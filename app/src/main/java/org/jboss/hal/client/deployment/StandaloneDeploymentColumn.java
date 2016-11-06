@@ -54,6 +54,7 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -257,14 +258,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> new Async<FunctionContext>(progress.get()).single(new FunctionContext(),
-                        new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext context) {
-                                eventBus.fireEvent(new MessageEvent(
-                                        Message.error(resources.messages().lastOperationFailed(),
-                                                context.getErrorMessage())));
-                            }
-
+                        new SuccessfulOutcome(eventBus, resources) {
                             @Override
                             public void onSuccess(final FunctionContext context) {
                                 refresh(Ids.deployment(name));

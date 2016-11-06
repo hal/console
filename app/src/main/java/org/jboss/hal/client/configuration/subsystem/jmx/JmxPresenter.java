@@ -28,7 +28,6 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -41,13 +40,12 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
@@ -137,14 +135,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
                     new HandlerFunctions.MergeHandler(dispatcher, statementContext, new HashSet<>(handler))
             };
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            MessageEvent.fire(getEventBus(), Message.error(resources.messages().lastOperationFailed(),
-                                    context.getErrorMessage()));
-
-                        }
-
+                    new SuccessfulOutcome(getEventBus(), resources) {
                         @Override
                         public void onSuccess(final FunctionContext context) {
                             load();

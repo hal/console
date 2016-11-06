@@ -54,6 +54,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -127,15 +128,6 @@ public class ModelBrowser implements HasElements {
             } else {
                 control.proceed();
             }
-        }
-    }
-
-
-    private abstract class SuccessfulMetadataCallback implements MetadataProcessor.MetadataCallback {
-
-        @Override
-        public void onError(final Throwable error) {
-            MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
         }
     }
 
@@ -397,7 +389,7 @@ public class ModelBrowser implements HasElements {
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
-        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
                 resourcePanel.update(node, node.data.getAddress(), metadata);
@@ -419,7 +411,7 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
+                metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
@@ -466,7 +458,7 @@ public class ModelBrowser implements HasElements {
 
         } else {
             AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
+            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                 @Override
                 public void onMetadata(Metadata metadata) {
                     AddResourceDialog dialog = new AddResourceDialog(

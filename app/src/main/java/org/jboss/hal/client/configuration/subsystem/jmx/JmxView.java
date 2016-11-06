@@ -103,6 +103,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
         // ------------------------------------------------------ audit log
 
+        // The handlers are modeled as sub-resources of the audit-log configuration,
+        // but in the UI here they're managed by a ListItem.
         Metadata handlerMetadata = metadataRegistry.lookup(AUDIT_LOG_HANDLER_TEMPLATE);
         SafeHtml handlerDescription = SafeHtmlUtils.fromString(handlerMetadata.getDescription().getDescription());
 

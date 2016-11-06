@@ -39,6 +39,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -104,15 +105,6 @@ public class CrudOperations {
     }
 
 
-    private abstract class SuccessfulMetadataCallback implements MetadataProcessor.MetadataCallback {
-
-        @Override
-        public void onError(final Throwable error) {
-            MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
-        }
-    }
-
-
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
@@ -171,7 +163,7 @@ public class CrudOperations {
      */
     public void add(final String id, final String type, final AddressTemplate template,
             final Iterable<String> attributes, final AddCallback callback) {
-        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
                 AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle(type),
@@ -249,7 +241,7 @@ public class CrudOperations {
      */
     public void addSingleton(final String id, final String type, final AddressTemplate template,
             final Iterable<String> attributes, final AddCallback callback) {
-        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
                 AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle(type),
