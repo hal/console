@@ -44,13 +44,12 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="io-worker-form" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                <form id="io-worker-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                     <attributes>
-                        <column name="io-threads"/>
-                        <column name="stack-size"/>
-                        <column name="task-keepalive"/>
-                        <column name="task-max-threads"/>
+                        <attribute name="io-threads"/>
+                        <attribute name="stack-size"/>
+                        <attribute name="task-keepalive"/>
+                        <attribute name="task-max-threads"/>
                     </attributes>
                 </form>
             </metadata>
@@ -91,6 +90,5 @@
                 </form>
             </metadata>
         </item>
-        
     </vertical-navigation>
 </view>
