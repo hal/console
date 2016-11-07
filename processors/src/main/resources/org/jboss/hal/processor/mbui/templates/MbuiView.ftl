@@ -10,9 +10,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
-<#if context.hasTabs()??>
-import org.jboss.hal.ballroom.Tabs;
-</#if>
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -47,9 +44,6 @@ final class ${context.subclass} extends ${context.base} {
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
     </#list>
-    <#list context.tabs as tabInfo>
-    private final Tabs ${tabInfo.name};
-    </#list>
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
@@ -62,9 +56,6 @@ final class ${context.subclass} extends ${context.base} {
         <#list context.metadataInfos as metadataInfo>
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
         this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
-        </#list>
-        <#list context.tabs as tabInfo>
-        ${tabInfo.name} = new Tabs();
         </#list>
         this.handlebarElements = new HashMap<>();
 
@@ -239,14 +230,6 @@ final class ${context.subclass} extends ${context.base} {
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
         </#list>
 
-        <#list context.tabs as tabInfo>
-            <#list tabInfo.items as tabItem>
-                <#list tabItem.formChildren as tabChild>
-        ${tabInfo.name}.add(Ids.build("${tabInfo.name}", "tab", "${tabItem.id}"), "${tabItem.title}", ${context.findFormById(tabChild)}.asElement());
-                </#list>
-            </#list>
-        </#list>
-
         <#if context.verticalNavigation??>
         ${context.verticalNavigation.name} = new VerticalNavigation();
             <#list context.verticalNavigation.items as primaryItem>
@@ -259,8 +242,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                        <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                         <#elseif content.reference??>
                 .add(${content.reference})
                         </#if>
@@ -285,8 +266,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                                <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                                 <#elseif content.reference??>
                 .add(${content.reference})
                                 </#if>
@@ -320,8 +299,6 @@ final class ${context.subclass} extends ${context.base} {
                         .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                         .rememberAs("${content.name}")
                     .end()
-                    <#elseif content.tab>
-                    .add(${context.findTabNameByTabId(content.reference)})
                     <#elseif content.reference??>
                     .add(${content.reference})
                     </#if>

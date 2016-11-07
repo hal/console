@@ -68,7 +68,8 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
         List<Element> subItems = element.getChildren("sub-item");
         if (!subItems.isEmpty()) {
             if (level > 0) {
-                processor.error(field, "Invalid nesting in vertical-navigation: sub items cannot have sub items.");
+                processor.error(field,
+                        "Invalid nesting in vertical-navigation: sub items cannot have nested sub items.");
             }
             subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, context, level + 1)));
 

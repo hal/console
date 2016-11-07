@@ -20,6 +20,7 @@ package org.jboss.hal.processor.mbui;
  */
 public interface XmlTags {
 
+    String FAIL_SAFE_FORM = "fail-safe-form";
     String FORM = "form";
     String METADATA = "metadata";
     String TAB = "tab";

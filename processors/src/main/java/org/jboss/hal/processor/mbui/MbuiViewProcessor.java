@@ -50,6 +50,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
 import org.jboss.hal.spi.MbuiElement;
@@ -62,6 +63,7 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import static org.jboss.hal.processor.mbui.ElementType.DataTable;
+import static org.jboss.hal.processor.mbui.ElementType.FailSafeForm;
 import static org.jboss.hal.processor.mbui.ElementType.Form;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
@@ -73,6 +75,14 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class MbuiViewProcessor extends AbstractProcessor {
+
+    /**
+     * Method to reset the various counter used to generate unique variables names. Do not use in production code!
+     */
+    static void resetCounter() {
+        Content.counter = 0;
+        MetadataInfo.counter = 0;
+    }
 
     private static final String TEMPLATE = "MbuiView.ftl";
 
@@ -167,9 +177,9 @@ public class MbuiViewProcessor extends AbstractProcessor {
         Document document = parseXml(type, mbuiView);
         validateDocument(type, document);
 
-        // first process the metadata and tab elements
+        // first process the metadata
         processMetadata(type, document, context);
-        processTabs(document, context);
+        // processTabs(document, context);
 
         // then find and verify all @MbuiElement members
         processMbuiElements(type, document, context);
@@ -258,8 +268,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
+    /**
+     * Lookup all //metadata elements, verify the address attribute and store them in the context.
+     */
     private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
-        XPathExpression<org.jdom2.Element> expression = xPathFactory.compile("//metadata", Filters.element());
+        XPathExpression<org.jdom2.Element> expression = xPathFactory
+                .compile("//" + XmlTags.METADATA, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
             String template = element.getAttributeValue("address");
             if (template == null) {
@@ -275,14 +289,22 @@ public class MbuiViewProcessor extends AbstractProcessor {
      * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
      */
     private void processTabs(final Document document, final MbuiViewContext context) {
-        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//metadata", Filters.element());
-        for (org.jdom2.Element metadataElement : expressionTabs.evaluate(document)) {
-            TabsInfo tab = new TabsInfo();
+/*
+        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//" + XmlTags.TAB, Filters.element());
+        List<org.jdom2.Element> tabElements = expressionTabs.evaluate(document);
+        if (!tabElements.isEmpty()) {
+            TabsInfo tabs = new TabsInfo();
+            context.addTab(tabs);
+
+        }
+        for (org.jdom2.Element tabElement : tabElements) {
             boolean hasTabs = false;
             for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
                 hasTabs = true;
-                TabsInfo.TabItem tabItem = null;
-                for (org.jdom2.Element child : tabElement.getChildren("form")) {
+                TabsInfo.TabItem tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
+                        tabElement.getAttributeValue("id"));
+                tabElement.getChild("form")
+                for (org.jdom2.Element child : tabElement.getChild("form")) {
                     if (tabItem == null) {
                         tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
                                 tabElement.getAttributeValue("id"));
@@ -295,6 +317,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 context.addTab(tab);
             }
         }
+*/
     }
 
 
@@ -331,6 +354,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
                             case DataTable:
                                 elementProcessor = new DataTableProcessor(this, typeUtils, xPathFactory);
                                 break;
+                            case FailSafeForm:
                             case Form:
                                 elementProcessor = new FormProcessor(this, typeUtils, xPathFactory);
                                 break;
@@ -374,10 +398,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private ElementType getMbuiElementType(TypeMirror dataElementType) {
         if (isAssignable(dataElementType, VerticalNavigation.class)) {
             return VerticalNavigation;
-        } else if (isAssignable(dataElementType, Form.class)) {
-            return Form;
         } else if (isAssignable(dataElementType, DataTable.class)) {
             return DataTable;
+        } else if (isAssignable(dataElementType, FailSafeForm.class)) {
+            return FailSafeForm;
+        } else if (isAssignable(dataElementType, Form.class)) {
+            return Form;
         } else {
             return null;
         }

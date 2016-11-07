@@ -42,6 +42,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         String title = element.getAttributeValue("title");
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue("auto-save"));
         boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue("include-runtime"));
+        boolean failSafe = XmlTags.FAIL_SAFE_FORM.equalsIgnoreCase(element.getName());
         String onSave = element.getAttributeValue("on-save");
         String nameResolver = element.getAttributeValue("name-resolver");
         MetadataInfo metadata = findMetadata(field, element, context);
@@ -75,7 +76,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         }
 
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata,
-                title, autoSave, onSave, nameResolver, includeRuntime);
+                title, autoSave, onSave, nameResolver, includeRuntime, failSafe);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild("attributes");

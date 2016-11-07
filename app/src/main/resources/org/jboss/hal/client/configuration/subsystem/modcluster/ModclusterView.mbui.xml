@@ -19,53 +19,68 @@
     <vertical-navigation id="modcluster-vertical-navigation">
         <item id="modcluster-advertising-item" title="Advertising" icon="fa fa-shopping-cart">
             <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
-                <form id="modcluster-advertising-form" title="Advertising" auto-save="true">
-                    <attributes>
-                        <attribute name="connector"/>
-                        <attribute name="load-balancing-group"/>
-                        <attribute name="balancer"/>
-                        <attribute name="advertise-socket"/>
-                        <attribute name="advertise-security-key"/>
-                        <attribute name="advertise"/>
-                    </attributes>
-                </form>
-            </metadata>
-        </item>
-
-        <item id="modcluster-sessions-item" title="Sessions" icon="pficon pficon-users">
-            <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
-                <form id="modcluster-sessions-form" title="Sessions" auto-save="true">
-                    <attributes>
-                        <attribute name="sticky-session"/>
-                        <attribute name="sticky-session-force"/>
-                        <attribute name="sticky-session-remove"/>
-                    </attributes>
-                </form>
-            </metadata>
-        </item>
-
-        <item id="modcluster-web-contexts-item" title="Web Contexts" icon="pficon pficon-repository">
-            <metadata address="">
-
-            </metadata>
-        </item>
-
-        <item id="modcluster-proxies-item" title="Proxies" icon="pficon pficon-build">
-            <metadata address="">
-
+                <tab id="modcluster-advertising-tab" title="Advertising">
+                    <form id="modcluster-advertising-form" title="Advertising" auto-save="true">
+                        <attributes>
+                            <attribute name="connector"/>
+                            <attribute name="load-balancing-group"/>
+                            <attribute name="balancer"/>
+                            <attribute name="advertise-socket"/>
+                            <attribute name="advertise-security-key"/>
+                            <attribute name="advertise"/>
+                        </attributes>
+                    </form>
+                </tab>
+                <tab id="modcluster-sessions-tab" title="Sessions">
+                    <form id="modcluster-sessions-form" title="Sessions" auto-save="true">
+                        <attributes>
+                            <attribute name="sticky-session"/>
+                            <attribute name="sticky-session-force"/>
+                            <attribute name="sticky-session-remove"/>
+                        </attributes>
+                    </form>
+                </tab>
+                <tab id="modcluster-web-contexts-tab" title="Web Contexts">
+                    <form id="modcluster-web-contexts-form" title="Web Contexts" auto-save="true">
+                        <attributes>
+                            <attribute name="auto-enable-context"/>
+                            <attribute name="excluded-contexts"/>
+                        </attributes>
+                    </form>
+                </tab>
+                <tab id="modcluster-proxies-tab" title="Proxies">
+                    <form id="modcluster-proxies-form" title="Proxies" auto-save="true">
+                        <attributes>
+                            <attribute name="proxy-url"/>
+                            <attribute name="proxies"/>
+                        </attributes>
+                    </form>
+                </tab>
             </metadata>
         </item>
 
         <item id="modcluster-ssl-item" title="SSL" icon="fa fa-lock">
-            <metadata address="">
-
+            <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
+                <fail-safe-form id="modcluster-ssl-form" title="SSL" auto-save="true">
+                    <attributes>
+                        <attribute name="key-alias"/>
+                        <attribute name="password"/>
+                        <attribute name="ca-certificate-file"/>
+                        <attribute name="certificate-key-file"/>
+                        <attribute name="cipher-suite"/>
+                        <attribute name="ca-revocation-url"/>
+                        <attribute name="protocol"/>
+                    </attributes>
+                </fail-safe-form>
             </metadata>
         </item>
 
+<!--
         <item id="modcluster-networking-item" title="Networking" icon="pficon pficon-network">
             <metadata address="">
 
             </metadata>
         </item>
+-->
     </vertical-navigation>
 </view>

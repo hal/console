@@ -15,27 +15,23 @@
  */
 package org.jboss.hal.processor.mbui;
 
-/**
- * @author Harald Pehl
- */
-public class MetadataInfo {
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.spi.MbuiElement;
+import org.jboss.hal.spi.MbuiView;
 
-    static int counter = 0;
+@MbuiView
+public abstract class AttributesFormView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    private final String name;
-    private final String template;
-
-    MetadataInfo(final String template) {
-        this.name = "metadata" + counter; //NON-NLS
-        this.template = template;
-        counter++;
+    public static AttributesFormView create(final MbuiContext mbuiContext) {
+        return null;
     }
 
-    public String getName() {
-        return name;
-    }
+    @MbuiElement("form") Form<ModelNode> form;
 
-    public String getTemplate() {
-        return template;
+    AttributesFormView(final MbuiContext mbuiContext) {
+        super(mbuiContext);
     }
 }
