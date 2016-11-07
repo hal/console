@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.form;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.processor.mbui.MbuiTestPresenter;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-public abstract class SimpleFormView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+public abstract class SimpleView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    public static SimpleFormView create(final MbuiContext mbuiContext) {
+    public static SimpleView create(final MbuiContext mbuiContext) {
         return null;
     }
 
     @MbuiElement("form") Form<ModelNode> form;
 
-    SimpleFormView(final MbuiContext mbuiContext) {
+    SimpleView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 }

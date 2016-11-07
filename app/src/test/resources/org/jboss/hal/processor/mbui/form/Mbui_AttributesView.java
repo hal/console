@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.form;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,13 +47,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_FormItemProviderView extends FormItemProviderView {
+final class Mbui_AttributesView extends AttributesView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_FormItemProviderView(MbuiContext mbuiContext) {
+    Mbui_AttributesFormView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
@@ -61,8 +61,7 @@ final class Mbui_FormItemProviderView extends FormItemProviderView {
         this.handlebarElements = new HashMap<>();
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
-                .include("foo")
-                .customFormItem("bar", (attributeDescription) -> new org.jboss.hal.ballroom.form.TextBoxItem("bar", "Bar"))
+                .include("foo", "bar")
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
                 .build();

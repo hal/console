@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.form;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,13 +47,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_AttributesFormView extends AttributesFormView {
+final class Mbui_SuggestHandlerView extends SuggestHandlerView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_AttributesFormView(MbuiContext mbuiContext) {
+    Mbui_SuggestHandlerView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
@@ -65,6 +65,13 @@ final class Mbui_AttributesFormView extends AttributesFormView {
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
                 .build();
+        form.getFormItem("foo").registerSuggestHandler(new ReadChildrenAutoComplete(
+                mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("/foo=*")));
+        List<AddressTemplate> formTemplates = asList(
+                AddressTemplate.of("/bar=*"),
+                AddressTemplate.of("/another-bar=*"));
+        form.getFormItem("bar").registerSuggestHandler(new ReadChildrenAutoComplete(
+                mbuiContext.dispatcher(), mbuiContext.statementContext(), formTemplates));
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

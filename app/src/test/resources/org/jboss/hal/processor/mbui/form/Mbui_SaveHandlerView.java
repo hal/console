@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.form;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_OnSaveFormView extends OnSaveFormView {
+final class Mbui_SaveHandlerView extends SaveHandlerView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;

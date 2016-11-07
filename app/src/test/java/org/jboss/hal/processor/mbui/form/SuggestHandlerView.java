@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.form;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.processor.mbui.MbuiTestPresenter;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-public abstract class AttributesFormView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+public abstract class SuggestHandlerView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    public static AttributesFormView create(final MbuiContext mbuiContext) {
+    public static SuggestHandlerView create(final MbuiContext mbuiContext) {
         return null;
     }
 
     @MbuiElement("form") Form<ModelNode> form;
 
-    AttributesFormView(final MbuiContext mbuiContext) {
+    SuggestHandlerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 }

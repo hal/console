@@ -15,23 +15,18 @@
  */
 package org.jboss.hal.processor.mbui;
 
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.spi.MbuiElement;
-import org.jboss.hal.spi.MbuiView;
+import com.google.testing.compile.Compilation;
+import org.junit.Test;
 
-@MbuiView
-public abstract class OnSaveFormView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+/**
+ * @author Harald Pehl
+ */
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+public class BasicTest extends MbuiProcessorTest {
 
-    public static OnSaveFormView create(final MbuiContext mbuiContext) {
-        return null;
-    }
-
-    @MbuiElement("form") Form<ModelNode> form;
-
-    OnSaveFormView(final MbuiContext mbuiContext) {
-        super(mbuiContext);
+    @Test
+    public void handlebars() {
+        Compilation compilation = compile("HandlebarsView");
+        assertSourceEquals(compilation, "Mbui_HandlebarsView");
     }
 }

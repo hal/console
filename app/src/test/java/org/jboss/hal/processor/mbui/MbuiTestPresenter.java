@@ -29,7 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
  * @author Harald Pehl
  */
 @SuppressWarnings("unused")
-abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.MyView, MbuiTestPresenter.MyProxy> {
+public abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.MyView, MbuiTestPresenter.MyProxy> {
 
     public interface MyProxy extends ProxyPlace<MbuiTestPresenter> {}
 
@@ -40,6 +40,6 @@ abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.MyView,
         super(eventBus, view, myProxy, finder);
     }
 
-    void saveForm(Form<ModelNode> form, Map<String, Object> changedValues) {}
+    public void saveForm(Form<ModelNode> form, Map<String, Object> changedValues) {}
 }
 
