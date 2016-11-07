@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 
 /**
  * Base class for views generated using {@code @MbuiView}.
@@ -37,6 +38,14 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
     @Override
     public void setPresenter(final P presenter) {
         this.presenter = presenter;
+    }
+
+    protected void add(final String id, final String type, final AddressTemplate template) {
+        mbuiContext.crud().add(id, type, template, (name, address) -> presenter.reload());
+    }
+
+    protected void addSingleton(final String id, final String type, final AddressTemplate template) {
+        mbuiContext.crud().addSingleton(id, type, template, (name, address) -> presenter.reload());
     }
 
     protected void saveForm(final String type, final String name, final ResourceAddress address,

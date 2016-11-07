@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public class FormTest extends MbuiProcessorTest {
 
     @Test
@@ -59,5 +59,11 @@ public class FormTest extends MbuiProcessorTest {
     public void saveHandler() {
         Compilation compilation = compile("SaveHandlerView");
         assertSourceEquals(compilation, "Mbui_SaveHandlerView");
+    }
+
+    @Test
+    public void failSafe() {
+        Compilation compilation = compile("FailSafeView");
+        assertSourceEquals(compilation, "Mbui_FailSafeView");
     }
 }

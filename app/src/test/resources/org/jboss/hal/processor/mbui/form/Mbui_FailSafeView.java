@@ -50,24 +50,26 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_AttributesView extends AttributesView {
+final class Mbui_FailSafeView extends FailSafeView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_AttributesFormView(MbuiContext mbuiContext) {
+    Mbui_FailSafeView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
-                .include("foo", "bar")
-                .unsorted()
+        Form<org.jboss.hal.dmr.ModelNode> failSafe_form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>(Ids.build("form", Ids.FORM_SUFFIX), metadata0)
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
                 .build();
+        form = new FailSafeForm<>(mbuiContext.dispatcher(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, metadata0Template.resolve(mbuiContext.statementContext())).build(),
+                failSafe_form,
+                () -> addSingleton("form", "Form", metadata0Template))
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

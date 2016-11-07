@@ -24,10 +24,12 @@ public class MetadataInfo {
 
     private final String name;
     private final String template;
+    private final boolean singleton;
 
     MetadataInfo(final String template) {
         this.name = "metadata" + counter; //NON-NLS
         this.template = template;
+        this.singleton = !template.endsWith("*");
         counter++;
     }
 
@@ -37,5 +39,9 @@ public class MetadataInfo {
 
     public String getTemplate() {
         return template;
+    }
+
+    public boolean isSingleton() {
+        return singleton;
     }
 }

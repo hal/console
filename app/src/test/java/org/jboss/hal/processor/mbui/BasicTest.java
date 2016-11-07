@@ -21,7 +21,7 @@ import org.junit.Test;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public class BasicTest extends MbuiProcessorTest {
 
     @Test

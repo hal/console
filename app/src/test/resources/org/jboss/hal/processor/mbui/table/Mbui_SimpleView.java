@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.form;
+package org.jboss.hal.processor.mbui.table;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,38 +50,37 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_AttributesView extends AttributesView {
+final class Mbui_SimpleView extends SimpleView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_AttributesFormView(MbuiContext mbuiContext) {
+    Mbui_SimpleFormView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
-                .include("foo", "bar")
-                .unsorted()
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
+                .columns("name")
                 .build();
+        table = new ModelNodeTable<>("table", tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
                 .column()
                 .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
                 .rememberAs("html0")
                 .end()
-                .add(form)
+                .add(table)
                 .end()
                 .end();
         handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
 
-        registerAttachable(form);
+        registerAttachable(table);
 
         Element root = layoutBuilder.build();
         initElement(root);

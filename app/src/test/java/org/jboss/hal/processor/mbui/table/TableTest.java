@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.table;
+
+import com.google.testing.compile.Compilation;
+import org.jboss.hal.processor.mbui.MbuiProcessorTest;
+import org.junit.Test;
 
 /**
  * @author Harald Pehl
  */
-public interface XmlTags {
+@SuppressWarnings("DuplicateStringLiteralInspection")
+public class TableTest extends MbuiProcessorTest {
 
-    String FAIL_SAFE_FORM = "fail-safe-form";
-    String FORM = "form";
-    String METADATA = "metadata";
-    // String TAB = "tab";
-    String TABLE = "table";
-    String VERTICAL_NAVIGATION = "vertical-navigation";
-    String VIEW = "view";
+    @Test
+    public void simple() {
+        Compilation compilation = compile("SimpleView");
+        assertSourceEquals(compilation, "Mbui_SimpleView");
+    }
 }

@@ -35,9 +35,9 @@ public class FormInfo extends MbuiElementInfo {
     private final boolean failSafe;
     private final List<Attribute> attributes;
 
-    FormInfo(final String name, final String selector, final String typeParameter, final MetadataInfo metadata,
-            final String title, final boolean autoSave, final String onSave, final String nameResolver,
-            final boolean includeRuntime, final boolean failSafe) {
+    FormInfo(final String name, final String selector, final String typeParameter,
+            final MetadataInfo metadata, final String title, final boolean autoSave, final String onSave,
+            final String nameResolver, final boolean includeRuntime, final boolean failSafe) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;

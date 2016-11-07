@@ -10,6 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -18,6 +19,7 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -31,6 +33,7 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -60,7 +63,11 @@ final class ${context.subclass} extends ${context.base} {
         this.handlebarElements = new HashMap<>();
 
         <#list context.forms as form>
+            <#if form.failSafe>
+        Form<${form.typeParameter}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
+            <#else>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+            </#if>
             <#if form.includeRuntime>
             .includeRuntime()
             </#if>
@@ -107,6 +114,12 @@ final class ${context.subclass} extends ${context.base} {
                     mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
+            <#if form.failSafe>
+        ${form.name} = new FailSafeForm<>(mbuiContext.dispatcher(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                failSafe_${form.name},
+                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template));
+            </#if>
         </#list>
 
         <#list context.dataTables as table>

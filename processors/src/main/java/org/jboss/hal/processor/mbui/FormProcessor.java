@@ -39,6 +39,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
     @Override
     public void process(final VariableElement field, final Element element, final String selector,
             final MbuiViewContext context) {
+        String id = element.getAttributeValue("id");
         String title = element.getAttributeValue("title");
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue("auto-save"));
         boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue("include-runtime"));
@@ -75,8 +76,8 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             }
         }
 
-        FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata,
-                title, autoSave, onSave, nameResolver, includeRuntime, failSafe);
+        FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
+                metadata, title, autoSave, onSave, nameResolver, includeRuntime, failSafe);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild("attributes");

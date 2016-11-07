@@ -53,8 +53,9 @@ public class Content {
         }
         StringBuilder htmlBuilder = new StringBuilder();
         for (org.jdom2.Element childElement : contentElement.getChildren()) {
-            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())
-                    || XmlTags.TAB.equals(childElement.getName())) {
+            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FAIL_SAFE_FORM.equals(childElement.getName())
+                    || XmlTags.FORM.equals(childElement.getName())
+                    /*|| XmlTags.TAB.equals(childElement.getName())*/) {
                 if (htmlBuilder.length() != 0) {
                     String html = htmlBuilder.toString();
                     htmlBuilder.setLength(0);
@@ -89,7 +90,7 @@ public class Content {
 
     private static Content htmlContent(String html, MetadataInfo metadataInfo) {
         if (metadataInfo != null) {
-            html = html.replace("metadata", metadataInfo.getName());
+            html = html.replace("metadata", metadataInfo.getName()); //NON-NLS
         }
         return new Content(null, html);
     }
@@ -131,8 +132,8 @@ public class Content {
     @Override
     public String toString() {
         return "Content{" +
-                "reference=" + reference + 
-                ", name=" + name + 
+                "reference=" + reference +
+                ", name=" + name +
                 ", html=" + html +
                 '}';
     }
