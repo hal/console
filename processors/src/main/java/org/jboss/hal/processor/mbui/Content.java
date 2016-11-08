@@ -54,8 +54,7 @@ public class Content {
         StringBuilder htmlBuilder = new StringBuilder();
         for (org.jdom2.Element childElement : contentElement.getChildren()) {
             if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FAIL_SAFE_FORM.equals(childElement.getName())
-                    || XmlTags.FORM.equals(childElement.getName())
-                    /*|| XmlTags.TAB.equals(childElement.getName())*/) {
+                    || XmlTags.FORM.equals(childElement.getName())) {
                 if (htmlBuilder.length() != 0) {
                     String html = htmlBuilder.toString();
                     htmlBuilder.setLength(0);
@@ -63,15 +62,7 @@ public class Content {
                 }
                 Content content = new Content(childElement.getAttributeValue("id"), null);
                 contents.add(content);
-/*
-                if (XmlTags.TAB.equals(childElement.getName())) {
-                    content.setTab(true);
-                    // from the template perspective, registering only one tab is ok, 
-                    // as the tab id will be used to lookup the tab object name created at runtime
-                    // in MbuiViewProcessor.processTabs (TabsInfo class)
-                    break;
-                }
-*/
+
             } else {
                 // do not directly add the html, but collect it until a table or form is about to be processed
                 htmlBuilder.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));

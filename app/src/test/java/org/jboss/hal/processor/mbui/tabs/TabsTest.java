@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.tabs;
+
+import org.jboss.hal.processor.mbui.MbuiViewProcessorTest;
 
 /**
  * @author Harald Pehl
  */
-public interface XmlTags {
-
-    String FAIL_SAFE_FORM = "fail-safe-form";
-    String FORM = "form";
-    String METADATA = "metadata";
-    String TABLE = "table";
-    String VERTICAL_NAVIGATION = "vertical-navigation";
-    String VIEW = "view";
+public class TabsTest extends MbuiViewProcessorTest {
 }

@@ -77,7 +77,7 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 public class MbuiViewProcessor extends AbstractProcessor {
 
     /**
-     * Method to reset the various counter used to generate unique variables names. Do not use in production code!
+     * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not use in production code!
      */
     static void resetCounter() {
         Content.counter = 0;
@@ -282,42 +282,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 context.addMetadata(template);
             }
         }
-    }
-
-    /**
-     * Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context.
-     * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
-     */
-    private void processTabs(final Document document, final MbuiViewContext context) {
-/*
-        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//" + XmlTags.TAB, Filters.element());
-        List<org.jdom2.Element> tabElements = expressionTabs.evaluate(document);
-        if (!tabElements.isEmpty()) {
-            TabsInfo tabs = new TabsInfo();
-            context.addTab(tabs);
-
-        }
-        for (org.jdom2.Element tabElement : tabElements) {
-            boolean hasTabs = false;
-            for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
-                hasTabs = true;
-                TabsInfo.TabItem tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
-                        tabElement.getAttributeValue("id"));
-                tabElement.getChild("form")
-                for (org.jdom2.Element child : tabElement.getChild("form")) {
-                    if (tabItem == null) {
-                        tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
-                                tabElement.getAttributeValue("id"));
-                    }
-                    tabItem.addChildId(child.getAttributeValue("id"));
-                }
-                if (tabItem != null) { tab.addItem(tabItem); }
-            }
-            if (hasTabs) {
-                context.addTab(tab);
-            }
-        }
-*/
     }
 
 
