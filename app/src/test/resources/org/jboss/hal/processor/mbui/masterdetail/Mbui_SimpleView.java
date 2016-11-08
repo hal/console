@@ -1,19 +1,4 @@
-/*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.jboss.hal.processor.mbui.table;
+package org.jboss.hal.processor.mbui.masterdetail;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,9 +44,16 @@ final class Mbui_SimpleView extends SimpleView {
     Mbui_SimpleView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
-        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
+        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=*");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
+
+        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.model.NamedNode>("form", metadata0)
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues);
+                })
+                .build();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
                 .columns("name")
@@ -72,15 +64,17 @@ final class Mbui_SimpleView extends SimpleView {
                 .row()
                 .column()
                 .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Master-Detail</h1>"))
                 .rememberAs("html0")
                 .end()
                 .add(table)
+                .add(form)
                 .end()
                 .end();
         handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
 
         registerAttachable(table);
+        registerAttachable(form);
 
         Element root = layoutBuilder.build();
         initElement(root);
@@ -89,5 +83,6 @@ final class Mbui_SimpleView extends SimpleView {
     @Override
     public void attach() {
         super.attach();
+        table.api().bindForm(form);
     }
 }

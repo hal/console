@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.table;
+package org.jboss.hal.processor.mbui.navigation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -63,24 +64,33 @@ final class Mbui_SimpleView extends SimpleView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .columns("name")
+        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
+                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
                 .build();
-        table = new ModelNodeTable<>("table", tableOptions);
+
+        navigation = new VerticalNavigation();
+
+        Elements.Builder itemBuilder = new Elements.Builder()
+                .div()
+                .div()
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
+                .rememberAs("html0")
+                .end()
+                .add(form)
+                .end();
+        Element itemElement = itemBuilder.build();
+        handlebarElements.put("html0", itemBuilder.referenceFor("html0"));
+        navigation.addPrimary("item", "Form", "fa fa-list-ul", itemElement);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
                 .column()
-                .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Table</h1>"))
-                .rememberAs("html0")
-                .end()
-                .add(table)
+                .addAll(navigation.panes())
                 .end()
                 .end();
-        handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
 
-        registerAttachable(table);
+        registerAttachable(navigation);
+        registerAttachable(form);
 
         Element root = layoutBuilder.build();
         initElement(root);

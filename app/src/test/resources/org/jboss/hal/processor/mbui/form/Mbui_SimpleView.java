@@ -56,7 +56,7 @@ final class Mbui_SimpleView extends SimpleView {
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_SimpleFormView(MbuiContext mbuiContext) {
+    Mbui_SimpleView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");

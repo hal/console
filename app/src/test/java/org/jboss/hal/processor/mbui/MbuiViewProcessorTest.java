@@ -27,7 +27,7 @@ import static com.google.testing.compile.Compiler.javac;
  * @author Harald Pehl
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public abstract class MbuiProcessorTest {
+public abstract class MbuiViewProcessorTest {
 
     @Before
     public void setUp() {
@@ -36,11 +36,12 @@ public abstract class MbuiProcessorTest {
 
     protected Compilation compile(@NonNls String source) {
         return javac()
+                .withOptions("-proc:only")
                 .withProcessors(new MbuiViewProcessor())
                 .compile(JavaFileObjects.forResource(getClass().getResource(source + ".java")));
     }
 
-    protected void assertSourceEquals(final Compilation compilation, final String source) {
+    protected void assertSourceEquals(final Compilation compilation, @NonNls final String source) {
         assertThat(compilation)
                 .generatedSourceFile(getClass().getPackage().getName() + "." + source)
                 .hasSourceEquivalentTo(JavaFileObjects.forResource(getClass().getResource(source + ".java")));

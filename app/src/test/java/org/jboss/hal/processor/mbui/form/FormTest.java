@@ -16,14 +16,14 @@
 package org.jboss.hal.processor.mbui.form;
 
 import com.google.testing.compile.Compilation;
-import org.jboss.hal.processor.mbui.MbuiProcessorTest;
+import org.jboss.hal.processor.mbui.MbuiViewProcessorTest;
 import org.junit.Test;
 
 /**
  * @author Harald Pehl
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
-public class FormTest extends MbuiProcessorTest {
+public class FormTest extends MbuiViewProcessorTest {
 
     @Test
     public void simple() {

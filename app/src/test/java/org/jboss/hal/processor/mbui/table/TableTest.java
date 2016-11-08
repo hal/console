@@ -16,14 +16,14 @@
 package org.jboss.hal.processor.mbui.table;
 
 import com.google.testing.compile.Compilation;
-import org.jboss.hal.processor.mbui.MbuiProcessorTest;
+import org.jboss.hal.processor.mbui.MbuiViewProcessorTest;
 import org.junit.Test;
 
 /**
  * @author Harald Pehl
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
-public class TableTest extends MbuiProcessorTest {
+public class TableTest extends MbuiViewProcessorTest {
 
     @Test
     public void simple() {
@@ -53,5 +53,11 @@ public class TableTest extends MbuiProcessorTest {
     public void customAction() {
         Compilation compilation = compile("CustomActionView");
         assertSourceEquals(compilation, "Mbui_CustomActionView");
+    }
+
+    @Test
+    public void customColumn() {
+        Compilation compilation = compile("CustomColumnView");
+        assertSourceEquals(compilation, "Mbui_CustomColumnView");
     }
 }

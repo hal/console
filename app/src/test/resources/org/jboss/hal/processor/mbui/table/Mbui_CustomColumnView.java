@@ -50,13 +50,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_SimpleView extends SimpleView {
+final class Mbui_CustomColumnView extends CustomColumnView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_SimpleView(MbuiContext mbuiContext) {
+    Mbui_CustomColumnView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
@@ -64,7 +64,8 @@ final class Mbui_SimpleView extends SimpleView {
         this.handlebarElements = new HashMap<>();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .columns("name")
+                .column("name")
+                .column("foo", (cell, type, row, meta) -> "foo")
                 .build();
         table = new ModelNodeTable<>("table", tableOptions);
 

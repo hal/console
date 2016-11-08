@@ -24,6 +24,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 
 /**
  * @author Harald Pehl
@@ -41,6 +42,8 @@ public abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.
     }
 
     public void saveForm(Form<ModelNode> form, Map<String, Object> changedValues) {}
+
+    public void saveNamedForm(Form<NamedNode> form, Map<String, Object> changedValues) {}
 
     @Override
     public void reload() {}
