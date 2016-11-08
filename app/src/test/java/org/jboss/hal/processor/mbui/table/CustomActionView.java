@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.table;
 
+import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.processor.mbui.MbuiTestPresenter;
+import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-public abstract class HandlebarsView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+public abstract class CustomActionView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    public static HandlebarsView create(final MbuiContext mbuiContext) {
+    public static CustomActionView create(final MbuiContext mbuiContext) {
         return null;
     }
 
-    HandlebarsView(final MbuiContext mbuiContext) {
+    @MbuiElement("table") DataTable<NamedNode> table;
+
+    CustomActionView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 }

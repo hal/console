@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui;
+package org.jboss.hal.processor.mbui.basic;
 
-import com.google.testing.compile.Compilation;
-import org.junit.Test;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.processor.mbui.MbuiTestPresenter;
+import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Harald Pehl
- */
-@SuppressWarnings("DuplicateStringLiteralInspection")
-public class BasicTest extends MbuiProcessorTest {
+@MbuiView
+public abstract class HandlebarsView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    @Test
-    public void handlebars() {
-        Compilation compilation = compile("HandlebarsView");
-        assertSourceEquals(compilation, "Mbui_HandlebarsView");
+    public static HandlebarsView create(final MbuiContext mbuiContext) {
+        return null;
+    }
+
+    HandlebarsView(final MbuiContext mbuiContext) {
+        super(mbuiContext);
     }
 }

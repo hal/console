@@ -41,5 +41,8 @@ public abstract class MbuiTestPresenter extends MbuiPresenter<MbuiTestPresenter.
     }
 
     public void saveForm(Form<ModelNode> form, Map<String, Object> changedValues) {}
+
+    @Override
+    public void reload() {}
 }
 

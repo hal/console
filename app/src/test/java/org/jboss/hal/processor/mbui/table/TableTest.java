@@ -30,4 +30,28 @@ public class TableTest extends MbuiProcessorTest {
         Compilation compilation = compile("SimpleView");
         assertSourceEquals(compilation, "Mbui_SimpleView");
     }
+
+    @Test
+    public void defaultActions() {
+        Compilation compilation = compile("DefaultActionsView");
+        assertSourceEquals(compilation, "Mbui_DefaultActionsView");
+    }
+
+    @Test
+    public void addWithAttributesActions() {
+        Compilation compilation = compile("AddWithAttributesView");
+        assertSourceEquals(compilation, "Mbui_AddWithAttributesView");
+    }
+
+    @Test
+    public void addWithSuggestHandlerActions() {
+        Compilation compilation = compile("AddWithSuggestHandlerView");
+        assertSourceEquals(compilation, "Mbui_AddWithSuggestHandlerView");
+    }
+
+    @Test
+    public void customAction() {
+        Compilation compilation = compile("CustomActionView");
+        assertSourceEquals(compilation, "Mbui_CustomActionView");
+    }
 }
