@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.navigation;
+package org.jboss.hal.processor.mbui.masterdetail;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,6 @@ import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
-import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
@@ -52,46 +51,51 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_NestedView extends NestedView {
+final class Mbui_AttributeGroupsView extends AttributeGroupsView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_NestedView(MbuiContext mbuiContext) {
+    Mbui_AttributeGroupsView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
-        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
+        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=*");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
-                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+        form = new GroupedForm.Builder<org.jboss.hal.dmr.model.NamedNode>("form", metadata0)
+                .group("group-1", "Group 1")
+                .include("foo", "bar")
+                .end()
+                .group("group-2", "Group 2")
+                .include("baz", "qux")
+                .end()
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues);
+                })
                 .build();
 
-        navigation = new VerticalNavigation();
-        navigation.addPrimary("item", "Main Item", "fa fa-list-ul");
-
-        Elements.Builder subItemBuilder = new Elements.Builder()
-                .div()
-                .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                .rememberAs("html0")
-                .end()
-                .add(form)
-                .end();
-        Element subItemElement = subItemBuilder.build();
-        handlebarElements.put("html0", subItemBuilder.referenceFor("html0"));
-        navigation.addSecondary("item", "sub-item", "Sub Item", subItemElement);
+        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
+                .columns("name")
+                .build();
+        table = new ModelNodeTable<>("table", tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
                 .column()
-                .addAll(navigation.panes())
+                .div()
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Master-Detail</h1>"))
+                .rememberAs("html0")
+                .end()
+                .add(table)
+                .add(form)
                 .end()
                 .end();
+        handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
 
-        registerAttachable(navigation);
+        registerAttachable(table);
         registerAttachable(form);
 
         Element root = layoutBuilder.build();
@@ -101,5 +105,6 @@ final class Mbui_NestedView extends NestedView {
     @Override
     public void attach() {
         super.attach();
+        table.api().bindForm(form);
     }
 }

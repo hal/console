@@ -30,4 +30,10 @@ public class MasterDetailTest extends MbuiViewProcessorTest {
         Compilation compilation = compile("SimpleView");
         assertSourceEquals(compilation, "Mbui_SimpleView");
     }
+
+    @Test
+    public void attributeGroups() {
+        Compilation compilation = compile("AttributeGroupsView");
+        assertSourceEquals(compilation, "Mbui_AttributeGroupsView");
+    }
 }

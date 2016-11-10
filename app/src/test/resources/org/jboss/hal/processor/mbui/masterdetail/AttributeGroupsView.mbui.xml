@@ -16,14 +16,14 @@
   ~ limitations under the License.
   -->
 <view>
-    <metadata address="/subsystem=foo">
+    <metadata address="/subsystem=*">
         <h1>Master-Detail</h1>
         <table id="table" form-ref="form">
             <columns>
                 <column name="name"/>
             </columns>
         </table>
-        <form id="form" title="Form" auto-save="true">
+        <form id="form" title="Form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
             <attributes>
                 <group id="group-1" title="Group 1">
                     <attribute name="foo"/>
