@@ -59,8 +59,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 
 /**
  * Handles {@link org.jboss.hal.dmr.dispatch.ProcessState} events and emits {@linkplain org.jboss.hal.spi.Message
- * messages} if necessary. Messages are emitted only if there was no message in the last {@value MESSAGE_TIMEOUT} ms and
- * the server was not restarted recently (a server restart resets the timeout).
+ * messages} if necessary. Messages are emitted only if there was no message in the last {@value MESSAGE_TIMEOUT} ms
+ * and if the server was not restarted recently (a server restart resets the timeout).
  * <p>
  * In standalone mode the message contains an action link to reload / restart the server. Whereas in domain mode
  * there's no direct way to reload / restart the affected servers (there might be just too many of them). Instead the
@@ -134,7 +134,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
         }
 
         if (shouldProcess() && !event.getProcessState().isEmpty()) {
-            rememberMessage();
+            startTimeout();
 
             if (environment.isStandalone()) {
                 ServerState serverState = event.getProcessState().first();
@@ -198,7 +198,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
         return applicationReady && lastMessage + MESSAGE_TIMEOUT < System.currentTimeMillis();
     }
 
-    private void rememberMessage() {
+    private void startTimeout() {
         lastMessage = System.currentTimeMillis();
     }
 

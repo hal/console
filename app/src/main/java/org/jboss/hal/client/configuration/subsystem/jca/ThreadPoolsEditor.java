@@ -94,17 +94,13 @@ class ThreadPoolsEditor implements IsElement, Attachable {
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_FORM), metadata)
                 .include(NAME, "allow-core-timeout", THREAD_FACTORY)
                 .unsorted()
-                .onSave((form, changedValues) -> {
-                    Browser.getWindow().alert(Names.NYI);
-                })
+                .onSave((form, changedValues) -> Browser.getWindow().alert(Names.NYI))
                 .build();
         attachables.add(attributesForm);
         sizingForm = new ModelNodeForm.Builder<ThreadPool>(
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_FORM), metadata)
                 .include(MAX_THREADS, "core-threads", "queue-length")
-                .onSave((form, changedValues) -> {
-                    Browser.getWindow().alert(Names.NYI);
-                })
+                .onSave((form, changedValues) -> Browser.getWindow().alert(Names.NYI))
                 .build();
         attachables.add(sizingForm);
 

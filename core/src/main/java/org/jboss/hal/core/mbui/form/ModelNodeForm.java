@@ -63,28 +63,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
-    private static class UnboundFormItem {
-
-        final FormItem formItem;
-        final int position;
-        final SafeHtml helpText;
-
-        private UnboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
-            this.formItem = formItem;
-            this.position = position;
-            this.helpText = helpText;
-        }
-    }
-
-
     /**
      * Builder useful to automatically inspect the read-resource-description and associate the
      * attributes (by calling: include, customFormItem). Creates the required form items and help texts.
-     * <p>
-     * This will not work if the resource description is for attribute of type LIST. For this try, to use the
-     * ModelNodeFormAttributeList.
-     *
-     * @param <T>
      */
     public static class Builder<T extends ModelNode> {
 
@@ -157,7 +138,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
          * Use this flag if you just want to use the form to add model nodes. This will create a form with an
          * {@link AddOnlyStateMachine}.
          * <p>
-         * The attributess will be taken from the {@code ATTRIBUTES} child node.
+         * The attributes will be taken from the {@code ATTRIBUTES} child node.
          */
         public Builder<T> addOnly() {
             this.addOnly = true;
@@ -218,6 +199,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
             this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
+            return this;
+        }
+
+        Builder<T> unboundFormItem(final UnboundFormItem unboundFormItem) {
+            this.unboundFormItems.add(unboundFormItem);
             return this;
         }
 

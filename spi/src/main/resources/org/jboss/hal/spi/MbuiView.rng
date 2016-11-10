@@ -121,6 +121,9 @@
             <attribute name="title">
                 <ref name="token-or-code"/>
             </attribute>
+            <element name="form">
+                <ref name="form-definition"/>
+            </element>
         </element>
     </define>
 
