@@ -414,6 +414,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         } else {
             resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.TABLE, document, context);
             resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FORM, document, context);
+            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FAIL_SAFE_FORM, document, context);
         }
     }
 

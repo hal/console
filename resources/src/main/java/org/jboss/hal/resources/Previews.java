@@ -115,6 +115,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/mail.html")
     ExternalTextResource configurationMail();
 
+    @Source("previews/configuration/modcluster.html")
+    ExternalTextResource configurationModcluster();
+
     @Source("previews/configuration/paths.html")
     ExternalTextResource configurationPaths();
 

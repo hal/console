@@ -15,8 +15,85 @@
  */
 package org.jboss.hal.client.configuration.subsystem.modcluster;
 
+import javax.inject.Inject;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.mbui.MbuiPresenter;
+import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.spi.Requires;
+
 /**
  * @author Harald Pehl
  */
-public class ModclusterPresenter {
+public class ModclusterPresenter
+        extends MbuiPresenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
+        implements SupportsExpertMode {
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.MODCLUSTER)
+    public interface MyProxy extends ProxyPlace<ModclusterPresenter> {}
+
+    public interface MyView extends MbuiView<ModclusterPresenter> {
+        void updateConfiguration(ModelNode modelNode);
+    }
+    // @formatter:on
+
+
+    static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration";
+    private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
+
+    private final CrudOperations crud;
+    private final FinderPathFactory finderPathFactory;
+    private final StatementContext statementContext;
+
+    @Inject
+    public ModclusterPresenter(final EventBus eventBus,
+            final MyView view,
+            final MyProxy myProxy,
+            final Finder finder,
+            final CrudOperations crud,
+            final FinderPathFactory finderPathFactory,
+            final StatementContext statementContext) {
+        super(eventBus, view, myProxy, finder);
+        this.crud = crud;
+        this.finderPathFactory = finderPathFactory;
+        this.statementContext = statementContext;
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return ROOT_TEMPLATE.resolve(statementContext);
+    }
+
+    @Override
+    public FinderPath finderPath() {
+        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MODCLUSTER);
+    }
+
+    @Override
+    protected void reload() {
+        crud.read(ROOT_TEMPLATE, 2, result -> getView().updateConfiguration(result));
+    }
 }

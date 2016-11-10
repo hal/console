@@ -55,6 +55,7 @@ public class Subsystems {
         add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));
         add(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true, resources.previews().configurationMail()));
         add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
+        add(new SubsystemMetadata(MODCLUSTER, "Modcluster", null, NameTokens.MODCLUSTER, null, true, resources.previews().configurationModcluster()));
         add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false, resources.previews().configurationRemoting()));
         add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
         add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, null, false));
