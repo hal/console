@@ -93,7 +93,14 @@
                     <ref name="table-definition"/>
                 </optional>
                 <optional>
-                    <ref name="form-definition"/>
+                    <element name="fail-safe-form">
+                        <ref name="form-definition"/>
+                    </element>
+                </optional>
+                <optional>
+                    <element name="form">
+                        <ref name="form-definition"/>
+                    </element>
                 </optional>
             </interleave>
         </element>
@@ -128,17 +135,6 @@
             </element>
         </element>
     </define>
-    
-    <define name="tab-definition">
-        <element name="tab">
-            <attribute name="id">
-                <data type="NCName"/>
-            </attribute>
-            <attribute name="title">
-                <ref name="token-or-code"/>
-            </attribute>
-        </element>
-    </define>
 
     <define name="action-definition">
         <element name="action">
@@ -164,11 +160,6 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="address">
-                    <data type="token"/>
-                </attribute>
-            </optional>
-            <optional>
                 <ref name="attributes-definition"/>
             </optional>
         </element>
@@ -186,53 +177,62 @@
     </define>
 
     <define name="form-definition">
-        <element name="form">
-            <attribute name="id">
-                <data type="NCName"/>
+        <attribute name="id">
+            <data type="NCName"/>
+        </attribute>
+        <optional>
+            <attribute name="title">
+                <ref name="token-or-code"/>
             </attribute>
-            <optional>
-                <attribute name="title">
-                    <ref name="token-or-code"/>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="name-resolver">
-                    <ref name="code"/>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="address">
-                    <data type="token"/>
-                </attribute>
-            </optional>
-            <optional>
-                <choice>
-                    <attribute name="auto-save">
-                        <data type="boolean"/>
-                    </attribute>
-                    <attribute name="on-save"/>
-                </choice>
-            </optional>
-            <optional>
-                <attribute name="include-runtime">
+        </optional>
+        <optional>
+            <attribute name="name-resolver">
+                <ref name="code"/>
+            </attribute>
+        </optional>
+        <optional>
+            <choice>
+                <attribute name="auto-save">
                     <data type="boolean"/>
                 </attribute>
-            </optional>
-            <optional>
-                <ref name="attributes-definition"/>
-            </optional>
-        </element>
+                <attribute name="on-save"/>
+            </choice>
+        </optional>
+        <optional>
+            <attribute name="include-runtime">
+                <data type="boolean"/>
+            </attribute>
+        </optional>
+        <optional>
+            <ref name="attributes-definition"/>
+        </optional>
     </define>
 
     <define name="attributes-definition">
-        <element name="attributes">
+        <choice>
             <oneOrMore>
-                <ref name="attribute-definition"/>
+                <ref name="group-definition"/>
             </oneOrMore>
+            <element name="attributes">
+                <oneOrMore>
+                    <ref name="attribute-definition"/>
+                </oneOrMore>
+            </element>
+        </choice>
+    </define>
+
+    <define name="group-definition">
+        <element name="group">
+            <attribute name="id">
+                <data type="NCName"/>
+            </attribute>
+            <attribute name="title">
+                <ref name="token-or-code"/>
+            </attribute>
         </element>
-        <optional>
-            <ref name="tab-definition"/>
-        </optional>
+        <oneOrMore>
+            <ref name="attribute-definition"/>
+        </oneOrMore>
     </define>
 
     <define name="attribute-definition">

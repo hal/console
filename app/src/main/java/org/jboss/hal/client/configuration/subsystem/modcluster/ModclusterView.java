@@ -15,8 +15,40 @@
  */
 package org.jboss.hal.client.configuration.subsystem.modcluster;
 
+import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.spi.MbuiElement;
+import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+
 /**
  * @author Harald Pehl
  */
-public class ModclusterView {
+@MbuiView
+public class ModclusterView extends MbuiViewImpl<ModclusterPresenter> implements ModclusterPresenter.MyView {
+
+    // ------------------------------------------------------ initialization
+
+    public static ModclusterView create(final MbuiContext mbuiContext) {
+        return new Mbui_ModclusterView(mbuiContext);
+    }
+
+    @MbuiElement("modcluster-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("modcluster-configuration") Form<ModelNode> configurationForm;
+    @MbuiElement("modcluster-ssl-form") FailSafeForm<ModelNode> sslForm;
+
+    ModclusterView(final MbuiContext mbuiContext) {
+        super(mbuiContext);
+    }
+
+    @Override
+    public void updateConfiguration(final ModelNode modelNode) {
+        configurationForm.view(modelNode);
+        sslForm.view(failSafeGet(modelNode, "ssl/configuration"));
+    }
 }

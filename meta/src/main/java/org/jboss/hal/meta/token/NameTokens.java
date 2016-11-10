@@ -53,6 +53,7 @@ public interface NameTokens {
     String LOGGING_PROFILE = "logging-profile";
     String MACRO_EDITOR = "macro-editor";
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
+    String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";

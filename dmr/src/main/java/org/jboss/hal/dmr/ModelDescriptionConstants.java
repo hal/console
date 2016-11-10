@@ -159,7 +159,7 @@ public interface ModelDescriptionConstants {
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIN = "min";
-    String MIN_VALUE = "min-value";
+    String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
 
     String NAME = "name";

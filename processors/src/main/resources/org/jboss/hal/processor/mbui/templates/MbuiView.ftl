@@ -10,9 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
-<#if context.hasTabs()??>
-import org.jboss.hal.ballroom.Tabs;
-</#if>
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -21,6 +19,8 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -34,6 +34,7 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -46,9 +47,6 @@ final class ${context.subclass} extends ${context.base} {
     </#list>
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
-    </#list>
-    <#list context.tabs as tabInfo>
-    private final Tabs ${tabInfo.name};
     </#list>
     private final Map<String, Element> handlebarElements;
 
@@ -63,29 +61,49 @@ final class ${context.subclass} extends ${context.base} {
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
         this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
         </#list>
-        <#list context.tabs as tabInfo>
-        ${tabInfo.name} = new Tabs();
-        </#list>
         this.handlebarElements = new HashMap<>();
 
         <#list context.forms as form>
-        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
-            <#if form.includeRuntime>
-            .includeRuntime()
-            </#if>
-            <#if form.attributes?has_content>
-                <#if form.hasAttributesWithProvider>
-                    <#list form.attributes as attribute>
-                        <#if attribute.provider??>
-            .customFormItem("${attribute.name}", ${attribute.provider})
-                        <#else>
-            .include("${attribute.name}")
-                        </#if>
-                    </#list>
+            <#if form.groups?has_content>
+        ${form.name} = new GroupedForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+                <#list form.groups as group>
+            .group("${group.id}", ${group.title})
+                    <#if group.hasAttributesWithProvider>
+                        <#list group.attributes as attribute>
+                            <#if attribute.provider??>
+                .customFormItem("${attribute.name}", ${attribute.provider})
+                            <#else>
+                .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+                .include(<#list group.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
+            .end()
+                </#list>
+            <#else>
+                <#if form.failSafe>
+        Form<${form.typeParameter}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
                 <#else>
-            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
                 </#if>
+                <#if form.includeRuntime>
+            .includeRuntime()
+                </#if>
+                <#if form.attributes?has_content>
+                    <#if form.hasAttributesWithProvider>
+                        <#list form.attributes as attribute>
+                            <#if attribute.provider??>
+            .customFormItem("${attribute.name}", ${attribute.provider})
+                            <#else>
+            .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
             .unsorted()
+                </#if>
             </#if>
             <#if form.autoSave>
                 <#if form.nameResolver??>
@@ -116,6 +134,12 @@ final class ${context.subclass} extends ${context.base} {
                     mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
+            <#if form.failSafe>
+        ${form.name} = new FailSafeForm<>(mbuiContext.dispatcher(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                failSafe_${form.name},
+                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template));
+            </#if>
         </#list>
 
         <#list context.dataTables as table>
@@ -239,14 +263,6 @@ final class ${context.subclass} extends ${context.base} {
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
         </#list>
 
-        <#list context.tabs as tabInfo>
-            <#list tabInfo.items as tabItem>
-                <#list tabItem.formChildren as tabChild>
-        ${tabInfo.name}.add(Ids.build("${tabInfo.name}", "tab", "${tabItem.id}"), "${tabItem.title}", ${context.findFormById(tabChild)}.asElement());
-                </#list>
-            </#list>
-        </#list>
-
         <#if context.verticalNavigation??>
         ${context.verticalNavigation.name} = new VerticalNavigation();
             <#list context.verticalNavigation.items as primaryItem>
@@ -259,8 +275,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                        <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                         <#elseif content.reference??>
                 .add(${content.reference})
                         </#if>
@@ -285,8 +299,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                                <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                                 <#elseif content.reference??>
                 .add(${content.reference})
                                 </#if>
@@ -320,8 +332,6 @@ final class ${context.subclass} extends ${context.base} {
                         .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                         .rememberAs("${content.name}")
                     .end()
-                    <#elseif content.tab>
-                    .add(${context.findTabNameByTabId(content.reference)})
                     <#elseif content.reference??>
                     .add(${content.reference})
                     </#if>

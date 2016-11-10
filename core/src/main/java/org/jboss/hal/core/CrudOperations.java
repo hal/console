@@ -156,8 +156,7 @@ public class CrudOperations {
      * @param id         the id used for the add resource dialog
      * @param type       the human readable resource type used in the dialog header and success message
      * @param template   the address template which is resolved against the current statement context to get the
-     *                   resource
-     *                   address for the add operation
+     *                   resource address for the add operation
      * @param attributes additional attributes which should be part of the add resource dialog
      * @param callback   the callback executed after adding the resource
      */

@@ -25,6 +25,45 @@ import static java.util.stream.Collectors.toList;
  */
 public class FormInfo extends MbuiElementInfo {
 
+    public static class Group {
+
+        private final String id;
+        private final String title;
+        private final List<Attribute> attributes;
+
+        Group(final String id, final String title) {
+            this.id = id;
+            this.title = Handlebars.templateSafeValue(title);
+            this.attributes = new ArrayList<>();
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        void addAttribute(Attribute attribute) {
+            attributes.add(attribute);
+        }
+
+        public List<Attribute> getAttributes() {
+            return attributes;
+        }
+
+        public boolean isHasAttributesWithProvider() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getProvider() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+
     private final String typeParameter;
     private final MetadataInfo metadata;
     private final String title;
@@ -32,11 +71,13 @@ public class FormInfo extends MbuiElementInfo {
     private final String onSave;
     private final String nameResolver;
     private final boolean includeRuntime;
+    private final boolean failSafe;
     private final List<Attribute> attributes;
+    private final List<Group> groups;
 
-    FormInfo(final String name, final String selector, final String typeParameter, final MetadataInfo metadata,
-            final String title, final boolean autoSave, final String onSave, final String nameResolver,
-            final boolean includeRuntime) {
+    FormInfo(final String name, final String selector, final String typeParameter,
+            final MetadataInfo metadata, final String title, final boolean autoSave, final String onSave,
+            final String nameResolver, final boolean includeRuntime, final boolean failSafe) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
@@ -45,7 +86,9 @@ public class FormInfo extends MbuiElementInfo {
         this.onSave = Handlebars.stripHandlebar(onSave); // name resolver has to be an expression
         this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
         this.includeRuntime = includeRuntime;
+        this.failSafe = failSafe;
         this.attributes = new ArrayList<>();
+        this.groups = new ArrayList<>();
     }
 
     public String getTypeParameter() {
@@ -76,6 +119,14 @@ public class FormInfo extends MbuiElementInfo {
         return includeRuntime;
     }
 
+    public boolean isFailSafe() {
+        return failSafe;
+    }
+
+    void addAttribute(Attribute attribute) {
+        attributes.add(attribute);
+    }
+
     public List<Attribute> getAttributes() {
         return attributes;
     }
@@ -90,19 +141,40 @@ public class FormInfo extends MbuiElementInfo {
     }
 
     public List<Attribute> getValidationHandlerAttributes() {
-        return attributes.stream()
-                .filter(attribute -> attribute.getValidationHandler() != null)
-                .collect(toList());
+        if (groups.isEmpty()) {
+            return attributes.stream()
+                    .filter(attribute -> attribute.getValidationHandler() != null)
+                    .collect(toList());
+        } else {
+            List<Attribute> attributes = new ArrayList<>();
+            groups.forEach(group -> group.getAttributes().stream()
+                    .filter(attribute -> attribute.getValidationHandler() != null)
+                    .forEach(attributes::add));
+            return attributes;
+        }
     }
 
     public List<Attribute> getSuggestHandlerAttributes() {
-        return attributes.stream()
-                .filter(attribute ->
-                        attribute.getSuggestHandler() != null || !attribute.getSuggestHandlerTemplates().isEmpty())
-                .collect(toList());
+        if (groups.isEmpty()) {
+            return attributes.stream()
+                    .filter(attribute ->
+                            attribute.getSuggestHandler() != null || !attribute.getSuggestHandlerTemplates().isEmpty())
+                    .collect(toList());
+        } else {
+            List<Attribute> attributes = new ArrayList<>();
+            groups.forEach(group -> group.getAttributes().stream()
+                    .filter(attribute ->
+                            attribute.getSuggestHandler() != null || !attribute.getSuggestHandlerTemplates().isEmpty())
+                    .forEach(attributes::add));
+            return attributes;
+        }
     }
 
-    void addAttribute(Attribute attribute) {
-        attributes.add(attribute);
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    void addGroup(Group group) {
+        groups.add(group);
     }
 }

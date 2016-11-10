@@ -56,6 +56,8 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView_Provider;
+import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
 import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
@@ -277,6 +279,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 MacroEditorPresenter.MyView.class,
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(ModclusterPresenter.class,
+                ModclusterPresenter.MyView.class,
+                Mbui_ModclusterView_Provider.class,
+                ModclusterPresenter.MyProxy.class);
 
         bindPresenter(ModelBrowserPresenter.class,
                 ModelBrowserPresenter.MyView.class,

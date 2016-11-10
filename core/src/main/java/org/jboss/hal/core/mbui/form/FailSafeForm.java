@@ -34,6 +34,8 @@ import org.jboss.hal.resources.Messages;
  * An element which uses the dispatcher and an operation to check whether a resource exists. If it exists the specified
  * form is displayed in view mode, otherwise an empty state element is displayed which can be used to create the
  * resource.
+ * <p>
+ * Useful to wrap forms for singleton resources which might not exist by default.
  *
  * @author Harald Pehl
  */
@@ -48,8 +50,8 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     private final Supplier<Operation> operation;
     private final Element root;
 
-    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation,
-            final Form<T> form, final EmptyState.Action action) {
+    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
+            final EmptyState.Action action) {
         this(dispatcher, operation, form, new EmptyState.Builder(CONSTANTS.noResource())
                 .description(MESSAGES.noResource())
                 .primaryAction(CONSTANTS.add(), action)
