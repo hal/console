@@ -364,7 +364,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private void testConnection(final DataSource dataSource) {
         TopologyFunctions.RunningServersQuery runningServers = new TopologyFunctions.RunningServersQuery(
-                environment, dispatcher, new ModelNode().set(SERVER_GROUP, statementContext.selectedProfile()));
+                environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile()));
         Function<FunctionContext> testConnection = control -> {
             List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
             if (!servers.isEmpty()) {

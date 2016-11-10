@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.tabs;
+package org.jboss.hal.processor.mbui.masterdetail;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -25,17 +25,16 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-public abstract class MasterDetailView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+public abstract class AttributeGroupsView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    public static MasterDetailView create(final MbuiContext mbuiContext) {
+    public static AttributeGroupsView create(final MbuiContext mbuiContext) {
         return null;
     }
 
     @MbuiElement("table") DataTable<NamedNode> table;
-    @MbuiElement("form-1") Form<NamedNode> form1;
-    @MbuiElement("form-2") Form<NamedNode> form2;
+    @MbuiElement("form") Form<NamedNode> form;
 
-    MasterDetailView(final MbuiContext mbuiContext) {
+    AttributeGroupsView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 }

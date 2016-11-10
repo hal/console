@@ -60,7 +60,7 @@ public class Content {
                     htmlBuilder.setLength(0);
                     contents.add(htmlContent(html, metadataInfo));
                 }
-                Content content = new Content(childElement.getAttributeValue("id"), null);
+                Content content = new Content(childElement.getAttributeValue(XmlTags.ID), null);
                 contents.add(content);
 
             } else {

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.List;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
 
@@ -27,7 +28,6 @@ import org.jdom2.xpath.XPathFactory;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     private static final String ON_SAVE_SIGNATURE = "(form, changedValues)";
@@ -39,13 +39,12 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
     @Override
     public void process(final VariableElement field, final Element element, final String selector,
             final MbuiViewContext context) {
-        String id = element.getAttributeValue("id");
-        String title = element.getAttributeValue("title");
-        boolean autoSave = Boolean.parseBoolean(element.getAttributeValue("auto-save"));
-        boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue("include-runtime"));
+        String title = element.getAttributeValue(XmlTags.TITLE);
+        boolean autoSave = Boolean.parseBoolean(element.getAttributeValue(XmlTags.AUTO_SAVE));
+        boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue(XmlTags.INCLUDE_RUNTIME));
         boolean failSafe = XmlTags.FAIL_SAFE_FORM.equalsIgnoreCase(element.getName());
-        String onSave = element.getAttributeValue("on-save");
-        String nameResolver = element.getAttributeValue("name-resolver");
+        String onSave = element.getAttributeValue(XmlTags.ON_SAVE);
+        String nameResolver = element.getAttributeValue(XmlTags.NAME_RESOLVER);
         MetadataInfo metadata = findMetadata(field, element, context);
         AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
 
@@ -80,9 +79,22 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
                 metadata, title, autoSave, onSave, nameResolver, includeRuntime, failSafe);
         context.addFormInfo(formInfo);
 
-        org.jdom2.Element attributesContainer = element.getChild("attributes");
+        org.jdom2.Element attributesContainer = element.getChild(XmlTags.ATTRIBUTES);
         if (attributesContainer != null) {
-            processAttributes(field, attributesContainer).forEach(formInfo::addAttribute);
+            List<Element> groupElements = attributesContainer.getChildren(XmlTags.GROUP);
+            if (groupElements.isEmpty()) {
+                processAttributes(field, attributesContainer).forEach(formInfo::addAttribute);
+
+            } else {
+                for (Element groupElement : groupElements) {
+                    String id = groupElement.getAttributeValue(XmlTags.ID);
+                    String groupTitle = groupElement.getAttributeValue(XmlTags.TITLE);
+                    FormInfo.Group group = new FormInfo.Group(id, groupTitle);
+                    groupElement.getChildren(XmlTags.ATTRIBUTE)
+                            .forEach(attributeElement -> group.addAttribute(processAttribute(field, attributeElement)));
+                    formInfo.addGroup(group);
+                }
+            }
         }
     }
 }

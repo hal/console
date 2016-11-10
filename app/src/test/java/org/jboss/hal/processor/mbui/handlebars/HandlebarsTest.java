@@ -23,7 +23,7 @@ import org.junit.Test;
  * @author Harald Pehl
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
-public class BasicTest extends MbuiViewProcessorTest {
+public class HandlebarsTest extends MbuiViewProcessorTest {
 
     @Test
     public void handlebars() {

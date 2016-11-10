@@ -21,9 +21,9 @@
             <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <tabs>
-                    <tab id="modcluster-advertising-tab" title="Advertising">
-                        <form id="modcluster-advertising-form" title="Advertising" auto-save="true">
+                <form id="modcluster-configuration" title="Configuration" auto-save="true">
+                    <attributes>
+                        <group id="advertising" title="Advertising">
                             <attributes>
                                 <attribute name="connector"/>
                                 <attribute name="load-balancing-group"/>
@@ -32,35 +32,27 @@
                                 <attribute name="advertise-security-key"/>
                                 <attribute name="advertise"/>
                             </attributes>
-                        </form>
-                    </tab>
-                    <tab id="modcluster-sessions-tab" title="Sessions">
-                        <form id="modcluster-sessions-form" title="Sessions" auto-save="true">
+                        </group>
+                        <group id="sessions" title="Sessions">
                             <attributes>
                                 <attribute name="sticky-session"/>
                                 <attribute name="sticky-session-force"/>
                                 <attribute name="sticky-session-remove"/>
                             </attributes>
-                        </form>
-                    </tab>
-                    <tab id="modcluster-web-contexts-tab" title="Web Contexts">
-                        <form id="modcluster-web-contexts-form" title="Web Contexts" auto-save="true">
+                        </group>
+                        <group id="web-contexts" title="Web Contexts">
                             <attributes>
                                 <attribute name="auto-enable-context"/>
                                 <attribute name="excluded-contexts"/>
                             </attributes>
-                        </form>
-                    </tab>
-                    <tab id="modcluster-proxies-tab" title="Proxies">
-                        <form id="modcluster-proxies-form" title="Proxies" auto-save="true">
+                        </group>
+                        <group id="proxies" title="Proxies">
                             <attributes>
                                 <attribute name="proxy-url"/>
                                 <attribute name="proxies"/>
                             </attributes>
-                        </form>
-                    </tab>
-                    <tab id="modcluster-networking-tab" title="Networking">
-                        <form id="modcluster-networking-form" title="Networking" auto-save="true">
+                        </group>
+                        <group id="networking" title="Networking">
                             <attributes>
                                 <attribute name="node-timeout"/>
                                 <attribute name="socket-timeout"/>
@@ -72,14 +64,15 @@
                                 <attribute name="ttl"/>
                                 <attribute name="worker-timeout"/>
                             </attributes>
-                        </form>
-                    </tab>
-                </tabs>
+                        </group>
+                    </attributes>
+                </form>
             </metadata>
         </item>
 
         <item id="modcluster-ssl-item" title="SSL" icon="fa fa-lock">
-            <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
+            <metadata
+                    address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
                 <h1>SSL</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <fail-safe-form id="modcluster-ssl-form" title="SSL" auto-save="true">

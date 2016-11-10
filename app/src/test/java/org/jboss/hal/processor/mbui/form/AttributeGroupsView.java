@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.tabs;
+package org.jboss.hal.processor.mbui.form;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -24,16 +24,15 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
-public abstract class SimpleView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
+public abstract class AttributeGroupsView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
-    public static SimpleView create(final MbuiContext mbuiContext) {
+    public static AttributeGroupsView create(final MbuiContext mbuiContext) {
         return null;
     }
 
-    @MbuiElement("form-1") Form<ModelNode> form1;
-    @MbuiElement("form-2") Form<ModelNode> form2;
+    @MbuiElement("form") Form<ModelNode> form;
 
-    SimpleView(final MbuiContext mbuiContext) {
+    AttributeGroupsView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 }

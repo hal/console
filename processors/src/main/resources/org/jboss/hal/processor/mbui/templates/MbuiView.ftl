@@ -20,6 +20,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -63,27 +64,46 @@ final class ${context.subclass} extends ${context.base} {
         this.handlebarElements = new HashMap<>();
 
         <#list context.forms as form>
-            <#if form.failSafe>
-        Form<${form.typeParameter}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
+            <#if form.groups?has_content>
+        ${form.name} = new GroupedForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+                <#list form.groups as group>
+            .group("${group.id}", ${group.title})
+                    <#if group.hasAttributesWithProvider>
+                        <#list group.attributes as attribute>
+                            <#if attribute.provider??>
+                .customFormItem("${attribute.name}", ${attribute.provider})
+                            <#else>
+                .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+                .include(<#list group.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
+            .end()
+                </#list>
             <#else>
-        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
-            </#if>
-            <#if form.includeRuntime>
-            .includeRuntime()
-            </#if>
-            <#if form.attributes?has_content>
-                <#if form.hasAttributesWithProvider>
-                    <#list form.attributes as attribute>
-                        <#if attribute.provider??>
-            .customFormItem("${attribute.name}", ${attribute.provider})
-                        <#else>
-            .include("${attribute.name}")
-                        </#if>
-                    </#list>
+                <#if form.failSafe>
+        Form<${form.typeParameter}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
                 <#else>
-            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
                 </#if>
+                <#if form.includeRuntime>
+            .includeRuntime()
+                </#if>
+                <#if form.attributes?has_content>
+                    <#if form.hasAttributesWithProvider>
+                        <#list form.attributes as attribute>
+                            <#if attribute.provider??>
+            .customFormItem("${attribute.name}", ${attribute.provider})
+                            <#else>
+            .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
             .unsorted()
+                </#if>
             </#if>
             <#if form.autoSave>
                 <#if form.nameResolver??>

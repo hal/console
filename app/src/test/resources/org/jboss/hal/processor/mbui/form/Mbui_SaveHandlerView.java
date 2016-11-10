@@ -31,6 +31,7 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -56,7 +57,7 @@ final class Mbui_SaveHandlerView extends SaveHandlerView {
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_SimpleFormView(MbuiContext mbuiContext) {
+    Mbui_SaveHandlerView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");

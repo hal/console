@@ -38,6 +38,12 @@ public class FormTest extends MbuiViewProcessorTest {
     }
 
     @Test
+    public void attributeGroups() {
+        Compilation compilation = compile("AttributeGroupsView");
+        assertSourceEquals(compilation, "Mbui_AttributeGroupsView");
+    }
+
+    @Test
     public void runtime() {
         Compilation compilation = compile("RuntimeView");
         assertSourceEquals(compilation, "Mbui_RuntimeView");

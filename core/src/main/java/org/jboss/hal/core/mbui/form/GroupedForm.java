@@ -219,7 +219,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         builder.groups.forEach(group -> {
             ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<T>(Ids.build(group.id, Ids.FORM_SUFFIX),
                     builder.metadata)
-                    .include(group.includes);
+                    .include(group.includes)
+                    .unsorted();
             group.providers.forEach(fb::customFormItem);
             group.unboundFormItems.forEach(fb::unboundFormItem);
 

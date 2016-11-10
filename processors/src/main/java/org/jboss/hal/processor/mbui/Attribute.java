@@ -27,16 +27,13 @@ public class Attribute {
     private final String provider;
     private final String validationHandler;
     private final String suggestHandler;
-    private final int position;
     private final List<String> suggestHandlerTemplates;
 
-    Attribute(final String name, final String provider, final String validationHandler, final String suggestHandler,
-            final int position) {
+    Attribute(final String name, final String provider, final String validationHandler, final String suggestHandler) {
         this.name = name;
         this.provider = Handlebars.stripHandlebar(provider);
         this.validationHandler = Handlebars.stripHandlebar(validationHandler);
         this.suggestHandler = Handlebars.stripHandlebar(suggestHandler);
-        this.position = position;
         this.suggestHandlerTemplates = new ArrayList<>();
     }
 
@@ -46,10 +43,6 @@ public class Attribute {
 
     public String getProvider() {
         return provider;
-    }
-
-    public int getPosition() {
-        return position;
     }
 
     public String getValidationHandler() {

@@ -90,13 +90,6 @@
                     </element>
                 </zeroOrMore>
                 <optional>
-                    <element name="tabs">
-                        <oneOrMore>
-                            <ref name="tab-definition"/>
-                        </oneOrMore>
-                    </element>
-                </optional>
-                <optional>
                     <ref name="table-definition"/>
                 </optional>
                 <optional>
@@ -110,20 +103,6 @@
                     </element>
                 </optional>
             </interleave>
-        </element>
-    </define>
-
-    <define name="tab-definition">
-        <element name="tab">
-            <attribute name="id">
-                <data type="NCName"/>
-            </attribute>
-            <attribute name="title">
-                <ref name="token-or-code"/>
-            </attribute>
-            <element name="form">
-                <ref name="form-definition"/>
-            </element>
         </element>
     </define>
 
@@ -230,11 +209,30 @@
     </define>
 
     <define name="attributes-definition">
-        <element name="attributes">
+        <choice>
             <oneOrMore>
-                <ref name="attribute-definition"/>
+                <ref name="group-definition"/>
             </oneOrMore>
+            <element name="attributes">
+                <oneOrMore>
+                    <ref name="attribute-definition"/>
+                </oneOrMore>
+            </element>
+        </choice>
+    </define>
+
+    <define name="group-definition">
+        <element name="group">
+            <attribute name="id">
+                <data type="NCName"/>
+            </attribute>
+            <attribute name="title">
+                <ref name="token-or-code"/>
+            </attribute>
         </element>
+        <oneOrMore>
+            <ref name="attribute-definition"/>
+        </oneOrMore>
     </define>
 
     <define name="attribute-definition">
