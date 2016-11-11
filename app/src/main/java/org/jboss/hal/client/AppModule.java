@@ -58,6 +58,8 @@ import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView_Provider;
 import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
+import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView_Provider;
+import org.jboss.hal.client.configuration.subsystem.remoting.RemotingPresenter;
 import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
@@ -304,6 +306,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 PathsPresenter.MyView.class,
                 Mbui_PathsView_Provider.class,
                 PathsPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(RemotingPresenter.class,
+                RemotingPresenter.MyView.class,
+                Mbui_RemotingView_Provider.class,
+                RemotingPresenter.MyProxy.class);
 
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,

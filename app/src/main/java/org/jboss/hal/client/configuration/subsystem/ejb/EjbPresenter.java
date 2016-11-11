@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
-import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,16 +30,13 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_TEMPLATE;
 
 /**
  * @author Claudio Miranda
@@ -56,23 +52,7 @@ public class EjbPresenter
     public interface MyProxy extends ProxyPlace<EjbPresenter> {}
 
     public interface MyView extends MbuiView<EjbPresenter> {
-        void updateConfiguration(ModelNode conf);
-        void updateThreadPool(List<NamedNode> items);
-        void updateRemotingProfile(List<NamedNode> items);
-        
-        void updateBeanPool(List<NamedNode> items);
-        
-        void updateCache(List<NamedNode> items);
-        void updatePassivation(List<NamedNode> items);
-        
-        void updateServiceAsync(ModelNode node);
-        void updateServiceIiop(ModelNode node);
-        void updateServiceRemote(ModelNode node);
-        void updateServiceTimer(ModelNode node);
-        
-        void updateMdbDeliveryGroup(List<NamedNode> items);
-        
-        void updateApplicationSecurityDomain(List<NamedNode> items);
+        void update(ModelNode payload);
     }
     // @formatter:on
 
@@ -112,27 +92,6 @@ public class EjbPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(EJB_SUBSYSTEM_TEMPLATE, result -> {
-            // @formatter:off
-            getView().updateConfiguration(result);
-
-            getView().updateThreadPool(asNamedNodes(failSafePropertyList(result, THREAD_POOL_TEMPLATE.lastKey())));
-            getView().updateRemotingProfile(asNamedNodes(failSafePropertyList(result, REMOTING_PROFILE_TEMPLATE.lastKey())));
-
-            getView().updateBeanPool(asNamedNodes(failSafePropertyList(result, BEAN_POOL_TEMPLATE.lastKey())));
-
-            getView().updateCache(asNamedNodes(failSafePropertyList(result, CACHE_TEMPLATE.lastKey())));
-            getView().updatePassivation(asNamedNodes(failSafePropertyList(result, PASSIVATION_TEMPLATE.lastKey())));
-
-            getView().updateServiceAsync(result.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
-            getView().updateServiceIiop(result.get(SERVICE).get(SERVICE_IIOP_TEMPLATE.lastValue()));
-            getView().updateServiceRemote(result.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
-            getView().updateServiceTimer(result.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));
-
-            getView().updateMdbDeliveryGroup(asNamedNodes(failSafePropertyList(result, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())));
-
-            getView().updateApplicationSecurityDomain(asNamedNodes(failSafePropertyList(result, APP_SEC_DOMAIN_TEMPLATE.lastKey())));
-            // @formatter:on
-        });
+        crud.readRecursive(EJB_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 }

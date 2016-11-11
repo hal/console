@@ -32,8 +32,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 @MbuiView
 public class ModclusterView extends MbuiViewImpl<ModclusterPresenter> implements ModclusterPresenter.MyView {
 
-    // ------------------------------------------------------ initialization
-
     public static ModclusterView create(final MbuiContext mbuiContext) {
         return new Mbui_ModclusterView(mbuiContext);
     }
@@ -47,8 +45,8 @@ public class ModclusterView extends MbuiViewImpl<ModclusterPresenter> implements
     }
 
     @Override
-    public void updateConfiguration(final ModelNode modelNode) {
-        configurationForm.view(modelNode);
-        sslForm.view(failSafeGet(modelNode, "ssl/configuration"));
+    public void updateConfiguration(final ModelNode payload) {
+        configurationForm.view(payload);
+        sslForm.view(failSafeGet(payload, "ssl/configuration")); //NON-NLS
     }
 }

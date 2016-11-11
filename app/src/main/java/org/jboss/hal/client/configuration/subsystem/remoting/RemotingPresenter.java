@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.modcluster;
+package org.jboss.hal.client.configuration.subsystem.remoting;
 
 import javax.inject.Inject;
 
@@ -28,42 +28,41 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTING_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
+
 /**
  * @author Harald Pehl
  */
-public class ModclusterPresenter
-        extends MbuiPresenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
+public class RemotingPresenter
+        extends MbuiPresenter<RemotingPresenter.MyView, RemotingPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.MODCLUSTER)
-    public interface MyProxy extends ProxyPlace<ModclusterPresenter> {}
+    @NameToken(NameTokens.REMOTING)
+    @Requires(REMOTING_SUBSYSTEM_ADDRESS)
+    public interface MyProxy extends ProxyPlace<RemotingPresenter> {}
 
-    public interface MyView extends MbuiView<ModclusterPresenter> {
-        void updateConfiguration(ModelNode payload);
+    public interface MyView extends MbuiView<RemotingPresenter> {
+        void update(ModelNode payload);
     }
     // @formatter:on
 
-
-    static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration";
-    private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
 
     @Inject
-    public ModclusterPresenter(final EventBus eventBus,
+    public RemotingPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
@@ -84,16 +83,16 @@ public class ModclusterPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return ROOT_TEMPLATE.resolve(statementContext);
+        return REMOTING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MODCLUSTER);
+        return finderPathFactory.subsystemPath(REMOTING);
     }
 
     @Override
     protected void reload() {
-        crud.read(ROOT_TEMPLATE, 2, result -> getView().updateConfiguration(result));
+        crud.readRecursive(REMOTING_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 }

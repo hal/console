@@ -17,7 +17,7 @@
   -->
 <view>
     <vertical-navigation id="modcluster-vertical-navigation">
-        <item id="modcluster-advertising-item" title="Configuration" icon="pficon pficon-settings">
+        <item id="modcluster-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
