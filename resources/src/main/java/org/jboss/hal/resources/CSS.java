@@ -299,7 +299,6 @@ public interface CSS {
     String toastPfAction = "toast-pf-action";
     String topology = "topology";
     String treeContainer = "tree-container";
-    String ttNested = "tt-nested";
 
     String underline = "underline";
     String unpin = "unpin";
