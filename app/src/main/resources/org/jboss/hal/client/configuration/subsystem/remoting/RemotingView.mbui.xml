@@ -59,7 +59,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/connector=*">
                     <h1>Connector</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-connector-table" title="Connector" form-ref="remoting-connector-form">
+                    <table id="remoting-connector-table" title="Connector">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -69,8 +69,6 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="remoting-connector-form" title="Connector" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>/>
                 </metadata>
             </sub-item>
 
@@ -78,8 +76,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/http-connector=*">
                     <h1>HTTP Connector</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-http-connector-table" title="HTTP Connector"
-                           form-ref="remoting-http-connector-form">
+                    <table id="remoting-http-connector-table" title="HTTP Connector">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -89,8 +86,6 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="remoting-http-connector-form" title="HTTP Connector" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>/>
                 </metadata>
             </sub-item>
         </item>
@@ -112,7 +107,7 @@
                         </columns>
                     </table>
                     <form id="remoting-local-outbound-form" title="Local Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>/>
+                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
 
@@ -131,7 +126,7 @@
                         </columns>
                     </table>
                     <form id="remoting-outbound-form" title="Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>/>
+                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
 
@@ -151,7 +146,7 @@
                         </columns>
                     </table>
                     <form id="remoting-remote-outbound-form" title="Remote Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>/>
+                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
         </item>

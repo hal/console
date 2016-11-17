@@ -86,6 +86,7 @@ class HandlerFunctions {
                     AUDIT_LOG_TEMPLATE.resolve(statementContext))
                     .param(CHILD_TYPE, HANDLER)
                     .build();
+            //noinspection Duplicates
             dispatcher.executeInFunction(control, operation,
                     result -> {
                         control.getContext().push(result.asList().stream()

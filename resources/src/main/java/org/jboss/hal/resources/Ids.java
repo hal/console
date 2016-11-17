@@ -271,6 +271,9 @@ public interface Ids {
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
+    String REMOTING = "remoting";
+    String REMOTING_CONNECTOR_FORM = build(REMOTING, "connector", FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_FORM = build(REMOTING, "http-connector", FORM_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);

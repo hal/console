@@ -43,6 +43,7 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
+    String HTTP_CONNECTOR = "HTTP Connector";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JDBC = "JDBC";
@@ -70,6 +71,7 @@ public interface Names {
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
     String REALM = "Realm";
+    String REMOTE_CONNECTOR = "Remote Connector";
     String RESOURCE = "Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";

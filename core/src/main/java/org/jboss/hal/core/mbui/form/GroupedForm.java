@@ -38,10 +38,12 @@ import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * A form which groups attributes on different tabs. Each group will include the specified attributes. Internally this
- * is done by creating a separate form for each group / tab. All forms share the same save, cancel and reset callbacks.
+ * A form which groups attributes on different tabs. Each group will include the attributes specified by the
+ * {@linkplain Builder grouped form builder}. The builder only supports to include attributes, exclusions are not
+ * supported.
  * <p>
- * A grouped form has a currently active form which is the form of the selected tab.
+ * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and
+ * reset callbacks.
  *
  * @author Harald Pehl
  */

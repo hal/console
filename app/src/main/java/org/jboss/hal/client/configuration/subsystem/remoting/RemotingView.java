@@ -15,22 +15,31 @@
  */
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
+import java.util.Map;
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.PropertiesItem;
+import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.SubResourceProperties;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.LOCAL_OUTBOUND_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.OUTBOUND_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTE_OUTBOUND_TEMPLATE;
+import static java.util.stream.Collectors.toMap;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -56,9 +65,7 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     @MbuiElement("remoting-endpoint-configuration") Form<ModelNode> endpointConfigurationForm;
 
     @MbuiElement("remoting-connector-table") DataTable<NamedNode> connectorTable;
-    @MbuiElement("remoting-connector-form") Form<NamedNode> connectorForm;
     @MbuiElement("remoting-http-connector-table") DataTable<NamedNode> httpConnectorTable;
-    @MbuiElement("remoting-http-connector-form") Form<NamedNode> httpConnectorForm;
 
     @MbuiElement("remoting-local-outbound-table") DataTable<NamedNode> localOutboundTable;
     @MbuiElement("remoting-local-outbound-form") Form<NamedNode> localOutboundForm;
@@ -67,25 +74,82 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     @MbuiElement("remoting-remote-outbound-table") DataTable<NamedNode> remoteOutboundTable;
     @MbuiElement("remoting-remote-outbound-form") Form<NamedNode> remoteOutboundForm;
 
+    private ModelNode payload;
+    private Form<NamedNode> connectorForm;
+    private SubResourceProperties.FormItem connectorProperties;
+    private Form<NamedNode> httpConnectorForm;
+    private SubResourceProperties.FormItem httpConnectorProperties;
+
     RemotingView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
+    @PostConstruct
+    void init() {
+        Metadata connectorMetadata = mbuiContext.metadataRegistry().lookup(CONNECTOR_TEMPLATE);
+        connectorProperties = new SubResourceProperties.FormItem(PROPERTY);
+        connectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_CONNECTOR_FORM, connectorMetadata)
+                .unboundFormItem(connectorProperties, 2)
+                .onSave((form, changedValues) -> presenter.saveConnector(form.getModel().getName(), changedValues,
+                        connectorProperties.isModified(), connectorProperties.getValue()))
+                .build();
+        registerAttachable(connectorForm);
+        connectorTable.asElement().getParentElement().appendChild(connectorForm.asElement());
+
+        Metadata httpConnectorMetadata = mbuiContext.metadataRegistry().lookup(HTTP_CONNECTOR_TEMPLATE);
+        httpConnectorProperties = new SubResourceProperties.FormItem(PROPERTY);
+        httpConnectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_HTTP_CONNECTOR_FORM,
+                httpConnectorMetadata)
+                .unboundFormItem(httpConnectorProperties, 2)
+                .onSave((form, changedValues) -> presenter.saveHttpConnector(form.getModel().getName(), changedValues,
+                        httpConnectorProperties.isModified(), httpConnectorProperties.getValue()))
+                .build();
+        registerAttachable(httpConnectorForm);
+        httpConnectorTable.asElement().getParentElement().appendChild(httpConnectorForm.asElement());
+    }
+
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
+    public void attach() {
+        super.attach();
+        connectorTable.api().onSelectionChange(api -> updateForm(api, connectorForm,
+                CONNECTOR_TEMPLATE.lastKey(), connectorProperties));
+        httpConnectorTable.api().onSelectionChange(api -> updateForm(api, httpConnectorForm,
+                HTTP_CONNECTOR_TEMPLATE.lastKey(), httpConnectorProperties));
+    }
+
+    private void updateForm(Api<NamedNode> api, Form<NamedNode> form, String resource, PropertiesItem propertiesItem) {
+        if (api.hasSelection()) {
+            //noinspection ConstantConditions
+            String path = resource + "/" + api.selectedRow().getName() + "/" + PROPERTY;
+            form.view(api.selectedRow());
+            Map<String, String> properties = failSafePropertyList(payload, path).stream()
+                    .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
+            propertiesItem.setValue(properties);
+
+        } else {
+            form.clear();
+            propertiesItem.clearValue();
+        }
+    }
+
+    @Override
     public void update(final ModelNode payload) {
-        endpointConfigurationForm.view(failSafeGet(payload, "configuration/endpoint"));
+        this.payload = payload;
+
+        endpointConfigurationForm.view(failSafeGet(payload, "configuration/endpoint")); //NON-NLS
 
         connectorTable.api()
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         connectorForm.clear();
+        connectorProperties.clearValue();
         httpConnectorTable.api()
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         httpConnectorForm.clear();
+        httpConnectorProperties.clearValue();
 
         localOutboundTable.api()
                 .clear()

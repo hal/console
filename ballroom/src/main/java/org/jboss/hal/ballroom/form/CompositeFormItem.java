@@ -117,10 +117,10 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void attach() {
         for (FormItem formItem : formItems) {
             formItem.attach();
-            //noinspection unchecked
             formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
         }
     }

@@ -31,7 +31,6 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -82,7 +81,6 @@ public class LoggingProfilePresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final Dispatcher dispatcher;
     private String loggingProfile;
 
     @Inject
@@ -92,13 +90,11 @@ public class LoggingProfilePresenter
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher) {
+            final StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
-        this.dispatcher = dispatcher;
     }
 
     @Override

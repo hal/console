@@ -182,6 +182,7 @@ public interface ModelDescriptionConstants {
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
     String PROFILE_NAME = "profile-name";
+    String PROPERTY = "property";
     String PROVIDER = "provider";
     String PROXIES = "proxies";
 
