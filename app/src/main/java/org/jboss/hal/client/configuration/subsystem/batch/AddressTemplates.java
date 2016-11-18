@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Claudio Miranda
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String BATCH_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=batch-jberet";
     String IN_MEMORY_JOB_REPO_ADDRESS = BATCH_SUBSYSTEM_ADDRESS + "/in-memory-job-repository=*";

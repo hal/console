@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Claudio Miranda
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String TRANSACTIONS_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=transactions";
 

@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String JCA_ADDRESS = "/{selected.profile}/subsystem=jca";
     String ARCHIVE_VALIDATION_ADDRESS = JCA_ADDRESS + "/archive-validation=archive-validation";

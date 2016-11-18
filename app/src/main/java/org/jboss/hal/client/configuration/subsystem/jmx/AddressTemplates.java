@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String JMX_ADDRESS = "/{selected.profile}/subsystem=jmx";
     String AUDIT_LOG_ADDRESS = JMX_ADDRESS + "/configuration=audit-log";

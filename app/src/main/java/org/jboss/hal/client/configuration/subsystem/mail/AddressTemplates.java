@@ -23,7 +23,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String MAIL_ADDRESS = "/{selected.profile}/subsystem=mail";
     AddressTemplate MAIL_TEMPLATE = AddressTemplate.of(MAIL_ADDRESS);

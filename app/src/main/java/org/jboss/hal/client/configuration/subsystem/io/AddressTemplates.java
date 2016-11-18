@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Claudio Miranda
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String IO_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=io";
     String BUFFER_POOL_ADDRESS = IO_SUBSYSTEM_ADDRESS + "/buffer-pool=*";

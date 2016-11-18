@@ -47,23 +47,23 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     private final Dispatcher dispatcher;
     private final EmptyState emptyState;
     private final Form<T> form;
-    private final Supplier<Operation> operation;
+    private final Supplier<Operation> readOperation;
     private final Element root;
 
-    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
-            final EmptyState.Action action) {
-        this(dispatcher, operation, form, new EmptyState.Builder(CONSTANTS.noResource())
+    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> readOperation, final Form<T> form,
+            final EmptyState.Action addAction) {
+        this(dispatcher, readOperation, form, new EmptyState.Builder(CONSTANTS.noResource())
                 .description(MESSAGES.noResource())
-                .primaryAction(CONSTANTS.add(), action)
+                .primaryAction(CONSTANTS.add(), addAction)
                 .build());
     }
 
-    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
+    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> readOperation, final Form<T> form,
             final EmptyState emptyState) {
         this.dispatcher = dispatcher;
         this.emptyState = emptyState;
         this.form = form;
-        this.operation = operation;
+        this.readOperation = readOperation;
         this.root = new Elements.Builder().div().add(emptyState).add(form).end().build();
 
         Elements.setVisible(emptyState.asElement(), false);
@@ -78,7 +78,7 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     @Override
     public void attach() {
         form.attach();
-        dispatcher.execute(operation.get(),
+        dispatcher.execute(readOperation.get(),
                 result -> formMode(),
                 (op, failure) -> emptyStateMode());
     }
@@ -88,8 +88,13 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
         form.detach();
     }
 
+    public void clear() {
+        form.clear();
+        formMode();
+    }
+
     public void view(T model) {
-        dispatcher.execute(operation.get(),
+        dispatcher.execute(readOperation.get(),
                 result -> {
                     formMode();
                     form.view(model);

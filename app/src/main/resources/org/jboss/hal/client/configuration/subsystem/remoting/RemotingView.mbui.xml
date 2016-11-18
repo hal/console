@@ -95,8 +95,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/local-outbound-connection=*">
                     <h1>Local Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-local-outbound-table" title="Local Outbound"
-                           form-ref="remoting-local-outbound-form">
+                    <table id="remoting-local-outbound-table" title="Local Outbound">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -106,8 +105,6 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="remoting-local-outbound-form" title="Local Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
 
@@ -115,7 +112,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/outbound-connection=*">
                     <h1>Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-outbound-table" title="Outbound" form-ref="remoting-outbound-form">
+                    <table id="remoting-outbound-table" title="Outbound">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -125,8 +122,6 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="remoting-outbound-form" title="Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
 
@@ -134,8 +129,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/remote-outbound-connection=*">
                     <h1>Remote Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-remote-outbound-table" title="Remote Outbound"
-                           form-ref="remoting-remote-outbound-form">
+                    <table id="remoting-remote-outbound-table" title="Remote Outbound">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -145,8 +139,6 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="remoting-remote-outbound-form" title="Remote Outbound" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
         </item>

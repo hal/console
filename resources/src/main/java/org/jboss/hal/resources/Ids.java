@@ -273,7 +273,21 @@ public interface Ids {
 
     String REMOTING = "remoting";
     String REMOTING_CONNECTOR_FORM = build(REMOTING, "connector", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_TAB = build(REMOTING, "connector", TAB_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_FORM = build(REMOTING, "connector-security", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_TAB = build(REMOTING, "connector-security", TAB_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "connector-security-policy", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "connector-security-policy", TAB_SUFFIX);
     String REMOTING_HTTP_CONNECTOR_FORM = build(REMOTING, "http-connector", FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_TAB = build(REMOTING, "http-connector", TAB_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_FORM = build(REMOTING, "http-connector-security", FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_TAB = build(REMOTING, "http-connector-security", TAB_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "http-connector-security-policy",
+            FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
+    String REMOTING_LOCAL_OUTBOUND_FORM = build(REMOTING, "local-outbound", FORM_SUFFIX);
+    String REMOTING_OUTBOUND_FORM = build(REMOTING, "outbound", FORM_SUFFIX);
+    String REMOTING_REMOTE_OUTBOUND_FORM = build(REMOTING, "remote-outbound", FORM_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);

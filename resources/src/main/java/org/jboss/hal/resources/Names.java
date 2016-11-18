@@ -44,6 +44,8 @@ public interface Names {
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
     String HTTP_CONNECTOR = "HTTP Connector";
+    String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
+    String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JDBC = "JDBC";
@@ -51,6 +53,7 @@ public interface Names {
     String JDBC_DRIVERS = "JDBC Drivers";
     String JNDI = "JNDI";
     String JPA = "JPA";
+    String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
@@ -64,6 +67,7 @@ public interface Names {
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
+    String OUTBOUND_CONNECTION = "Outbound Connection";
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PROFILE = "Profile";
@@ -72,6 +76,9 @@ public interface Names {
     String QUERY_CACHE = "Query Cache";
     String REALM = "Realm";
     String REMOTE_CONNECTOR = "Remote Connector";
+    String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
+    String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
+    String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
     String RESOURCE = "Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
