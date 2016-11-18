@@ -373,6 +373,7 @@ public class RemotingPresenter
 
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
+
         Function[] functions = new Function[]{
                 (Function<FunctionContext>) control -> {
                     Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
@@ -411,6 +412,6 @@ public class RemotingPresenter
                                 Message.success(resources.messages().addSingleResourceSuccess(type)));
                         reload();
                     }
-                });
+                }, functions);
     }
 }
