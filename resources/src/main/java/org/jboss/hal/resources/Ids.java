@@ -285,6 +285,8 @@ public interface Ids {
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "http-connector-security-policy",
             FORM_SUFFIX);
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
+    String RESOURCE_ADAPTER = "resource-adapter";
+    String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
@@ -390,6 +392,10 @@ public interface Ids {
      */
     static String principal(final String type, final String name) {
         return build(type, name);
+    }
+
+    static String resourceAdapter(final String name) {
+        return build(RESOURCE_ADAPTER, name);
     }
 
     static String role(String name) {

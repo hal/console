@@ -18,7 +18,7 @@
 <view>
     <vertical-navigation id="resource-adapter-vertical-navigation">
         <item id="resource-adapter-configuration-item" title="Configuration" icon="pficon pficon-settings">
-            <metadata address="/{selected.profile}/subsystem=resource-adapters=*">
+            <metadata address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="resource-adapter-configuration-form" title="Configuration"
@@ -31,7 +31,7 @@
                             <attribute name="bootstrap-context"/>
                             <attribute name="module"/>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
                             <attribute name="statistics-enabled"/>
                             <attribute name="transaction-support"/>
                         </group>
@@ -53,7 +53,8 @@
 
         <item id="resource-adapter-connection-definition-item" title="Connection Definitions"
               icon="pficon pficon-service">
-            <metadata address="/{selected.profile}/subsystem=resource-adapters=*/connection-definitions=*">
+            <metadata
+                    address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/connection-definitions=*">
                 <h1>Connection Definitions</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="resource-adapter-connection-definition-table" title="Connection Definition"
@@ -65,7 +66,7 @@
                                 handler="{{removeConnectionDefinition(api)}}" scope="selected"/>
                     </actions>
                     <columns>
-                        <column name="name"/>
+                        <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
                 <form id="resource-adapter-connection-definition-form" title="Connection Definition"
@@ -80,7 +81,7 @@
                             <attribute name="connectable"/>
                             <attribute name="enabled"/>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
                         </group>
                         <group id="resource-adapter-connection-definition-pool"
                                title="{{mbuiContext.resources().constants().pool()}}">
@@ -108,8 +109,8 @@
             </metadata>
         </item>
 
-        <item id="resource-adapter-admin-object-item" title="Admin |Objects" icon="fa fa-lock">
-            <metadata address="/{selected.profile}/subsystem=resource-adapters=*/admin-objects=*">
+        <item id="resource-adapter-admin-object-item" title="Admin Objects" icon="fa fa-lock">
+            <metadata address="/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/admin-objects=*">
                 <h1>Admin Objects</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="resource-adapter-admin-object-table" title="Admin Object"
@@ -120,7 +121,7 @@
                                 handler="{{removeAdminObject(api)}}" scope="selected"/>
                     </actions>
                     <columns>
-                        <column name="name"/>
+                        <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
                 <form id="resource-adapter-admin-object-form" title="Admin Object"
@@ -130,7 +131,7 @@
                         <attribute name="enabled"/>
                         <attribute name="jndi-name"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                                form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
                         <attribute name="use-java-context"/>
                     </attributes>
                 </form>

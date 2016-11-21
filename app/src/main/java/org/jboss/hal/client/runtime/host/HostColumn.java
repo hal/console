@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -136,7 +135,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public String getFilterData() {
-                return Joiner.on(' ').join(item.getName(),
+                return String.join(" ", item.getName(),
                         item.isDomainController() ? "dc" : "hc", //NON-NLS
                         ModelNodeHelper.asAttributeValue(item.getHostState()));
             }

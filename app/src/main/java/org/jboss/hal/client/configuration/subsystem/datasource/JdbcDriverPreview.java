@@ -39,10 +39,10 @@ class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
         JdbcDriver.Provider provider = driver.getProvider();
         if (provider == MODULE) {
             previewBuilder().p().innerHtml(
-                    resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getModule())).end();
+                    resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getModule())).end();
         } else if (provider == DEPLOYMENT) {
             previewBuilder().p().innerHtml(
-                    resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getDeploymentName()))
+                    resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getDeploymentName()))
                     .end();
             previewBuilder().p().innerHtml(resources.messages().jdbcDriverDeploymentHint()).end();
         }

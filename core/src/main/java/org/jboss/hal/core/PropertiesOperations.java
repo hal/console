@@ -231,6 +231,42 @@ public class PropertiesOperations {
      * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
+     * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map,
+     * CrudOperations.Callback)}:
+     * <ol>
+     * <li>New properties are added as children of the PSR</li>
+     * <li>Modified properties are modified in the PSRs</li>
+     * <li>Removed properties are removed from the PSR</li>
+     * </ol>
+     *
+     * @param type          the human readable resource type used in the success message
+     * @param name          the resource name
+     * @param address       the fq address for the operation
+     * @param form          the form containing an unbound form item for the properties
+     * @param changedValues the changed values / payload for the operation
+     * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
+     * @param callback      the callback executed after saving the resource
+     */
+    public <T extends ModelNode> void saveWithProperties(final String type, final String name,
+            final ResourceAddress address, final Form<T> form, final Map<String, Object> changedValues,
+            final String psr, final CrudOperations.Callback callback) {
+
+        changedValues.remove(psr);
+        FormItem<Map<String, String>> properties = form.getFormItem(psr);
+
+        if (!properties.isModified()) {
+            if (!changedValues.isEmpty()) {
+                crud.save(type, name, address, changedValues, callback);
+            }
+        } else {
+            saveWithProperties(type, name, address, changedValues, properties.getValue(), psr, callback);
+        }
+    }
+
+    /**
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
+     * saved a standard success message is fired and the specified callback is executed.
+     * <p>
      * This is the properties-extended version of {@link CrudOperations#saveSingleton(String, AddressTemplate, Map,
      * CrudOperations.Callback)}:
      * <ol>

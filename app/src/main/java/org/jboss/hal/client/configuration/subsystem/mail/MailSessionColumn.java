@@ -132,7 +132,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                 List<String> data = new ArrayList<>();
                 data.add(mailSession.getName());
                 data.addAll(mailSession.getServers());
-                return Joiner.on(' ').join(data);
+                return String.join(" ", data);
             }
 
             @Override

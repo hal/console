@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
@@ -157,10 +156,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         HOST_STATE, RUNNING_MODE))
                 .append(model -> new PreviewAttribute(
                         "Management Version", //NON-NLS
-                        Joiner.on('.').join(
-                                model.get(MANAGEMENT_MAJOR_VERSION),
-                                model.get(MANAGEMENT_MINOR_VERSION),
-                                model.get(MANAGEMENT_MICRO_VERSION))
+                        String.join(".",
+                                model.get(MANAGEMENT_MAJOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MINOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MICRO_VERSION).asString())
                 ))
                 .end();
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP,

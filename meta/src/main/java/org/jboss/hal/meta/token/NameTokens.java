@@ -59,6 +59,7 @@ public interface NameTokens {
     String PATH = "path";
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
+    String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
     String RUNTIME = "runtime";
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";

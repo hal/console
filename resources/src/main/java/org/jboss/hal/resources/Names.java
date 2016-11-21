@@ -23,6 +23,7 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String ARCHIVE = "Archive";
     String AUDIT_LOG = "Audit Log";
     String BOOTSTRAP = "Bootstrap";
     String COLLECTION = "Collection";
@@ -80,6 +81,7 @@ public interface Names {
     String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
     String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
     String RESOURCE = "Resource";
+    String RESOURCE_ADAPTER = "Resource Adapter";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SECOND_LEVEL_CACHE = "Second Level Cache";

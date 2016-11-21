@@ -127,6 +127,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/remoting.html")
     ExternalTextResource configurationRemoting();
 
+    @Source("previews/configuration/resource-adapters.html")
+    ExternalTextResource configurationResourceAdapters();
+
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource configurationSocketBindings();
 

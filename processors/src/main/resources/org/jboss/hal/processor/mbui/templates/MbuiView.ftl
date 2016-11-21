@@ -76,6 +76,14 @@ final class ${context.subclass} extends ${context.base} {
                 .include("${attribute.name}")
                             </#if>
                         </#list>
+                    <#elseif group.hasUnboundAttributes>
+                        <#list group.attributes as attribute>
+                            <#if attribute.formItem??>
+                .unboundFormItem(${attribute.formItem}, ${attribute_index})
+                            <#else>
+                .include("${attribute.name}")
+                            </#if>
+                        </#list>
                     <#else>
                 .include(<#list group.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
                     </#if>

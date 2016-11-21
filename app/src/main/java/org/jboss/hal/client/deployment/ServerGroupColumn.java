@@ -18,7 +18,6 @@ package org.jboss.hal.client.deployment;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -92,7 +91,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
             @Override
             public String getFilterData() {
-                return Joiner.on(' ').join(item.getName(), item.getProfile());
+                return String.join(" ", item.getName(), item.getProfile());
             }
 
             @Override

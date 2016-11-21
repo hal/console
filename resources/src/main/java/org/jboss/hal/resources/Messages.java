@@ -123,7 +123,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml includeAllHelpText();
 
     SafeHtml jdbcDriverDeploymentHint();
-    SafeHtml jdbcDriverProvidedByPreview(String type, String value);
+    SafeHtml jdbcDriverProvidedBy(String type, String value);
 
     SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
@@ -189,9 +189,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeUserSuccess(String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    SafeHtml resourceNotFound(String type, String name);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
+    SafeHtml resourceAdapterProvidedBy(String type, String name);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);

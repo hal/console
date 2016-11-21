@@ -67,6 +67,7 @@ public interface ModelDescriptionConstants {
     String CLASS_NAME = "class-name";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
+    String CONFIG_PROPERTIES = "config-properties";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -160,6 +161,7 @@ public interface ModelDescriptionConstants {
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIN = "min";
+    String MODULE = "module";
     String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
 
@@ -218,6 +220,7 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String RESPONSE = "response";
     String RESOURCE_ADAPTERS = "resource-adapters";
+    String RESOURCE_ADAPTER = "resource-adapter";
     String RESPONSE_HEADERS = "response-headers";
     String RESTART = "restart";
     String RESTART_REQUIRED = "restart-required";
@@ -271,6 +274,7 @@ public interface ModelDescriptionConstants {
     String THREAD_FACTORY = "thread-factory";
     String TIMEOUT = "timeout";
     String TO = "to";
+    String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TYPE = "type";

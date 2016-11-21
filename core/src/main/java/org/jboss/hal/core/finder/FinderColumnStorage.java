@@ -18,7 +18,6 @@ package org.jboss.hal.core.finder;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import elemental.client.Browser;
@@ -55,6 +54,7 @@ class FinderColumnStorage {
         if (storage != null) {
             String pinnedItems = storage.getItem(this.pinnedId);
             if (pinnedItems != null) {
+                //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(items, Splitter.on(',').split(pinnedItems));
             }
         }
@@ -63,7 +63,7 @@ class FinderColumnStorage {
 
     private void save(Set<String> items) {
         if (storage != null) {
-            storage.setItem(pinnedId, Joiner.on(',').join(items));
+            storage.setItem(pinnedId, String.join(",", items));
         }
     }
 }

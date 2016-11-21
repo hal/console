@@ -23,8 +23,6 @@
  */
 package org.jboss.hal.config.semver;
 
-import com.google.common.base.Joiner;
-
 /**
  * The {@code NormalVersion} class represents the version core.
  *
@@ -176,6 +174,6 @@ class NormalVersion implements Comparable<NormalVersion> {
      */
     @Override
     public String toString() {
-        return Joiner.on('.').join(major, minor, patch);
+        return String.join(".", String.valueOf(major), String.valueOf(minor), String.valueOf(patch));
     }
 }
