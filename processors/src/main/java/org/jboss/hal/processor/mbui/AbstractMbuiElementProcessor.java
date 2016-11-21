@@ -87,15 +87,20 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
     Attribute processAttribute(VariableElement field, org.jdom2.Element attributeElement) {
         String name = attributeElement.getAttributeValue(XmlTags.NAME);
         String provider = attributeElement.getAttributeValue(XmlTags.PROVIDER);
+        String formItem = attributeElement.getAttributeValue(XmlTags.FORM_ITEM);
         String validationHandler = attributeElement.getAttributeValue(XmlTags.VALIDATION_HANDLER);
         String suggestHandlerAttribute = attributeElement.getAttributeValue(XmlTags.SUGGEST_HANDLER);
         org.jdom2.Element suggestHandlerElement = attributeElement.getChild(XmlTags.SUGGEST_HANDLER);
 
-        if (name == null) {
+        if (name == null && formItem == null) {
             processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
         }
         if (provider != null && !Handlebars.isExpression(provider)) {
             processor.error(field, "Provider for attribute \"%s\" has to be an expression.",
+                    xmlAsString(attributeElement));
+        }
+        if (formItem != null && !Handlebars.isExpression(formItem)) {
+            processor.error(field, "FormItem for attribute \"%s\" has to be an expression.",
                     xmlAsString(attributeElement));
         }
         if (validationHandler != null && !Handlebars.isExpression(validationHandler)) {
@@ -112,7 +117,7 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
                     xmlAsString(attributeElement));
         }
 
-        Attribute attribute = new Attribute(name, provider, validationHandler, suggestHandlerAttribute);
+        Attribute attribute = new Attribute(name, provider, formItem, validationHandler, suggestHandlerAttribute);
         if (suggestHandlerElement != null) {
             org.jdom2.Element templatesContainer = suggestHandlerElement.getChild(XmlTags.TEMPLATES);
             if (templatesContainer != null) {

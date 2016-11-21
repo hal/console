@@ -24,6 +24,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -101,6 +102,8 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
                 },
                 (op, failure) -> emptyStateMode());
     }
+
+    public <F> FormItem<F> getFormItem(final String name) {return form.getFormItem(name);}
 
     private void emptyStateMode() {
         Elements.setVisible(emptyState.asElement(), true);

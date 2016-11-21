@@ -246,6 +246,11 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="form-item">
+                    <ref name="code"/>
+                </attribute>
+            </optional>
+            <optional>
                 <element name="suggest-handler">
                     <element name="templates">
                         <oneOrMore>

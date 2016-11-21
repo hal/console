@@ -95,9 +95,21 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/local-outbound-connection=*">
                     <h1>Local Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-local-outbound-table" title="Local Outbound">
+                    <table id="remoting-local-outbound-table" title="Local Outbound"
+                           form-ref="remoting-local-outbound-form">
                         <actions>
-                            <action handler-ref="add-resource"/>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="outbound-socket-binding-ref">
+                                        <suggest-handler>
+                                            <templates>
+                                                <template
+                                                        address="/socket-binding-group=*/local-destination-outbound-socket-binding=*"/>
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
+                                </attributes>
+                            </action>
                             <action handler-ref="remove-resource" scope="selected"
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
@@ -105,6 +117,21 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
+                    <form id="remoting-local-outbound-form" title="Local Outbound"
+                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}">
+                        <attributes>
+                            <attribute
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute name="outbound-socket-binding-ref">
+                                <suggest-handler>
+                                    <templates>
+                                        <template
+                                                address="/socket-binding-group=*/local-destination-outbound-socket-binding=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                        </attributes>
+                    </form>
                 </metadata>
             </sub-item>
 
@@ -112,7 +139,7 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/outbound-connection=*">
                     <h1>Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-outbound-table" title="Outbound">
+                    <table id="remoting-outbound-table" title="Outbound" form-ref="remoting-outbound-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -122,6 +149,14 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
+                    <form id="remoting-outbound-form" title="Outbound"
+                          on-save="{{presenter.saveOutbound(form, changedValues)}}">
+                        <attributes>
+                            <attribute
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute name="uri"/>
+                        </attributes>
+                    </form>
                 </metadata>
             </sub-item>
 
@@ -129,9 +164,21 @@
                 <metadata address="/{selected.profile}/subsystem=remoting/remote-outbound-connection=*">
                     <h1>Remote Outbound</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="remoting-remote-outbound-table" title="Remote Outbound">
+                    <table id="remoting-remote-outbound-table" title="Remote Outbound"
+                           form-ref="remoting-remote-outbound-form">
                         <actions>
-                            <action handler-ref="add-resource"/>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="outbound-socket-binding-ref">
+                                        <suggest-handler>
+                                            <templates>
+                                                <template
+                                                        address="/socket-binding-group=*/remote-destination-outbound-socket-binding=*"/>
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
+                                </attributes>
+                            </action>
                             <action handler-ref="remove-resource" scope="selected"
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
@@ -139,6 +186,24 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
+                    <form id="remoting-remote-outbound-form" title="Remote Outbound"
+                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}">
+                        <attributes>
+                            <attribute name="outbound-socket-binding-ref">
+                                <suggest-handler>
+                                    <templates>
+                                        <template
+                                                address="/socket-binding-group=*/remote-destination-outbound-socket-binding=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute name="protocol"/>
+                            <attribute name="security-realm"/>
+                            <attribute name="username"/>
+                        </attributes>
+                    </form>
                 </metadata>
             </sub-item>
         </item>

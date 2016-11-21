@@ -113,6 +113,15 @@ public class DataTableInfo extends MbuiElementInfo {
             return false;
         }
 
+        public boolean isHasUnboundAttributes() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getFormItem() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public boolean isHasAttributesWithValidationsHandler() {
             return !getSuggestHandlerAttributes().isEmpty();
         }

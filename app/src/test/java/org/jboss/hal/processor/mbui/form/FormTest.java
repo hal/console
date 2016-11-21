@@ -56,6 +56,12 @@ public class FormTest extends MbuiViewProcessorTest {
     }
 
     @Test
+    public void unboundFormItem() {
+        Compilation compilation = compile("UnboundFormItemView");
+        assertSourceEquals(compilation, "Mbui_UnboundFormItemView");
+    }
+
+    @Test
     public void suggestHandler() {
         Compilation compilation = compile("SuggestHandlerView");
         assertSourceEquals(compilation, "Mbui_SuggestHandlerView");

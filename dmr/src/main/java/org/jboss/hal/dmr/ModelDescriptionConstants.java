@@ -105,6 +105,7 @@ public interface ModelDescriptionConstants {
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
     String FILE = "file";
+    String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
     String GLOBAL_MODULES = "global-modules";
@@ -269,6 +270,7 @@ public interface ModelDescriptionConstants {
 
     String THREAD_FACTORY = "thread-factory";
     String TIMEOUT = "timeout";
+    String TO = "to";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TYPE = "type";

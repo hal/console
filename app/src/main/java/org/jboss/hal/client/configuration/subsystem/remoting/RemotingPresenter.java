@@ -28,22 +28,19 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mbui.form.SubResourceProperties.MergeProperties;
-import org.jboss.hal.core.mbui.form.SubResourceProperties.ReadProperties;
+import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
@@ -91,12 +88,12 @@ public class RemotingPresenter
 
 
     private final CrudOperations crud;
+    private final PropertiesOperations propertiesOperations;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Provider<Progress> progress;
     private final Resources resources;
-    private final OperationFactory operationFactory;
 
     private ModelNode payload;
     private String connector;
@@ -110,6 +107,7 @@ public class RemotingPresenter
             final MyProxy myProxy,
             final Finder finder,
             final CrudOperations crud,
+            final PropertiesOperations propertiesOperations,
             final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
@@ -118,12 +116,12 @@ public class RemotingPresenter
 
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
+        this.propertiesOperations = propertiesOperations;
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.progress = progress;
         this.resources = resources;
-        this.operationFactory = new OperationFactory();
 
         selectedConnectorContext = new SelectionAwareStatementContext(statementContext, () -> connector);
         selectedHttpConnectorContext = new SelectionAwareStatementContext(statementContext, () -> httpConnector);
@@ -163,18 +161,10 @@ public class RemotingPresenter
         getView().updateConnector(namedNode);
     }
 
-    void saveConnector(String name, Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.save(Names.REMOTE_CONNECTOR, name, CONNECTOR_TEMPLATE, changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.REMOTE_CONNECTOR, name,
-                    CONNECTOR_TEMPLATE.replaceWildcards(name), statementContext,
-                    changedValues, properties);
-        }
+    void saveConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
+        propertiesOperations
+                .saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE, form,
+                        changedValues, PROPERTY, this::reload);
     }
 
     void createConnectorSecurity() {
@@ -183,20 +173,10 @@ public class RemotingPresenter
         dispatcher.execute(operation, result -> reload());
     }
 
-    void saveConnectorSecurity(Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.saveSingleton(Names.REMOTE_CONNECTOR_SECURITY,
-                        SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext),
-                        changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.REMOTE_CONNECTOR_SECURITY, null,
-                    SELECTED_CONNECTOR_SECURITY_TEMPLATE, selectedConnectorContext,
-                    changedValues, properties);
-        }
+    void saveConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
+        propertiesOperations.saveSingletonWithProperties(Names.REMOTE_CONNECTOR_SECURITY,
+                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, changedValues, PROPERTY,
+                this::reload);
     }
 
     void createConnectorSecurityPolicy() {
@@ -219,18 +199,10 @@ public class RemotingPresenter
         getView().updateHttpConnector(namedNode);
     }
 
-    void saveHttpConnector(String name, Map<String, Object> changedValues,
-            boolean propertiesModified, Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.save(Names.HTTP_CONNECTOR, name, HTTP_CONNECTOR_TEMPLATE, changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.HTTP_CONNECTOR, name,
-                    HTTP_CONNECTOR_TEMPLATE.replaceWildcards(name), statementContext,
-                    changedValues, properties);
-        }
+    void saveHttpConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
+        propertiesOperations
+                .saveWithProperties(Names.HTTP_CONNECTOR, form.getModel().getName(), HTTP_CONNECTOR_TEMPLATE, form,
+                        changedValues, PROPERTY, this::reload);
     }
 
     void createHttpConnectorSecurity() {
@@ -239,20 +211,10 @@ public class RemotingPresenter
         dispatcher.execute(operation, result -> reload());
     }
 
-    void saveHttpConnectorSecurity(Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.saveSingleton(Names.HTTP_CONNECTOR_SECURITY,
-                        SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext),
-                        changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.HTTP_CONNECTOR_SECURITY, null,
-                    SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE, selectedHttpConnectorContext,
-                    changedValues, properties);
-        }
+    void saveHttpConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
+        propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY,
+                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, changedValues,
+                PROPERTY, this::reload);
     }
 
     void createHttpConnectorSecurityPolicy() {
@@ -275,18 +237,10 @@ public class RemotingPresenter
         getView().updateLocalOutbound(namedNode);
     }
 
-    void saveLocalOutbound(String name, Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.save(Names.LOCAL_OUTBOUND_CONNECTION, name, LOCAL_OUTBOUND_TEMPLATE, changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.LOCAL_OUTBOUND_CONNECTION, name,
-                    LOCAL_OUTBOUND_TEMPLATE.replaceWildcards(name), statementContext,
-                    changedValues, properties);
-        }
+    void saveLocalOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
+        propertiesOperations
+                .saveWithProperties(Names.LOCAL_OUTBOUND_CONNECTION, form.getModel().getName(), LOCAL_OUTBOUND_TEMPLATE,
+                        form, changedValues, PROPERTY, this::reload);
     }
 
 
@@ -298,18 +252,9 @@ public class RemotingPresenter
         getView().updateOutbound(namedNode);
     }
 
-    void saveOutbound(String name, Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.save(Names.OUTBOUND_CONNECTION, name, OUTBOUND_TEMPLATE, changedValues, this::reload);
-            }
-        } else {
-            saveWithProperties(Names.OUTBOUND_CONNECTION, name,
-                    OUTBOUND_TEMPLATE.replaceWildcards(name), statementContext,
-                    changedValues, properties);
-        }
+    void saveOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
+        propertiesOperations.saveWithProperties(Names.OUTBOUND_CONNECTION, form.getModel().getName(), OUTBOUND_TEMPLATE,
+                form, changedValues, PROPERTY, this::reload);
     }
 
 
@@ -321,56 +266,19 @@ public class RemotingPresenter
         getView().updateRemoteOutbound(namedNode);
     }
 
-    void saveRemoteOutbound(String name, Map<String, Object> changedValues, boolean propertiesModified,
-            Map<String, String> properties) {
-        changedValues.remove(PROPERTY);
-        if (!propertiesModified) {
-            if (!changedValues.isEmpty()) {
-                crud.save(Names.REMOTE_OUTBOUND_CONNECTION, name, REMOTE_OUTBOUND_TEMPLATE, changedValues,
-                        this::reload);
-            }
-        } else {
-            saveWithProperties(Names.REMOTE_OUTBOUND_CONNECTION, name,
-                    REMOTE_OUTBOUND_TEMPLATE.replaceWildcards(name), statementContext,
-                    changedValues, properties);
-        }
+    void saveRemoteOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
+        propertiesOperations.saveWithProperties(Names.REMOTE_OUTBOUND_CONNECTION, form.getModel().getName(),
+                REMOTE_OUTBOUND_TEMPLATE,
+                form, changedValues, PROPERTY, this::reload);
     }
 
 
     // ------------------------------------------------------ helper methods
 
-    private void saveWithProperties(String type, String name,
-            AddressTemplate template, StatementContext statementContext,
-            Map<String, Object> changedValues, Map<String, String> properties) {
-        Function[] functions = new Function[]{
-                control -> {
-                    if (changedValues.isEmpty()) {
-                        control.proceed();
-                    } else {
-                        Composite operation = operationFactory
-                                .fromChangeSet(template.resolve(statementContext), changedValues);
-                        dispatcher.executeInFunction(control, operation, (CompositeResult result) -> control.proceed());
-                    }
-                },
-                new ReadProperties(dispatcher, statementContext, template, PROPERTY),
-                new MergeProperties(dispatcher, statementContext, template, PROPERTY, properties)
-        };
-        new Async<FunctionContext>(progress.get())
-                .waterfall(new FunctionContext(), new SuccessfulOutcome(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(final FunctionContext context) {
-                        if (name == null) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().modifySingleResourceSuccess(type)));
-                        } else {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().modifyResourceSuccess(type, name)));
-                        }
-                        reload();
-                    }
-                }, functions);
-    }
-
+    /**
+     * Creates the singleton {@code /subsystem=remoting/(http-)connector=foo/security=sasl/sasl-policy=policy}
+     * in a fail-safe manner: A missing {@code security=sasl} parent resource is created on demand.
+     */
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
 

@@ -71,7 +71,7 @@ final class ${context.subclass} extends ${context.base} {
                     <#if group.hasAttributesWithProvider>
                         <#list group.attributes as attribute>
                             <#if attribute.provider??>
-                .customFormItem("${attribute.name}", ${attribute.provider})
+                .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
                             <#else>
                 .include("${attribute.name}")
                             </#if>
@@ -94,7 +94,15 @@ final class ${context.subclass} extends ${context.base} {
                     <#if form.hasAttributesWithProvider>
                         <#list form.attributes as attribute>
                             <#if attribute.provider??>
-            .customFormItem("${attribute.name}", ${attribute.provider})
+            .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
+                            <#else>
+            .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#elseif form.hasUnboundAttributes>
+                        <#list form.attributes as attribute>
+                            <#if attribute.formItem??>
+            .unboundFormItem(${attribute.formItem}, ${attribute_index})
                             <#else>
             .include("${attribute.name}")
                             </#if>
@@ -149,7 +157,7 @@ final class ${context.subclass} extends ${context.base} {
                     <#switch action.handlerRef>
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
-                                <#if action.hasAttributesWithProvider>
+                                <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
@@ -157,7 +165,9 @@ final class ${context.subclass} extends ${context.base} {
                     .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
                                     <#list action.attributes as attribute>
                                         <#if attribute.provider??>
-                    .customFormItem("${attribute.name}", ${attribute.provider})
+                    .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
+                                        <#elseif attribute.formItem??>
+                    .unboundFormItem(${attribute.formItem}, ${attribute_index})
                                         <#else>
                     .include("${attribute.name}")
                                         </#if>

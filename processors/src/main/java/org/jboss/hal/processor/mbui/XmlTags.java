@@ -30,6 +30,7 @@ public interface XmlTags {
     String COLUMNS = "columns";
     String FAIL_SAFE_FORM = "fail-safe-form";
     String FORM = "form";
+    String FORM_ITEM = "form-item";
     String FORM_REF = "form-ref";
     String GROUP = "group";
     String HANDLER = "handler";

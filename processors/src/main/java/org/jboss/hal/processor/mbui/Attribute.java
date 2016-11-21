@@ -24,14 +24,17 @@ import java.util.List;
 public class Attribute {
 
     private final String name;
+    private final String formItem;
     private final String provider;
     private final String validationHandler;
     private final String suggestHandler;
     private final List<String> suggestHandlerTemplates;
 
-    Attribute(final String name, final String provider, final String validationHandler, final String suggestHandler) {
+    Attribute(final String name, final String provider, final String formItem,
+            final String validationHandler, final String suggestHandler) {
         this.name = name;
         this.provider = Handlebars.stripHandlebar(provider);
+        this.formItem = Handlebars.stripHandlebar(formItem);
         this.validationHandler = Handlebars.stripHandlebar(validationHandler);
         this.suggestHandler = Handlebars.stripHandlebar(suggestHandler);
         this.suggestHandlerTemplates = new ArrayList<>();
@@ -39,6 +42,10 @@ public class Attribute {
 
     public String getName() {
         return name;
+    }
+
+    public String getFormItem() {
+        return formItem;
     }
 
     public String getProvider() {

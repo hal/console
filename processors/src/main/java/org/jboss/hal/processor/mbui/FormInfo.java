@@ -140,6 +140,15 @@ public class FormInfo extends MbuiElementInfo {
         return false;
     }
 
+    public boolean isHasUnboundAttributes() {
+        for (Attribute attribute : attributes) {
+            if (attribute.getFormItem() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Attribute> getValidationHandlerAttributes() {
         if (groups.isEmpty()) {
             return attributes.stream()

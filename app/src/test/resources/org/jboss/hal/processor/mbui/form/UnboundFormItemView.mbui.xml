@@ -21,7 +21,7 @@
         <form id="form" title="Form" auto-save="true">
             <attributes>
                 <attribute name="foo"/>
-                <attribute name="bar" provider='{{new org.jboss.hal.ballroom.form.TextBoxItem("bar", "Bar")}}'/>
+                <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("bar", new org.jboss.hal.ballroom.LabelBuilder().label("bar"))}}'/>
             </attributes>
         </form>
     </metadata>

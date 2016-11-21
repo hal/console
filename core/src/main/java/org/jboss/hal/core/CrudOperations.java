@@ -437,8 +437,8 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate
 
     /**
-     * Write the changed values to the specified resource. After the resource resource has been saved a standard
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param name          the resource name
@@ -454,8 +454,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource resource has been saved the specified
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * message is fired and the specified callback is executed.
      *
      * @param name           the resource name
      * @param template       the address template which is resolved against the current statement context and the
@@ -470,8 +470,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource resource has been saved a standard
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param name          the resource name
@@ -485,8 +485,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource resource has been saved the specified
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * message is fired and the specified callback is executed.
      *
      * @param address        the fq address for the operation
      * @param changedValues  the changed values / payload for the operation
@@ -503,8 +503,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource resource has been saved a
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param template      the address template which is resolved against the current statement context to get the
@@ -519,8 +519,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource resource has been saved a
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * message is fired and the specified callback is executed.
      *
      * @param template       the address template which is resolved against the current statement context to get the
      *                       resource address for the operation
@@ -534,8 +534,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource resource has been saved a
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param address       the fq address for the operation
@@ -548,8 +548,8 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource resource has been saved a
-     * success message is fired and the specified callback is executed.
+     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * message is fired and the specified callback is executed.
      *
      * @param address        the fq address for the operation
      * @param changedValues  the changed values / payload for the operation

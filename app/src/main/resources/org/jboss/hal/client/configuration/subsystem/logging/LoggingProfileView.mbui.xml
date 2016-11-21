@@ -136,7 +136,7 @@
                     </table>
                     <form id="logging-profile-handler-file-form" on-save="{{saveFileHandler(form, changedValues)}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
@@ -185,7 +185,7 @@
                     <form id="logging-profile-handler-periodic-rotating-file-form"
                           on-save="{{savePeriodicHandler(form, changedValues)}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
@@ -235,7 +235,7 @@
                     <form id="logging-profile-handler-periodic-size-rotating-file-form"
                           on-save="{{savePeriodicSizeHandler(form, changedValues)}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -288,7 +288,7 @@
                     <form id="logging-profile-handler-size-rotating-file-form"
                           on-save="{{saveSizeHandler(form, changedValues)}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>

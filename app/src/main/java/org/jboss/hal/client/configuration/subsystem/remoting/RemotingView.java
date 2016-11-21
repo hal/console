@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -29,7 +30,6 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.form.SubResourceProperties;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -50,9 +50,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
- * This view is half generated, half hand written. The navigation and tables are generated using MBUI XML,
- * whereas the forms are created in this view. This is because the forms contain properties items which map to
- * sub resources and nested singletons which may be null.
+ * This view is half generated, half hand written. The navigation, tables and outbound forms are generated using MBUI
+ * XML, whereas the connector forms are created in this view. This is because these forms contain nested singletons
+ * which may be null.
  *
  * @author Harald Pehl
  */
@@ -73,27 +73,19 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     @MbuiElement("remoting-http-connector-table") DataTable<NamedNode> httpConnectorTable;
 
     @MbuiElement("remoting-local-outbound-table") DataTable<NamedNode> localOutboundTable;
+    @MbuiElement("remoting-local-outbound-form") Form<NamedNode> localOutboundForm;
     @MbuiElement("remoting-outbound-table") DataTable<NamedNode> outboundTable;
+    @MbuiElement("remoting-outbound-form") Form<NamedNode> outboundForm;
     @MbuiElement("remoting-remote-outbound-table") DataTable<NamedNode> remoteOutboundTable;
+    @MbuiElement("remoting-remote-outbound-form") Form<NamedNode> remoteOutboundForm;
 
     private Form<NamedNode> connectorForm;
-    private SubResourceProperties.FormItem connectorProperties;
     private FailSafeForm<ModelNode> connectorSecurityForm;
-    private SubResourceProperties.FormItem connectorSecurityProperties;
     private FailSafeForm<ModelNode> connectorSecurityPolicyForm;
 
     private Form<NamedNode> httpConnectorForm;
-    private SubResourceProperties.FormItem httpConnectorProperties;
     private FailSafeForm<ModelNode> httpConnectorSecurityForm;
-    private SubResourceProperties.FormItem httpConnectorSecurityProperties;
     private FailSafeForm<ModelNode> httpConnectorSecurityPolicyForm;
-
-    private Form<NamedNode> localOutboundForm;
-    private SubResourceProperties.FormItem localOutboundProperties;
-    private Form<NamedNode> outboundForm;
-    private SubResourceProperties.FormItem outboundProperties;
-    private Form<NamedNode> remoteOutboundForm;
-    private SubResourceProperties.FormItem remoteOutboundProperties;
 
     RemotingView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -103,22 +95,18 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     void init() {
         // remote connector
         Metadata connectorMetadata = mbuiContext.metadataRegistry().lookup(CONNECTOR_TEMPLATE);
-        connectorProperties = new SubResourceProperties.FormItem(PROPERTY);
         connectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_CONNECTOR_FORM, connectorMetadata)
-                .unboundFormItem(connectorProperties, 1)
-                .onSave((form, changedValues) -> presenter.saveConnector(form.getModel().getName(), changedValues,
-                        connectorProperties.isModified(), connectorProperties.getValue()))
+                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 1)
+                .onSave((form, changedValues) -> presenter.saveConnector(form, changedValues))
                 .build();
         registerAttachable(connectorForm);
 
         // remote connector security
         Metadata connectorSecurityMetadata = mbuiContext.metadataRegistry().lookup(CONNECTOR_SECURITY_TEMPLATE);
-        connectorSecurityProperties = new SubResourceProperties.FormItem(PROPERTY);
         Form<ModelNode> csf = new ModelNodeForm.Builder<>(Ids.REMOTING_CONNECTOR_SECURITY_FORM,
                 connectorSecurityMetadata)
-                .unboundFormItem(connectorSecurityProperties, 2)
-                .onSave((form, changedValues) -> presenter.saveConnectorSecurity(changedValues,
-                        connectorSecurityProperties.isModified(), connectorSecurityProperties.getValue()))
+                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .onSave((form, changedValues) -> presenter.saveConnectorSecurity(form, changedValues))
                 .build();
         connectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION,
@@ -155,24 +143,20 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
 
         // http connector
         Metadata httpConnectorMetadata = mbuiContext.metadataRegistry().lookup(HTTP_CONNECTOR_TEMPLATE);
-        httpConnectorProperties = new SubResourceProperties.FormItem(PROPERTY);
         httpConnectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_HTTP_CONNECTOR_FORM,
                 httpConnectorMetadata)
-                .unboundFormItem(httpConnectorProperties, 2)
-                .onSave((form, changedValues) -> presenter.saveHttpConnector(form.getModel().getName(), changedValues,
-                        httpConnectorProperties.isModified(), httpConnectorProperties.getValue()))
+                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .onSave((form, changedValues) -> presenter.saveHttpConnector(form, changedValues))
                 .build();
         registerAttachable(httpConnectorForm);
 
         // http connector security
         Metadata httpConnectorSecurityMetadata = mbuiContext.metadataRegistry()
                 .lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
-        httpConnectorSecurityProperties = new SubResourceProperties.FormItem(PROPERTY);
         Form<ModelNode> hcsf = new ModelNodeForm.Builder<>(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_FORM,
                 httpConnectorSecurityMetadata)
-                .unboundFormItem(httpConnectorSecurityProperties, 2)
-                .onSave((form, changedValues) -> presenter.saveHttpConnectorSecurity(changedValues,
-                        httpConnectorSecurityProperties.isModified(), httpConnectorSecurityProperties.getValue()))
+                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .onSave((form, changedValues) -> presenter.saveHttpConnectorSecurity(form, changedValues))
                 .build();
         httpConnectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE
@@ -207,41 +191,6 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
                 .add(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB, mbuiContext.resources().constants().policy(),
                         httpConnectorSecurityPolicyForm.asElement());
         httpConnectorTable.asElement().getParentElement().appendChild(httpConnectorTabs.asElement());
-
-        // local outbound connection
-        Metadata localOutboundMetadata = mbuiContext.metadataRegistry().lookup(LOCAL_OUTBOUND_TEMPLATE);
-        localOutboundProperties = new SubResourceProperties.FormItem(PROPERTY);
-        localOutboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_LOCAL_OUTBOUND_FORM,
-                localOutboundMetadata)
-                .unboundFormItem(localOutboundProperties)
-                .onSave((form, changedValues) -> presenter.saveLocalOutbound(form.getModel().getName(), changedValues,
-                        localOutboundProperties.isModified(), localOutboundProperties.getValue()))
-                .build();
-        registerAttachable(localOutboundForm);
-        localOutboundTable.asElement().getParentElement().appendChild(localOutboundForm.asElement());
-
-        // outbound connection
-        Metadata outboundMetadata = mbuiContext.metadataRegistry().lookup(OUTBOUND_TEMPLATE);
-        outboundProperties = new SubResourceProperties.FormItem(PROPERTY);
-        outboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_OUTBOUND_FORM, outboundMetadata)
-                .unboundFormItem(outboundProperties, 0)
-                .onSave((form, changedValues) -> presenter.saveOutbound(form.getModel().getName(), changedValues,
-                        outboundProperties.isModified(), outboundProperties.getValue()))
-                .build();
-        registerAttachable(outboundForm);
-        outboundTable.asElement().getParentElement().appendChild(outboundForm.asElement());
-
-        // remote outbound connection
-        Metadata remoteOutboundMetadata = mbuiContext.metadataRegistry().lookup(REMOTE_OUTBOUND_TEMPLATE);
-        remoteOutboundProperties = new SubResourceProperties.FormItem(PROPERTY);
-        remoteOutboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_REMOTE_OUTBOUND_FORM,
-                remoteOutboundMetadata)
-                .unboundFormItem(remoteOutboundProperties, 1)
-                .onSave((form, changedValues) -> presenter.saveRemoteOutbound(form.getModel().getName(), changedValues,
-                        remoteOutboundProperties.isModified(), remoteOutboundProperties.getValue()))
-                .build();
-        registerAttachable(remoteOutboundForm);
-        remoteOutboundTable.asElement().getParentElement().appendChild(remoteOutboundForm.asElement());
     }
 
     @Override
@@ -270,9 +219,9 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
                 .add(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         connectorForm.clear();
-        connectorProperties.clearValue();
+        connectorForm.getFormItem(PROPERTY).clearValue();
         connectorSecurityForm.clear();
-        connectorSecurityProperties.clearValue();
+        connectorSecurityForm.getFormItem(PROPERTY).clearValue();
         connectorSecurityPolicyForm.clear();
 
         httpConnectorTable.api()
@@ -280,9 +229,9 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
                 .add(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         httpConnectorForm.clear();
-        httpConnectorProperties.clearValue();
+        httpConnectorForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityForm.clear();
-        httpConnectorSecurityProperties.clearValue();
+        httpConnectorSecurityForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityPolicyForm.clear();
 
         localOutboundTable.api()
@@ -290,39 +239,40 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
                 .add(asNamedNodes(failSafePropertyList(payload, LOCAL_OUTBOUND_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         localOutboundForm.clear();
-        localOutboundProperties.clearValue();
+        localOutboundForm.getFormItem(PROPERTY).clearValue();
 
         outboundTable.api()
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, OUTBOUND_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         outboundForm.clear();
-        outboundProperties.clearValue();
+        outboundForm.getFormItem(PROPERTY).clearValue();
 
         remoteOutboundTable.api()
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, REMOTE_OUTBOUND_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
         remoteOutboundForm.clear();
-        remoteOutboundProperties.clearValue();
+        remoteOutboundForm.getFormItem(PROPERTY).clearValue();
     }
 
     @Override
     public void updateConnector(final NamedNode connector) {
-        updateGenericConnector(connector, connectorForm, connectorProperties,
-                connectorSecurityForm, connectorSecurityProperties, connectorSecurityPolicyForm);
+        updateGenericConnector(connector, connectorForm, connectorSecurityForm, connectorSecurityPolicyForm);
     }
 
     @Override
     public void updateHttpConnector(final NamedNode httpConnector) {
-        updateGenericConnector(httpConnector, httpConnectorForm, httpConnectorProperties,
-                httpConnectorSecurityForm, httpConnectorSecurityProperties, httpConnectorSecurityPolicyForm);
+        updateGenericConnector(httpConnector, httpConnectorForm, httpConnectorSecurityForm,
+                httpConnectorSecurityPolicyForm);
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private void updateGenericConnector(NamedNode node, Form<NamedNode> form, PropertiesItem properties,
-            FailSafeForm<ModelNode> securityForm, PropertiesItem securityProperties,
+    private void updateGenericConnector(NamedNode node, Form<NamedNode> form, FailSafeForm<ModelNode> securityForm,
             FailSafeForm<ModelNode> policyForm) {
+
+        FormItem<Object> properties = form.getFormItem(PROPERTY);
+        FormItem<Object> securityProperties = securityForm.getFormItem(PROPERTY);
 
         if (node != null) {
             Map<String, String> p = failSafePropertyList(node, PROPERTY).stream()
@@ -349,20 +299,21 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
 
     @Override
     public void updateLocalOutbound(@Nullable final NamedNode localOutbound) {
-        updateGenericOutbound(localOutbound, localOutboundForm, localOutboundProperties);
+        updateGenericOutbound(localOutbound, localOutboundForm);
     }
 
     @Override
     public void updateOutbound(@Nullable final NamedNode outbound) {
-        updateGenericOutbound(outbound, outboundForm, outboundProperties);
+        updateGenericOutbound(outbound, outboundForm);
     }
 
     @Override
     public void updateRemoteOutbound(@Nullable final NamedNode remoteOutbound) {
-        updateGenericOutbound(remoteOutbound, remoteOutboundForm, remoteOutboundProperties);
+        updateGenericOutbound(remoteOutbound, remoteOutboundForm);
     }
 
-    private void updateGenericOutbound(NamedNode node, Form<NamedNode> form, PropertiesItem properties) {
+    private void updateGenericOutbound(NamedNode node, Form<NamedNode> form) {
+        FormItem<Object> properties = form.getFormItem(PROPERTY);
         if (node != null) {
             Map<String, String> p = failSafePropertyList(node, PROPERTY).stream()
                     .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
