@@ -87,6 +87,7 @@ public interface Names {
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
+    String SECURITY_DOMAIN = "Security Domain";
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";

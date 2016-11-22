@@ -59,7 +59,7 @@ public class Subsystems {
         add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, true, resources.previews().configurationRemoting()));
         add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
         add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, Ids.RESOURCE_ADAPTER, true, resources.previews().configurationResourceAdapters()));
-        add(new SubsystemMetadata(SECURITY, "Security", null, null, null, false));
+        add(new SubsystemMetadata(SECURITY, "Security Domains", null, NameTokens.SECURITY_CONFIGURATION, Ids.SECURITY_DOMAIN, true, resources.previews().configurationSecurityDomains()));
         add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
         add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, null, false));
         add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));

@@ -300,6 +300,8 @@ public interface Ids {
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
+    String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_DOMAIN_ADD = build(SECURITY_DOMAIN, ADD_SUFFIX);
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
     String SERVER_GROUP = "server-group";
@@ -406,6 +408,10 @@ public interface Ids {
 
     static String server(final String name) {
         return build(SERVER, name);
+    }
+
+    static String securityDomain(final String name) {
+        return build(SECURITY_DOMAIN, name);
     }
 
     static String serverGroup(final String name) {

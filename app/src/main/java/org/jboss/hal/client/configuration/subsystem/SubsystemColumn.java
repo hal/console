@@ -100,9 +100,6 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public List<ItemAction<SubsystemMetadata>> actions() {
-                        if (item.getNextColumn() != null) {
-                            return ItemDisplay.super.actions();
-                        }
                         PlaceRequest placeRequest = null;
                         if (item.hasCustomImplementation() && item.getToken() != null) {
                             placeRequest = places.selectedProfile(item.getToken()).build();

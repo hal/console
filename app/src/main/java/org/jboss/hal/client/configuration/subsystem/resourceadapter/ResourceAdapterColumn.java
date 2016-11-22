@@ -43,7 +43,6 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -73,7 +72,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                 .itemsProvider((context, callback) -> {
                     ResourceAddress address = RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation op = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, RESOURCE_ADAPTER_TEMPLATE.lastKey())
+                            .param(CHILD_TYPE, RESOURCE_ADAPTER)
                             .param(RECURSIVE, true).build();
 
                     dispatcher.execute(op, result -> {

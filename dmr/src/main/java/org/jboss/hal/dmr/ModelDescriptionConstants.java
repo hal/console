@@ -61,6 +61,7 @@ public interface ModelDescriptionConstants {
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
 
+    String CACHE_TYPE = "cache=type";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
