@@ -60,7 +60,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     static final Constants CONSTANTS = GWT.create(Constants.class);
-    static final Messages MESSAGES = GWT.create(Messages.class);
+    protected static final Messages MESSAGES = GWT.create(Messages.class);
 
     private static final String ARIA_DESCRIBEDBY = "aria-describedby";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
@@ -84,7 +84,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     final DivElement editingRoot;
     final DivElement inputGroupContainer;
     final DivElement inputContainer;
-    final SpanElement errorText;
+    protected final SpanElement errorText;
     private final LabelElement inputLabelElement;
     private final SpanElement inputButtonContainer;
     private final ButtonElement expressionButton;

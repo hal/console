@@ -140,6 +140,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
+    SafeHtml mappingHint();
     String messages(@PluralCount int count);
     SafeHtml metadataError();
     String modifyResourceTitle(String type);

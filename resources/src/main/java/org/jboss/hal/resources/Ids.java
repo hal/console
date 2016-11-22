@@ -287,6 +287,8 @@ public interface Ids {
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
+    String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = build(RESOURCE_ADAPTER, "admin-object", ADD_SUFFIX);
+    String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = build(RESOURCE_ADAPTER, "connection-definition", ADD_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);

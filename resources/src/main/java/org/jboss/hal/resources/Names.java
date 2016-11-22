@@ -23,12 +23,14 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String ADMIN_OBJECT = "Admin Object";
     String ARCHIVE = "Archive";
     String AUDIT_LOG = "Audit Log";
     String BOOTSTRAP = "Bootstrap";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
+    String CONNECTION_DEFINITION = "Connection Definition";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";

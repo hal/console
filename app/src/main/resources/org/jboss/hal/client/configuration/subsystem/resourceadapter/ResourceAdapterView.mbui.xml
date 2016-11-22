@@ -40,11 +40,9 @@
                             <attribute name="wm-security-default-groups"/>
                             <attribute name="wm-security-default-principal"/>
                             <attribute name="wm-security-domain"/>
-                            <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("wm-security-mapping-groups", new org.jboss.hal.ballroom.LabelBuilder().label("wm-security-mapping-groups"))}}'/>
+                            <attribute form-item='{{new MappingsItem("wm-security-mapping-groups")}}'/>
                             <attribute name="wm-security-mapping-required"/>
-                            <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("wm-security-mapping-users", new org.jboss.hal.ballroom.LabelBuilder().label("wm-security-mapping-users"))}}'/>
+                            <attribute form-item='{{new MappingsItem("wm-security-mapping-users")}}'/>
                         </group>
                     </attributes>
                 </form>

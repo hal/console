@@ -449,8 +449,9 @@ public class CrudOperations {
      */
     public void save(final String type, final String name, final AddressTemplate template,
             final Map<String, Object> changedValues, final Callback callback) {
-        save(template.resolve(statementContext, name), changedValues,
-                resources.messages().modifyResourceSuccess(type, name), callback);
+        ResourceAddress address = template.resolve(statementContext, name);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues);
+        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
     }
 
     /**
@@ -466,7 +467,9 @@ public class CrudOperations {
      */
     public void save(final String name, final AddressTemplate template, final Map<String, Object> changedValues,
             final SafeHtml successMessage, final Callback callback) {
-        save(template.resolve(statementContext, name), changedValues, successMessage, callback);
+        ResourceAddress address = template.resolve(statementContext, name);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues);
+        save(operations, successMessage, callback);
     }
 
     /**
@@ -481,7 +484,21 @@ public class CrudOperations {
      */
     public void save(final String type, final String name, final ResourceAddress address,
             final Map<String, Object> changedValues, final Callback callback) {
-        save(address, changedValues, resources.messages().modifyResourceSuccess(type, name), callback);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues);
+        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
+    }
+
+    /**
+     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * is fired and the specified callback is executed.
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param name       the resource name
+     * @param operations the composite operation to persist the changed values
+     * @param callback   the callback executed after saving the resource
+     */
+    public void save(final String type, final String name, final Composite operations, final Callback callback) {
+        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
     }
 
     /**
@@ -495,8 +512,19 @@ public class CrudOperations {
      */
     public void save(final ResourceAddress address, final Map<String, Object> changedValues,
             final SafeHtml successMessage, final Callback callback) {
-        Composite operation = operationFactory.fromChangeSet(address, changedValues);
-        dispatcher.execute(operation, (CompositeResult result) -> {
+        save(operationFactory.fromChangeSet(address, changedValues), successMessage, callback);
+    }
+
+    /**
+     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * message is fired and the specified callback is executed.
+     *
+     * @param operations     the composite operation to persist the changed values
+     * @param successMessage the success message fired after saving the resource
+     * @param callback       the callback executed after saving the resource
+     */
+    public void save(final Composite operations, final SafeHtml successMessage, final Callback callback) {
+        dispatcher.execute(operations, (CompositeResult result) -> {
             MessageEvent.fire(eventBus, Message.success(successMessage));
             callback.execute();
         });

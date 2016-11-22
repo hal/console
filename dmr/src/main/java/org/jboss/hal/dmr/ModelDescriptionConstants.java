@@ -68,6 +68,7 @@ public interface ModelDescriptionConstants {
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONFIG_PROPERTIES = "config-properties";
+    String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -289,6 +290,8 @@ public interface ModelDescriptionConstants {
     String WEBSERVICES = "webservices";
     String WHERE = "where";
     String WHOAMI = "whoami";
+    String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
+    String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
     String WORKMANAGER = "workmanager";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 

@@ -24,7 +24,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -35,6 +34,7 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -508,7 +508,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .addFromRequestProperties()
-                .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
+                .unboundFormItem(new NameItem(), 0)
                 .customFormItem("file", (attributeDescription) -> new FileFormItem())
                 .unsorted();
         if (attributes != null) {
@@ -524,14 +524,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     private void removeResource(Api<NamedNode> api, String templateSuffix, String type) {
+        //noinspection ConstantConditions
         String name = api.selectedRow().getName();
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
-        DialogFactory.showConfirmation(
-                mbuiContext.resources().messages().removeResourceConfirmationTitle(type),
-                mbuiContext.resources().messages().removeResourceConfirmationQuestion(name),
-                () -> {
-                    ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
-                    crud().remove(type, name, address, () -> presenter.reload());
-                });
+        ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
+        crud().remove(type, name, address, () -> presenter.reload());
     }
 }

@@ -16,7 +16,6 @@
 package org.jboss.hal.dmr.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,24 +35,25 @@ public class Composite extends Operation implements Iterable<Operation> {
     public Composite(Operation first, Operation... rest) {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
         this.operations = new ArrayList<>();
-        this.operations.add(first);
+
+        add(first);
         if (rest != null) {
-            Collections.addAll(operations, rest);
+            for (Operation operation : rest) {
+                add(operation);
+            }
         }
-        addSteps();
     }
 
     public Composite(List<Operation> operations) {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
         this.operations = new ArrayList<>();
-        this.operations.addAll(operations);
-        addSteps();
+
+        operations.forEach(this::add);
     }
 
-    private void addSteps() {
-        for (Operation operation : operations) {
-            get(STEPS).add(operation);
-        }
+    public void add(Operation operation) {
+        operations.add(operation);
+        get(STEPS).add(operation);
     }
 
     @Override

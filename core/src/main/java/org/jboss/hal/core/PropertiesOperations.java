@@ -217,13 +217,14 @@ public class PropertiesOperations {
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
-        if (!properties.isModified()) {
+        if (properties == null || !properties.isModified()) {
             if (!changedValues.isEmpty()) {
                 crud.save(type, name, template, changedValues, callback);
             }
         } else {
-            saveWithProperties(type, name, template.resolve(statementContext, name), changedValues, properties.getValue(),
-                    psr, callback);
+            ResourceAddress address = template.resolve(statementContext, name);
+            Composite operations = operationFactory.fromChangeSet(address, changedValues);
+            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
         }
     }
 
@@ -254,12 +255,48 @@ public class PropertiesOperations {
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
-        if (!properties.isModified()) {
+        if (properties == null || !properties.isModified()) {
             if (!changedValues.isEmpty()) {
                 crud.save(type, name, address, changedValues, callback);
             }
         } else {
-            saveWithProperties(type, name, address, changedValues, properties.getValue(), psr, callback);
+            Composite operations = operationFactory.fromChangeSet(address, changedValues);
+            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
+        }
+    }
+
+    /**
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
+     * saved a standard success message is fired and the specified callback is executed.
+     * <p>
+     * This is the properties-extended version of {@link CrudOperations#save(String, String, Composite,
+     * CrudOperations.Callback)}:
+     * <ol>
+     * <li>New properties are added as children of the PSR</li>
+     * <li>Modified properties are modified in the PSRs</li>
+     * <li>Removed properties are removed from the PSR</li>
+     * </ol>
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param name       the resource name
+     * @param address    the fq address for the operation
+     * @param form       the form containing an unbound form item for the properties
+     * @param operations the composite operation to persist the changed values
+     * @param psr        the name of the properties sub resource (PSR) - most often this is "property"
+     * @param callback   the callback executed after saving the resource
+     */
+    public <T extends ModelNode> void saveWithProperties(final String type, final String name,
+            final ResourceAddress address, final Form<T> form, final Composite operations,
+            final String psr, final CrudOperations.Callback callback) {
+
+        FormItem<Map<String, String>> properties = form.getFormItem(psr);
+
+        if (properties == null || !properties.isModified()) {
+            if (!operations.isEmpty()) {
+                crud.save(type, name, operations, callback);
+            }
+        } else {
+            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
         }
     }
 
@@ -289,28 +326,27 @@ public class PropertiesOperations {
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
-        if (!properties.isModified()) {
+        if (properties == null || !properties.isModified()) {
             if (!changedValues.isEmpty()) {
                 crud.saveSingleton(type, address, changedValues, callback);
             }
         } else {
-            saveWithProperties(type, null, address, changedValues, properties.getValue(), psr,
+            Composite operations = operationFactory.fromChangeSet(address, changedValues);
+            saveWithProperties(type, null, address, operations, properties.getValue(), psr,
                     callback);
         }
     }
 
     private void saveWithProperties(String type, String name, ResourceAddress address,
-            Map<String, Object> changedValues, Map<String, String> properties, String psr,
+            Composite operations, Map<String, String> properties, String psr,
             CrudOperations.Callback callback) {
 
         Function[] functions = new Function[]{
                 (Function<FunctionContext>) control -> {
-                    if (changedValues.isEmpty()) {
+                    if (operations.isEmpty()) {
                         control.proceed();
                     } else {
-                        Composite operation = operationFactory
-                                .fromChangeSet(address, changedValues);
-                        dispatcher.executeInFunction(control, operation,
+                        dispatcher.executeInFunction(control, operations,
                                 (CompositeResult result) -> control.proceed());
                     }
                 },
