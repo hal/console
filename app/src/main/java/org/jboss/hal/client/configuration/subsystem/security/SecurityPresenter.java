@@ -94,6 +94,6 @@ public class SecurityPresenter
 
     @Override
     protected void reload() {
-        crud.read(SECURITY_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(SECURITY_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 }

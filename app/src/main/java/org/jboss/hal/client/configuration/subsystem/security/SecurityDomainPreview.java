@@ -15,8 +15,24 @@
  */
 package org.jboss.hal.client.configuration.subsystem.security;
 
+import java.util.Collections;
+
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewContent;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
+
 /**
  * @author Harald Pehl
  */
-class SecurityDomainPreview {
+class SecurityDomainPreview extends PreviewContent<SecurityDomain> {
+
+    SecurityDomainPreview(final SecurityDomain securityDomain) {
+        super(securityDomain.getName());
+
+        PreviewAttributes<SecurityDomain> attributes = new PreviewAttributes<>(securityDomain,
+                Collections.singletonList(CACHE_TYPE))
+                .end();
+        previewBuilder().addAll(attributes);
+    }
 }

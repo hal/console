@@ -22,28 +22,68 @@ import com.google.gwt.resources.client.ExternalTextResource;
  */
 public class SubsystemMetadata {
 
+    public static class Builder {
+
+        private final String name;
+        private final String title;
+        private String subtitle;
+        private String token;
+        private String nextColumn;
+        private ExternalTextResource externalTextResource;
+        private boolean generic;
+
+        public Builder(final String name, final String title) {
+            this.name = name;
+            this.title = title;
+        }
+
+        public Builder subtitle(String subtitle) {
+            this.subtitle = subtitle;
+            return this;
+        }
+
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder nextColumn(String nextColumn) {
+            this.nextColumn = nextColumn;
+            return this;
+        }
+
+        public Builder preview(ExternalTextResource externalTextResource) {
+            this.externalTextResource = externalTextResource;
+            return this;
+        }
+
+        public Builder generic() {
+            this.generic = true;
+            return this;
+        }
+
+        public SubsystemMetadata build() {
+            return new SubsystemMetadata(this);
+        }
+    }
+
+
     private final String name;
     private final String title;
     private final String subtitle;
     private final String token;
     private final String nextColumn;
-    private final boolean customImplementation;
     private final ExternalTextResource externalTextResource;
+    private final boolean generic;
 
-    public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
-            final String nextColumn, final boolean customImplementation) {
-        this(name, title, subtitle, token, nextColumn, customImplementation, null);
-    }
-
-    public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
-            final String nextColumn, final boolean customImplementation, ExternalTextResource externalTextResource) {
-        this.name = name;
-        this.title = title;
-        this.subtitle = subtitle;
-        this.token = token;
-        this.nextColumn = nextColumn;
-        this.customImplementation = customImplementation;
-        this.externalTextResource = externalTextResource;
+    private SubsystemMetadata(final Builder builder) {
+        this.name = builder.name;
+        this.title = builder.title;
+        this.subtitle = builder.subtitle;
+        this.token = builder.token;
+        this.nextColumn = builder.nextColumn;
+        this.externalTextResource = builder.externalTextResource;
+        this.generic = builder.generic;
     }
 
     @Override
@@ -71,11 +111,11 @@ public class SubsystemMetadata {
         return nextColumn;
     }
 
-    public boolean hasCustomImplementation() {
-        return customImplementation;
-    }
-
     public ExternalTextResource getExternalTextResource() {
         return externalTextResource;
+    }
+
+    public boolean isGeneric() {
+        return generic;
     }
 }

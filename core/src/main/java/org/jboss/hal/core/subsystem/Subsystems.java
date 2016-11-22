@@ -35,35 +35,86 @@ public class Subsystems {
 
     private final Map<String, SubsystemMetadata> subsystems;
 
-    @SuppressWarnings("HardCodedStringLiteral")
     @Inject
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public Subsystems(Resources resources) {
         subsystems = new HashMap<>();
 
-        // @formatter:off
-        add(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_CONFIGURATION, null, true, resources.previews().configurationBatch()));
-        add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER, true, resources.previews().configurationDatasourcesDrivers()));
-        add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true, resources.previews().configurationDeploymentScanner()));
-        add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true, resources.previews().configurationEe()));
-        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, true, resources.previews().configurationEjb3()));
-        add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
-        add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, false));
-        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
-        add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, true));
-        add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, true));
-        add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, true));
-        add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));
-        add(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true, resources.previews().configurationMail()));
-        add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
-        add(new SubsystemMetadata(MODCLUSTER, "Modcluster", null, NameTokens.MODCLUSTER, null, true, resources.previews().configurationModcluster()));
-        add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, true, resources.previews().configurationRemoting()));
-        add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
-        add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, Ids.RESOURCE_ADAPTER, true, resources.previews().configurationResourceAdapters()));
-        add(new SubsystemMetadata(SECURITY, "Security Domains", null, NameTokens.SECURITY_CONFIGURATION, Ids.SECURITY_DOMAIN, true, resources.previews().configurationSecurityDomains()));
-        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
-        add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, null, false));
-        add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
-        // @formatter:on
+        add(new SubsystemMetadata.Builder(BATCH_JBERET, "Batch")
+                .subtitle("JBeret")
+                .token(NameTokens.BATCH_CONFIGURATION)
+                .preview(resources.previews().configurationBatch())
+                .build());
+        add(new SubsystemMetadata.Builder(DATASOURCES, Names.DATASOURCES_DRIVERS)
+                .nextColumn(Ids.DATA_SOURCE_DRIVER)
+                .preview(resources.previews().configurationDatasourcesDrivers())
+                .build());
+        add(new SubsystemMetadata.Builder(DEPLOYMENT_SCANNER, "Deployment Scanners")
+                .token(NameTokens.DEPLOYMENT_SCANNERS)
+                .preview(resources.previews().configurationDeploymentScanner())
+                .build());
+        add(new SubsystemMetadata.Builder(EE, "EE")
+                .token(NameTokens.EE)
+                .preview(resources.previews().configurationEe())
+                .build());
+        add(new SubsystemMetadata.Builder(EJB3, "EJB3")
+                .token(NameTokens.EJB3)
+                .preview(resources.previews().configurationEjb3())
+                .build());
+        add(new SubsystemMetadata.Builder(IIOP_OPENJDK, "IIOP")
+                .subtitle("OpenJDK")
+                .token(NameTokens.IIOP)
+                .build());
+        add(new SubsystemMetadata.Builder(INFINISPAN, "Infinispan")
+                .build());
+        add(new SubsystemMetadata.Builder(IO, "IO")
+                .token(NameTokens.IO)
+                .preview(resources.previews().configurationIo())
+                .build());
+        add(new SubsystemMetadata.Builder(JCA, "JCA")
+                .token(NameTokens.JCA)
+                .build());
+        add(new SubsystemMetadata.Builder(JMX, "JMX")
+                .token(NameTokens.JMX)
+                .build());
+        add(new SubsystemMetadata.Builder(JPA, "JPA")
+                .token(NameTokens.JPA_CONFIGURATION)
+                .build());
+        add(new SubsystemMetadata.Builder(LOGGING, Names.LOGGING)
+                .nextColumn(Ids.LOGGING)
+                .preview(resources.previews().configurationLogging())
+                .build());
+        add(new SubsystemMetadata.Builder(MAIL, "Mail")
+                .nextColumn(Ids.MAIL_SESSION)
+                .preview(resources.previews().configurationMail())
+                .build());
+        add(new SubsystemMetadata.Builder(MESSAGING_ACTIVEMQ, "Messaging")
+                .subtitle("ActiveMQ")
+                .build());
+        add(new SubsystemMetadata.Builder(MODCLUSTER, "Modcluster")
+                .token(NameTokens.MODCLUSTER)
+                .preview(resources.previews().configurationModcluster())
+                .build());
+        add(new SubsystemMetadata.Builder(REMOTING, "Remoting")
+                .token(NameTokens.REMOTING)
+                .preview(resources.previews().configurationRemoting())
+                .build());
+        add(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, "Resource Adapters")
+                .nextColumn(Ids.RESOURCE_ADAPTER)
+                .preview(resources.previews().configurationResourceAdapters())
+                .build());
+        add(new SubsystemMetadata.Builder(SECURITY, "Security")
+                .subtitle("deprecated")
+                .nextColumn(Ids.SECURITY_DOMAIN)
+                .token(NameTokens.SECURITY_CONFIGURATION)
+                .preview(resources.previews().configurationSecurityDomains())
+                .build());
+        add(new SubsystemMetadata.Builder(TRANSACTIONS, "Transactions")
+                .token(NameTokens.TRANSACTIONS)
+                .build());
+        add(new SubsystemMetadata.Builder(UNDERTOW, "Web")
+                .subtitle("Undertow")
+                .build());
     }
 
     private void add(SubsystemMetadata subsystem) {

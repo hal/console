@@ -101,14 +101,19 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     @Override
                     public List<ItemAction<SubsystemMetadata>> actions() {
                         PlaceRequest placeRequest = null;
-                        if (item.hasCustomImplementation() && item.getToken() != null) {
-                            placeRequest = places.selectedProfile(item.getToken()).build();
-
-                        } else if (!item.hasCustomImplementation()) {
+                        if (item.isGeneric()) {
                             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                             placeRequest = places.genericSubsystem(address);
                         }
-                        return singletonList(itemActionFactory.view(placeRequest));
+                        else if (item.getToken() != null) {
+                            placeRequest = places.selectedProfile(item.getToken()).build();
+                        }
+
+                        if (placeRequest == null) {
+                            return ItemDisplay.super.actions();
+                        } else {
+                            return singletonList(itemActionFactory.view(placeRequest));
+                        }
                     }
                 })
 
@@ -143,8 +148,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     } else {
                         String title = new LabelBuilder().label(name);
-                        SubsystemMetadata subsystem = new SubsystemMetadata(name, title, null, null, null, false);
-                        combined.add(subsystem);
+                        combined.add(new SubsystemMetadata.Builder(name, title).generic().build());
                     }
                 }
                 callback.onSuccess(combined);

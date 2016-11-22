@@ -38,6 +38,8 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -45,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
-@Requires({AddressTemplates.SECURITY_SUBSYSTEM_ADDRESS, AddressTemplates.SECURITY_DOMAIN_ADDRESS})
+@Requires(value = {SECURITY_SUBSYSTEM_ADDRESS, SECURITY_DOMAIN_ADDRESS})
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
     @Inject
@@ -80,7 +82,7 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(SecurityDomainPresenter::new)
+                .onPreview(SecurityDomainPreview::new)
         );
 
         setItemRenderer(item -> new ItemDisplay<SecurityDomain>() {
