@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -69,8 +70,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
         @Override
         @SuppressWarnings("Duplicates")
-        protected void assembleUI() {
-            super.assembleUI();
+        protected <C> void assembleUI(CreationContext<C> context) {
+            super.assembleUI(context);
             Elements.setVisible(valueElement, false);
             pre = Browser.getDocument().createPreElement();
             pre.getClassList().add(formControlStatic);
@@ -102,8 +103,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
         @Override
         @SuppressWarnings("Duplicates")
-        protected void assembleUI() {
-            super.assembleUI();
+        protected <C> void assembleUI(CreationContext<C> context) {
+            super.assembleUI(context);
             Elements.setVisible(valueElement, false);
             pre = Browser.getDocument().createPreElement();
             pre.getClassList().add(formControlStatic);

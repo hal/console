@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 
 /**
@@ -28,8 +29,8 @@ class MappingsItem extends PropertiesItem {
     }
 
     @Override
-    protected void assembleUI() {
-        super.assembleUI();
+    protected <C> void assembleUI(CreationContext<C> context) {
+        super.assembleUI(context);
         errorText.setInnerHTML(MESSAGES.mappingHint().asString());
     }
 

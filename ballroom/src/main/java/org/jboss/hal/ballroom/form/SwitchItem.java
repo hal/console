@@ -15,10 +15,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 
 /**
@@ -33,7 +32,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
-    protected InputElement<Boolean> newInputElement(Context<?> context) {
+    protected InputElement<Boolean> newInputElement(CreationContext<?> context) {
         switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
         return switchElement;

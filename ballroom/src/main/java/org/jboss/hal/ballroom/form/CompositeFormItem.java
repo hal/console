@@ -32,7 +32,6 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.separator;
 
 /**
@@ -65,8 +64,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     private Element readonlyContainer;
     private List<FormItem> formItems;
 
-    protected CompositeFormItem(final String name) {
-        super(name, new LabelBuilder().label(name), null, EMPTY_CONTEXT);
+    protected <C> CompositeFormItem(final String name, CreationContext<C> context) {
+        super(name, new LabelBuilder().label(name), null, context);
         this.name = name;
     }
 
@@ -83,7 +82,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    protected void assembleUI() {
+    protected <C> void assembleUI(CreationContext<C> context) {
         editContainer = Browser.getDocument().createDivElement();
         readonlyContainer = Browser.getDocument().createDivElement();
 
@@ -101,7 +100,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    protected InputElement<ModelNode> newInputElement(final InputElement.Context<?> context) {
+    protected InputElement<ModelNode> newInputElement(final CreationContext<?> context) {
         return new NoopInputElement();
     }
 

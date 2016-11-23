@@ -20,10 +20,9 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
@@ -40,7 +39,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement(Context<?> context) {
+    protected InputElement<List<String>> newInputElement(CreationContext<?> context) {
         selectBox = new MultiSelectBoxElement();
         selectBox.setClassName(formControl + " " + selectpicker);
         return selectBox;

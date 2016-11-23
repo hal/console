@@ -23,12 +23,11 @@ import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
 import static org.jboss.hal.resources.CSS.tags;
@@ -47,15 +46,15 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement(Context<?> context) {
+    protected InputElement<List<String>> newInputElement(CreationContext<?> context) {
         listElement = new ListElement();
         listElement.setClassName(formControl + " " + tags);
         return listElement;
     }
 
     @Override
-    protected void assembleUI() {
-        super.assembleUI();
+    protected <C> void assembleUI(CreationContext<C> context) {
+        super.assembleUI(context);
 
         inputGroupContainer.getClassList().add(tags);
 
