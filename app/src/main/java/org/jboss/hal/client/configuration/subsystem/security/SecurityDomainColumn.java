@@ -45,7 +45,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
-@Requires(value = SECURITY_DOMAIN_ADDRESS, recursive = false)
+@Requires(value = SECURITY_DOMAIN_ADDRESS)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
     @Inject
