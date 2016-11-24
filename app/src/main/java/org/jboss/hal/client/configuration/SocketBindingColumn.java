@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 import javax.inject.Inject;
 
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -25,8 +26,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -35,9 +34,8 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 
 /**
  * @author Harald Pehl
@@ -48,9 +46,9 @@ public class SocketBindingColumn extends FinderColumn<Property> {
 
     @Inject
     public SocketBindingColumn(final Finder finder,
-            final Dispatcher dispatcher,
             final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory) {
+            final ItemActionFactory itemActionFactory,
+            final CrudOperations crud) {
 
         super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING, Names.SOCKET_BINDING)
                 .columnAction(columnActionFactory.add(
@@ -58,14 +56,8 @@ public class SocketBindingColumn extends FinderColumn<Property> {
                         Names.SOCKET_BINDING,
                         SocketBindingPresenter.ROOT_TEMPLATE))
                 .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_REFRESH))
-                .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            ResourceAddress.root())
-                            .param(CHILD_TYPE, "socket-binding-group").build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(result.asPropertyList());
-                    });
-                }));
+                .itemsProvider((context, callback) -> crud
+                        .readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, callback::onSuccess)));
 
         setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override

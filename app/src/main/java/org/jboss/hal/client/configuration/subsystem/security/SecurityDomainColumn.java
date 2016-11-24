@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -27,10 +28,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -39,23 +36,23 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 
 /**
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
-@Requires(value = {SECURITY_SUBSYSTEM_ADDRESS, SECURITY_DOMAIN_ADDRESS})
+@Requires(value = SECURITY_DOMAIN_ADDRESS, recursive = false)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
     @Inject
     public SecurityDomainColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
+            final CrudOperations crud,
             final Places places) {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
@@ -67,13 +64,8 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                         Collections.singletonList(CACHE_TYPE)))
 
                 .itemsProvider((context, callback) -> {
-                    ResourceAddress address = SECURITY_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-                    Operation op = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, SECURITY_DOMAIN)
-                            .param(RECURSIVE, true).build();
-
-                    dispatcher.execute(op, result -> {
-                        List<SecurityDomain> securityDomains = result.asPropertyList().stream()
+                    crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
+                        List<SecurityDomain> securityDomains = children.stream()
                                 .map(SecurityDomain::new)
                                 .collect(toList());
                         callback.onSuccess(securityDomains);

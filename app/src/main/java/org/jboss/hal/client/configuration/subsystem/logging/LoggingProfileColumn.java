@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -30,7 +31,6 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -41,7 +41,10 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
@@ -57,6 +60,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             final ItemActionFactory itemActionFactory,
             final Places places,
             final Dispatcher dispatcher,
+            final CrudOperations crud,
             final StatementContext statementContext,
             final Resources resources) {
 
@@ -67,14 +71,8 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                         Names.LOGGING_PROFILE,
                         AddressTemplates.LOGGING_PROFILE_TEMPLATE))
 
-                .itemsProvider((context, callback) -> {
-                    ResourceAddress address = AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, LOGGING_PROFILE)
-                            .param(RECURSIVE_DEPTH, 1)
-                            .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
-                })
+                .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
+                        children -> callback.onSuccess(asNamedNodes(children))))
 
                 .onPreview(item -> new LoggingPreview<>(dispatcher, resources,
                         item.getName(), resources.previews().configurationLoggingProfiles(),

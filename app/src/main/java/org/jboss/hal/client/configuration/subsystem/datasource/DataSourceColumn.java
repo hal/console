@@ -40,6 +40,7 @@ import org.jboss.hal.client.configuration.subsystem.datasource.wizard.Properties
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.ReviewStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.State;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -56,6 +57,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -73,6 +75,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
@@ -90,6 +93,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
+    private final CrudOperations crud;
     private final EventBus eventBus;
     private final StatementContext statementContext;
     private final Environment environment;
@@ -100,6 +104,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     @Inject
     public DataSourceColumn(final MetadataRegistry metadataRegistry,
             final Dispatcher dispatcher,
+            final CrudOperations crud,
             final EventBus eventBus,
             final StatementContext statementContext,
             final Environment environment,
@@ -117,6 +122,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
+        this.crud = crud;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.environment = environment;
@@ -147,7 +153,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         .map(property -> new DataSource(property, false)).collect(toList()));
                 combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new DataSource(property, true)).collect(toList()));
-                Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
+                combined.sort(comparing(NamedNode::getName));
                 callback.onSuccess(combined);
             });
         });
@@ -227,11 +233,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         };
 
         Function<FunctionContext> readDataSources = control -> {
-            ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
-                    .param(CHILD_TYPE, xa ? XA_DATA_SOURCE : DATA_SOURCE).build();
-            dispatcher.executeInFunction(control, operation, result -> {
-                List<DataSource> dataSources = result.asPropertyList().stream()
+            crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE, children -> {
+                List<DataSource> dataSources = children.stream()
                         .map(property -> new DataSource(property, xa)).collect(toList());
                 control.getContext().set(DATASOURCES, dataSources);
                 control.proceed();
@@ -240,7 +243,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
                 readDataSources,
-                new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
+                new JdbcDriverFunctions.ReadConfiguration(crud),
                 new TopologyFunctions.RunningServersQuery(environment, dispatcher,
                         new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
                 new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),

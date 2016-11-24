@@ -48,10 +48,20 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class which contains generic CRUD methods to add, read, update and remove resources. Whenever possible the methods of
- * this class should be reused instead of writing custom CRUD functionality.
+ * Class which contains generic CRUD methods to add, read, update and remove resources. For each group of methods there
+ * are different signatures which work with different levels of abstractions:
+ * <dl>
+ * <dt>{@link AddressTemplate}</dt>
+ * <dd>The most generic form. The template is resolves against the current statement context</dd>
+ * <dt>{@link ResourceAddress}</dt>
+ * <dd>Gives you full control over the resource address. Use this if you're using a custom statement context like
+ * ({@link org.jboss.hal.meta.FilteringStatementContext}).</dd>
+ * <dt>{@link Operation}</dt>
+ * <dd>For some methods you can specify the operation itself</dd>
+ * </dl>
  * <p>
- * Currently this class is heavily used in
+ * Whenever possible the methods of this class should be reused instead of writing custom CRUD functionality. Currently
+ * this class is heavily used in
  * <ul>
  * <li>{@code ColumnActionFactory}</li>
  * <li>{@code ItemActionFactory}</li>
@@ -130,7 +140,7 @@ public class CrudOperations {
     }
 
 
-    // ------------------------------------------------------ (c)reate
+    // ------------------------------------------------------ (c)reate with dialog
 
     /**
      * Opens an add-resource-dialog for the given resource type. The dialog contains fields for all required request
@@ -172,6 +182,9 @@ public class CrudOperations {
         });
     }
 
+
+    // ------------------------------------------------------ (c)reate operation
+
     /**
      * Executes an add operation using the specified name and payload. After the resource has been added a success
      * message is fired and the specified callback is executed.
@@ -208,6 +221,9 @@ public class CrudOperations {
             callback.execute(name, address);
         });
     }
+
+
+    // ------------------------------------------------------ (c)reate singleton with dialog
 
     /**
      * Opens an add-resource-dialog for the given singleton resource type. The dialog contains fields for all required
@@ -250,6 +266,9 @@ public class CrudOperations {
         });
     }
 
+
+    // ------------------------------------------------------ (c)reate singleton operation
+
     /**
      * Executes an add operation using the specified template. After the resource has been added a success message is
      * fired and the specified callback is executed.
@@ -261,18 +280,6 @@ public class CrudOperations {
      */
     public void addSingleton(final String type, final AddressTemplate template, final AddCallback callback) {
         addSingleton(type, template.resolve(statementContext), null, callback);
-    }
-
-    /**
-     * Executes an add operation using the specified template. After the resource has been added a success message is
-     * fired and the specified callback is executed.
-     *
-     * @param type     the human readable resource type used in the dialog header and success message
-     * @param address  the fq address for the add operation
-     * @param callback the callback executed after adding the singleton resource
-     */
-    public void addSingleton(final String type, final ResourceAddress address, final AddCallback callback) {
-        addSingleton(type, address, null, callback);
     }
 
     /**
@@ -312,7 +319,7 @@ public class CrudOperations {
     }
 
 
-    // ------------------------------------------------------ (r)ead
+    // ------------------------------------------------------ (r)ead using template
 
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the specified
@@ -327,17 +334,6 @@ public class CrudOperations {
     }
 
     /**
-     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the specified
-     * template and passes the result to the specified callback.
-     *
-     * @param address  the fq address for the {@code read-resource} operation
-     * @param callback the callback which gets the result of the {@code read-resource} operation
-     */
-    public void read(final ResourceAddress address, final ReadCallback callback) {
-        read(new Operation.Builder(READ_RESOURCE_OPERATION, address).param(INCLUDE_ALIASES, true).build(), callback);
-    }
-
-    /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} with the specified depth
      * on the specified template and passes the result to the specified callback.
      *
@@ -348,6 +344,67 @@ public class CrudOperations {
      */
     public void read(final AddressTemplate template, final int depth, final ReadCallback callback) {
         read(template.resolve(statementContext), depth, callback);
+    }
+
+    /**
+     * Executes a recursive {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the
+     * specified template and passes the result to the specified callback.
+     *
+     * @param template the address template which is resolved against the current statement context to get the
+     *                 resource address for the {@code read-resource} operation
+     * @param callback the callback which gets the result of the {@code read-resource} operation
+     */
+    public void readRecursive(final AddressTemplate template, final ReadCallback callback) {
+        readRecursive(template.resolve(statementContext), callback);
+    }
+
+    /**
+     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
+     * specified template and passes the result as {@code List<Property>} to the specified callback.
+     *
+     * @param template the address template which is resolved against the current statement context to get the
+     *                 resource address for the {@code read-children-resource} operation
+     * @param resource the child resource (not human readable, but the actual child resource name!)
+     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
+     *                 List<Property>}
+     */
+    public void readChildren(final AddressTemplate template, final String resource,
+            final ReadChildrenCallback callback) {
+        readChildren(template.resolve(statementContext), resource, callback);
+    }
+
+    /**
+     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
+     * specified template and passes the result as {@code List<Property>} to the specified callback.
+     *
+     * @param template the address template which is resolved against the current statement context to get the
+     *                 resource address for the {@code read-children-resource} operation
+     * @param resource the child resource (not human readable, but the actual child resource name!)
+     * @param depth    the depth used for the {@code recursive-depth} parameter
+     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
+     *                 List<Property>}
+     */
+    public void readChildren(final AddressTemplate template, final String resource, final int depth,
+            final ReadChildrenCallback callback) {
+        readChildren(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, template.resolve(statementContext))
+                        .param(CHILD_TYPE, resource)
+                        .param(RECURSIVE_DEPTH, depth)
+                        .build(),
+                callback);
+    }
+
+
+    // ------------------------------------------------------ (r)ead using address
+
+    /**
+     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the specified
+     * template and passes the result to the specified callback.
+     *
+     * @param address  the fq address for the {@code read-resource} operation
+     * @param callback the callback which gets the result of the {@code read-resource} operation
+     */
+    public void read(final ResourceAddress address, final ReadCallback callback) {
+        read(new Operation.Builder(READ_RESOURCE_OPERATION, address).param(INCLUDE_ALIASES, true).build(), callback);
     }
 
     /**
@@ -370,18 +427,6 @@ public class CrudOperations {
      * Executes a recursive {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the
      * specified template and passes the result to the specified callback.
      *
-     * @param template the address template which is resolved against the current statement context to get the
-     *                 resource address for the {@code read-resource} operation
-     * @param callback the callback which gets the result of the {@code read-resource} operation
-     */
-    public void readRecursive(final AddressTemplate template, final ReadCallback callback) {
-        readRecursive(template.resolve(statementContext), callback);
-    }
-
-    /**
-     * Executes a recursive {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the
-     * specified template and passes the result to the specified callback.
-     *
      * @param address  the fq address for the {@code read-resource} operation
      * @param callback the callback which gets the result of the {@code read-resource} operation
      */
@@ -391,25 +436,6 @@ public class CrudOperations {
                         .param(RECURSIVE, true)
                         .build(),
                 callback);
-    }
-
-    private void read(final Operation operation, final ReadCallback callback) {
-        dispatcher.execute(operation, callback::execute);
-    }
-
-    /**
-     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
-     * specified template and passes the result as {@code List<Property>} to the specified callback.
-     *
-     * @param template the address template which is resolved against the current statement context to get the
-     *                 resource address for the {@code read-children-resource} operation
-     * @param resource the child resource (not human readable, but the actual child resource name!)
-     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
-     *                 List<Property>}
-     */
-    public void readChildren(final AddressTemplate template, final String resource,
-            final ReadChildrenCallback callback) {
-        readChildren(template.resolve(statementContext), resource, callback);
     }
 
     /**
@@ -429,12 +455,16 @@ public class CrudOperations {
                 callback);
     }
 
+    private void read(final Operation operation, final ReadCallback callback) {
+        dispatcher.execute(operation, callback::execute);
+    }
+
     private void readChildren(final Operation operation, final ReadChildrenCallback callback) {
         dispatcher.execute(operation, result -> callback.execute(result.asPropertyList()));
     }
 
 
-    // ------------------------------------------------------ (u)pdate
+    // ------------------------------------------------------ (u)pdate using template
 
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
@@ -472,6 +502,9 @@ public class CrudOperations {
         save(operations, successMessage, callback);
     }
 
+
+    // ------------------------------------------------------ (u)pdate using address
+
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
@@ -487,6 +520,23 @@ public class CrudOperations {
         Composite operations = operationFactory.fromChangeSet(address, changedValues);
         save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
     }
+
+    /**
+     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * message is fired and the specified callback is executed.
+     *
+     * @param address        the fq address for the operation
+     * @param changedValues  the changed values / payload for the operation
+     * @param successMessage the success message fired after saving the resource
+     * @param callback       the callback executed after saving the resource
+     */
+    public void save(final ResourceAddress address, final Map<String, Object> changedValues,
+            final SafeHtml successMessage, final Callback callback) {
+        save(operationFactory.fromChangeSet(address, changedValues), successMessage, callback);
+    }
+
+
+    // ------------------------------------------------------ (u)pdate using operation
 
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
@@ -505,20 +555,6 @@ public class CrudOperations {
      * Write the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      *
-     * @param address        the fq address for the operation
-     * @param changedValues  the changed values / payload for the operation
-     * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the resource
-     */
-    public void save(final ResourceAddress address, final Map<String, Object> changedValues,
-            final SafeHtml successMessage, final Callback callback) {
-        save(operationFactory.fromChangeSet(address, changedValues), successMessage, callback);
-    }
-
-    /**
-     * Write the changed values to the specified resource. After the resource has been saved the specified success
-     * message is fired and the specified callback is executed.
-     *
      * @param operations     the composite operation to persist the changed values
      * @param successMessage the success message fired after saving the resource
      * @param callback       the callback executed after saving the resource
@@ -529,6 +565,9 @@ public class CrudOperations {
             callback.execute();
         });
     }
+
+
+    // ------------------------------------------------------ (u)pdate singleton using template
 
     /**
      * Write the changed values to the specified singleton resource. After the resource has been saved a success
@@ -560,6 +599,9 @@ public class CrudOperations {
             final SafeHtml successMessage, final Callback callback) {
         saveSingleton(template.resolve(statementContext), changedValues, successMessage, callback);
     }
+
+
+    // ------------------------------------------------------ (u)pdate singleton using address
 
     /**
      * Write the changed values to the specified singleton resource. After the resource has been saved a success
@@ -594,7 +636,7 @@ public class CrudOperations {
     }
 
 
-    // ------------------------------------------------------ (d)elete
+    // ------------------------------------------------------ (d)elete using template
 
     /**
      * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been
@@ -609,6 +651,9 @@ public class CrudOperations {
     public void remove(final String type, final String name, final AddressTemplate template, final Callback callback) {
         remove(type, name, template.resolve(statementContext, name), callback);
     }
+
+
+    // ------------------------------------------------------ (d)elete using address
 
     /**
      * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been

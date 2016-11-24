@@ -23,6 +23,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -30,10 +31,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -43,7 +40,9 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -57,8 +56,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
     public ResourceAdapterColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
+            final CrudOperations crud,
             final Places places,
             final Resources resources) {
 
@@ -70,13 +68,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                         AddressTemplates.RESOURCE_ADAPTER_TEMPLATE))
 
                 .itemsProvider((context, callback) -> {
-                    ResourceAddress address = RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-                    Operation op = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, RESOURCE_ADAPTER)
-                            .param(RECURSIVE, true).build();
-
-                    dispatcher.execute(op, result -> {
-                        List<ResourceAdapter> resourceAdapters = result.asPropertyList().stream()
+                    crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER, children -> {
+                        List<ResourceAdapter> resourceAdapters = children.stream()
                                 .map(ResourceAdapter::new)
                                 .collect(toList());
                         callback.onSuccess(resourceAdapters);
