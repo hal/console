@@ -26,134 +26,134 @@
             </metadata>
         </item>
 
-        <item id="security-domain-acl-module-item" title="ACL Modules" icon="fa fa-list-ul">
-            <metadata address="/{selected.profile}/subsystem=security/security-domain=*/acl=classic/acl-module=*">
-                <h1>ACL Module</h1>
+        <item id="security-domain-authentication-item" title="Authentication" icon="fa fa-sign-in">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authentication=classic/login-module=*">
+                <h1>Authentication Module</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-acl-module-table" title="ACL Module"
-                       form-ref="security-domain-acl-module-form">
+                <table id="security-domain-authentication-table" title="Authentication Module"
+                       form-ref="security-domain-authentication-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.ACL)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                                handler="{{presenter.addClassicAuthenticationModule()}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUTHENTICATION)}}" scope="selected"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="security-domain-acl-module-form" title="ACL Module"
+                <form id="security-domain-authentication-form" title="Authentication Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-authorization-item" title="Authorization" icon="fa fa-shield">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authorization=classic/policy-module=*">
+                <h1>Authorization Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-authorization-table" title="Authorization Module"
+                       form-ref="security-domain-authorization-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.AUTHORIZATION)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUTHORIZATION)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-authorization-form" title="Authorization Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-audit-item" title="Audit" icon="fa fa-search">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
+                <h1>Audit Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-audit-table" title="Provider Module"
+                       form-ref="security-domain-audit-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.AUDIT)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUDIT)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-audit-form" title="Audit Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUDIT)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-acl-item" title="ACL" icon="fa fa-lock">
+            <metadata address="/{selected.profile}/subsystem=security/security-domain=*/acl=classic/acl-module=*">
+                <h1>ACL Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-acl-table" title="ACL Module"
+                       form-ref="security-domain-acl-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.ACL)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.ACL)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-acl-form" title="ACL Module"
                       on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"/>
             </metadata>
         </item>
 
-        <item id="security-domain-provider-module-item" title="Provider Modules" icon="fa fa-cubes">
-            <metadata
-                    address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
-                <h1>Provider Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-provider-module-table" title="Provider Module"
-                       form-ref="security-domain-provider-module-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.PROVIDER)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="security-domain-provider-module-form" title="Provider Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.PROVIDER)}}"/>
-            </metadata>
-        </item>
-
-        <item id="security-domain-login-module-item" title="Login Modules" icon="fa fa-sign-in">
-            <metadata
-                    address="/{selected.profile}/subsystem=security/security-domain=*/authentication=classic/login-module=*">
-                <h1>Login Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-login-module-table" title="Login Module"
-                       form-ref="security-domain-login-module-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.LOGIN)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="security-domain-login-module-form" title="Login Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.LOGIN)}}"/>
-            </metadata>
-        </item>
-
-        <item id="security-domain-policy-module-item" title="Policy Modules" icon="fa fa-shield">
-            <metadata
-                    address="/{selected.profile}/subsystem=security/security-domain=*/authorization=classic/policy-module=*">
-                <h1>Policy Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-policy-module-table" title="Policy Module"
-                       form-ref="security-domain-policy-module-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.POLICY)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="security-domain-policy-module-form" title="Policy Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.POLICY)}}"/>
-            </metadata>
-        </item>
-
-        <item id="security-domain-trust-module-item" title="Trust Modules" icon="fa fa-handshake-o">
-            <metadata
-                    address="/{selected.profile}/subsystem=security/security-domain=*/identity-trust=classic/trust-module=*">
-                <h1>Trust Module</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-trust-module-table" title="Trust Module"
-                       form-ref="security-domain-trust-module-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.TRUST)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="security-domain-trust-module-form" title="Trust Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"/>
-            </metadata>
-        </item>
-
-        <item id="security-domain-mapping-module-item" title="Mapping Modules" icon="fa fa-exchange">
+        <item id="security-domain-mapping-item" title="Mapping" icon="fa fa-exchange">
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/mapping=classic/mapping-module=*">
                 <h1>Mapping Module</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="security-domain-mapping-module-table" title="Mapping Module"
-                       form-ref="security-domain-mapping-module-form">
+                <table id="security-domain-mapping-table" title="Mapping Module"
+                       form-ref="security-domain-mapping-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.MAPPING)}}"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.MAPPING)}}" scope="selected"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="security-domain-mapping-module-form" title="Mapping Module"
+                <form id="security-domain-mapping-form" title="Mapping Module"
                       on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-trust-item" title="Identity Trust" icon="fa fa-handshake-o">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/identity-trust=classic/trust-module=*">
+                <h1>Trust Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-trust-table" title="Trust Module"
+                       form-ref="security-domain-trust-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.TRUST)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.TRUST)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-trust-form" title="Trust Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"/>
             </metadata>
         </item>
     </vertical-navigation>

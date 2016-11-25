@@ -24,7 +24,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsHelper;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -79,14 +78,12 @@ class ChildrenPanel implements HasElements, Attachable {
                 })
 
                 .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, api) -> DialogFactory.showConfirmation(
-                                resources.constants().removeResource(),
-                                resources.messages().removeResourceConfirmationQuestion(api.selectedRow()),
-                                () -> {
-                                    ResourceAddress fq = parent.data.getAddress().getParent()
-                                            .add(parent.text, api.selectedRow());
-                                    modelBrowser.remove(fq);
-                                }))
+                        (event, api) -> {
+                            ResourceAddress fq = parent.data.getAddress()
+                                    .getParent()
+                                    .add(parent.text, api.selectedRow());
+                            modelBrowser.remove(fq);
+                        })
                 .paging(false)
                 .build();
 

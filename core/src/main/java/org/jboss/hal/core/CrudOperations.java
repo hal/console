@@ -48,19 +48,20 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class which contains generic CRUD methods to add, read, update and remove resources. For each group of methods there
- * are different signatures which work with different levels of abstractions:
+ * Class which contains generic CRUD methods to add, read, update and remove resources. Each group of methods provides
+ * different signatures which use different levels of abstractions:
  * <dl>
  * <dt>{@link AddressTemplate}</dt>
- * <dd>The most generic form. The template is resolves against the current statement context</dd>
+ * <dd>The most generic form. The template is resolved against the current statement context</dd>
  * <dt>{@link ResourceAddress}</dt>
  * <dd>Gives you full control over the resource address. Use this if you're using a custom statement context like
- * ({@link org.jboss.hal.meta.FilteringStatementContext}).</dd>
+ * ({@link org.jboss.hal.meta.FilteringStatementContext}) and need to resolve the template yourself.</dd>
  * <dt>{@link Operation}</dt>
- * <dd>For some methods you can specify the operation itself</dd>
+ * <dd>For some methods you can specify the operation itself. This signature give you full control over the
+ * operation.</dd>
  * </dl>
  * <p>
- * Whenever possible the methods of this class should be reused instead of writing custom CRUD functionality. Currently
+ * Whenever possible the methods of this class should be used instead of writing custom CRUD functionality. Currently
  * this class is heavily used in
  * <ul>
  * <li>{@code ColumnActionFactory}</li>
@@ -669,8 +670,7 @@ public class CrudOperations {
                 resources.messages().removeResourceConfirmationTitle(type),
                 resources.messages().removeResourceConfirmationQuestion(name),
                 () -> {
-                    Operation operation = new Operation.Builder(REMOVE, address)
-                            .build();
+                    Operation operation = new Operation.Builder(REMOVE, address).build();
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().removeResourceSuccess(type, name)));

@@ -25,11 +25,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 enum Module {
+    AUTHENTICATION(Ids.SECURITY_DOMAIN_AUTHENTICATION_ADD, Names.AUTHENTICATION_MODULE, "authentication=classic",
+            LOGIN_MODULE),
+    AUTHORIZATION(Ids.SECURITY_DOMAIN_AUTHORIZATION_ADD, Names.AUTHORIZATION_MODULE, "authorization=classic",
+            POLICY_MODULE),
+    AUDIT(Ids.SECURITY_DOMAIN_AUDIT_ADD, Names.AUDIT_MODULE, "audit=classic", PROVIDER_MODULE),
     ACL(Ids.SECURITY_DOMAIN_ACL_MODULE_ADD, Names.ACL_MODULE, "acl=classic", ACL_MODULE),
-    LOGIN(Ids.SECURITY_DOMAIN_LOGIN_MODULE_ADD, Names.LOGIN_MODULE, "authentication=classic", LOGIN_MODULE),
-    MAPPING(Ids.SECURITY_DOMAIN_MAPPING_MODULE_ADD, Names.MAPPING_MODULE, "mapping=classic", MAPPING_MODULE),
-    PROVIDER(Ids.SECURITY_DOMAIN_PROVIDER_MODULE_ADD, Names.PROVIDER_MODULE, "audit=classic", PROVIDER_MODULE),
-    POLICY(Ids.SECURITY_DOMAIN_POLICY_MODULE_ADD, Names.POLICY_MODULE, "authorization=classic", POLICY_MODULE),
+    MAPPING(Ids.SECURITY_DOMAIN_MAPPING_ADD, Names.MAPPING_MODULE, "mapping=classic", MAPPING_MODULE),
     TRUST(Ids.SECURITY_DOMAIN_TRUST_MODULE_ADD, Names.TRUST_MODULE, "identity-trust=classic", TRUST_MODULE);
 
     final String id;

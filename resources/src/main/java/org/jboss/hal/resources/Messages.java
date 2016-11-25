@@ -96,6 +96,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentUnknownState(String name);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
+
+    SafeHtml duplicateAuthenticationModule();
+
+    String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();

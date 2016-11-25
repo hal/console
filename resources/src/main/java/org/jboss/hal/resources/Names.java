@@ -27,6 +27,9 @@ public interface Names {
     String ADMIN_OBJECT = "Admin Object";
     String ARCHIVE = "Archive";
     String AUDIT_LOG = "Audit Log";
+    String AUDIT_MODULE = "Audit Module";
+    String AUTHENTICATION_MODULE = "Authentication Module";
+    String AUTHORIZATION_MODULE = "Authorization Module";
     String BOOTSTRAP = "Bootstrap";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
@@ -61,7 +64,6 @@ public interface Names {
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
-    String LOGIN_MODULE = "Login Module";
     String LONG_RUNNING = "long running";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
@@ -76,10 +78,8 @@ public interface Names {
     String OUTBOUND_CONNECTION = "Outbound Connection";
     String PATCHING = "Patching";
     String PATHS = "Paths";
-    String POLICY_MODULE = "Policy Module";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
-    String PROVIDER_MODULE = "Provider Module";
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
     String REALM = "Realm";

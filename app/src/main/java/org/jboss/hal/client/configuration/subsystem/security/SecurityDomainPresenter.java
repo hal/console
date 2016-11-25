@@ -29,6 +29,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -53,6 +54,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
@@ -60,6 +63,7 @@ import static org.jboss.hal.client.configuration.subsystem.security.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SELECTED_SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_DOMAIN;
 
@@ -147,6 +151,24 @@ public class SecurityDomainPresenter
                 this::reload);
     }
 
+    void addClassicAuthenticationModule() {
+        // Check if there's already a 'authentication=jaspi' singleton node.
+        // Either 'authentication=classic' or 'authentication=jaspi' is allowed not both!
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
+                SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext))
+                .build();
+        dispatcher.execute(operation,
+                result -> {
+                    // error: there's already a 'authentication=jaspi' singleton
+                    MessageEvent.fire(getEventBus(), Message.error(resources.messages().duplicateAuthenticationModule(),
+                            resources.messages().duplicateAuthenticationModuleReason()));
+                },
+                (op, failure) -> {
+                    // everything ok: no 'authentication=jaspi' found
+                    addModule(Module.AUTHENTICATION);
+                });
+    }
+
     void addModule(Module module) {
         // first check for (and add) the intermediate singleton
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
@@ -197,5 +219,14 @@ public class SecurityDomainPresenter
                         .resolve(statementContext),
                 changedValues,
                 this::reload);
+    }
+
+    void removeModule(Api<NamedNode> api, Module module) {
+        //noinspection ConstantConditions
+        String name = api.selectedRow().getName();
+        AddressTemplate template = SELECTED_SECURITY_DOMAIN_TEMPLATE
+                .append(module.singleton)
+                .append(module.resource + "=" + name);
+        crud.remove(module.type, name, template.resolve(statementContext), this::reload);
     }
 }
