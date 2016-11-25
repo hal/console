@@ -66,6 +66,7 @@ public class HalBootstrapper implements Bootstrapper {
             public void onFailure(final FunctionContext context) {
                 LoadingPanel.get().off();
                 logger.error("Bootstrap error: {}", context.getErrorMessage());
+                // TODO Enhance bootstrap error page to look more like the console w/ a fake header
                 Browser.getDocument().getBody().appendChild(
                         BootstrapFailed.create(resources.constants().bootstrapException(), context.getErrorMessage())
                                 .asElement());

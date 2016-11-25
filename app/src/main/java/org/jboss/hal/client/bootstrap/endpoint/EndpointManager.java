@@ -99,6 +99,9 @@ public class EndpointManager {
                             endpoints.useBase(Endpoints.getBaseUrl());
                             next.execute();
                             break;
+                        // TODO Show an error page!
+                        // case 500:
+                        //     break;
                         default:
                             logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                                     managementEndpoint);
