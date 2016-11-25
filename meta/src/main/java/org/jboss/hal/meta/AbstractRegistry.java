@@ -19,6 +19,8 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
+ * Abstract registry which uses {@link WildcardStatementContext} to resolve address template for lookup.
+ *
  * @author Harald Pehl
  */
 public abstract class AbstractRegistry<T> implements Registry<T> {
@@ -28,7 +30,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
 
     protected AbstractRegistry(final StatementContext statementContext, final String type,
             final Environment environment) {
-        this.statementContext = new ProfileAndServerGroupWildcardStatementContext(statementContext, environment);
+        this.statementContext = new WildcardStatementContext(statementContext, environment);
         this.type = type;
     }
 

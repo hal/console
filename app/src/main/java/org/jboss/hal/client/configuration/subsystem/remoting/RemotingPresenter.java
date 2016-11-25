@@ -30,18 +30,19 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceCheck;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -57,7 +58,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
@@ -283,19 +283,7 @@ public class RemotingPresenter
             StatementContext statementContext) {
 
         Function[] functions = new Function[]{
-                (Function<FunctionContext>) control -> {
-                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                            securityTemplate.resolve(statementContext)).build();
-                    dispatcher.executeInFunction(control, operation,
-                            result -> {
-                                control.getContext().push(200);
-                                control.proceed();
-                            },
-                            (op, failure) -> {
-                                control.getContext().push(404);
-                                control.proceed();
-                            });
-                },
+                new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
                 (Function<FunctionContext>) control -> {
                     int status = control.getContext().pop();
                     if (status == 200) {

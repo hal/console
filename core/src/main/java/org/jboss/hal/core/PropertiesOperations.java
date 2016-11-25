@@ -341,6 +341,7 @@ public class PropertiesOperations {
             Composite operations, Map<String, String> properties, String psr,
             CrudOperations.Callback callback) {
 
+        // TODO Check if the functions can be replaced with a composite operation
         Function[] functions = new Function[]{
                 (Function<FunctionContext>) control -> {
                     if (operations.isEmpty()) {

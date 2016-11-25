@@ -302,6 +302,12 @@ public interface Ids {
 
     String SECURITY_DOMAIN = "security-domain";
     String SECURITY_DOMAIN_ADD = build(SECURITY_DOMAIN, ADD_SUFFIX);
+    String SECURITY_DOMAIN_ACL_MODULE_ADD = build(SECURITY_DOMAIN, "acl-module", ADD_SUFFIX);
+    String SECURITY_DOMAIN_LOGIN_MODULE_ADD = build(SECURITY_DOMAIN, "login-module", ADD_SUFFIX);
+    String SECURITY_DOMAIN_MAPPING_MODULE_ADD = build(SECURITY_DOMAIN, "mapping-module", ADD_SUFFIX);
+    String SECURITY_DOMAIN_POLICY_MODULE_ADD = build(SECURITY_DOMAIN, "policy-module", ADD_SUFFIX);
+    String SECURITY_DOMAIN_PROVIDER_MODULE_ADD = build(SECURITY_DOMAIN, "provider-module", ADD_SUFFIX);
+    String SECURITY_DOMAIN_TRUST_MODULE_ADD = build(SECURITY_DOMAIN, "trust-module", ADD_SUFFIX);
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
     String SERVER_GROUP = "server-group";

@@ -111,6 +111,9 @@ class OperationsTable implements IsElement {
     private void buildParameter(Elements.Builder builder, String name, ModelNode parameter) {
         boolean required = parameter.hasDefined(REQUIRED) && parameter.get(REQUIRED).asBoolean();
         String type = parameter.get(TYPE).asString();
+        if (parameter.hasDefined(VALUE_TYPE)) {
+            type += "<" + parameter.get(VALUE_TYPE).asString() + ">";
+        }
         String description = parameter.hasDefined(DESCRIPTION) ? parameter.get(DESCRIPTION).asString() : null;
 
         SafeHtmlBuilder html = new SafeHtmlBuilder();

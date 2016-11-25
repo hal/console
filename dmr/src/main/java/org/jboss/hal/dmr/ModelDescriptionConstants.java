@@ -47,6 +47,7 @@ public interface ModelDescriptionConstants {
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "access-control";
     String ACCESS_TYPE = "access-type";
+    String ACL_MODULE = "acl-module";
     String ADD = "add";
     String ADDRESS = "address";
     String ALLOWED = "allowed";
@@ -61,7 +62,7 @@ public interface ModelDescriptionConstants {
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
 
-    String CACHE_TYPE = "cache=type";
+    String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
@@ -148,6 +149,7 @@ public interface ModelDescriptionConstants {
     String LIST_REMOVE = "list-remove";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
+    String LOGIN_MODULE = "login-module";
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
@@ -158,6 +160,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
+    String MAPPING_MODULE = "mapping-module";
     String MAX = "max";
     String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
@@ -180,6 +183,7 @@ public interface ModelDescriptionConstants {
     String PASSWORD = "password";
     String PATH = "path";
     String POLICY = "policy";
+    String POLICY_MODULE = "policy-module";
     String POP3 = "pop3";
     String PORT = "port";
     String PROCESS_STATE = "process-state";
@@ -189,6 +193,7 @@ public interface ModelDescriptionConstants {
     String PROFILE_NAME = "profile-name";
     String PROPERTY = "property";
     String PROVIDER = "provider";
+    String PROVIDER_MODULE = "provider-module";
     String PROXIES = "proxies";
 
     String QUERY = "query";
@@ -279,6 +284,7 @@ public interface ModelDescriptionConstants {
     String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
+    String TRUST_MODULE = "trust-module";
     String TYPE = "type";
 
     String UNIT = "unit";

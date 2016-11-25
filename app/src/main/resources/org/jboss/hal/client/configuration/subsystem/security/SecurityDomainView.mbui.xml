@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="security-domain-vertical-navigation">
+        <item id="security-domain-configuration-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=security/security-domain=*">
+                <h1>Configuration</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="security-domain-configuration-form" title="Configuration"
+                      on-save="{{presenter.saveSecurityDomain(form, changedValues)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-acl-module-item" title="ACL Modules" icon="fa fa-list-ul">
+            <metadata address="/{selected.profile}/subsystem=security/security-domain=*/acl=classic/acl-module=*">
+                <h1>ACL Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-acl-module-table" title="ACL Module"
+                       form-ref="security-domain-acl-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.ACL)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-acl-module-form" title="ACL Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-provider-module-item" title="Provider Modules" icon="fa fa-cubes">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
+                <h1>Provider Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-provider-module-table" title="Provider Module"
+                       form-ref="security-domain-provider-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.PROVIDER)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-provider-module-form" title="Provider Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.PROVIDER)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-login-module-item" title="Login Modules" icon="fa fa-sign-in">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authentication=classic/login-module=*">
+                <h1>Login Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-login-module-table" title="Login Module"
+                       form-ref="security-domain-login-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.LOGIN)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-login-module-form" title="Login Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.LOGIN)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-policy-module-item" title="Policy Modules" icon="fa fa-shield">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authorization=classic/policy-module=*">
+                <h1>Policy Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-policy-module-table" title="Policy Module"
+                       form-ref="security-domain-policy-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.POLICY)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-policy-module-form" title="Policy Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.POLICY)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-trust-module-item" title="Trust Modules" icon="fa fa-handshake-o">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/identity-trust=classic/trust-module=*">
+                <h1>Trust Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-trust-module-table" title="Trust Module"
+                       form-ref="security-domain-trust-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.TRUST)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-trust-module-form" title="Trust Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-mapping-module-item" title="Mapping Modules" icon="fa fa-exchange">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/mapping=classic/mapping-module=*">
+                <h1>Mapping Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-mapping-module-table" title="Mapping Module"
+                       form-ref="security-domain-mapping-module-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.MAPPING)}}"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-mapping-module-form" title="Mapping Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"/>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

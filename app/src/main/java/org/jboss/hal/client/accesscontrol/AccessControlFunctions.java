@@ -29,6 +29,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceCheck;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -44,37 +45,10 @@ final class AccessControlFunctions {
      * Checks whether a role mapping for a given role exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    static class CheckRoleMapping implements Function<FunctionContext> {
-
-        private final Dispatcher dispatcher;
-        private final Role role;
+    static class CheckRoleMapping extends ResourceCheck {
 
         CheckRoleMapping(final Dispatcher dispatcher, final Role role) {
-            this.dispatcher = dispatcher;
-            this.role = role;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, AddressTemplates.roleMapping(role))
-                    .build();
-            dispatcher.executeInFunction(control, operation,
-                    result -> {
-                        if (result.isFailure()) {
-                            // no role mapping found
-                            control.getContext().push(404);
-                            control.proceed();
-                        } else {
-                            // role mapping exists
-                            control.getContext().push(200);
-                            control.proceed();
-                        }
-                    },
-                    (operation1, failure) -> {
-                        // no role mapping found
-                        control.getContext().push(404);
-                        control.proceed();
-                    });
+            super(dispatcher, AddressTemplates.roleMapping(role));
         }
     }
 

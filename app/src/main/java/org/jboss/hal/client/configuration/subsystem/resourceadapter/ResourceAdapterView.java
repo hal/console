@@ -52,7 +52,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters"})
+@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection"})
 public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPresenter>
         implements ResourceAdapterPresenter.MyView {
 

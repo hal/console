@@ -23,6 +23,7 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String ARCHIVE = "Archive";
     String AUDIT_LOG = "Audit Log";
@@ -60,10 +61,12 @@ public interface Names {
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
+    String LOGIN_MODULE = "Login Module";
     String LONG_RUNNING = "long running";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MAPPING_MODULE = "Mapping Module";
     String MB = "MB";
     String MODULE = "Module";
     String NAME = "Name";
@@ -73,8 +76,10 @@ public interface Names {
     String OUTBOUND_CONNECTION = "Outbound Connection";
     String PATCHING = "Patching";
     String PATHS = "Paths";
+    String POLICY_MODULE = "Policy Module";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
+    String PROVIDER_MODULE = "Provider Module";
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
     String REALM = "Realm";
@@ -103,6 +108,7 @@ public interface Names {
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
+    String TRUST_MODULE = "Trust Module";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";

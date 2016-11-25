@@ -92,7 +92,7 @@ public class FormInfo extends MbuiElementInfo {
         this.metadata = metadata;
         this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
         this.autoSave = autoSave;
-        this.onSave = Handlebars.stripHandlebar(onSave); // name resolver has to be an expression
+        this.onSave = Handlebars.stripHandlebar(onSave); // save handler has to be an expression
         this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
         this.includeRuntime = includeRuntime;
         this.failSafe = failSafe;

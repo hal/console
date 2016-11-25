@@ -62,7 +62,9 @@ import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView_P
 import org.jboss.hal.client.configuration.subsystem.remoting.RemotingPresenter;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.Mbui_ResourceAdapterView_Provider;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapterPresenter;
+import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityDomainView_Provider;
 import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityView_Provider;
+import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPresenter;
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
@@ -335,6 +337,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 SecurityPresenter.MyView.class,
                 Mbui_SecurityView_Provider.class,
                 SecurityPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(SecurityDomainPresenter.class,
+                SecurityDomainPresenter.MyView.class,
+                Mbui_SecurityDomainView_Provider.class,
+                SecurityDomainPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ServerPresenter.class,
                 ServerPresenter.MyView.class,
