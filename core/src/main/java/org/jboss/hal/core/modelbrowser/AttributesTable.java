@@ -77,11 +77,7 @@ class AttributesTable implements IsElement {
             builder.td().innerHtml(html.toSafeHtml()).end();
 
             // type
-            String type = attribute.get(TYPE).asString();
-            if (attribute.hasDefined(VALUE_TYPE)) {
-                type += "<" + attribute.get(VALUE_TYPE).asString() + ">";
-            }
-            builder.td().textContent(type).end();
+            builder.td().textContent(Types.formatType(attribute)).end();
 
             // storage
             builder.td();
