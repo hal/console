@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
@@ -72,7 +73,7 @@ class EndpointDialog {
     private final ButtonItem ping;
 
     private Mode mode;
-    private ModelNodeTable<Endpoint> table;
+    private NamedNodeTable<Endpoint> table;
     private Dialog dialog;
 
     EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
@@ -90,7 +91,7 @@ class EndpointDialog {
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, endpointOptions);
+        table = new NamedNodeTable<>(Ids.ENDPOINT_SELECT, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()
@@ -131,7 +132,7 @@ class EndpointDialog {
                     }
                     storage.add(endpoint);
                     switchTo(SELECT);
-                    select(endpoint.getName());
+                    select(endpoint);
                 })
                 .build();
 
@@ -152,9 +153,9 @@ class EndpointDialog {
         dialog.registerAttachable(form, table);
     }
 
-    private void select(String name) {
+    private void select(Endpoint endpoint) {
         if (mode == SELECT) {
-            table.api().rows((index, endpoint, tr) -> name.equals(endpoint.getName())).select();
+            table.select(endpoint);
         }
     }
 
@@ -231,6 +232,6 @@ class EndpointDialog {
         storage.list().stream()
                 .filter(Endpoint::isSelected)
                 .findAny()
-                .ifPresent(endpoint -> select(endpoint.getName()));
+                .ifPresent(endpoint -> select(endpoint));
     }
 }

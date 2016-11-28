@@ -28,8 +28,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -99,18 +99,12 @@ public class StandaloneDeploymentPresenter extends
         deployment = request.getParameter(DEPLOYMENT, null);
     }
 
-    @Override
-    protected void onReset() {
-        super.onReset();
-        getView().reset();
-        loadDeployment();
-    }
-
     public FinderPath finderPath() {
         return finderPathFactory.deployment(deployment);
     }
 
-    void loadDeployment() {
+    @Override
+    protected void reload() {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         Operation browseContent = new Operation.Builder(BROWSE_CONTENT, address).build();
         Operation readDeployment = new Operation.Builder(READ_RESOURCE_OPERATION, address)
@@ -120,6 +114,7 @@ public class StandaloneDeploymentPresenter extends
         dispatcher.execute(composite, (CompositeResult result) -> {
             ModelNode readContentResult = result.step(0).get(RESULT);
             Deployment d = new Deployment(Server.STANDALONE, result.step(1).get(RESULT));
+            getView().reset();
             getView().update(readContentResult, d);
         });
     }
@@ -131,7 +126,7 @@ public class StandaloneDeploymentPresenter extends
         Operation operation = new Operation.Builder(DEPLOY, address).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
-            loadDeployment();
+            reload();
             MessageEvent
                     .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
         });

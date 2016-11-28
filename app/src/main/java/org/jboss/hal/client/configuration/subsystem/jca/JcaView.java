@@ -186,7 +186,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Options<NamedNode> bcTableOptions = new ModelNodeTable.Builder<NamedNode>(bcMetadata)
                 .button(resources.constants().add(), (event, api) -> bcAddDialog.show())
                 .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
-                        api -> api.selectedRow().getName(), () -> presenter.load()))
+                        api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .build();
         bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcTableOptions);
@@ -232,7 +232,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Options<NamedNode> wmOptions = new ModelNodeTable.Builder<NamedNode>(wmMetadata)
                 .button(resources.constants().add(), (event, api) -> wmAddDialog.show())
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
-                        () -> presenter.load()))
+                        () -> presenter.reload()))
                 .column(NAME)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
@@ -273,7 +273,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Options<NamedNode> dwmOptions = new ModelNodeTable.Builder<NamedNode>(dwmMetadata)
                 .button(resources.constants().add(), (event, api) -> dwmAddDialog.show())
                 .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
-                        api -> api.selectedRow().getName(), () -> presenter.load()))
+                        api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .column(POLICY)
                 .column(SELECTOR)

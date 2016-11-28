@@ -133,22 +133,17 @@ public class EEPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadEESubsystem();
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
-    void loadEESubsystem() {
+    @Override
+    protected void reload() {
         crud.readRecursive(EE_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 
     void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues, SafeHtml successMessage) {
-        crud.save(addressTemplate.resolve(statementContext), changedValues, successMessage, this::loadEESubsystem);
+        crud.save(addressTemplate.resolve(statementContext), changedValues, successMessage, this::reload);
     }
 
     void launchAddDialogGlobalModule() {
@@ -168,7 +163,7 @@ public class EEPresenter
             dispatcher.execute(operation, result -> {
                 MessageEvent.fire(eventBus, Message.success(
                         resources.messages().addResourceSuccess(Names.GLOBAL_MODULES, name)));
-                loadEESubsystem();
+                reload();
             });
         });
 
@@ -189,7 +184,7 @@ public class EEPresenter
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().removeResourceSuccess(Names.GLOBAL_MODULES, name)));
-                        loadEESubsystem();
+                        reload();
                     });
                 });
     }

@@ -105,12 +105,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    void load() {
+    protected void reload() {
         ResourceAddress address = JPA_TEMPLATE.resolve(statementContext, deployment, resourceName);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)

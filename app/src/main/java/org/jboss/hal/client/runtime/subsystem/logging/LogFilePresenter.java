@@ -46,7 +46,6 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LINES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -124,12 +123,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    private void load() {
+    protected void reload() {
         if (logFileName != null) {
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
@@ -138,7 +132,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                     .build();
             //noinspection HardCodedStringLiteral
             Operation contentOp = new Operation.Builder("read-log-file", address)
-                    .param("lines", LINES)
+                    .param("lines", LogFiles.LINES)
                     .param("tail", true)
                     .build();
             dispatcher.execute(new Composite(logFileOp, contentOp),
@@ -165,7 +159,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         }
     }
 
-    void refresh() {
+    void reloadFile() {
         if (logFile != null) {
             int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
@@ -200,12 +194,12 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFile != null) {
             if (on) {
                 if (!inTailMode()) {
-                    intervalHandle = Browser.getWindow().setInterval(this::refresh, REFRESH_INTERVAL);
+                    intervalHandle = Browser.getWindow().setInterval(this::reloadFile, REFRESH_INTERVAL);
                 }
             } else {
                 Browser.getWindow().clearInterval(intervalHandle);
                 intervalHandle = -1;
-                refresh();
+                reloadFile();
             }
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));

@@ -208,12 +208,7 @@ final class ${context.subclass} extends ${context.base} {
                     form,
                     (name, modelNode) -> {
                         ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
-                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
-                            presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                            mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
-                        });
+                        mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                 dialog.show();
             })
@@ -226,12 +221,7 @@ final class ${context.subclass} extends ${context.base} {
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
                     (name, modelNode) -> {
                         ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
-                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
-                            presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
-                        });
+                        mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                                     <#list action.validationHandlerAttributes as attribute>
                 dialog.getForm().getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});

@@ -135,37 +135,32 @@ public class JcaPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
+    protected void reload() {
+        crud.read(JCA_TEMPLATE, 1, result -> getView().update(result));
     }
 
 
     // ------------------------------------------------------ generic crud
 
-    void load() {
-        crud.read(JCA_TEMPLATE, 1, result -> getView().update(result));
-    }
-
     void add(final String type, final String name, final AddressTemplate template, final ModelNode payload) {
-        crud.add(type, name, template, payload, (n, a) -> load());
+        crud.add(type, name, template, payload, (n, a) -> reload());
     }
 
     void saveResource(final AddressTemplate template, final String name, final Map<String, Object> changedValues,
             final SafeHtml successMessage) {
-        crud.save(name, template, changedValues, successMessage, this::load);
+        crud.save(name, template, changedValues, successMessage, this::reload);
     }
 
     void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
             final SafeHtml successMessage) {
-        crud.saveSingleton(template, changedValues, successMessage, this::load);
+        crud.saveSingleton(template, changedValues, successMessage, this::reload);
     }
 
 
     // ------------------------------------------------------ tracer
 
     void addTracer() {
-        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, (n, a) -> load());
+        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, (n, a) -> reload());
     }
 
 

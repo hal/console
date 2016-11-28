@@ -45,4 +45,11 @@ public class NamedNodeTable<T extends NamedNode> extends ModelNodeTable<T> {
     public void update(final Iterable<T> data) {
         super.update(data, NamedNode::getName);
     }
+
+    /**
+     * Shortcut for {@code super.select(data, NamedNode::getName)}
+     */
+    public void select(T data) {
+        super.select(data, NamedNode::getName);
+    }
 }

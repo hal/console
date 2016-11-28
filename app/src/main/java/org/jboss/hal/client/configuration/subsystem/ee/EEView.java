@@ -185,11 +185,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void attach() {
         super.attach();
         tables.forEach((id, table) -> {
             if (forms.containsKey(id)) {
-                //noinspection unchecked
                 table.bindForm(forms.get(id));
             }
         });
@@ -255,12 +255,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type,
-                        template, (name, address) -> presenter.loadEESubsystem()))
+                        template, (name, address) -> presenter.reload()))
 
                 .button(tableButtonFactory.remove(
                         type,
                         template, (api) -> api.selectedRow().getName(),
-                        () -> presenter.loadEESubsystem()))
+                        () -> presenter.reload()))
 
                 .build();
 

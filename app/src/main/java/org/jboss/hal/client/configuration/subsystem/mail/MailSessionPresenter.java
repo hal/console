@@ -83,6 +83,7 @@ public class MailSessionPresenter
 
     public interface MyView extends HalView, HasPresenter<MailSessionPresenter> {
         void update(MailSession mailSession);
+        void select(NamedNode mailServer);
     }
     // @formatter:on
 
@@ -138,19 +139,14 @@ public class MailSessionPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    private void load() {
+    protected void reload() {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         crud.readRecursive(address, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
     void save(final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::load);
+        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::reload);
     }
 
     void launchAddServer() {
@@ -207,7 +203,7 @@ public class MailSessionPresenter
                                 MessageEvent.fire(getEventBus(),
                                         Message.success(resources.messages()
                                                 .addResourceSuccess(Names.SERVER, serverType)));
-                                load();
+                                reload();
                             });
                         });
                 dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
@@ -223,6 +219,6 @@ public class MailSessionPresenter
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
                 .append(SERVER + "=" + name)
                 .resolve(statementContext);
-        crud.remove(Names.SERVER, name, address, this::load);
+        crud.remove(Names.SERVER, name, address, this::reload);
     }
 }

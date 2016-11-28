@@ -37,8 +37,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
@@ -124,17 +124,12 @@ public class ServerGroupDeploymentPresenter extends
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadDeployment();
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.deployment(deployment);
     }
 
-    private void loadDeployment() {
+    @Override
+    protected void reload() {
         Function[] functions = new Function[]{
                 new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
                 new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
@@ -179,7 +174,7 @@ public class ServerGroupDeploymentPresenter extends
         Operation operation = new Operation.Builder(DEPLOY, address).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
-            loadDeployment();
+            reload();
             MessageEvent
                     .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
         });

@@ -85,7 +85,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         Metadata configMetadata = metadataRegistry.lookup(JMX_TEMPLATE);
         configForm = new ModelNodeForm.Builder<>(Ids.JMX_CONFIGURATION_FORM, configMetadata)
                 .onSave((form, changedValues) -> crud
-                        .saveSingleton(Names.CONFIGURATION, JMX_TEMPLATE, changedValues, () -> presenter.load()))
+                        .saveSingleton(Names.CONFIGURATION, JMX_TEMPLATE, changedValues, () -> presenter.reload()))
                 .build();
 
         // @formatter:off
@@ -125,7 +125,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext))
                         .build(),
                 alForm,
-                () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (name, address) -> presenter.load()));
+                () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (name, address) -> presenter.reload()));
 
         // @formatter:off
         Element alLayout = new Elements.Builder()
@@ -146,14 +146,14 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         Metadata rcMetadata = metadataRegistry.lookup(REMOTING_CONNECTOR_TEMPLATE);
         Form<ModelNode> rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
-                        changedValues, () -> presenter.load()))
+                        changedValues, () -> presenter.reload()))
                 .build();
         failSafeRcForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION,
                         REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
                         .build(),
                 rcForm,
-                () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (name, address) -> presenter.load()));
+                () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (name, address) -> presenter.reload()));
 
         // @formatter:off
         Element rcLayout = new Elements.Builder()

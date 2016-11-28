@@ -163,4 +163,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         serverTable.update(servers);
         serverTable.api().button(0).enable(servers.size() != 3);
     }
+
+    @Override
+    public void select(final NamedNode mailServer) {
+        serverTable.select(mailServer);
+    }
 }

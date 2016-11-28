@@ -102,12 +102,7 @@ public class ServerStatusPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    private void load() {
+    protected void reload() {
         ResourceAddress address = SERVER_STATUS_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)

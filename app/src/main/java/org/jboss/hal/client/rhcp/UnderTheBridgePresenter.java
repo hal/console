@@ -24,8 +24,8 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
@@ -58,8 +58,7 @@ public class UnderTheBridgePresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
+    protected void reload() {
         getView().show(model);
     }
 

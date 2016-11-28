@@ -114,19 +114,14 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    void load() {
+    protected void reload() {
         crud.readRecursive(JMX_TEMPLATE, result -> getView().update(result));
     }
 
     void saveAuditLog(final Map<String, Object> changedValues, final boolean changedHandler,
             final List<String> handler) {
         if (!changedHandler) {
-            crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::load);
+            crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::reload);
         } else {
             changedValues.remove(HANDLER);
             Function[] functions = {
@@ -138,7 +133,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
                     new SuccessfulOutcome(getEventBus(), resources) {
                         @Override
                         public void onSuccess(final FunctionContext context) {
-                            load();
+                            reload();
                         }
                     }, functions);
         }

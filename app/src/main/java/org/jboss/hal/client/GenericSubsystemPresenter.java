@@ -90,8 +90,7 @@ public class GenericSubsystemPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
+    protected void reload() {
         getView().setRoot(address);
     }
 

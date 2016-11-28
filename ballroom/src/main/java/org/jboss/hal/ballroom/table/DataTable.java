@@ -182,15 +182,45 @@ public class DataTable<T> implements IsElement, Attachable {
      *
      * @param data       the new data
      * @param identifier a function which must return an unique identifier for a given row. Used to restore the
-     *                   selection after replacing the data
+     *                   selection after replacing the data.
      */
     public void update(final Iterable<T> data, final Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
         api().clear().add(data).refresh(RESET);
         if (!selection.isEmpty()) {
-            RowSelection<T> rows = (index, d1, tr) ->
-                    selection.stream().anyMatch(d2 ->
-                            identifier.apply(d1).equals(identifier.apply(d2)));
+            RowSelection<T> rows = (index, d1, tr) -> {
+                if (d1 != null) {
+                    String id1 = identifier.apply(d1);
+                    return selection.stream().anyMatch(d2 -> {
+                        if (d2 != null) {
+                            String id2 = identifier.apply(d2);
+                            return id1.equals(id2);
+                        }
+                        return false;
+                    });
+                }
+                return false;
+            };
+            api().rows(rows).select();
+        }
+    }
+
+    /**
+     * Selects the row with the specified data.
+     *
+     * @param data       the data
+     * @param identifier a function which must return an unique identifier for a given row.
+     */
+    public void select(final T data, final Function<T, String> identifier) {
+        if (data != null) {
+            String id1 = identifier.apply(data);
+            RowSelection<T> rows = (idx, d, tr) -> {
+                if (d != null) {
+                    String id2 = identifier.apply(d);
+                    return id1.equals(id2);
+                }
+                return false;
+            };
             api().rows(rows).select();
         }
     }

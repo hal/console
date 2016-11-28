@@ -32,7 +32,7 @@ public class BrowseContentView extends HalViewImpl implements BrowseContentPrese
 
     @Inject
     public BrowseContentView(final Dispatcher dispatcher, final Resources resources) {
-        this.browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.loadContent());
+        this.browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
         initElement(browseContent);
     }
 

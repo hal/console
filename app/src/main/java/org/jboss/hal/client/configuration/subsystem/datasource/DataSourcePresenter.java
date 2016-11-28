@@ -113,7 +113,7 @@ public class DataSourcePresenter
     @Override
     protected void onReset() {
         super.onReset();
-        loadDataSource();
+        reload();
     }
 
     @Override
@@ -123,12 +123,13 @@ public class DataSourcePresenter
                 .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);
     }
 
-    private void loadDataSource() {
+    @Override
+    protected void reload() {
         crud.read(resourceAddress(), result -> getView().update(new DataSource(name, result, xa)));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        crud.save(type(), name, resourceAddress(), changedValues, this::loadDataSource);
+        crud.save(type(), name, resourceAddress(), changedValues, this::reload);
     }
 
     private String type() {

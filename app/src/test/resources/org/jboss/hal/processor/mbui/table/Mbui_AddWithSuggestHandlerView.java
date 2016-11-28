@@ -74,12 +74,7 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
                             asList("foo"),
                             (name, modelNode) -> {
                                 ResourceAddress address = metadata0Template.resolve(mbuiContext.statementContext(), name);
-                                Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                                mbuiContext.dispatcher().execute(operation, result -> {
-                                    presenter.reload();
-                                    MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                            mbuiContext.resources().messages().addResourceSuccess("Foo", name)));
-                                });
+                                mbuiContext.crud().add("Foo", name, address, modelNode, (n, a) -> presenter.reload());
                             });
                     dialog.getForm().getFormItem("foo").registerSuggestHandler(new ReadChildrenAutoComplete(
                             mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("/foo=*")));

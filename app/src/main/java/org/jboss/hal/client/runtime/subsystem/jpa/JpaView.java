@@ -46,7 +46,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
@@ -278,7 +277,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     private void refresh() {
         if (presenter != null) {
-            presenter.load();
+            presenter.reload();
         }
     }
 }
