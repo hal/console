@@ -63,7 +63,7 @@ import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
-import static org.jboss.hal.resources.UIConstants.DIALOG_TIMEOUT;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
  * @author Harald Pehl
@@ -225,7 +225,7 @@ public class ServerActions {
                                 (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
                                         Message.error(resources.messages().restartServerError(server.getName()))));
 
-                    }, DIALOG_TIMEOUT);
+                    }, SHORT_TIMEOUT);
                 });
     }
 

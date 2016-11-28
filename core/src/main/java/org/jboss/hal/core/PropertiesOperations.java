@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -194,7 +195,7 @@ public class PropertiesOperations {
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
      * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map,
-     * CrudOperations.Callback)}:
+     * Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
@@ -212,7 +213,7 @@ public class PropertiesOperations {
      */
     public <T extends ModelNode> void saveWithProperties(final String type, final String name,
             final AddressTemplate template, final Form<T> form, final Map<String, Object> changedValues,
-            final String psr, final CrudOperations.Callback callback) {
+            final String psr, final Callback callback) {
 
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
@@ -233,7 +234,7 @@ public class PropertiesOperations {
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
      * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map,
-     * CrudOperations.Callback)}:
+     * Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
@@ -250,7 +251,7 @@ public class PropertiesOperations {
      */
     public <T extends ModelNode> void saveWithProperties(final String type, final String name,
             final ResourceAddress address, final Form<T> form, final Map<String, Object> changedValues,
-            final String psr, final CrudOperations.Callback callback) {
+            final String psr, final Callback callback) {
 
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
@@ -269,8 +270,7 @@ public class PropertiesOperations {
      * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
-     * This is the properties-extended version of {@link CrudOperations#save(String, String, Composite,
-     * CrudOperations.Callback)}:
+     * This is the properties-extended version of {@link CrudOperations#save(String, String, Composite, Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
@@ -287,7 +287,7 @@ public class PropertiesOperations {
      */
     public <T extends ModelNode> void saveWithProperties(final String type, final String name,
             final ResourceAddress address, final Form<T> form, final Composite operations,
-            final String psr, final CrudOperations.Callback callback) {
+            final String psr, final Callback callback) {
 
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
@@ -305,7 +305,7 @@ public class PropertiesOperations {
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
      * This is the properties-extended version of {@link CrudOperations#saveSingleton(String, AddressTemplate, Map,
-     * CrudOperations.Callback)}:
+     * Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
@@ -321,7 +321,7 @@ public class PropertiesOperations {
      */
     public <T extends ModelNode> void saveSingletonWithProperties(final String type, final ResourceAddress address,
             final Form<T> form, final Map<String, Object> changedValues, final String psr,
-            final CrudOperations.Callback callback) {
+            final Callback callback) {
 
         changedValues.remove(psr);
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
@@ -338,8 +338,7 @@ public class PropertiesOperations {
     }
 
     private void saveWithProperties(String type, String name, ResourceAddress address,
-            Composite operations, Map<String, String> properties, String psr,
-            CrudOperations.Callback callback) {
+            Composite operations, Map<String, String> properties, String psr, Callback callback) {
 
         // TODO Check if the functions can be replaced with a composite operation
         Function[] functions = new Function[]{

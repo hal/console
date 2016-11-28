@@ -25,6 +25,7 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 
@@ -56,7 +57,7 @@ public class TableButtonFactory {
     }
 
     public <T> Button<T> remove(String type, AddressTemplate template, Function<Api<T>, String> nameFunction,
-            CrudOperations.Callback callback) {
+            Callback callback) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();
         button.extend = SELECTED_SINGLE.selector();

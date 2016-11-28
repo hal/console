@@ -131,7 +131,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
 
     private void load() {
         if (logFileName != null) {
-            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.PROGRESS_TIMEOUT);
+            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             Operation logFileOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                     .param(INCLUDE_RUNTIME, true)
@@ -168,7 +168,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     void refresh() {
         if (logFile != null) {
             int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
-            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.PROGRESS_TIMEOUT);
+            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             //noinspection HardCodedStringLiteral
             Operation operation = new Operation.Builder("read-log-file", address)

@@ -207,7 +207,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         // show the loading indicator if the dmr operation take too long
         int timeoutHandle = Browser.getWindow()
-                .setTimeout(() -> Elements.setVisible(loadingSection, true), PROGRESS_TIMEOUT);
+                .setTimeout(() -> Elements.setVisible(loadingSection, true), MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {

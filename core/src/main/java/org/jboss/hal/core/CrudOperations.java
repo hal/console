@@ -41,6 +41,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -89,16 +90,6 @@ public class CrudOperations {
          * @param address the resource address of the newly added resource
          */
         void execute(@Nullable final String name, ResourceAddress address);
-    }
-
-
-    /**
-     * Callback used for the {@code save} and {@code remove} methods.
-     */
-    @FunctionalInterface
-    public interface Callback {
-
-        void execute();
     }
 
 

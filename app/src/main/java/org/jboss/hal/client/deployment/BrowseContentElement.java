@@ -48,6 +48,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
@@ -65,13 +66,6 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  */
 class BrowseContentElement implements IsElement, Attachable {
-
-    @FunctionalInterface
-    interface RefreshCallback {
-
-        void refresh();
-    }
-
 
     @SuppressWarnings("HardCodedStringLiteral")
     private static final Set<String> EDITOR_FILE_TYPES = Sets.newHashSet(
@@ -164,8 +158,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
     // ------------------------------------------------------ ui setup
 
-    BrowseContentElement(final Dispatcher dispatcher, final Resources resources,
-            final RefreshCallback refreshCallback) {
+    BrowseContentElement(final Dispatcher dispatcher, final Resources resources, final Callback refreshCallback) {
         this.dispatcher = dispatcher;
         this.resources = resources;
         this.contentParser = new ContentParser();
@@ -226,7 +219,7 @@ class BrowseContentElement implements IsElement, Attachable {
                 .column(4)
                     .div().css(flexRow, marginTopLarge)
                         .div().css(btnGroup, marginRightSmall)
-                            .button().css(btn, btnDefault).on(click, event -> refreshCallback.refresh())
+                            .button().css(btn, btnDefault).on(click, event -> refreshCallback.execute())
                                 .add("i").css(fontAwesome(CSS.refresh))
                             .end()
                             .button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))

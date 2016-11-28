@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.client.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -68,7 +69,7 @@ class DeploymentModelElement implements HasElements {
         modelBrowser.setSurroundingHeight(surroundingHeight);
     }
 
-    void update(Deployment deployment, EmptyState.Action enableAction) {
+    void update(Deployment deployment, Callback enableAction) {
         boolean active = deployment.getStatus() == OK;
         Elements.setVisible(notEnabled.asElement(), !active);
         modelBrowser.asElements().forEach(element -> Elements.setVisible(element, active));

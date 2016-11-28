@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.AccessControlProvider;
@@ -34,6 +33,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
@@ -107,7 +107,7 @@ public class AccessControl {
         assignments.clear();
     }
 
-    void reload(ScheduledCommand andThen) {
+    void reload(Callback callback) {
         reset();
 
         List<Operation> operations = new ArrayList<>();
@@ -151,6 +151,7 @@ public class AccessControl {
                         .forEach(roles::add);
             }
 
+            //noinspection UnusedAssignment
             result.step(step++).get(RESULT).asPropertyList().forEach(p1 -> {
                 Role role = roles.get(Ids.role(p1.getName()));
                 if (role != null) {
@@ -170,7 +171,7 @@ public class AccessControl {
                 }
             });
 
-            andThen.execute();
+            callback.execute();
         });
     }
 

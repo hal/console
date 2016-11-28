@@ -16,10 +16,10 @@
 package org.jboss.hal.ballroom;
 
 import elemental.dom.Element;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.Callback;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -28,13 +28,6 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
  */
 @JsType(isNative = true)
 public class Tooltip {
-
-    @JsFunction
-    @FunctionalInterface
-    public interface TooltipHandler {
-
-        void handleEvent();
-    }
 
     @JsMethod(namespace = GLOBAL, name = "$")
     public native static Tooltip element(Element element);
@@ -49,7 +42,7 @@ public class Tooltip {
 
     native void attr(String name, String value);
 
-    native void on(String event, TooltipHandler handler);
+    native void on(String event, Callback callback);
 
     @JsOverlay
     public final Tooltip show() {
@@ -70,7 +63,7 @@ public class Tooltip {
     }
 
     @JsOverlay
-    public final void onHide(TooltipHandler handler) {
-        on("hidden.bs.tooltip", handler); //NON-NLS
+    public final void onHide(Callback callback) {
+        on("hidden.bs.tooltip", callback); //NON-NLS
     }
 }

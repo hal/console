@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
+import org.jboss.hal.spi.Callback;
 
 /**
  * An element which uses the dispatcher and an operation to check whether a resource exists. If it exists the specified
@@ -52,7 +53,7 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     private final Element root;
 
     public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> readOperation, final Form<T> form,
-            final EmptyState.Action addAction) {
+            final Callback addAction) {
         this(dispatcher, readOperation, form, new EmptyState.Builder(CONSTANTS.noResource())
                 .description(MESSAGES.noResource())
                 .primaryAction(CONSTANTS.add(), addAction)

@@ -16,23 +16,16 @@
 package org.jboss.hal.ballroom.tree;
 
 import elemental.js.util.JsArrayOf;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.Callback;
 
 /**
  * @author Harald Pehl
  */
 @JsType(isNative = true)
 public class Api<T> {
-
-    @JsFunction
-    @FunctionalInterface
-    public interface OpenCallback {
-
-        void opened();
-    }
 
     @JsMethod(name = "close_node")
     public native void closeNode(String id);
@@ -41,7 +34,7 @@ public class Api<T> {
     public native void openNode(String id);
 
     @JsMethod(name = "open_node")
-    public native void openNode(String id, OpenCallback callback);
+    public native void openNode(String id, Callback callback);
 
     @JsMethod(name = "refresh_node")
     public native void refreshNode(String id);
