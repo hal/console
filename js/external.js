@@ -96624,7 +96624,7 @@ var autoComplete = (function(){
 }(function ($, undefined) {
 	"use strict";
 /*!
- * jsTree 3.3.2
+ * jsTree 3.3.3
  * http://jstree.com/
  *
  * Copyright (c) 2014 Ivan Bozhanov (http://vakata.com)
@@ -96654,25 +96654,7 @@ var autoComplete = (function(){
 		ccp_inst = false,
 		themes_loaded = [],
 		src = $('script:last').attr('src'),
-		document = window.document, // local variable is always faster to access then a global
-		_node = document.createElement('LI'), _temp1, _temp2;
-
-	_node.setAttribute('role', 'treeitem');
-	_temp1 = document.createElement('I');
-	_temp1.className = 'jstree-icon jstree-ocl';
-	_temp1.setAttribute('role', 'presentation');
-	_node.appendChild(_temp1);
-	_temp1 = document.createElement('A');
-	_temp1.className = 'jstree-anchor';
-	_temp1.setAttribute('href','#');
-	_temp1.setAttribute('tabindex','-1');
-	_temp2 = document.createElement('I');
-	_temp2.className = 'jstree-icon jstree-themeicon';
-	_temp2.setAttribute('role', 'presentation');
-	_temp1.appendChild(_temp2);
-	_node.appendChild(_temp1);
-	_temp1 = _temp2 = null;
-
+		document = window.document; // local variable is always faster to access then a global
 
 	/**
 	 * holds all jstree related functions and variables, including the actual class and methods to create, access and manipulate instances.
@@ -96683,7 +96665,7 @@ var autoComplete = (function(){
 		 * specifies the jstree version in use
 		 * @name $.jstree.version
 		 */
-		version : '3.3.2',
+		version : '3.3.3',
 		/**
 		 * holds all the default options used when creating new instances
 		 * @name $.jstree.defaults
@@ -96704,6 +96686,7 @@ var autoComplete = (function(){
 		idregex : /[\\:&!^|()\[\]<>@*'+~#";.,=\- \/${}%?`]/g,
 		root : '#'
 	};
+	
 	/**
 	 * creates a jstree instance
 	 * @name $.jstree.create(el [, options])
@@ -96750,7 +96733,8 @@ var autoComplete = (function(){
 				themes : {
 					name : false,
 					dots : false,
-					icons : false
+					icons : false,
+					ellipsis : false
 				},
 				selected : [],
 				last_error : {},
@@ -97021,6 +97005,11 @@ var autoComplete = (function(){
 			 */
 			icons			: true,
 			/**
+			 * a boolean indicating if node ellipsis should be shown - this only works with a fixed with on the container
+			 * @name $.jstree.defaults.core.themes.ellipsis
+			 */
+			ellipsis		: false,
+			/**
 			 * a boolean indicating if the tree background is striped
 			 * @name $.jstree.defaults.core.themes.stripes
 			 */
@@ -97138,6 +97127,7 @@ var autoComplete = (function(){
 			this.element.html("<"+"ul class='jstree-container-ul jstree-children' role='group'><"+"li id='j"+this._id+"_loading' class='jstree-initial-node jstree-loading jstree-leaf jstree-last' role='tree-item'><i class='jstree-icon jstree-ocl'></i><"+"a class='jstree-anchor' href='#'><i class='jstree-icon jstree-themeicon-hidden'></i>" + this.get_string("Loading ...") + "</a></li></ul>");
 			this.element.attr('aria-activedescendant','j' + this._id + '_loading');
 			this._data.core.li_height = this.get_container_ul().children("li").first().height() || 24;
+			this._data.core.node = this._create_prototype_node();
 			/**
 			 * triggered after the loading text is shown and before loading starts
 			 * @event
@@ -97161,6 +97151,29 @@ var autoComplete = (function(){
 			}
 			if(!keep_html) { this.element.empty(); }
 			this.teardown();
+		},
+		/**
+		 * Create prototype node
+		 */
+		_create_prototype_node : function () {
+			var _node = document.createElement('LI'), _temp1, _temp2;
+			_node.setAttribute('role', 'treeitem');
+			_temp1 = document.createElement('I');
+			_temp1.className = 'jstree-icon jstree-ocl';
+			_temp1.setAttribute('role', 'presentation');
+			_node.appendChild(_temp1);
+			_temp1 = document.createElement('A');
+			_temp1.className = 'jstree-anchor';
+			_temp1.setAttribute('href','#');
+			_temp1.setAttribute('tabindex','-1');
+			_temp2 = document.createElement('I');
+			_temp2.className = 'jstree-icon jstree-themeicon';
+			_temp2.setAttribute('role', 'presentation');
+			_temp1.appendChild(_temp2);
+			_node.appendChild(_temp1);
+			_temp1 = _temp2 = null;
+
+			return _node;
 		},
 		/**
 		 * part of the destroying of an instance. Used internally.
@@ -97412,6 +97425,7 @@ var autoComplete = (function(){
 						this._data.core.themes.dots			= s.dots;
 						this._data.core.themes.stripes		= s.stripes;
 						this._data.core.themes.icons		= s.icons;
+						this._data.core.themes.ellipsis		= s.ellipsis;
 						this.set_theme(s.name || "default", s.url);
 						this.set_theme_variant(s.variant);
 					}, this))
@@ -97419,6 +97433,7 @@ var autoComplete = (function(){
 						this[ this._data.core.themes.dots ? "show_dots" : "hide_dots" ]();
 						this[ this._data.core.themes.icons ? "show_icons" : "hide_icons" ]();
 						this[ this._data.core.themes.stripes ? "show_stripes" : "hide_stripes" ]();
+						this[ this._data.core.themes.ellipsis ? "show_ellipsis" : "hide_ellipsis" ]();
 					}, this))
 				.on('blur.jstree', '.jstree-anchor', $.proxy(function (e) {
 						this._data.core.focused = null;
@@ -98969,7 +98984,7 @@ var autoComplete = (function(){
 				//node = d.createElement('LI');
 				//node = node[0];
 			}
-			node = _node.cloneNode(true);
+			node = this._data.core.node.cloneNode(true);
 			// node is DOM, deep is boolean
 
 			c = 'jstree-node ';
@@ -99476,7 +99491,7 @@ var autoComplete = (function(){
 		 * hides a node - it is still in the structure but will not be visible
 		 * @name hide_node(obj)
 		 * @param {mixed} obj the node to hide
-		 * @param {Boolean} redraw internal parameter controlling if redraw is called
+		 * @param {Boolean} skip_redraw internal parameter controlling if redraw is called
 		 * @trigger hide_node.jstree
 		 */
 		hide_node : function (obj, skip_redraw) {
@@ -101129,12 +101144,30 @@ var autoComplete = (function(){
 		 * shows a striped background on the container (if the theme supports it)
 		 * @name show_stripes()
 		 */
-		show_stripes : function () { this._data.core.themes.stripes = true; this.get_container_ul().addClass("jstree-striped"); },
+		show_stripes : function () {
+			this._data.core.themes.stripes = true;
+			this.get_container_ul().addClass("jstree-striped");
+			/**
+			 * triggered when stripes are shown
+			 * @event
+			 * @name show_stripes.jstree
+			 */
+			this.trigger('show_stripes');
+		},
 		/**
 		 * hides the striped background on the container
 		 * @name hide_stripes()
 		 */
-		hide_stripes : function () { this._data.core.themes.stripes = false; this.get_container_ul().removeClass("jstree-striped"); },
+		hide_stripes : function () {
+			this._data.core.themes.stripes = false;
+			this.get_container_ul().removeClass("jstree-striped");
+			/**
+			 * triggered when stripes are hidden
+			 * @event
+			 * @name hide_stripes.jstree
+			 */
+			this.trigger('hide_stripes');
+		},
 		/**
 		 * toggles the striped background on the container
 		 * @name toggle_stripes()
@@ -101144,12 +101177,30 @@ var autoComplete = (function(){
 		 * shows the connecting dots (if the theme supports it)
 		 * @name show_dots()
 		 */
-		show_dots : function () { this._data.core.themes.dots = true; this.get_container_ul().removeClass("jstree-no-dots"); },
+		show_dots : function () {
+			this._data.core.themes.dots = true;
+			this.get_container_ul().removeClass("jstree-no-dots");
+			/**
+			 * triggered when dots are shown
+			 * @event
+			 * @name show_dots.jstree
+			 */
+			this.trigger('show_dots');
+		},
 		/**
 		 * hides the connecting dots
 		 * @name hide_dots()
 		 */
-		hide_dots : function () { this._data.core.themes.dots = false; this.get_container_ul().addClass("jstree-no-dots"); },
+		hide_dots : function () {
+			this._data.core.themes.dots = false;
+			this.get_container_ul().addClass("jstree-no-dots");
+			/**
+			 * triggered when dots are hidden
+			 * @event
+			 * @name hide_dots.jstree
+			 */
+			this.trigger('hide_dots');
+		},
 		/**
 		 * toggles the connecting dots
 		 * @name toggle_dots()
@@ -101159,17 +101210,68 @@ var autoComplete = (function(){
 		 * show the node icons
 		 * @name show_icons()
 		 */
-		show_icons : function () { this._data.core.themes.icons = true; this.get_container_ul().removeClass("jstree-no-icons"); },
+		show_icons : function () {
+			this._data.core.themes.icons = true;
+			this.get_container_ul().removeClass("jstree-no-icons");
+			/**
+			 * triggered when icons are shown
+			 * @event
+			 * @name show_icons.jstree
+			 */
+			this.trigger('show_icons');
+		},
 		/**
 		 * hide the node icons
 		 * @name hide_icons()
 		 */
-		hide_icons : function () { this._data.core.themes.icons = false; this.get_container_ul().addClass("jstree-no-icons"); },
+		hide_icons : function () {
+			this._data.core.themes.icons = false;
+			this.get_container_ul().addClass("jstree-no-icons");
+			/**
+			 * triggered when icons are hidden
+			 * @event
+			 * @name hide_icons.jstree
+			 */
+			this.trigger('hide_icons');
+		},
 		/**
 		 * toggle the node icons
 		 * @name toggle_icons()
 		 */
 		toggle_icons : function () { if(this._data.core.themes.icons) { this.hide_icons(); } else { this.show_icons(); } },
+		/**
+		 * show the node ellipsis
+		 * @name show_icons()
+		 */
+		show_ellipsis : function () {
+			this._data.core.themes.ellipsis = true;
+			this.get_container_ul().addClass("jstree-ellipsis");
+			/**
+			 * triggered when ellisis is shown
+			 * @event
+			 * @name show_ellipsis.jstree
+			 */
+			this.trigger('show_ellipsis');
+		},
+		/**
+		 * hide the node ellipsis
+		 * @name hide_ellipsis()
+		 */
+		hide_ellipsis : function () {
+			this._data.core.themes.ellipsis = false;
+			this.get_container_ul().removeClass("jstree-ellipsis");
+			/**
+			 * triggered when ellisis is hidden
+			 * @event
+			 * @name hide_ellipsis.jstree
+			 */
+			this.trigger('hide_ellipsis');
+		},
+		/**
+		 * toggle the node ellipsis
+		 * @name toggle_icons()
+		 */
+		toggle_ellipsis : function () { if(this._data.core.themes.ellipsis) { this.hide_ellipsis(); } else { this.show_ellipsis(); } },
 		/**
 		 * set the node icon for a node
 		 * @name set_icon(obj, icon)
@@ -102814,7 +102916,7 @@ var autoComplete = (function(){
 						switch(e.which) {
 							case 13:
 							case 32:
-								e.type = "mouseup";
+								e.type = "click";
 								e.preventDefault();
 								$(e.currentTarget).trigger(e);
 								break;
@@ -103793,7 +103895,7 @@ var autoComplete = (function(){
 					return a.call(this, str, $.proxy(function (d) {
 							if(d && d.d) { d = d.d; }
 							this._load_nodes(!$.isArray(d) ? [] : $.vakata.array_unique(d), function () {
-								this.search(str, true, show_only_matches, inside, append);
+								this.search(str, true, show_only_matches, inside, append, show_only_matches_children);
 							});
 						}, this), inside);
 				}
@@ -103804,7 +103906,10 @@ var autoComplete = (function(){
 					if(inside) {
 						a.data.inside = inside;
 					}
-					return $.ajax(a)
+					if (this._data.search.lastRequest) {
+						this._data.search.lastRequest.abort();
+					}
+					this._data.search.lastRequest = $.ajax(a)
 						.fail($.proxy(function () {
 							this._data.core.last_error = { 'error' : 'ajax', 'plugin' : 'search', 'id' : 'search_01', 'reason' : 'Could not load search parents', 'data' : JSON.stringify(a) };
 							this.settings.core.error.call(this, this._data.core.last_error);
@@ -103812,9 +103917,10 @@ var autoComplete = (function(){
 						.done($.proxy(function (d) {
 							if(d && d.d) { d = d.d; }
 							this._load_nodes(!$.isArray(d) ? [] : $.vakata.array_unique(d), function () {
-								this.search(str, true, show_only_matches, inside, append);
+								this.search(str, true, show_only_matches, inside, append, show_only_matches_children);
 							});
 						}, this));
+					return this._data.search.lastRequest;
 				}
 			}
 			if(!append) {
@@ -104464,12 +104570,12 @@ var autoComplete = (function(){
 			old_type = obj.type;
 			old_icon = this.get_icon(obj);
 			obj.type = type;
-			if(old_icon === true || (t[old_type] && t[old_type].icon !== undefined && old_icon === t[old_type].icon)) {
+			if(old_icon === true || !t[old_type] || (t[old_type].icon !== undefined && old_icon === t[old_type].icon)) {
 				this.set_icon(obj, t[type].icon !== undefined ? t[type].icon : true);
 			}
 
 			// remove old type props
-			if(t[old_type].li_attr !== undefined && typeof t[old_type].li_attr === 'object') {
+			if(t[old_type] && t[old_type].li_attr !== undefined && typeof t[old_type].li_attr === 'object') {
 				for (k in t[old_type].li_attr) {
 					if (t[old_type].li_attr.hasOwnProperty(k)) {
 						if (k === 'id') {
@@ -104486,7 +104592,7 @@ var autoComplete = (function(){
 					}
 				}
 			}
-			if(t[old_type].a_attr !== undefined && typeof t[old_type].a_attr === 'object') {
+			if(t[old_type] && t[old_type].a_attr !== undefined && typeof t[old_type].a_attr === 'object') {
 				for (k in t[old_type].a_attr) {
 					if (t[old_type].a_attr.hasOwnProperty(k)) {
 						if (k === 'id') {
@@ -104739,6 +104845,11 @@ var autoComplete = (function(){
 				.on("click.jstree", ".jstree-wholerow", function (e) {
 						e.stopImmediatePropagation();
 						var tmp = $.Event('click', { metaKey : e.metaKey, ctrlKey : e.ctrlKey, altKey : e.altKey, shiftKey : e.shiftKey });
+						$(e.currentTarget).closest(".jstree-node").children(".jstree-anchor").first().trigger(tmp).focus();
+					})
+				.on("dblclick.jstree", ".jstree-wholerow", function (e) {
+						e.stopImmediatePropagation();
+						var tmp = $.Event('dblclick', { metaKey : e.metaKey, ctrlKey : e.ctrlKey, altKey : e.altKey, shiftKey : e.shiftKey });
 						$(e.currentTarget).closest(".jstree-node").children(".jstree-anchor").first().trigger(tmp).focus();
 					})
 				.on("click.jstree", ".jstree-leaf > .jstree-ocl", $.proxy(function (e) {
@@ -110350,415 +110461,15 @@ var autoComplete = (function(){
 })(function() {
   return this || window;
 }());
-// Util: PatternFly Sidebar
-// Set height of sidebar-pf to height of document minus height of navbar-pf if not mobile
-(function ($) {
+(function (window) {
   'use strict';
-  $.fn.sidebar = function () {
-    var documentHeight = 0,
-      navbarpfHeight = 0,
-      colHeight = 0;
 
-    if ($('.navbar-pf .navbar-toggle').is(':hidden')) {
-      documentHeight = $(document).height();
-      navbarpfHeight = $('.navbar-pf').outerHeight();
-      colHeight = documentHeight - navbarpfHeight;
-    }
-    $('.sidebar-pf').parent('.row').children('[class*="col-"]').css({"min-height" : colHeight});
+  var patternfly = {
+    version: "3.13.0"
   };
 
-  $(document).ready(function () {
-    // Call sidebar() on ready if .sidebar-pf exists and .datatable does not exist
-    if ($('.sidebar-pf').length > 0 && $('.datatable').length === 0) {
-      $.fn.sidebar();
-    }
-  });
-
-  $(window).resize(function () {
-    // Call sidebar() on resize if .sidebar-pf exists
-    if ($('.sidebar-pf').length > 0) {
-      $.fn.sidebar();
-    }
-  });
-}(jQuery));
-
-// Util: PatternFly Popovers
-// Add data-close="true" to insert close X icon
-(function ($) {
-  'use strict';
-
-  $.fn.popovers = function () {
-    // Initialize
-    this.popover();
-
-    // Add close icons
-    this.filter('[data-close=true]').each(function (index, element) {
-      var $this = $(element),
-        title = $this.attr('data-original-title') + '<button type="button" class="close" aria-hidden="true"><span class="pficon pficon-close"></span></button>';
-
-      $this.attr('data-original-title', title);
-    });
-
-    // Bind Close Icon to Toggle Display
-    this.on('click', function (e) {
-      var $this = $(this),
-        $title = $this.next('.popover').find('.popover-title');
-
-      // Only if data-close is true add class "x" to title for right padding
-      $title.find('.close').parent('.popover-title').addClass('closable');
-
-      // Bind x icon to close popover
-      $title.find('.close').on('click', function () {
-        $this.popover('hide');
-      });
-
-      // Prevent href="#" page scroll to top
-      e.preventDefault();
-    });
-
-    return this;
-  };
-}(jQuery));
-
-
-// Util: DataTables Settings
-(function ($) {
-  'use strict';
-  if ($.fn.dataTableExt) {
-    /* Set the defaults for DataTables initialisation */
-    $.extend(true, $.fn.dataTable.defaults, {
-      "bDestroy": true,
-      "bAutoWidth": false,
-      "iDisplayLength": 20,
-      "sDom":
-        "<'dataTables_header' f i r >" +
-        "<'table-responsive'  t >" +
-        "<'dataTables_footer' p >",
-      "oLanguage": {
-        "sInfo": "Showing <b>_START_</b> to <b>_END_</b> of <b>_TOTAL_</b> Items",
-        "sInfoFiltered" : "(of <b>_MAX_</b>)",
-        "sInfoEmpty" : "Showing <b>0</b> Results",
-        "sZeroRecords":
-          "<p>Suggestions</p>" +
-          "<ul>" +
-            "<li>Check the javascript regular expression syntax of the search term.</li>" +
-            "<li>Check that the correct menu option is chosen (token ID vs. user ID).</li>" +
-            "<li>Use wildcards (* to match 0 or more characters, + to match 1 or more characters, ? to match 0 or 1 character).</li>" +
-            "<li>Clear the search field, then click Search to return to the 20 most recent records.</li>" +
-          "</ul>",
-        "sSearch": ""
-      },
-      "sPaginationType": "bootstrap_input",
-      "oSearch": {
-        "sSearch": "",
-        "bRegex": true,
-        "bSmart": false
-      }
-    });
-
-    /* Default class modification */
-    $.extend($.fn.dataTableExt.oStdClasses, {
-      "sWrapper": "dataTables_wrapper"
-    });
-
-    /* API method to get paging information */
-    $.fn.dataTableExt.oApi.fnPagingInfo = function (oSettings) {
-      return {
-        "iStart":         oSettings._iDisplayStart,
-        "iEnd":           oSettings.fnDisplayEnd(),
-        "iLength":        oSettings._iDisplayLength,
-        "iTotal":         oSettings.fnRecordsTotal(),
-        "iFilteredTotal": oSettings.fnRecordsDisplay(),
-        "iPage":          oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-        "iTotalPages":    oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-      };
-    };
-
-    /* Combination of Bootstrap + Input Text style pagination control */
-    $.extend($.fn.dataTableExt.oPagination, {
-      "bootstrap_input": {
-        "fnInit": function (oSettings, nPaging, fnDraw) {
-          var fnClickHandler = function (e) {
-              e.preventDefault();
-              if (oSettings.oApi._fnPageChange(oSettings, e.data.action)) {
-                fnDraw(oSettings);
-              }
-            },
-            els,
-            nInput;
-
-          $(nPaging).append(
-            '<ul class="pagination">' +
-              '  <li class="first disabled"><span class="i fa fa-angle-double-left"></span></li>' +
-              '  <li class="prev disabled"><span class="i fa fa-angle-left"></span></li>' +
-              '</ul>' +
-              '<div class="pagination-input">' +
-              '  <input type="text" class="paginate_input">' +
-              '  <span class="paginate_of">of <b>3</b></span>' +
-              '</div>' +
-              '<ul class="pagination">' +
-              '  <li class="next disabled"><span class="i fa fa-angle-right"></span></li>' +
-              '  <li class="last disabled"><span class="i fa fa-angle-double-right"></span></li>' +
-              '</ul>'
-          );
-
-          els = $('li', nPaging);
-          $(els[0]).bind('click.DT', { action: "first" }, fnClickHandler);
-          $(els[1]).bind('click.DT', { action: "previous" }, fnClickHandler);
-          $(els[2]).bind('click.DT', { action: "next" }, fnClickHandler);
-          $(els[3]).bind('click.DT', { action: "last" }, fnClickHandler);
-
-          nInput = $('input', nPaging);
-          $(nInput).keyup(function (e) {
-            var iNewStart;
-            if (e.which === 38 || e.which === 39) {
-              this.value += 1;
-            } else if ((e.which === 37 || e.which === 40) && this.value > 1) {
-              this.value -= 1;
-            }
-
-            if (this.value === "" || !this.value.match(/[0-9]/)) {
-              /* Nothing entered or non-numeric character */
-              return;
-            }
-
-            iNewStart = oSettings._iDisplayLength * (this.value - 1);
-            if (iNewStart > oSettings.fnRecordsDisplay()) {
-              /* Display overrun */
-              oSettings._iDisplayStart = (Math.ceil((oSettings.fnRecordsDisplay() - 1) /
-                oSettings._iDisplayLength) - 1) * oSettings._iDisplayLength;
-              fnDraw(oSettings);
-              return;
-            }
-
-            oSettings._iDisplayStart = iNewStart;
-            fnDraw(oSettings);
-          });
-        },
-
-        "fnUpdate": function (oSettings, fnDraw) {
-          var oPaging = oSettings.oInstance.fnPagingInfo(),
-            an = oSettings.aanFeatures.p,
-            ien = an.length,
-            iPages = Math.ceil((oSettings.fnRecordsDisplay()) / oSettings._iDisplayLength),
-            iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1,
-            i;
-
-          for (i = 0; i < ien; i += 1) {
-            $('.paginate_input', an[i]).val(iCurrentPage)
-              .siblings('.paginate_of').find('b').html(iPages);
-
-            // Add / remove disabled classes from the static elements
-            if (oPaging.iPage === 0) {
-              $('li.first', an[i]).addClass('disabled');
-              $('li.prev', an[i]).addClass('disabled');
-            } else {
-              $('li.first', an[i]).removeClass('disabled');
-              $('li.prev', an[i]).removeClass('disabled');
-            }
-
-            if (oPaging.iPage === oPaging.iTotalPages - 1 || oPaging.iTotalPages === 0) {
-              $('li.next', an[i]).addClass('disabled');
-              $('li.last', an[i]).addClass('disabled');
-            } else {
-              $('li.next', an[i]).removeClass('disabled');
-              $('li.last', an[i]).removeClass('disabled');
-            }
-          }
-        }
-      }
-    });
-  }
-}(jQuery));
-
-// Util: definition of breakpoint sizes for tablet and desktop modes
-(function ($) {
-  'use strict';
-  $.pfBreakpoints = {
-    'tablet': 768,
-    'desktop': 1200
-  };
-}(jQuery));
-
-// Util: PatternFly Collapsible Left Hand Navigation
-// Must have navbar-toggle in navbar-pf-alt for expand/collapse
-(function ($) {
-
-  'use strict';
-
-  $.fn.navigation = function () {
-
-    var navElement = $('.layout-pf-alt-fixed .nav-pf-vertical-alt'),
-      bodyContentElement = $('.container-pf-alt-nav-pf-vertical-alt'),
-      toggleNavBarButton = $('.navbar-toggle'),
-      explicitCollapse = false,
-      checkNavState = function () {
-        var width = $(window).width();
-
-        //Always remove the hidden & peek class
-        navElement.removeClass('hidden show-mobile-nav collapsed');
-
-        //Set the body class back to the default
-        bodyContentElement.removeClass('collapsed-nav hidden-nav');
-
-        // Check to see if the nav needs to collapse
-        if (width < $.pfBreakpoints.desktop || explicitCollapse) {
-          navElement.addClass('collapsed');
-          bodyContentElement.addClass('collapsed-nav');
-        }
-
-        // Check to see if we need to move down to the mobile state
-        if (width < $.pfBreakpoints.tablet) {
-          //Set the nav to being hidden
-          navElement.addClass('hidden');
-
-          //Make sure this is expanded
-          navElement.removeClass('collapsed');
-
-          //Set the body class to the correct state
-          bodyContentElement.removeClass('collapsed-nav');
-          bodyContentElement.addClass('hidden-nav');
-        }
-      },
-      collapseMenu = function () {
-        //Make sure this is expanded
-        navElement.addClass('collapsed');
-        //Set the body class to the correct state
-        bodyContentElement.addClass('collapsed-nav');
-
-        explicitCollapse = true;
-      },
-      enableTransitions = function () {
-        // enable transitions only when toggleNavBarButton is clicked or window is resized
-        $('html').addClass('transitions');
-      },
-      expandMenu = function () {
-        //Make sure this is expanded
-        navElement.removeClass('collapsed');
-        //Set the body class to the correct state
-        bodyContentElement.removeClass('collapsed-nav');
-
-        explicitCollapse = false;
-      },
-      bindMenuBehavior = function () {
-        toggleNavBarButton.on('click', function (e) {
-          var inMobileState = bodyContentElement.hasClass('hidden-nav');
-          enableTransitions();
-
-          if (inMobileState && navElement.hasClass('show-mobile-nav')) {
-            //In mobile state just need to hide the nav
-            navElement.removeClass('show-mobile-nav');
-          } else if (inMobileState) {
-            navElement.addClass('show-mobile-nav');
-          } else if (navElement.hasClass('collapsed')) {
-            expandMenu();
-          } else {
-            collapseMenu();
-          }
-        });
-      },
-      setTooltips = function () {
-        $('.nav-pf-vertical-alt [data-toggle="tooltip"]').tooltip({'container': 'body', 'delay': { 'show': '500', 'hide': '200' }});
-
-        $(".nav-pf-vertical-alt").on("show.bs.tooltip", function (e) {
-          return $(this).hasClass("collapsed");
-        });
-
-      },
-      init = function () {
-        //Set correct state on load
-        checkNavState();
-
-        // Bind Top level hamburger menu with menu behavior;
-        bindMenuBehavior();
-
-        //Set tooltips
-        setTooltips();
-      };
-
-    //Listen for the window resize event and collapse/hide as needed
-    $(window).on('resize', function () {
-      checkNavState();
-      enableTransitions();
-    });
-
-    init();
-
-  };
-
-  $(document).ready(function () {
-    if ($('.nav-pf-vertical-alt').length > 0) {
-      $.fn.navigation();
-    }
-  });
-
-}(jQuery));
-
-// Count and Display Remaining Characters
-(function ($) {
-
-  'use strict';
-
-  $.fn.countRemainingChars = function (options) {
-
-    var settings = $.extend({
-        // These are the defaults.
-        charsMaxLimit: 100,
-        charsWarnRemaining: 5,
-        blockInputAtMaxLimit: false
-      }, options),
-      $taFld = this,
-      $countFld = $('#'  + settings.countFld).text(settings.charsMaxLimit),
-      charsRemainingFn = function (charsLength) {
-        var charsRemaining = settings.charsMaxLimit - charsLength;
-        $countFld.text(charsRemaining);
-        $countFld.toggleClass('chars-warn-remaining-pf', charsRemaining <= settings.charsWarnRemaining);
-        if (charsRemaining < 0) {
-          $taFld.trigger("overCharsMaxLimitEvent", $taFld.attr('id'));
-        } else {
-          $taFld.trigger("underCharsMaxLimitEvent", $taFld.attr('id'));
-        }
-      };
-
-    this.on('paste', function (event) {
-      setTimeout(function () {
-        var charsLength = $taFld.val().length, maxTxt;
-
-        if (settings.blockInputAtMaxLimit && charsLength > settings.charsMaxLimit) {
-          maxTxt = $taFld.val();
-          maxTxt = maxTxt.substring(0, settings.charsMaxLimit);
-          $taFld.val(maxTxt);
-          charsLength = $taFld.val().length;
-        }
-
-        charsRemainingFn(charsLength);
-      }, 100);
-    });
-
-    this.keyup(function (event) {
-      charsRemainingFn($taFld.val().length);
-    });
-
-    this.keydown(function (event) {
-      var charsLength = $taFld.val().length;
-
-      if (settings.blockInputAtMaxLimit && charsLength >= settings.charsMaxLimit) {
-        // Except backspace
-        if (event.keyCode !== 8) {
-          event.preventDefault();
-        }
-      }
-    });
-
-    return this;
-  };
-}(jQuery));
-
-// Util: PatternFly Palette colors
-(function ($) {
-  'use strict';
-
-  $.pfPaletteColors = {
+  // Util: PatternFly Palette colors
+  patternfly.pfPaletteColors = {
     black:         '#030303',
     black100:      '#fafafa',
     black200:      '#ededed',
@@ -110840,20 +110551,16 @@ var autoComplete = (function(){
     red400:        '#470000',
     red500:        '#2c0000'
   };
-}(jQuery));
 
-// Util: PatternFly C3 Chart Defaults
-(function ($) {
-  'use strict';
-
-  $.fn.pfSetDonutChartTitle = function (selector, primary, secondary) {
+  // Util: PatternFly C3 Chart Defaults
+  patternfly.pfSetDonutChartTitle = function (selector, primary, secondary) {
     var donutChartRightTitle = window.d3.select(selector).select('text.c3-chart-arcs-title');
     donutChartRightTitle.text("");
     donutChartRightTitle.insert('tspan').text(primary).classed('donut-title-big-pf', true).attr('dy', 0).attr('x', 0);
     donutChartRightTitle.insert('tspan').text(secondary).classed('donut-title-small-pf', true).attr('dy', 20).attr('x', 0);
   };
 
-  $.fn.pfDonutTooltipContents = function (d, defaultTitleFormat, defaultValueFormat, color) {
+  patternfly.pfDonutTooltipContents = function (d, defaultTitleFormat, defaultValueFormat, color) {
     return '<table class="c3-tooltip">' +
       '  <tr>' +
       '    <td><span style="background-color:' + color(d[0].id) + '"></span>' + '<strong>' + d[0].value + '</strong> ' + d[0].name + '</td>' +
@@ -110862,7 +110569,7 @@ var autoComplete = (function(){
       '</table>';
   };
 
-  $.fn.pfGetUtilizationDonutTooltipContentsFn = function (units) {
+  patternfly.pfGetUtilizationDonutTooltipContentsFn = function (units) {
     return function (d) {
       return '<span class="donut-tooltip-pf" style="white-space: nowrap;">' +
         (Math.round(d[0].ratio * 1000) / 10) + '%' + ' ' + units + ' ' + d[0].name +
@@ -110870,7 +110577,7 @@ var autoComplete = (function(){
     };
   };
 
-  $.fn.pfGetBarChartTooltipContentsFn = function (categories) {
+  patternfly.pfGetBarChartTooltipContentsFn = function (categories) {
     return function (d) {
       var name = categories ? categories[d[0].index] : d[0].index;
       return '<table class="c3-tooltip">' +
@@ -110882,7 +110589,7 @@ var autoComplete = (function(){
     };
   };
 
-  $.fn.pfSingleLineChartTooltipContentsFn = function (categories) {
+  patternfly.pfSingleLineChartTooltipContentsFn = function (categories) {
     return function (d) {
       var name = categories ? categories[d[0].index] : d[0].index;
       return '<table class="c3-tooltip">' +
@@ -110894,20 +110601,20 @@ var autoComplete = (function(){
     };
   };
 
-  $.fn.pfPieTooltipContents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-    return $().pfDonutTooltipContents(d, defaultTitleFormat, defaultValueFormat, color);
+  patternfly.pfPieTooltipContents = function (d, defaultTitleFormat, defaultValueFormat, color) {
+    return patternfly.pfDonutTooltipContents(d, defaultTitleFormat, defaultValueFormat, color);
   };
 
-  $.fn.c3ChartDefaults = function () {
+  patternfly.c3ChartDefaults = function () {
     var
       getDefaultColors = function () {
         return {
           pattern: [
-            $.pfPaletteColors.blue,
-            $.pfPaletteColors.blue300,
-            $.pfPaletteColors.green,
-            $.pfPaletteColors.orange,
-            $.pfPaletteColors.red
+            patternfly.pfPaletteColors.blue,
+            patternfly.pfPaletteColors.blue300,
+            patternfly.pfPaletteColors.green,
+            patternfly.pfPaletteColors.orange,
+            patternfly.pfPaletteColors.red
           ]
         };
       },
@@ -110920,7 +110627,7 @@ var autoComplete = (function(){
       },
       getDefaultBarTooltip = function (categories) {
         return {
-          contents: $().pfGetBarChartTooltipContentsFn(categories)
+          contents: patternfly.pfGetBarChartTooltipContentsFn(categories)
         };
       },
       getDefaultBarLegend = function () {
@@ -110974,8 +110681,8 @@ var autoComplete = (function(){
       getDefaultDonutColors = function () {
         return {
           pattern: [
-            $.pfPaletteColors.blue,
-            $.pfPaletteColors.black300
+            patternfly.pfPaletteColors.blue,
+            patternfly.pfPaletteColors.black300
           ]
         };
       },
@@ -111015,8 +110722,8 @@ var autoComplete = (function(){
       getDefaultPieColors = function () {
         return {
           pattern: [
-            $.pfPaletteColors.blue,
-            $.pfPaletteColors.black300
+            patternfly.pfPaletteColors.blue,
+            patternfly.pfPaletteColors.black300
           ]
         };
       },
@@ -111241,6 +110948,450 @@ var autoComplete = (function(){
       getDefaultSingleAreaConfig: getDefaultSingleAreaConfig
     };
   };
+
+  // definition of breakpoint sizes for tablet and desktop modes
+  patternfly.pfBreakpoints = {
+    'tablet': 768,
+    'desktop': 1200
+  };
+
+  if (typeof define === 'function' && define.amd) {
+    define("patternfly", function () {
+      return patternfly;
+    });
+  } else if ('undefined' !== typeof exports && 'undefined' !== typeof module) {
+    module.exports = patternfly;
+  } else {
+    window.patternfly = patternfly;
+  }
+
+})(window);
+
+
+// Util: PatternFly Sidebar
+// Set height of sidebar-pf to height of document minus height of navbar-pf if not mobile
+(function ($) {
+  'use strict';
+  $.fn.sidebar = function () {
+    var documentHeight = 0,
+      navbarpfHeight = 0,
+      colHeight = 0;
+
+    if ($('.navbar-pf .navbar-toggle').is(':hidden')) {
+      documentHeight = $(document).height();
+      navbarpfHeight = $('.navbar-pf').outerHeight();
+      colHeight = documentHeight - navbarpfHeight;
+    }
+    $('.sidebar-pf').parent('.row').children('[class*="col-"]').css({"min-height" : colHeight});
+  };
+
+  $(document).ready(function () {
+    // Call sidebar() on ready if .sidebar-pf exists and .datatable does not exist
+    if ($('.sidebar-pf').length > 0 && $('.datatable').length === 0) {
+      $.fn.sidebar();
+    }
+  });
+
+  $(window).resize(function () {
+    // Call sidebar() on resize if .sidebar-pf exists
+    if ($('.sidebar-pf').length > 0) {
+      $.fn.sidebar();
+    }
+  });
+}(jQuery));
+
+// Util: PatternFly Popovers
+// Add data-close="true" to insert close X icon
+(function ($) {
+  'use strict';
+
+  $.fn.popovers = function () {
+    // Initialize
+    this.popover();
+
+    // Add close icons
+    this.filter('[data-close=true]').each(function (index, element) {
+      var $this = $(element),
+        title = $this.attr('data-original-title') + '<button type="button" class="close" aria-hidden="true"><span class="pficon pficon-close"></span></button>';
+
+      $this.attr('data-original-title', title);
+    });
+
+    // Bind Close Icon to Toggle Display
+    this.on('click', function (e) {
+      var $this = $(this),
+        $title = $this.next('.popover').find('.popover-title');
+
+      // Only if data-close is true add class "x" to title for right padding
+      $title.find('.close').parent('.popover-title').addClass('closable');
+
+      // Bind x icon to close popover
+      $title.find('.close').on('click', function () {
+        $this.popover('hide');
+      });
+
+      // Prevent href="#" page scroll to top
+      e.preventDefault();
+    });
+
+    return this;
+  };
+}(jQuery));
+
+
+// Util: DataTables Settings
+(function ($) {
+  'use strict';
+  if ($.fn.dataTableExt) {
+    /* Set the defaults for DataTables initialisation */
+    $.extend(true, $.fn.dataTable.defaults, {
+      "bDestroy": true,
+      "bAutoWidth": false,
+      "iDisplayLength": 20,
+      "sDom":
+        "<'dataTables_header' f i r >" +
+        "<'table-responsive'  t >" +
+        "<'dataTables_footer' p >",
+      "oLanguage": {
+        "sInfo": "Showing <b>_START_</b> to <b>_END_</b> of <b>_TOTAL_</b> Items",
+        "sInfoFiltered" : "(of <b>_MAX_</b>)",
+        "sInfoEmpty" : "Showing <b>0</b> Results",
+        "sZeroRecords":
+          "<p>Suggestions</p>" +
+          "<ul>" +
+            "<li>Check the javascript regular expression syntax of the search term.</li>" +
+            "<li>Check that the correct menu option is chosen (token ID vs. user ID).</li>" +
+            "<li>Use wildcards (* to match 0 or more characters, + to match 1 or more characters, ? to match 0 or 1 character).</li>" +
+            "<li>Clear the search field, then click Search to return to the 20 most recent records.</li>" +
+          "</ul>",
+        "sSearch": ""
+      },
+      "sPaginationType": "bootstrap_input",
+      "oSearch": {
+        "sSearch": "",
+        "bRegex": true,
+        "bSmart": false
+      }
+    });
+
+    /* Default class modification */
+    $.extend($.fn.dataTableExt.oStdClasses, {
+      "sWrapper": "dataTables_wrapper"
+    });
+
+    /* API method to get paging information */
+    $.fn.dataTableExt.oApi.fnPagingInfo = function (oSettings) {
+      return {
+        "iStart":         oSettings._iDisplayStart,
+        "iEnd":           oSettings.fnDisplayEnd(),
+        "iLength":        oSettings._iDisplayLength,
+        "iTotal":         oSettings.fnRecordsTotal(),
+        "iFilteredTotal": oSettings.fnRecordsDisplay(),
+        "iPage":          oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+        "iTotalPages":    oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+      };
+    };
+
+    /* Combination of Bootstrap + Input Text style pagination control */
+    $.extend($.fn.dataTableExt.oPagination, {
+      "bootstrap_input": {
+        "fnInit": function (oSettings, nPaging, fnDraw) {
+          var fnClickHandler = function (e) {
+              e.preventDefault();
+              if (oSettings.oApi._fnPageChange(oSettings, e.data.action)) {
+                fnDraw(oSettings);
+              }
+            },
+            els,
+            nInput;
+
+          $(nPaging).append(
+            '<ul class="pagination">' +
+              '  <li class="first disabled"><span class="i fa fa-angle-double-left"></span></li>' +
+              '  <li class="prev disabled"><span class="i fa fa-angle-left"></span></li>' +
+              '</ul>' +
+              '<div class="pagination-input">' +
+              '  <input type="text" class="paginate_input">' +
+              '  <span class="paginate_of">of <b>3</b></span>' +
+              '</div>' +
+              '<ul class="pagination">' +
+              '  <li class="next disabled"><span class="i fa fa-angle-right"></span></li>' +
+              '  <li class="last disabled"><span class="i fa fa-angle-double-right"></span></li>' +
+              '</ul>'
+          );
+
+          els = $('li', nPaging);
+          $(els[0]).bind('click.DT', { action: "first" }, fnClickHandler);
+          $(els[1]).bind('click.DT', { action: "previous" }, fnClickHandler);
+          $(els[2]).bind('click.DT', { action: "next" }, fnClickHandler);
+          $(els[3]).bind('click.DT', { action: "last" }, fnClickHandler);
+
+          nInput = $('input', nPaging);
+          $(nInput).keyup(function (e) {
+            var iNewStart;
+            if (e.which === 38 || e.which === 39) {
+              this.value += 1;
+            } else if ((e.which === 37 || e.which === 40) && this.value > 1) {
+              this.value -= 1;
+            }
+
+            if (this.value === "" || !this.value.match(/[0-9]/)) {
+              /* Nothing entered or non-numeric character */
+              return;
+            }
+
+            iNewStart = oSettings._iDisplayLength * (this.value - 1);
+            if (iNewStart >= oSettings.fnRecordsDisplay()) {
+              /* Display overrun */
+              oSettings._iDisplayStart = (Math.ceil((oSettings.fnRecordsDisplay() - 1) /
+                oSettings._iDisplayLength) - 1) * oSettings._iDisplayLength;
+              fnDraw(oSettings);
+              return;
+            }
+
+            oSettings._iDisplayStart = iNewStart;
+            fnDraw(oSettings);
+          });
+        },
+
+        "fnUpdate": function (oSettings, fnDraw) {
+          var oPaging = oSettings.oInstance.fnPagingInfo(),
+            an = oSettings.aanFeatures.p,
+            ien = an.length,
+            iPages = Math.ceil((oSettings.fnRecordsDisplay()) / oSettings._iDisplayLength),
+            iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1,
+            i;
+
+          for (i = 0; i < ien; i += 1) {
+            $('.paginate_input', an[i]).val(iCurrentPage)
+              .siblings('.paginate_of').find('b').html(iPages);
+
+            // Add / remove disabled classes from the static elements
+            if (oPaging.iPage === 0) {
+              $('li.first', an[i]).addClass('disabled');
+              $('li.prev', an[i]).addClass('disabled');
+            } else {
+              $('li.first', an[i]).removeClass('disabled');
+              $('li.prev', an[i]).removeClass('disabled');
+            }
+
+            if (oPaging.iPage === oPaging.iTotalPages - 1 || oPaging.iTotalPages === 0) {
+              $('li.next', an[i]).addClass('disabled');
+              $('li.last', an[i]).addClass('disabled');
+            } else {
+              $('li.next', an[i]).removeClass('disabled');
+              $('li.last', an[i]).removeClass('disabled');
+            }
+          }
+        }
+      }
+    });
+  }
+}(jQuery));
+
+// Util: definition of breakpoint sizes for tablet and desktop modes
+(function ($) {
+  'use strict';
+  if (patternfly !== undefined) {
+    $.pfBreakpoints = patternfly.pfBreakpoints;
+  }
+}(jQuery));
+
+// Util: PatternFly Collapsible Left Hand Navigation
+// Must have navbar-toggle in navbar-pf-alt for expand/collapse
+(function ($) {
+
+  'use strict';
+
+  $.fn.navigation = function () {
+
+    var navElement = $('.layout-pf-alt-fixed .nav-pf-vertical-alt'),
+      bodyContentElement = $('.container-pf-alt-nav-pf-vertical-alt'),
+      toggleNavBarButton = $('.navbar-toggle'),
+      explicitCollapse = false,
+      checkNavState = function () {
+        var width = $(window).width();
+
+        //Always remove the hidden & peek class
+        navElement.removeClass('hidden show-mobile-nav collapsed');
+
+        //Set the body class back to the default
+        bodyContentElement.removeClass('collapsed-nav hidden-nav');
+
+        // Check to see if the nav needs to collapse
+        if (width < $.pfBreakpoints.desktop || explicitCollapse) {
+          navElement.addClass('collapsed');
+          bodyContentElement.addClass('collapsed-nav');
+        }
+
+        // Check to see if we need to move down to the mobile state
+        if (width < $.pfBreakpoints.tablet) {
+          //Set the nav to being hidden
+          navElement.addClass('hidden');
+
+          //Make sure this is expanded
+          navElement.removeClass('collapsed');
+
+          //Set the body class to the correct state
+          bodyContentElement.removeClass('collapsed-nav');
+          bodyContentElement.addClass('hidden-nav');
+        }
+      },
+      collapseMenu = function () {
+        //Make sure this is expanded
+        navElement.addClass('collapsed');
+        //Set the body class to the correct state
+        bodyContentElement.addClass('collapsed-nav');
+
+        explicitCollapse = true;
+      },
+      enableTransitions = function () {
+        // enable transitions only when toggleNavBarButton is clicked or window is resized
+        $('html').addClass('transitions');
+      },
+      expandMenu = function () {
+        //Make sure this is expanded
+        navElement.removeClass('collapsed');
+        //Set the body class to the correct state
+        bodyContentElement.removeClass('collapsed-nav');
+
+        explicitCollapse = false;
+      },
+      bindMenuBehavior = function () {
+        toggleNavBarButton.on('click', function (e) {
+          var inMobileState = bodyContentElement.hasClass('hidden-nav');
+          enableTransitions();
+
+          if (inMobileState && navElement.hasClass('show-mobile-nav')) {
+            //In mobile state just need to hide the nav
+            navElement.removeClass('show-mobile-nav');
+          } else if (inMobileState) {
+            navElement.addClass('show-mobile-nav');
+          } else if (navElement.hasClass('collapsed')) {
+            expandMenu();
+          } else {
+            collapseMenu();
+          }
+        });
+      },
+      setTooltips = function () {
+        $('.nav-pf-vertical-alt [data-toggle="tooltip"]').tooltip({'container': 'body', 'delay': { 'show': '500', 'hide': '200' }});
+
+        $(".nav-pf-vertical-alt").on("show.bs.tooltip", function (e) {
+          return $(this).hasClass("collapsed");
+        });
+
+      },
+      init = function () {
+        //Set correct state on load
+        checkNavState();
+
+        // Bind Top level hamburger menu with menu behavior;
+        bindMenuBehavior();
+
+        //Set tooltips
+        setTooltips();
+      };
+
+    //Listen for the window resize event and collapse/hide as needed
+    $(window).on('resize', function () {
+      checkNavState();
+      enableTransitions();
+    });
+
+    init();
+
+  };
+
+  $(document).ready(function () {
+    if ($('.nav-pf-vertical-alt').length > 0) {
+      $.fn.navigation();
+    }
+  });
+
+}(jQuery));
+
+// Count and Display Remaining Characters
+(function ($) {
+
+  'use strict';
+
+  $.fn.countRemainingChars = function (options) {
+
+    var settings = $.extend({
+        // These are the defaults.
+        charsMaxLimit: 100,
+        charsWarnRemaining: 5,
+        blockInputAtMaxLimit: false
+      }, options),
+      $taFld = this,
+      $countFld = $('#'  + settings.countFld).text(settings.charsMaxLimit),
+      charsRemainingFn = function (charsLength) {
+        var charsRemaining = settings.charsMaxLimit - charsLength;
+        $countFld.text(charsRemaining);
+        $countFld.toggleClass('chars-warn-remaining-pf', charsRemaining <= settings.charsWarnRemaining);
+        if (charsRemaining < 0) {
+          $taFld.trigger("overCharsMaxLimitEvent", $taFld.attr('id'));
+        } else {
+          $taFld.trigger("underCharsMaxLimitEvent", $taFld.attr('id'));
+        }
+      };
+
+    this.on('paste', function (event) {
+      setTimeout(function () {
+        var charsLength = $taFld.val().length, maxTxt;
+
+        if (settings.blockInputAtMaxLimit && charsLength > settings.charsMaxLimit) {
+          maxTxt = $taFld.val();
+          maxTxt = maxTxt.substring(0, settings.charsMaxLimit);
+          $taFld.val(maxTxt);
+          charsLength = $taFld.val().length;
+        }
+
+        charsRemainingFn(charsLength);
+      }, 100);
+    });
+
+    this.keyup(function (event) {
+      charsRemainingFn($taFld.val().length);
+    });
+
+    this.keydown(function (event) {
+      var charsLength = $taFld.val().length;
+
+      if (settings.blockInputAtMaxLimit && charsLength >= settings.charsMaxLimit) {
+        // Except backspace
+        if (event.keyCode !== 8) {
+          event.preventDefault();
+        }
+      }
+    });
+
+    return this;
+  };
+}(jQuery));
+
+// Util: PatternFly Palette colors
+(function ($) {
+  'use strict';
+
+  if (patternfly !== undefined) {
+    $.pfPaletteColors = patternfly.pfPaletteColors;
+  }
+}(jQuery));
+
+// Util: PatternFly C3 Chart Defaults
+(function ($) {
+  'use strict';
+  if (patternfly !== undefined) {
+    $.fn.pfSetDonutChartTitle = patternfly.pfSetDonutChartTitle;
+    $.fn.pfDonutTooltipContents = patternfly.pfDonutTooltipContents;
+    $.fn.pfGetUtilizationDonutTooltipContentsFn = patternfly.pfGetUtilizationDonutTooltipContentsFn;
+    $.fn.pfGetBarChartTooltipContentsFn = patternfly.pfGetBarChartTooltipContentsFn;
+    $.fn.pfSingleLineChartTooltipContentsFn = patternfly.pfSingleLineChartTooltipContentsFn;
+    $.fn.pfPieTooltipContents = patternfly.pfPieTooltipContents;
+    $.fn.c3ChartDefaults = patternfly.c3ChartDefaults;
+  }
 }(jQuery));
 
 // Util: PatternFly Collapse with fixed heights
@@ -111920,6 +112071,10 @@ var autoComplete = (function(){
       },
 
       init = function (handleItemSelections) {
+        // Hide the nav menus during initialization
+        navElement.addClass('hide-nav-pf');
+        bodyContentElement.addClass('hide-nav-pf');
+
         //Set correct state on load
         checkNavState();
 

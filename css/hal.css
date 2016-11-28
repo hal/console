@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for hal-next 0.4.3
- * Build date: 2016-10-24 22:13:02
+ * Generated CSS file for hal-next 0.4.4
+ * Build date: 2016-11-28 23:08:23
  */
 /*
  * Fonts
@@ -41,15 +41,15 @@
   src: url("../fonts/OpenSans-ExtraBold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-ExtraBold-webfont.woff") format("woff"), url("../fonts/OpenSans-ExtraBold-webfont.ttf") format("truetype"), url("../fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold") format("svg");
 }
 /*!
- *  Font Awesome 4.6.3 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('../fonts/fontawesome-webfont.eot?v=4.6.3');
-  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.6.3') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff2?v=4.6.3') format('woff2'), url('../fonts/fontawesome-webfont.woff?v=4.6.3') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.6.3') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular') format('svg');
+  src: url('../fonts/fontawesome-webfont.eot?v=4.7.0');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('../fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -1875,6 +1875,7 @@
   content: "\f23e";
 }
 .fa-battery-4:before,
+.fa-battery:before,
 .fa-battery-full:before {
   content: "\f240";
 }
@@ -2220,6 +2221,143 @@
 .fa-fa:before,
 .fa-font-awesome:before {
   content: "\f2b4";
+}
+.fa-handshake-o:before {
+  content: "\f2b5";
+}
+.fa-envelope-open:before {
+  content: "\f2b6";
+}
+.fa-envelope-open-o:before {
+  content: "\f2b7";
+}
+.fa-linode:before {
+  content: "\f2b8";
+}
+.fa-address-book:before {
+  content: "\f2b9";
+}
+.fa-address-book-o:before {
+  content: "\f2ba";
+}
+.fa-vcard:before,
+.fa-address-card:before {
+  content: "\f2bb";
+}
+.fa-vcard-o:before,
+.fa-address-card-o:before {
+  content: "\f2bc";
+}
+.fa-user-circle:before {
+  content: "\f2bd";
+}
+.fa-user-circle-o:before {
+  content: "\f2be";
+}
+.fa-user-o:before {
+  content: "\f2c0";
+}
+.fa-id-badge:before {
+  content: "\f2c1";
+}
+.fa-drivers-license:before,
+.fa-id-card:before {
+  content: "\f2c2";
+}
+.fa-drivers-license-o:before,
+.fa-id-card-o:before {
+  content: "\f2c3";
+}
+.fa-quora:before {
+  content: "\f2c4";
+}
+.fa-free-code-camp:before {
+  content: "\f2c5";
+}
+.fa-telegram:before {
+  content: "\f2c6";
+}
+.fa-thermometer-4:before,
+.fa-thermometer:before,
+.fa-thermometer-full:before {
+  content: "\f2c7";
+}
+.fa-thermometer-3:before,
+.fa-thermometer-three-quarters:before {
+  content: "\f2c8";
+}
+.fa-thermometer-2:before,
+.fa-thermometer-half:before {
+  content: "\f2c9";
+}
+.fa-thermometer-1:before,
+.fa-thermometer-quarter:before {
+  content: "\f2ca";
+}
+.fa-thermometer-0:before,
+.fa-thermometer-empty:before {
+  content: "\f2cb";
+}
+.fa-shower:before {
+  content: "\f2cc";
+}
+.fa-bathtub:before,
+.fa-s15:before,
+.fa-bath:before {
+  content: "\f2cd";
+}
+.fa-podcast:before {
+  content: "\f2ce";
+}
+.fa-window-maximize:before {
+  content: "\f2d0";
+}
+.fa-window-minimize:before {
+  content: "\f2d1";
+}
+.fa-window-restore:before {
+  content: "\f2d2";
+}
+.fa-times-rectangle:before,
+.fa-window-close:before {
+  content: "\f2d3";
+}
+.fa-times-rectangle-o:before,
+.fa-window-close-o:before {
+  content: "\f2d4";
+}
+.fa-bandcamp:before {
+  content: "\f2d5";
+}
+.fa-grav:before {
+  content: "\f2d6";
+}
+.fa-etsy:before {
+  content: "\f2d7";
+}
+.fa-imdb:before {
+  content: "\f2d8";
+}
+.fa-ravelry:before {
+  content: "\f2d9";
+}
+.fa-eercast:before {
+  content: "\f2da";
+}
+.fa-microchip:before {
+  content: "\f2db";
+}
+.fa-snowflake-o:before {
+  content: "\f2dc";
+}
+.fa-superpowers:before {
+  content: "\f2dd";
+}
+.fa-wpexplorer:before {
+  content: "\f2de";
+}
+.fa-meetup:before {
+  content: "\f2e0";
 }
 .sr-only {
   position: absolute;
@@ -11360,6 +11498,25 @@ label.required-pf:after {
 span.required-pf {
   color: #cc0000;
 }
+.fields-section-pf {
+  border-color: #ededed;
+  border-style: solid;
+  border-width: 1px 0 0;
+  margin-top: 25px;
+  padding: 15px 0 0;
+}
+.fields-section-header-pf {
+  border: none;
+  font-size: 12px;
+  margin: 0;
+  padding-right: 10px;
+  width: auto;
+}
+.fields-section-header-pf .fa-angle-right {
+  cursor: pointer;
+  font-size: 14px;
+  width: 14px;
+}
 .label {
   border-radius: 0;
   font-size: 100%;
@@ -12881,6 +13038,9 @@ table.datatable th:active {
 .pficon-delete:before {
   content: "\e611";
 }
+.pficon-domain:before {
+  content: "\e919";
+}
 .pficon-edit:before {
   content: "\e60a";
 }
@@ -12983,6 +13143,9 @@ table.datatable th:active {
 }
 .pficon-server:before {
   content: "\e90d";
+}
+.pficon-server-group:before {
+  content: "\e91a";
 }
 .pficon-service:before {
   content: "\e61e";
@@ -15447,7 +15610,7 @@ a.disabled {
   box-shadow: 0 0 3px rgba(3, 3, 3, 0.15);
   display: block !important;
 }
-.nav-pf-vertical .hide-nav-pf {
+.nav-pf-vertical.hide-nav-pf {
   visibility: hidden !important;
 }
 .nav-pf-vertical .list-group {
@@ -15473,6 +15636,14 @@ a.disabled {
   position: relative;
   white-space: nowrap;
   width: 230px;
+}
+@supports (display: flex) {
+  .nav-pf-vertical .list-group-item > a {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding-right: 0;
+  }
 }
 .nav-pf-vertical .list-group-item > a .fa,
 .nav-pf-vertical .list-group-item > a .glyphicon,
@@ -15522,6 +15693,15 @@ a.disabled {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@supports (display: flex) {
+  .nav-pf-vertical .list-group-item .list-group-item-value {
+    -webkit-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    max-width: none;
+    padding-right: 15px;
+  }
+}
 .nav-pf-vertical .list-group-item-separator {
   border-top-color: #030303;
   border-top-width: 2px;
@@ -15551,6 +15731,16 @@ a.disabled {
   position: absolute;
   right: 15px;
   top: 20px;
+}
+@supports (display: flex) {
+  .nav-pf-vertical .badge-container-pf {
+    padding-left: 0;
+    padding-right: 15px;
+    position: relative;
+    right: 0;
+    margin-top: -3px;
+    top: 5px;
+  }
 }
 .nav-pf-vertical .badge-container-pf .badge {
   background: #292e34;
@@ -15694,6 +15884,11 @@ a.disabled {
   position: absolute;
   right: 20px;
   top: 0;
+}
+@supports (display: flex) {
+  .secondary-nav-item-pf > a .list-group-item-value {
+    padding-right: 35px;
+  }
 }
 .secondary-nav-item-pf.active > a,
 .secondary-nav-item-pf:hover > a {
@@ -15946,6 +16141,11 @@ a.disabled {
   position: absolute;
   right: 20px;
   top: 4px;
+}
+@supports (display: flex) {
+  .nav-pf-secondary-nav .list-group-item.tertiary-nav-item-pf > a .list-group-item-value {
+    padding-right: 35px;
+  }
 }
 .nav-pf-secondary-nav .list-group-item.tertiary-nav-item-pf.active > a,
 .nav-pf-secondary-nav .list-group-item.tertiary-nav-item-pf:hover > a {
@@ -16659,6 +16859,9 @@ h2.underline {
 .margin-top-small {
   margin-top: 10px;
 }
+.page {
+  margin-top: 20px;
+}
 .with-progress {
   -webkit-animation: progress-animation 1s linear infinite;
           animation: progress-animation 1s linear infinite;
@@ -17128,8 +17331,11 @@ h2.underline {
   color: #8b8d8f;
   margin: 0 3px;
 }
-.form.readonly .form-control-static.properties .value {
-  margin-right: 8px;
+.form.readonly .form-control-static.properties .value:after {
+  content: ", ";
+}
+.form.readonly .form-control-static.properties .value:last-child:after {
+  content: "";
 }
 .form.editing input.restricted {
   cursor: not-allowed;
@@ -17233,6 +17439,9 @@ abbr.key {
   text-align: center;
   top: -1px;
   right: 0;
+}
+.input-group-btn > .bootstrap-select.btn-group {
+  margin-left: -1px;
 }
 /*
  * TagManager classes
@@ -17459,6 +17668,9 @@ pre.editor {
 }
 .datatable tr.selected td.select-checkbox:before {
   content: '\f046';
+}
+.column-action {
+  cursor: pointer;
 }
 /**
  * jsTree
@@ -17756,6 +17968,7 @@ pre.editor {
   background-color: transparent;
 }
 .jstree-hal .jstree-anchor,
+.jstree-hal .jstree-animated,
 .jstree-hal .jstree-wholerow {
   transition: background-color 0.15s, box-shadow 0.15s;
 }
