@@ -168,7 +168,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     public void onSuccess(final List<SubsystemMetadata> result) {
                         // only subsystems w/o next columns will show up in the breadcrumb dropdown
                         List<SubsystemMetadata> subsystemsWithTokens = result.stream()
-                                .filter(metadata -> metadata.getNextColumn() == null)
+                                .filter(metadata -> metadata.getToken() != null || metadata.isGeneric())
                                 .collect(toList());
                         callback.onSuccess(subsystemsWithTokens);
                     }

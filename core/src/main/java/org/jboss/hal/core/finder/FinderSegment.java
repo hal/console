@@ -138,7 +138,7 @@ public class FinderSegment<T> {
     }
 
     FinderSegment<T> copy() {
-        return new FinderSegment<T>(columnId, itemId, columnTitle, itemTitle);
+        return new FinderSegment<>(columnId, itemId, columnTitle, itemTitle);
     }
 
     public void connect(FinderColumn<T> column) {

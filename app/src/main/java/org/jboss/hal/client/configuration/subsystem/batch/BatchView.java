@@ -19,10 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -43,13 +42,13 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
 
     @MbuiElement("batch-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("batch-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("batch-in-memory-job-repo-table") DataTable<NamedNode> inMemoryJobRepoTable;
+    @MbuiElement("batch-in-memory-job-repo-table") NamedNodeTable<NamedNode> inMemoryJobRepoTable;
     @MbuiElement("batch-in-memory-job-repo-form") Form<NamedNode> inMemoryJobRepoForm;
-    @MbuiElement("batch-jdbc-job-repo-table") DataTable<NamedNode> jdbcJobRepoTable;
+    @MbuiElement("batch-jdbc-job-repo-table") NamedNodeTable<NamedNode> jdbcJobRepoTable;
     @MbuiElement("batch-jdbc-job-repo-form") Form<NamedNode> jdbcJobRepoForm;
-    @MbuiElement("batch-thread-factory-table") DataTable<NamedNode> threadFactoryTable;
+    @MbuiElement("batch-thread-factory-table") NamedNodeTable<NamedNode> threadFactoryTable;
     @MbuiElement("batch-thread-factory-form") Form<NamedNode> threadFactoryForm;
-    @MbuiElement("batch-thread-pool-table") DataTable<NamedNode> threadPoolTable;
+    @MbuiElement("batch-thread-pool-table") NamedNodeTable<NamedNode> threadPoolTable;
     @MbuiElement("batch-thread-pool-form") Form<NamedNode> threadPoolForm;
 
     BatchView(final MbuiContext mbuiContext) {
@@ -66,25 +65,25 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
 
     @Override
     public void updateInMemoryJobRepository(final List<NamedNode> items) {
-        inMemoryJobRepoTable.api().clear().add(items).refresh(RefreshMode.RESET);
         inMemoryJobRepoForm.clear();
+        inMemoryJobRepoTable.update(items);
     }
 
     @Override
     public void updateJdbcJobRepository(final List<NamedNode> items) {
-        jdbcJobRepoTable.api().clear().add(items).refresh(RefreshMode.RESET);
         jdbcJobRepoForm.clear();
+        jdbcJobRepoTable.update(items);
     }
 
     @Override
     public void updateThreadFactory(final List<NamedNode> items) {
-        threadFactoryTable.api().clear().add(items).refresh(RefreshMode.RESET);
         threadFactoryForm.clear();
+        threadFactoryTable.update(items);
     }
 
     @Override
     public void updateThreadPool(final List<NamedNode> items) {
-        threadPoolTable.api().clear().add(items).refresh(RefreshMode.RESET);
         threadPoolForm.clear();
+        threadPoolTable.update(items);
     }
 }

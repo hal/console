@@ -425,6 +425,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @Override
     public void showBackToNormalMode() {
+        FinderContext finderContext = presenter.lastFinderContext();
+        if (finderContext != null) {
+            FinderPath disconnected = finderContext.getPath().copy(); // remove column references to disable drop downs
+            finderContext.reset(disconnected);
+            updateBreadcrumb(finderContext);
+        }
         switchModeLink.setOnclick(event -> presenter.backToNormalMode());
         switchModeLink.setTitle(resources().constants().backToNormalMode());
         switchModeIcon.setClassName(fontAwesome("th-list", large));
