@@ -24,7 +24,7 @@ public class CreationContext<C> {
 
     private final C data;
 
-    CreationContext(final C data) {this.data = data;}
+    public CreationContext(final C data) {this.data = data;}
 
     public C data() {
         return data;
