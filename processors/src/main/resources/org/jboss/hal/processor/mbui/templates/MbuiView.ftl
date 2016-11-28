@@ -10,9 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
-<#if context.hasTabs()??>
-import org.jboss.hal.ballroom.Tabs;
-</#if>
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -21,8 +19,11 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -34,6 +35,7 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -46,9 +48,6 @@ final class ${context.subclass} extends ${context.base} {
     </#list>
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
-    </#list>
-    <#list context.tabs as tabInfo>
-    private final Tabs ${tabInfo.name};
     </#list>
     private final Map<String, Element> handlebarElements;
 
@@ -63,39 +62,74 @@ final class ${context.subclass} extends ${context.base} {
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
         this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
         </#list>
-        <#list context.tabs as tabInfo>
-        ${tabInfo.name} = new Tabs();
-        </#list>
         this.handlebarElements = new HashMap<>();
 
         <#list context.forms as form>
-        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
-            <#if form.includeRuntime>
-            .includeRuntime()
-            </#if>
-            <#if form.attributes?has_content>
-                <#if form.hasAttributesWithProvider>
-                    <#list form.attributes as attribute>
-                        <#if attribute.provider??>
-            .customFormItem("${attribute.name}", ${attribute.provider})
-                        <#else>
-            .include("${attribute.name}")
-                        </#if>
-                    </#list>
+            <#if form.groups?has_content>
+        ${form.name} = new GroupedForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
+                <#list form.groups as group>
+            .group("${group.id}", ${group.title})
+                    <#if group.hasAttributesWithProvider>
+                        <#list group.attributes as attribute>
+                            <#if attribute.provider??>
+                .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
+                            <#else>
+                .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#elseif group.hasUnboundAttributes>
+                        <#list group.attributes as attribute>
+                            <#if attribute.formItem??>
+                .unboundFormItem(${attribute.formItem}, ${attribute_index})
+                            <#else>
+                .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+                .include(<#list group.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
+            .end()
+                </#list>
+            <#else>
+                <#if form.failSafe>
+        Form<${form.typeParameter.type}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
                 <#else>
-            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 </#if>
+                <#if form.includeRuntime>
+            .includeRuntime()
+                </#if>
+                <#if form.attributes?has_content>
+                    <#if form.hasAttributesWithProvider>
+                        <#list form.attributes as attribute>
+                            <#if attribute.provider??>
+            .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
+                            <#else>
+            .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#elseif form.hasUnboundAttributes>
+                        <#list form.attributes as attribute>
+                            <#if attribute.formItem??>
+            .unboundFormItem(${attribute.formItem}, ${attribute_index})
+                            <#else>
+            .include("${attribute.name}")
+                            </#if>
+                        </#list>
+                    <#else>
+            .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                    </#if>
             .unsorted()
+                </#if>
             </#if>
             <#if form.autoSave>
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
                 String name = ${form.nameResolver};
-                saveForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name),
-                    ${form.title}, name);
+                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), changedValues);
             })
                 <#else>
-            .onSave((form, changedValues) -> saveSingletonForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), ${form.title}))
+            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), changedValues))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
@@ -117,16 +151,26 @@ final class ${context.subclass} extends ${context.base} {
                     mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
+            <#if form.failSafe>
+        ${form.name} = new FailSafeForm<>(mbuiContext.dispatcher(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                failSafe_${form.name},
+                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template));
+            </#if>
         </#list>
 
         <#list context.dataTables as table>
-        Options<${table.typeParameter}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter}>(${table.metadata.name})
+            <#if table.typeParameter.named>
+        Options<${table.typeParameter.type}> ${table.name}Options = new NamedNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
+            <#else>
+        Options<${table.typeParameter.type}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
+            </#if>
             <#list table.actions as action>
                 <#if action.knownHandler>
                     <#switch action.handlerRef>
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
-                                <#if action.hasAttributesWithProvider>
+                                <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
@@ -134,7 +178,9 @@ final class ${context.subclass} extends ${context.base} {
                     .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
                                     <#list action.attributes as attribute>
                                         <#if attribute.provider??>
-                    .customFormItem("${attribute.name}", ${attribute.provider})
+                    .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
+                                        <#elseif attribute.formItem??>
+                    .unboundFormItem(${attribute.formItem}, ${attribute_index})
                                         <#else>
                     .include("${attribute.name}")
                                         </#if>
@@ -162,12 +208,7 @@ final class ${context.subclass} extends ${context.base} {
                     form,
                     (name, modelNode) -> {
                         ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
-                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
-                            presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                            mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
-                        });
+                        mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                 dialog.show();
             })
@@ -180,12 +221,7 @@ final class ${context.subclass} extends ${context.base} {
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
                     (name, modelNode) -> {
                         ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
-                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
-                            presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
-                        });
+                        mbuiContext.crud().add(${table.title}, name, address, modelNode, (n, a) -> presenter.reload());
                     });
                                     <#list action.validationHandlerAttributes as attribute>
                 dialog.getForm().getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});
@@ -207,16 +243,12 @@ final class ${context.subclass} extends ${context.base} {
             })
                                 <#else>
             .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
-                ${table.metadata.name}Template,
-                () -> presenter.reload(),
-                                    <#list action.attributes as attribute>
-                "${attribute.name}"<#if attribute_has_next>, <#else>))</#if>
-                                    </#list>
+                ${table.metadata.name}Template, <#if action.attributes?has_content>asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>), </#if>(name, address) -> presenter.reload()))
                                 </#if>
                             <#else>
             .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
-                () -> presenter.reload()))
+                (name, address) -> presenter.reload()))
                             </#if>
                             <#break>
                         <#case "REMOVE_RESOURCE">
@@ -241,15 +273,11 @@ final class ${context.subclass} extends ${context.base} {
                 </#list>
             </#if>
             .build();
+            <#if table.typeParameter.named>
+        ${table.name} = new NamedNodeTable<>("${table.selector}", ${table.name}Options);
+            <#else>
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
-        </#list>
-
-        <#list context.tabs as tabInfo>
-            <#list tabInfo.items as tabItem>
-                <#list tabItem.formChildren as tabChild>
-        ${tabInfo.name}.add(Ids.build("${tabInfo.name}", "tab", "${tabItem.id}"), "${tabItem.title}", ${context.findFormById(tabChild)}.asElement());
-                </#list>
-            </#list>
+            </#if>
         </#list>
 
         <#if context.verticalNavigation??>
@@ -264,8 +292,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                        <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                         <#elseif content.reference??>
                 .add(${content.reference})
                         </#if>
@@ -290,8 +316,6 @@ final class ${context.subclass} extends ${context.base} {
                     .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                     .rememberAs("${content.name}")
                 .end()
-                                <#elseif content.tab>
-                .add(${context.findTabNameByTabId(content.reference)})
                                 <#elseif content.reference??>
                 .add(${content.reference})
                                 </#if>
@@ -325,8 +349,6 @@ final class ${context.subclass} extends ${context.base} {
                         .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
                         .rememberAs("${content.name}")
                     .end()
-                    <#elseif content.tab>
-                    .add(${context.findTabNameByTabId(content.reference)})
                     <#elseif content.reference??>
                     .add(${content.reference})
                     </#if>
@@ -376,7 +398,7 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.dataTables as table>
             <#if table.formRef??>
-        ${table.name}.api().bindForm(${table.formRef.name});
+            ${table.name}.bindForm(${table.formRef.name});
             </#if>
         </#list>
 

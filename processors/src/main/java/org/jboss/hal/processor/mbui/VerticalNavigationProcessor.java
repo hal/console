@@ -17,6 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 import java.util.List;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.jdom2.Element;
@@ -29,12 +30,11 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     VerticalNavigationProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final XPathFactory xPathFactory) {
-        super(processor, typeUtils, xPathFactory);
+            final Elements elementUtils, final XPathFactory xPathFactory) {
+        super(processor, typeUtils, elementUtils, xPathFactory);
     }
 
     @Override
@@ -43,16 +43,16 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
         VerticalNavigationInfo navigationInfo = new VerticalNavigationInfo(field.getSimpleName().toString(), selector);
         context.setVerticalNavigation(navigationInfo);
 
-        XPathExpression<Element> expression = xPathFactory.compile("item", Filters.element());
+        XPathExpression<Element> expression = xPathFactory.compile(XmlTags.ITEM, Filters.element());
         expression.evaluate(element)
                 .forEach(itemElement -> navigationInfo.addItem(createItem(field, itemElement, context, 0)));
     }
 
     private VerticalNavigationInfo.Item createItem(final VariableElement field, org.jdom2.Element element,
             final MbuiViewContext context, int level) {
-        String id = element.getAttributeValue("id");
-        String title = element.getAttributeValue("title");
-        String icon = element.getAttributeValue("icon");
+        String id = element.getAttributeValue(XmlTags.ID);
+        String title = element.getAttributeValue(XmlTags.TITLE);
+        String icon = element.getAttributeValue(XmlTags.ICON);
 
         if (id == null) {
             processor.error(field, "Invalid item \"%s\" in vertical-navigation: id is mandatory.",
@@ -65,10 +65,11 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
         VerticalNavigationInfo.Item item = new VerticalNavigationInfo.Item(id, title, icon);
 
         // nested sub-items or metadata?
-        List<Element> subItems = element.getChildren("sub-item");
+        List<Element> subItems = element.getChildren(XmlTags.SUB_ITEM);
         if (!subItems.isEmpty()) {
             if (level > 0) {
-                processor.error(field, "Invalid nesting in vertical-navigation: sub items cannot have sub items.");
+                processor.error(field,
+                        "Invalid nesting in vertical-navigation: sub items cannot have nested sub items.");
             }
             subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, context, level + 1)));
 

@@ -218,6 +218,6 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
     @EventHandler(element = "refresh", on = click)
     void onRefresh() {
-        presenter.refresh();
+        presenter.reloadFile();
     }
 }

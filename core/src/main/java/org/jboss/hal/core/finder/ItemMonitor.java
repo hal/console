@@ -17,15 +17,15 @@ package org.jboss.hal.core.finder;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.resources.CSS.withProgress;
-import static org.jboss.hal.resources.UIConstants.PROGRESS_TIMEOUT;
+import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
@@ -63,9 +63,9 @@ public class ItemMonitor {
      * Wraps and monitors an item action which triggers a place request.
      */
     public <T> ItemActionHandler<T> monitorPlaceRequest(final String itemId, final String nameToken,
-            final Scheduler.ScheduledCommand command) {
+            final Callback callback) {
         return itm -> {
-            command.execute();
+            callback.execute();
             startProgress(itemId);
             timeoutHandle = Browser.getWindow().setTimeout(() ->
                     handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
@@ -74,7 +74,7 @@ public class ItemMonitor {
                             Browser.getWindow().clearTimeout(timeoutHandle);
                             stopProgress(itemId);
                         }
-                    }), PROGRESS_TIMEOUT);
+                    }), MEDIUM_TIMEOUT);
         };
     }
 }

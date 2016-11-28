@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="security-domain-vertical-navigation">
+        <item id="security-domain-configuration-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=security/security-domain=*">
+                <h1>Configuration</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="security-domain-configuration-form" title="Configuration"
+                      on-save="{{presenter.saveSecurityDomain(form, changedValues)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-authentication-item" title="Authentication" icon="fa fa-sign-in">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authentication=classic/login-module=*">
+                <h1>Authentication Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-authentication-table" title="Authentication Module"
+                       form-ref="security-domain-authentication-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addClassicAuthenticationModule()}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUTHENTICATION)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-authentication-form" title="Authentication Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-authorization-item" title="Authorization" icon="fa fa-shield">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/authorization=classic/policy-module=*">
+                <h1>Authorization Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-authorization-table" title="Authorization Module"
+                       form-ref="security-domain-authorization-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.AUTHORIZATION)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUTHORIZATION)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-authorization-form" title="Authorization Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-audit-item" title="Audit" icon="fa fa-search">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
+                <h1>Audit Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-audit-table" title="Provider Module"
+                       form-ref="security-domain-audit-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.AUDIT)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.AUDIT)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-audit-form" title="Audit Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUDIT)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-acl-item" title="ACL" icon="fa fa-lock">
+            <metadata address="/{selected.profile}/subsystem=security/security-domain=*/acl=classic/acl-module=*">
+                <h1>ACL Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-acl-table" title="ACL Module"
+                       form-ref="security-domain-acl-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.ACL)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.ACL)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-acl-form" title="ACL Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-mapping-item" title="Mapping" icon="fa fa-exchange">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/mapping=classic/mapping-module=*">
+                <h1>Mapping Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-mapping-table" title="Mapping Module"
+                       form-ref="security-domain-mapping-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.MAPPING)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.MAPPING)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-mapping-form" title="Mapping Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"/>
+            </metadata>
+        </item>
+
+        <item id="security-domain-trust-item" title="Identity Trust" icon="fa fa-handshake-o">
+            <metadata
+                    address="/{selected.profile}/subsystem=security/security-domain=*/identity-trust=classic/trust-module=*">
+                <h1>Trust Module</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="security-domain-trust-table" title="Trust Module"
+                       form-ref="security-domain-trust-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addModule(Module.TRUST)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeModule(api, Module.TRUST)}}" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="security-domain-trust-form" title="Trust Module"
+                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"/>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

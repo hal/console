@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
 import elemental.client.Browser;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class EndpointManager {
     private final Endpoints endpoints;
     private final EndpointStorage storage;
 
-    private ScheduledCommand next;
+    private Callback callback;
 
     @Inject
     public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
@@ -56,8 +57,8 @@ public class EndpointManager {
         this.storage = storage;
     }
 
-    public void select(ScheduledCommand next) {
-        this.next = next;
+    public void select(Callback callback) {
+        this.callback = callback;
 
         String connect = Window.Location.getParameter(CONNECT_PARAMETER);
         if (connect != null) {
@@ -96,8 +97,11 @@ public class EndpointManager {
                         case 200:
                         case 401:
                             endpoints.useBase(Endpoints.getBaseUrl());
-                            next.execute();
+                            callback.execute();
                             break;
+                        // TODO Show an error page!
+                        // case 500:
+                        //     break;
                         default:
                             logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                                     managementEndpoint);
@@ -139,6 +143,6 @@ public class EndpointManager {
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
         endpoints.useBase(endpoint.getUrl());
-        next.execute();
+        callback.execute();
     }
 }

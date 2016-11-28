@@ -15,7 +15,8 @@
  */
 package org.jboss.hal.client.deployment;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
@@ -42,7 +43,7 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     @Inject
     public StandaloneDeploymentView(final Dispatcher dispatcher, final ModelBrowser modelBrowser,
             final Resources resources) {
-        browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.loadDeployment());
+        browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
         tabs = new Tabs()

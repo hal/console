@@ -28,12 +28,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.properties;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
@@ -44,7 +43,7 @@ import static org.jboss.hal.resources.Ids.uniqueId;
  */
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
-    private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
+    private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d\\-_]+)=([\\w\\d\\-_]+)$"); //NON-NLS
 
     private PropertiesElement propertiesElement;
     private Element tagsContainer;
@@ -54,15 +53,15 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
-    protected InputElement<Map<String, String>> newInputElement(Context<?> context) {
+    protected InputElement<Map<String, String>> newInputElement(CreationContext<?> context) {
         propertiesElement = new PropertiesElement();
         propertiesElement.setClassName(formControl + " " + properties);
         return propertiesElement;
     }
 
     @Override
-    protected void assembleUI() {
-        super.assembleUI();
+    protected <C> void assembleUI(CreationContext<C> context) {
+        super.assembleUI(context);
 
         valueElement.getClassList().add(properties);
 
@@ -112,7 +111,6 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             setUndefined(value.isEmpty());
             signalChange(value);
         });
-
     }
 
     @Override

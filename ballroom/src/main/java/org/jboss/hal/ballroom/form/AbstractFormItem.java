@@ -60,7 +60,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     static final Constants CONSTANTS = GWT.create(Constants.class);
-    static final Messages MESSAGES = GWT.create(Messages.class);
+    protected static final Messages MESSAGES = GWT.create(Messages.class);
 
     private static final String ARIA_DESCRIBEDBY = "aria-describedby";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
@@ -84,7 +84,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     final DivElement editingRoot;
     final DivElement inputGroupContainer;
     final DivElement inputContainer;
-    final SpanElement errorText;
+    protected final SpanElement errorText;
     private final LabelElement inputLabelElement;
     private final SpanElement inputButtonContainer;
     private final ButtonElement expressionButton;
@@ -104,7 +104,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ initialization
 
     @SuppressWarnings("unchecked")
-    protected AbstractFormItem(String name, String label, String hint, InputElement.Context<?> context) {
+    protected <C> AbstractFormItem(String name, String label, String hint, CreationContext<C> context) {
         this.inputElement = newInputElement(context);
 
         this.label = label;
@@ -199,7 +199,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                 .end()
                 .build();
 
-        assembleUI();
+        assembleUI(context);
         setId(Ids.build(name));
         setName(name);
     }
@@ -208,7 +208,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * Assembles the <strong>initial</strong> widgets / containers at creation time based on the default values of this
      * form item.
      */
-    protected void assembleUI() {
+    protected <C> void assembleUI(CreationContext<C> context) {
         if (hint != null) {
             showInputAddon(hint);
         } else {
@@ -300,7 +300,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      *
      * @return a new input element for this form item
      */
-    protected abstract InputElement<T> newInputElement(InputElement.Context<?> context);
+    protected abstract InputElement<T> newInputElement(CreationContext<?> context);
 
     @Override
     public Element asElement(Form.State state) {

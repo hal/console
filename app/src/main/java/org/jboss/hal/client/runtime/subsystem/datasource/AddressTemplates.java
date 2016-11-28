@@ -23,7 +23,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String DATA_SOURCE_ADDRESS = "/{selected.host}/{selected.server}/subsystem=datasources/data-source=*";
     String DATA_SOURCE_POOL_ADDRESS = DATA_SOURCE_ADDRESS + "/statistics=pool";

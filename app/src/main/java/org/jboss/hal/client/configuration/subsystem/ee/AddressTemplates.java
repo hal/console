@@ -22,7 +22,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 /**
  * @author Claudio Miranda
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String EE_ADDRESS                           = "/{selected.profile}/subsystem=ee";
     String SERVICE_DEFAULT_BINDINGS_ADDRESS     = EE_ADDRESS + "/service=default-bindings";

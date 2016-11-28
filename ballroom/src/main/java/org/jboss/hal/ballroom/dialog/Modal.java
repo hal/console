@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.ballroom.dialog;
 
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -26,14 +26,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 @JsType(isNative = true)
 public abstract class Modal {
-
-    @JsFunction
-    @FunctionalInterface
-    public interface ModalHandler {
-
-        void handle();
-    }
-
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class ModalOptions {
@@ -58,5 +50,5 @@ public abstract class Modal {
 
     public native void modal(@NonNls String action);
 
-    public native void on(@NonNls String event, ModalHandler handler);
+    public native void on(@NonNls String event, Callback callback);
 }

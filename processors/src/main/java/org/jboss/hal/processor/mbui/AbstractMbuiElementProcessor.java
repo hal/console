@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.processor.mbui;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.google.auto.common.MoreTypes;
@@ -27,37 +27,41 @@ import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.jetbrains.annotations.NonNls;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
+    @NonNls final MbuiViewProcessor processor;
     private final Types typeUtils;
-    final MbuiViewProcessor processor;
+    private final Elements elementUtils;
     final XPathFactory xPathFactory;
 
     AbstractMbuiElementProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final XPathFactory xPathFactory) {
+            final Elements elementUtils, final XPathFactory xPathFactory) {
         this.processor = processor;
         this.typeUtils = typeUtils;
+        this.elementUtils = elementUtils;
         this.xPathFactory = xPathFactory;
     }
 
     MetadataInfo findMetadata(final VariableElement field, final org.jdom2.Element element,
             final MbuiViewContext context) {
         MetadataInfo metadataInfo = null;
-        XPathExpression<Element> expression = xPathFactory.compile("ancestor::metadata", Filters.element());
+        //noinspection HardCodedStringLiteral
+        XPathExpression<Element> expression = xPathFactory.compile("ancestor::" + XmlTags.METADATA, Filters.element());
         org.jdom2.Element metadataElement = expression.evaluateFirst(element);
         if (metadataElement == null) {
             processor.error(field,
                     "Missing metadata ancestor for %s#%s. Please make sure the there's a <%s/> ancestor element.",
-                    element.getName(), element.getAttributeValue("id"), XmlTags.METADATA);
+                    element.getName(), element.getAttributeValue(XmlTags.ID), XmlTags.METADATA);
         } else {
-            metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue("address"));
+            metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue(XmlTags.ADDRESS));
             if (metadataInfo == null) {
                 processor
                         .error(field, "No metadata found for %s#%s. Please make sure there's a <%s/> ancestor element.",
@@ -67,61 +71,67 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
         return metadataInfo;
     }
 
-    String getTypeParameter(final VariableElement field) {
-        String typeArgument = "org.jboss.hal.dmr.ModelNode";
+    TypeParameter getTypeParameter(final VariableElement field) {
+        TypeMirror type = elementUtils.getTypeElement("org.jboss.hal.dmr.ModelNode").asType();
+        TypeMirror namedNodeType = elementUtils.getTypeElement("org.jboss.hal.dmr.model.NamedNode").asType();
         DeclaredType declaredType = MoreTypes.asDeclared(field.asType());
         List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
         if (!typeArguments.isEmpty()) {
-            typeArgument = MoreTypes.asTypeElement(typeUtils, typeArguments.get(0)).getQualifiedName().toString();
+            type = typeArguments.get(0);
         }
-        return typeArgument;
+        return new TypeParameter(MoreTypes.asTypeElement(typeUtils, type).getQualifiedName().toString(),
+                typeUtils.isAssignable(typeUtils.erasure(type), typeUtils.erasure(namedNodeType)));
     }
 
     List<Attribute> processAttributes(final VariableElement field, org.jdom2.Element attributesContainer) {
-        int position = 0;
-        List<Attribute> attributes = new ArrayList<>();
+        return attributesContainer.getChildren(XmlTags.ATTRIBUTE).stream()
+                .map(element -> processAttribute(field, element))
+                .collect(toList());
+    }
 
-        for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
-            String name = attributeElement.getAttributeValue("name");
-            String provider = attributeElement.getAttributeValue("provider");
-            String validationHandler = attributeElement.getAttributeValue("validation-handler");
-            String suggestHandlerAttribute = attributeElement.getAttributeValue("suggest-handler");
-            org.jdom2.Element suggestHandlerElement = attributeElement.getChild("suggest-handler");
+    Attribute processAttribute(VariableElement field, org.jdom2.Element attributeElement) {
+        String name = attributeElement.getAttributeValue(XmlTags.NAME);
+        String provider = attributeElement.getAttributeValue(XmlTags.PROVIDER);
+        String formItem = attributeElement.getAttributeValue(XmlTags.FORM_ITEM);
+        String validationHandler = attributeElement.getAttributeValue(XmlTags.VALIDATION_HANDLER);
+        String suggestHandlerAttribute = attributeElement.getAttributeValue(XmlTags.SUGGEST_HANDLER);
+        org.jdom2.Element suggestHandlerElement = attributeElement.getChild(XmlTags.SUGGEST_HANDLER);
 
-            if (name == null) {
-                processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
-            }
-            if (provider != null && !Handlebars.isExpression(provider)) {
-                processor.error(field, "Provider for attribute \"%s\" has to be an expression.",
-                        xmlAsString(attributeElement));
-            }
-            if (validationHandler != null && !Handlebars.isExpression(validationHandler)) {
-                processor.error(field, "Validation handler for attribute \"%s\" has to be an expression.",
-                        xmlAsString(attributeElement));
-            }
-            if (suggestHandlerAttribute != null && !Handlebars.isExpression(suggestHandlerAttribute)) {
-                processor.error(field, "Suggestion handler for attribute \"%s\" has to be an expression.",
-                        xmlAsString(attributeElement));
-            }
-            if (suggestHandlerAttribute != null && suggestHandlerElement != null) {
-                processor.error(field, "Invalid suggest handler for attribute \"%s\": " +
-                                "Please specify suggest handler as attribute or child element, not both",
-                        xmlAsString(attributeElement));
-            }
+        if (name == null && formItem == null) {
+            processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
+        }
+        if (provider != null && !Handlebars.isExpression(provider)) {
+            processor.error(field, "Provider for attribute \"%s\" has to be an expression.",
+                    xmlAsString(attributeElement));
+        }
+        if (formItem != null && !Handlebars.isExpression(formItem)) {
+            processor.error(field, "FormItem for attribute \"%s\" has to be an expression.",
+                    xmlAsString(attributeElement));
+        }
+        if (validationHandler != null && !Handlebars.isExpression(validationHandler)) {
+            processor.error(field, "Validation handler for attribute \"%s\" has to be an expression.",
+                    xmlAsString(attributeElement));
+        }
+        if (suggestHandlerAttribute != null && !Handlebars.isExpression(suggestHandlerAttribute)) {
+            processor.error(field, "Suggestion handler for attribute \"%s\" has to be an expression.",
+                    xmlAsString(attributeElement));
+        }
+        if (suggestHandlerAttribute != null && suggestHandlerElement != null) {
+            processor.error(field, "Invalid suggest handler for attribute \"%s\": " +
+                            "Please specify suggest handler as attribute or child element, not both",
+                    xmlAsString(attributeElement));
+        }
 
-            Attribute attribute = new Attribute(name, provider, validationHandler, suggestHandlerAttribute, position);
-            if (suggestHandlerElement != null) {
-                org.jdom2.Element templatesContainer = suggestHandlerElement.getChild("templates");
-                if (templatesContainer != null) {
-                    for (org.jdom2.Element templateElement : templatesContainer.getChildren("template")) {
-                        String address = templateElement.getAttributeValue("address");
-                        attribute.addSuggestHandlerTemplate(address);
-                    }
+        Attribute attribute = new Attribute(name, provider, formItem, validationHandler, suggestHandlerAttribute);
+        if (suggestHandlerElement != null) {
+            org.jdom2.Element templatesContainer = suggestHandlerElement.getChild(XmlTags.TEMPLATES);
+            if (templatesContainer != null) {
+                for (org.jdom2.Element templateElement : templatesContainer.getChildren(XmlTags.TEMPLATE)) {
+                    String address = templateElement.getAttributeValue(XmlTags.ADDRESS);
+                    attribute.addSuggestHandlerTemplate(address);
                 }
             }
-            attributes.add(attribute);
-            position++;
         }
-        return attributes;
+        return attribute;
     }
 }

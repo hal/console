@@ -17,6 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 import java.util.stream.Stream;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -31,11 +32,11 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final XPathFactory xPathFactory) {
-        super(processor, typeUtils, xPathFactory);
+    DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
+            final XPathFactory xPathFactory) {
+        super(processor, typeUtils, elementUtils, xPathFactory);
     }
 
     @Override
@@ -43,7 +44,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
             final MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
-        String title = element.getAttributeValue("title");
+        String title = element.getAttributeValue(XmlTags.TITLE);
         if (title == null) {
             title = new LabelBuilder().label(template.lastKey());
         }
@@ -52,15 +53,15 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
         context.addDataTableInfo(tableInfo);
 
         // actions
-        org.jdom2.Element actionsContainer = element.getChild("actions");
+        org.jdom2.Element actionsContainer = element.getChild(XmlTags.ACTIONS);
         if (actionsContainer != null) {
-            for (org.jdom2.Element actionElement : actionsContainer.getChildren("action")) {
-                String handler = actionElement.getAttributeValue("handler");
-                String handlerRef = actionElement.getAttributeValue("handler-ref");
-                String actionTitle = actionElement.getAttributeValue("title");
-                String scope = actionElement.getAttributeValue("scope");
-                String nameResolver = actionElement.getAttributeValue("name-resolver");
-                Element attributesContainer = actionElement.getChild("attributes");
+            for (org.jdom2.Element actionElement : actionsContainer.getChildren(XmlTags.ACTION)) {
+                String handler = actionElement.getAttributeValue(XmlTags.HANDLER);
+                String handlerRef = actionElement.getAttributeValue(XmlTags.HANDLER_REF);
+                String actionTitle = actionElement.getAttributeValue(XmlTags.TITLE);
+                String scope = actionElement.getAttributeValue(XmlTags.SCOPE);
+                String nameResolver = actionElement.getAttributeValue(XmlTags.NAME_RESOLVER);
+                Element attributesContainer = actionElement.getChild(XmlTags.ATTRIBUTES);
 
                 if (handler != null && handlerRef != null) {
                     processor.error(field,
@@ -101,7 +102,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                                     "but no name resolver is is provided.",
                             HandlerRef.REMOVE_RESOURCE.getRef(), selector);
                 }
-                if (scope != null && !"selected".equals(scope)) {
+                if (scope != null && !XmlTags.SELECTED.equals(scope)) {
                     processor.error(field,
                             "Unknown scope \"%s\" in handler-ref \"%s\" in data-table#%s: Only \"selected\" is supported.",
                             scope, handlerRef, selector);
@@ -118,11 +119,11 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
         }
 
         // columns
-        org.jdom2.Element columnsContainer = element.getChild("columns");
+        org.jdom2.Element columnsContainer = element.getChild(XmlTags.COLUMNS);
         if (columnsContainer != null) {
-            for (org.jdom2.Element columnElement : columnsContainer.getChildren("column")) {
-                String name = columnElement.getAttributeValue("name");
-                String value = columnElement.getAttributeValue("value");
+            for (org.jdom2.Element columnElement : columnsContainer.getChildren(XmlTags.COLUMN)) {
+                String name = columnElement.getAttributeValue(XmlTags.NAME);
+                String value = columnElement.getAttributeValue(XmlTags.VALUE);
 
                 if (name == null) {
                     processor.error(field, "Invalid column \"%s\" in data-table#%s: name is mandatory.",

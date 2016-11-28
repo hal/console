@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -66,11 +67,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     private static final String MANAGED_THREAD_FACTORY_NAME = "Thread Factories";
 
     private final MetadataRegistry metadataRegistry;
-    private final VerticalNavigation navigation;
     private final TableButtonFactory tableButtonFactory;
+    private final Resources resources;
+    private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<ModelNode> globalModulesTable;
-    private final Map<String, ModelNodeTable> tables;
+    private final Map<String, NamedNodeTable> tables;
 
     private EEPresenter presenter;
 
@@ -80,6 +82,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
             final Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.tableButtonFactory = tableButtonFactory;
+        this.resources = resources;
 
         this.forms = new HashMap<>();
         this.tables = new HashMap<>(4);
@@ -92,7 +95,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
                 .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
-                        resources.constants().deploymentAttributes()))
+                        resources.messages()
+                                .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);
@@ -135,7 +139,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
-                        changedValues, DEFAULT_BINDINGS_NAME))
+                        changedValues, resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
                 .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
@@ -181,13 +185,19 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public void setPresenter(final EEPresenter presenter) {
-        this.presenter = presenter;
+    @SuppressWarnings("unchecked")
+    public void attach() {
+        super.attach();
+        tables.forEach((id, table) -> {
+            if (forms.containsKey(id)) {
+                table.bindForm(forms.get(id));
+            }
+        });
     }
 
     @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
+    public void setPresenter(final EEPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
@@ -229,9 +239,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         if (eeData.hasDefined(resourceType)) {
             List<NamedNode> models = asNamedNodes(eeData.get(resourceType).asPropertyList());
             Form form = forms.get(resourceType);
-            DataTable<NamedNode> table = tables.get(resourceType);
-            table.api().clear().add(models).refresh(RESET);
             form.clear();
+            NamedNodeTable<NamedNode> table = tables.get(resourceType);
+            table.update(models);
             navigation.updateBadge(navigationId, models.size());
         }
     }
@@ -245,17 +255,16 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type,
-                        template,
-                        () -> presenter.loadEESubsystem()))
+                        template, (name, address) -> presenter.reload()))
 
                 .button(tableButtonFactory.remove(
                         type,
                         template, (api) -> api.selectedRow().getName(),
-                        () -> presenter.loadEESubsystem()))
+                        () -> presenter.reload()))
 
                 .build();
 
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 
@@ -263,7 +272,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
-                    presenter.save(fullyQualified, changedValues, template.lastKey());
+                    presenter.save(fullyQualified, changedValues, resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
                 })
                 .build();
 

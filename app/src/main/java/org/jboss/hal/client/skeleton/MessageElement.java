@@ -56,7 +56,7 @@ class MessageElement implements IsElement {
             builder.div().css(pullRight, toastPfAction)
                 .a().css(clickable).data(DISMISS, ALERT);
                     if (message.hasAction()) {
-                        builder.on(click, event -> message.getAction().execute())
+                        builder.on(click, event -> message.getCallback().execute())
                                 .textContent(message.getActionTitle());
                     } else {
                         builder.on(click, event -> showMessage(message))

@@ -23,6 +23,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -32,21 +33,14 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class EmptyState implements IsElement {
 
-    @FunctionalInterface
-    public interface Action {
-
-        void execute();
-    }
-
-
     private static class TitleAndAction {
 
         public final String title;
-        public final Action action;
+        public final Callback callback;
 
-        TitleAndAction(final String title, final Action action) {
+        TitleAndAction(final String title, final Callback callback) {
             this.title = title;
-            this.action = action;
+            this.callback = callback;
         }
     }
 
@@ -84,13 +78,13 @@ public class EmptyState implements IsElement {
             return this;
         }
 
-        public Builder primaryAction(String title, Action action) {
-            this.primaryAction = new TitleAndAction(title, action);
+        public Builder primaryAction(String title, Callback callback) {
+            this.primaryAction = new TitleAndAction(title, callback);
             return this;
         }
 
-        public Builder secondaryAction(String title, Action action) {
-            this.secondaryActions.add(new TitleAndAction(title, action));
+        public Builder secondaryAction(String title, Callback callback) {
+            this.secondaryActions.add(new TitleAndAction(title, callback));
             return this;
         }
 
@@ -123,7 +117,7 @@ public class EmptyState implements IsElement {
 
         eb.div().css(blankSlatePfMainAction).rememberAs(PRIMARY_ACTION_DIV);
         if (builder.primaryAction != null) {
-            eb.button().css(btn, btnPrimary, btnLg).on(click, event -> builder.primaryAction.action.execute())
+            eb.button().css(btn, btnPrimary, btnLg).on(click, event -> builder.primaryAction.callback.execute())
                     .textContent(builder.primaryAction.title)
                     .end();
         }
@@ -132,7 +126,7 @@ public class EmptyState implements IsElement {
         eb.div().css(blankSlatePfSecondaryAction).rememberAs(SECONDARY_ACTIONS_DIV);
         if (!builder.secondaryActions.isEmpty()) {
             for (TitleAndAction tac : builder.secondaryActions) {
-                eb.button().css(btn, btnDefault).on(click, event -> tac.action.execute())
+                eb.button().css(btn, btnDefault).on(click, event -> tac.callback.execute())
                         .textContent(tac.title)
                         .end();
             }
@@ -160,10 +154,10 @@ public class EmptyState implements IsElement {
         paragraphsDiv.appendChild(p);
     }
 
-    public void setPrimaryAction(String title, Action action) {
+    public void setPrimaryAction(String title, Callback callback) {
         Elements.removeChildrenFrom(primaryActionDiv);
         Element element = new Elements.Builder()
-                .button().css(btn, btnPrimary, btnLg).on(click, event -> action.execute())
+                .button().css(btn, btnPrimary, btnLg).on(click, event -> callback.execute())
                 .textContent(title)
                 .end()
                 .build();

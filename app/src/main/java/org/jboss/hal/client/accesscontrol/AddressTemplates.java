@@ -31,7 +31,7 @@ import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String ROOT_ADDRESS = "/core-service=management/access=authorization";
     String ROLE_MAPPING_ADDRESS = ROOT_ADDRESS + "/role-mapping=*";

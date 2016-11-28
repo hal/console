@@ -26,6 +26,7 @@ import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
@@ -43,18 +44,11 @@ public class Search implements IsElement {
     }
 
 
-    @FunctionalInterface
-    public interface ClearHandler {
-
-        void clear();
-    }
-
-
     public static class Builder {
 
         private final String id;
         private final SearchHandler onSearch;
-        private ClearHandler onClear;
+        private Callback onClear;
         private SearchHandler onPrevious;
         private SearchHandler onNext;
 
@@ -63,7 +57,7 @@ public class Search implements IsElement {
             this.onSearch = onSearch;
         }
 
-        public Builder onClear(ClearHandler onClear) {
+        public Builder onClear(Callback onClear) {
             this.onClear = onClear;
             return this;
         }
@@ -116,7 +110,7 @@ public class Search implements IsElement {
                             .on(click, event -> {
                                 clear();
                                 if (builder.onClear!= null) {
-                                    builder.onClear.clear();
+                                    builder.onClear.execute();
                                 }
                                 focus();
                             })

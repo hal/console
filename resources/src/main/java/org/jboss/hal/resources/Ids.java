@@ -102,6 +102,7 @@ public interface Ids {
     String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_DRIVER_FORM = build(DATA_SOURCE_CONFIGURATION, "driver", FORM_SUFFIX);
     String DATA_SOURCE_DRIVER_STEP = build(DATA_SOURCE_CONFIGURATION, "driver", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_FORM = build(DATA_SOURCE_CONFIGURATION, FORM_SUFFIX);
     String DATA_SOURCE_NAMES_FORM = build(DATA_SOURCE_CONFIGURATION, "names", FORM_SUFFIX);
     String DATA_SOURCE_NAMES_STEP = build(DATA_SOURCE_CONFIGURATION, "names", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_PROPERTIES_STEP = build(DATA_SOURCE_CONFIGURATION, "properties", WIZARD_STEP_SUFFIX);
@@ -173,10 +174,51 @@ public interface Ids {
     String INTERFACE_ADD = build(INTERFACE, ADD_SUFFIX);
     String INTERFACE_REFRESH = build(INTERFACE, REFRESH_SUFFIX);
 
+    String JCA = "jca";
+    String JCA_ARCHIVE_VALIDATION_FORM = build(JCA, "archive-validation", FORM_SUFFIX);
+    String JCA_ARCHIVE_VALIDATION_TAB = build(JCA, "archive-validation", TAB_SUFFIX);
+    String JCA_BEAN_VALIDATION_FORM = build(JCA, "bean-validation", FORM_SUFFIX);
+    String JCA_BEAN_VALIDATION_TAB = build(JCA, "bean-validation", TAB_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_ADD = build(JCA, "bootstrap-context", ADD_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_FORM = build(JCA, "bootstrap-context", FORM_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_ENTRY = build(JCA, "bootstrap-context", ENTRY_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_TABLE = build(JCA, "bootstrap-context", TABLE_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER = build(JCA, "distributed-workmanager");
+    String JCA_DISTRIBUTED_WORKMANAGER_ADD = build(JCA_DISTRIBUTED_WORKMANAGER, ADD_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_ENTRY = build(JCA_DISTRIBUTED_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_FORM = build(JCA_DISTRIBUTED_WORKMANAGER, FORM_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
+    String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
+    String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
+    String JCA_CONFIGURATION_ENTRY = build(JCA, "configuration", ENTRY_SUFFIX);
+    String JCA_TRACER_ENTRY = build(JCA, "tracer", ENTRY_SUFFIX);
+    String JCA_TRACER_FORM = build(JCA, "tracer", FORM_SUFFIX);
+    String JCA_WORKMANAGER = build(JCA, "workmanager");
+    String JCA_WORKMANAGER_ADD = build(JCA_WORKMANAGER, ADD_SUFFIX);
+    String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
+    // Please note that the JCA_THREAD_POOL_* constants are prefixed with JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
+    // Thus the JCA_THREAD_POOL_ATTRIBUTES_TAB used for the distributed workmanager reads as
+    // "jca-distributed-workmanager-thread-pool-attributes-tab"
+    String JCA_THREAD_POOL = "thread-pool";
+    String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
+    String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
+    String JCA_THREAD_POOL_ATTRIBUTES_TAB = build(JCA_THREAD_POOL, "attributes", TAB_SUFFIX);
+    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, "page");
+    String JCA_THREAD_POOL_SIZING_FORM = build(JCA_THREAD_POOL, "sizing", FORM_SUFFIX);
+    String JCA_THREAD_POOL_SIZING_TAB = build(JCA_THREAD_POOL, "sizing", TAB_SUFFIX);
+    String JCA_THREAD_POOL_TABLE = build(JCA_THREAD_POOL, TABLE_SUFFIX);
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JMX = "jmx";
+    String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
+    String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
+    String JMX_CONFIGURATION_ENTRY = build(JMX, "configuration", ENTRY_SUFFIX);
+    String JMX_CONFIGURATION_FORM = build(JMX, "configuration", FORM_SUFFIX);
+    String JMX_REMOTING_CONNECTOR_ENTRY = build(JMX, "remoting-connector", ENTRY_SUFFIX);
+    String JMX_REMOTING_CONNECTOR_FORM = build(JMX, "remoting-connector", FORM_SUFFIX);
     String JNDI = "jndi";
     String JNDI_DETAILS = build(JNDI, "details");
     String JNDI_SEARCH = build(JNDI, "search");
@@ -211,9 +253,9 @@ public interface Ids {
     String MAIL_SERVER_TABLE = build(MAIL_SERVER, TABLE_SUFFIX);
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ADD = build(MAIL_SESSION, ADD_SUFFIX);
-    String MAIL_SESSION_ATTRIBUTES_ENTRY = build(MAIL_SESSION, "attributes", ENTRY_SUFFIX);
-    String MAIL_SESSION_ATTRIBUTES_FORM = build(MAIL_SESSION, "attributes", FORM_SUFFIX);
     String MAIL_SESSION_DIALOG = build(MAIL_SESSION, FORM_SUFFIX);
+    String MAIL_SESSION_ENTRY = build(MAIL_SESSION, ENTRY_SUFFIX);
+    String MAIL_SESSION_FORM = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
@@ -229,6 +271,24 @@ public interface Ids {
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
+    String REMOTING = "remoting";
+    String REMOTING_CONNECTOR_FORM = build(REMOTING, "connector", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_TAB = build(REMOTING, "connector", TAB_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_FORM = build(REMOTING, "connector-security", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_TAB = build(REMOTING, "connector-security", TAB_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "connector-security-policy", FORM_SUFFIX);
+    String REMOTING_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "connector-security-policy", TAB_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_FORM = build(REMOTING, "http-connector", FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_TAB = build(REMOTING, "http-connector", TAB_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_FORM = build(REMOTING, "http-connector-security", FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_TAB = build(REMOTING, "http-connector-security", TAB_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "http-connector-security-policy",
+            FORM_SUFFIX);
+    String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
+    String RESOURCE_ADAPTER = "resource-adapter";
+    String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
+    String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = build(RESOURCE_ADAPTER, "admin-object", ADD_SUFFIX);
+    String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = build(RESOURCE_ADAPTER, "connection-definition", ADD_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
@@ -240,6 +300,14 @@ public interface Ids {
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
+    String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_DOMAIN_ADD = build(SECURITY_DOMAIN, ADD_SUFFIX);
+    String SECURITY_DOMAIN_ACL_MODULE_ADD = build(SECURITY_DOMAIN, "acl", ADD_SUFFIX);
+    String SECURITY_DOMAIN_AUDIT_ADD = build(SECURITY_DOMAIN, "provider", ADD_SUFFIX);
+    String SECURITY_DOMAIN_AUTHENTICATION_ADD = build(SECURITY_DOMAIN, "authentication", ADD_SUFFIX);
+    String SECURITY_DOMAIN_AUTHORIZATION_ADD = build(SECURITY_DOMAIN, "authorization", ADD_SUFFIX);
+    String SECURITY_DOMAIN_MAPPING_ADD = build(SECURITY_DOMAIN, "mapping", ADD_SUFFIX);
+    String SECURITY_DOMAIN_TRUST_MODULE_ADD = build(SECURITY_DOMAIN, "identity-trust", ADD_SUFFIX);
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
     String SERVER_GROUP = "server-group";
@@ -268,8 +336,6 @@ public interface Ids {
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
-    String SUGGEST_HANDLER_ID = "id";
-    String SUGGEST_HANDLER_VALUE = "value";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
@@ -287,11 +353,9 @@ public interface Ids {
     String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
 
-    String VERSION_INFO = "version-info";
-    String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
-
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
+    String XA_DATA_SOURCE_FORM = build(XA_DATA_SOURCE, FORM_SUFFIX);
     String XA_DATA_SOURCE_RUNTIME = "xa-data-source-runtime";
     String XA_DATA_SOURCE_RUNTIME_JDBC_FORM = build(XA_DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
     String XA_DATA_SOURCE_RUNTIME_JDBC_TAB = build(XA_DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
@@ -304,6 +368,7 @@ public interface Ids {
     static String content(String name) {
         return name;
     }
+
     static String dataSourceConfiguration(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
     }
@@ -339,12 +404,20 @@ public interface Ids {
         return build(type, name);
     }
 
+    static String resourceAdapter(final String name) {
+        return build(RESOURCE_ADAPTER, name);
+    }
+
     static String role(String name) {
         return asId(name);
     }
 
     static String server(final String name) {
         return build(SERVER, name);
+    }
+
+    static String securityDomain(final String name) {
+        return build(SECURITY_DOMAIN, name);
     }
 
     static String serverGroup(final String name) {

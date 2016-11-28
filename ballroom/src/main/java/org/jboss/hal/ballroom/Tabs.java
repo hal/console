@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import elemental.dom.Element;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -38,14 +38,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class Tabs implements IsElement {
 
-    @JsFunction
-    @FunctionalInterface
-    public interface SelectHandler {
-
-        void onSelect();
-    }
-
-
     @JsType(isNative = true)
     static class Bridge {
 
@@ -54,7 +46,7 @@ public class Tabs implements IsElement {
 
         public native void tab(String command);
 
-        public native void on(String event, SelectHandler handler);
+        public native void on(String event, Callback callback);
     }
 
 
@@ -178,9 +170,9 @@ public class Tabs implements IsElement {
         }
     }
 
-    public void onShow(final String id, final SelectHandler handler) {
+    public void onShow(final String id, final Callback callback) {
         if (id != null) {
-            Bridge.select("a[href='#" + id + "']").on("shown.bs.tab", handler); //NON-NLS
+            Bridge.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
         }
     }
 }

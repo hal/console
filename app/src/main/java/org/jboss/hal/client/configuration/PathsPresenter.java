@@ -22,22 +22,20 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.meta.token.NameTokens.PATH;
 
 /**
  * @author Harald Pehl
@@ -46,8 +44,8 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(PATH)
     @Requires("/path=*")
+    @NameToken(NameTokens.PATH)
     public interface MyProxy extends ProxyPlace<PathsPresenter> {}
 
     public interface MyView extends MbuiView<PathsPresenter> {
@@ -56,16 +54,16 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
     // @formatter:on
 
 
-    private final Dispatcher dispatcher;
+    private final CrudOperations crud;
 
     @Inject
     public PathsPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
-            final Dispatcher dispatcher) {
+            final CrudOperations crud) {
         super(eventBus, view, proxy, finder);
-        this.dispatcher = dispatcher;
+        this.crud = crud;
     }
 
     @Override
@@ -82,9 +80,6 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
 
     @Override
     protected void reload() {
-        Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                .param(CHILD_TYPE, "path")
-                .build();
-        dispatcher.execute(operation, result -> getView().update(asNamedNodes(result.asPropertyList())));
+        crud.readChildren(ResourceAddress.root(), PATH, children -> getView().update(asNamedNodes(children)));
     }
 }

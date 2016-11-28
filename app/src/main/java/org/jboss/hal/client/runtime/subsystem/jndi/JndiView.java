@@ -93,7 +93,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
                     .h(1).rememberAs(HEADER).textContent(resources.constants().jndiTree()).end()
                     .div().css(flexRow)
                         .div().css(btnGroup, marginRightSmall)
-                            .button().css(btn, btnDefault).on(click, event -> presenter.load())
+                            .button().css(btn, btnDefault).on(click, event -> presenter.reload())
                                 .add("i").css(fontAwesome(CSS.refresh))
                             .end()
                             .button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))

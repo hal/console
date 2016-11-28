@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 import javax.inject.Inject;
 
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -25,8 +26,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -35,10 +34,10 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static java.util.Collections.singletonList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INET_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 @Column(Ids.INTERFACE)
 @Requires(InterfacePresenter.ROOT_ADDRESS)
@@ -48,25 +47,17 @@ public class InterfaceColumn extends FinderColumn<Property> {
     public InterfaceColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher) {
+            final CrudOperations crud) {
 
         super(new Builder<Property>(finder, Ids.INTERFACE, Names.INTERFACE)
-
                 .columnAction(columnActionFactory.add(
                         Ids.INTERFACE_ADD,
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
-                        "inet-address"))
+                        singletonList(INET_ADDRESS)))
                 .columnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH))
-
-                .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, INTERFACE).build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(result.asPropertyList());
-                    });
-                })
-
+                .itemsProvider((context, callback) -> crud
+                        .readChildren(ResourceAddress.root(), INTERFACE, callback::onSuccess))
                 .useFirstActionAsBreadcrumbHandler());
 
         setItemRenderer(property -> new ItemDisplay<Property>() {

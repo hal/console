@@ -166,10 +166,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -193,7 +191,7 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file" provider="{{new FileFormItem()}}"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
                                 </attributes>
@@ -209,7 +207,7 @@
                     </table>
                     <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
@@ -217,10 +215,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -245,7 +241,7 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file" provider="{{new FileFormItem()}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -263,7 +259,7 @@
                     <form id="logging-handler-periodic-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
@@ -272,10 +268,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -300,7 +294,7 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file" provider="{{new FileFormItem()}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -320,7 +314,7 @@
                     <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -332,10 +326,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -360,7 +352,7 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file" provider="{{new FileFormItem()}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -380,7 +372,7 @@
                     <form id="logging-handler-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -392,10 +384,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -511,10 +501,8 @@
                             <attribute name="named-formatter">
                                 <suggest-handler>
                                     <templates>
-                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>

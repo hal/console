@@ -93,7 +93,7 @@ class DeploymentFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation contentOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
+            Operation contentOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             ResourceAddress address = new ResourceAddress()
@@ -306,7 +306,7 @@ class DeploymentFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> {
@@ -362,7 +362,7 @@ class DeploymentFunctions {
             }
 
             if (replace) {
-                builder = new Operation.Builder(FULL_REPLACE_DEPLOYMENT, ResourceAddress.ROOT) //NON-NLS
+                builder = new Operation.Builder(FULL_REPLACE_DEPLOYMENT, ResourceAddress.root()) //NON-NLS
                         .param(NAME, name)
                         .param(RUNTIME_NAME, runtimeName);
                 // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained

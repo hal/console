@@ -18,29 +18,27 @@ package org.jboss.hal.client.configuration.subsystem.ee;
 import java.util.Map;
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -61,8 +59,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy> implements
-        SupportsExpertMode {
+public class EEPresenter
+        extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -70,7 +69,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
     @Requires(AddressTemplates.EE_ADDRESS)
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
-    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<EEPresenter> {
+    public interface MyView extends HalView, HasPresenter<EEPresenter> {
         void update(ModelNode eeData);
     }
     // @formatter:on
@@ -93,11 +92,11 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
                 metadata.getCapabilities());
     }
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private final OperationFactory operationFactory;
     private final EventBus eventBus;
     private final Metadata globalModulesMetadata;
 
@@ -106,18 +105,18 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
-
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.operationFactory = new OperationFactory();
         this.eventBus = eventBus;
         this.globalModulesMetadata = globalModulesMetadata(metadataRegistry);
     }
@@ -134,39 +133,23 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadEESubsystem();
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
-    void loadEESubsystem() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                EE_SUBSYSTEM_TEMPLATE.resolve(statementContext))
-                .param(RECURSIVE, true)
-                .build();
-        dispatcher.execute(operation, result -> getView().update(result));
+    @Override
+    protected void reload() {
+        crud.readRecursive(EE_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 
-    void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues, String successMsg) {
-        ResourceAddress resourceAddress = addressTemplate.resolve(statementContext);
-        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
-
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.EE, successMsg)));
-            loadEESubsystem();
-        });
+    void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues, SafeHtml successMessage) {
+        crud.save(addressTemplate.resolve(statementContext), changedValues, successMessage, this::reload);
     }
 
     void launchAddDialogGlobalModule() {
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.EE_GLOBAL_MODULES_FORM, globalModulesMetadata)
                 .addOnly()
-                .include("name", "slot", "annotations", "services", "meta-inf")
+                .include(NAME, "slot", "annotations", "services", "meta-inf")
                 .unsorted()
                 .build();
 
@@ -180,7 +163,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
             dispatcher.execute(operation, result -> {
                 MessageEvent.fire(eventBus, Message.success(
                         resources.messages().addResourceSuccess(Names.GLOBAL_MODULES, name)));
-                loadEESubsystem();
+                reload();
             });
         });
 
@@ -201,7 +184,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().removeResourceSuccess(Names.GLOBAL_MODULES, name)));
-                        loadEESubsystem();
+                        reload();
                     });
                 });
     }

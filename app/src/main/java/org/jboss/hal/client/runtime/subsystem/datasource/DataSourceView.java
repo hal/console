@@ -203,7 +203,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
     private void refresh() {
         if (presenter != null) {
-            presenter.load();
+            presenter.reload();
         }
     }
 }

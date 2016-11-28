@@ -27,12 +27,12 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -48,29 +48,29 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 /**
  * TODO I18n for error / validation messages
+ *
  * @author Claudio Miranda
  */
 public class TransactionPresenter
         extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // datasource address is required as there is a typeahead declared in TransactionView.mbui.xml
-    // to lookup datasource subsystem
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.TRANSACTIONS)
-    @Requires({TRANSACTIONS_SUBSYSTEM_ADDRESS, DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
+    @Requires(TRANSACTIONS_SUBSYSTEM_ADDRESS)
     public interface MyProxy extends ProxyPlace<TransactionPresenter> {}
 
-    public interface MyView extends MbuiView<TransactionPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<TransactionPresenter> {
         void updateConfiguration(ModelNode conf);
     }
     // @formatter:on
@@ -78,8 +78,10 @@ public class TransactionPresenter
     private static final String PROCESS_ID_UUID = "process-id-uuid";
     private static final String PROCESS_ID_SOCKET_BINDING = "process-id-socket-binding";
     private static final String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
-    private final static ValidationResult invalid = ValidationResult.invalid("Validation error, see error messages below.");
+    private final static ValidationResult invalid = ValidationResult
+            .invalid("Validation error, see error messages below.");
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -90,11 +92,13 @@ public class TransactionPresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -119,11 +123,7 @@ public class TransactionPresenter
 
     @Override
     protected void reload() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext))
-                .param(RECURSIVE_DEPTH, 1)
-                .build();
-        dispatcher.execute(operation, result -> getView().updateConfiguration(result));
+        crud.read(TRANSACTIONS_SUBSYSTEM_TEMPLATE, 1, result -> getView().updateConfiguration(result));
     }
 
     // The process form, contains attributes that must have some special treatment before save operation
@@ -178,8 +178,8 @@ public class TransactionPresenter
         dispatcher.execute(op, result -> {
             if (result.isFailure()) {
                 MessageEvent.fire(getEventBus(),
-                    Message.error(resources.messages().transactionUnableSetProcessId(), 
-                        result.getFailureDescription()));
+                        Message.error(resources.messages().transactionUnableSetProcessId(),
+                                result.getFailureDescription()));
             } else {
                 MessageEvent.fire(getEventBus(),
                         Message.success(resources.messages().modifySingleResourceSuccess("Process")));
@@ -196,11 +196,11 @@ public class TransactionPresenter
                 .param(NAME, PROCESS_ID_SOCKET_BINDING)
                 .param(VALUE, socketBinding)
                 .build();
-        
+
         Operation undefineUuid = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
                 .param(NAME, PROCESS_ID_UUID)
                 .build();
-        
+
         if (maxPorts != null) {
             Operation writeMaxPorts = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
                     .param(NAME, PROCESS_ID_SOCKET_MAX_PORTS)
@@ -210,20 +210,20 @@ public class TransactionPresenter
         } else {
             composite = new Composite(undefineUuid, writeSocketBinding);
         }
-        
+
         dispatcher.execute(composite, new Dispatcher.CompositeCallback() {
             @Override
             public void onSuccess(final CompositeResult result) {
 
                 ModelNode writeSocketResult = result.step(0);
                 ModelNode undefineUuidResult = result.step(1);
-                
+
                 boolean failed = writeSocketResult.isFailure() || undefineUuidResult.isFailure();
                 if (failed) {
-                    String failMessage = writeSocketBinding.isFailure() ? writeSocketBinding.getFailureDescription() 
-                        : undefineUuidResult.getFailureDescription();
+                    String failMessage = writeSocketBinding.isFailure() ? writeSocketBinding.getFailureDescription()
+                            : undefineUuidResult.getFailureDescription();
                     MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().transactionUnableSetProcessId(), failMessage));
+                            Message.error(resources.messages().transactionUnableSetProcessId(), failMessage));
                 } else {
                     MessageEvent.fire(getEventBus(),
                             Message.success(resources.messages().modifySingleResourceSuccess("Process")));
@@ -255,7 +255,7 @@ public class TransactionPresenter
         }
         return validationResult;
     };
-    
+
     private FormValidation<ModelNode> processFormValidation = form -> {
 
         ValidationResult validationResult = ValidationResult.OK;
@@ -282,7 +282,7 @@ public class TransactionPresenter
         }
         return validationResult;
     };
-    
+
     private FormValidation<ModelNode> jdbcFormValidation = form -> {
 
         ValidationResult validationResult = ValidationResult.OK;

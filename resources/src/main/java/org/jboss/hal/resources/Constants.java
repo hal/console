@@ -224,6 +224,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllHeader();
     String input();
 
+    String jcaConfiguration();
     String jdbcDriver();
     String jndiTree();
 
@@ -261,6 +262,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
     String noReferenceServer();
+    String noResource();
     String noRolesExcluded();
     String noRolesIncluded();
     String noRolesIncludedOrExcluded();
@@ -288,12 +290,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ping();
     String platform();
     String play();
+    String policy();
     String pool();
     String preparedStatementCache();
     String preview();
     String processors();
     String productName();
     String productVersion();
+    String properties();
     String providedBy();
 
     String refresh();
@@ -332,6 +336,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String size();
+    String sizing();
     String specifyNames();
     String start();
     String starting();

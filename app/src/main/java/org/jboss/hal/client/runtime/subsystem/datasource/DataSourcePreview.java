@@ -158,7 +158,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         List<Operation> operations = new ArrayList<>();
 
         if (environment.isStandalone()) {
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT)
+            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
                     .param(INCLUDE_RUNTIME, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .build());

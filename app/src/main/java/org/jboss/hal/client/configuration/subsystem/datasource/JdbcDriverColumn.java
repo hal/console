@@ -30,6 +30,8 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -39,7 +41,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.TopologyFunctions;
-import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -78,6 +79,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
             final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
+            final CrudOperations crud,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
             final @Footer Provider<Progress> progress,
@@ -98,7 +100,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                         }
                     };
                     new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                            new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
+                            new JdbcDriverFunctions.ReadConfiguration(crud),
                             new TopologyFunctions.RunningServersQuery(environment, dispatcher,
                                     new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
                             new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),

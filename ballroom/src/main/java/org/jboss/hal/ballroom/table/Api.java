@@ -17,18 +17,22 @@ package org.jboss.hal.ballroom.table;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import elemental.client.Browser;
+import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.form.Form;
+import org.jboss.gwt.elemento.core.Elements;
 
 import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
 import static org.jboss.hal.ballroom.table.DataTable.ROW;
 import static org.jboss.hal.ballroom.table.DataTable.SELECT;
+import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
  * Subset of the DataTables API.
@@ -89,7 +93,7 @@ public class Api<T> {
      */
     @JsFunction
     @FunctionalInterface
-    public interface SelectCallback<T> {
+    interface SelectCallback<T> {
 
         void onSelect(Object event, Api<T> api, String type);
     }
@@ -101,7 +105,7 @@ public class Api<T> {
      * @param <T> the row type
      */
     @FunctionalInterface
-    public interface SelectionHandler<T> {
+    interface SelectionHandler<T> {
 
         /**
          * Called when a <em>row</em> is selected.
@@ -110,23 +114,6 @@ public class Api<T> {
          * @param row the selected row.
          */
         void onSelect(Api<T> api, T row);
-    }
-
-
-    /**
-     * Convenience handler when a <em>row</em> is deselected.
-     *
-     * @param <T> the row type
-     */
-    @FunctionalInterface
-    public interface DeselectionHandler<T> {
-
-        /**
-         * Called when a <em>row</em> is deselected.
-         *
-         * @param api the api instance
-         */
-        void onDeselect(Api<T> api);
     }
 
 
@@ -150,6 +137,10 @@ public class Api<T> {
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
+
+    // Does not map to something in DataTables, but necessary in refresh()
+    String id;
+    Map<String, ColumnAction<T>> columnActions;
 
 
     // ------------------------------------------------------ API a-z
@@ -184,9 +175,9 @@ public class Api<T> {
     public native Api<T> rows(SelectorModifier selectorModifier);
 
     /**
-     * Select rows by index. Chain the {@link #data()} to get the actual data.
+     * Select rows by tr element. Chain the {@link #data()} to get the actual data.
      */
-    public native Api<T> rows(int index);
+    public native Api<T> rows(Element tr);
 
     /**
      * Select rows by using a function. Chain the {@link #data()} to get the actual data.
@@ -194,7 +185,7 @@ public class Api<T> {
     public native Api<T> rows(RowSelection<T> selection);
 
     /**
-     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(int)} or {@link
+     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(Element)} or {@link
      * #rows(SelectorModifier)} selector methods.
      */
     public native Api<T> select();
@@ -225,6 +216,7 @@ public class Api<T> {
     }
 
     @JsOverlay
+    @SuppressWarnings("Convert2Lambda")
     public final Api<T> onSelect(SelectionHandler<T> handler) {
         on(SELECT, new SelectCallback<T>() {
             @Override
@@ -238,19 +230,7 @@ public class Api<T> {
     }
 
     @JsOverlay
-    public final Api<T> onDeselect(DeselectionHandler<T> handler) {
-        on(DESELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onDeselect(api);
-                }
-            }
-        });
-        return this;
-    }
-
-    @JsOverlay
+    @SuppressWarnings("Convert2Lambda")
     public final Api<T> onSelectionChange(SelectionChangeHandler<T> handler) {
         on(SELECT, new SelectCallback<T>() {
             @Override
@@ -273,7 +253,28 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> refresh(RefreshMode mode) {
-        return draw(mode.mode());
+        Api<T> api = draw(mode.mode());
+        if (!columnActions.isEmpty()) {
+            Element table = Browser.getDocument().getElementById(id);
+            Elements.stream(table.querySelectorAll("." + columnAction)).forEach(link -> {
+                ColumnAction<T> columnAction = columnActions.get(link.getId());
+                if (columnAction != null) {
+                    link.setOnclick(event -> {
+                        Element e = link; // find enclosing tr
+                        while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
+                            e = e.getParentElement();
+                        }
+                        if (e != null) {
+                            JsArrayOf<T> array = rows(e).data().toArray();
+                            if (!array.isEmpty()) {
+                                columnAction.action(array.get(0));
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        return api;
     }
 
     @JsOverlay
@@ -293,42 +294,5 @@ public class Api<T> {
             return Collections.emptyList();
         }
         return asList(selection);
-    }
-
-    @JsOverlay
-    public final Api<T> bindForm(Form<T> form) {
-        // don't replace this with a lambda - it won't run in super dev mode
-        //noinspection Convert2Lambda
-        return onSelectionChange(new SelectionChangeHandler<T>() {
-            @Override
-            public void onSelectionChanged(final Api<T> api) {
-                if (api.hasSelection()) {
-                    form.view(api.selectedRow());
-                } else {
-                    form.clear();
-                }
-            }
-        });
-    }
-
-    @JsOverlay
-    public final Api<T> bindForms(final Iterable<Form<T>> forms) {
-        // don't replace this with a lambda - it won't run in super dev mode
-        //noinspection Convert2Lambda
-        return onSelectionChange(new SelectionChangeHandler<T>() {
-            @Override
-            public void onSelectionChanged(final Api<T> api) {
-                if (api.hasSelection()) {
-                    T selectedRow = api.selectedRow();
-                    for (Form<T> form : forms) {
-                        form.view(selectedRow);
-                    }
-                } else {
-                    for (Form<T> form : forms) {
-                        form.clear();
-                    }
-                }
-            }
-        });
     }
 }

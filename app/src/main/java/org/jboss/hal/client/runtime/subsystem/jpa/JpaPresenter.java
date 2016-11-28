@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -54,7 +53,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     @Requires(JPA_ADDRESS)
     public interface MyProxy extends ProxyPlace<JpaPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<JpaPresenter>, HasVerticalNavigation {
+    public interface MyView extends HalView, HasPresenter<JpaPresenter> {
         void update(JpaStatistic statistic);
     }
     // @formatter:on
@@ -106,12 +105,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    void load() {
+    protected void reload() {
         ResourceAddress address = JPA_TEMPLATE.resolve(statementContext, deployment, resourceName);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)

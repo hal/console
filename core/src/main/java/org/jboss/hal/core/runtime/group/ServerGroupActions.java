@@ -425,11 +425,13 @@ public class ServerGroupActions {
     }
 
     private void markAsPending(ServerGroup serverGroup) {
+        dispatcher.setPendingLifecycleAction(true);
         pendingServerGroups.put(serverGroup.getName(), serverGroup);
         logger.debug("Mark server group {} as pending", serverGroup.getName());
     }
 
     private void clearPending(ServerGroup serverGroup) {
+        dispatcher.setPendingLifecycleAction(false);
         pendingServerGroups.remove(serverGroup.getName());
         logger.debug("Clear pending state for server group {}", serverGroup.getName());
     }

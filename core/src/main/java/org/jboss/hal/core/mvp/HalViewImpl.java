@@ -20,12 +20,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.resources.Icons;
+
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * View which initializes JavaScript based PatternFly components like select picker, tooltips or data tables in its
@@ -43,6 +49,23 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     protected HalViewImpl() {
         attachables = new ArrayList<>();
         attached = false;
+
+        // @formatter:off
+        // noinspection HardCodedStringLiteral
+        element = new Elements.Builder()
+            .div().css(marginTopLarge)
+                .add(new Alert(Icons.ERROR, SafeHtmlUtils.fromString("View not initialized")).asElement())
+                .p()
+                    .span().textContent("The view is not initialized. Did you forget to call ").end()
+                    .start("code").textContent("initElement(Element)").end()
+                    .span().textContent(" / ").end()
+                    .start("code").textContent("initElements(Iterable<Element>)").end()
+                    .span().textContent("?").end()
+                .end()
+            .end()
+        .build();
+        // @formatter:on
+
     }
 
     protected void initElement(IsElement element) {

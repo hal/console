@@ -43,7 +43,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * @return an id based on {@link #getTitle()}
      */
     default String getId() {
-        Iterable<String> parts = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults().split(getTitle());
+        Iterable<String> parts = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(getTitle());
         return stream(parts.spliterator(), false).map(String::toLowerCase).collect(joining("-"));
     }
 

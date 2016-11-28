@@ -32,7 +32,6 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.separator;
 
 /**
@@ -65,12 +64,12 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     private Element readonlyContainer;
     private List<FormItem> formItems;
 
-    protected CompositeFormItem(final String name) {
-        super(name, new LabelBuilder().label(name), null, EMPTY_CONTEXT);
+    protected <C> CompositeFormItem(final String name, CreationContext<C> context) {
+        super(name, new LabelBuilder().label(name), null, context);
         this.name = name;
     }
 
-    protected abstract List<FormItem> createFormItems();
+    protected abstract <C> List<FormItem> createFormItems(CreationContext<C> context);
 
     /**
      * Called during {@link #setValue(Object)} to set the form items using the provided model.
@@ -83,15 +82,13 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected void assembleUI() {
+    protected <C> void assembleUI(CreationContext<C> context) {
         editContainer = Browser.getDocument().createDivElement();
         readonlyContainer = Browser.getDocument().createDivElement();
 
-        formItems = createFormItems();
+        formItems = createFormItems(context);
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
-            formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
             editContainer.appendChild(formItem.asElement(EDITING));
             readonlyContainer.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
@@ -103,7 +100,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    protected InputElement<ModelNode> newInputElement(final InputElement.Context<?> context) {
+    protected InputElement<ModelNode> newInputElement(final CreationContext<?> context) {
         return new NoopInputElement();
     }
 
@@ -119,9 +116,11 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void attach() {
         for (FormItem formItem : formItems) {
             formItem.attach();
+            formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
         }
     }
 

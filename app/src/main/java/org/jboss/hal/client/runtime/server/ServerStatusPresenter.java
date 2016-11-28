@@ -26,7 +26,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -53,7 +52,7 @@ public class ServerStatusPresenter
     @Requires(SERVER_STATUS_ADDRESS)
     public interface MyProxy extends ProxyPlace<ServerStatusPresenter> {}
 
-    public interface MyView extends HalView, HasVerticalNavigation {
+    public interface MyView extends HalView {
         void update(ModelNode modelNode);
     }
     // @formatter:on
@@ -103,12 +102,7 @@ public class ServerStatusPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    private void load() {
+    protected void reload() {
         ResourceAddress address = SERVER_STATUS_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)

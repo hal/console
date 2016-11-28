@@ -36,11 +36,11 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * @author Harald Pehl
  */
-public class TagsManager {
+class TagsManager {
 
     @JsFunction
     @FunctionalInterface
-    public interface RefreshListener {
+    interface RefreshListener {
 
         /**
          * @param cst (c)omma (s)eparated (t)ags
@@ -51,7 +51,7 @@ public class TagsManager {
 
     @JsFunction
     @FunctionalInterface
-    public interface Validator {
+    interface Validator {
 
         boolean validate(String tag);
     }
@@ -60,9 +60,9 @@ public class TagsManager {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        public JsInt16Array delimiters;
-        public String tagsContainer;
-        public String tagClass;
+        JsInt16Array delimiters;
+        String tagsContainer;
+        String tagClass;
         public Validator validator;
     }
 
@@ -101,12 +101,12 @@ public class TagsManager {
         public native void tagsManager(Options options);
 
         @JsOverlay
-        public final void onRefresh(RefreshListener refreshListener) {
+        final void onRefresh(RefreshListener refreshListener) {
             on(REFRESH_EVENT, refreshListener);
         }
 
         @JsOverlay
-        public final void addTag(String tag) {
+        final void addTag(String tag) {
             tagsManager(PUSH_TAG, tag);
         }
 

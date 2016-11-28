@@ -46,12 +46,26 @@ import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView_Provider;
+import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
+import org.jboss.hal.client.configuration.subsystem.jca.JcaView;
+import org.jboss.hal.client.configuration.subsystem.jmx.JmxPresenter;
+import org.jboss.hal.client.configuration.subsystem.jmx.JmxView;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingProfilePresenter;
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileView_Provider;
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView_Provider;
+import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
+import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView_Provider;
+import org.jboss.hal.client.configuration.subsystem.remoting.RemotingPresenter;
+import org.jboss.hal.client.configuration.subsystem.resourceadapter.Mbui_ResourceAdapterView_Provider;
+import org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapterPresenter;
+import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityDomainView_Provider;
+import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityView_Provider;
+import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPresenter;
+import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
@@ -83,8 +97,6 @@ import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
 import org.jboss.hal.client.runtime.server.ServerStatusView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
-import org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter;
-import org.jboss.hal.client.runtime.subsystem.jpa.JpaView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
 import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -231,15 +243,30 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_InterfaceView_Provider.class,
                 InterfacePresenter.MyProxy.class);
 
+        bindPresenter(JcaPresenter.class,
+                JcaPresenter.MyView.class,
+                JcaView.class,
+                JcaPresenter.MyProxy.class);
+
+        bindPresenter(JmxPresenter.class,
+                JmxPresenter.MyView.class,
+                JmxView.class,
+                JmxPresenter.MyProxy.class);
+
         bindPresenter(JndiPresenter.class,
                 JndiPresenter.MyView.class,
                 JndiView.class,
                 JndiPresenter.MyProxy.class);
 
-        bindPresenter(JpaPresenter.class,
-                JpaPresenter.MyView.class,
-                JpaView.class,
-                JpaPresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaView.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.Mbui_JpaView_Provider.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyProxy.class);
 
         bindTemplatedPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,
@@ -261,6 +288,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(ModclusterPresenter.class,
+                ModclusterPresenter.MyView.class,
+                Mbui_ModclusterView_Provider.class,
+                ModclusterPresenter.MyProxy.class);
+
         bindPresenter(ModelBrowserPresenter.class,
                 ModelBrowserPresenter.MyView.class,
                 ModelBrowserView.class,
@@ -281,6 +313,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_PathsView_Provider.class,
                 PathsPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(RemotingPresenter.class,
+                RemotingPresenter.MyView.class,
+                Mbui_RemotingView_Provider.class,
+                RemotingPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(ResourceAdapterPresenter.class,
+                ResourceAdapterPresenter.MyView.class,
+                Mbui_ResourceAdapterView_Provider.class,
+                ResourceAdapterPresenter.MyProxy.class);
+
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,
                 RhcpView.class,
@@ -290,6 +332,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RuntimePresenter.MyView.class,
                 RuntimeView.class,
                 RuntimePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(SecurityPresenter.class,
+                SecurityPresenter.MyView.class,
+                Mbui_SecurityView_Provider.class,
+                SecurityPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(SecurityDomainPresenter.class,
+                SecurityDomainPresenter.MyView.class,
+                Mbui_SecurityDomainView_Provider.class,
+                SecurityDomainPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ServerPresenter.class,
                 ServerPresenter.MyView.class,

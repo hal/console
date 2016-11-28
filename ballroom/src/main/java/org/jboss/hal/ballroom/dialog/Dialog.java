@@ -37,6 +37,7 @@ import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
@@ -45,7 +46,7 @@ import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
- * be placed on the left or the right side. Each button has a callback. The callback is either a {@link SimpleCallback}
+ * be placed on the left or the right side. Each button has a callback. The callback is either a {@link Callback}
  * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}
  * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons
  * as you like, but only one of them should be the primary button.
@@ -82,24 +83,14 @@ public class Dialog implements IsElement {
     }
 
 
-    /**
-     * A simplified button callback w/o a return value. When using this callback the dialog is closed in any case.
-     */
-    @FunctionalInterface
-    public interface SimpleCallback {
-
-        void execute();
-    }
-
-
     private static class Button {
 
         final String label;
         final ResultCallback resultCallback;
-        final SimpleCallback simpleCallback;
+        final Callback simpleCallback;
         final boolean primary;
 
-        private Button(final String label, final ResultCallback callback, final SimpleCallback simpleCallback,
+        private Button(final String label, final ResultCallback callback, final Callback simpleCallback,
                 boolean primary) {
             this.label = label;
             this.resultCallback = callback;
@@ -124,7 +115,7 @@ public class Dialog implements IsElement {
         private boolean closeIcon;
         private boolean closeOnEsc;
         private boolean fadeIn;
-        private SimpleCallback onClose;
+        private Callback onClose;
 
         public Builder(final String title) {
             this.title = title;
@@ -161,7 +152,7 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        Builder yesNo(SimpleCallback yesCallback) {
+        Builder yesNo(Callback yesCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), null, null, false));
@@ -172,7 +163,7 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder okCancel(SimpleCallback okCallback) {
+        public Builder okCancel(Callback okCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));
@@ -230,7 +221,7 @@ public class Dialog implements IsElement {
             return this;
         }
 
-        public Builder onClose(SimpleCallback onClose) {
+        public Builder onClose(Callback onClose) {
             this.onClose = onClose;
             return this;
         }
@@ -263,9 +254,9 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog singleton
 
-    public static final int SECONDARY_POSITION = 100;
     public static final int PRIMARY_POSITION = 200;
-    public static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
+    static final int SECONDARY_POSITION = 100;
+    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String BODY_ELEMENT = "body";
@@ -334,7 +325,7 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ dialog instance
 
     private final boolean closeOnEsc;
-    private final SimpleCallback onClose;
+    private final Callback onClose;
     private final Map<Integer, ButtonElement> buttons;
     private final List<Attachable> attachables;
 

@@ -68,6 +68,6 @@ public class ModelBrowserPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        getView().setRoot(ResourceAddress.ROOT);
+        getView().setRoot(ResourceAddress.root());
     }
 }

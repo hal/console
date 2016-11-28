@@ -16,11 +16,17 @@
 package org.jboss.hal.ballroom.table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Button.ActionHandler;
 import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.resources.CSS.*;
 
@@ -34,8 +40,11 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+
     protected List<Button<T>> buttons;
     protected List<Column<T>> columns;
+    protected Map<String, ColumnAction<T>> columnActions;
     protected int pageLength;
     protected boolean keys;
     protected boolean paging;
@@ -45,6 +54,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     protected GenericOptionsBuilder() {
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
+        this.columnActions = new HashMap<>();
         this.pageLength = 10;
         this.keys = true;
         this.paging = true;
@@ -100,6 +110,28 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
+    /**
+     * Adds an action column named {@link Constants#action()} with the specified link title and action handler.
+     *
+     * @param link         the link title
+     * @param columnAction the action handler which receives the row data as parameter
+     */
+    @SuppressWarnings("HardCodedStringLiteral")
+    public B column(String link, ColumnAction<T> columnAction) {
+        Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
+                (cell, type, row, meta) -> {
+                    String id = Ids.uniqueId();
+                    columnActions.put(id, columnAction);
+                    return "<a id=\"" + id + "\" class=\"" + CSS.columnAction + "\">" + link + "</a>";
+                })
+                .orderable(false)
+                .searchable(false)
+                .width("10em")
+                .build();
+        this.columns.add(column);
+        return that();
+    }
+
     public B checkboxColumn() {
         Column<T> checkboxColumn = new Column<>();
         checkboxColumn.orderable = false;
@@ -116,11 +148,6 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     public B multiselect() {
         this.select = Select.build(true);
-        return that();
-    }
-
-    public B pageLength(int pageLength) {
-        this.pageLength = pageLength;
         return that();
     }
 
@@ -164,6 +191,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         options.pageLength = pageLength;
         options.searching = searching;
         options.select = select;
+        options.columnActions = columnActions;
         return options;
     }
 }

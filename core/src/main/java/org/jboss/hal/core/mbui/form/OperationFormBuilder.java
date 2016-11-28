@@ -18,7 +18,6 @@ package org.jboss.hal.core.mbui.form;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
@@ -67,7 +66,7 @@ public class OperationFormBuilder<T extends ModelNode> {
 
     public ModelNodeForm<T> build() {
         ModelNode modelNode = ModelNodeHelper.failSafeGet(metadata.getDescription(),
-                Joiner.on('/').join(OPERATIONS, operation, REQUEST_PROPERTIES));
+                String.join("/", OPERATIONS, operation, REQUEST_PROPERTIES));
         ModelNode repackaged = new ModelNode();
         repackaged.get(ATTRIBUTES).set(modelNode);
         ResourceDescription reloadDescription = new ResourceDescription(repackaged);

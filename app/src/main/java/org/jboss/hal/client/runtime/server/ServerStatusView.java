@@ -28,10 +28,10 @@ import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
@@ -69,8 +69,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
         @Override
         @SuppressWarnings("Duplicates")
-        protected void assembleUI() {
-            super.assembleUI();
+        protected <C> void assembleUI(CreationContext<C> context) {
+            super.assembleUI(context);
             Elements.setVisible(valueElement, false);
             pre = Browser.getDocument().createPreElement();
             pre.getClassList().add(formControlStatic);
@@ -102,8 +102,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
         @Override
         @SuppressWarnings("Duplicates")
-        protected void assembleUI() {
-            super.assembleUI();
+        protected <C> void assembleUI(CreationContext<C> context) {
+            super.assembleUI(context);
             Elements.setVisible(valueElement, false);
             pre = Browser.getDocument().createPreElement();
             pre.getClassList().add(formControlStatic);
@@ -150,7 +150,6 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
             INPUT_ARGUMENTS,
     };
 
-    private final VerticalNavigation navigation;
     private final Form<ModelNode> mainAttributes;
     private final Form<ModelNode> bootstrapAttributes;
     private final DataTable<Property> systemProperties;
@@ -214,7 +213,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         .build();
         // @formatter:on
 
-        navigation = new VerticalNavigation();
+        VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
@@ -233,11 +232,6 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .end();
         Element root = layoutBuilder.build();
         initElement(root);
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 
     @Override
@@ -264,7 +258,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         bootstrapAttributes.getFormItem(LIBRARY_PATH)
                 .setText(pathWithNewLines(modelNode.get(LIBRARY_PATH).asString(), pathSeparator));
 
-        systemProperties.api().clear().add(sp).refresh(RefreshMode.RESET);
+        systemProperties.update(sp, Property::getName);
     }
 
     private String pathWithNewLines(String path, String pathSeparator) {

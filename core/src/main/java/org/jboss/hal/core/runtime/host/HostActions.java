@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.UIConstants.DIALOG_TIMEOUT;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
  * @author Harald Pehl
@@ -180,7 +180,7 @@ public class HostActions {
                                             resources.messages().reloadHostError(host.getName()),
                                             resources.messages().hostControllerTimeout(host.getName()));
                                 }
-                            }, DIALOG_TIMEOUT);
+                            }, SHORT_TIMEOUT);
                         });
                 dialog.registerAttachable(form);
                 dialog.show();
@@ -227,7 +227,7 @@ public class HostActions {
                             resources.messages().restartHostError(host.getName()),
                             resources.messages().hostControllerTimeout(host.getName()));
                 }
-            }, DIALOG_TIMEOUT);
+            }, SHORT_TIMEOUT);
         });
     }
 
@@ -296,11 +296,13 @@ public class HostActions {
     }
 
     private void markAsPending(Host host) {
+        dispatcher.setPendingLifecycleAction(true);
         pendingHosts.put(host.getName(), host);
         logger.debug("Mark host {} as pending", host.getName());
     }
 
     private void clearPending(Host host) {
+        dispatcher.setPendingLifecycleAction(false);
         pendingHosts.remove(host.getName());
         logger.debug("Clear pending state for host {}", host.getName());
     }

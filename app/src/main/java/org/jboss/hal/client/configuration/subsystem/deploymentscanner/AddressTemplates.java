@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Claudio Miranda
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=deployment-scanner";
     String DEPLOYMENTSCANNER_ADDRESS = DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS + "/scanner=*";

@@ -35,14 +35,15 @@ public class LayoutBuilder extends Elements.CoreBuilder<LayoutBuilder> {
     }
 
     /**
-     * Starts a row. You always need at least one row. Rows should contain columns only.
+     * Starts a row. You always need at least one row. Rows should contain columns only. Must be closed with {@link
+     * #end()}.
      */
     public LayoutBuilder row() {
         return div().css(row);
     }
 
     /**
-     * Starts a column. Columns should contain (sub)headers, elements or tabs.
+     * Starts a column. Columns should contain (sub)headers, elements or tabs. Must be closed with {@link #end()}.
      */
     public LayoutBuilder column() {
         return column(0, 12);
@@ -66,6 +67,7 @@ public class LayoutBuilder extends Elements.CoreBuilder<LayoutBuilder> {
     private String rowCss(int offset, int columns) {
         return offset == 0
                 ? CSS.column(columns, columnLg, columnMd, columnSm)
-                : offset(offset, columnLg, columnMd, columnSm) + " " + CSS.column(columns, columnLg, columnMd, columnSm);
+                : offset(offset, columnLg, columnMd, columnSm) + " " + CSS
+                .column(columns, columnLg, columnMd, columnSm);
     }
 }

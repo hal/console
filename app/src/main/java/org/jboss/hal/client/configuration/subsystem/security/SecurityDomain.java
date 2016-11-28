@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.client.configuration.subsystem.security;
 
-import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.NamedNode;
 
 /**
- * Meant to be implemented by views which have a vertical navigation. Works together with {@link ApplicationFinderPresenter}
- * to automatically show and hide the vertical navigation when the presenter is revealed and hidden.
- *
  * @author Harald Pehl
  */
-public interface HasVerticalNavigation {
+class SecurityDomain extends NamedNode {
 
-    VerticalNavigation getVerticalNavigation();
+    SecurityDomain(final Property property) {
+        super(property);
+    }
+
+    SecurityDomain(final String name, final ModelNode node) {
+        super(name, node);
+    }
 }

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import java.util.Map;
+
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -39,4 +41,6 @@ public class Options<T> {
     public int pageLength;
     public boolean searching;
     public Select select;
+    // only used to get the columnActions into the Api instance
+    Map<String, ColumnAction<T>> columnActions;
 }

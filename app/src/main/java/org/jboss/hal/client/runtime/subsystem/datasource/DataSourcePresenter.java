@@ -113,12 +113,7 @@ public class DataSourcePresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    void load() {
+    protected void reload() {
         ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
                 .resolve(statementContext, name);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)

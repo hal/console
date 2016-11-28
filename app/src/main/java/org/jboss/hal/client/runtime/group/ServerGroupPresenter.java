@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -63,7 +62,7 @@ public class ServerGroupPresenter
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerGroupPresenter> {}
 
-    public interface MyView extends MbuiView<ServerGroupPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<ServerGroupPresenter> {
         void updateServerGroup(ServerGroup serverGroup);
         void updateJvms(List<NamedNode> interfaces);
         void updateSystemProperties(List<NamedNode> interfaces);

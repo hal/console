@@ -47,6 +47,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allContentAlreadyDeployedToServerGroup(String serverGroup);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
+    SafeHtml allThreadPoolsExist();
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);
@@ -95,6 +96,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentUnknownState(String name);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
+
+    SafeHtml duplicateAuthenticationModule();
+
+    String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
@@ -122,7 +127,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml includeAllHelpText();
 
     SafeHtml jdbcDriverDeploymentHint();
-    SafeHtml jdbcDriverProvidedByPreview(String type, String value);
+    SafeHtml jdbcDriverProvidedBy(String type, String value);
 
     SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
@@ -139,6 +144,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
+    SafeHtml mappingHint();
     String messages(@PluralCount int count);
     SafeHtml metadataError();
     String modifyResourceTitle(String type);
@@ -153,6 +159,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noMacrosDescription(String startMacro);
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
+    SafeHtml noResource();
     SafeHtml noServerGroupSelected();
     SafeHtml normalLogFile(String size);
 
@@ -187,9 +194,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeUserSuccess(String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    SafeHtml resourceNotFound(String type, String name);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
+    SafeHtml resourceAdapterProvidedBy(String type, String name);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);

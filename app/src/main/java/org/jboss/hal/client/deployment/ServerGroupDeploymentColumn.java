@@ -63,6 +63,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -385,14 +386,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         String serverGroup = statementContext.selectedServerGroup();
                         String runtimeName = model.get(RUNTIME_NAME).asString();
                         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                                new Outcome<FunctionContext>() {
-                                    @Override
-                                    public void onFailure(final FunctionContext context) {
-                                        eventBus.fireEvent(new MessageEvent(Message.error(
-                                                resources.messages().lastOperationFailed(),
-                                                context.getErrorMessage())));
-                                    }
-
+                                new SuccessfulOutcome(eventBus, resources) {
                                     @Override
                                     public void onSuccess(final FunctionContext context) {
                                         refresh(Ids.serverGroupDeployment(serverGroup, name));

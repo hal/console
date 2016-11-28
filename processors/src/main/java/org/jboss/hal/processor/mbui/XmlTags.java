@@ -20,10 +20,40 @@ package org.jboss.hal.processor.mbui;
  */
 public interface XmlTags {
 
+    String ACTION = "action";
+    String ACTIONS = "actions";
+    String ADDRESS = "address";
+    String ATTRIBUTES = "attributes";
+    String ATTRIBUTE = "attribute";
+    String AUTO_SAVE = "auto-save";
+    String COLUMN = "column";
+    String COLUMNS = "columns";
+    String FAIL_SAFE_FORM = "fail-safe-form";
     String FORM = "form";
+    String FORM_ITEM = "form-item";
+    String FORM_REF = "form-ref";
+    String GROUP = "group";
+    String HANDLER = "handler";
+    String HANDLER_REF = "handler-ref";
+    String ICON = "icon";
+    String ID = "id";
+    String INCLUDE_RUNTIME = "include-runtime";
+    String ITEM = "item";
     String METADATA = "metadata";
-    String TAB = "tab";
+    String NAME = "name";
+    String NAME_RESOLVER = "name-resolver";
+    String ON_SAVE = "on-save";
+    String PROVIDER = "provider";
+    String SCOPE = "scope";
+    String SELECTED = "selected";
+    String SUB_ITEM = "sub-item";
+    String SUGGEST_HANDLER = "suggest-handler";
     String TABLE = "table";
+    String TEMPLATE = "template";
+    String TEMPLATES = "templates";
+    String TITLE = "title";
+    String VALIDATION_HANDLER = "validation-handler";
+    String VALUE = "value";
     String VERTICAL_NAVIGATION = "vertical-navigation";
     String VIEW = "view";
 }

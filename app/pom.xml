@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.4.3</version>
+        <version>0.4.4</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -130,6 +130,13 @@
             <artifactId>circuit-processor</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -221,7 +228,8 @@
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java
+                                </additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
@@ -264,6 +272,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

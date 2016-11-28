@@ -16,7 +16,6 @@
 package org.jboss.hal.ballroom.form;
 
 import elemental.client.Browser;
-import org.jboss.hal.ballroom.form.InputElement.Context;
 
 /**
  * @author Harald Pehl
@@ -28,7 +27,7 @@ public class PasswordItem extends TextBoxItem {
     }
 
     @Override
-    protected InputElement<String> newInputElement(Context<?> context) {
+    protected InputElement<String> newInputElement(CreationContext<?> context) {
         elemental.html.InputElement element = Browser.getDocument().createInputElement();
         element.setType("password"); //NON-NLS
         TextBoxElement passwordElement = new TextBoxElement(element);

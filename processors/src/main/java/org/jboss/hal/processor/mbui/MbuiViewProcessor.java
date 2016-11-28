@@ -50,6 +50,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
 import org.jboss.hal.spi.MbuiElement;
@@ -62,6 +63,7 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import static org.jboss.hal.processor.mbui.ElementType.DataTable;
+import static org.jboss.hal.processor.mbui.ElementType.FailSafeForm;
 import static org.jboss.hal.processor.mbui.ElementType.Form;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
@@ -71,8 +73,16 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
  */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class MbuiViewProcessor extends AbstractProcessor {
+
+    /**
+     * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not
+     * use in production code!
+     */
+    static void resetCounter() {
+        Content.counter = 0;
+        MetadataInfo.counter = 0;
+    }
 
     private static final String TEMPLATE = "MbuiView.ftl";
 
@@ -100,6 +110,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ general validation
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private void validateType(final TypeElement type, final MbuiView mbuiView) {
         if (mbuiView == null) {
             // This shouldn't happen unless the compilation environment is buggy,
@@ -155,7 +166,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ processing
 
     protected void processType(final TypeElement type, final MbuiView mbuiView) {
-        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Mbui_", ""));
+        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Mbui_", "")); //NON-NLS
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
@@ -167,9 +178,9 @@ public class MbuiViewProcessor extends AbstractProcessor {
         Document document = parseXml(type, mbuiView);
         validateDocument(type, document);
 
-        // first process the metadata and tab elements
+        // first process the metadata
         processMetadata(type, document, context);
-        processTabs(document, context);
+        // processTabs(document, context);
 
         // then find and verify all @MbuiElement members
         processMbuiElements(type, document, context);
@@ -184,8 +195,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
         // generate code
         code(TEMPLATE, context.getPackage(), context.getSubclass(),
-                () -> ImmutableMap.of("context", context));
-        info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase());
+                () -> ImmutableMap.of("context", context)); //NON-NLS
+        info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase()); //NON-NLS
     }
 
     String generatedClassName(TypeElement type, String prefix, String suffix) {
@@ -208,7 +219,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         if (createMethod.isPresent()) {
             return createMethod.get().getSimpleName().toString();
         } else {
-            error(type, "@%s needs to define one static method which returns an %s instance",
+            error(type, "@%s needs to define one static method which returns an %s instance", //NON-NLS
                     MbuiView.class.getSimpleName(), type.getSimpleName());
             return null;
         }
@@ -217,6 +228,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ XML processing
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private Document parseXml(final TypeElement type, final MbuiView mbuiView) {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
                 ? type.getSimpleName().toString() + ".mbui.xml"
@@ -236,6 +248,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return null;
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private void validateDocument(final TypeElement type, final Document document) {
         // verify root element
         org.jdom2.Element root = document.getRootElement();
@@ -258,41 +271,18 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
+    /**
+     * Lookup all //metadata elements, verify the address attribute and store them in the context.
+     */
     private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
-        XPathExpression<org.jdom2.Element> expression = xPathFactory.compile("//metadata", Filters.element());
+        XPathExpression<org.jdom2.Element> expression = xPathFactory
+                .compile("//" + XmlTags.METADATA, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
-            String template = element.getAttributeValue("address");
+            String template = element.getAttributeValue(XmlTags.ADDRESS);
             if (template == null) {
-                error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element));
+                error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element)); //NON-NLS
             } else {
                 context.addMetadata(template);
-            }
-        }
-    }
-
-    /**
-     * Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context.
-     * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
-     */
-    private void processTabs(final Document document, final MbuiViewContext context) {
-        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//metadata", Filters.element());
-        for (org.jdom2.Element metadataElement : expressionTabs.evaluate(document)) {
-            TabsInfo tab = new TabsInfo();
-            boolean hasTabs = false;
-            for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
-                hasTabs = true;
-                TabsInfo.TabItem tabItem = null;
-                for (org.jdom2.Element child : tabElement.getChildren("form")) {
-                    if (tabItem == null) {
-                        tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
-                                tabElement.getAttributeValue("id"));
-                    }
-                    tabItem.addChildId(child.getAttributeValue("id"));
-                }
-                if (tabItem != null) { tab.addItem(tabItem); }
-            }
-            if (hasTabs) {
-                context.addTab(tab);
             }
         }
     }
@@ -300,6 +290,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ process @MbuiElement
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private void processMbuiElements(final TypeElement type, final Document document, final MbuiViewContext context) {
         ElementFilter.fieldsIn(type.getEnclosedElements()).stream()
                 .filter(field -> MoreElements.isAnnotationPresent(field, MbuiElement.class))
@@ -326,13 +317,15 @@ public class MbuiViewProcessor extends AbstractProcessor {
                         MbuiElementProcessor elementProcessor = null;
                         switch (elementType) {
                             case VerticalNavigation:
-                                elementProcessor = new VerticalNavigationProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new VerticalNavigationProcessor(this, typeUtils, elementUtils,
+                                        xPathFactory);
                                 break;
                             case DataTable:
-                                elementProcessor = new DataTableProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new DataTableProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
+                            case FailSafeForm:
                             case Form:
-                                elementProcessor = new FormProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new FormProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
                         }
                         elementProcessor.process(field, element, selector, context);
@@ -358,14 +351,14 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private org.jdom2.Element verifySelector(String selector, Element element, Document document) {
         XPathExpression<org.jdom2.Element> expression = xPathFactory
-                .compile("//*[@id='" + selector + "']", Filters.element());
+                .compile("//*[@" + XmlTags.ID + "='" + selector + "']", Filters.element());
         List<org.jdom2.Element> elements = expression.evaluate(document);
         if (elements.isEmpty()) {
             error(element,
-                    "Cannot find a matching element in the MBUI XML with id \"%s\".", selector);
+                    "Cannot find a matching element in the MBUI XML with id \"%s\".", selector); //NON-NLS
         } else if (elements.size() > 1) {
             error(element,
-                    "Found %d matching elements in the MBUI XML with id \"%s\". Id must be unique.",
+                    "Found %d matching elements in the MBUI XML with id \"%s\". Id must be unique.", //NON-NLS
                     elements.size(), selector);
         }
         return elements.get(0);
@@ -374,10 +367,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private ElementType getMbuiElementType(TypeMirror dataElementType) {
         if (isAssignable(dataElementType, VerticalNavigation.class)) {
             return VerticalNavigation;
-        } else if (isAssignable(dataElementType, Form.class)) {
-            return Form;
         } else if (isAssignable(dataElementType, DataTable.class)) {
             return DataTable;
+        } else if (isAssignable(dataElementType, FailSafeForm.class)) {
+            return FailSafeForm;
+        } else if (isAssignable(dataElementType, Form.class)) {
+            return Form;
         } else {
             return null;
         }
@@ -398,10 +393,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private void processCrossReferences(final Document document, final MbuiViewContext context) {
         // table-form bindings
-        XPathExpression<org.jdom2.Element> expression = xPathFactory.compile("//table[@form-ref]", Filters.element());
+        XPathExpression<org.jdom2.Element> expression = xPathFactory
+                .compile("//" + XmlTags.TABLE + "[@" + XmlTags.FORM_REF + "]", Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
-            DataTableInfo tableInfo = context.getElement(element.getAttributeValue("id"));
-            FormInfo formInfo = context.getElement(element.getAttributeValue("form-ref"));
+            DataTableInfo tableInfo = context.getElement(element.getAttributeValue(XmlTags.ID));
+            FormInfo formInfo = context.getElement(element.getAttributeValue(XmlTags.FORM_REF));
             if (tableInfo != null && formInfo != null) {
                 tableInfo.setFormRef(formInfo);
             }
@@ -417,25 +413,29 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 }
             }
         } else {
-            resolveItemReferences(navigation, "//item//table", document, context);
-            resolveItemReferences(navigation, "//item//form", document, context);
+            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.TABLE, document, context);
+            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FORM, document, context);
+            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FAIL_SAFE_FORM, document, context);
         }
     }
 
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private void resolveItemReferences(final VerticalNavigationInfo navigation, final String xpath,
             final Document document, final MbuiViewContext context) {
 
         XPathExpression<org.jdom2.Element> expression = xPathFactory.compile(xpath, Filters.element());
         for (org.jdom2.Element element : expression.evaluate(document)) {
-            String id = element.getAttributeValue("id");
+            String id = element.getAttributeValue(XmlTags.ID);
             MbuiElementInfo elementInfo = context.getElement(id);
             if (elementInfo != null) {
                 // find parent (sub)item
-                XPathExpression<org.jdom2.Element> parentItemExpression = xPathFactory.compile("ancestor::sub-item",
-                        Filters.element());
+                XPathExpression<org.jdom2.Element> parentItemExpression = xPathFactory
+                        .compile("ancestor::" + XmlTags.SUB_ITEM, //NON-NLS
+                                Filters.element());
                 org.jdom2.Element parentItemElement = parentItemExpression.evaluateFirst(element);
                 if (parentItemElement == null) {
-                    parentItemExpression = xPathFactory.compile("ancestor::item", Filters.element());
+                    parentItemExpression = xPathFactory
+                            .compile("ancestor::" + XmlTags.ITEM, Filters.element()); //NON-NLS
                     parentItemElement = parentItemExpression.evaluateFirst(element);
                 }
                 VerticalNavigationInfo.Item parentItem = navigation.getItem(parentItemElement.getAttributeValue("id"));
@@ -457,11 +457,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
                     // verify method
                     if (method.getReturnType().getKind() == TypeKind.VOID) {
-                        error(method, "Abstract propertiers in a @%s class must not return void",
+                        error(method, "Abstract propertiers in a @%s class must not return void", //NON-NLS
                                 MbuiView.class.getSimpleName());
                     }
                     if (!method.getParameters().isEmpty()) {
-                        error(method, "Abstract properties in a @%s class must not have parameters",
+                        error(method, "Abstract properties in a @%s class must not have parameters", //NON-NLS
                                 MbuiView.class.getSimpleName());
                     }
 
@@ -496,9 +496,9 @@ public class MbuiViewProcessor extends AbstractProcessor {
         String modifier = null;
         Set<Modifier> modifiers = method.getModifiers();
         if (modifiers.contains(Modifier.PUBLIC)) {
-            modifier = "public";
+            modifier = "public"; //NON-NLS
         } else if (modifiers.contains(Modifier.PROTECTED)) {
-            modifier = "protected";
+            modifier = "protected"; //NON-NLS
         }
         return modifier;
     }
@@ -506,6 +506,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ process @PostConstruct
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private void processPostConstruct(TypeElement type, final MbuiViewContext context) {
         ElementFilter.methodsIn(type.getEnclosedElements()).stream()
                 .filter(method -> MoreElements.isAnnotationPresent(method, PostConstruct.class))

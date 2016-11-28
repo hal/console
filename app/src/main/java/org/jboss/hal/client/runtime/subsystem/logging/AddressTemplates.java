@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String LOGGING_SUBSYSTEM_ADDRESS = "/{selected.host}/{selected.server}/subsystem=logging";
     AddressTemplate LOGGING_SUBSYSTEM_TEMPLATE = AddressTemplate.of(LOGGING_SUBSYSTEM_ADDRESS);

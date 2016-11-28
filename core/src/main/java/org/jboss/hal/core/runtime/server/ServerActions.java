@@ -63,11 +63,9 @@ import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
-import static org.jboss.hal.resources.UIConstants.DIALOG_TIMEOUT;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
- * TODO Support standalone mode
- *
  * @author Harald Pehl
  */
 public class ServerActions {
@@ -194,10 +192,10 @@ public class ServerActions {
                                 .buildLongRunning(title,
                                         resources.messages().restartStandalonePending(server.getName()));
                         pendingDialog.show();
-                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.ROOT)
+                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.root())
                                 .param(RESTART, true)
                                 .build();
-                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT).build();
+                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root()).build();
                         dispatcher.execute(operation,
 
                                 result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
@@ -227,7 +225,7 @@ public class ServerActions {
                                 (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
                                         Message.error(resources.messages().restartServerError(server.getName()))));
 
-                    }, DIALOG_TIMEOUT);
+                    }, SHORT_TIMEOUT);
                 });
     }
 
@@ -405,11 +403,13 @@ public class ServerActions {
     }
 
     public void markAsPending(Server server) {
+        dispatcher.setPendingLifecycleAction(true);
         pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
+        dispatcher.setPendingLifecycleAction(false);
         pendingServers.remove(Ids.hostServer(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }

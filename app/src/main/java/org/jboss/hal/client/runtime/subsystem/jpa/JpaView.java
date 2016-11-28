@@ -33,6 +33,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -45,7 +46,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
@@ -60,11 +60,62 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     private static final String LEAD_ELEMENT = "leadElement";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static LinkedListMultimap<String, String> mainAttributes = LinkedListMultimap.create();
+
+    static {
+        mainAttributes.putAll(CONSTANTS.attributes(), asList(
+                "hibernate-persistence-unit",
+                "enabled",
+                "statistics-enabled"
+        ));
+
+        mainAttributes.putAll(CONSTANTS.counter(), asList(
+                "session-open-count",
+                "session-close-count",
+                "completed-transaction-count",
+                "successful-transaction-count",
+                "prepared-statement-count",
+                "close-statement-count",
+                "flush-count",
+                "connect-count",
+                "optimistic-failure-count"
+        ));
+
+        mainAttributes.putAll(Names.ENTITY, asList(
+                "entity-delete-count",
+                "entity-fetch-count",
+                "entity-insert-count",
+                "entity-load-count",
+                "entity-update-count"
+        ));
+
+        mainAttributes.putAll(Names.CONNECTION, asList(
+                "collection-fetch-count",
+                "collection-load-count",
+                "collection-recreated-count",
+                "collection-remove-count",
+                "collection-update-count"
+        ));
+
+        mainAttributes.putAll(Names.QUERY, asList(
+                "query-cache-hit-count",
+                "query-cache-miss-count",
+                "query-cache-put-count",
+                "query-execution-count",
+                "query-execution-max-time",
+                "query-execution-max-time-query-string"
+        ));
+
+        mainAttributes.putAll(Names.SECOND_LEVEL_CACHE, asList(
+                "second-level-cache-hit-count",
+                "second-level-cache-miss-count",
+                "second-level-cache-put-count"
+        ));
+    }
+
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private final VerticalNavigation navigation;
     private final List<Form<JpaStatistic>> mainForms;
-    private final Map<String, DataTable<NamedNode>> childTables;
+    private final Map<String, NamedNodeTable<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
     private final Element headerElement;
     private final Element leadElement;
@@ -117,7 +168,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         headerElement = builder.referenceFor(HEADER_ELEMENT);
         leadElement = builder.referenceFor(LEAD_ELEMENT);
 
-        navigation = new VerticalNavigation();
+        VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
@@ -151,7 +202,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), options);
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
                 metadata)
@@ -193,17 +244,12 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     private void bindFormToTable(String resource) {
         DataTable<NamedNode> table = childTables.get(resource);
-        table.api().bindForm(childForms.get(resource));
+        table.bindForm(childForms.get(resource));
     }
 
     @Override
     public void setPresenter(final JpaPresenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 
     @Override
@@ -223,66 +269,15 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         if (statistic.hasDefined(childResource)) {
             List<NamedNode> childResources = asNamedNodes(statistic.get(childResource).asPropertyList());
             Form<NamedNode> form = childForms.get(childResource);
-            DataTable<NamedNode> table = childTables.get(childResource);
-            table.api().clear().add(childResources).refresh(RESET);
+            NamedNodeTable<NamedNode> table = childTables.get(childResource);
             form.clear();
+            table.update(childResources);
         }
     }
 
     private void refresh() {
         if (presenter != null) {
-            presenter.load();
+            presenter.reload();
         }
-    }
-
-    static {
-        mainAttributes.putAll(CONSTANTS.attributes(), asList(
-                "hibernate-persistence-unit",
-                "enabled",
-                "statistics-enabled"
-        ));
-
-        mainAttributes.putAll(CONSTANTS.counter(), asList(
-                "session-open-count",
-                "session-close-count",
-                "completed-transaction-count",
-                "successful-transaction-count",
-                "prepared-statement-count",
-                "close-statement-count",
-                "flush-count",
-                "connect-count",
-                "optimistic-failure-count"
-        ));
-
-        mainAttributes.putAll(Names.ENTITY, asList(
-                "entity-delete-count",
-                "entity-fetch-count",
-                "entity-insert-count",
-                "entity-load-count",
-                "entity-update-count"
-        ));
-
-        mainAttributes.putAll(Names.CONNECTION, asList(
-                "collection-fetch-count",
-                "collection-load-count",
-                "collection-recreated-count",
-                "collection-remove-count",
-                "collection-update-count"
-        ));
-
-        mainAttributes.putAll(Names.QUERY, asList(
-                "query-cache-hit-count",
-                "query-cache-miss-count",
-                "query-cache-put-count",
-                "query-execution-count",
-                "query-execution-max-time",
-                "query-execution-max-time-query-string"
-        ));
-
-        mainAttributes.putAll(Names.SECOND_LEVEL_CACHE, asList(
-                "second-level-cache-hit-count",
-                "second-level-cache-miss-count",
-                "second-level-cache-put-count"
-        ));
     }
 }

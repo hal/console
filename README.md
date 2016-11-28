@@ -29,7 +29,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - PatternFly compliance
     - Enhanced form items for lists, properties and booleans
     - Use capabilities & requirements to generate combo boxes with type-ahead support
-    - Declarative UI using MBUI and a simple XML format. See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml) for an example.
+    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui..xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
     - Remove deprecated APIs 
 
 - Finder

@@ -20,7 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String JPA_ADDRESS = "/{selected.host}/{selected.server}/deployment=*/subsystem=jpa/hibernate-persistence-unit=*";
     String ENTITY_ADDRESS = JPA_ADDRESS + "/entity=*";

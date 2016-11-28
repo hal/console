@@ -34,8 +34,8 @@
  */
 package org.jboss.hal.ballroom;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -46,6 +46,7 @@ import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 
 /**
@@ -129,9 +130,6 @@ public class ProgressElement implements IsElement, Progress {
     @Override
     public void finish() {
         // give the user a chance to see that we're finished
-        Scheduler.get().scheduleFixedDelay(() -> {
-            Elements.setVisible(root, false);
-            return false;
-        }, 333);
+        Browser.getWindow().setTimeout(() -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
     }
 }

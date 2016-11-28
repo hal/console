@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
-import java.util.List;
-
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
@@ -27,6 +25,11 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
  * @author Claudio Miranda
@@ -76,80 +79,57 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     }
 
 
-    // ------------------------------------------------------ form and table updates from DMR
+    // ------------------------------------------------------ update from DMR
 
     @Override
-    public void updateConfiguration(ModelNode configuration) {
-        configurationForm.view(configuration);
-    }
+    public void update(final ModelNode payload) {
+        configurationForm.view(payload);
 
-    @Override
-    public void updateThreadPool(final List<NamedNode> items) {
-        threadPoolTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        threadPoolTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         threadPoolForm.clear();
-    }
 
-    @Override
-    public void updateRemotingProfile(final List<NamedNode> items) {
-        remotingProfileTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        remotingProfileTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, REMOTING_PROFILE_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         remotingProfileForm.clear();
-    }
 
-    @Override
-    public void updateBeanPool(final List<NamedNode> items) {
-        beanPoolTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        beanPoolTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, BEAN_POOL_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         beanPoolForm.clear();
-    }
 
-    @Override
-    public void updateCache(final List<NamedNode> items) {
-        cacheTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        cacheTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, CACHE_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         cacheForm.clear();
-    }
 
-    @Override
-    public void updatePassivation(final List<NamedNode> items) {
-        passivationTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        passivationTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, PASSIVATION_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         passivationForm.clear();
-    }
 
-    @Override
-    public void updateServiceAsync(ModelNode node) {
-        serviceAsyncForm.view(node);
-    }
+        serviceAsyncForm.view(payload.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
+        serviceIiopForm.view(payload.get(SERVICE).get(SERVICE_IIOP_TEMPLATE.lastValue()));
+        serviceRemoteForm.view(payload.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
+        serviceTimerForm.view(payload.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));
 
-    @Override
-    public void updateServiceIiop(ModelNode node) {
-        serviceIiopForm.view(node);
-    }
-
-    @Override
-    public void updateServiceRemote(ModelNode node) {
-        serviceRemoteForm.view(node);
-    }
-
-    @Override
-    public void updateServiceTimer(ModelNode node) {
-        serviceTimerForm.view(node);
-    }
-
-    @Override
-    public void updateMdbDeliveryGroup(List<NamedNode> items) {
-        mdbDeliveryGroupTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        mdbDeliveryGroupTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         mdbDeliveryGroupForm.clear();
-    }
 
-    @Override
-    public void updateApplicationSecurityDomain(List<NamedNode> items) {
-        appSecurityDomainTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        appSecurityDomainTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
         appSecurityDomainForm.clear();
-    }
-
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 }

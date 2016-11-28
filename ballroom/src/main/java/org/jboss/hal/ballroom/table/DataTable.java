@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import java.util.List;
+import java.util.function.Function;
+
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.TableElement;
@@ -23,9 +26,11 @@ import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -107,11 +112,13 @@ public class DataTable<T> implements IsElement, Attachable {
         if (api == null) {
             // TODO check security context and adjust options if necessary
             api = Bridge.<T>select("#" + id).dataTable(options);
+            api.id = id;
+            api.columnActions = options.columnActions;
         }
     }
 
 
-    // ------------------------------------------------------ API access
+    // ------------------------------------------------------ DataTable API access
 
     /**
      * Getter for the {@link Api} instance.
@@ -128,6 +135,9 @@ public class DataTable<T> implements IsElement, Attachable {
         return api;
     }
 
+
+    // ------------------------------------------------------ 'higher' level API
+
     public void show() {
         Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, true);
@@ -136,5 +146,82 @@ public class DataTable<T> implements IsElement, Attachable {
     public void hide() {
         Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, false);
+    }
+
+    /**
+     * Binds a form to the table and takes care to view or clear the form upon selection changes
+     */
+    public void bindForm(final Form<T> form) {
+        api().onSelectionChange(api -> {
+            if (api.hasSelection()) {
+                form.view(api.selectedRow());
+            } else {
+                form.clear();
+            }
+        });
+    }
+
+    public void bindForms(final Iterable<Form<T>> forms) {
+        api().onSelectionChange(api -> {
+            if (api.hasSelection()) {
+                T selectedRow = api.selectedRow();
+                for (Form<T> form : forms) {
+                    form.view(selectedRow);
+                }
+            } else {
+                for (Form<T> form : forms) {
+                    form.clear();
+                }
+            }
+        });
+    }
+
+    /**
+     * Replaces the existing data with the new one. If necessary, restores the current selection based on the specified
+     * function.
+     *
+     * @param data       the new data
+     * @param identifier a function which must return an unique identifier for a given row. Used to restore the
+     *                   selection after replacing the data.
+     */
+    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+        List<T> selection = api().selectedRows();
+        api().clear().add(data).refresh(RESET);
+        if (!selection.isEmpty()) {
+            RowSelection<T> rows = (index, d1, tr) -> {
+                if (d1 != null) {
+                    String id1 = identifier.apply(d1);
+                    return selection.stream().anyMatch(d2 -> {
+                        if (d2 != null) {
+                            String id2 = identifier.apply(d2);
+                            return id1.equals(id2);
+                        }
+                        return false;
+                    });
+                }
+                return false;
+            };
+            api().rows(rows).select();
+        }
+    }
+
+    /**
+     * Selects the row with the specified data.
+     *
+     * @param data       the data
+     * @param identifier a function which must return an unique identifier for a given row.
+     */
+    public void select(final T data, final Function<T, String> identifier) {
+        if (data != null) {
+            String id1 = identifier.apply(data);
+            RowSelection<T> rows = (idx, d, tr) -> {
+                if (d != null) {
+                    String id2 = identifier.apply(d);
+                    return id1.equals(id2);
+                }
+                return false;
+            };
+            api().rows(rows).select();
+        }
     }
 }

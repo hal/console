@@ -104,16 +104,16 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
-    public static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
-    public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
-    public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
+    static final FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {/* noop */};
+    static final ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {/* noop */};
 
+    static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
-    static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {/* noop */};
-    static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {/* noop */};
 
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
+    private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
@@ -123,6 +123,7 @@ public class Dispatcher implements RecordingHandler {
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
     private Macros macros;
+    private boolean pendingLifecycleAction;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
@@ -132,6 +133,7 @@ public class Dispatcher implements RecordingHandler {
         this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
         this.macros = macros;
+        this.pendingLifecycleAction = false;
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
@@ -378,7 +380,9 @@ public class Dispatcher implements RecordingHandler {
                         failedCallback.onFailed(operation, payload.getFailureDescription());
                     }
                 } else {
-                    handleErrorCodes(status, operation, exceptionCallback);
+                    if (!pendingLifecycleAction) {
+                        handleErrorCodes(status, operation, exceptionCallback);
+                    }
                 }
             }
         });
@@ -473,9 +477,9 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
-    // ------------------------------------------------------ getter
+    // ------------------------------------------------------ getter / setter
 
-    public ExceptionCallback defaultExceptionCallback() {
-        return exceptionCallback;
+    public void setPendingLifecycleAction(final boolean pendingLifecycleAction) {
+        this.pendingLifecycleAction = pendingLifecycleAction;
     }
 }

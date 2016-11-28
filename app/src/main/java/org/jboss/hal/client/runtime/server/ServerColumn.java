@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
@@ -303,7 +302,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 } else {
                     data.add("stopped");
                 }
-                return Joiner.on(' ').join(data);
+                return String.join(" ", data);
             }
 
             @Override

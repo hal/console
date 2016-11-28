@@ -33,12 +33,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
  */
 class MailSession extends NamedNode {
 
-    public MailSession(final String name, final ModelNode node) {
-        super(name, node);
+    MailSession(Property property) {
+        super(property);
     }
 
-    MailSession(Property property) {
-        super(property.getName(), property.getValue());
+    MailSession(final String name, final ModelNode node) {
+        super(name, node);
     }
 
     List<String> getServers() {

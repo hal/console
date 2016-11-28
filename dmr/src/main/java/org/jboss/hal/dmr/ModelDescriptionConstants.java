@@ -41,13 +41,16 @@ package org.jboss.hal.dmr;
  * @author Brian Stansberry
  * @author Harald Pehl
  */
+@SuppressWarnings({"DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "access-control";
     String ACCESS_TYPE = "access-type";
+    String ACL_MODULE = "acl-module";
     String ADD = "add";
     String ADDRESS = "address";
+    String ADMIN_OBJECTS = "admin-objects";
     String ALLOWED = "allowed";
     String ANY = "any";
     String ARCHIVE = "archive";
@@ -60,12 +63,15 @@ public interface ModelDescriptionConstants {
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
 
+    String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
+    String CONFIG_PROPERTIES = "config-properties";
+    String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -104,11 +110,13 @@ public interface ModelDescriptionConstants {
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
     String FILE = "file";
+    String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
 
+    String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HOST = "host";
@@ -124,8 +132,8 @@ public interface ModelDescriptionConstants {
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
+    String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
-    String INHERITED = "inherited";
     String INTERFACE = "interface";
     String IO = "io";
 
@@ -140,9 +148,9 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
-    String LOCALE = "locale";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
+    String LOGIN_MODULE = "login-module";
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
@@ -153,11 +161,14 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
+    String MAPPING_MODULE = "mapping-module";
     String MAX = "max";
+    String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIN = "min";
-    String MIN_VALUE = "min-value";
+    String MODULE = "module";
+    String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
 
     String NAME = "name";
@@ -172,6 +183,8 @@ public interface ModelDescriptionConstants {
 
     String PASSWORD = "password";
     String PATH = "path";
+    String POLICY = "policy";
+    String POLICY_MODULE = "policy-module";
     String POP3 = "pop3";
     String PORT = "port";
     String PROCESS_STATE = "process-state";
@@ -179,10 +192,13 @@ public interface ModelDescriptionConstants {
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
     String PROFILE_NAME = "profile-name";
+    String PROPERTY = "property";
     String PROVIDER = "provider";
+    String PROVIDER_MODULE = "provider-module";
     String PROXIES = "proxies";
 
     String QUERY = "query";
+    String QUEUE_LENGTH = "queue-length";
 
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -212,6 +228,7 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String RESPONSE = "response";
     String RESOURCE_ADAPTERS = "resource-adapters";
+    String RESOURCE_ADAPTER = "resource-adapter";
     String RESPONSE_HEADERS = "response-headers";
     String RESTART = "restart";
     String RESTART_REQUIRED = "restart-required";
@@ -228,6 +245,7 @@ public interface ModelDescriptionConstants {
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
     String SELECT = "select";
+    String SELECTOR = "selector";
     String SERVER = "server";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
@@ -261,13 +279,18 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";
 
+    String THREAD_FACTORY = "thread-factory";
     String TIMEOUT = "timeout";
+    String TO = "to";
+    String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
+    String TRUST_MODULE = "trust-module";
     String TYPE = "type";
 
     String UNIT = "unit";
     String URL = "url";
+    String USERNAME = "username";
 
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
@@ -276,6 +299,9 @@ public interface ModelDescriptionConstants {
     String WEBSERVICES = "webservices";
     String WHERE = "where";
     String WHOAMI = "whoami";
+    String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
+    String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
+    String WORKMANAGER = "workmanager";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";

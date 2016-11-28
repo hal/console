@@ -20,15 +20,12 @@ import java.util.List;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsHelper;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.Button.Scope;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
@@ -48,7 +45,6 @@ import static org.jboss.hal.ballroom.table.SelectorModifier.Page.all;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.resources.CSS.clickable;
 
 /**
  * Panel which holds the children of the selected resource.
@@ -74,27 +70,20 @@ class ChildrenPanel implements HasElements, Attachable {
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
-                .column(new ColumnBuilder<String>("action", resources.constants().action(),
-                        (cell, type, row, meta) -> "<a data-" + VIEW_RESOURCE_DATA + "=\"" + row +
-                                "\" class=\"" + clickable + "\">" + resources.constants().view() + "</a>")
-                        .orderable(false)
-                        .searchable(false)
-                        .width("10em")
-                        .build())
+                .column(resources.constants().view(), row -> modelBrowser.tree.api().openNode(parent.id,
+                        () -> modelBrowser.select(uniqueId(parent, row), false)))
                 .button(resources.constants().add(), (event, api) -> {
                     SelectorModifier selectorModifier = new SelectorModifierBuilder().page(all).build();
                     modelBrowser.add(parent, JsHelper.asList(api.rows(selectorModifier).data().toArray()));
                 })
 
                 .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, api) -> DialogFactory.showConfirmation(
-                                resources.constants().removeResource(),
-                                resources.messages().removeResourceConfirmationQuestion(api.selectedRow()),
-                                () -> {
-                                    ResourceAddress fq = parent.data.getAddress().getParent()
-                                            .add(parent.text, api.selectedRow());
-                                    modelBrowser.remove(fq);
-                                }))
+                        (event, api) -> {
+                            ResourceAddress fq = parent.data.getAddress()
+                                    .getParent()
+                                    .add(parent.text, api.selectedRow());
+                            modelBrowser.remove(fq);
+                        })
                 .paging(false)
                 .build();
 
@@ -114,17 +103,6 @@ class ChildrenPanel implements HasElements, Attachable {
     @Override
     public void attach() {
         table.attach();
-        registerLinkClickHandler();
-    }
-
-    private void registerLinkClickHandler() {
-        NodeList links = table.asElement().querySelectorAll("." + clickable);
-        for (int i = 0; i < links.getLength(); i++) {
-            Element link = (Element) links.item(i);
-            String name = String.valueOf(link.getDataset().at(VIEW_RESOURCE_DATA));
-            link.setOnclick(event -> modelBrowser.tree.api().openNode(parent.id,
-                    () -> modelBrowser.select(uniqueId(parent, name), false)));
-        }
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -147,7 +125,6 @@ class ChildrenPanel implements HasElements, Attachable {
         dispatcher.execute(operation, result -> {
             List<String> names = result.asList().stream().map(ModelNode::asString).collect(toList());
             table.api().clear().add(names).refresh(RefreshMode.RESET);
-            registerLinkClickHandler();
             if (node.data.hasSingletons()) {
                 Browser.getWindow().getConsole()
                         .log("Read " + names.size() + " / " + node.data.getSingletons().size() + " singletons");

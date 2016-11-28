@@ -29,7 +29,10 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REPLY_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 import static org.jboss.hal.resources.CSS.operationParameter;
 import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.CSS.tableBordered;
@@ -110,7 +113,6 @@ class OperationsTable implements IsElement {
 
     private void buildParameter(Elements.Builder builder, String name, ModelNode parameter) {
         boolean required = parameter.hasDefined(REQUIRED) && parameter.get(REQUIRED).asBoolean();
-        String type = parameter.get(TYPE).asString();
         String description = parameter.hasDefined(DESCRIPTION) ? parameter.get(DESCRIPTION).asString() : null;
 
         SafeHtmlBuilder html = new SafeHtmlBuilder();
@@ -118,7 +120,7 @@ class OperationsTable implements IsElement {
             //noinspection HardCodedStringLiteral
             html.appendHtmlConstant("<code>").appendEscaped(name).appendHtmlConstant("</code>").appendEscaped(": ");
         }
-        html.appendEscaped(type);
+        html.appendEscaped(Types.formatType(parameter));
         if (required) {
             html.appendHtmlConstant(NBSP).append(resources.messages().requiredMarker());
         }

@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -25,10 +24,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -161,61 +159,78 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     private final Resources resources;
-    private final List<Form<DataSource>> nonXaForms;
-    private final List<Form<DataSource>> xaForms;
+    private final Form<DataSource> nonXaForm;
+    private final Form<DataSource> xaForm;
+    // private final List<Form<DataSource>> nonXaForms;
+    // private final List<Form<DataSource>> xaForms;
     private final Element header;
     private final Element nonXaInfo;
     private final Element xaInfo;
-    private final Tabs nonXaTabs;
-    private final Tabs xaTabs;
+    // private final Tabs nonXaTabs;
+    // private final Tabs xaTabs;
     private DataSourcePresenter presenter;
 
     @Inject
     public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
         this.resources = resources;
 
-        Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
-        Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
-        nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
-                .build();
-        xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();
-
-        nonXaForms = new ArrayList<>();
-        xaForms = new ArrayList<>();
-        nonXaTabs = new Tabs();
-        xaTabs = new Tabs();
-        ModelNodeForm<DataSource> form;
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
 
-        for (String section : attributes.keySet()) {
-            String sectionId = Ids.asId(section);
-            List<Attribute> sectionAttributes = attributes.get(section);
+        Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
+        nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
+                .build();
+        GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
+                nonXaMeta).onSave(saveCallback);
+
+        Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
+        xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();
+        GroupedForm.Builder<DataSource> xaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.XA_DATA_SOURCE_FORM,
+                xaMeta).onSave(saveCallback);
+        // nonXaForms = new ArrayList<>();
+        // xaForms = new ArrayList<>();
+        // nonXaTabs = new Tabs();
+        // xaTabs = new Tabs();
+        // ModelNodeForm<DataSource> form;
+
+        for (String group : attributes.keySet()) {
+            String groupId = Ids.asId(group);
+            List<Attribute> groupAttributes = attributes.get(group);
 
             // non xa form and tab
-            List<String> nonXaNames = sectionAttributes.stream()
+            List<String> nonXaNames = groupAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", sectionId),
-                    nonXaMeta)
+            nonXaFormBuilder.group(groupId, group)
                     .include(nonXaNames)
-                    .onSave(saveCallback)
-                    .build();
-            nonXaForms.add(form);
-            nonXaTabs.add(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "tab", sectionId), section, form.asElement());
+                    .end();
+
+            // form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", groupId),
+            //         nonXaMeta)
+            //         .include(nonXaNames)
+            //         .onSave(saveCallback)
+            //         .build();
+            // nonXaForms.add(form);
+            // nonXaTabs.add(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "group", groupId), group, form.asElement());
 
             // xa form and tab
-            List<String> xaNames = sectionAttributes.stream()
+            List<String> xaNames = groupAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.XA_DATA_SOURCE, "form", sectionId), xaMeta)
+            xaFormBuilder.group(groupId, group)
                     .include(xaNames)
-                    .onSave(saveCallback)
-                    .build();
-            xaForms.add(form);
-            xaTabs.add(Ids.build(Ids.XA_DATA_SOURCE, "tab", sectionId), section, form.asElement());
+                    .end();
+            // form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.XA_DATA_SOURCE, "form", groupId), xaMeta)
+            //         .include(xaNames)
+            //         .onSave(saveCallback)
+            //         .build();
+            // xaForms.add(form);
+            // xaTabs.add(Ids.build(Ids.XA_DATA_SOURCE, "group", groupId), group, form.asElement());
         }
+
+        nonXaForm = nonXaFormBuilder.build();
+        xaForm = xaFormBuilder.build();
 
         // @formatter:off
         LayoutBuilder layoutBuilder = new LayoutBuilder()
@@ -224,16 +239,16 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
                     .add(nonXaInfo)
                     .add(xaInfo)
-                    .add(nonXaTabs.asElement())
-                    .add(xaTabs.asElement())
+                    .add(nonXaForm.asElement())
+                    .add(xaForm.asElement())
                 .end()
             .end();
         // @formatter:on
 
         Element root = layoutBuilder.build();
         header = layoutBuilder.referenceFor(HEADER_ELEMENT);
-        registerAttachables(nonXaForms);
-        registerAttachables(xaForms);
+        registerAttachable(nonXaForm);
+        registerAttachable(xaForm);
         initElement(root);
     }
 
@@ -247,14 +262,16 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         showHide(xa);
         if (xa) {
             header.setTextContent(Names.XA_DATASOURCE);
-            for (Form<DataSource> form : xaForms) {
-                form.clear();
-            }
+            xaForm.clear();
+            // for (Form<DataSource> form : xaForms) {
+            //     form.clear();
+            // }
         } else {
             header.setTextContent(Names.DATASOURCE);
-            for (Form<DataSource> form : nonXaForms) {
-                form.clear();
-            }
+            nonXaForm.clear();
+            // for (Form<DataSource> form : nonXaForms) {
+            //     form.clear();
+            // }
         }
     }
 
@@ -273,20 +290,22 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .appendHtmlConstant("</small>")
                 .toSafeHtml().asString());
         if (dataSource.isXa()) {
-            for (Form<DataSource> form : xaForms) {
-                form.view(dataSource);
-            }
+            xaForm.view(dataSource);
+            // for (Form<DataSource> form : xaForms) {
+            //     form.view(dataSource);
+            // }
         } else {
-            for (Form<DataSource> form : nonXaForms) {
-                form.view(dataSource);
-            }
+            nonXaForm.view(dataSource);
+            // for (Form<DataSource> form : nonXaForms) {
+            //     form.view(dataSource);
+            // }
         }
     }
 
     private void showHide(boolean xa) {
         Elements.setVisible(nonXaInfo, !xa);
         Elements.setVisible(xaInfo, xa);
-        Elements.setVisible(nonXaTabs.asElement(), !xa);
-        Elements.setVisible(xaTabs.asElement(), xa);
+        Elements.setVisible(nonXaForm.asElement(), !xa);
+        Elements.setVisible(xaForm.asElement(), xa);
     }
 }

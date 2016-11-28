@@ -53,6 +53,7 @@ public interface CSS {
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
+    String breadcrumb = "breadcrumb";
     String btn = "btn";
     String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
@@ -70,6 +71,7 @@ public interface CSS {
     String clickable = "clickable";
     String close = "close";
     String column = "col";
+    String columnAction = "column-action";
     String columnLg = "lg";
     String columnMd = "md";
     String columnSm = "sm";
@@ -222,6 +224,7 @@ public interface CSS {
     String operationParameter = "operation-parameter";
     String operations = "operations";
 
+    String page = "page";
     String panel = "panel";
     String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";
@@ -296,7 +299,6 @@ public interface CSS {
     String toastPfAction = "toast-pf-action";
     String topology = "topology";
     String treeContainer = "tree-container";
-    String ttNested = "tt-nested";
 
     String underline = "underline";
     String unpin = "unpin";

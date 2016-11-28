@@ -114,6 +114,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     private PresenterType presenterType;
     private PlaceRequest normalMode;
+    private FinderContext lastFinderContext;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
@@ -205,6 +206,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     public void onFinderContext(final FinderContextEvent event) {
         getView().updateLinks(event.getFinderContext());
         if (presenterType == PresenterType.APPLICATION) {
+            lastFinderContext = event.getFinderContext();
             getView().updateBreadcrumb(event.getFinderContext());
         }
     }
@@ -216,6 +218,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         }
     }
 
+    FinderContext lastFinderContext() {
+        return lastFinderContext;
+    }
 
     // ------------------------------------------------------ place management
 

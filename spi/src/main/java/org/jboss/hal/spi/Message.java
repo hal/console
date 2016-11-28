@@ -29,13 +29,6 @@ public class Message {
     }
 
 
-    @FunctionalInterface
-    public interface Action {
-
-        void execute();
-    }
-
-
     // ------------------------------------------------------ error
 
     public static Message error(final SafeHtml message) {
@@ -54,12 +47,12 @@ public class Message {
         return new Message(Level.ERROR, message, details, null, null, sticky);
     }
 
-    public static Message error(final SafeHtml message, final String actionTitle, final Action action) {
-        return error(message, actionTitle, action, false);
+    public static Message error(final SafeHtml message, final String actionTitle, final Callback callback) {
+        return error(message, actionTitle, callback, false);
     }
 
-    public static Message error(final SafeHtml message, final String actionTitle, final Action action, boolean sticky) {
-        return new Message(Level.ERROR, message, null, actionTitle, action, sticky);
+    public static Message error(final SafeHtml message, final String actionTitle, final Callback callback, boolean sticky) {
+        return new Message(Level.ERROR, message, null, actionTitle, callback, sticky);
     }
 
 
@@ -81,13 +74,13 @@ public class Message {
         return new Message(Level.WARNING, message, details, null, null, sticky);
     }
 
-    public static Message warning(final SafeHtml message, final String actionTitle, final Action action) {
-        return warning(message, actionTitle, action, false);
+    public static Message warning(final SafeHtml message, final String actionTitle, final Callback callback) {
+        return warning(message, actionTitle, callback, false);
     }
 
-    public static Message warning(final SafeHtml message, final String actionTitle, final Action action,
+    public static Message warning(final SafeHtml message, final String actionTitle, final Callback callback,
             boolean sticky) {
-        return new Message(Level.WARNING, message, null, actionTitle, action, sticky);
+        return new Message(Level.WARNING, message, null, actionTitle, callback, sticky);
     }
 
 
@@ -109,12 +102,12 @@ public class Message {
         return new Message(Level.INFO, message, details, null, null, sticky);
     }
 
-    public static Message info(final SafeHtml message, final String actionTitle, final Action action) {
-        return info(message, actionTitle, action, false);
+    public static Message info(final SafeHtml message, final String actionTitle, final Callback callback) {
+        return info(message, actionTitle, callback, false);
     }
 
-    public static Message info(final SafeHtml message, final String actionTitle, final Action action, boolean sticky) {
-        return new Message(Level.INFO, message, null, actionTitle, action, sticky);
+    public static Message info(final SafeHtml message, final String actionTitle, final Callback callback, boolean sticky) {
+        return new Message(Level.INFO, message, null, actionTitle, callback, sticky);
     }
 
 
@@ -136,13 +129,13 @@ public class Message {
         return new Message(Level.SUCCESS, message, details, null, null, sticky);
     }
 
-    public static Message success(final SafeHtml message, final String actionTitle, final Action action) {
-        return success(message, actionTitle, action, false);
+    public static Message success(final SafeHtml message, final String actionTitle, final Callback callback) {
+        return success(message, actionTitle, callback, false);
     }
 
-    public static Message success(final SafeHtml message, final String actionTitle, final Action action,
+    public static Message success(final SafeHtml message, final String actionTitle, final Callback callback,
             boolean sticky) {
-        return new Message(Level.SUCCESS, message, null, actionTitle, action, sticky);
+        return new Message(Level.SUCCESS, message, null, actionTitle, callback, sticky);
     }
 
 
@@ -154,18 +147,18 @@ public class Message {
     private final SafeHtml message;
     private final String details;
     private final String actionTitle;
-    private final Action action;
+    private final Callback callback;
     private final boolean sticky;
 
     private Message(final Level level, final SafeHtml message, final String details,
-            final String actionTitle, final Action action, final boolean sticky) {
+            final String actionTitle, final Callback callback, final boolean sticky) {
         this.id = System.currentTimeMillis();
         this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(new Date());
         this.level = level;
         this.message = message;
         this.details = details;
         this.actionTitle = actionTitle;
-        this.action = action;
+        this.callback = callback;
         this.sticky = sticky;
     }
 
@@ -190,15 +183,15 @@ public class Message {
     }
 
     public boolean hasAction() {
-        return actionTitle != null && action != null;
+        return actionTitle != null && callback != null;
     }
 
     public String getActionTitle() {
         return actionTitle;
     }
 
-    public Action getAction() {
-        return action;
+    public Callback getCallback() {
+        return callback;
     }
 
     public boolean isSticky() {

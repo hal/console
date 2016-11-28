@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.List;
+
 import com.google.common.collect.Ordering;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -27,8 +29,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
-
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
@@ -77,7 +77,7 @@ class AttributesTable implements IsElement {
             builder.td().innerHtml(html.toSafeHtml()).end();
 
             // type
-            builder.td().textContent(attribute.get(TYPE).asString()).end();
+            builder.td().textContent(Types.formatType(attribute)).end();
 
             // storage
             builder.td();

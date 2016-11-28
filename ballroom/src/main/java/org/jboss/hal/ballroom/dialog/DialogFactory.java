@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.dialog;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.dialog.Dialog.SimpleCallback;
+import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.SMALL;
 import static org.jboss.hal.resources.CSS.centerBlock;
@@ -36,7 +36,7 @@ public final class DialogFactory {
      * Creates and shows a confirmation dialog using the provided question. When confirmed the specified callback is
      * executed.
      */
-    public static void showConfirmation(String title, SafeHtml question, SimpleCallback confirm) {
+    public static void showConfirmation(String title, SafeHtml question, Callback confirm) {
         showConfirmation(title, question, null, confirm);
     }
 
@@ -44,7 +44,7 @@ public final class DialogFactory {
      * Creates and shows a confirmation dialog using the question and the provided element. When confirmed the specified
      * callback is executed.
      */
-    public static void showConfirmation(String title, SafeHtml question, Element element, SimpleCallback confirm) {
+    public static void showConfirmation(String title, SafeHtml question, Element element, Callback confirm) {
         buildConfirmation(title, question, element, confirm).show();
     }
 
@@ -55,7 +55,7 @@ public final class DialogFactory {
      * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
      * on the returned dialog.
      */
-    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, SimpleCallback confirm) {
+    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, Callback confirm) {
         Element content;
         if (element != null) {
             content = new Elements.Builder().div().p().innerHtml(question).end().add(element).end().build();

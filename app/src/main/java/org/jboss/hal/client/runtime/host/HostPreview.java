@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime.host;
 
-import com.google.common.base.Joiner;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
@@ -78,10 +77,9 @@ class HostPreview extends RuntimePreview<Host> {
                         HOST_STATE, RUNNING_MODE))
                 .append(model -> new PreviewAttribute(
                         "Management Version",
-                        Joiner.on('.').join(
-                                model.get(MANAGEMENT_MAJOR_VERSION),
-                                model.get(MANAGEMENT_MINOR_VERSION),
-                                model.get(MANAGEMENT_MICRO_VERSION))
+                        String.join(".", model.get(MANAGEMENT_MAJOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MINOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MICRO_VERSION).asString())
                 ))
                 .end();
         previewBuilder().addAll(attributes);

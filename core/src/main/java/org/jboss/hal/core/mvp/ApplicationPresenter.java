@@ -24,7 +24,7 @@ import org.jboss.hal.core.header.PresenterType;
 import org.jboss.hal.core.ui.Skeleton;
 
 /**
- * Base presenter for all kind of application presenters. The presenter fires a {@link HeaderModeEvent} with various
+ * Base presenter for all kind of application presenters. The presenter returns a {@link HeaderModeEvent} with various
  * information depending on the implemented interfaces:
  * <ul>
  * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>

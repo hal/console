@@ -21,6 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -28,18 +29,11 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -64,25 +58,22 @@ public class IiopPresenter
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=iiop-openjdk";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private final Dispatcher dispatcher;
-    private final Resources resources;
 
     @Inject
     public IiopPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final Resources resources) {
+            final StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
-        this.resources = resources;
     }
 
     @Override
@@ -103,15 +94,6 @@ public class IiopPresenter
 
     @Override
     protected void reload() {
-        ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
-                .build();
-        dispatcher.execute(operation,
-                result -> getView().update(result),
-                (o, failure) -> {
-                    MessageEvent.fire(getEventBus(), Message.error(resources.messages().unknownResource(),
-                            resources.messages().unknownResourceDetails(address.toString(), failure)));
-                    getView().clear();
-                });
+        crud.read(ROOT_TEMPLATE, result -> getView().update(result));
     }
 }

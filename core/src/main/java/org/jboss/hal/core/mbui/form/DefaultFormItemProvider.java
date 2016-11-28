@@ -42,6 +42,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -53,6 +56,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 class DefaultFormItemProvider implements FormItemProvider {
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);
 
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;
@@ -187,6 +192,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case PROPERTY:
                 case TYPE:
                 case UNDEFINED:
+                    logger.warn("Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.", type.name(), property.getName(), metadata.getTemplate());
                     break;
             }
 

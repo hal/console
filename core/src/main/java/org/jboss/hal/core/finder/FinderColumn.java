@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
@@ -43,6 +42,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -913,7 +913,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         });
     }
 
-    public void refresh(ScheduledCommand andThen) {
+    public void refresh(Callback callback) {
         setItems(new AsyncCallback<FinderColumn>() {
             @Override
             public void onFailure(final Throwable throwable) {
@@ -923,8 +923,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             @Override
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
-                if (andThen != null) {
-                    andThen.execute();
+                if (callback != null) {
+                    callback.execute();
                 }
             }
         });

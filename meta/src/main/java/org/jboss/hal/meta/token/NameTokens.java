@@ -53,12 +53,16 @@ public interface NameTokens {
     String LOGGING_PROFILE = "logging-profile";
     String MACRO_EDITOR = "macro-editor";
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
+    String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
+    String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
     String RUNTIME = "runtime";
+    String SECURITY_CONFIGURATION = "security";
+    String SECURITY_DOMAIN = ModelDescriptionConstants.SECURITY_DOMAIN;
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";

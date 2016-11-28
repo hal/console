@@ -113,6 +113,15 @@ public class DataTableInfo extends MbuiElementInfo {
             return false;
         }
 
+        public boolean isHasUnboundAttributes() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getFormItem() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public boolean isHasAttributesWithValidationsHandler() {
             return !getSuggestHandlerAttributes().isEmpty();
         }
@@ -160,15 +169,15 @@ public class DataTableInfo extends MbuiElementInfo {
     }
 
 
-    private final String typeParameter;
+    private final TypeParameter typeParameter;
     private final MetadataInfo metadata;
     private final String title;
     private FormInfo formRef;
     private final List<Column> columns;
     private final List<Action> actions;
 
-    DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata,
-            final String title) {
+    DataTableInfo(final String name, final String selector, final TypeParameter typeParameter,
+            final MetadataInfo metadata, final String title) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
@@ -177,7 +186,7 @@ public class DataTableInfo extends MbuiElementInfo {
         this.actions = new ArrayList<>();
     }
 
-    public String getTypeParameter() {
+    public TypeParameter getTypeParameter() {
         return typeParameter;
     }
 

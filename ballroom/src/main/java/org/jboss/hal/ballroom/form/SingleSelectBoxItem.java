@@ -18,7 +18,6 @@ package org.jboss.hal.ballroom.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
 import static com.google.common.base.Strings.emptyToNull;
@@ -39,7 +38,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
-        super(name, label, null, new Context<>(allowEmpty));
+        super(name, label, null, new CreationContext<>(allowEmpty));
         this.allowEmpty = allowEmpty;
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -50,7 +49,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    protected InputElement<String> newInputElement(Context<?> context) {
+    protected InputElement<String> newInputElement(CreationContext<?> context) {
         Boolean allowEmpty = (Boolean) context.data();
         selectBox = new SingleSelectBoxElement(allowEmpty);
         selectBox.setClassName(formControl + " " + selectpicker);

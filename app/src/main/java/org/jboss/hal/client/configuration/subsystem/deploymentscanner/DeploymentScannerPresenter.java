@@ -22,7 +22,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -30,9 +30,7 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -42,8 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.deploymentscanner.Add
 import static org.jboss.hal.client.configuration.subsystem.deploymentscanner.AddressTemplates.DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.deploymentscanner.AddressTemplates.DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.deploymentscanner.AddressTemplates.DEPLOYMENTSCANNER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -66,25 +62,22 @@ public class DeploymentScannerPresenter
     // @formatter:on
 
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
-    private final Dispatcher dispatcher;
 
     @Inject
     public DeploymentScannerPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher) {
+            final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -105,14 +98,8 @@ public class DeploymentScannerPresenter
 
     @Override
     protected void reload() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE.resolve(statementContext))
-                .param(RECURSIVE_DEPTH, 2)
-                .build();
-        dispatcher.execute(operation, result -> {
-            // @formatter:off
-            getView().updateScanners(asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey())));
-            // @formatter:on
-        });
+        crud.read(DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE, 2, result ->
+                getView().updateScanners(
+                        asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey()))));
     }
 }

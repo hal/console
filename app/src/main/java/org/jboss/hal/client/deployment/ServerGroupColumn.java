@@ -18,7 +18,6 @@ package org.jboss.hal.client.deployment;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -43,7 +42,6 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 /**
  * @author Harald Pehl
@@ -93,7 +91,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
             @Override
             public String getFilterData() {
-                return Joiner.on(' ').join(item.getName(), item.getProfile());
+                return String.join(" ", item.getName(), item.getProfile());
             }
 
             @Override
@@ -103,7 +101,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
         });
 
         setItemsProvider((context, callback) -> {
-            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
+            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
                     .param(CHILD_TYPE, SERVER_GROUP)
                     .param(INCLUDE_RUNTIME, true)
                     .build();

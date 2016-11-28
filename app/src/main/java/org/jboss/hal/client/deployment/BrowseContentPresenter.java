@@ -83,17 +83,12 @@ public class BrowseContentPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadContent();
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.content(content);
     }
 
-    void loadContent() {
+    @Override
+    protected void reload() {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
         Operation operation = new Operation.Builder(BROWSE_CONTENT, address).build();
         dispatcher.execute(operation, result -> getView().setContent(content, result));

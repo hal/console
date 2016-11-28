@@ -24,30 +24,22 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -72,10 +64,8 @@ public class InterfacePresenter
     static final String ROOT_ADDRESS = "/interface=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
-    private final Dispatcher dispatcher;
+    private final CrudOperations crud;
     private final StatementContext statementContext;
-    private final OperationFactory operationFactory;
-    private final Resources resources;
     private String interfce;
 
     @Inject
@@ -83,15 +73,11 @@ public class InterfacePresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final OperationFactory operationFactory,
-            final Resources resources) {
+            final CrudOperations crud,
+            final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
-        this.dispatcher = dispatcher;
+        this.crud = crud;
         this.statementContext = statementContext;
-        this.operationFactory = operationFactory;
-        this.resources = resources;
     }
 
     @Override
@@ -120,19 +106,11 @@ public class InterfacePresenter
 
     @Override
     protected void reload() {
-        ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext, interfce);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
-        dispatcher.execute(operation, result -> getView().update(result));
+        crud.read(ROOT_TEMPLATE.resolve(statementContext, interfce), result -> getView().update(result));
     }
 
     @SuppressWarnings("UnusedParameters")
     void saveInterface(final Form<ModelNode> form, final Map<String, Object> changedValues) {
-        Composite composite = operationFactory
-                .fromChangeSet(ROOT_TEMPLATE.resolve(statementContext, interfce), changedValues);
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.INTERFACE, interfce)));
-            reload();
-        });
+        crud.save(Names.INTERFACE, interfce, ROOT_TEMPLATE, changedValues, this::reload);
     }
 }

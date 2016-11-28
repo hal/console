@@ -115,6 +115,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/mail.html")
     ExternalTextResource configurationMail();
 
+    @Source("previews/configuration/modcluster.html")
+    ExternalTextResource configurationModcluster();
+
     @Source("previews/configuration/paths.html")
     ExternalTextResource configurationPaths();
 
@@ -123,6 +126,12 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/remoting.html")
     ExternalTextResource configurationRemoting();
+
+    @Source("previews/configuration/resource-adapters.html")
+    ExternalTextResource configurationResourceAdapters();
+
+    @Source("previews/configuration/security-domains.html")
+    ExternalTextResource configurationSecurityDomains();
 
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource configurationSocketBindings();

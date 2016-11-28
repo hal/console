@@ -22,7 +22,7 @@ import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRES
 /**
  * @author Harald Pehl
  */
-public interface AddressTemplates {
+interface AddressTemplates {
 
     String LOGGING_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=logging";
     String ROOT_LOGGER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/root-logger=ROOT";

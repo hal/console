@@ -27,7 +27,6 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -53,6 +52,7 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
  * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
@@ -463,7 +463,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
             case EDITING:
                 if (!formItems.isEmpty()) {
-                    Scheduler.get().scheduleDeferred(() -> getFormItems().iterator().next().setFocus(true));
+                    Browser.getWindow()
+                            .setTimeout(() -> getFormItems().iterator().next().setFocus(true), SHORT_TIMEOUT);
                 }
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC

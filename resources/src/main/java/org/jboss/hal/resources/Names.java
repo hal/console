@@ -16,17 +16,25 @@
 package org.jboss.hal.resources;
 
 /**
- * Common names and terms which are not meant to be translated.
+ * Common names and technical terms which are not meant to be translated.
  *
  * @author Harald Pehl
  */
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String ACL_MODULE = "ACL Module";
+    String ADMIN_OBJECT = "Admin Object";
+    String ARCHIVE = "Archive";
+    String AUDIT_LOG = "Audit Log";
+    String AUDIT_MODULE = "Audit Module";
+    String AUTHENTICATION_MODULE = "Authentication Module";
+    String AUTHORIZATION_MODULE = "Authorization Module";
     String BOOTSTRAP = "Bootstrap";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
+    String CONNECTION_DEFINITION = "Connection Definition";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
@@ -42,6 +50,9 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
+    String HTTP_CONNECTOR = "HTTP Connector";
+    String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
+    String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JDBC = "JDBC";
@@ -49,18 +60,22 @@ public interface Names {
     String JDBC_DRIVERS = "JDBC Drivers";
     String JNDI = "JNDI";
     String JPA = "JPA";
+    String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
+    String LONG_RUNNING = "long running";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MAPPING_MODULE = "Mapping Module";
     String MB = "MB";
     String MODULE = "Module";
     String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
+    String OUTBOUND_CONNECTION = "Outbound Connection";
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PROFILE = "Profile";
@@ -68,13 +83,20 @@ public interface Names {
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
     String REALM = "Realm";
+    String REMOTE_CONNECTOR = "Remote Connector";
+    String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
+    String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
+    String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
     String RESOURCE = "Resource";
+    String RESOURCE_ADAPTER = "Resource Adapter";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
+    String SECURITY_DOMAIN = "Security Domain";
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
+    String SHORT_RUNNING = "short running";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";
@@ -82,8 +104,11 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
+    String THREAD_POOL = "Thread Pool";
+    String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
+    String TRUST_MODULE = "Trust Module";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";

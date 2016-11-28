@@ -29,7 +29,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -74,7 +73,7 @@ public class HostPresenter
             SYSTEM_PROPERTY_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<HostPresenter> {}
 
-    public interface MyView extends MbuiView<HostPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<HostPresenter> {
         void updateHost(Host host);
         void updateInterfaces(List<NamedNode> interfaces);
         void updateJvms(List<NamedNode> interfaces);

@@ -24,17 +24,17 @@ import java.util.Map;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.JdbcDriver;
+import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.StatementContext;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
@@ -58,21 +58,16 @@ class JdbcDriverFunctions {
      */
     static class ReadConfiguration implements Function<FunctionContext> {
 
-        private final StatementContext statementContext;
-        private final Dispatcher dispatcher;
+        private final CrudOperations crud;
 
-        ReadConfiguration(final StatementContext statementContext, final Dispatcher dispatcher) {
-            this.statementContext = statementContext;
-            this.dispatcher = dispatcher;
+        ReadConfiguration(final CrudOperations crud) {
+            this.crud = crud;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            ResourceAddress address = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                    .param(CHILD_TYPE, JDBC_DRIVER).build();
-            dispatcher.executeInFunction(control, operation, result -> {
-                List<JdbcDriver> drivers = result.asPropertyList().stream()
+            crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER, children -> {
+                List<JdbcDriver> drivers = children.stream()
                         .map(JdbcDriver::new)
                         .collect(toList());
                 control.getContext().set(CONFIGURATION_DRIVERS, drivers);

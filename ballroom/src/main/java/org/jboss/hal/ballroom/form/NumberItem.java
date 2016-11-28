@@ -20,11 +20,10 @@ import java.util.List;
 import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.form.InputElement.Context;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
-import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -35,12 +34,12 @@ public class NumberItem extends AbstractFormItem<Long> {
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
-    public static final long MIN_SAFE_LONG = -9007199254740991l;
+    public static final long MIN_SAFE_LONG = -9007199254740991L;
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
-    public static final long MAX_SAFE_LONG = 9007199254740991l;
+    public static final long MAX_SAFE_LONG = 9007199254740991L;
 
     private long min;
     private long max;
@@ -60,7 +59,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
     @Override
-    protected InputElement<Long> newInputElement(Context<?> context) {
+    protected InputElement<Long> newInputElement(CreationContext<?> context) {
         NumberElement number = new NumberElement();
         number.setClassName(formControl);
         number.element.setOnchange(event -> {

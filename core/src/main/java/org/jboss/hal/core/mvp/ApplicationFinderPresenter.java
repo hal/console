@@ -47,12 +47,13 @@ public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ exten
 
     /**
      * Updates the breadcrumb by taking the information from {@link #finderPath()} and fires a {@link
-     * FinderContextEvent}.
+     * FinderContextEvent}. Finally calls {@code reload(null)}.
      */
     @Override
     protected void onReset() {
         super.onReset();
         updateBreadcrumb();
+        reload();
     }
 
     @SuppressWarnings("unchecked")
@@ -74,4 +75,14 @@ public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ exten
         // The breadcrumb is part of the header. Notify the header presenter to take care of updating the breadcrumb
         getEventBus().fireEvent(new FinderContextEvent(finder.getContext()));
     }
+
+    /**
+     * Override this method to
+     * <ol>
+     * <li>load the data from the backend and</li>
+     * <li>update the view</li>
+     * </ol>
+     * It's called as part of the {@link #onReset()} method.
+     */
+    protected abstract void reload();
 }

@@ -54,6 +54,12 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
+                        cwd: '<%= config.bower %>/font-awesome/fonts',
+                        src: '*',
+                        dest: '<%= config.public %>/fonts'
+                    },
+                    {
+                        expand: true,
                         cwd: '<%= config.bower %>/patternfly/dist/img',
                         src: '*',
                         dest: '<%= config.public %>/img'

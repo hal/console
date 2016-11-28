@@ -64,7 +64,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT)
+                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
                             .param(INCLUDE_RUNTIME, true)
                             .param(ATTRIBUTES_ONLY, true)
                             .build();

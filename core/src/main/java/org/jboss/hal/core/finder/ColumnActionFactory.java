@@ -15,33 +15,18 @@
  */
 package org.jboss.hal.core.finder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 
-import static java.util.Arrays.asList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -52,50 +37,12 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ColumnActionFactory {
 
-    private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback {
-
-        private final FinderColumn<T> column;
-        private final String type;
-        private final AddressTemplate template;
-
-        ColumnAddResourceCallback(final FinderColumn<T> column, final String type,
-                final AddressTemplate template) {
-            this.column = column;
-            this.type = type;
-            this.template = template;
-        }
-
-        @Override
-        public void onAdd(final String name, final ModelNode model) {
-            ResourceAddress address = template.resolve(statementContext, name);
-            Operation operation = new Operation.Builder(ADD, address)
-                    .payload(model)
-                    .build();
-            dispatcher.execute(operation, result -> {
-                MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().addResourceSuccess(type, name)));
-                column.refresh(name);
-            });
-        }
-    }
-
-
-    private final MetadataRegistry metadataRegistry;
-    private final Dispatcher dispatcher;
-    private final EventBus eventBus;
-    private final StatementContext statementContext;
+    private final CrudOperations crud;
     private final Resources resources;
 
     @Inject
-    public ColumnActionFactory(final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final StatementContext statementContext,
-            final Resources resources) {
-        this.metadataRegistry = metadataRegistry;
-        this.dispatcher = dispatcher;
-        this.eventBus = eventBus;
-        this.statementContext = statementContext;
+    public ColumnActionFactory(final CrudOperations crud, final Resources resources) {
+        this.crud = crud;
         this.resources = resources;
     }
 
@@ -105,25 +52,21 @@ public class ColumnActionFactory {
      * address template.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template) {
-        return add(id, type, template, null);
+        return add(id, type, template, Collections.emptyList());
     }
 
-    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
-            @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
-
+    /**
+     * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains
+     * fields for all required request properties plus the ones specified by {@code attributes}. When clicking "Add", a
+     * new resource is added using the specified address template.
+     */
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes) {
         return add(id, type, column -> {
-            Metadata metadata = metadataRegistry.lookup(template);
-            List<String> attributes = new ArrayList<>();
-            if (firstAttribute != null) {
-                attributes.add(firstAttribute);
-            }
-            if (otherAttributes != null) {
-                attributes.addAll(asList(otherAttributes));
-            }
-            AddResourceDialog dialog = new AddResourceDialog(Ids.build(id, Ids.FORM_SUFFIX),
-                    resources.messages().addResourceTitle(type), metadata, attributes,
-                    new ColumnAddResourceCallback<>(column, type, template));
-            dialog.show();
+            crud.add(id, type, template, attributes, (name, address) -> {
+                if (name != null) {
+                    column.refresh(name);
+                }
+            });
         });
     }
 

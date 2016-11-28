@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.CompositeFormItem;
+import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
@@ -54,11 +55,11 @@ public class FileFormItem extends CompositeFormItem {
     private FormItem<String> relativeTo;
 
     FileFormItem() {
-        super(FILE);
+        super(FILE, CreationContext.EMPTY_CONTEXT);
     }
 
     @Override
-    protected List<FormItem> createFormItems() {
+    protected <C> List<FormItem> createFormItems(CreationContext<C> context) {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(true);
         path.setId(Ids.uniqueId());

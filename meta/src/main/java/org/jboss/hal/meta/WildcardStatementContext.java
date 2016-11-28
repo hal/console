@@ -17,22 +17,32 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.config.Environment;
 
+import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
- * A statement context which resolves the {@code selected.profile} and {@code selected.group} tuple to "*".
+ * A statement context which resolves
+ * <ul>
+ * <li>{@code selected.profile}</li>
+ * <li>{@code selected.group} and</li>
+ * <li>{@code selection}</li>
+ * </ul>
+ * to "*".
  *
  * @author Harald Pehl
  */
-public class ProfileAndServerGroupWildcardStatementContext extends FilteringStatementContext
+public class WildcardStatementContext extends FilteringStatementContext
         implements StatementContext {
 
-    public ProfileAndServerGroupWildcardStatementContext(final StatementContext delegate, Environment environment) {
+    public WildcardStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String placeholder) {
-                return null;
+                if (SELECTION_KEY.equals(placeholder)) {
+                    return "*";
+                }
+                return delegate.resolve(placeholder);
             }
 
             @Override
