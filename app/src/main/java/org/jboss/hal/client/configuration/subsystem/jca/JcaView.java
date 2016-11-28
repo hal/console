@@ -337,8 +337,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     @Override
     public void attach() {
         super.attach();
-        bcTable.api().bindForm(bcForm);
-        dwmTable.api().bindForm(dwmForm);
+        bcTable.bindForm(bcForm);
+        dwmTable.bindForm(dwmForm);
     }
 
     @Override

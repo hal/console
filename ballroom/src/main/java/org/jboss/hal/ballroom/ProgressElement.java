@@ -130,6 +130,6 @@ public class ProgressElement implements IsElement, Progress {
     @Override
     public void finish() {
         // give the user a chance to see that we're finished
-        Browser.getWindow().setInterval(() -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
+        Browser.getWindow().setTimeout(() -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
     }
 }

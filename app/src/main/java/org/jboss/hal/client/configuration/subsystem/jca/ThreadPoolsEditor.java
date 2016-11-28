@@ -133,7 +133,7 @@ class ThreadPoolsEditor implements IsElement, Attachable {
     @Override
     public void attach() {
         attachables.forEach(Attachable::attach);
-        table.api().bindForms(asList(attributesForm, sizingForm));
+        table.bindForms(asList(attributesForm, sizingForm));
     }
 
     @Override

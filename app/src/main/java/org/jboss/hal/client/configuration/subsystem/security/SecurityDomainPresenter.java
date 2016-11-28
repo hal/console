@@ -170,7 +170,7 @@ public class SecurityDomainPresenter
     }
 
     void addModule(Module module) {
-        // first check for (and add) the intermediate singleton
+        // first check for (and add if necessary) the intermediate singleton
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
         Function[] functions = new Function[]{
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
@@ -211,22 +211,23 @@ public class SecurityDomainPresenter
     }
 
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {
-        crud.save(module.type,
-                form.getModel().getName(),
+        String name = form.getModel().getName();
+        crud.save(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)
                         .append(module.resource + "=*")
-                        .resolve(statementContext),
-                changedValues,
-                this::reload);
+                        .resolve(statementContext, name),
+                changedValues, this::reload);
     }
 
     void removeModule(Api<NamedNode> api, Module module) {
         //noinspection ConstantConditions
         String name = api.selectedRow().getName();
-        AddressTemplate template = SELECTED_SECURITY_DOMAIN_TEMPLATE
-                .append(module.singleton)
-                .append(module.resource + "=" + name);
-        crud.remove(module.type, name, template.resolve(statementContext), this::reload);
+        crud.remove(module.type, name,
+                SELECTED_SECURITY_DOMAIN_TEMPLATE
+                        .append(module.singleton)
+                        .append(module.resource + "=*")
+                        .resolve(statementContext, name),
+                this::reload);
     }
 }

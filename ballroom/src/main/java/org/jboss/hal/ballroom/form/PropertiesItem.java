@@ -43,7 +43,7 @@ import static org.jboss.hal.resources.Ids.uniqueId;
  */
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
-    private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
+    private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d\\-_]+)=([\\w\\d\\-_]+)$"); //NON-NLS
 
     private PropertiesElement propertiesElement;
     private Element tagsContainer;

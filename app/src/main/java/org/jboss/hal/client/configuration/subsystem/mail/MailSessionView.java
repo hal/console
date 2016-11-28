@@ -176,7 +176,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     public void attach() {
         super.attach();
         ModelNodeForm form = forms.get(Ids.MAIL_SERVER_FORM);
-        serversTable.api().bindForm(form);
+        serversTable.bindForm(form);
     }
 
     @Override

@@ -464,7 +464,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             case EDITING:
                 if (!formItems.isEmpty()) {
                     Browser.getWindow()
-                            .setInterval(() -> getFormItems().iterator().next().setFocus(true), SHORT_TIMEOUT);
+                            .setTimeout(() -> getFormItems().iterator().next().setFocus(true), SHORT_TIMEOUT);
                 }
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC

@@ -105,6 +105,6 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
     @Override
     public void attach() {
         super.attach();
-        table.api().bindForm(form);
+        table.bindForm(form);
     }
 }

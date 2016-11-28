@@ -244,7 +244,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     private void bindFormToTable(String resource) {
         DataTable<NamedNode> table = childTables.get(resource);
-        table.api().bindForm(childForms.get(resource));
+        table.bindForm(childForms.get(resource));
     }
 
     @Override

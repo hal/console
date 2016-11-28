@@ -65,11 +65,14 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
     public void update(final SecurityDomain securityDomain) {
         configurationForm.view(securityDomain);
 
-        authenticationTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)))
-                .refresh(RefreshMode.RESET);
-        authenticationForm.clear();
+        // authenticationTable.api()
+        //         .clear()
+        //         .add(asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)))
+        //         .refresh(RefreshMode.RESET);
+        // authenticationForm.clear();
+        authenticationTable.update(
+                asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)),
+                NamedNode::getName);
 
         authorizationTable.api()
                 .clear()

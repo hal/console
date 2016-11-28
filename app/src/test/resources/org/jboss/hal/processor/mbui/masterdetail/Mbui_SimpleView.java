@@ -99,6 +99,6 @@ final class Mbui_SimpleView extends SimpleView {
     @Override
     public void attach() {
         super.attach();
-        table.api().bindForm(form);
+        table.bindForm(form);
     }
 }
