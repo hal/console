@@ -19,6 +19,7 @@ import java.util.List;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.google.auto.common.MoreTypes;
@@ -36,14 +37,16 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
  */
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    private final Types typeUtils;
     @NonNls final MbuiViewProcessor processor;
+    private final Types typeUtils;
+    private final Elements elementUtils;
     final XPathFactory xPathFactory;
 
     AbstractMbuiElementProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final XPathFactory xPathFactory) {
+            final Elements elementUtils, final XPathFactory xPathFactory) {
         this.processor = processor;
         this.typeUtils = typeUtils;
+        this.elementUtils = elementUtils;
         this.xPathFactory = xPathFactory;
     }
 
@@ -68,14 +71,16 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
         return metadataInfo;
     }
 
-    String getTypeParameter(final VariableElement field) {
-        String typeArgument = "org.jboss.hal.dmr.ModelNode";
+    TypeParameter getTypeParameter(final VariableElement field) {
+        TypeMirror type = elementUtils.getTypeElement("org.jboss.hal.dmr.ModelNode").asType();
+        TypeMirror namedNodeType = elementUtils.getTypeElement("org.jboss.hal.dmr.model.NamedNode").asType();
         DeclaredType declaredType = MoreTypes.asDeclared(field.asType());
         List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
         if (!typeArguments.isEmpty()) {
-            typeArgument = MoreTypes.asTypeElement(typeUtils, typeArguments.get(0)).getQualifiedName().toString();
+            type = typeArguments.get(0);
         }
-        return typeArgument;
+        return new TypeParameter(MoreTypes.asTypeElement(typeUtils, type).getQualifiedName().toString(),
+                typeUtils.isAssignable(typeUtils.erasure(type), typeUtils.erasure(namedNodeType)));
     }
 
     List<Attribute> processAttributes(final VariableElement field, org.jdom2.Element attributesContainer) {

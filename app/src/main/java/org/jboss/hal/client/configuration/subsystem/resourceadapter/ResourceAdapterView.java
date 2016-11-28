@@ -21,13 +21,12 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Api;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
@@ -68,9 +67,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     final SelectionAwareStatementContext selectionAwareStatementContext;
     @MbuiElement("resource-adapter-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("resource-adapter-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("resource-adapter-connection-definition-table") DataTable<NamedNode> connectionDefinitionsTable;
+    @MbuiElement("resource-adapter-connection-definition-table") NamedNodeTable<NamedNode> connectionDefinitionsTable;
     @MbuiElement("resource-adapter-connection-definition-form") Form<NamedNode> connectionDefinitionsForm;
-    @MbuiElement("resource-adapter-admin-object-table") DataTable<NamedNode> adminObjectsTable;
+    @MbuiElement("resource-adapter-admin-object-table") NamedNodeTable<NamedNode> adminObjectsTable;
     @MbuiElement("resource-adapter-admin-object-form") Form<NamedNode> adminObjectsForm;
 
     public ResourceAdapterView(final MbuiContext mbuiContext) {
@@ -120,8 +119,8 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
                 ModelNode mappings = new ModelNode();
                 formItem.getValue().forEach((key, value) -> {
                     ModelNode mapping = new ModelNode();
-                    mapping.get("from").set(key);
-                    mapping.get("to").set(value);
+                    mapping.get(FROM).set(key);
+                    mapping.get(TO).set(value);
                     mappings.add(mapping);
                 });
                 operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
@@ -193,19 +192,13 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         updateMappings(resourceAdapter, WM_SECURITY_MAPPING_GROUPS);
         updateMappings(resourceAdapter, WM_SECURITY_MAPPING_USERS);
 
-        connectionDefinitionsTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(resourceAdapter, CONNECTION_DEFINITIONS)))
-                .refresh(RefreshMode.RESET);
         connectionDefinitionsForm.clear();
         connectionDefinitionsForm.getFormItem(CONFIG_PROPERTIES).clearValue();
-
-        adminObjectsTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(resourceAdapter, "admin-objects")))
-                .refresh(RefreshMode.RESET);
         adminObjectsForm.clear();
         adminObjectsForm.getFormItem(CONFIG_PROPERTIES).clearValue();
+
+        connectionDefinitionsTable.update(asNamedNodes(failSafePropertyList(resourceAdapter, CONNECTION_DEFINITIONS)));
+        adminObjectsTable.update(asNamedNodes(failSafePropertyList(resourceAdapter, ADMIN_OBJECTS)));
     }
 
     private void updateProperties(Api<NamedNode> api, Form<NamedNode> form) {
@@ -225,7 +218,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
             formItem.clearValue();
         } else {
             Map<String, String> mappings = resourceAdapter.get(attribute).asList().stream()
-                    .collect(toMap(node -> node.get("from").asString(), node -> node.get("to").asString()));
+                    .collect(toMap(node -> node.get(FROM).asString(), node -> node.get(TO).asString()));
             formItem.setValue(mappings);
         }
     }

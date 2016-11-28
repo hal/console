@@ -33,6 +33,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -115,7 +116,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final List<Form<JpaStatistic>> mainForms;
-    private final Map<String, DataTable<NamedNode>> childTables;
+    private final Map<String, NamedNodeTable<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
     private final Element headerElement;
     private final Element leadElement;
@@ -202,7 +203,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), options);
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
                 metadata)
@@ -269,9 +270,9 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         if (statistic.hasDefined(childResource)) {
             List<NamedNode> childResources = asNamedNodes(statistic.get(childResource).asPropertyList());
             Form<NamedNode> form = childForms.get(childResource);
-            DataTable<NamedNode> table = childTables.get(childResource);
-            table.api().clear().add(childResources).refresh(RESET);
+            NamedNodeTable<NamedNode> table = childTables.get(childResource);
             form.clear();
+            table.update(childResources);
         }
     }
 

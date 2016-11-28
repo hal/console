@@ -45,6 +45,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
@@ -131,28 +132,28 @@ public class MailSessionPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadMailSession();
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.MAIL)
                 .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
-    void loadMailSession() {
+    @Override
+    protected void onReset() {
+        super.onReset();
+        load();
+    }
+
+    private void load() {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        crud.read(address, result -> getView().update(new MailSession(mailSessionName, result)));
+        crud.readRecursive(address, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
     void save(final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::loadMailSession);
+        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::load);
     }
 
-    void launchAddNewServer() {
+    void launchAddServer() {
         SortedSet<String> availableServers = new TreeSet<>(asList(SMTP.toUpperCase(),
                 IMAP.toUpperCase(), POP3.toUpperCase()));
         ResourceAddress selectedSessionAddress = SELECTED_MAIL_SESSION_TEMPLATE
@@ -185,7 +186,7 @@ public class MailSessionPresenter
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MAIL_SERVER_DIALOG, metadata)
                         .addFromRequestProperties()
-                        .include(OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls")
+                        .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
                         .requiredOnly()
                         .unboundFormItem(serverTypeItem, 0)
                         .build();
@@ -196,17 +197,17 @@ public class MailSessionPresenter
                         (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
                             ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
-                                    .append(ModelDescriptionConstants.SERVER + "=" + serverType)
+                                    .append(SERVER + "=" + serverType)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
                                     .payload(modelNode)
-                                    .param(ModelDescriptionConstants.SERVER, name)
+                                    .param(SERVER, name)
                                     .build();
                             dispatcher.execute(operation, result -> {
                                 MessageEvent.fire(getEventBus(),
                                         Message.success(resources.messages()
                                                 .addResourceSuccess(Names.SERVER, serverType)));
-                                loadMailSession();
+                                load();
                             });
                         });
                 dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
@@ -217,7 +218,11 @@ public class MailSessionPresenter
         });
     }
 
-    String getMailSessionName() {
-        return mailSessionName;
+    void removeServer(final NamedNode mailServer) {
+        String name = mailServer.getName();
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
+                .append(SERVER + "=" + name)
+                .resolve(statementContext);
+        crud.remove(Names.SERVER, name, address, this::load);
     }
 }

@@ -31,7 +31,6 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -91,7 +90,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                     Metadata metadata = metadataRegistry.lookup(AddressTemplates.MAIL_SESSION_TEMPLATE);
                     AddResourceDialog dialog = new AddResourceDialog(Ids.MAIL_SESSION_DIALOG,
                             resources.messages().addResourceTitle(Names.MAIL_SESSION), metadata,
-                            Arrays.asList(ModelDescriptionConstants.JNDI_NAME, "from", "debug"), //NON-NLS
+                            Arrays.asList(JNDI_NAME, FROM, "debug"), //NON-NLS
                             (name, modelNode) -> {
                                 if (modelNode != null) {
                                     ResourceAddress address = AddressTemplates.MAIL_SESSION_TEMPLATE

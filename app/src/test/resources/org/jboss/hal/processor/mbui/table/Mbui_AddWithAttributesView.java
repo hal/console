@@ -34,6 +34,7 @@ import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -64,12 +65,12 @@ final class Mbui_AddWithAttributesView extends AddWithAttributesView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new ModelNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
+        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
                         metadata0Template, asList("foo"), (name, address) -> presenter.reload()))
                 .columns("name")
                 .build();
-        table = new ModelNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

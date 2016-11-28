@@ -253,9 +253,9 @@ public interface Ids {
     String MAIL_SERVER_TABLE = build(MAIL_SERVER, TABLE_SUFFIX);
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ADD = build(MAIL_SESSION, ADD_SUFFIX);
-    String MAIL_SESSION_ATTRIBUTES_ENTRY = build(MAIL_SESSION, "attributes", ENTRY_SUFFIX);
-    String MAIL_SESSION_ATTRIBUTES_FORM = build(MAIL_SESSION, "attributes", FORM_SUFFIX);
     String MAIL_SESSION_DIALOG = build(MAIL_SESSION, FORM_SUFFIX);
+    String MAIL_SESSION_ENTRY = build(MAIL_SESSION, ENTRY_SUFFIX);
+    String MAIL_SESSION_FORM = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");

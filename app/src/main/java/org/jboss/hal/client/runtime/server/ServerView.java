@@ -19,10 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -41,13 +40,13 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
 
     @MbuiElement("server-navigation") VerticalNavigation navigation;
     @MbuiElement("server-configuration-form") Form<Server> serverConfigurationForm;
-    @MbuiElement("server-interface-table") DataTable<NamedNode> serverInterfaceTable;
+    @MbuiElement("server-interface-table") NamedNodeTable<NamedNode> serverInterfaceTable;
     @MbuiElement("server-interface-form") Form<NamedNode> serverInterfaceForm;
-    @MbuiElement("server-jvm-table") DataTable<NamedNode> serverJvmTable;
+    @MbuiElement("server-jvm-table") NamedNodeTable<NamedNode> serverJvmTable;
     @MbuiElement("server-jvm-form") Form<NamedNode> serverJvmForm;
-    @MbuiElement("server-path-table") DataTable<NamedNode> serverPathTable;
+    @MbuiElement("server-path-table") NamedNodeTable<NamedNode> serverPathTable;
     @MbuiElement("server-path-form") Form<NamedNode> serverPathForm;
-    @MbuiElement("server-system-property-table") DataTable<NamedNode> serverSystemPropertyTable;
+    @MbuiElement("server-system-property-table") NamedNodeTable<NamedNode> serverSystemPropertyTable;
     @MbuiElement("server-system-property-form") Form<NamedNode> serverSystemPropertyForm;
 
     ServerView(final MbuiContext mbuiContext) {
@@ -61,25 +60,25 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
 
     @Override
     public void updateInterfaces(final List<NamedNode> interfaces) {
-        serverInterfaceTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
         serverInterfaceForm.clear();
+        serverInterfaceTable.update(interfaces);
     }
 
     @Override
-    public void updateJvms(final List<NamedNode> interfaces) {
-        serverJvmTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
+    public void updateJvms(final List<NamedNode> jvms) {
         serverJvmForm.clear();
+        serverJvmTable.update(jvms);
     }
 
     @Override
-    public void updatePaths(final List<NamedNode> interfaces) {
-        serverPathTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
+    public void updatePaths(final List<NamedNode> paths) {
         serverPathForm.clear();
+        serverPathTable.update(paths);
     }
 
     @Override
-    public void updateSystemProperties(final List<NamedNode> interfaces) {
-        serverSystemPropertyTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
+    public void updateSystemProperties(final List<NamedNode> properties) {
         serverSystemPropertyForm.clear();
+        serverSystemPropertyTable.update(properties);
     }
 }

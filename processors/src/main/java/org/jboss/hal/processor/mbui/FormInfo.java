@@ -73,7 +73,7 @@ public class FormInfo extends MbuiElementInfo {
     }
 
 
-    private final String typeParameter;
+    private final TypeParameter typeParameter;
     private final MetadataInfo metadata;
     private final String title;
     private final boolean autoSave;
@@ -84,7 +84,7 @@ public class FormInfo extends MbuiElementInfo {
     private final List<Attribute> attributes;
     private final List<Group> groups;
 
-    FormInfo(final String name, final String selector, final String typeParameter,
+    FormInfo(final String name, final String selector, final TypeParameter typeParameter,
             final MetadataInfo metadata, final String title, final boolean autoSave, final String onSave,
             final String nameResolver, final boolean includeRuntime, final boolean failSafe) {
         super(name, selector);
@@ -100,7 +100,7 @@ public class FormInfo extends MbuiElementInfo {
         this.groups = new ArrayList<>();
     }
 
-    public String getTypeParameter() {
+    public TypeParameter getTypeParameter() {
         return typeParameter;
     }
 

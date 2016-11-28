@@ -17,6 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 import java.util.List;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.jdom2.Element;
@@ -32,8 +33,8 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     VerticalNavigationProcessor(final MbuiViewProcessor processor, final Types typeUtils,
-            final XPathFactory xPathFactory) {
-        super(processor, typeUtils, xPathFactory);
+            final Elements elementUtils, final XPathFactory xPathFactory) {
+        super(processor, typeUtils, elementUtils, xPathFactory);
     }
 
     @Override

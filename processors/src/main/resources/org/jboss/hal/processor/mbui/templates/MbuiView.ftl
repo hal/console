@@ -23,6 +23,7 @@ import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -65,7 +66,7 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.forms as form>
             <#if form.groups?has_content>
-        ${form.name} = new GroupedForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+        ${form.name} = new GroupedForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 <#list form.groups as group>
             .group("${group.id}", ${group.title})
                     <#if group.hasAttributesWithProvider>
@@ -91,9 +92,9 @@ final class ${context.subclass} extends ${context.base} {
                 </#list>
             <#else>
                 <#if form.failSafe>
-        Form<${form.typeParameter}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
+        Form<${form.typeParameter.type}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
                 <#else>
-        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+        ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 </#if>
                 <#if form.includeRuntime>
             .includeRuntime()
@@ -159,7 +160,11 @@ final class ${context.subclass} extends ${context.base} {
         </#list>
 
         <#list context.dataTables as table>
-        Options<${table.typeParameter}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter}>(${table.metadata.name})
+            <#if table.typeParameter.named>
+        Options<${table.typeParameter.type}> ${table.name}Options = new NamedNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
+            <#else>
+        Options<${table.typeParameter.type}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
+            </#if>
             <#list table.actions as action>
                 <#if action.knownHandler>
                     <#switch action.handlerRef>
@@ -278,7 +283,11 @@ final class ${context.subclass} extends ${context.base} {
                 </#list>
             </#if>
             .build();
+            <#if table.typeParameter.named>
+        ${table.name} = new NamedNodeTable<>("${table.selector}", ${table.name}Options);
+            <#else>
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
+            </#if>
         </#list>
 
         <#if context.verticalNavigation??>

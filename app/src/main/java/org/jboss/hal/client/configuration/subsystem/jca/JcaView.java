@@ -30,13 +30,12 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -75,11 +74,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final Form<ModelNode> avForm;
     private final Form<ModelNode> bvForm;
     private final FailSafeForm<ModelNode> failSafeTracerForm;
-    private final DataTable<NamedNode> bcTable;
+    private final NamedNodeTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
-    private final ModelNodeTable<NamedNode> wmTable;
+    private final NamedNodeTable<NamedNode> wmTable;
     private final ThreadPoolsEditor wmTpEditor;
-    private final ModelNodeTable<NamedNode> dwmTable;
+    private final NamedNodeTable<NamedNode> dwmTable;
     private final Form<NamedNode> dwmForm;
     private final ThreadPoolsEditor dwmTpEditor;
 
@@ -190,7 +189,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                         api -> api.selectedRow().getName(), () -> presenter.load()))
                 .column(NAME)
                 .build();
-        bcTable = new ModelNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcTableOptions);
+        bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcTableOptions);
 
         bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM,
                 bcMetadata)
@@ -237,7 +236,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .column(NAME)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
+        wmTable = new NamedNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -280,7 +279,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .column(SELECTOR)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        dwmTable = new ModelNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmOptions);
+        dwmTable = new NamedNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmOptions);
 
         dwmForm = new ModelNodeForm.Builder<NamedNode>(
                 Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
@@ -355,20 +354,13 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         failSafeTracerForm.view(failSafeGet(payload, "tracer/tracer"));
 
-        bcTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        bcForm.clear();
+        dwmForm.clear();
+        dwmForm.clear();
 
-        wmTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
-
-        dwmTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        bcTable.update(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastKey())));
+        wmTable.update(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())));
+        dwmTable.update(asNamedNodes(failSafePropertyList(payload, DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey())));
     }
 
     @Override

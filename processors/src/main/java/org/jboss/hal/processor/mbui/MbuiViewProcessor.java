@@ -317,14 +317,15 @@ public class MbuiViewProcessor extends AbstractProcessor {
                         MbuiElementProcessor elementProcessor = null;
                         switch (elementType) {
                             case VerticalNavigation:
-                                elementProcessor = new VerticalNavigationProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new VerticalNavigationProcessor(this, typeUtils, elementUtils,
+                                        xPathFactory);
                                 break;
                             case DataTable:
-                                elementProcessor = new DataTableProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new DataTableProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
                             case FailSafeForm:
                             case Form:
-                                elementProcessor = new FormProcessor(this, typeUtils, xPathFactory);
+                                elementProcessor = new FormProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
                         }
                         elementProcessor.process(field, element, selector, context);

@@ -26,11 +26,11 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
@@ -64,27 +64,27 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-config-form") Form<ModelNode> loggingConfigForm;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
-    @MbuiElement("logging-categories-table") DataTable<NamedNode> loggerTable;
+    @MbuiElement("logging-categories-table") NamedNodeTable<NamedNode> loggerTable;
     @MbuiElement("logging-categories-form") Form<NamedNode> loggerForm;
-    @MbuiElement("logging-handler-console-table") DataTable<NamedNode> consoleHandlerTable;
+    @MbuiElement("logging-handler-console-table") NamedNodeTable<NamedNode> consoleHandlerTable;
     @MbuiElement("logging-handler-console-form") Form<NamedNode> consoleHandlerForm;
-    @MbuiElement("logging-handler-file-table") DataTable<NamedNode> fileHandlerTable;
+    @MbuiElement("logging-handler-file-table") NamedNodeTable<NamedNode> fileHandlerTable;
     @MbuiElement("logging-handler-file-form") Form<NamedNode> fileHandlerForm;
-    @MbuiElement("logging-handler-periodic-rotating-file-table") DataTable<NamedNode> periodicHandlerTable;
+    @MbuiElement("logging-handler-periodic-rotating-file-table") NamedNodeTable<NamedNode> periodicHandlerTable;
     @MbuiElement("logging-handler-periodic-rotating-file-form") Form<NamedNode> periodicHandlerForm;
-    @MbuiElement("logging-handler-periodic-size-rotating-file-table") DataTable<NamedNode> periodicSizeHandlerTable;
+    @MbuiElement("logging-handler-periodic-size-rotating-file-table") NamedNodeTable<NamedNode> periodicSizeHandlerTable;
     @MbuiElement("logging-handler-periodic-size-rotating-file-form") Form<NamedNode> periodicSizeHandlerForm;
-    @MbuiElement("logging-handler-size-rotating-file-table") DataTable<NamedNode> sizeHandlerTable;
+    @MbuiElement("logging-handler-size-rotating-file-table") NamedNodeTable<NamedNode> sizeHandlerTable;
     @MbuiElement("logging-handler-size-rotating-file-form") Form<NamedNode> sizeHandlerForm;
-    @MbuiElement("logging-handler-async-table") DataTable<NamedNode> asyncHandlerTable;
+    @MbuiElement("logging-handler-async-table") NamedNodeTable<NamedNode> asyncHandlerTable;
     @MbuiElement("logging-handler-async-form") Form<NamedNode> asyncHandlerForm;
-    @MbuiElement("logging-handler-custom-table") DataTable<NamedNode> customHandlerTable;
+    @MbuiElement("logging-handler-custom-table") NamedNodeTable<NamedNode> customHandlerTable;
     @MbuiElement("logging-handler-custom-form") Form<NamedNode> customHandlerForm;
-    @MbuiElement("logging-handler-syslog-table") DataTable<NamedNode> syslogHandlerTable;
+    @MbuiElement("logging-handler-syslog-table") NamedNodeTable<NamedNode> syslogHandlerTable;
     @MbuiElement("logging-handler-syslog-form") Form<NamedNode> syslogHandlerForm;
-    @MbuiElement("logging-formatter-custom-table") DataTable<NamedNode> customFormatterTable;
+    @MbuiElement("logging-formatter-custom-table") NamedNodeTable<NamedNode> customFormatterTable;
     @MbuiElement("logging-formatter-custom-form") Form<NamedNode> customFormatterForm;
-    @MbuiElement("logging-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
+    @MbuiElement("logging-formatter-pattern-table") NamedNodeTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
     EmptyState noRootLogger;
@@ -183,57 +183,57 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @Override
     public void updateConsoleHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-console-item", items.size());
-        consoleHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         consoleHandlerForm.clear();
+        consoleHandlerTable.update(items);
     }
 
     @Override
     public void updateFileHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-file-item", items.size());
-        fileHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         fileHandlerForm.clear();
+        fileHandlerTable.update(items);
     }
 
     @Override
     public void updatePeriodicHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-periodic-rotating-file-item", items.size());
-        periodicHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         periodicHandlerForm.clear();
+        periodicHandlerTable.update(items);
     }
 
     @Override
     public void updatePeriodicSizeHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-periodic-size-rotating-file-item", items.size());
-        periodicSizeHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         periodicSizeHandlerForm.clear();
+        periodicSizeHandlerTable.update(items);
     }
 
     @Override
     public void updateSizeHandlerHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-size-rotating-file-item", items.size());
-        sizeHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         sizeHandlerForm.clear();
+        sizeHandlerTable.update(items);
     }
 
     @Override
     public void updateAsyncHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-async-item", items.size());
-        asyncHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         asyncHandlerForm.clear();
+        asyncHandlerTable.update(items);
     }
 
     @Override
     public void updateCustomHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-custom-item", items.size());
-        customHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         customHandlerForm.clear();
+        customHandlerTable.update(items);
     }
 
     @Override
     public void updateSyslogHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-syslog-item", items.size());
-        syslogHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         syslogHandlerForm.clear();
+        syslogHandlerTable.update(items);
     }
 
 
@@ -242,14 +242,14 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @Override
     public void updateCustomFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-custom-item", items.size());
-        customFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
         customFormatterForm.clear();
+        customFormatterTable.update(items);
     }
 
     @Override
     public void updatePatternFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-pattern-item", items.size());
-        patternFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
         patternFormatterForm.clear();
+        patternFormatterTable.update(items);
     }
 }

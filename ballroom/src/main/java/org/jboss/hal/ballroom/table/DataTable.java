@@ -184,12 +184,13 @@ public class DataTable<T> implements IsElement, Attachable {
      * @param identifier a function which must return an unique identifier for a given row. Used to restore the
      *                   selection after replacing the data
      */
-    public <S> void update(final Iterable<T> data, final Function<T, S> identifier) {
+    public void update(final Iterable<T> data, final Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
         api().clear().add(data).refresh(RESET);
         if (!selection.isEmpty()) {
-            RowSelection<T> rows = (index, d1, tr) -> selection.stream().anyMatch(
-                    d2 -> identifier.apply(d1).equals(identifier.apply(d2)));
+            RowSelection<T> rows = (index, d1, tr) ->
+                    selection.stream().anyMatch(d2 ->
+                            identifier.apply(d1).equals(identifier.apply(d2)));
             api().rows(rows).select();
         }
     }

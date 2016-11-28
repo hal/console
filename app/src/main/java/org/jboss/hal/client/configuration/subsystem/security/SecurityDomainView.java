@@ -17,10 +17,9 @@ package org.jboss.hal.client.configuration.subsystem.security;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -44,17 +43,17 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
 
     @MbuiElement("security-domain-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("security-domain-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("security-domain-authentication-table") DataTable<NamedNode> authenticationTable;
+    @MbuiElement("security-domain-authentication-table") NamedNodeTable<NamedNode> authenticationTable;
     @MbuiElement("security-domain-authentication-form") Form<NamedNode> authenticationForm;
-    @MbuiElement("security-domain-authorization-table") DataTable<NamedNode> authorizationTable;
+    @MbuiElement("security-domain-authorization-table") NamedNodeTable<NamedNode> authorizationTable;
     @MbuiElement("security-domain-authorization-form") Form<NamedNode> authorizationForm;
-    @MbuiElement("security-domain-audit-table") DataTable<NamedNode> auditTable;
+    @MbuiElement("security-domain-audit-table") NamedNodeTable<NamedNode> auditTable;
     @MbuiElement("security-domain-audit-form") Form<NamedNode> auditForm;
-    @MbuiElement("security-domain-acl-table") DataTable<NamedNode> aclTable;
+    @MbuiElement("security-domain-acl-table") NamedNodeTable<NamedNode> aclTable;
     @MbuiElement("security-domain-acl-form") Form<NamedNode> aclForm;
-    @MbuiElement("security-domain-trust-table") DataTable<NamedNode> trustTable;
+    @MbuiElement("security-domain-trust-table") NamedNodeTable<NamedNode> trustTable;
     @MbuiElement("security-domain-trust-form") Form<NamedNode> trustForm;
-    @MbuiElement("security-domain-mapping-table") DataTable<NamedNode> mappingTable;
+    @MbuiElement("security-domain-mapping-table") NamedNodeTable<NamedNode> mappingTable;
     @MbuiElement("security-domain-mapping-form") Form<NamedNode> mappingForm;
 
     public SecurityDomainView(final MbuiContext mbuiContext) {
@@ -65,43 +64,17 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
     public void update(final SecurityDomain securityDomain) {
         configurationForm.view(securityDomain);
 
-        // authenticationTable.api()
-        //         .clear()
-        //         .add(asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)))
-        //         .refresh(RefreshMode.RESET);
-        // authenticationForm.clear();
-        authenticationTable.update(
-                asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)),
-                NamedNode::getName);
-
-        authorizationTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "authorization/classic/" + POLICY_MODULE)))
-                .refresh(RefreshMode.RESET);
-        authorizationForm.clear();
-
-        auditTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "audit/classic" + PROVIDER_MODULE)))
-                .refresh(RefreshMode.RESET);
+        authenticationForm.clear();
         auditForm.clear();
-
-        aclTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "acl/classic/" + ACL_MODULE)))
-                .refresh(RefreshMode.RESET);
         aclForm.clear();
-
-        trustTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "identity-trust/classic/" + TRUST_MODULE)))
-                .refresh(RefreshMode.RESET);
         trustForm.clear();
-
-        mappingTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(securityDomain, "mapping/classic/" + MAPPING_MODULE)))
-                .refresh(RefreshMode.RESET);
         mappingForm.clear();
+
+        authenticationTable.update(
+                asNamedNodes(failSafePropertyList(securityDomain, "authentication/classic/" + LOGIN_MODULE)));
+        auditTable.update(asNamedNodes(failSafePropertyList(securityDomain, "audit/classic" + PROVIDER_MODULE)));
+        aclTable.update(asNamedNodes(failSafePropertyList(securityDomain, "acl/classic/" + ACL_MODULE)));
+        trustTable.update(asNamedNodes(failSafePropertyList(securityDomain, "identity-trust/classic/" + TRUST_MODULE)));
+        mappingTable.update(asNamedNodes(failSafePropertyList(securityDomain, "mapping/classic/" + MAPPING_MODULE)));
     }
 }

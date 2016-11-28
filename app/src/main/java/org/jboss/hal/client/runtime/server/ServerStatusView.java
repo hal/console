@@ -32,7 +32,6 @@ import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
@@ -259,7 +258,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         bootstrapAttributes.getFormItem(LIBRARY_PATH)
                 .setText(pathWithNewLines(modelNode.get(LIBRARY_PATH).asString(), pathSeparator));
 
-        systemProperties.api().clear().add(sp).refresh(RefreshMode.RESET);
+        systemProperties.update(sp, Property::getName);
     }
 
     private String pathWithNewLines(String path, String pathSeparator) {

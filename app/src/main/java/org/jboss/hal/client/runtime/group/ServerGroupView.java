@@ -19,10 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -41,9 +40,9 @@ public class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implemen
 
     @MbuiElement("server-group-navigation") VerticalNavigation navigation;
     @MbuiElement("server-group-configuration-form") Form<ServerGroup> serverGroupConfigurationForm;
-    @MbuiElement("server-group-jvm-table") DataTable<NamedNode> serverGroupJvmTable;
+    @MbuiElement("server-group-jvm-table") NamedNodeTable<NamedNode> serverGroupJvmTable;
     @MbuiElement("server-group-jvm-form") Form<NamedNode> serverGroupJvmForm;
-    @MbuiElement("server-group-system-property-table") DataTable<NamedNode> serverGroupSystemPropertyTable;
+    @MbuiElement("server-group-system-property-table") NamedNodeTable<NamedNode> serverGroupSystemPropertyTable;
     @MbuiElement("server-group-system-property-form") Form<NamedNode> serverGroupSystemPropertyForm;
 
     ServerGroupView(final MbuiContext mbuiContext) {
@@ -56,14 +55,14 @@ public class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implemen
     }
 
     @Override
-    public void updateJvms(final List<NamedNode> interfaces) {
-        serverGroupJvmTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
+    public void updateJvms(final List<NamedNode> jvms) {
         serverGroupJvmForm.clear();
+        serverGroupJvmTable.update(jvms);
     }
 
     @Override
-    public void updateSystemProperties(final List<NamedNode> interfaces) {
-        serverGroupSystemPropertyTable.api().clear().add(interfaces).refresh(Api.RefreshMode.RESET);
+    public void updateSystemProperties(final List<NamedNode> properties) {
         serverGroupSystemPropertyForm.clear();
+        serverGroupSystemPropertyTable.update(properties);
     }
 }

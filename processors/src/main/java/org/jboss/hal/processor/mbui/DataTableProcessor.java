@@ -17,6 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 import java.util.stream.Stream;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -33,8 +34,9 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
  */
 class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final XPathFactory xPathFactory) {
-        super(processor, typeUtils, xPathFactory);
+    DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
+            final XPathFactory xPathFactory) {
+        super(processor, typeUtils, elementUtils, xPathFactory);
     }
 
     @Override

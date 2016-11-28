@@ -17,6 +17,7 @@ package org.jboss.hal.processor.mbui;
 
 import java.util.List;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.google.common.base.Strings;
@@ -30,10 +31,9 @@ import org.jdom2.xpath.XPathFactory;
  */
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
-    private static final String ON_SAVE_SIGNATURE = "(form, changedValues)";
-
-    FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final XPathFactory xPathFactory) {
-        super(processor, typeUtils, xPathFactory);
+    FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,
+            final XPathFactory xPathFactory) {
+        super(processor, typeUtils, elementUtils, xPathFactory);
     }
 
     @Override
@@ -66,12 +66,6 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         } else if (!Strings.isNullOrEmpty(onSave)) {
             if (!Handlebars.isExpression(onSave)) {
                 processor.error(field, "on-save handler in form#%s has to be an expression.", selector);
-            }
-            // TODO Should we accept other signatures as well?
-            if (!onSave.contains(ON_SAVE_SIGNATURE)) {
-                processor.error(field,
-                        "Invalid signature for on-save handler in form#%s. Signature has to follow \"%s\".",
-                        selector, ON_SAVE_SIGNATURE);
             }
         }
 

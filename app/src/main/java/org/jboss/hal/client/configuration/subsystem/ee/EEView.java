@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -71,7 +72,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<ModelNode> globalModulesTable;
-    private final Map<String, ModelNodeTable> tables;
+    private final Map<String, NamedNodeTable> tables;
 
     private EEPresenter presenter;
 
@@ -184,6 +185,17 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @Override
+    public void attach() {
+        super.attach();
+        tables.forEach((id, table) -> {
+            if (forms.containsKey(id)) {
+                //noinspection unchecked
+                table.bindForm(forms.get(id));
+            }
+        });
+    }
+
+    @Override
     public void setPresenter(final EEPresenter presenter) {
         this.presenter = presenter;
     }
@@ -227,9 +239,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         if (eeData.hasDefined(resourceType)) {
             List<NamedNode> models = asNamedNodes(eeData.get(resourceType).asPropertyList());
             Form form = forms.get(resourceType);
-            DataTable<NamedNode> table = tables.get(resourceType);
-            table.api().clear().add(models).refresh(RESET);
             form.clear();
+            NamedNodeTable<NamedNode> table = tables.get(resourceType);
+            table.update(models);
             navigation.updateBadge(navigationId, models.size());
         }
     }
@@ -252,7 +264,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
                 .build();
 
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 

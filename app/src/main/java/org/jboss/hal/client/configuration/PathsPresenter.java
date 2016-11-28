@@ -29,12 +29,13 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.meta.token.NameTokens.PATH;
 
 /**
  * @author Harald Pehl
@@ -43,8 +44,8 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(PATH)
     @Requires("/path=*")
+    @NameToken(NameTokens.PATH)
     public interface MyProxy extends ProxyPlace<PathsPresenter> {}
 
     public interface MyView extends MbuiView<PathsPresenter> {
@@ -79,6 +80,6 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
 
     @Override
     protected void reload() {
-        crud.readChildren(ResourceAddress.root(), "path", children -> getView().update(asNamedNodes(children)));
+        crud.readChildren(ResourceAddress.root(), PATH, children -> getView().update(asNamedNodes(children)));
     }
 }

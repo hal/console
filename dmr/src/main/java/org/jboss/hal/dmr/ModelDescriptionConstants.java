@@ -50,6 +50,7 @@ public interface ModelDescriptionConstants {
     String ACL_MODULE = "acl-module";
     String ADD = "add";
     String ADDRESS = "address";
+    String ADMIN_OBJECTS = "admin-objects";
     String ALLOWED = "allowed";
     String ANY = "any";
     String ARCHIVE = "archive";
@@ -289,6 +290,7 @@ public interface ModelDescriptionConstants {
 
     String UNIT = "unit";
     String URL = "url";
+    String USERNAME = "username";
 
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
