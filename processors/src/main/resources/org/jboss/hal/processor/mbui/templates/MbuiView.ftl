@@ -399,7 +399,7 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.dataTables as table>
             <#if table.formRef??>
-        ${table.name}.api().bindForm(${table.formRef.name});
+            ${table.name}.bindForm(${table.formRef.name});
             </#if>
         </#list>
 

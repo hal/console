@@ -69,7 +69,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
         this.name = name;
     }
 
-    protected abstract List<FormItem> createFormItems();
+    protected abstract <C> List<FormItem> createFormItems(CreationContext<C> context);
 
     /**
      * Called during {@link #setValue(Object)} to set the form items using the provided model.
@@ -86,7 +86,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
         editContainer = Browser.getDocument().createDivElement();
         readonlyContainer = Browser.getDocument().createDivElement();
 
-        formItems = createFormItems();
+        formItems = createFormItems(context);
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
             editContainer.appendChild(formItem.asElement(EDITING));

@@ -59,7 +59,7 @@ public class FileFormItem extends CompositeFormItem {
     }
 
     @Override
-    protected List<FormItem> createFormItems() {
+    protected <C> List<FormItem> createFormItems(CreationContext<C> context) {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(true);
         path.setId(Ids.uniqueId());
