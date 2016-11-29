@@ -70,7 +70,7 @@
             </metadata>
         </item>
 
-        <item id="security-domain-audit-item" title="Audit" icon="fa fa-search">
+        <item id="security-domain-audit-item" title="Audit" icon="fa fa-file-text-o">
             <metadata
                     address="/{selected.profile}/subsystem=security/security-domain=*/audit=classic/provider-module=*">
                 <h1>Audit Module</h1>
