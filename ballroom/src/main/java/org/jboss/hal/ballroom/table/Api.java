@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.table;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -140,7 +139,7 @@ public class Api<T> {
 
     // Does not map to something in DataTables, but necessary in refresh()
     String id;
-    Map<String, ColumnAction<T>> columnActions;
+    ColumnActions<T> columnActions;
 
 
     // ------------------------------------------------------ API a-z

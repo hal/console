@@ -16,9 +16,8 @@
 package org.jboss.hal.ballroom.table;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -44,17 +43,17 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     protected List<Button<T>> buttons;
     protected List<Column<T>> columns;
-    protected Map<String, ColumnAction<T>> columnActions;
-    protected int pageLength;
     protected boolean keys;
-    protected boolean paging;
     protected boolean searching;
     protected Select select;
+    private ColumnActions<T> columnActions;
+    private int pageLength;
+    private boolean paging;
 
     protected GenericOptionsBuilder() {
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
-        this.columnActions = new HashMap<>();
+        this.columnActions = new ColumnActions<>();
         this.pageLength = 10;
         this.keys = true;
         this.paging = true;
@@ -121,7 +120,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
                 (cell, type, row, meta) -> {
                     String id = Ids.uniqueId();
-                    columnActions.put(id, columnAction);
+                    columnActions.add(id, columnAction);
                     return "<a id=\"" + id + "\" class=\"" + CSS.columnAction + "\">" + link + "</a>";
                 })
                 .orderable(false)
@@ -132,16 +131,16 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
+    public B column(Function<ColumnActions<T>, Column<T>> actionColumn) {
+        this.columns.add(actionColumn.apply(columnActions));
+        return that();
+    }
+
     public B checkboxColumn() {
         Column<T> checkboxColumn = new Column<>();
         checkboxColumn.orderable = false;
         checkboxColumn.className = selectCheckbox;
-        checkboxColumn.render = new Column.RenderCallback<T, String>() {
-            @Override
-            public String render(final String cell, final String type, final T row, final Column.Meta meta) {
-                return null;
-            }
-        };
+        checkboxColumn.render = (Column.RenderCallback<T, String>) (cell, type, row, meta) -> null;
         checkboxColumn.width = "40px"; //NON-NLS
         return column(checkboxColumn);
     }

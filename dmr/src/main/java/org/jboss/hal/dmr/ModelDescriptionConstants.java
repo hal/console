@@ -68,6 +68,7 @@ public interface ModelDescriptionConstants {
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
+    String CLIENT_CONFIG = "client-config";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONFIG_PROPERTIES = "config-properties";
@@ -101,6 +102,7 @@ public interface ModelDescriptionConstants {
 
     String EE = "ee";
     String EJB3 = "ejb3";
+    String ENDPOINT_CONFIG = "endpoint-config";
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";

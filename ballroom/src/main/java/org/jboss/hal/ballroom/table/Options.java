@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import java.util.Map;
-
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -30,6 +28,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/option/">https://datatables.net/reference/option/</a>
  */
+@SuppressWarnings("WeakerAccess")
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options<T> {
 
@@ -42,5 +41,5 @@ public class Options<T> {
     public boolean searching;
     public Select select;
     // only used to get the columnActions into the Api instance
-    Map<String, ColumnAction<T>> columnActions;
+    ColumnActions<T> columnActions;
 }

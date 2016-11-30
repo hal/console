@@ -353,6 +353,13 @@ public interface Ids {
     String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
 
+    String WEBSERVICES = "webservices";
+    String WEBSERVICES_CLIENT_CONFIG = build(WEBSERVICES, "client-config");
+    String WEBSERVICES_CLIENT_CONFIG_ENTRY = build(WEBSERVICES, "client-config", ENTRY_SUFFIX);
+    String WEBSERVICES_ENDPOINT_CONFIG = build(WEBSERVICES, "endpoint-config");
+    String WEBSERVICES_ENDPOINT_CONFIG_ENTRY = build(WEBSERVICES, "endpoint-config", ENTRY_SUFFIX);
+    String WEBSERVICES_HANDLER_CHAIN_COLUMN = build(WEBSERVICES, "handler-chain-column");
+
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
     String XA_DATA_SOURCE_FORM = build(XA_DATA_SOURCE, FORM_SUFFIX);

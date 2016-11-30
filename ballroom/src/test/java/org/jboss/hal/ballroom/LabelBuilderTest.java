@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
  * Attributes taken from /subsystem=datasources/data-source=*:read-resource-description
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class LabelBuilderTest {
 
     private LabelBuilder builder;
@@ -33,6 +33,8 @@ public class LabelBuilderTest {
         assertEquals("Connection URL", builder.label(property("connection-url")));
         assertEquals("JNDI Name", builder.label(property("jndi-name")));
         assertEquals("URL Selector Strategy Class Name", builder.label(property("url-selector-strategy-class-name")));
+        assertEquals("Modify WSDL Address", builder.label(property("modify-wsdl-address")));
+        assertEquals("WSDL Port", builder.label(property("wsdl-port")));
     }
 
     private Property property(String name) {

@@ -71,6 +71,7 @@ public class Pages implements IsElement {
         Breadcrumb breadcrumb = new Breadcrumb().append(this.title, this::showMain).append(title);
         pageContainer.appendChild(breadcrumb.asElement());
         pageContainer.appendChild(page);
+        Elements.setVisible(pageContainer, false);
 
         root.appendChild(pageContainer);
         breadcrumbs.put(id, breadcrumb);

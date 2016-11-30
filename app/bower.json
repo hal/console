@@ -24,7 +24,6 @@
   },
   "resolutions": {
     "font-awesome": "~4.7.0",
-    "jquery": "~2.2.4",
-    "patternfly-bootstrap-treeview": "~2.1.0"
+    "jquery": "~2.2.4"
   }
 }

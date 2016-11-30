@@ -115,6 +115,10 @@ public class Subsystems {
         add(new SubsystemMetadata.Builder(UNDERTOW, "Web")
                 .subtitle("Undertow")
                 .build());
+        add(new SubsystemMetadata.Builder(WEBSERVICES, "Web Services")
+                .token(NameTokens.WEBSERVICES)
+                .preview(resources.previews().configurationWebservices())
+                .build());
     }
 
     private void add(SubsystemMetadata subsystem) {

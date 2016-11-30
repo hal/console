@@ -134,7 +134,7 @@ public class EEPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(EE_SUBSYSTEM_TEMPLATE.lastValue());
+        return finderPathFactory.subsystemPath(EE);
     }
 
     @Override

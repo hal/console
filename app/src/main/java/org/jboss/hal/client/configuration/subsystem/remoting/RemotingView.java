@@ -57,10 +57,8 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection"})
 public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements RemotingPresenter.MyView {
-
-    // ------------------------------------------------------ initialization
 
     public static RemotingView create(final MbuiContext mbuiContext) {
         return new Mbui_RemotingView(mbuiContext);

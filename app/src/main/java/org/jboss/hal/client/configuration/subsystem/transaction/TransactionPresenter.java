@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.transactions;
+package org.jboss.hal.client.configuration.subsystem.transaction;
 
 import java.util.Map;
 import javax.inject.Inject;
@@ -48,8 +48,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.transaction.AddressTemplates.TRANSACTIONS_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.transaction.AddressTemplates.TRANSACTIONS_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;

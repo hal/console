@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.dmr.Property;
 
 /**
- * Generates a human readable label from terms used in the management model.
+ * Generates human readable labels from terms used in the management model.
  *
  * @author Harald Pehl
  */
@@ -47,6 +47,7 @@ public class LabelBuilder {
             .put("sql", "SQL")
             .put("uri", "URI")
             .put("url", "URL")
+            .put("wsdl", "WSDL")
             .build();
 
     public String label(Property property) {

@@ -145,6 +145,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource configurationSystemProperties();
 
+    @Source("previews/configuration/webservices.html")
+    ExternalTextResource configurationWebservices();
+
 
     // ------------------------------------------------------ deployments
 

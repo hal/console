@@ -31,6 +31,7 @@ public interface Names {
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
     String BOOTSTRAP = "Bootstrap";
+    String CLIENT_CONFIG = "Client Config";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
@@ -42,10 +43,13 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
+    String ENDPOINT_CONFIG = "Endpoint Config";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
+    String HANDLER = "Handler";
+    String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
@@ -78,6 +82,8 @@ public interface Names {
     String OUTBOUND_CONNECTION = "Outbound Connection";
     String PATCHING = "Patching";
     String PATHS = "Paths";
+    String POST_HANDLER_CHAIN = "Post Handler Chain";
+    String PRE_HANDLER_CHAIN = "Pre Handler Chain";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String QUERY = "Query";
