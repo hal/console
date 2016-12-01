@@ -67,7 +67,7 @@ final class Mbui_UnboundFormItemView extends UnboundFormItemView {
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .include("foo")
-                .unboundFormItem(new org.jboss.hal.ballroom.form.PropertiesItem("bar", new org.jboss.hal.ballroom.LabelBuilder().label("bar")), 1)
+                .unboundFormItem(new org.jboss.hal.ballroom.form.PropertiesItem("bar"), 1)
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
                 .build();

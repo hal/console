@@ -297,7 +297,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String processors();
     String productName();
     String productVersion();
-    String properties();
     String providedBy();
 
     String refresh();
@@ -305,7 +304,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String releaseVersion();
     String reload();
     String remove();
-    String removeResource();
     String rename();
     String replace();
     String replaceContent();

@@ -24,12 +24,11 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -67,14 +66,14 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     @MbuiElement("remoting-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("remoting-endpoint-configuration") Form<ModelNode> endpointConfigurationForm;
 
-    @MbuiElement("remoting-connector-table") DataTable<NamedNode> connectorTable;
-    @MbuiElement("remoting-http-connector-table") DataTable<NamedNode> httpConnectorTable;
+    @MbuiElement("remoting-connector-table") NamedNodeTable<NamedNode> connectorTable;
+    @MbuiElement("remoting-http-connector-table") NamedNodeTable<NamedNode> httpConnectorTable;
 
-    @MbuiElement("remoting-local-outbound-table") DataTable<NamedNode> localOutboundTable;
+    @MbuiElement("remoting-local-outbound-table") NamedNodeTable<NamedNode> localOutboundTable;
     @MbuiElement("remoting-local-outbound-form") Form<NamedNode> localOutboundForm;
-    @MbuiElement("remoting-outbound-table") DataTable<NamedNode> outboundTable;
+    @MbuiElement("remoting-outbound-table") NamedNodeTable<NamedNode> outboundTable;
     @MbuiElement("remoting-outbound-form") Form<NamedNode> outboundForm;
-    @MbuiElement("remoting-remote-outbound-table") DataTable<NamedNode> remoteOutboundTable;
+    @MbuiElement("remoting-remote-outbound-table") NamedNodeTable<NamedNode> remoteOutboundTable;
     @MbuiElement("remoting-remote-outbound-form") Form<NamedNode> remoteOutboundForm;
 
     private Form<NamedNode> connectorForm;
@@ -94,7 +93,7 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
         // remote connector
         Metadata connectorMetadata = mbuiContext.metadataRegistry().lookup(CONNECTOR_TEMPLATE);
         connectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_CONNECTOR_FORM, connectorMetadata)
-                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 1)
+                .unboundFormItem(new PropertiesItem(PROPERTY), 1)
                 .onSave((form, changedValues) -> presenter.saveConnector(form, changedValues))
                 .build();
         registerAttachable(connectorForm);
@@ -103,7 +102,7 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
         Metadata connectorSecurityMetadata = mbuiContext.metadataRegistry().lookup(CONNECTOR_SECURITY_TEMPLATE);
         Form<ModelNode> csf = new ModelNodeForm.Builder<>(Ids.REMOTING_CONNECTOR_SECURITY_FORM,
                 connectorSecurityMetadata)
-                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveConnectorSecurity(form, changedValues))
                 .build();
         connectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
@@ -143,7 +142,7 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
         Metadata httpConnectorMetadata = mbuiContext.metadataRegistry().lookup(HTTP_CONNECTOR_TEMPLATE);
         httpConnectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_HTTP_CONNECTOR_FORM,
                 httpConnectorMetadata)
-                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveHttpConnector(form, changedValues))
                 .build();
         registerAttachable(httpConnectorForm);
@@ -153,7 +152,7 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
                 .lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         Form<ModelNode> hcsf = new ModelNodeForm.Builder<>(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_FORM,
                 httpConnectorSecurityMetadata)
-                .unboundFormItem(new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties()), 2)
+                .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveHttpConnectorSecurity(form, changedValues))
                 .build();
         httpConnectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
@@ -212,46 +211,31 @@ public class RemotingView extends MbuiViewImpl<RemotingPresenter> implements Rem
     public void update(final ModelNode payload) {
         endpointConfigurationForm.view(failSafeGet(payload, "configuration/endpoint")); //NON-NLS
 
-        connectorTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
         connectorForm.clear();
         connectorForm.getFormItem(PROPERTY).clearValue();
         connectorSecurityForm.clear();
         connectorSecurityForm.getFormItem(PROPERTY).clearValue();
         connectorSecurityPolicyForm.clear();
+        connectorTable.update(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastKey())));
 
-        httpConnectorTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
         httpConnectorForm.clear();
         httpConnectorForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityForm.clear();
         httpConnectorSecurityForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityPolicyForm.clear();
+        httpConnectorTable.update(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastKey())));
 
-        localOutboundTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, LOCAL_OUTBOUND_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
         localOutboundForm.clear();
         localOutboundForm.getFormItem(PROPERTY).clearValue();
+        localOutboundTable.update(asNamedNodes(failSafePropertyList(payload, LOCAL_OUTBOUND_TEMPLATE.lastKey())));
 
-        outboundTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, OUTBOUND_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
         outboundForm.clear();
         outboundForm.getFormItem(PROPERTY).clearValue();
+        outboundTable.update(asNamedNodes(failSafePropertyList(payload, OUTBOUND_TEMPLATE.lastKey())));
 
-        remoteOutboundTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, REMOTE_OUTBOUND_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
         remoteOutboundForm.clear();
         remoteOutboundForm.getFormItem(PROPERTY).clearValue();
+        remoteOutboundTable.update(asNamedNodes(failSafePropertyList(payload, REMOTE_OUTBOUND_TEMPLATE.lastKey())));
     }
 
     @Override

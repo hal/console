@@ -267,11 +267,11 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         case DRIVER:
                             previous = NAMES;
                             break;
-                        case PROPERTIES:
+                        case XA_PROPERTIES:
                             previous = DRIVER;
                             break;
                         case CONNECTION:
-                            previous = context.isXa() ? PROPERTIES : DRIVER;
+                            previous = context.isXa() ? XA_PROPERTIES : DRIVER;
                             break;
                         case REVIEW:
                             previous = CONNECTION;
@@ -289,9 +289,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                             next = DRIVER;
                             break;
                         case DRIVER:
-                            next = context.isXa() ? PROPERTIES : CONNECTION;
+                            next = context.isXa() ? XA_PROPERTIES : CONNECTION;
                             break;
-                        case PROPERTIES:
+                        case XA_PROPERTIES:
                             next = CONNECTION;
                             break;
                         case CONNECTION:
@@ -332,7 +332,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         builder.addStep(NAMES, new NamesStep(dataSources, dataSourceMetadata, resources));
         builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources));
         if (xa) {
-            builder.addStep(PROPERTIES, new PropertiesStep(resources));
+            builder.addStep(XA_PROPERTIES, new PropertiesStep(resources));
         }
         builder.addStep(CONNECTION, new ConnectionStep(dataSourceMetadata, resources, xa));
         builder.addStep(REVIEW, new ReviewStep(dataSourceMetadata, resources, xa));

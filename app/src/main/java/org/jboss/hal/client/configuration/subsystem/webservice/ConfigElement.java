@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -32,6 +33,7 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -44,6 +46,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.CLIENT_CONFIG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
@@ -112,9 +115,10 @@ class ConfigElement implements IsElement, Attachable {
                 .build();
         configTable = new NamedNodeTable<>(Ids.build(baseId, TABLE_SUFFIX), configOptions);
 
-        configProperties = new PropertiesItem(PROPERTY, mbuiContext.resources().constants().properties());
+        ModelNode propertyHelp = failSafeGet(configMetadata.getDescription(), "children/property/description");
+        configProperties = new PropertiesItem(PROPERTY);
         configForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, FORM_SUFFIX), configMetadata)
-                .unboundFormItem(configProperties)
+                .unboundFormItem(configProperties, 0, SafeHtmlUtils.fromString(propertyHelp.asString()))
                 .onSave((form, changedValues) -> mbuiContext.po()
                         .saveWithProperties(Names.CLIENT_CONFIG, form.getModel().getName(), CLIENT_CONFIG_TEMPLATE,
                                 form, changedValues, PROPERTY, presenter::reload))

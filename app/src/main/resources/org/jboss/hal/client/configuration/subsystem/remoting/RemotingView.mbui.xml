@@ -120,8 +120,7 @@
                     <form id="remoting-local-outbound-form" title="Local Outbound"
                           on-save="{{presenter.saveLocalOutbound(form, changedValues)}}">
                         <attributes>
-                            <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>
                                     <templates>
@@ -152,8 +151,7 @@
                     <form id="remoting-outbound-form" title="Outbound"
                           on-save="{{presenter.saveOutbound(form, changedValues)}}">
                         <attributes>
-                            <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="uri"/>
                         </attributes>
                     </form>
@@ -197,8 +195,7 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property", mbuiContext.resources().constants().properties())}}'/>
+                            <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="protocol"/>
                             <attribute name="security-realm"/>
                             <attribute name="username"/>

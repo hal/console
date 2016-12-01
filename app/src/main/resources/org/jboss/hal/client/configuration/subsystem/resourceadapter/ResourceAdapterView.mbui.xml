@@ -31,7 +31,7 @@
                             <attribute name="bootstrap-context"/>
                             <attribute name="module"/>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
                             <attribute name="statistics-enabled"/>
                             <attribute name="transaction-support"/>
                         </group>
@@ -79,7 +79,7 @@
                             <attribute name="connectable"/>
                             <attribute name="enabled"/>
                             <attribute
-                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
+                                    form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
                         </group>
                         <group id="resource-adapter-connection-definition-pool"
                                title="{{mbuiContext.resources().constants().pool()}}">
@@ -129,7 +129,7 @@
                         <attribute name="enabled"/>
                         <attribute name="jndi-name"/>
                         <attribute
-                                form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties", mbuiContext.resources().constants().properties())}}'/>
+                                form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
                         <attribute name="use-java-context"/>
                     </attributes>
                 </form>

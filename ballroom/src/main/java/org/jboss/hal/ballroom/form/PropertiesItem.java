@@ -28,6 +28,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -47,6 +48,10 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     private PropertiesElement propertiesElement;
     private Element tagsContainer;
+
+    public PropertiesItem(final String name) {
+        super(name, new LabelBuilder().label(name), null, EMPTY_CONTEXT);
+    }
 
     public PropertiesItem(final String name, final String label) {
         super(name, label, null, EMPTY_CONTEXT);
