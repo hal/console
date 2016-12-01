@@ -563,8 +563,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return element;
     }
 
+    FinderRow<T> row(String itemId) {
+        return rows.get(itemId);
+    }
+
     private FinderRow<T> row(Element element) {
-        return rows.get(element.getId());
+        return row(element.getId());
     }
 
     FinderRow<T> selectedRow() {

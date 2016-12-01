@@ -101,6 +101,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         private void selectItem(FinderColumn column, Control<FunctionContext> control) {
             if (column.contains(segment.getItemId())) {
                 column.markSelected(segment.getItemId());
+                column.row(segment.getItemId()).asElement().scrollIntoView(false);
                 updateContext();
                 control.getContext().push(column);
                 control.proceed();
