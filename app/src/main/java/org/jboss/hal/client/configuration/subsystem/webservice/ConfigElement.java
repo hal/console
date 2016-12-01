@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
@@ -43,7 +44,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.CLIENT_CONFIG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -64,7 +64,7 @@ class ConfigElement implements IsElement, Attachable {
     private static final String POST_CHAIN = "post-chain";
 
     private final String configType;
-    private String configName;
+    private NamedNode selectedConfig;
 
     private final Pages pages;
 
@@ -120,8 +120,8 @@ class ConfigElement implements IsElement, Attachable {
         configForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, FORM_SUFFIX), configMetadata)
                 .unboundFormItem(configProperties, 0, SafeHtmlUtils.fromString(propertyHelp.asString()))
                 .onSave((form, changedValues) -> mbuiContext.po()
-                        .saveWithProperties(Names.CLIENT_CONFIG, form.getModel().getName(), CLIENT_CONFIG_TEMPLATE,
-                                form, changedValues, PROPERTY, presenter::reload))
+                        .saveWithProperties(Names.CLIENT_CONFIG, form.getModel().getName(), template, form,
+                                changedValues, PROPERTY, presenter::reload))
                 .build();
 
         // @formatter:off
@@ -140,9 +140,19 @@ class ConfigElement implements IsElement, Attachable {
         preChainPage = Ids.build(baseId, PRE_CHAIN, "page");
         AddressTemplate preChainTemplate = template.append("/" + PRE_HANDLER_CHAIN + "=*");
         Metadata preChainMetadata = mbuiContext.metadataRegistry().lookup(preChainTemplate);
-        Options<NamedNode> preChainOptions = new ModelNodeTable.Builder<NamedNode>(configMetadata)
-                .button(mbuiContext.tableButtonFactory()
-                        .add(Ids.build(baseId, PRE_CHAIN, ADD_SUFFIX), type, template, (n, a) -> presenter.reload()))
+        Options<NamedNode> preChainOptions = new ModelNodeTable.Builder<NamedNode>(preChainMetadata)
+                .button(mbuiContext.resources().constants().add(), (event, api) -> {
+                    AddResourceDialog dialog = new AddResourceDialog(Ids.build(baseId, PRE_CHAIN, ADD_SUFFIX),
+                            mbuiContext.resources().messages().addResourceTitle(type), preChainMetadata,
+                            (name, model) -> {
+                                ResourceAddress address = preChainTemplate.resolve(mbuiContext.statementContext(),
+                                        selectedConfig.getName(), name);
+                                mbuiContext.crud()
+                                        .add(Names.PRE_HANDLER_CHAIN, name, address, model,
+                                                (n, a) -> presenter.reload());
+                            });
+                    dialog.show();
+                })
                 .button(mbuiContext.tableButtonFactory()
                         .remove(type, template, api -> api.selectedRow().getName(), presenter::reload))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
@@ -153,10 +163,11 @@ class ConfigElement implements IsElement, Attachable {
         preChainForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, PRE_CHAIN, FORM_SUFFIX),
                 preChainMetadata)
                 .onSave((form, changedValues) -> {
-                    String name = form.getModel().getName();
+                    String configName = form.getModel().getName();
                     ResourceAddress address = preChainTemplate.resolve(mbuiContext.statementContext(),
-                            configTable.api().selectedRow().getName(), name);
-                    mbuiContext.crud().save(Names.PRE_HANDLER_CHAIN, name, address, changedValues, presenter::reload);
+                            configTable.api().selectedRow().getName(), configName);
+                    mbuiContext.crud()
+                            .save(Names.PRE_HANDLER_CHAIN, configName, address, changedValues, presenter::reload);
                 })
                 .build();
 
@@ -176,9 +187,10 @@ class ConfigElement implements IsElement, Attachable {
         postChainPage = Ids.build(baseId, POST_CHAIN, "page");
         AddressTemplate postChainTemplate = template.append("/" + POST_HANDLER_CHAIN + "=*");
         Metadata postChainMetadata = mbuiContext.metadataRegistry().lookup(postChainTemplate);
-        Options<NamedNode> postChainOptions = new ModelNodeTable.Builder<NamedNode>(configMetadata)
+        Options<NamedNode> postChainOptions = new ModelNodeTable.Builder<NamedNode>(postChainMetadata)
                 .button(mbuiContext.tableButtonFactory()
-                        .add(Ids.build(baseId, POST_CHAIN, ADD_SUFFIX), type, template, (n, a) -> presenter.reload()))
+                        .add(Ids.build(baseId, POST_CHAIN, ADD_SUFFIX), type, postChainTemplate,
+                                (n, a) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory()
                         .remove(type, template, api -> api.selectedRow().getName(), presenter::reload))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
@@ -210,7 +222,7 @@ class ConfigElement implements IsElement, Attachable {
         // ------------------------------------------------------ pages
 
         String mainId = Ids.build(baseId, "page");
-        pages = new Pages(mainId, () -> configType + ": " + configName, configSection);
+        pages = new Pages(mainId, () -> configType + ": " + selectedConfig.getName(), configSection);
         pages.addPage(mainId, preChainPage, Names.PRE_HANDLER_CHAIN, preChainSection);
         pages.addPage(mainId, postChainPage, Names.POST_HANDLER_CHAIN, postChainSection);
     }
@@ -246,18 +258,18 @@ class ConfigElement implements IsElement, Attachable {
     }
 
     private void preHandlerChain(NamedNode config) {
-        configName = config.getName();
+        selectedConfig = config;
+
         preChainForm.clear();
         preChainTable.update(asNamedNodes(failSafePropertyList(config, PRE_HANDLER_CHAIN)));
-
         pages.showPage(preChainPage);
     }
 
     private void postHandlerChain(NamedNode config) {
-        configName = config.getName();
+        selectedConfig = config;
+
         postChainForm.clear();
         postChainTable.update(asNamedNodes(failSafePropertyList(config, POST_HANDLER_CHAIN)));
-
         pages.showPage(postChainPage);
     }
 
