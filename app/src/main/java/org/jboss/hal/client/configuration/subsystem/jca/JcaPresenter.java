@@ -78,7 +78,6 @@ public class JcaPresenter
     public interface MyProxy extends ProxyPlace<JcaPresenter> {}
 
     public interface MyView extends HalView, HasPresenter<JcaPresenter> {
-        void reveal();
         void update(ModelNode payload);
         void updateThreadPools(AddressTemplate workmanagerTemplate, String workmanager,
                 List<Property> lrt, List<Property> srt);
@@ -116,12 +115,6 @@ public class JcaPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().reveal();
     }
 
     @Override

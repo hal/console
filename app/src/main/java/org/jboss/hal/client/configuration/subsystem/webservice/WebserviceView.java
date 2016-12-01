@@ -63,13 +63,13 @@ public class WebserviceView extends MbuiViewImpl<WebservicePresenter> implements
     @PostConstruct
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     void init() {
-        clientConfig = new ConfigElement(mbuiContext, presenter, Ids.WEBSERVICES_CLIENT_CONFIG,
+        clientConfig = new ConfigElement(presenter, mbuiContext, Ids.WEBSERVICES_CLIENT_CONFIG,
                 Names.CLIENT_CONFIG, CLIENT_CONFIG_TEMPLATE);
         registerAttachable(clientConfig);
         navigation.addPrimary(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, Names.CLIENT_CONFIG, fontAwesome("laptop"),
                 clientConfig);
 
-        endpointConfig = new ConfigElement(mbuiContext, presenter, Ids.WEBSERVICES_ENDPOINT_CONFIG,
+        endpointConfig = new ConfigElement(presenter, mbuiContext, Ids.WEBSERVICES_ENDPOINT_CONFIG,
                 Names.ENDPOINT_CONFIG, ENDPOINT_CONFIG_TEMPLATE);
         registerAttachable(endpointConfig);
         navigation.addPrimary(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, Names.ENDPOINT_CONFIG, pfIcon("service"),

@@ -187,6 +187,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_ADD = build(JCA_DISTRIBUTED_WORKMANAGER, ADD_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_ENTRY = build(JCA_DISTRIBUTED_WORKMANAGER, ENTRY_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_FORM = build(JCA_DISTRIBUTED_WORKMANAGER, FORM_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_PAGE = build(JCA_DISTRIBUTED_WORKMANAGER, "page");
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
     String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
     String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
@@ -196,9 +197,11 @@ public interface Ids {
     String JCA_WORKMANAGER = build(JCA, "workmanager");
     String JCA_WORKMANAGER_ADD = build(JCA_WORKMANAGER, ADD_SUFFIX);
     String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, "page");
     String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
-    // Please note that the JCA_THREAD_POOL_* constants are prefixed with JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
-    // Thus the JCA_THREAD_POOL_ATTRIBUTES_TAB used for the distributed workmanager reads as
+    // Please note that the JCA_THREAD_POOL_* constants are not used on its own. They're prefixed with either
+    // JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
+    // So the final id of the thread pool attributes tab for the distributed workmanager reads as
     // "jca-distributed-workmanager-thread-pool-attributes-tab"
     String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);

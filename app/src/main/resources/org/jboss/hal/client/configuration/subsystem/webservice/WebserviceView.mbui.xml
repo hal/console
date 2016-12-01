@@ -19,7 +19,7 @@
     <vertical-navigation id="webservice-vertical-navigation">
         <item id="webservice-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=webservices">
-                <h1>Web Service Configuration</h1>
+                <h1>Web Services Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="webservice-configuration-form" title="Web Services Configuration" auto-save="true"/>
             </metadata>

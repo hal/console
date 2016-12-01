@@ -15,95 +15,137 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.function.Supplier;
 
+import com.google.common.collect.Lists;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.CSS;
+
+import static org.jboss.hal.resources.CSS.page;
 
 /**
- * A structural element to manage a main and several nested page elements. The page elements have a {@linkplain
- * Breadcrumb breadcrumb} to navigate back to their parent element. Each call to {@link #addPage(String, String,
- * Element)} adds another nested page.
+ * A structural element to manage a main and several nested page elements. The nested page elements provide a
+ * {@linkplain Breadcrumb breadcrumb} to navigate back and forth. The breadcrumb segments can contain dynamic parts
+ * (e.g. the name of a selected resource).
  * <p>
- * Use this element when you need an additional level of navigation which cannot be provided by a {@linkplain
+ * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
  * VerticalNavigation vertical navigation}.
- * <p>
- * TODO Support nested pages
  *
  * @author Harald Pehl
  */
 public class Pages implements IsElement {
 
-    private final String title;
-    private final Element main;
+    private static class Page implements IsElement {
+
+        private final String id;
+        private final String parentId;
+        private final Supplier<String> title;
+        private final Element element;
+
+        private Page(final String parentId, final String id, final Supplier<String> title, final Element element) {
+            this.parentId = parentId;
+            this.id = id;
+            this.title = title;
+            this.element = element;
+        }
+
+        @Override
+        public Element asElement() {
+            return element;
+        }
+    }
+
+
     private final Element root;
-    private final Map<String, Breadcrumb> breadcrumbs;
-    private final Map<String, Element> pages;
+    private final Breadcrumb breadcrumb;
+    private final Map<String, Page> pages;
 
-    public Pages(final String title, IsElement main) {
-        this(title, main.asElement());
+    public Pages(String id, final String title, final IsElement element) {
+        this(id, () -> title, element.asElement());
     }
 
-    public Pages(final String title, final Element main) {
-        this.title = title;
-        this.main = main;
-        this.root = Browser.getDocument().createDivElement();
-        this.breadcrumbs = new HashMap<>();
-        this.pages = new HashMap<>();
-
-        root.appendChild(main);
-        showMain();
+    public Pages(String id, final Supplier<String> title, final IsElement element) {
+        this(id, title, element.asElement());
     }
 
-    public Pages addPage(String id, String title, IsElement page) {
-        return addPage(id, title, page.asElement());
+    public Pages(String id, final String title, final Element element) {
+        this(id, () -> title, element);
     }
 
-    public Pages addPage(String id, String title, Element page) {
-        Element pageContainer = Browser.getDocument().createDivElement();
-        pageContainer.getClassList().add(CSS.page);
-        Breadcrumb breadcrumb = new Breadcrumb().append(this.title, this::showMain).append(title);
-        pageContainer.appendChild(breadcrumb.asElement());
-        pageContainer.appendChild(page);
-        Elements.setVisible(pageContainer, false);
+    public Pages(String id, final Supplier<String> title, final Element element) {
+        breadcrumb = new Breadcrumb();
+        breadcrumb.asElement().getClassList().add(page);
+        pages = new HashMap<>();
 
-        root.appendChild(pageContainer);
-        breadcrumbs.put(id, breadcrumb);
-        pages.put(id, pageContainer);
-        return this;
+        Page main = new Page(null, id, title, element);
+        pages.put(id, main);
+        root = Browser.getDocument().createDivElement();
+        root.appendChild(main.asElement());
+        root.appendChild(breadcrumb.asElement());
+        showPage(id);
     }
 
-    public void showMain() {
-        Elements.setVisible(main, true);
-        pages.values().forEach(page -> Elements.setVisible(page, false));
+
+    public void addPage(final String parentId, final String id, final String title, final IsElement element) {
+        addPage(parentId, id, () -> title, element.asElement());
+    }
+
+    public void addPage(final String parentId, final String id, final Supplier<String> title, final IsElement element) {
+        addPage(parentId, id, title, element.asElement());
+    }
+
+    public void addPage(final String parentId, final String id, final String title, final Element element) {
+        addPage(parentId, id, () -> title, element);
+    }
+
+    public void addPage(final String parentId, final String id, final Supplier<String> title, final Element element) {
+        Page page = new Page(parentId, id, title, element);
+        Elements.setVisible(page.asElement(), false);
+        pages.put(id, page);
+
+        root.appendChild(page.asElement());
     }
 
     public void showPage(String id) {
-        Elements.setVisible(main, false);
-        pages.forEach((pageId, page) -> Elements.setVisible(page, id.equals(pageId)));
-    }
+        if (pages.containsKey(id)) {
+            List<Page> bottomUp = new ArrayList<>();
+            for (Page page = pages.get(id); page != null; page = pages.get(page.parentId)) {
+                bottomUp.add(page);
+            }
 
-    public String getCurrentPage() {
-        Optional<String> first = pages.entrySet().stream()
-                .filter(entry -> Elements.isVisible(entry.getValue()))
-                .map(Entry::getKey)
-                .findFirst();
-        return first.orElse(null);
-    }
+            if (bottomUp.size() == 1) {
+                // show main page
+                Page main = bottomUp.get(0);
+                Elements.setVisible(main.asElement(), true);
+                Elements.setVisible(breadcrumb.asElement(), false);
+                pages.forEach((pageId, page) -> Elements.setVisible(page.asElement(), id.equals(pageId)));
 
-    /**
-     * Updates the breadcrumb on the specified page. The segments are updated from left to right.
-     */
-    public void updateBreadcrumb(String id, String firstSegment, String... restSegments) {
-        Breadcrumb breadcrumb = breadcrumbs.get(id);
-        if (breadcrumb != null) {
-            breadcrumb.update(firstSegment, restSegments);
+            } else if (bottomUp.size() > 1) {
+                // show nested page
+                breadcrumb.clear();
+                List<Page> topDown = Lists.reverse(bottomUp);
+                Page main = topDown.get(0);
+                for (Iterator<Page> iterator = topDown.iterator(); iterator.hasNext(); ) {
+                    Page page = iterator.next();
+                    boolean lastPage = !iterator.hasNext();
+                    if (lastPage) {
+                        breadcrumb.append(page.title.get());
+                    } else {
+                        breadcrumb.append(page.title.get(), () -> showPage(page.id));
+                    }
+                }
+
+                Elements.setVisible(main.asElement(), false);
+                Elements.setVisible(breadcrumb.asElement(), true);
+                pages.forEach((pageId, p) -> Elements.setVisible(p.asElement(), id.equals(pageId)));
+            }
         }
     }
 

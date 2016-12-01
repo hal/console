@@ -83,6 +83,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final ThreadPoolsEditor dwmTpEditor;
 
     private JcaPresenter presenter;
+    private String selectedWorkmanager;
 
     @Inject
     @SuppressWarnings("ConstantConditions")
@@ -251,8 +252,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, resources);
         registerAttachable(wmTpEditor);
 
-        Pages wmPages = new Pages(wmType, wmLayout)
-                .addPage(Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS, wmTpEditor.asElement());
+        Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGE,
+                () -> labelBuilder.label(wmType) + ": " + selectedWorkmanager, wmLayout);
+        wmPages.addPage(Ids.JCA_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS, wmTpEditor.asElement());
         pages.put(WORKMANAGER_TEMPLATE, wmPages);
 
         navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cog"), wmPages);
@@ -304,8 +306,10 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, resources);
         registerAttachable(dwmTpEditor);
 
-        Pages dwmPages = new Pages(dwmType, dwmLayout)
-                .addPage(Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS, dwmTpEditor.asElement());
+        Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, () -> dwmType + ": " + selectedWorkmanager,
+                dwmLayout);
+        dwmPages.addPage(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS,
+                dwmTpEditor.asElement());
         pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
 
         navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ENTRY, dwmType, fontAwesome("cogs"), dwmPages);
@@ -341,11 +345,6 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     }
 
     @Override
-    public void reveal() {
-        pages.values().forEach(Pages::showMain);
-    }
-
-    @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final ModelNode payload) {
         ccmForm.view(failSafeGet(payload, "cached-connection-manager/cached-connection-manager"));
@@ -366,11 +365,10 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     @Override
     public void updateThreadPools(final AddressTemplate workmanagerTemplate, final String workmanager,
             final List<Property> lrt, final List<Property> srt) {
+        selectedWorkmanager = workmanager;
         Pages pages = this.pages.get(workmanagerTemplate);
         if (pages != null) {
             pages.showPage(Ids.JCA_THREAD_POOL_PAGE);
-            pages.updateBreadcrumb(Ids.JCA_THREAD_POOL_PAGE,
-                    labelBuilder.label(workmanagerTemplate.lastKey()) + ": " + workmanager);
         }
         if (WORKMANAGER.equals(workmanagerTemplate.lastKey())) {
             wmTpEditor.update(workmanagerTemplate, workmanager, lrt, srt);

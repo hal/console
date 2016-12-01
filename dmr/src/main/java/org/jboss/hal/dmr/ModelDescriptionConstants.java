@@ -189,6 +189,8 @@ public interface ModelDescriptionConstants {
     String POLICY_MODULE = "policy-module";
     String POP3 = "pop3";
     String PORT = "port";
+    String POST_HANDLER_CHAIN = "post-handler-chain";
+    String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
     String PRODUCT_VERSION = "product-version";

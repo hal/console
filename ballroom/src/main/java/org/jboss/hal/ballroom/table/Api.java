@@ -259,6 +259,7 @@ public class Api<T> {
                 ColumnAction<T> columnAction = columnActions.get(link.getId());
                 if (columnAction != null) {
                     link.setOnclick(event -> {
+                        event.stopPropagation();
                         Element e = link; // find enclosing tr
                         while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
                             e = e.getParentElement();
