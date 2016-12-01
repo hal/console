@@ -22,5 +22,5 @@ package org.jboss.hal.core.runtime;
  * @author Harald Pehl
  */
 public enum Action {
-    RELOAD, RESTART, SUSPEND, RESUME, START, STOP
+    RELOAD, RESTART, SUSPEND, RESUME, START, STOP, KILL
 }

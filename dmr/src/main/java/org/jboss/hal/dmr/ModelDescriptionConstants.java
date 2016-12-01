@@ -146,6 +146,8 @@ public interface ModelDescriptionConstants {
     String JPA = "jpa";
     String JVM = "jvm";
 
+    String KILL = "kill";
+
     String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
     String LIST_ADD = "list-add";

@@ -383,6 +383,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         actions.add(new ItemAction<>(resources.constants().stop(), serverActions::stop));
                     }
                 }
+                // add kill action regardless of server state to kill servers which might show a wrong state
+                actions.add(new ItemAction<>(resources.constants().kill(), serverActions::kill));
                 return actions;
             }
 

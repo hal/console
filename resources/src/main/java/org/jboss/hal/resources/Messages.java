@@ -126,12 +126,19 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml includeAllHelpText();
 
+    String invalidRange(long value, long min, long max);
+
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedBy(String type, String value);
-
     SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
-    String invalidRange(long value, long min, long max);
+    String kill(String name);
+
+    SafeHtml killServerError(String name);
+
+    SafeHtml killServerQuestion(String name);
+
+    SafeHtml killServerSuccess(String name);
 
     SafeHtml largeLogFile(String size);
     SafeHtml lastOperationException();

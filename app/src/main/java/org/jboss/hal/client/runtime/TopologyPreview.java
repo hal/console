@@ -705,6 +705,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             }
             actionLink(builder, event -> serverActions.stop(server), resources.constants().stop());
         }
+        // add kill link regardless of server state to kill servers which might show a wrong state
+        actionLink(builder, event -> serverActions.kill(server), resources.constants().kill());
     }
 
     private String[] statusCss(final Server server) {
