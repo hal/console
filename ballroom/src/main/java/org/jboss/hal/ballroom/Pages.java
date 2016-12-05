@@ -68,6 +68,7 @@ public class Pages implements IsElement {
     private final Breadcrumb breadcrumb;
     private final Map<String, Page> pages;
     private final Element root;
+    private String currentId;
 
     /**
      * Create a new instance with the main page id and element.
@@ -98,6 +99,7 @@ public class Pages implements IsElement {
         for (Page page : pages.values()) {
             Elements.setVisible(page.asElement(), false);
         }
+        currentId = mainId;
     }
 
     /**
@@ -171,8 +173,13 @@ public class Pages implements IsElement {
                 Elements.setVisible(mainPage, false);
                 Elements.setVisible(breadcrumb.asElement(), true);
                 pages.forEach((pageId, page3) -> Elements.setVisible(page3.asElement(), id.equals(pageId)));
+                currentId = mainId;
             }
         }
+    }
+
+    public String getCurrentPageId() {
+        return currentId;
     }
 
     @Override

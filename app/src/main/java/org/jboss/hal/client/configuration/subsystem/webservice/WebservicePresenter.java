@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -52,6 +53,7 @@ import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTem
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSERVICES;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
@@ -82,7 +84,6 @@ public class WebservicePresenter
     private final PropertiesOperations po;
     private final Resources resources;
 
-    private ModelNode payload;
     private Config configType;
     private NamedNode config;
     private HandlerChain handlerChainType;
@@ -150,10 +151,11 @@ public class WebservicePresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(WEBSERVICES_TEMPLATE, result -> {
-            this.payload = result;
-            getView().update(payload);
-        });
+        reload(modelNode -> getView().update(modelNode));
+    }
+
+    private void reload(Consumer<ModelNode> payload) {
+        crud.readRecursive(WEBSERVICES_TEMPLATE, payload::accept);
     }
 
     void saveWebservicesConfiguration(final Map<String, Object> changedValues) {
@@ -228,19 +230,33 @@ public class WebservicePresenter
                 resources.messages().addResourceTitle(handlerChainType.type), metadata,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
-                    crud.add(handlerChainType.type, name, address, model, (n, a) -> reload());
+                    crud.add(handlerChainType.type, name, address, model, (n, a) -> reloadHandlerChains());
                 });
         dialog.show();
     }
 
     void saveHandlerChain(String name, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
-        crud.save(handlerChainType.type, name, address, changedValues, this::reload);
+        crud.save(handlerChainType.type, name, address, changedValues, this::reloadHandlerChains);
     }
 
     void removeHandlerChain(String name) {
         ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
-        crud.remove(handlerChainType.type, name, address, this::reload);
+        crud.remove(handlerChainType.type, name, address, this::reloadHandlerChains);
+    }
+
+    private void reloadHandlerChains() {
+        reload(modelNode -> {
+            getView().update(modelNode);
+            updateHandlerChains(modelNode);
+        });
+    }
+
+    private void updateHandlerChains(ModelNode modelNode) {
+        config = new NamedNode(config.getName(),
+                failSafeGet(modelNode, configType.resource + "/" + config.getName()));
+        List<NamedNode> handlerChains = asNamedNodes(failSafePropertyList(config, handlerChainType.resource));
+        getView().updateHandlerChains(configType, handlerChainType, handlerChains);
     }
 
 
@@ -259,18 +275,36 @@ public class WebservicePresenter
                 resources.messages().addResourceTitle(Names.HANDLER), metadata,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
-                    crud.add(Names.HANDLER, name, address, model, (n, a) -> reload());
+                    crud.add(Names.HANDLER, name, address, model, (n, a) -> reloadHandlers());
                 });
         dialog.show();
     }
 
     void saveHandler(String name, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
-        crud.save(Names.HANDLER, name, address, changedValues, this::reload);
+        crud.save(Names.HANDLER, name, address, changedValues, this::reloadHandlers);
     }
 
     void removeHandler(String name) {
         ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
-        crud.remove(Names.HANDLER, name, address, this::reload);
+        crud.remove(Names.HANDLER, name, address, this::reloadHandlers);
+    }
+
+    private void reloadHandlers() {
+        reload(modelNode -> {
+            getView().update(modelNode);
+            updateHandlerChains(modelNode);
+            updateHandlers(modelNode);
+        });
+    }
+
+    private void updateHandlers(ModelNode modelNode) {
+        handlerChain = new NamedNode(handlerChain.getName(), failSafeGet(modelNode,
+                String.join("/",
+                        configType.resource, config.getName(),
+                        handlerChainType.resource, handlerChain.getName())));
+
+        List<NamedNode> handlers = asNamedNodes(failSafePropertyList(handlerChain, HANDLER));
+        getView().updateHandlers(configType, handlerChainType, handlers);
     }
 }
