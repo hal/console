@@ -25,9 +25,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -37,9 +39,13 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.*;
@@ -70,8 +76,12 @@ public class WebservicePresenter
 
 
     private final FinderPathFactory finderPathFactory;
-    private final CrudOperations crud;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
+    private final CrudOperations crud;
+    private final PropertiesOperations po;
+    private final Resources resources;
+
     private ModelNode payload;
     private Config configType;
     private NamedNode config;
@@ -84,12 +94,15 @@ public class WebservicePresenter
             final MyProxy myProxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
+            final StatementContext statementContext,
             final CrudOperations crud,
-            final StatementContext statementContext) {
+            final PropertiesOperations po,
+            final Resources resources) {
 
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.crud = crud;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = new FilteringStatementContext(statementContext, new Filter() {
             @Override
             public String filter(final String resource) {
@@ -111,6 +124,9 @@ public class WebservicePresenter
                 return null;
             }
         });
+        this.crud = crud;
+        this.po = po;
+        this.resources = resources;
     }
 
     @Override
@@ -158,12 +174,25 @@ public class WebservicePresenter
     }
 
     void addConfig() {
+        Metadata metadata = metadataRegistry.lookup(configType.template);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(configType.baseId, Ids.ADD_SUFFIX),
+                resources.messages().addResourceTitle(configType.type), metadata,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
+                    crud.add(configType.type, name, address, model, (n, a) -> reload());
+                });
+        dialog.show();
     }
 
     void saveConfig(Form<NamedNode> form, Map<String, Object> changedValues, String property) {
+        String name = form.getModel().getName();
+        ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
+        po.saveWithProperties(configType.type, name, address, form, changedValues, property, this::reload);
     }
 
     void removeConfig(String name) {
+        ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
+        crud.remove(configType.type, name, address, this::reload);
     }
 
 
@@ -194,12 +223,24 @@ public class WebservicePresenter
     }
 
     void addHandlerChain() {
+        Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.WEBSERVICES_HANDLER_CHAIN_ADD,
+                resources.messages().addResourceTitle(handlerChainType.type), metadata,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
+                    crud.add(handlerChainType.type, name, address, model, (n, a) -> reload());
+                });
+        dialog.show();
     }
 
     void saveHandlerChain(String name, Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
+        crud.save(handlerChainType.type, name, address, changedValues, this::reload);
     }
 
     void removeHandlerChain(String name) {
+        ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
+        crud.remove(handlerChainType.type, name, address, this::reload);
     }
 
 
@@ -213,12 +254,23 @@ public class WebservicePresenter
     }
 
     void addHandler() {
+        Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
+        AddResourceDialog dialog = new AddResourceDialog(Ids.WEBSERVICES_HANDLER_ADD,
+                resources.messages().addResourceTitle(Names.HANDLER), metadata,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
+                    crud.add(Names.HANDLER, name, address, model, (n, a) -> reload());
+                });
+        dialog.show();
     }
 
     void saveHandler(String name, Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
+        crud.save(Names.HANDLER, name, address, changedValues, this::reload);
     }
 
     void removeHandler(String name) {
+        ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
+        crud.remove(Names.HANDLER, name, address, this::reload);
     }
-
 }

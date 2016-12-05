@@ -37,7 +37,7 @@ interface AddressTemplates {
 
     // For the nested pre/post-chain-handler and handler resources we use client-config as base resource.
     // This is ok for reading the metadata since both the client-config and endpoint-config (sub)resources
-    // are identical in terms of attributes. However we must not use these constants for CRUD!
+    // are identical in terms of attributes. However we must not use these constants for CRUD operations!
     String HANDLER_CHAIN_ADDRESS = CLIENT_CONFIG_ADDRESS + "/pre-handler-chain=*";
     String HANDLER_ADDRESS = HANDLER_CHAIN_ADDRESS + "/handler=*";
 

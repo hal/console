@@ -364,6 +364,8 @@ public interface Ids {
     String WEBSERVICES_CLIENT_CONFIG_ENTRY = build(WEBSERVICES, "client-config", ENTRY_SUFFIX);
     String WEBSERVICES_ENDPOINT_CONFIG = build(WEBSERVICES, "endpoint-config");
     String WEBSERVICES_ENDPOINT_CONFIG_ENTRY = build(WEBSERVICES, "endpoint-config", ENTRY_SUFFIX);
+    String WEBSERVICES_HANDLER_ADD = build(WEBSERVICES, "handler", ADD_SUFFIX);
+    String WEBSERVICES_HANDLER_CHAIN_ADD = build(WEBSERVICES, "handler-chain", ADD_SUFFIX);
     String WEBSERVICES_HANDLER_CHAIN_COLUMN = build(WEBSERVICES, "handler-chain-column");
 
     String XA_DATA_SOURCE = "xa-data-source";
