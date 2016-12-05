@@ -20,7 +20,7 @@ package org.jboss.hal.meta;
  *
  * @author Heiko Braun
  */
-class FilteringStatementContext implements StatementContext {
+public class FilteringStatementContext implements StatementContext {
 
     /**
      * Allows to modify resource names and placeholders. Methods should return {@code null} if no modification is
@@ -37,7 +37,7 @@ class FilteringStatementContext implements StatementContext {
     private Filter filter;
     private StatementContext delegate;
 
-    FilteringStatementContext(StatementContext delegate, Filter filter) {
+    public FilteringStatementContext(StatementContext delegate, Filter filter) {
         this.delegate = delegate;
         this.filter = filter;
     }

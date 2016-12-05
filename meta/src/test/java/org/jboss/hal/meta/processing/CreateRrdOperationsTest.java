@@ -14,9 +14,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.processing.CreateRrdOperations.RRD_DEPTH;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
+import static org.jboss.hal.meta.processing.MetadataProcessor.RRD_DEPTH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

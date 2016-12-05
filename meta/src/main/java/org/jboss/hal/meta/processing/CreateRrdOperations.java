@@ -29,13 +29,13 @@ import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.NOTHING_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
+import static org.jboss.hal.meta.processing.MetadataProcessor.RRD_DEPTH;
 
 /**
  * @author Harald Pehl
  */
 class CreateRrdOperations {
 
-    static final int RRD_DEPTH = 2;
     private final StatementContext statementContext;
 
     CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
@@ -66,7 +66,6 @@ class CreateRrdOperations {
                                 break;
                         }
                         if (lookupResult.recursive()) {
-                            // Workaround: Some browsers choke on too big payload size
                             builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
                         }
                         operations.add(builder.build());

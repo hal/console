@@ -31,7 +31,7 @@ public interface Names {
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
     String BOOTSTRAP = "Bootstrap";
-    String CLIENT_CONFIG = "Client Config";
+    String CLIENT_CONFIGURATION = "Client Configuration";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
@@ -43,7 +43,7 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
-    String ENDPOINT_CONFIG = "Endpoint Config";
+    String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
     String GLOBAL_MODULES = "Global Modules";
@@ -118,5 +118,6 @@ public interface Names {
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";
+    String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String XA_DATASOURCE = "XA Datasource";
 }

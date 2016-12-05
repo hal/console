@@ -15,25 +15,28 @@
  */
 package org.jboss.hal.client.configuration.subsystem.webservice;
 
-import javax.annotation.PostConstruct;
+import java.util.List;
+import javax.inject.Inject;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.spi.MbuiElement;
-import org.jboss.hal.spi.MbuiView;
+import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.CLIENT_CONFIG_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.ENDPOINT_CONFIG_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CLIENT_CONFIG;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENDPOINT_CONFIG;
+import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.WEBSERVICES_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.Config.CLIENT_CONFIG;
+import static org.jboss.hal.client.configuration.subsystem.webservice.Config.ENDPOINT_CONFIG;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -42,41 +45,44 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Harald Pehl
  */
-@MbuiView
-@SuppressWarnings("DuplicateStringLiteralInspection")
-public class WebserviceView extends MbuiViewImpl<WebservicePresenter> implements WebservicePresenter.MyView {
+public class WebserviceView extends HalViewImpl implements WebservicePresenter.MyView {
 
-    public static WebserviceView create(final MbuiContext mbuiContext) {
-        return new Mbui_WebserviceView(mbuiContext);
-    }
+    private final Form<ModelNode> webservicesForm;
+    private final ConfigElement clientConfig;
+    private final ConfigElement endpointConfig;
+    private WebservicePresenter presenter;
 
-    @MbuiElement("webservice-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("webservice-configuration-form") Form<ModelNode> configurationForm;
+    @Inject
+    public WebserviceView(final MetadataRegistry metadataRegistry, final Resources resources) {
 
-    private ConfigElement clientConfig;
-    private ConfigElement endpointConfig;
+        Metadata metadata = metadataRegistry.lookup(WEBSERVICES_TEMPLATE);
+        webservicesForm = new ModelNodeForm.Builder<>(Ids.WEBSERVICES_FORM, metadata)
+                .onSave((form, changedValues) -> presenter.saveWebservicesConfiguration(changedValues))
+                .build();
+        // @formatter:off
+        Element webservicesSection = new Elements.Builder()
+            .section()
+                .h(1).textContent(Names.WEBSERVICES_CONFIGURATION).end()
+                .p().textContent(metadata.getDescription().getDescription()).end()
+                .add(webservicesForm)
+            .end()
+        .build();
+        // @formatter:on
 
-    WebserviceView(final MbuiContext mbuiContext) {
-        super(mbuiContext);
-    }
+        clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, resources);
+        endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, resources);
 
-    @PostConstruct
-    @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    void init() {
-        clientConfig = new ConfigElement(presenter, mbuiContext, Ids.WEBSERVICES_CLIENT_CONFIG,
-                Names.CLIENT_CONFIG, CLIENT_CONFIG_TEMPLATE);
-        registerAttachable(clientConfig);
-        navigation.addPrimary(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, Names.CLIENT_CONFIG, fontAwesome("laptop"),
-                clientConfig);
+        VerticalNavigation navigation = new VerticalNavigation();
+        navigation.addPrimary(Ids.WEBSERVICES_ENTRY, Names.CONFIGURATION, pfIcon("settings"), webservicesSection);
+        navigation.addPrimary(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, Names.CLIENT_CONFIGURATION,
+                fontAwesome("laptop"), clientConfig);
+        navigation.onShow(Ids.WEBSERVICES_CLIENT_CONFIG_ENTRY, () -> presenter.selectConfig(CLIENT_CONFIG));
+        navigation.addPrimary(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, Names.ENDPOINT_CONFIGURATION,
+                pfIcon("service"), endpointConfig);
+        navigation.onShow(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, () -> presenter.selectConfig(ENDPOINT_CONFIG));
 
-        endpointConfig = new ConfigElement(presenter, mbuiContext, Ids.WEBSERVICES_ENDPOINT_CONFIG,
-                Names.ENDPOINT_CONFIG, ENDPOINT_CONFIG_TEMPLATE);
-        registerAttachable(endpointConfig);
-        navigation.addPrimary(Ids.WEBSERVICES_ENDPOINT_CONFIG_ENTRY, Names.ENDPOINT_CONFIG, pfIcon("service"),
-                endpointConfig);
+        registerAttachables(asList(navigation, webservicesForm, clientConfig, endpointConfig));
 
-        // rebuild root layout with new navigation entries (kind a hack, but it works)
-        Elements.removeChildrenFrom(asElement().getParentElement());
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
                 .column()
@@ -88,14 +94,36 @@ public class WebserviceView extends MbuiViewImpl<WebservicePresenter> implements
     }
 
     @Override
-    public void attach() {
-        super.attach();
+    public void setPresenter(final WebservicePresenter presenter) {
+        this.presenter = presenter;
+        clientConfig.setPresenter(presenter);
+        endpointConfig.setPresenter(presenter);
     }
 
     @Override
-    public void update(final ModelNode data) {
-        configurationForm.view(data);
-        clientConfig.update(asNamedNodes(failSafePropertyList(data, CLIENT_CONFIG)));
-        endpointConfig.update(asNamedNodes(failSafePropertyList(data, ENDPOINT_CONFIG)));
+    public void update(final ModelNode payload) {
+        webservicesForm.view(payload);
+        clientConfig.update(asNamedNodes(failSafePropertyList(payload, CLIENT_CONFIG.resource)));
+        endpointConfig.update(asNamedNodes(failSafePropertyList(payload, ENDPOINT_CONFIG.resource)));
+    }
+
+    @Override
+    public void updateHandlerChains(final Config configType, final HandlerChain handlerChainType,
+            final List<NamedNode> handlerChains) {
+        if (configType == CLIENT_CONFIG) {
+            clientConfig.updateHandlerChains(configType, handlerChainType, handlerChains);
+        } else {
+            endpointConfig.updateHandlerChains(configType, handlerChainType, handlerChains);
+        }
+    }
+
+    @Override
+    public void updateHandlers(final Config configType, final HandlerChain handlerChainType,
+            final List<NamedNode> handlers) {
+        if (configType == CLIENT_CONFIG) {
+            clientConfig.updateHandlers(configType, handlerChainType, handlers);
+        } else {
+            endpointConfig.updateHandlers(configType, handlerChainType, handlers);
+        }
     }
 }

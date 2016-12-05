@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,10 +154,12 @@ public class VerticalNavigation implements Attachable {
 
     private final LinkedHashMap<String, Entry> entries;
     private final LinkedHashMap<String, Pane> panes;
+    private final Map<String, Callback> callbacks;
 
     public VerticalNavigation() {
         this.entries = new LinkedHashMap<>();
         this.panes = new LinkedHashMap<>();
+        this.callbacks = new HashMap<>();
     }
 
     @Override
@@ -338,10 +342,17 @@ public class VerticalNavigation implements Attachable {
                 Elements.setVisible(pane.asElement(), pane.id.equals(id));
             }
             show.asElement().click();
+            if (callbacks.containsKey(id)) {
+                callbacks.get(id).execute();
+            }
 
         } else {
             logger.error("Unable to show entry for id '{}': No such entry!", id);
         }
+    }
+
+    public void onShow(String id, Callback callback) {
+        callbacks.put(id, callback);
     }
 
     public void updateBadge(String id, int count) {

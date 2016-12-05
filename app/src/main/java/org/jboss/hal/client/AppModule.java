@@ -68,8 +68,8 @@ import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPrese
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.transaction.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter;
-import org.jboss.hal.client.configuration.subsystem.webservice.Mbui_WebserviceView_Provider;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebservicePresenter;
+import org.jboss.hal.client.configuration.subsystem.webservice.WebserviceView;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
 import org.jboss.hal.client.deployment.BrowseContentView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
@@ -380,9 +380,9 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 UnderTheBridgeView.class,
                 UnderTheBridgePresenter.MyProxy.class);
 
-        bindTemplatedPresenter(WebservicePresenter.class,
+        bindPresenter(WebservicePresenter.class,
                 WebservicePresenter.MyView.class,
-                Mbui_WebserviceView_Provider.class,
+                WebserviceView.class,
                 WebservicePresenter.MyProxy.class);
     }
 }

@@ -97,8 +97,8 @@ public class SecurityDomainPresenter
 
     @Inject
     public SecurityDomainPresenter(final EventBus eventBus,
-            final SecurityDomainPresenter.MyView view,
-            final SecurityDomainPresenter.MyProxy myProxy,
+            final MyView view,
+            final MyProxy myProxy,
             final Finder finder,
             final Dispatcher dispatcher,
             final CrudOperations crud,

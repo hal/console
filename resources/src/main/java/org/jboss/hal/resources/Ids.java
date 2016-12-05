@@ -62,6 +62,7 @@ public interface Ids {
     String ADD_SUFFIX = "add";
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
+    String PAGE_SUFFIX = "page";
     String REFRESH_SUFFIX = "refresh";
     String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
@@ -187,7 +188,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_ADD = build(JCA_DISTRIBUTED_WORKMANAGER, ADD_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_ENTRY = build(JCA_DISTRIBUTED_WORKMANAGER, ENTRY_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_FORM = build(JCA_DISTRIBUTED_WORKMANAGER, FORM_SUFFIX);
-    String JCA_DISTRIBUTED_WORKMANAGER_PAGE = build(JCA_DISTRIBUTED_WORKMANAGER, "page");
+    String JCA_DISTRIBUTED_WORKMANAGER_PAGE = build(JCA_DISTRIBUTED_WORKMANAGER, PAGE_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
     String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
     String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
@@ -197,7 +198,7 @@ public interface Ids {
     String JCA_WORKMANAGER = build(JCA, "workmanager");
     String JCA_WORKMANAGER_ADD = build(JCA_WORKMANAGER, ADD_SUFFIX);
     String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
-    String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, "page");
+    String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, PAGE_SUFFIX);
     String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
     // Please note that the JCA_THREAD_POOL_* constants are not used on its own. They're prefixed with either
     // JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
@@ -207,7 +208,7 @@ public interface Ids {
     String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_TAB = build(JCA_THREAD_POOL, "attributes", TAB_SUFFIX);
-    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, "page");
+    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, PAGE_SUFFIX);
     String JCA_THREAD_POOL_SIZING_FORM = build(JCA_THREAD_POOL, "sizing", FORM_SUFFIX);
     String JCA_THREAD_POOL_SIZING_TAB = build(JCA_THREAD_POOL, "sizing", TAB_SUFFIX);
     String JCA_THREAD_POOL_TABLE = build(JCA_THREAD_POOL, TABLE_SUFFIX);
@@ -357,6 +358,8 @@ public interface Ids {
     String USER = "user";
 
     String WEBSERVICES = "webservices";
+    String WEBSERVICES_FORM = build(WEBSERVICES, FORM_SUFFIX);
+    String WEBSERVICES_ENTRY = build(WEBSERVICES, ENTRY_SUFFIX);
     String WEBSERVICES_CLIENT_CONFIG = build(WEBSERVICES, "client-config");
     String WEBSERVICES_CLIENT_CONFIG_ENTRY = build(WEBSERVICES, "client-config", ENTRY_SUFFIX);
     String WEBSERVICES_ENDPOINT_CONFIG = build(WEBSERVICES, "endpoint-config");
