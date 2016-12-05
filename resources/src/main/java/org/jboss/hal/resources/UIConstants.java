@@ -37,6 +37,10 @@ public interface UIConstants {
      */
     int MESSAGE_TIMEOUT = 6000; // ms
 
+    long RELOAD_MESSAGE_ID = 5102007;
+    long RESTART_MESSAGE_ID = 1102010;
+    long DOMAIN_CHANGED_MESSAGE_ID = 291973;
+
 
     String ALERT = "alert";
     String BODY = "body";
