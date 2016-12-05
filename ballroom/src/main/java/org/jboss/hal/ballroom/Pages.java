@@ -31,7 +31,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
- * A structural element to manage a main and several nested page elements. The nested page elements provide a
+ * A structural element to manage a main and any number of nested page elements. The nested page elements provide a
  * {@linkplain Breadcrumb breadcrumb} to navigate back and forth.
  * <p>
  * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
@@ -69,10 +69,16 @@ public class Pages implements IsElement {
     private final Map<String, Page> pages;
     private final Element root;
 
+    /**
+     * Create a new instance with the main page id and element.
+     */
     public Pages(String id, final IsElement element) {
         this(id, element.asElement());
     }
 
+    /**
+     * Create a new instance with the main page id and element.
+     */
     public Pages(String id, final Element element) {
         mainId = id;
         mainPage = element;
@@ -94,13 +100,30 @@ public class Pages implements IsElement {
         }
     }
 
-
+    /**
+     * Adds a nested page.
+     *
+     * @param parentId    the parent id
+     * @param id          the id of the page being added
+     * @param parentTitle the title of the parent or main page
+     * @param title       the title of the page being added
+     * @param element     the page element
+     */
     public void addPage(final String parentId, final String id,
             final Supplier<String> parentTitle, final Supplier<String> title,
             final IsElement element) {
         addPage(parentId, id, parentTitle, title, element.asElement());
     }
 
+    /**
+     * Adds a nested page.
+     *
+     * @param parentId    the parent id
+     * @param id          the id of the page being added
+     * @param parentTitle the title of the parent or main page
+     * @param title       the title of the page being added
+     * @param element     the page element
+     */
     public void addPage(final String parentId, final String id,
             final Supplier<String> parentTitle, final Supplier<String> title,
             final Element element) {
@@ -111,6 +134,11 @@ public class Pages implements IsElement {
         root.appendChild(page.asElement());
     }
 
+    /**
+     * Shows the specified main / nested page and updates the breadcrumb.
+     *
+     * @param id the page id
+     */
     public void showPage(String id) {
         if (mainId.equals(id)) {
             showMain();
