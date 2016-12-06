@@ -49,6 +49,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="code"/>
                     </columns>
                 </table>
                 <form id="undertow-error-page-form" title="Error Page" auto-save="true"
@@ -69,6 +70,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="expression"/>
                     </columns>
                 </table>
                 <form id="undertow-expression-filter-form" title="Expression Filter" auto-save="true"
@@ -80,7 +82,7 @@
             <metadata address="/{selected.profile}/subsystem=undertow/configuration=filter/gzip=*">
                 <h1>GZip</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="undertow-gzip-table" title="GZip" form-ref="undertow-gzip-form">
+                <table id="undertow-gzip-table" title="GZip">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -90,8 +92,6 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-gzip-form" title="GZip" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -107,6 +107,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="management-socket-binding"/>
                     </columns>
                 </table>
                 <form id="undertow-mod-cluster-form" title="Mod Cluster" auto-save="true"
@@ -126,6 +127,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="max-concurrent-requests"/>
                     </columns>
                 </table>
                 <form id="undertow-request-limit-form" title="Request Limit" auto-save="true"
@@ -146,6 +148,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="value" value='{{row.get("header-value").asString()}}'/>
                     </columns>
                 </table>
                 <form id="undertow-response-header-form" title="Response Header" auto-save="true"
@@ -165,6 +168,7 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="target"/>
                     </columns>
                 </table>
                 <form id="undertow-rewrite-form" title="Rewrite" auto-save="true"

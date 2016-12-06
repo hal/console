@@ -21,7 +21,6 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -49,7 +48,6 @@ public abstract class UndertowFilterView extends MbuiViewImpl<UndertowFilterPres
     @MbuiElement("undertow-expression-filter-table") NamedNodeTable<NamedNode> expressionFilterTable;
     @MbuiElement("undertow-expression-filter-form") Form<NamedNode> expressionFilterForm;
     @MbuiElement("undertow-gzip-table") NamedNodeTable<NamedNode> gzipTable;
-    @MbuiElement("undertow-gzip-form") Form<NamedNode> gzipForm;
     @MbuiElement("undertow-mod-cluster-table") NamedNodeTable<NamedNode> modClusterTable;
     @MbuiElement("undertow-mod-cluster-form") Form<NamedNode> modClusterForm;
     @MbuiElement("undertow-request-limit-table") NamedNodeTable<NamedNode> requestLimitTable;
@@ -71,7 +69,6 @@ public abstract class UndertowFilterView extends MbuiViewImpl<UndertowFilterPres
         errorPageTable.update(asNamedNodes(failSafePropertyList(modelNode, "error-page")));
         expressionFilterForm.clear();
         expressionFilterTable.update(asNamedNodes(failSafePropertyList(modelNode, "expression-filter")));
-        gzipForm.clear();
         gzipTable.update(asNamedNodes(failSafePropertyList(modelNode, "gzip")));
         modClusterForm.clear();
         modClusterTable.update(asNamedNodes(failSafePropertyList(modelNode, "mod-cluster")));

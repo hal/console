@@ -120,7 +120,6 @@ public interface Names {
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String TRUST_MODULE = "Trust Module";
-    String UNDERTOW = "Undertow";
     String UNDERTOW_CONFIGURATION = "Undertow Configuration";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";

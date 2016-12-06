@@ -100,6 +100,6 @@ public class UndertowHandlerPresenter
 
     @Override
     protected void reload() {
-        crud.read(UNDERTOW_HANDLER_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(UNDERTOW_HANDLER_TEMPLATE, result -> getView().update(result));
     }
 }

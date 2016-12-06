@@ -100,6 +100,6 @@ public class UndertowFilterPresenter
 
     @Override
     protected void reload() {
-        crud.read(UNDERTOW_FILTER_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(UNDERTOW_FILTER_TEMPLATE, result -> getView().update(result));
     }
 }

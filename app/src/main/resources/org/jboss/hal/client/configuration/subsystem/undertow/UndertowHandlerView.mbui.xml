@@ -30,9 +30,10 @@
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
+                        <column name="path"/>
                     </columns>
                 </table>
-                <form id="undertow-file-handler-form" title="Custom Filter" auto-save="true"
+                <form id="undertow-file-handler-form" title="File Handler" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
@@ -51,7 +52,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-reverse-proxy-form" title="Custom Filter" auto-save="true"
+                <form id="undertow-reverse-proxy-form" title="Reverse Proxy" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>

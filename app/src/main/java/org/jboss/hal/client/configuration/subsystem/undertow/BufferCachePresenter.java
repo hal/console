@@ -38,12 +38,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.BUFFER_CACHE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BUFFER_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
  * @author Harald Pehl
@@ -105,7 +103,7 @@ public class BufferCachePresenter
 
     @Override
     protected void reload() {
-        crud.read(BUFFER_CACHE_TEMPLATE, 2, result ->
-                getView().update(asNamedNodes(failSafePropertyList(result, BUFFER_CACHE))));
+        crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, BUFFER_CACHE, children ->
+                getView().update(asNamedNodes(children)));
     }
 }
