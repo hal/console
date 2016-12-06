@@ -348,6 +348,11 @@ public interface Ids {
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
 
+    String UNDERTOW_SETTINGS = "undertow-settings";
+    String UNDERTOW_SERVER = "undertow-server";
+    String UNDERTOW_SERVER_ADD = build(UNDERTOW_SERVER, ADD_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
+    String UNDERTOW_SERVLET_CONTAINER_ADD = build(UNDERTOW_SERVLET_CONTAINER, ADD_SUFFIX);
     String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
     String UPLOAD = "upload";
@@ -445,6 +450,14 @@ public interface Ids {
 
     static String serverGroupServer(final String serverGroup, final String server) {
         return build(serverGroup, server);
+    }
+
+    static String undertowServer(String name) {
+        return build(UNDERTOW_SETTINGS, SERVER, name);
+    }
+
+    static String undertowServletContainer(String name) {
+        return build(UNDERTOW_SETTINGS, UNDERTOW_SERVLET_CONTAINER, name);
     }
 
 

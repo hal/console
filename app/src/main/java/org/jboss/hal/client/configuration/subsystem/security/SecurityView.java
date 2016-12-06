@@ -35,7 +35,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  */
 @MbuiView
 @SuppressWarnings({"HardCodedStringLiteral", "WeakerAccess", "unused", "DuplicateStringLiteralInspection"})
-public class SecurityView extends MbuiViewImpl<SecurityPresenter> implements SecurityPresenter.MyView {
+public abstract class SecurityView extends MbuiViewImpl<SecurityPresenter> implements SecurityPresenter.MyView {
 
     public static SecurityView create(final MbuiContext mbuiContext) {
         return new Mbui_SecurityView(mbuiContext);

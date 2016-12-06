@@ -31,6 +31,7 @@ public interface Names {
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
     String BOOTSTRAP = "Bootstrap";
+    String BUFFER_CACHES = "Buffer Caches";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
@@ -46,9 +47,12 @@ public interface Names {
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
+    String FILTER = "Filter";
+    String FILTERS = "Filters";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
     String HANDLER = "Handler";
+    String HANDLERS = "Handlers";
     String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
     String HOST = "Host";
@@ -102,6 +106,7 @@ public interface Names {
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
+    String SERVLET_CONTAINER = "Servlet Container";
     String SHORT_RUNNING = "short running";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
@@ -115,6 +120,8 @@ public interface Names {
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String TRUST_MODULE = "Trust Module";
+    String UNDERTOW = "Undertow";
+    String UNDERTOW_CONFIGURATION = "Undertow Configuration";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";

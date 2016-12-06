@@ -143,8 +143,10 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
     }
 
     @SuppressWarnings("UnusedParameters")
-    public void update(T item) {
+    public void update(T item) {}
 
+    public Element getContentSection() {
+        return builder.referenceFor(CONTENT_ELEMENT);
     }
 
     @Override

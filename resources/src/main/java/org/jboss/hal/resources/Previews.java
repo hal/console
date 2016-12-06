@@ -145,6 +145,24 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource configurationSystemProperties();
 
+    @Source("previews/configuration/undertow.html")
+    ExternalTextResource configurationUndertow();
+
+    @Source("previews/configuration/undertow-buffer-caches.html")
+    ExternalTextResource configurationUndertowBufferCaches();
+
+    @Source("previews/configuration/undertow-filters.html")
+    ExternalTextResource configurationUndertowFilters();
+
+    @Source("previews/configuration/undertow-handlers.html")
+    ExternalTextResource configurationUndertowHandlers();
+
+    @Source("previews/configuration/undertow-server.html")
+    ExternalTextResource configurationUndertowServer();
+
+    @Source("previews/configuration/undertow-servlet-container.html")
+    ExternalTextResource configurationUndertowServletContainer();
+
     @Source("previews/configuration/webservices.html")
     ExternalTextResource configurationWebservices();
 

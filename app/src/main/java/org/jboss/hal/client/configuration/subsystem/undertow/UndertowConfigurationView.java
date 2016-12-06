@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.iiop;
+package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -26,15 +26,16 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class IiopView extends MbuiViewImpl<IiopPresenter> implements IiopPresenter.MyView {
+public abstract class UndertowConfigurationView extends MbuiViewImpl<UndertowConfigurationPresenter>
+        implements UndertowConfigurationPresenter.MyView {
 
-    public static IiopView create(final MbuiContext mbuiContext) {
-        return new Mbui_IiopView(mbuiContext);
+    public static UndertowConfigurationView create(final MbuiContext mbuiContext) {
+        return new Mbui_UndertowConfigurationView(mbuiContext);
     }
 
-    @MbuiElement("iiop-openjdk-form") Form<ModelNode> form;
+    @MbuiElement("undertow-configuration-form") Form<ModelNode> form;
 
-    IiopView(final MbuiContext mbuiContext) {
+    UndertowConfigurationView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

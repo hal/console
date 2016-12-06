@@ -18,10 +18,9 @@ package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -39,8 +38,8 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
-    @MbuiElement("deployment-scanner-table") DataTable<NamedNode> deploymentscannerTable;
-    @MbuiElement("deployment-scanner-form") Form<NamedNode> deploymentscannerForm;
+    @MbuiElement("deployment-scanner-table") NamedNodeTable<NamedNode> table;
+    @MbuiElement("deployment-scanner-form") Form<NamedNode> form;
 
     DeploymentScannerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -50,8 +49,7 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
 
     @Override
     public void updateScanners(final List<NamedNode> items) {
-        deploymentscannerTable.api().clear().add(items).refresh(RefreshMode.RESET);
-        deploymentscannerForm.clear();
+        form.clear();
+        table.update(items);
     }
-
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.iiop;
+package org.jboss.hal.client.configuration.subsystem.requestcontroller;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -26,15 +26,15 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class IiopView extends MbuiViewImpl<IiopPresenter> implements IiopPresenter.MyView {
+public abstract class RequestControllerView extends MbuiViewImpl<RequestControllerPresenter> implements RequestControllerPresenter.MyView {
 
-    public static IiopView create(final MbuiContext mbuiContext) {
-        return new Mbui_IiopView(mbuiContext);
+    public static RequestControllerView create(final MbuiContext mbuiContext) {
+        return new Mbui_RequestControllerView(mbuiContext);
     }
 
-    @MbuiElement("iiop-openjdk-form") Form<ModelNode> form;
+    @MbuiElement("request-controller-form") Form<ModelNode> form;
 
-    IiopView(final MbuiContext mbuiContext) {
+    RequestControllerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

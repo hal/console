@@ -60,6 +60,8 @@ import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterVi
 import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
 import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.remoting.RemotingPresenter;
+import org.jboss.hal.client.configuration.subsystem.requestcontroller.Mbui_RequestControllerView_Provider;
+import org.jboss.hal.client.configuration.subsystem.requestcontroller.RequestControllerPresenter;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.Mbui_ResourceAdapterView_Provider;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapterPresenter;
 import org.jboss.hal.client.configuration.subsystem.security.Mbui_SecurityDomainView_Provider;
@@ -68,6 +70,14 @@ import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPrese
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.transaction.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.BufferCachePresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_BufferCacheView_Provider;
+import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowConfigurationView_Provider;
+import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowFilterView_Provider;
+import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowHandlerView_Provider;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowConfigurationPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowFilterPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowHandlerPresenter;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebservicePresenter;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebserviceView;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
@@ -174,6 +184,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 BrowseContentPresenter.MyView.class,
                 BrowseContentView.class,
                 BrowseContentPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(BufferCachePresenter.class,
+                BufferCachePresenter.MyView.class,
+                Mbui_BufferCacheView_Provider.class,
+                BufferCachePresenter.MyProxy.class);
 
         bindPresenter(ConfigurationPresenter.class,
                 ConfigurationPresenter.MyView.class,
@@ -320,6 +335,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_RemotingView_Provider.class,
                 RemotingPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(RequestControllerPresenter.class,
+                RequestControllerPresenter.MyView.class,
+                Mbui_RequestControllerView_Provider.class,
+                RequestControllerPresenter.MyProxy.class);
+
         bindTemplatedPresenter(ResourceAdapterPresenter.class,
                 ResourceAdapterPresenter.MyView.class,
                 Mbui_ResourceAdapterView_Provider.class,
@@ -379,6 +399,21 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 UnderTheBridgePresenter.MyView.class,
                 UnderTheBridgeView.class,
                 UnderTheBridgePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(UndertowConfigurationPresenter.class,
+                UndertowConfigurationPresenter.MyView.class,
+                Mbui_UndertowConfigurationView_Provider.class,
+                UndertowConfigurationPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(UndertowFilterPresenter.class,
+                UndertowFilterPresenter.MyView.class,
+                Mbui_UndertowFilterView_Provider.class,
+                UndertowFilterPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(UndertowHandlerPresenter.class,
+                UndertowHandlerPresenter.MyView.class,
+                Mbui_UndertowHandlerView_Provider.class,
+                UndertowHandlerPresenter.MyProxy.class);
 
         bindPresenter(WebservicePresenter.class,
                 WebservicePresenter.MyView.class,

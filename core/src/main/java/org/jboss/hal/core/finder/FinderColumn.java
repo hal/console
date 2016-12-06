@@ -91,6 +91,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private boolean firstActionAsBreadcrumbHandler;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
+        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private ItemSelectionHandler<T> selectionHandler;
 
         public Builder(final Finder finder, final String id, final String title) {
@@ -128,7 +129,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
-        Builder<T> initialItems(List<T> items) {
+        public Builder<T> initialItems(List<T> items) {
             if (items != null && !items.isEmpty()) {
                 this.items.addAll(items);
             }
@@ -137,6 +138,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         public Builder<T> itemsProvider(ItemsProvider<T> itemsProvider) {
             this.itemsProvider = itemsProvider;
+            return this;
+        }
+
+        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
             return this;
         }
 
@@ -231,6 +237,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
         this.previewCallback = builder.previewCallback;
+        this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
         this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.firstActionAsBreadcrumbHandler = builder.firstActionAsBreadcrumbHandler;
         this.asElement = false;

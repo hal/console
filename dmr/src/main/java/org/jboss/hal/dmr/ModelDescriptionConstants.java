@@ -62,6 +62,7 @@ public interface ModelDescriptionConstants {
     String BATCH_JBERET = "batch-jberet";
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
+    String BUFFER_CACHE = "buffer-cache";
 
     String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
@@ -259,6 +260,7 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUPS = "server-groups";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";
+    String SERVLET_CONTAINER = "servlet-container";
     String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";

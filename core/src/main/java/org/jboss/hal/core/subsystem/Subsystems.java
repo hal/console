@@ -27,8 +27,7 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * TODO set customImplementation flags to true once the subsystems are implemented
- *
+ * Subsystem registry. Lives in core so that extensions can use this class to register their subsystems.
  * @author Harald Pehl
  */
 public class Subsystems {
@@ -99,6 +98,9 @@ public class Subsystems {
                 .token(NameTokens.REMOTING)
                 .preview(resources.previews().configurationRemoting())
                 .build());
+        add(new SubsystemMetadata.Builder(REQUEST_CONTROLLER, "Request Controller")
+                .token(NameTokens.REQUEST_CONTROLLER)
+                .build());
         add(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, "Resource Adapters")
                 .nextColumn(Ids.RESOURCE_ADAPTER)
                 .preview(resources.previews().configurationResourceAdapters())
@@ -114,6 +116,8 @@ public class Subsystems {
                 .build());
         add(new SubsystemMetadata.Builder(UNDERTOW, "Web")
                 .subtitle("Undertow")
+                .nextColumn(Ids.UNDERTOW_SETTINGS)
+                .preview(resources.previews().configurationUndertow())
                 .build());
         add(new SubsystemMetadata.Builder(WEBSERVICES, "Web Services")
                 .token(NameTokens.WEBSERVICES)

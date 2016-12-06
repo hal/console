@@ -24,11 +24,11 @@ import java.util.List;
  */
 public class StaticItemColumn extends FinderColumn<StaticItem> {
 
-    private static class StaticItemDisplay implements ItemDisplay<StaticItem> {
+    public static class StaticItemDisplay implements ItemDisplay<StaticItem> {
 
         private final StaticItem item;
 
-        private StaticItemDisplay(StaticItem item) {
+        public StaticItemDisplay(StaticItem item) {
             this.item = item;
         }
 

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.iiop;
+package org.jboss.hal.client.configuration.subsystem.requestcontroller;
 
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -35,26 +35,27 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_CONTROLLER;
+
 /**
  * @author Harald Pehl
  */
-public class IiopPresenter
-        extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy>
+public class RequestControllerPresenter
+        extends MbuiPresenter<RequestControllerPresenter.MyView, RequestControllerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
-    @ProxyStandard
+    @ProxyCodeSplit
     @Requires(ROOT_ADDRESS)
-    @NameToken(NameTokens.IIOP)
-    public interface MyProxy extends ProxyPlace<IiopPresenter> {}
+    @NameToken(NameTokens.REQUEST_CONTROLLER)
+    public interface MyProxy extends ProxyPlace<RequestControllerPresenter> {}
 
-    public interface MyView extends MbuiView<IiopPresenter> {
-        void update(ModelNode modelNode);
+    public interface MyView extends MbuiView<RequestControllerPresenter> {
+        void update(ModelNode payload);
     }
     // @formatter:on
 
-
-    static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=iiop-openjdk";
+    private static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=request-controller";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final CrudOperations crud;
@@ -62,14 +63,14 @@ public class IiopPresenter
     private final StatementContext statementContext;
 
     @Inject
-    public IiopPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
+    public RequestControllerPresenter(final EventBus eventBus,
+            final RequestControllerPresenter.MyView view,
+            final RequestControllerPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext) {
-        super(eventBus, view, myProxy, finder);
+        super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -82,17 +83,17 @@ public class IiopPresenter
     }
 
     @Override
-    public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
-    }
-
-    @Override
     public ResourceAddress resourceAddress() {
         return ROOT_TEMPLATE.resolve(statementContext);
     }
 
     @Override
+    public FinderPath finderPath() {
+        return finderPathFactory.subsystemPath(REQUEST_CONTROLLER);
+    }
+
+    @Override
     protected void reload() {
-        crud.read(ROOT_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(ROOT_TEMPLATE, result -> getView().update(result));
     }
 }

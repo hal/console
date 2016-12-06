@@ -70,6 +70,10 @@ public interface NameTokens {
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
+    String UNDERTOW_CONFIGURATION = "undertow-configuration";
+    String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
+    String UNDERTOW_FILTER = "undertow-filter";
+    String UNDERTOW_HANDLER = "undertow-handler";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
 
     Set<String> getTokens();
