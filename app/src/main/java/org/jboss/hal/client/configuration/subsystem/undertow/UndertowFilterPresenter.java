@@ -37,8 +37,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_FILTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_FILTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
 /**
@@ -50,7 +50,7 @@ public class UndertowFilterPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(UNDERTOW_FILTER_ADDRESS)
+    @Requires(FILTER_ADDRESS)
     @NameToken(NameTokens.UNDERTOW_FILTER)
     public interface MyProxy extends ProxyPlace<UndertowFilterPresenter> {}
 
@@ -88,7 +88,7 @@ public class UndertowFilterPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return UNDERTOW_FILTER_TEMPLATE.resolve(statementContext);
+        return FILTER_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -100,6 +100,6 @@ public class UndertowFilterPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(UNDERTOW_FILTER_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(FILTER_TEMPLATE, result -> getView().update(result));
     }
 }

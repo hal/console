@@ -219,9 +219,7 @@ public class PropertiesOperations {
         FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
         if (properties == null || !properties.isModified()) {
-            if (!changedValues.isEmpty()) {
-                crud.save(type, name, template, changedValues, callback);
-            }
+            crud.save(type, name, template, changedValues, callback);
         } else {
             ResourceAddress address = template.resolve(statementContext, name);
             Composite operations = operationFactory.fromChangeSet(address, changedValues);

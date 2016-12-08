@@ -25,6 +25,7 @@ public interface Names {
     String ACCESS_CONTROL = "Access Control";
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
+    String AJP_LISTENER = "AJP Listener";
     String ARCHIVE = "Archive";
     String AUDIT_LOG = "Audit Log";
     String AUDIT_MODULE = "Audit Module";
@@ -37,6 +38,8 @@ public interface Names {
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
     String CONNECTION_DEFINITION = "Connection Definition";
+    String COOKIES = "Cookies";
+    String CRAWLER = "Crawler";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
@@ -47,7 +50,6 @@ public interface Names {
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
-    String FILTER = "Filter";
     String FILTERS = "Filters";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
@@ -61,6 +63,8 @@ public interface Names {
     String HTTP_CONNECTOR = "HTTP Connector";
     String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
     String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
+    String HTTP_LISTENER = "HTTP Listener";
+    String HTTPS_LISTENER = "HTTPS Listener";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JDBC = "JDBC";
@@ -68,6 +72,8 @@ public interface Names {
     String JDBC_DRIVERS = "JDBC Drivers";
     String JNDI = "JNDI";
     String JPA = "JPA";
+    String JSP = "JSP";
+    String LISTENER = "Listener";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
@@ -77,6 +83,7 @@ public interface Names {
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPING_MODULE = "Mapping Module";
+    String MIME_MAPPING = "Mime Mapping";
     String MB = "MB";
     String MODULE = "Module";
     String NAME = "Name";
@@ -107,6 +114,7 @@ public interface Names {
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
     String SERVLET_CONTAINER = "Servlet Container";
+    String SESSIONS = "Sessions";
     String SHORT_RUNNING = "short running";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
@@ -120,10 +128,11 @@ public interface Names {
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String TRUST_MODULE = "Trust Module";
-    String UNDERTOW_CONFIGURATION = "Undertow Configuration";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
+    String WEBSOCKETS = "Web Sockets";
+    String WELCOME_FILE = "Welcome File";
     String XA_DATASOURCE = "XA Datasource";
 }

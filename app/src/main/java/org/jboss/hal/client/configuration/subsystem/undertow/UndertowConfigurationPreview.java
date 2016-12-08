@@ -20,7 +20,7 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
@@ -35,8 +35,8 @@ class UndertowConfigurationPreview extends PreviewContent<StaticItem> {
     private final PreviewAttributes<ModelNode> attributes;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    UndertowConfigurationPreview(CrudOperations crud) {
-        super(Names.UNDERTOW_CONFIGURATION);
+    UndertowConfigurationPreview(CrudOperations crud, Resources resources) {
+        super(resources.constants().globalSettings());
         this.crud = crud;
         this.attributes = new PreviewAttributes<>(new ModelNode(),
                 asList("default-security-domain",

@@ -15,21 +15,27 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -37,33 +43,47 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.UNDERTOW_SERVER)
-@Requires(AddressTemplates.UNDERTOW_SERVER_ADDRESS)
+@Requires(AddressTemplates.SERVER_ADDRESS)
 public class UndertowServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
     public UndertowServerColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
             final CrudOperations crud) {
+
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.UNDERTOW_SERVER, Names.SERVER)
 
-                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, UNDERTOW_SERVER_TEMPLATE))
+                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH))
 
                 .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
-                .itemRenderer(item -> new ItemDisplay<NamedNode>() {
-                    @Override
-                    public String getId() {
-                        return Ids.undertowServer(item.getName());
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-                })
-
                 .onPreview(UndertowServerPreview::new)
+                .useFirstActionAsBreadcrumbHandler()
+                .withFilter()
         );
+
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
+            @Override
+            public String getId() {
+                return Ids.undertowServer(item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public List<ItemAction<NamedNode>> actions() {
+                List<ItemAction<NamedNode>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.UNDERTOW_SERVER, NAME, item.getName()));
+                actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), SERVER_TEMPLATE,
+                        UndertowServerColumn.this));
+                return actions;
+            }
+        });
     }
 }

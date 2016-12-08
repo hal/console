@@ -50,9 +50,10 @@ public class UndertowSettingsColumn
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
 
                 .initialItems(asList(
-                        new StaticItem.Builder(Names.UNDERTOW_CONFIGURATION)
+                        new StaticItem.Builder(resources.constants().globalSettings())
+                                .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
                                 .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                .onPreview(new UndertowConfigurationPreview(crud))
+                                .onPreview(new UndertowConfigurationPreview(crud, resources))
                                 .build(),
                         new StaticItem.Builder(Names.BUFFER_CACHES)
                                 .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
@@ -84,9 +85,9 @@ public class UndertowSettingsColumn
                 .breadcrumbItemsProvider((context, callback) -> {
                     // include those items w/o a next column
                     callback.onSuccess(asList(
-                            new StaticItem.Builder(Names.UNDERTOW_CONFIGURATION)
+                            new StaticItem.Builder(resources.constants().globalSettings())
                                     .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                    .onPreview(new UndertowConfigurationPreview(crud))
+                                    .onPreview(new UndertowConfigurationPreview(crud, resources))
                                     .build(),
                             new StaticItem.Builder(Names.BUFFER_CACHES)
                                     .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))

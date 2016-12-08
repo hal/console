@@ -75,9 +75,13 @@ import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_BufferCacheVie
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowConfigurationView_Provider;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowFilterView_Provider;
 import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowHandlerView_Provider;
-import org.jboss.hal.client.configuration.subsystem.undertow.UndertowConfigurationPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.UndertowFilterPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowGlobalSettingsPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.UndertowHandlerPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowServerPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowServerView;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowServletContainerPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.UndertowServletContainerView;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebservicePresenter;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebserviceView;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
@@ -400,20 +404,30 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 UnderTheBridgeView.class,
                 UnderTheBridgePresenter.MyProxy.class);
 
-        bindTemplatedPresenter(UndertowConfigurationPresenter.class,
-                UndertowConfigurationPresenter.MyView.class,
-                Mbui_UndertowConfigurationView_Provider.class,
-                UndertowConfigurationPresenter.MyProxy.class);
-
         bindTemplatedPresenter(UndertowFilterPresenter.class,
                 UndertowFilterPresenter.MyView.class,
                 Mbui_UndertowFilterView_Provider.class,
                 UndertowFilterPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(UndertowGlobalSettingsPresenter.class,
+                UndertowGlobalSettingsPresenter.MyView.class,
+                Mbui_UndertowConfigurationView_Provider.class,
+                UndertowGlobalSettingsPresenter.MyProxy.class);
+
         bindTemplatedPresenter(UndertowHandlerPresenter.class,
                 UndertowHandlerPresenter.MyView.class,
                 Mbui_UndertowHandlerView_Provider.class,
                 UndertowHandlerPresenter.MyProxy.class);
+
+        bindPresenter(UndertowServerPresenter.class,
+                UndertowServerPresenter.MyView.class,
+                UndertowServerView.class,
+                UndertowServerPresenter.MyProxy.class);
+
+        bindPresenter(UndertowServletContainerPresenter.class,
+                UndertowServletContainerPresenter.MyView.class,
+                UndertowServletContainerView.class,
+                UndertowServletContainerPresenter.MyProxy.class);
 
         bindPresenter(WebservicePresenter.class,
                 WebservicePresenter.MyView.class,

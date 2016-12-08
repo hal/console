@@ -158,6 +158,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
 
+    SafeHtml noChanges();
     SafeHtml noContent();
     SafeHtml noContentSelected();
     SafeHtml noDeployment();

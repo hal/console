@@ -15,21 +15,27 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SERVLET_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -37,34 +43,49 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.UNDERTOW_SERVLET_CONTAINER)
-@Requires(AddressTemplates.UNDERTOW_SERVLET_CONTAINER_ADDRESS)
+@Requires(AddressTemplates.SERVLET_CONTAINER_ADDRESS)
 public class UndertowServletContainerColumn extends FinderColumn<NamedNode> {
 
     @Inject
     public UndertowServletContainerColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
             final CrudOperations crud) {
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_SERVLET_CONTAINER, Names.SERVLET_CONTAINER)
 
                 .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVLET_CONTAINER_ADD, Names.SERVLET_CONTAINER,
-                        UNDERTOW_SERVLET_CONTAINER_TEMPLATE))
+                        SERVLET_CONTAINER_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVLET_CONTAINER_REFRESH))
 
-                .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVLET_CONTAINER,
-                        children -> callback.onSuccess(asNamedNodes(children))))
-
-                .itemRenderer(item -> new ItemDisplay<NamedNode>() {
-                    @Override
-                    public String getId() {
-                        return Ids.undertowServletContainer(item.getName());
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-                })
+                .itemsProvider(
+                        (context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVLET_CONTAINER, 2,
+                                children -> callback.onSuccess(asNamedNodes(children))))
 
                 .onPreview(UndertowServletContainerPreview::new)
+                .useFirstActionAsBreadcrumbHandler()
+                .withFilter()
         );
+
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
+            @Override
+            public String getId() {
+                return Ids.undertowServletContainer(item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public List<ItemAction<NamedNode>> actions() {
+                List<ItemAction<NamedNode>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.UNDERTOW_SERVLET_CONTAINER, NAME, item.getName()));
+                actions.add(
+                        itemActionFactory.remove(Names.SERVLET_CONTAINER, item.getName(), SERVLET_CONTAINER_TEMPLATE,
+                                UndertowServletContainerColumn.this));
+                return actions;
+            }
+        });
     }
 }

@@ -26,8 +26,8 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class UndertowConfigurationView extends MbuiViewImpl<UndertowConfigurationPresenter>
-        implements UndertowConfigurationPresenter.MyView {
+public abstract class UndertowConfigurationView extends MbuiViewImpl<UndertowGlobalSettingsPresenter>
+        implements UndertowGlobalSettingsPresenter.MyView {
 
     public static UndertowConfigurationView create(final MbuiContext mbuiContext) {
         return new Mbui_UndertowConfigurationView(mbuiContext);

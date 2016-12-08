@@ -49,8 +49,8 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class which contains generic CRUD methods to add, read, update and remove resources. Each group of methods provides
- * different signatures which use different levels of abstractions:
+ * Class which contains generic CRUD methods to add, read, update and remove (singleton) resources. Each group of
+ * methods provides different signatures which use different levels of abstractions:
  * <dl>
  * <dt>{@link AddressTemplate}</dt>
  * <dd>The most generic form. The template is resolved against the current statement context</dd>
@@ -62,8 +62,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * operation.</dd>
  * </dl>
  * <p>
- * Whenever possible the methods of this class should be used instead of writing custom CRUD functionality. Currently
- * this class is heavily used in
+ * Whenever possible use the methods of this class instead of writing custom CRUD functionality. Currently this class
+ * is heavily used by
  * <ul>
  * <li>{@code ColumnActionFactory}</li>
  * <li>{@code ItemActionFactory}</li>
@@ -89,7 +89,7 @@ public class CrudOperations {
          * @param name    the name of the resource, {@code null} for {@code addSingleton} methods.
          * @param address the resource address of the newly added resource
          */
-        void execute(@Nullable final String name, ResourceAddress address);
+        void execute(@Nullable final String name, final ResourceAddress address);
     }
 
 
@@ -185,11 +185,11 @@ public class CrudOperations {
      * @param name     the resource name which is part of the add operation
      * @param template the address template which is resolved against the current statement context and the resource
      *                 name to get the resource address for the add operation
-     * @param payload  the payload of the add operation
+     * @param payload  the optional payload of the add operation (may be null or undefined)
      * @param callback the callback executed after adding the resource
      */
-    public void add(final String type, final String name, final AddressTemplate template, final ModelNode payload,
-            final AddCallback callback) {
+    public void add(final String type, final String name, final AddressTemplate template,
+            @Nullable final ModelNode payload, final AddCallback callback) {
         add(type, name, template.resolve(statementContext, name), payload, callback);
     }
 
@@ -200,11 +200,11 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param name     the resource name which is part of the add operation
      * @param address  the fq address for the add operation
-     * @param payload  the payload of the add operation
+     * @param payload  the optional payload of the add operation (may be null or undefined)
      * @param callback the callback executed after adding the resource
      */
-    public void add(final String type, final String name, final ResourceAddress address, final ModelNode payload,
-            final AddCallback callback) {
+    public void add(final String type, final String name, final ResourceAddress address,
+            @Nullable final ModelNode payload, final AddCallback callback) {
         Operation operation = new Operation.Builder(ADD, address)
                 .payload(payload)
                 .build();
@@ -281,10 +281,10 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param template the address template which is resolved against the current statement context to get the
      *                 singleton resource address for the add operation
-     * @param payload  the payload of the add operation
+     * @param payload  the optional payload of the add operation (may be null or undefined)
      * @param callback the callback executed after adding the singleton resource
      */
-    public void addSingleton(final String type, final AddressTemplate template, final ModelNode payload,
+    public void addSingleton(final String type, final AddressTemplate template, @Nullable final ModelNode payload,
             final AddCallback callback) {
         addSingleton(type, template.resolve(statementContext), payload, callback);
     }
@@ -295,10 +295,10 @@ public class CrudOperations {
      *
      * @param type     the human readable resource type used in the dialog header and success message
      * @param address  the fq address for the add operation
-     * @param payload  the payload of the add operation
+     * @param payload  the optional payload of the add operation (may be null or undefined)
      * @param callback the callback executed after adding the singleton resource
      */
-    public void addSingleton(final String type, final ResourceAddress address, final ModelNode payload,
+    public void addSingleton(final String type, final ResourceAddress address, @Nullable final ModelNode payload,
             final AddCallback callback) {
         Operation.Builder builder = new Operation.Builder(ADD, address);
         if (payload != null && payload.isDefined()) {
@@ -461,6 +461,8 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param name          the resource name
@@ -479,6 +481,8 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param name           the resource name
      * @param template       the address template which is resolved against the current statement context and the
@@ -500,6 +504,8 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
      * @param name          the resource name
@@ -516,6 +522,8 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param address        the fq address for the operation
      * @param changedValues  the changed values / payload for the operation
@@ -533,6 +541,9 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
+     * <p>
+     * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
+     * callback is executed.
      *
      * @param type       the human readable resource type used in the success message
      * @param name       the resource name
@@ -546,16 +557,24 @@ public class CrudOperations {
     /**
      * Write the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
+     * <p>
+     * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
+     * callback is executed.
      *
      * @param operations     the composite operation to persist the changed values
      * @param successMessage the success message fired after saving the resource
      * @param callback       the callback executed after saving the resource
      */
     public void save(final Composite operations, final SafeHtml successMessage, final Callback callback) {
-        dispatcher.execute(operations, (CompositeResult result) -> {
-            MessageEvent.fire(eventBus, Message.success(successMessage));
+        if (operations.isEmpty()) {
+            MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
             callback.execute();
-        });
+        } else {
+            dispatcher.execute(operations, (CompositeResult result) -> {
+                MessageEvent.fire(eventBus, Message.success(successMessage));
+                callback.execute();
+            });
+        }
     }
 
 

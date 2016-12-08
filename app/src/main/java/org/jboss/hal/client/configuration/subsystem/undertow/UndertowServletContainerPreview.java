@@ -15,11 +15,24 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.Iterator;
+import java.util.List;
+
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MIME_MAPPING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WELCOME_FILE;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
  * @author Harald Pehl
@@ -27,12 +40,42 @@ import static java.util.Arrays.asList;
 class UndertowServletContainerPreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    UndertowServletContainerPreview(NamedNode server) {
-        super(server.getName());
+    UndertowServletContainerPreview(NamedNode servletContainer) {
+        super(servletContainer.getName());
 
-        previewBuilder().addAll(new PreviewAttributes<>(server,
-                asList("default-encoding", "default-session-timeout", "directory-listing", "max-sessions")).end());
+        LabelBuilder labelBuilder = new LabelBuilder();
+        PreviewAttributes<NamedNode> attributes = new PreviewAttributes<>(servletContainer,
+                asList("default-encoding", "default-session-timeout", "directory-listing", "max-sessions"));
 
-        // TODO Add mime-mapping and welcome-file
+        attributes.append(model -> {
+            List<Property> properties = failSafePropertyList(model, MIME_MAPPING);
+            if (!properties.isEmpty()) {
+                SafeHtmlBuilder builder = new SafeHtmlBuilder();
+                for (Iterator<Property> iterator = properties.iterator(); iterator.hasNext(); ) {
+                    Property property = iterator.next();
+                    builder.appendEscaped(property.getName())
+                            .appendEscaped(" ")
+                            .appendHtmlConstant("&rarr;")
+                            .appendEscaped(" ")
+                            .appendEscaped(property.getValue().get(VALUE).asString());
+                    if (iterator.hasNext()) {
+                        builder.appendEscaped(", ");
+                    }
+                }
+                return new PreviewAttribute(labelBuilder.label(MIME_MAPPING), builder.toSafeHtml());
+            }
+            return new PreviewAttribute(labelBuilder.label(MIME_MAPPING), Names.NOT_AVAILABLE);
+        });
+
+        attributes.append(model -> {
+            List<Property> files = failSafePropertyList(model, WELCOME_FILE);
+            if (!files.isEmpty()) {
+                String csv = files.stream().map(Property::getName).collect(joining(", "));
+                return new PreviewAttribute(labelBuilder.label(WELCOME_FILE), csv);
+            }
+            return new PreviewAttribute(labelBuilder.label(WELCOME_FILE), Names.NOT_AVAILABLE);
+        });
+
+        previewBuilder().addAll(attributes.end());
     }
 }

@@ -131,6 +131,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formErrors();
     String formResetDesc();
 
+    String globalSettings();
     String gotoDeployment();
     String group();
     String groups();

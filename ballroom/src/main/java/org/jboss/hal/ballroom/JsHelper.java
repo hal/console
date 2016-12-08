@@ -32,11 +32,14 @@ import static org.jboss.hal.resources.CSS.ondrag;
 public final class JsHelper {
 
     public static <T> List<T> asList(JsArrayOf<T> array) {
-        List<T> list = new ArrayList<>(array.length());
-        for (int i = 0; i < array.length(); i++) {
-            list.add(array.get(i));
+        if (array != null) {
+            List<T> list = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.get(i));
+            }
+            return list;
         }
-        return list;
+        return new ArrayList<>();
     }
 
     public static <T> JsArrayOf<T> asJsArray(List<T> list) {

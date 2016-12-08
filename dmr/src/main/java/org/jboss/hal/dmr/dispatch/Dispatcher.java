@@ -321,7 +321,8 @@ public class Dispatcher implements RecordingHandler {
         ResourceAddress address = operation.getAddress();
         if (!address.isEmpty()) {
             String path = address.asPropertyList().stream()
-                    .map(property -> property.getName() + "/" + property.getValue().asString())
+                    .map(property -> Browser.encodeURIComponent(property.getName()) + "/" +
+                            Browser.encodeURIComponent(property.getValue().asString()))
                     .collect(joining("/"));
             builder.append(path);
         }
@@ -337,9 +338,9 @@ public class Dispatcher implements RecordingHandler {
         // 3. parameter
         if (operation.hasParamter()) {
             operation.getParameter().asPropertyList().forEach(property -> {
-                builder.append("&").append(property.getName());
+                builder.append("&").append(Browser.encodeURIComponent(property.getName()));
                 if (property.getValue().isDefined()) {
-                    builder.append("=").append(property.getValue().asString());
+                    builder.append("=").append(Browser.encodeURIComponent(property.getValue().asString()));
                 }
             });
         }

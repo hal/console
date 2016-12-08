@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
@@ -44,17 +43,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 /**
  * @author Harald Pehl
  */
-public class UndertowConfigurationPresenter
-        extends MbuiPresenter<UndertowConfigurationPresenter.MyView, UndertowConfigurationPresenter.MyProxy>
+public class UndertowGlobalSettingsPresenter
+        extends MbuiPresenter<UndertowGlobalSettingsPresenter.MyView, UndertowGlobalSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.UNDERTOW_CONFIGURATION)
     @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<UndertowConfigurationPresenter> {}
+    public interface MyProxy extends ProxyPlace<UndertowGlobalSettingsPresenter> {}
 
-    public interface MyView extends MbuiView<UndertowConfigurationPresenter> {
+    public interface MyView extends MbuiView<UndertowGlobalSettingsPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -65,9 +64,9 @@ public class UndertowConfigurationPresenter
     private final Resources resources;
 
     @Inject
-    public UndertowConfigurationPresenter(final EventBus eventBus,
-            final UndertowConfigurationPresenter.MyView view,
-            final UndertowConfigurationPresenter.MyProxy proxy,
+    public UndertowGlobalSettingsPresenter(final EventBus eventBus,
+            final UndertowGlobalSettingsPresenter.MyView view,
+            final UndertowGlobalSettingsPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
@@ -94,8 +93,8 @@ public class UndertowConfigurationPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(UNDERTOW)
-                .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.UNDERTOW_CONFIGURATION),
-                        resources.constants().settings(), Names.UNDERTOW_CONFIGURATION);
+                .append(Ids.UNDERTOW_SETTINGS, Ids.UNDERTOW_GLOBAL_SETTINGS,
+                        resources.constants().settings(), resources.constants().globalSettings());
     }
 
     @Override

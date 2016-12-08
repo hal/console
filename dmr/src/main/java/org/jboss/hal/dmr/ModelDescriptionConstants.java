@@ -51,6 +51,7 @@ public interface ModelDescriptionConstants {
     String ADD = "add";
     String ADDRESS = "address";
     String ADMIN_OBJECTS = "admin-objects";
+    String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
     String ANY = "any";
     String ARCHIVE = "archive";
@@ -78,6 +79,7 @@ public interface ModelDescriptionConstants {
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
+    String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
 
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
@@ -126,6 +128,8 @@ public interface ModelDescriptionConstants {
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
+    String HTTP_LISTENER = "http-listener";
+    String HTTPS_LISTENER = "https-listener";
 
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
@@ -145,6 +149,7 @@ public interface ModelDescriptionConstants {
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
+    String JSP = "jsp";
     String JVM = "jvm";
 
     String KILL = "kill";
@@ -171,6 +176,7 @@ public interface ModelDescriptionConstants {
     String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
+    String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MODULE = "module";
     String MODCLUSTER = "modcluster";
@@ -188,6 +194,7 @@ public interface ModelDescriptionConstants {
 
     String PASSWORD = "password";
     String PATH = "path";
+    String PERSISTENT_SESSIONS = "persistent-sessions";
     String POLICY = "policy";
     String POLICY_MODULE = "policy-module";
     String POP3 = "pop3";
@@ -262,6 +269,7 @@ public interface ModelDescriptionConstants {
     String SERVER_TYPE = "server-type";
     String SERVLET_CONTAINER = "servlet-container";
     String SERVICE = "service";
+    String SESSION_COOKIE = "session-cookie";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
@@ -305,6 +313,8 @@ public interface ModelDescriptionConstants {
     String VERBOSE = "verbose";
 
     String WEBSERVICES = "webservices";
+    String WEBSOCKETS = "websockets";
+    String WELCOME_FILE = "welcome-file";
     String WHERE = "where";
     String WHOAMI = "whoami";
     String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";

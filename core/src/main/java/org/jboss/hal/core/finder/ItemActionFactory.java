@@ -92,9 +92,9 @@ public class ItemActionFactory {
     }
 
     /**
-     * Creates a 'remove' action which removes the specified resource from the given address. The address can contain a
-     * wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed the
-     * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
+     * Creates a 'remove' action which removes the specified resource from the given template. The template can contain
+     * a wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed
+     * the resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, FinderColumn<T> column) {
         return new ItemAction<>(resources.constants().remove(), item -> crud.remove(type, name, template,
