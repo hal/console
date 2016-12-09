@@ -49,7 +49,7 @@ public class UndertowSubsystemPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.UNDERTOW_CONFIGURATION)
+    @NameToken(NameTokens.UNDERTOW)
     @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<UndertowSubsystemPresenter> {}
 

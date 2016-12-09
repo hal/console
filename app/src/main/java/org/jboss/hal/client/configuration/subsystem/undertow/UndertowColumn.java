@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
@@ -31,6 +32,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Holds the top level items to configure the undertow subsystem.
@@ -48,68 +50,45 @@ public class UndertowColumn
             final Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.UNDERTOW_SETTINGS, resources.constants().settings())
-
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
-
-                .initialItems(asList(
-                        new StaticItem.Builder(resources.constants().globalSettings())
-                                .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
-                                .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                .onPreview(new UndertowSubsystemPreview(crud, resources))
-                                .build(),
-                        new StaticItem.Builder(Names.BUFFER_CACHES)
-                                .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
-                                .onPreview(new PreviewContent(Names.BUFFER_CACHES,
-                                        resources.previews().configurationUndertowBufferCaches()))
-                                .build(),
-                        new StaticItem.Builder(Names.SERVER)
-                                .nextColumn(Ids.UNDERTOW_SERVER)
-                                .onPreview(new PreviewContent(Names.SERVER,
-                                        resources.previews().configurationUndertowServer()))
-                                .build(),
-                        new StaticItem.Builder(Names.SERVLET_CONTAINER)
-                                .nextColumn(Ids.UNDERTOW_SERVLET_CONTAINER)
-                                .onPreview(new PreviewContent(Names.SERVLET_CONTAINER,
-                                        resources.previews().configurationUndertowServletContainer()))
-                                .build(),
-                        new StaticItem.Builder(Names.FILTERS)
-                                .action(itemActionFactory.view(NameTokens.UNDERTOW_FILTER))
-                                .onPreview(new PreviewContent<>(Names.FILTERS,
-                                        resources.previews().configurationUndertowFilters()))
-                                .build(),
-                        new StaticItem.Builder(Names.HANDLERS)
-                                .action(itemActionFactory.view(NameTokens.UNDERTOW_HANDLER))
-                                .onPreview(new PreviewContent<>(Names.HANDLERS,
-                                        resources.previews().configurationUndertowHandlers()))
-                                .build()
-                ))
-
-                .breadcrumbItemsProvider((context, callback) -> {
-                    // include those items w/o a next column
-                    callback.onSuccess(asList(
-                            new StaticItem.Builder(resources.constants().globalSettings())
-                                    .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                    .onPreview(new UndertowSubsystemPreview(crud, resources))
-                                    .build(),
-                            new StaticItem.Builder(Names.BUFFER_CACHES)
-                                    .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
-                                    .onPreview(new PreviewContent(Names.BUFFER_CACHES,
-                                            resources.previews().configurationUndertowBufferCaches()))
-                                    .build(),
-                            new StaticItem.Builder(Names.FILTERS)
-                                    .action(itemActionFactory.view(NameTokens.UNDERTOW_FILTER))
-                                    .onPreview(new PreviewContent<>(Names.FILTERS,
-                                            resources.previews().configurationUndertowFilters()))
-                                    .build(),
-                            new StaticItem.Builder(Names.HANDLERS)
-                                    .action(itemActionFactory.view(NameTokens.UNDERTOW_HANDLER))
-                                    .onPreview(new PreviewContent<>(Names.HANDLERS,
-                                            resources.previews().configurationUndertowHandlers()))
-                                    .build()
-                    ));
-                })
-
                 .onPreview(StaticItem::getPreviewContent)
                 .useFirstActionAsBreadcrumbHandler());
+
+        List<StaticItem> items = asList(
+                new StaticItem.Builder(resources.constants().globalSettings())
+                        .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
+                        .action(itemActionFactory.view(NameTokens.UNDERTOW))
+                        .onPreview(new UndertowSubsystemPreview(crud, resources))
+                        .build(),
+                new StaticItem.Builder(Names.BUFFER_CACHES)
+                        .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
+                        .onPreview(new PreviewContent(Names.BUFFER_CACHES,
+                                resources.previews().configurationUndertowBufferCaches()))
+                        .build(),
+                new StaticItem.Builder(Names.SERVER)
+                        .nextColumn(Ids.UNDERTOW_SERVER)
+                        .onPreview(new PreviewContent(Names.SERVER,
+                                resources.previews().configurationUndertowServer()))
+                        .build(),
+                new StaticItem.Builder(Names.SERVLET_CONTAINER)
+                        .nextColumn(Ids.UNDERTOW_SERVLET_CONTAINER)
+                        .onPreview(new PreviewContent(Names.SERVLET_CONTAINER,
+                                resources.previews().configurationUndertowServletContainer()))
+                        .build(),
+                new StaticItem.Builder(Names.FILTERS)
+                        .action(itemActionFactory.view(NameTokens.UNDERTOW_FILTER))
+                        .onPreview(new PreviewContent<>(Names.FILTERS,
+                                resources.previews().configurationUndertowFilters()))
+                        .build(),
+                new StaticItem.Builder(Names.HANDLERS)
+                        .action(itemActionFactory.view(NameTokens.UNDERTOW_HANDLER))
+                        .onPreview(new PreviewContent<>(Names.HANDLERS,
+                                resources.previews().configurationUndertowHandlers()))
+                        .build()
+        );
+        setItemsProvider((context, callback) -> callback.onSuccess(items));
+        setBreadcrumbItemsProvider(
+                (context, callback) -> callback.onSuccess(
+                        items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
     }
 }
