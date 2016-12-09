@@ -142,14 +142,13 @@ public class PropertiesOperations {
                     })
                     .forEach(operations::add);
             modify.stream()
+                    .filter(property -> properties.get(property) != null)
                     .map(property -> {
                         ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
-                        Operation.Builder builder = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
-                                .param(NAME, VALUE);
-                        if (properties.get(property) != null) {
-                            builder.param(VALUE, properties.get(property));
-                        }
-                        return builder.build();
+                        return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                                .param(NAME, VALUE)
+                                .param(VALUE, properties.get(property))
+                                .build();
                     })
                     .forEach(operations::add);
             remove.stream()
