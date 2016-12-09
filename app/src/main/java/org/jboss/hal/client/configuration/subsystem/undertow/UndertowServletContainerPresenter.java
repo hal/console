@@ -23,7 +23,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -48,11 +47,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyMap;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MIME_MAPPING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WELCOME_FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -139,14 +134,14 @@ public class UndertowServletContainerPresenter
                 SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), changedValues, this::reload);
     }
 
-    void saveMimeMapping(final Form<ModelNode> form) {
+    void saveMimeMapping(final Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
-        po.saveSingletonWithProperties(Names.MIME_MAPPING, address, form, emptyMap(), MIME_MAPPING, this::reload);
+        po.saveSingletonWithProperties(Names.MIME_MAPPING, address, emptyMap(), MIME_MAPPING, properties, this::reload);
     }
 
-    void saveWelcomeFile(final Form<ModelNode> form) {
+    void saveWelcomeFile(final Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
-        po.saveSingletonWithProperties(Names.WELCOME_FILE, address, form, emptyMap(), WELCOME_FILE, this::reload);
+        po.saveSingletonWithProperties(Names.WELCOME_FILE, address, emptyMap(), WELCOME_FILE, properties, this::reload);
     }
 
     void saveSettings(final ServletContainerSetting settingType, final Map<String, Object> changedValues) {

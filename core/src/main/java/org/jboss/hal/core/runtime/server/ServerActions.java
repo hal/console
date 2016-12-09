@@ -423,13 +423,13 @@ public class ServerActions {
     }
 
     public void markAsPending(Server server) {
-        dispatcher.setPendingLifecycleAction(true);
+        Dispatcher.setPendingLifecycleAction(true);
         pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
-        dispatcher.setPendingLifecycleAction(false);
+        Dispatcher.setPendingLifecycleAction(false);
         pendingServers.remove(Ids.hostServer(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }

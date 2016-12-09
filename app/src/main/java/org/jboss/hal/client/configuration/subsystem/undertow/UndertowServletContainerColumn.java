@@ -54,7 +54,7 @@ public class UndertowServletContainerColumn extends FinderColumn<NamedNode> {
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_SERVLET_CONTAINER, Names.SERVLET_CONTAINER)
 
                 .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVLET_CONTAINER_ADD, Names.SERVLET_CONTAINER,
-                        SERVLET_CONTAINER_TEMPLATE))
+                        SERVLET_CONTAINER_TEMPLATE, Ids::undertowServletContainer))
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVLET_CONTAINER_REFRESH))
 
                 .itemsProvider(

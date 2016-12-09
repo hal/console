@@ -117,13 +117,20 @@ public class Dispatcher implements RecordingHandler {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
+    private static boolean pendingLifecycleAction = false;
+
+    public static void setPendingLifecycleAction(final boolean value) {
+        pendingLifecycleAction = value;
+        logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
+    }
+
+
     private final Endpoints endpoints;
     private final EventBus eventBus;
     private final Provider<ProcessStateProcessor> processStateProcessor;
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
     private Macros macros;
-    private boolean pendingLifecycleAction;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
@@ -133,16 +140,20 @@ public class Dispatcher implements RecordingHandler {
         this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
         this.macros = macros;
-        this.pendingLifecycleAction = false;
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
+            if (!pendingLifecycleAction) {
+                eventBus.fireEvent(
+                        new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
+            }
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
-            eventBus.fireEvent(
-                    new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
+            if (!pendingLifecycleAction) {
+                eventBus.fireEvent(
+                        new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
+            }
         };
     }
 
@@ -475,12 +486,5 @@ public class Dispatcher implements RecordingHandler {
         } else {
             return operation.getName().startsWith("read") || operation.getName().equals(QUERY);
         }
-    }
-
-
-    // ------------------------------------------------------ getter / setter
-
-    public void setPendingLifecycleAction(final boolean pendingLifecycleAction) {
-        this.pendingLifecycleAction = pendingLifecycleAction;
     }
 }

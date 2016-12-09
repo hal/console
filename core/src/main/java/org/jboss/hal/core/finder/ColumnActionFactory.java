@@ -16,6 +16,7 @@
 package org.jboss.hal.core.finder;
 
 import java.util.Collections;
+import java.util.function.Function;
 import javax.inject.Inject;
 
 import elemental.dom.Element;
@@ -23,6 +24,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
@@ -48,26 +50,38 @@ public class ColumnActionFactory {
 
     /**
      * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains
-     * fields for all required request properties. When clicking "Add", a new resource is added using the specified
-     * address template.
+     * fields for all required request properties.
+     * <p>
+     * When clicking "Add", a new resource is added using the specified address template and the newly added resource
+     * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template) {
-        return add(id, type, template, Collections.emptyList());
+        return add(id, type, template, Collections.emptyList(), Ids::asId);
+    }
+
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
+            Function<String, String> identifier) {
+        return add(id, type, template, Collections.emptyList(), identifier);
     }
 
     /**
      * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains
-     * fields for all required request properties plus the ones specified by {@code attributes}. When clicking "Add", a
-     * new resource is added using the specified address template.
+     * fields for all required request properties plus the ones specified by {@code attributes}.
+     * <p>
+     * When clicking "Add", a new resource is added using the specified address template and the newly added resource
+     * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes) {
-        return add(id, type, column -> {
-            crud.add(id, type, template, attributes, (name, address) -> {
-                if (name != null) {
-                    column.refresh(name);
-                }
-            });
-        });
+        return add(id, type, template, attributes, Ids::asId);
+    }
+
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
+            Function<String, String> identifier) {
+        return add(id, type, column -> crud.add(id, type, template, attributes, (name, address) -> {
+            if (name != null) {
+                column.refresh(identifier.apply(name));
+            }
+        }));
     }
 
     public <T> ColumnAction<T> add(String id, String type, ColumnActionHandler<T> handler) {

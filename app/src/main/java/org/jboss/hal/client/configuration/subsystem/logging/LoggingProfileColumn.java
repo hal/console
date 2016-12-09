@@ -69,7 +69,8 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 .columnAction(columnActionFactory.add(
                         Ids.LOGGING_PROFILE_ADD,
                         Names.LOGGING_PROFILE,
-                        AddressTemplates.LOGGING_PROFILE_TEMPLATE))
+                        AddressTemplates.LOGGING_PROFILE_TEMPLATE,
+                        Ids::loggingProfile))
 
                 .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
                         children -> callback.onSuccess(asNamedNodes(children))))

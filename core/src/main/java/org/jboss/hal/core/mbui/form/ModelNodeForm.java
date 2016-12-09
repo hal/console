@@ -17,7 +17,7 @@ package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -299,7 +299,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             properties.addAll(filteredByName.values());
         } else {
             properties.addAll(filteredProperties);
-            Collections.sort(properties, (p1, p2) -> p1.getName().compareTo(p2.getName()));
+            properties.sort(Comparator.comparing(Property::getName));
         }
         this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
 

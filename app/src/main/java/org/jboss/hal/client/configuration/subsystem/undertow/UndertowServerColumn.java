@@ -54,7 +54,8 @@ public class UndertowServerColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.UNDERTOW_SERVER, Names.SERVER)
 
-                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE))
+                .columnAction(columnActionFactory.add(Ids.UNDERTOW_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
+                        Ids::undertowServer))
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH))
 
                 .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVER,

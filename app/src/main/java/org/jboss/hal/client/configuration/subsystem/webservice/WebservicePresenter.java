@@ -189,7 +189,8 @@ public class WebservicePresenter
     void saveConfig(Form<NamedNode> form, Map<String, Object> changedValues, String property) {
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
-        po.saveWithProperties(configType.type, name, address, form, changedValues, property, this::reload);
+        po.saveWithProperties(configType.type, name, address, changedValues, property,
+                form.<Map<String, String>>getFormItem(property).getValue(), this::reload);
     }
 
     void removeConfig(String name) {

@@ -17,6 +17,7 @@ package org.jboss.hal.core.mbui.dialog;
 
 import java.util.Collections;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
@@ -27,7 +28,6 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
-import org.jetbrains.annotations.Nullable;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 

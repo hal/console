@@ -17,6 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Function;
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -63,10 +64,11 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
 
     private final Dispatcher dispatcher;
     private final Form<ModelNode> configurationForm;
+    private final Form<ModelNode> mimeMappingForm;
     private final PropertiesItem mimeMappingItem;
-    private final ListItem welcomeFile;
+    private final Form<ModelNode> welcomeFileForm;
+    private final ListItem welcomeFileItem;
     private final Map<ServletContainerSetting, FailSafeForm<ModelNode>> settings;
-    private final Map<ServletContainerSetting, Element> settingsSections;
     private UndertowServletContainerPresenter presenter;
 
     @Inject
@@ -87,25 +89,22 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
                 new ResourceDescription(new ModelNode()),
                 configurationMetadata.getCapabilities());
 
-        mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING);
-        ModelNode mimeMappingDescriptionNode = failSafeGet(configurationMetadata.getDescription(),
+        ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/mime-mapping/description"); //NON-NLS
-        String mimeMappingDescription = mimeMappingDescriptionNode.isDefined()
-                ? mimeMappingDescriptionNode.asString() : Names.NOT_AVAILABLE;
-        Form<ModelNode> mimeMappingForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM,
-                emptyMetadata)
-                .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription))
-                .onSave((form, changedValues) -> presenter.saveMimeMapping(form))
+        mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING);
+        mimeMappingForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM, emptyMetadata)
+                .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
+                .exclude(VALUE)
+                .onSave((form, changedValues) -> presenter.saveMimeMapping(mimeMappingItem.getValue()))
                 .build();
 
-        welcomeFile = new ListItem(WELCOME_FILE, Names.WELCOME_FILE);
-        ModelNode welcomeFileNode = failSafeGet(configurationMetadata.getDescription(),
+        ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/welcome-file/description"); //NON-NLS
-        String welcomeFileDescription = welcomeFileNode.isDefined() ? welcomeFileNode.asString() : Names.NOT_AVAILABLE;
-        Form<ModelNode> welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM,
-                emptyMetadata)
-                .unboundFormItem(welcomeFile, 0, SafeHtmlUtils.fromString(welcomeFileDescription))
-                .onSave((form, changedValues) -> presenter.saveWelcomeFile(form))
+        welcomeFileItem = new ListItem(WELCOME_FILE, Names.WELCOME_FILE);
+        welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM, emptyMetadata)
+                .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))
+                .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()
+                        .collect(toMap(Function.identity(), value -> null))))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -125,7 +124,7 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
         // @formatter:on
 
         settings = new EnumMap<>(ServletContainerSetting.class);
-        settingsSections = new EnumMap<>(ServletContainerSetting.class);
+        Map<ServletContainerSetting, Element> settingsSections = new EnumMap<>(ServletContainerSetting.class);
         for (ServletContainerSetting setting : ServletContainerSetting.values()) {
             Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(setting.templateSuffix()));
             FailSafeForm<ModelNode> form = failSafeFrom(setting, metadata);
@@ -188,9 +187,11 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
     @Override
     public void update(final ModelNode payload) {
         configurationForm.view(payload);
+        mimeMappingForm.view(new ModelNode());
         mimeMappingItem.setValue(failSafePropertyList(payload, MIME_MAPPING).stream()
                 .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString())));
-        welcomeFile.setValue(failSafePropertyList(payload, WELCOME_FILE).stream()
+        welcomeFileForm.view(new ModelNode());
+        welcomeFileItem.setValue(failSafePropertyList(payload, WELCOME_FILE).stream()
                 .map(Property::getName)
                 .collect(toList()));
         settings.forEach((settingType, form) -> form.view(failSafeGet(payload, settingType.path())));

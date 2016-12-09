@@ -21,8 +21,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Api;
-import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -98,8 +96,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
             operations.add(userMappings);
         }
 
-        mbuiContext.po().saveWithProperties(Names.RESOURCE_ADAPTER, presenter.getResourceAdapter(),
-                address, form, operations, CONFIG_PROPERTIES, () -> presenter.reload());
+        mbuiContext.po().saveWithProperties(Names.RESOURCE_ADAPTER, presenter.getResourceAdapter(), address,
+                operations, CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
+                () -> presenter.reload());
     }
 
     private Operation mappingsOperation(ResourceAddress address, Form<ModelNode> form, String attribute) {
@@ -140,9 +139,11 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
 
     void saveConnectionDefinition(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name,
-                SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext, name), form,
-                changedValues, CONFIG_PROPERTIES, () -> presenter.reload());
+        ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext,
+                name);
+        mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues,
+                CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
+                () -> presenter.reload());
     }
 
     void removeConnectionDefinition(Api<NamedNode> api) {
@@ -165,9 +166,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
 
     void saveAdminObject(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        mbuiContext.po().saveWithProperties(Names.ADMIN_OBJECT, name,
-                SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name), form,
-                changedValues, CONFIG_PROPERTIES, () -> presenter.reload());
+        ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
+        mbuiContext.po().saveWithProperties(Names.ADMIN_OBJECT, name, address, changedValues, CONFIG_PROPERTIES,
+                form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(), () -> presenter.reload());
     }
 
     void removeAdminObject(Api<NamedNode> api) {

@@ -50,6 +50,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allThreadPoolsExist();
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
+    String atLeastOneIsRequired(String attribute1, String attribute2);
     String available(double value);
 
     String blacklist(String blacklist);

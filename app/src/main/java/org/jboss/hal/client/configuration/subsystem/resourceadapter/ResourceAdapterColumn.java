@@ -19,9 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -30,7 +34,13 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -40,9 +50,8 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -57,15 +66,11 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
+            final MetadataRegistry metadataRegistry,
             final Places places,
             final Resources resources) {
 
         super(new Builder<ResourceAdapter>(finder, Ids.RESOURCE_ADAPTER, Names.RESOURCE_ADAPTER)
-
-                .columnAction(columnActionFactory.add(
-                        Ids.RESOURCE_ADAPTER_ADD,
-                        Names.RESOURCE_ADAPTER,
-                        AddressTemplates.RESOURCE_ADAPTER_TEMPLATE))
 
                 .itemsProvider((context, callback) -> {
                     crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER, children -> {
@@ -80,6 +85,36 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(item -> new ResourceAdapterPreview(item, resources))
         );
+
+        addColumnAction(columnActionFactory.add(
+                Ids.RESOURCE_ADAPTER_ADD,
+                Names.RESOURCE_ADAPTER,
+                column -> {
+                    Metadata metadata = metadataRegistry.lookup(RESOURCE_ADAPTER_TEMPLATE);
+                    ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
+                            Ids.RESOURCE_ADAPTER_FORM, metadata)
+                            .addFromRequestProperties()
+                            .unboundFormItem(new NameItem())
+                            .include(ARCHIVE, MODULE)
+                            .build();
+                    form.addFormValidation(f -> {
+                        FormItem<String> archiveItem = f.getFormItem(ARCHIVE);
+                        FormItem<String> moduleItem = f.getFormItem(MODULE);
+                        String archive = archiveItem.getValue();
+                        String module = moduleItem.getValue();
+                        if (Strings.isNullOrEmpty(archive) && Strings.isNullOrEmpty(module)) {
+                            LabelBuilder labelBuilder = new LabelBuilder();
+                            return ValidationResult.invalid(resources.messages()
+                                    .atLeastOneIsRequired(labelBuilder.label(ARCHIVE), labelBuilder.label(MODULE)));
+                        }
+                        return ValidationResult.OK;
+                    });
+                    AddResourceDialog dialog = new AddResourceDialog(
+                            resources.messages().addResourceTitle(Names.RESOURCE_ADAPTER), form,
+                            (name, model) -> crud.add(Names.RESOURCE_ADAPTER, name, RESOURCE_ADAPTER_TEMPLATE, model,
+                                    (n, a) -> refresh(Ids.resourceAdapter(n))));
+                    dialog.show();
+                }));
 
         setItemRenderer(item -> new ItemDisplay<ResourceAdapter>() {
             @Override
