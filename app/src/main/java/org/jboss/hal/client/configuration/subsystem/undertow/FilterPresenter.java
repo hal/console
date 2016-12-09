@@ -33,27 +33,28 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
 /**
  * @author Harald Pehl
  */
-public class UndertowGlobalSettingsPresenter
-        extends MbuiPresenter<UndertowGlobalSettingsPresenter.MyView, UndertowGlobalSettingsPresenter.MyProxy>
+public class FilterPresenter
+        extends MbuiPresenter<FilterPresenter.MyView, FilterPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.UNDERTOW_CONFIGURATION)
-    @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<UndertowGlobalSettingsPresenter> {}
+    @Requires(FILTER_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_FILTER)
+    public interface MyProxy extends ProxyPlace<FilterPresenter> {}
 
-    public interface MyView extends MbuiView<UndertowGlobalSettingsPresenter> {
+    public interface MyView extends MbuiView<FilterPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -64,9 +65,9 @@ public class UndertowGlobalSettingsPresenter
     private final Resources resources;
 
     @Inject
-    public UndertowGlobalSettingsPresenter(final EventBus eventBus,
-            final UndertowGlobalSettingsPresenter.MyView view,
-            final UndertowGlobalSettingsPresenter.MyProxy proxy,
+    public FilterPresenter(final EventBus eventBus,
+            final FilterPresenter.MyView view,
+            final FilterPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
@@ -87,18 +88,18 @@ public class UndertowGlobalSettingsPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return UNDERTOW_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+        return FILTER_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(UNDERTOW)
-                .append(Ids.UNDERTOW_SETTINGS, Ids.UNDERTOW_GLOBAL_SETTINGS,
-                        resources.constants().settings(), resources.constants().globalSettings());
+                .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.FILTERS),
+                        resources.constants().settings(), Names.FILTERS);
     }
 
     @Override
     protected void reload() {
-        crud.read(UNDERTOW_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(FILTER_TEMPLATE, result -> getView().update(result));
     }
 }

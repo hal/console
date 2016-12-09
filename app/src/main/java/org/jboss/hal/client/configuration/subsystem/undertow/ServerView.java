@@ -52,18 +52,18 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Harald Pehl
  */
-public class UndertowServerView extends HalViewImpl implements UndertowServerPresenter.MyView {
+public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
     private final Map<Listener, ListenerElement> listener;
     private final VerticalNavigation navigation;
-    private UndertowServerPresenter presenter;
+    private ServerPresenter presenter;
 
     @Inject
     @SuppressWarnings("ConstantConditions")
-    public UndertowServerView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public ServerView(final MetadataRegistry metadataRegistry, final Resources resources) {
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServer(changedValues))
@@ -140,7 +140,7 @@ public class UndertowServerView extends HalViewImpl implements UndertowServerPre
     }
 
     @Override
-    public void setPresenter(final UndertowServerPresenter presenter) {
+    public void setPresenter(final ServerPresenter presenter) {
         this.presenter = presenter;
         this.listener.values().forEach(l -> l.setPresenter(presenter));
     }

@@ -33,11 +33,11 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
-public abstract class UndertowFilterView extends MbuiViewImpl<UndertowFilterPresenter>
-        implements UndertowFilterPresenter.MyView {
+public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
+        implements FilterPresenter.MyView {
 
-    public static UndertowFilterView create(final MbuiContext mbuiContext) {
-        return new Mbui_UndertowFilterView(mbuiContext);
+    public static FilterView create(final MbuiContext mbuiContext) {
+        return new Mbui_FilterView(mbuiContext);
     }
 
     @MbuiElement("undertow-filter-vertical-navigation") VerticalNavigation navigation;
@@ -57,7 +57,7 @@ public abstract class UndertowFilterView extends MbuiViewImpl<UndertowFilterPres
     @MbuiElement("undertow-rewrite-table") NamedNodeTable<NamedNode> rewriteTable;
     @MbuiElement("undertow-rewrite-form") Form<NamedNode> rewriteForm;
 
-    UndertowFilterView(final MbuiContext mbuiContext) {
+    FilterView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

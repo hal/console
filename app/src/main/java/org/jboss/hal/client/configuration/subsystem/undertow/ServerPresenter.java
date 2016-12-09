@@ -57,17 +57,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 /**
  * @author Harald Pehl
  */
-public class UndertowServerPresenter
-        extends ApplicationFinderPresenter<UndertowServerPresenter.MyView, UndertowServerPresenter.MyProxy>
+public class ServerPresenter
+        extends ApplicationFinderPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
     @Requires(SERVER_ADDRESS)
     @NameToken(NameTokens.UNDERTOW_SERVER)
-    public interface MyProxy extends ProxyPlace<UndertowServerPresenter> {}
+    public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<UndertowServerPresenter> {
+    public interface MyView extends HalView, HasPresenter<ServerPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -80,7 +80,7 @@ public class UndertowServerPresenter
     private String serverName;
 
     @Inject
-    public UndertowServerPresenter(
+    public ServerPresenter(
             final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,

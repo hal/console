@@ -39,12 +39,12 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 /**
  * @author Harald Pehl
  */
-class ListenerElement implements IsElement, Attachable, HasPresenter<UndertowServerPresenter> {
+class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPresenter> {
 
     private final Element root;
     private final NamedNodeTable<NamedNode> table;
     private final Form<NamedNode> form;
-    private UndertowServerPresenter presenter;
+    private ServerPresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
     ListenerElement(Listener listenerType, MetadataRegistry metadataRegistry, Resources resources) {
@@ -94,7 +94,7 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<UndertowSer
     }
 
     @Override
-    public void setPresenter(final UndertowServerPresenter presenter) {
+    public void setPresenter(final ServerPresenter presenter) {
         this.presenter = presenter;
     }
 

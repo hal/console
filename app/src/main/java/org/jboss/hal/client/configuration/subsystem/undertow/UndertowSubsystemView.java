@@ -26,16 +26,16 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class UndertowConfigurationView extends MbuiViewImpl<UndertowGlobalSettingsPresenter>
-        implements UndertowGlobalSettingsPresenter.MyView {
+public abstract class UndertowSubsystemView extends MbuiViewImpl<UndertowSubsystemPresenter>
+        implements UndertowSubsystemPresenter.MyView {
 
-    public static UndertowConfigurationView create(final MbuiContext mbuiContext) {
-        return new Mbui_UndertowConfigurationView(mbuiContext);
+    public static UndertowSubsystemView create(final MbuiContext mbuiContext) {
+        return new Mbui_UndertowSubsystemView(mbuiContext);
     }
 
-    @MbuiElement("undertow-configuration-form") Form<ModelNode> form;
+    @MbuiElement("undertow-global-settings-form") Form<ModelNode> form;
 
-    UndertowConfigurationView(final MbuiContext mbuiContext) {
+    UndertowSubsystemView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

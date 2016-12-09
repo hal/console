@@ -56,7 +56,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Harald Pehl
  */
-public class UndertowServletContainerView extends HalViewImpl implements UndertowServletContainerPresenter.MyView {
+public class ServletContainerView extends HalViewImpl implements ServletContainerPresenter.MyView {
 
     private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[]{
             JSP, WEBSOCKETS, SESSIONS, COOKIE, CRAWLER
@@ -69,11 +69,11 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
     private final Form<ModelNode> welcomeFileForm;
     private final ListItem welcomeFileItem;
     private final Map<ServletContainerSetting, FailSafeForm<ModelNode>> settings;
-    private UndertowServletContainerPresenter presenter;
+    private ServletContainerPresenter presenter;
 
     @Inject
     @SuppressWarnings("ConstantConditions")
-    public UndertowServletContainerView(final Dispatcher dispatcher,
+    public ServletContainerView(final Dispatcher dispatcher,
             final MetadataRegistry metadataRegistry,
             final Resources resources) {
         this.dispatcher = dispatcher;
@@ -180,7 +180,7 @@ public class UndertowServletContainerView extends HalViewImpl implements Underto
     }
 
     @Override
-    public void setPresenter(final UndertowServletContainerPresenter presenter) {
+    public void setPresenter(final ServletContainerPresenter presenter) {
         this.presenter = presenter;
     }
 

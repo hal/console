@@ -33,14 +33,16 @@ import org.jboss.hal.spi.AsyncColumn;
 import static java.util.Arrays.asList;
 
 /**
+ * Holds the top level items to configure the undertow subsystem.
+ *
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.UNDERTOW_SETTINGS)
-public class UndertowSettingsColumn
+public class UndertowColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
 
     @Inject
-    public UndertowSettingsColumn(final Finder finder,
+    public UndertowColumn(final Finder finder,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
             final Resources resources) {
@@ -53,7 +55,7 @@ public class UndertowSettingsColumn
                         new StaticItem.Builder(resources.constants().globalSettings())
                                 .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
                                 .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                .onPreview(new UndertowConfigurationPreview(crud, resources))
+                                .onPreview(new UndertowSubsystemPreview(crud, resources))
                                 .build(),
                         new StaticItem.Builder(Names.BUFFER_CACHES)
                                 .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
@@ -87,7 +89,7 @@ public class UndertowSettingsColumn
                     callback.onSuccess(asList(
                             new StaticItem.Builder(resources.constants().globalSettings())
                                     .action(itemActionFactory.view(NameTokens.UNDERTOW_CONFIGURATION))
-                                    .onPreview(new UndertowConfigurationPreview(crud, resources))
+                                    .onPreview(new UndertowSubsystemPreview(crud, resources))
                                     .build(),
                             new StaticItem.Builder(Names.BUFFER_CACHES)
                                     .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))

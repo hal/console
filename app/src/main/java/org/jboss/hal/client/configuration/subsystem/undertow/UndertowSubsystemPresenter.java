@@ -33,28 +33,27 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
 /**
  * @author Harald Pehl
  */
-public class UndertowHandlerPresenter         
-        extends MbuiPresenter<UndertowHandlerPresenter.MyView, UndertowHandlerPresenter.MyProxy>
+public class UndertowSubsystemPresenter
+        extends MbuiPresenter<UndertowSubsystemPresenter.MyView, UndertowSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(HANDLER_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_HANDLER)
-    public interface MyProxy extends ProxyPlace<UndertowHandlerPresenter> {}
+    @NameToken(NameTokens.UNDERTOW_CONFIGURATION)
+    @Requires(value = UNDERTOW_SUBSYSTEM_ADDRESS, recursive = false)
+    public interface MyProxy extends ProxyPlace<UndertowSubsystemPresenter> {}
 
-    public interface MyView extends MbuiView<UndertowHandlerPresenter> {
+    public interface MyView extends MbuiView<UndertowSubsystemPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -65,9 +64,9 @@ public class UndertowHandlerPresenter
     private final Resources resources;
 
     @Inject
-    public UndertowHandlerPresenter(final EventBus eventBus,
-            final UndertowHandlerPresenter.MyView view,
-            final UndertowHandlerPresenter.MyProxy proxy,
+    public UndertowSubsystemPresenter(final EventBus eventBus,
+            final UndertowSubsystemPresenter.MyView view,
+            final UndertowSubsystemPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
@@ -88,18 +87,18 @@ public class UndertowHandlerPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return HANDLER_TEMPLATE.resolve(statementContext);
+        return UNDERTOW_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(UNDERTOW)
-                .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.HANDLERS),
-                        resources.constants().settings(), Names.HANDLERS);
+                .append(Ids.UNDERTOW_SETTINGS, Ids.UNDERTOW_GLOBAL_SETTINGS,
+                        resources.constants().settings(), resources.constants().globalSettings());
     }
 
     @Override
     protected void reload() {
-        crud.readRecursive(HANDLER_TEMPLATE, result -> getView().update(result));
+        crud.read(UNDERTOW_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 }

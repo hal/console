@@ -37,10 +37,10 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Harald Pehl
  */
-class UndertowServletContainerPreview extends PreviewContent<NamedNode> {
+class ServletContainerPreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    UndertowServletContainerPreview(NamedNode servletContainer) {
+    ServletContainerPreview(NamedNode servletContainer) {
         super(servletContainer.getName());
 
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -55,7 +55,7 @@ class UndertowServletContainerPreview extends PreviewContent<NamedNode> {
                     Property property = iterator.next();
                     builder.appendEscaped(property.getName())
                             .appendEscaped(" ")
-                            .appendHtmlConstant("&rarr;")
+                            .appendHtmlConstant("&rArr;")
                             .appendEscaped(" ")
                             .appendEscaped(property.getValue().get(VALUE).asString());
                     if (iterator.hasNext()) {

@@ -25,10 +25,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 /**
  * @author Harald Pehl
  */
-class UndertowServerPreview extends PreviewContent<NamedNode> {
+class ServerPreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    UndertowServerPreview(NamedNode server) {
+    ServerPreview(NamedNode server) {
         super(server.getName());
 
         previewBuilder()

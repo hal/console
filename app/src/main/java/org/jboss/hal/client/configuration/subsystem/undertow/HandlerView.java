@@ -33,11 +33,11 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
-public abstract class UndertowHandlerView extends MbuiViewImpl<UndertowHandlerPresenter>
-        implements UndertowHandlerPresenter.MyView {
+public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
+        implements HandlerPresenter.MyView {
 
-    public static UndertowHandlerView create(final MbuiContext mbuiContext) {
-        return new Mbui_UndertowHandlerView(mbuiContext);
+    public static HandlerView create(final MbuiContext mbuiContext) {
+        return new Mbui_HandlerView(mbuiContext);
     }
 
     @MbuiElement("undertow-handler-vertical-navigation") VerticalNavigation navigation;
@@ -46,7 +46,7 @@ public abstract class UndertowHandlerView extends MbuiViewImpl<UndertowHandlerPr
     @MbuiElement("undertow-reverse-proxy-table") NamedNodeTable<NamedNode> reverseProxyTable;
     @MbuiElement("undertow-reverse-proxy-form") Form<NamedNode> reverseProxyForm;
 
-    UndertowHandlerView(final MbuiContext mbuiContext) {
+    HandlerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

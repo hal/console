@@ -29,13 +29,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 /**
  * @author Harald Pehl
  */
-class UndertowConfigurationPreview extends PreviewContent<StaticItem> {
+class UndertowSubsystemPreview extends PreviewContent<StaticItem> {
 
     private final CrudOperations crud;
     private final PreviewAttributes<ModelNode> attributes;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    UndertowConfigurationPreview(CrudOperations crud, Resources resources) {
+    UndertowSubsystemPreview(CrudOperations crud, Resources resources) {
         super(resources.constants().globalSettings());
         this.crud = crud;
         this.attributes = new PreviewAttributes<>(new ModelNode(),

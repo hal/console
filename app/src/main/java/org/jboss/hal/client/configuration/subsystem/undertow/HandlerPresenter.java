@@ -37,24 +37,24 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
 /**
  * @author Harald Pehl
  */
-public class UndertowFilterPresenter
-        extends MbuiPresenter<UndertowFilterPresenter.MyView, UndertowFilterPresenter.MyProxy>
+public class HandlerPresenter
+        extends MbuiPresenter<HandlerPresenter.MyView, HandlerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(FILTER_ADDRESS)
-    @NameToken(NameTokens.UNDERTOW_FILTER)
-    public interface MyProxy extends ProxyPlace<UndertowFilterPresenter> {}
+    @Requires(HANDLER_ADDRESS)
+    @NameToken(NameTokens.UNDERTOW_HANDLER)
+    public interface MyProxy extends ProxyPlace<HandlerPresenter> {}
 
-    public interface MyView extends MbuiView<UndertowFilterPresenter> {
+    public interface MyView extends MbuiView<HandlerPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -65,9 +65,9 @@ public class UndertowFilterPresenter
     private final Resources resources;
 
     @Inject
-    public UndertowFilterPresenter(final EventBus eventBus,
-            final UndertowFilterPresenter.MyView view,
-            final UndertowFilterPresenter.MyProxy proxy,
+    public HandlerPresenter(final EventBus eventBus,
+            final HandlerPresenter.MyView view,
+            final HandlerPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
@@ -88,18 +88,18 @@ public class UndertowFilterPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return FILTER_TEMPLATE.resolve(statementContext);
+        return HANDLER_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(UNDERTOW)
-                .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.FILTERS),
-                        resources.constants().settings(), Names.FILTERS);
+                .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.HANDLERS),
+                        resources.constants().settings(), Names.HANDLERS);
     }
 
     @Override
     protected void reload() {
-        crud.readRecursive(FILTER_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(HANDLER_TEMPLATE, result -> getView().update(result));
     }
 }

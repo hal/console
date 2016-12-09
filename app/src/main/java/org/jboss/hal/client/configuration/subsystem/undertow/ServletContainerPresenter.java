@@ -52,18 +52,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class UndertowServletContainerPresenter
+public class ServletContainerPresenter
         extends
-        ApplicationFinderPresenter<UndertowServletContainerPresenter.MyView, UndertowServletContainerPresenter.MyProxy>
+        ApplicationFinderPresenter<ServletContainerPresenter.MyView, ServletContainerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
     @Requires(SERVLET_CONTAINER_ADDRESS)
     @NameToken(NameTokens.UNDERTOW_SERVLET_CONTAINER)
-    public interface MyProxy extends ProxyPlace<UndertowServletContainerPresenter> {}
+    public interface MyProxy extends ProxyPlace<ServletContainerPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<UndertowServletContainerPresenter> {
+    public interface MyView extends HalView, HasPresenter<ServletContainerPresenter> {
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -77,7 +77,7 @@ public class UndertowServletContainerPresenter
     private String servletContainerName;
 
     @Inject
-    public UndertowServletContainerPresenter(
+    public ServletContainerPresenter(
             final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
