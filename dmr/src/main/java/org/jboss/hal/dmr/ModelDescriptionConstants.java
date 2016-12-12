@@ -64,6 +64,7 @@ public interface ModelDescriptionConstants {
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
     String BUFFER_CACHE = "buffer-cache";
+    String BUFFER_POOL = "buffer-pool";
 
     String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
@@ -85,6 +86,7 @@ public interface ModelDescriptionConstants {
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEFAULT_HOST = "default-host";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
@@ -124,6 +126,7 @@ public interface ModelDescriptionConstants {
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
+    String HEADER_NAME = "header-name";
     String HOST = "host";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -319,6 +322,7 @@ public interface ModelDescriptionConstants {
     String WHOAMI = "whoami";
     String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
     String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
+    String WORKER = "worker";
     String WORKMANAGER = "workmanager";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 

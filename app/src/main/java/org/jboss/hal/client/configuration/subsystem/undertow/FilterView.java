@@ -15,16 +15,24 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.ResponseHeader;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HEADER_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -59,6 +67,14 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
 
     FilterView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    void init() {
+        List<String> responseHeader = Arrays.stream(ResponseHeader.values())
+                .map(ResponseHeader::header)
+                .collect(toList());
+        responseHeaderForm.getFormItem(HEADER_NAME).registerSuggestHandler(new StaticAutoComplete(responseHeader));
     }
 
     @Override

@@ -15,30 +15,51 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.ResponseHeader;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.RESPONSE_HEADER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HEADER_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
 /**
@@ -60,7 +81,9 @@ public class FilterPresenter
     // @formatter:on
 
     private final CrudOperations crud;
+    private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
 
@@ -70,12 +93,16 @@ public class FilterPresenter
             final FilterPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
+            final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
+        this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
     }
@@ -101,5 +128,50 @@ public class FilterPresenter
     @Override
     protected void reload() {
         crud.readRecursive(FILTER_TEMPLATE, result -> getView().update(result));
+    }
+
+    void addResponseHeader() {
+        Metadata metadata = metadataRegistry.lookup(RESPONSE_HEADER_TEMPLATE);
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_RESPONSE_HEADER_ADD, metadata)
+                .addFromRequestProperties()
+                .build();
+
+        List<String> responseHeader = Arrays.stream(ResponseHeader.values())
+                .map(ResponseHeader::header)
+                .collect(toList());
+        form.getFormItem(HEADER_NAME).registerSuggestHandler(new StaticAutoComplete(responseHeader));
+
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.RESPONSE_HEADER), form,
+                (name, model) -> {
+                    //noinspection ConstantConditions
+                    SafeHtml successMessage = resources.messages()
+                            .addResourceSuccess(Names.RESPONSE_HEADER, model.get(HEADER_NAME).asString());
+                    crud.add(name, RESPONSE_HEADER_TEMPLATE, model, successMessage, (n, a) -> reload());
+                });
+        dialog.show();
+    }
+
+    void saveResponseHeader(Form<NamedNode> form, Map<String, Object> changedValues) {
+        SafeHtml successMessage = resources.messages()
+                .modifyResourceSuccess(Names.RESPONSE_HEADER, form.getModel().get(HEADER_NAME).asString());
+        crud.save(form.getModel().getName(), RESPONSE_HEADER_TEMPLATE, changedValues, successMessage, this::reload);
+    }
+
+    void removeResponseHeader(NamedNode responseHeader) {
+        ResourceAddress address = RESPONSE_HEADER_TEMPLATE.resolve(statementContext, responseHeader.getName());
+        String name = responseHeader.get(HEADER_NAME).asString();
+
+        DialogFactory.showConfirmation(
+                resources.messages().removeResourceConfirmationTitle(Names.RESPONSE_HEADER),
+                resources.messages().removeResourceConfirmationQuestion(name),
+                () -> {
+                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(getEventBus(), Message.success(
+                                resources.messages().removeResourceSuccess(Names.RESPONSE_HEADER, name)));
+                        reload();
+                    });
+                });
     }
 }

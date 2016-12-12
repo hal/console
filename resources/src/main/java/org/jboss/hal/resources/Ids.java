@@ -355,6 +355,7 @@ public interface Ids {
     String UNDERTOW_HOST_ENTRY = build(UNDERTOW_HOST, ENTRY_SUFFIX);
     String UNDERTOW_HOST_FORM = build(UNDERTOW_HOST, FORM_SUFFIX);
     String UNDERTOW_HOST_TABLE = build(UNDERTOW_HOST, TABLE_SUFFIX);
+    String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVER_ADD = build(UNDERTOW_SERVER, ADD_SUFFIX);
     String UNDERTOW_SERVER_AJP_LISTENER = build(UNDERTOW_SERVER, "ajp-listener");

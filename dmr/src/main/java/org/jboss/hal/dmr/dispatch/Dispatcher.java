@@ -55,6 +55,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /**
  * The dispatcher executes operations / uploads against the management endpoint.
@@ -110,9 +113,6 @@ public class Dispatcher implements RecordingHandler {
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
 
-    private static final String HEADER_ACCEPT = "Accept";
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
@@ -228,8 +228,8 @@ public class Dispatcher implements RecordingHandler {
 
         XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
                 exceptionCallback);
-        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         if (method == GET) {
             xhr.send();
         } else {
@@ -311,8 +311,8 @@ public class Dispatcher implements RecordingHandler {
                 }
             }
         });
-        request.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-        request.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        request.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+        request.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         request.send();
         // Downloads are not supported in macros!
     }
@@ -370,7 +370,7 @@ public class Dispatcher implements RecordingHandler {
             if (readyState == 4) {
                 int status = xhr.getStatus();
                 String responseText = xhr.getResponseText();
-                String contentType = xhr.getResponseHeader(HEADER_CONTENT_TYPE);
+                String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
 
                 if (status == 200 || status == 500) {
                     ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
@@ -409,7 +409,7 @@ public class Dispatcher implements RecordingHandler {
         xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
                 .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
         xhr.open(method.name(), url, true);
-        xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+        xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         xhr.setWithCredentials(true);
 
         return xhr;

@@ -106,6 +106,7 @@ public interface Names {
     String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
+    String RESPONSE_HEADER = "Response Header";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SECOND_LEVEL_CACHE = "Second Level Cache";

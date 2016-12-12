@@ -24,7 +24,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
 /**
  * @author Harald Pehl
@@ -39,12 +38,9 @@ class UndertowSubsystemPreview extends PreviewContent<StaticItem> {
         super(resources.constants().globalSettings());
         this.crud = crud;
         this.attributes = new PreviewAttributes<>(new ModelNode(),
-                asList("default-security-domain",
-                        "default-server",
+                asList("default-server",
                         "default-servlet-container",
-                        "default-virtual-host",
-                        "instance-id",
-                        STATISTICS_ENABLED))
+                        "default-virtual-host"))
                 .end();
 
         previewBuilder().addAll(attributes);

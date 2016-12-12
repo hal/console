@@ -112,6 +112,7 @@
                 </table>
                 <form id="undertow-mod-cluster-form" title="Mod Cluster" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}"/>
+                <!-- TODO Add attributes groups. Add suggest handler for socket bindings and worker -->
             </metadata>
         </item>
 
@@ -142,17 +143,18 @@
                 <table id="undertow-response-header-table" title="Response Header"
                        form-ref="undertow-response-header-form">
                     <actions>
-                        <action handler-ref="add-resource"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addResponseHeader()}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeResponseHeader(api.selectedRow())}}" scope="selected"/>
                     </actions>
                     <columns>
-                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="name" value='{{row.get("header-name").asString()}}'/>
                         <column name="value" value='{{row.get("header-value").asString()}}'/>
                     </columns>
                 </table>
-                <form id="undertow-response-header-form" title="Response Header" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                <form id="undertow-response-header-form" title="Response Header"
+                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}"/>
             </metadata>
         </item>
 

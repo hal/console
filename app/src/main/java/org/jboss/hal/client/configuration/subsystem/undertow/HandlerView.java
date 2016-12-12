@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;

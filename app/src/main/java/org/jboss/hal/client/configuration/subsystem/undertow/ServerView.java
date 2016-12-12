@@ -24,12 +24,14 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -39,11 +41,15 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HOST_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.AJP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -54,6 +60,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
+    private final Dispatcher dispatcher;
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
@@ -63,7 +70,9 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     @Inject
     @SuppressWarnings("ConstantConditions")
-    public ServerView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry, final Resources resources) {
+        this.dispatcher = dispatcher;
+
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServer(changedValues))
@@ -137,6 +146,14 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     public void attach() {
         super.attach();
         hostTable.bindForm(hostForm);
+
+        // register the suggest handler here, cause some of them need a valid presenter reference
+        configurationForm.getFormItem(DEFAULT_HOST).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
+                        SELECTED_SERVER_TEMPLATE.append(HOST + "=*")));
+        configurationForm.getFormItem(SERVLET_CONTAINER).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(), SERVLET_CONTAINER_TEMPLATE));
+
     }
 
     @Override

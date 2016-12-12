@@ -29,6 +29,7 @@ interface AddressTemplates {
     String FILTER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=filter";
     String HANDLER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=handler";
     String HOST_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=*/host=*";
+    String RESPONSE_HEADER_ADDRESS = FILTER_ADDRESS + "/response-header=*";
     String SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=*";
     String SELECTED_SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
@@ -38,6 +39,7 @@ interface AddressTemplates {
     AddressTemplate FILTER_TEMPLATE = AddressTemplate.of(FILTER_ADDRESS);
     AddressTemplate HANDLER_TEMPLATE = AddressTemplate.of(HANDLER_ADDRESS);
     AddressTemplate HOST_TEMPLATE = AddressTemplate.of(HOST_ADDRESS);
+    AddressTemplate RESPONSE_HEADER_TEMPLATE = AddressTemplate.of(RESPONSE_HEADER_ADDRESS);
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
     AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
     AddressTemplate SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SERVLET_CONTAINER_ADDRESS);

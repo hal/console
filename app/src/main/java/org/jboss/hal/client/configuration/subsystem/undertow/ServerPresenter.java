@@ -207,4 +207,10 @@ public class ServerPresenter
                 .resolve(statementContext);
         crud.remove(listenerType.type, name, address, this::reload);
     }
+
+    // ------------------------------------------------------ getter
+
+    StatementContext getStatementContext() {
+        return statementContext;
+    }
 }

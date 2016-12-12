@@ -35,6 +35,8 @@ public class LabelBuilder {
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ee", "EE")
             .put("ejb3", "EJB3")
+            .put("http", "HTTP")
+            .put("http2", "HTTP/2")
             .put("jaxrs", "JAX-RS")
             .put("jca", "JCA")
             .put("jdr", "JDA")

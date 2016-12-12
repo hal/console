@@ -190,7 +190,24 @@ public class CrudOperations {
      */
     public void add(final String type, final String name, final AddressTemplate template,
             @Nullable final ModelNode payload, final AddCallback callback) {
-        add(type, name, template.resolve(statementContext, name), payload, callback);
+        add(name, template.resolve(statementContext, name), payload,
+                resources.messages().addResourceSuccess(type, name), callback);
+    }
+
+    /**
+     * Executes an add operation using the specified name and payload. After the resource has been added the specified
+     * success message is fired and the specified callback is executed.
+     *
+     * @param name           the resource name which is part of the add operation
+     * @param template       the address template which is resolved against the current statement context and the
+     *                       resource name to get the resource address for the add operation
+     * @param payload        the optional payload of the add operation (may be null or undefined)
+     * @param successMessage the success message fired after adding the resource
+     * @param callback       the callback executed after adding the resource
+     */
+    public void add(final String name, final AddressTemplate template, @Nullable final ModelNode payload,
+            final SafeHtml successMessage, final AddCallback callback) {
+        add(name, template.resolve(statementContext, name), payload, successMessage, callback);
     }
 
     /**
@@ -205,11 +222,26 @@ public class CrudOperations {
      */
     public void add(final String type, final String name, final ResourceAddress address,
             @Nullable final ModelNode payload, final AddCallback callback) {
+        add(name, address, payload, resources.messages().addResourceSuccess(type, name), callback);
+    }
+
+    /**
+     * Executes an add operation using the specified name and payload. After the resource has been added the specified
+     * success message is fired and the specified callback is executed.
+     *
+     * @param name           the resource name which is part of the add operation
+     * @param address        the fq address for the add operation
+     * @param payload        the optional payload of the add operation (may be null or undefined)
+     * @param successMessage the success message fired after adding the resource
+     * @param callback       the callback executed after adding the resource
+     */
+    public void add(final String name, final ResourceAddress address,
+            @Nullable final ModelNode payload, final SafeHtml successMessage, final AddCallback callback) {
         Operation operation = new Operation.Builder(ADD, address)
                 .payload(payload)
                 .build();
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus, Message.success(resources.messages().addResourceSuccess(type, name)));
+            MessageEvent.fire(eventBus, Message.success(successMessage));
             callback.execute(name, address);
         });
     }

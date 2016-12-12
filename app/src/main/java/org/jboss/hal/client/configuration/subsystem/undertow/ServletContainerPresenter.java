@@ -162,4 +162,9 @@ public class ServletContainerPresenter
         crud.addSingleton(settingType.type, address, null, (n, a) -> reload());
     }
 
+    // ------------------------------------------------------ getter
+
+    StatementContext getStatementContext() {
+        return statementContext;
+    }
 }

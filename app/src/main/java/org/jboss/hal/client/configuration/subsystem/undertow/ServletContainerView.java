@@ -26,15 +26,18 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -46,9 +49,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.ServletContainerSetting.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MIME_MAPPING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WELCOME_FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -59,7 +60,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class ServletContainerView extends HalViewImpl implements ServletContainerPresenter.MyView {
 
     private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[]{
-            JSP, WEBSOCKETS, SESSIONS, COOKIE, CRAWLER
+            ServletContainerSetting.JSP, ServletContainerSetting.WEBSOCKETS, SESSIONS, COOKIE, CRAWLER
     };
 
     private final Dispatcher dispatcher;
@@ -169,8 +170,16 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
     @Override
     public void attach() {
-        configurationForm.attach();
         super.attach();
+        configurationForm.attach();
+        settings.get(ServletContainerSetting.WEBSOCKETS).getFormItem(BUFFER_POOL).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
+                        AddressTemplate.of("/{selected.profile}/subsystem=io/buffer-pool=*")));
+        settings.get(ServletContainerSetting.WEBSOCKETS).getFormItem(WORKER).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
+                        AddressTemplate.of("/{selected.profile}/subsystem=io/worker=*")));
+        settings.get(SESSIONS).getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+
     }
 
     @Override
