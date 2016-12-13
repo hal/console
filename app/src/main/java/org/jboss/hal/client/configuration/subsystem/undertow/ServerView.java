@@ -70,6 +70,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final FailSafeForm<ModelNode> singleSignOnForm;
     private final NamedNodeTable<NamedNode> filterRefTable;
     private final Form<NamedNode> filterRefForm;
+    private final NamedNodeTable<NamedNode> locationTable;
+    private final Form<NamedNode> locationForm;
     private final Pages hostPages;
     private final Map<Listener, ListenerElement> listener;
     private final VerticalNavigation navigation;
@@ -80,6 +82,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry, final Resources resources) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
+
+        // ------------------------------------------------------ server configuration
 
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
@@ -95,6 +99,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             .end()
         .build();
         // @formatter:on
+
+        // ------------------------------------------------------ hosts
 
         Metadata hostMetadata = metadataRegistry.lookup(HOST_TEMPLATE);
         Options<NamedNode> hostOptions = new NamedNodeTable.Builder<>(hostMetadata)
@@ -144,6 +150,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         .build();
         // @formatter:on
 
+        // ------------------------------------------------------ host filter refs
+
         Metadata filterRefMetadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
         Options<NamedNode> filterRefOptions = new NamedNodeTable.Builder<>(filterRefMetadata)
                 .button(resources.constants().add(), (event, api) -> presenter.addFilterRef())
@@ -169,9 +177,40 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         .build();
         // @formatter:on
 
+        // ------------------------------------------------------ host locations
+
+        Metadata locationMetadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
+        Options<NamedNode> locationOptions = new NamedNodeTable.Builder<>(locationMetadata)
+                .button(resources.constants().add(), (event, api) -> presenter.addLocation())
+                .button(resources.constants().remove(), SELECTED,
+                        (event, api) -> presenter.removeLocation(api.selectedRow().getName()))
+                .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
+                .column(HANDLER)
+                .build();
+        locationTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_LOCATION_TABLE, locationOptions);
+
+        locationForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FORM, locationMetadata)
+                .onSave((form, changedValues) -> presenter.saveLocation(form, changedValues))
+                .build();
+
+        // @formatter:off
+        Element locationSection = new Elements.Builder()
+            .section()
+                .h(1).textContent(Names.LOCATIONS).end()
+                .p().textContent(locationMetadata.getDescription().getDescription()).end()
+                .add(locationTable)
+                .add(locationForm)
+            .end()
+        .build();
+        // @formatter:on
+
+        // ------------------------------------------------------ pages, listener and navigation 
+
         hostPages = new Pages(Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_FILTER_REF_PAGE,
                 () -> presenter.hostSegment(), () -> Names.FILTERS, filterRefSection);
+        hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_LOCATION_PAGE,
+                () -> presenter.hostSegment(), () -> Names.LOCATIONS, locationSection);
 
         listener = new EnumMap<>(Listener.class);
         listener.put(AJP, new ListenerElement(AJP, metadataRegistry, resources));
@@ -194,6 +233,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 configurationForm,
                 hostTable, hostForm,
                 filterRefTable, filterRefForm,
+                locationTable, locationForm,
                 accessLogForm, singleSignOnForm);
         listener.values().forEach(element -> registerAttachable(element));
 
@@ -233,20 +273,22 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         });
 
         filterRefTable.bindForm(filterRefForm);
-
-        // register the suggest handler here, cause some of them need a valid presenter reference
-        configurationForm.getFormItem(DEFAULT_HOST).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
-                        SELECTED_SERVER_TEMPLATE.append(HOST + "=*")));
-        configurationForm.getFormItem(SERVLET_CONTAINER).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(), SERVLET_CONTAINER_TEMPLATE));
-
+        locationTable.bindForm(locationForm);
     }
 
     @Override
     public void setPresenter(final ServerPresenter presenter) {
         this.presenter = presenter;
         this.listener.values().forEach(l -> l.setPresenter(presenter));
+
+        // register suggest handlers here; they need a valid presenter reference (which is n/a in constructor)
+        configurationForm.getFormItem(DEFAULT_HOST).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(),
+                        SELECTED_SERVER_TEMPLATE.append(HOST + "=*")));
+        configurationForm.getFormItem(SERVLET_CONTAINER).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(), SERVLET_CONTAINER_TEMPLATE));
+        locationForm.getFormItem(HANDLER).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, presenter.getStatementContext(), HANDLER_SUGGESTIONS));
     }
 
     @Override
@@ -266,5 +308,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         filterRefForm.clear();
         filterRefTable.update(filters);
         hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
+    }
+
+    @Override
+    public void updateLocation(final List<NamedNode> locations) {
+        locationForm.clear();
+        locationTable.update(locations);
+        hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
     }
 }

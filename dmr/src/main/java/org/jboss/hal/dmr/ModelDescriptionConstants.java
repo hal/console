@@ -163,6 +163,7 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
+    String LOCATION = "location";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
     String LOGIN_MODULE = "login-module";

@@ -76,6 +76,7 @@ public class ServerPresenter
     public interface MyView extends HalView, HasPresenter<ServerPresenter> {
         void update(ModelNode payload);
         void updateFilterRef(List<NamedNode> filters);
+        void updateLocation(List<NamedNode> locations);
     }
     // @formatter:on
 
@@ -255,7 +256,46 @@ public class ServerPresenter
     // ------------------------------------------------------ host location
 
     void showHostLocation(final NamedNode host) {
+        selectHost(host.getName());
+        getView().updateLocation(asNamedNodes(failSafePropertyList(host, LOCATION)));
+    }
 
+    void addLocation() {
+        Metadata metadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_HOST_LOCATION_ADD, metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addFromRequestProperties()
+                .build();
+        form.getFormItem(HANDLER)
+                .registerSuggestHandler(
+                        new ReadChildrenAutoComplete(dispatcher, statementContext, HANDLER_SUGGESTIONS));
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.LOCATION), form,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*")
+                            .resolve(statementContext, name);
+                    crud.add(Names.LOCATION, name, address, model, (n, a) -> reloadLocation());
+                });
+        dialog.show();
+    }
+
+    void saveLocation(final Form<NamedNode> form, final Map<String, Object> changedValues) {
+        String name = form.getModel().getName();
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*").resolve(statementContext, name);
+        crud.save(Names.LOCATION, name, address, changedValues, this::reloadLocation);
+    }
+
+    void removeLocation(final String name) {
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*").resolve(statementContext, name);
+        crud.remove(Names.FILTER, name, address, this::reloadLocation);
+    }
+
+    private void reloadLocation() {
+        reload(modelNode -> {
+            getView().update(modelNode);
+            getView().updateLocation(
+                    asNamedNodes(failSafePropertyList(modelNode, String.join("/", HOST, hostName, LOCATION))));
+        });
     }
 
     // ------------------------------------------------------ listener

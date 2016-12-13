@@ -77,6 +77,7 @@ public interface Names {
     String JSP = "JSP";
     String LISTENER = "Listener";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
+    String LOCATION = "Location";
     String LOCATIONS = "Locations";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";

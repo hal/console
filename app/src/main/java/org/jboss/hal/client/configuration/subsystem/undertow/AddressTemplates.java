@@ -36,6 +36,7 @@ interface AddressTemplates {
     String SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=*";
     String HOST_ADDRESS = SERVER_ADDRESS + "/host=*";
     String FILTER_REF_ADDRESS = HOST_ADDRESS + "/filter-ref=*";
+    String LOCATION_ADDRESS = HOST_ADDRESS + "/location=*";
 
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
 
@@ -51,6 +52,7 @@ interface AddressTemplates {
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
     AddressTemplate HOST_TEMPLATE = AddressTemplate.of(HOST_ADDRESS);
     AddressTemplate FILTER_REF_TEMPLATE = AddressTemplate.of(FILTER_REF_ADDRESS);
+    AddressTemplate LOCATION_TEMPLATE = AddressTemplate.of(LOCATION_ADDRESS);
 
     AddressTemplate SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SERVLET_CONTAINER_ADDRESS);
 
@@ -67,5 +69,10 @@ interface AddressTemplates {
             FILTER_TEMPLATE.append("request-limit=*"),
             FILTER_TEMPLATE.append("response-header=*"),
             FILTER_TEMPLATE.append("rewrite=*")
+    );
+
+    List<AddressTemplate> HANDLER_SUGGESTIONS = asList(
+            HANDLER_TEMPLATE.append("file=*"),
+            HANDLER_TEMPLATE.append("reverse-proxy=*")
     );
 }
