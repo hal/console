@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  */
 public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
-    static final String SELECTION_KEY = "selection";
+    public static final String SELECTION_KEY = "selection";
     public static final String SELECTION_EXPRESSION = "{" + SELECTION_KEY + "}";
 
     public SelectionAwareStatementContext(final StatementContext delegate, final Supplier<String> selection) {

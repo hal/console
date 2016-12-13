@@ -46,6 +46,7 @@ public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "access-control";
+    String ACCESS_LOG = "access-log";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
     String ADD = "add";
@@ -117,6 +118,7 @@ public interface ModelDescriptionConstants {
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
     String FILE = "file";
+    String FILTER_REF = "filter-ref";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
@@ -204,6 +206,7 @@ public interface ModelDescriptionConstants {
     String PORT = "port";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
+    String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
     String PRODUCT_VERSION = "product-version";
@@ -278,6 +281,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SHUTDOWN = "shutdown";
+    String SINGLE_SIGN_ON = "single-sign-on";
     String SMTP = "smtp";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";

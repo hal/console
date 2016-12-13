@@ -23,6 +23,7 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String ACCESS_LOG = "Access Log";
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
@@ -50,6 +51,7 @@ public interface Names {
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
+    String FILTER = "Filter";
     String FILTERS = "Filters";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
@@ -75,6 +77,7 @@ public interface Names {
     String JSP = "JSP";
     String LISTENER = "Listener";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
+    String LOCATIONS = "Locations";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
@@ -116,6 +119,7 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SERVLET_CONTAINER = "Servlet Container";
     String SESSIONS = "Sessions";
+    String SINGLE_SIGN_ON = "Single Sign On";
     String SHORT_RUNNING = "short running";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";

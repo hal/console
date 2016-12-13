@@ -15,8 +15,11 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
+import java.util.List;
+
 import org.jboss.hal.meta.AddressTemplate;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
 /**
@@ -27,21 +30,42 @@ interface AddressTemplates {
     String UNDERTOW_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=undertow";
     String BUFFER_CACHE_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/buffer-cache=*";
     String FILTER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=filter";
-    String HANDLER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=handler";
-    String HOST_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=*/host=*";
     String RESPONSE_HEADER_ADDRESS = FILTER_ADDRESS + "/response-header=*";
+    String HANDLER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=handler";
+
     String SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=*";
-    String SELECTED_SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
+    String HOST_ADDRESS = SERVER_ADDRESS + "/host=*";
+    String FILTER_REF_ADDRESS = HOST_ADDRESS + "/filter-ref=*";
+
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
+
+    String SELECTED_SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
+    String SELECTED_HOST_ADDRESS = SELECTED_SERVER_ADDRESS + "/host={host}";
     String SELECTED_SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=" + SELECTION_EXPRESSION;
 
     AddressTemplate UNDERTOW_SUBSYSTEM_TEMPLATE = AddressTemplate.of(UNDERTOW_SUBSYSTEM_ADDRESS);
     AddressTemplate FILTER_TEMPLATE = AddressTemplate.of(FILTER_ADDRESS);
-    AddressTemplate HANDLER_TEMPLATE = AddressTemplate.of(HANDLER_ADDRESS);
-    AddressTemplate HOST_TEMPLATE = AddressTemplate.of(HOST_ADDRESS);
     AddressTemplate RESPONSE_HEADER_TEMPLATE = AddressTemplate.of(RESPONSE_HEADER_ADDRESS);
+    AddressTemplate HANDLER_TEMPLATE = AddressTemplate.of(HANDLER_ADDRESS);
+
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
-    AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
+    AddressTemplate HOST_TEMPLATE = AddressTemplate.of(HOST_ADDRESS);
+    AddressTemplate FILTER_REF_TEMPLATE = AddressTemplate.of(FILTER_REF_ADDRESS);
+
     AddressTemplate SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SERVLET_CONTAINER_ADDRESS);
+
+    AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
+    AddressTemplate SELECTED_HOST_TEMPLATE = AddressTemplate.of(SELECTED_HOST_ADDRESS);
     AddressTemplate SELECTED_SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SELECTED_SERVLET_CONTAINER_ADDRESS);
+
+    List<AddressTemplate> FILTER_SUGGESTIONS = asList(
+            FILTER_TEMPLATE.append("custom-filter=*"),
+            FILTER_TEMPLATE.append("error-page=*"),
+            FILTER_TEMPLATE.append("expression-filter=*"),
+            FILTER_TEMPLATE.append("gzip=*"),
+            FILTER_TEMPLATE.append("mod-cluster=*"),
+            FILTER_TEMPLATE.append("request-limit=*"),
+            FILTER_TEMPLATE.append("response-header=*"),
+            FILTER_TEMPLATE.append("rewrite=*")
+    );
 }

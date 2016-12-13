@@ -302,6 +302,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productVersion();
     String providedBy();
 
+    String references();
     String refresh();
     String releaseName();
     String releaseVersion();

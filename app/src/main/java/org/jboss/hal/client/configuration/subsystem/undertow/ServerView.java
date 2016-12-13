@@ -23,10 +23,14 @@ import javax.inject.Inject;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.Pages;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -40,18 +44,15 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HOST_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.AJP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -61,17 +62,24 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     private final Dispatcher dispatcher;
+    private final MetadataRegistry metadataRegistry;
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
+    private final FailSafeForm<ModelNode> accessLogForm;
+    private final FailSafeForm<ModelNode> singleSignOnForm;
+    private final NamedNodeTable<NamedNode> filterRefTable;
+    private final Form<NamedNode> filterRefForm;
+    private final Pages hostPages;
     private final Map<Listener, ListenerElement> listener;
     private final VerticalNavigation navigation;
     private ServerPresenter presenter;
 
     @Inject
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     public ServerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry, final Resources resources) {
         this.dispatcher = dispatcher;
+        this.metadataRegistry = metadataRegistry;
 
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
@@ -94,12 +102,36 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(resources.constants().remove(), SELECTED,
                         (event, api) -> presenter.removeHost(api.selectedRow().getName()))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.UNDERTOW_HOST_ACTION_COLUMN,
+                        resources.constants().references(),
+                        (cell, t, row, meta) -> {
+                            String id1 = Ids.uniqueId();
+                            String id2 = Ids.uniqueId();
+                            columnActions.add(id1, row1 -> presenter.showFilterRef(row1));
+                            columnActions.add(id2, row2 -> presenter.showHostLocation(row2));
+                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.FILTERS + "</a> / " +
+                                    "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.LOCATIONS + "</a>";
+                        })
+                        .orderable(false)
+                        .searchable(false)
+                        .width("13em")
+                        .build())
                 .build();
         hostTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_TABLE, hostOptions);
 
-        hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_FORM, hostMetadata)
+        hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)
                 .onSave((form, changedValues) -> presenter.saveHost(form.getModel().getName(), changedValues))
                 .build();
+
+        accessLogForm = hostSetting(HostSetting.ACCESS_LOG);
+        singleSignOnForm = hostSetting(HostSetting.SINGLE_SIGN_ON);
+
+        Tabs tabs = new Tabs();
+        tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
+        tabs.add(Ids.build(HostSetting.ACCESS_LOG.baseId, Ids.TAB_SUFFIX), HostSetting.ACCESS_LOG.type,
+                accessLogForm.asElement());
+        tabs.add(Ids.build(HostSetting.SINGLE_SIGN_ON.baseId, Ids.TAB_SUFFIX), HostSetting.SINGLE_SIGN_ON.type,
+                singleSignOnForm.asElement());
 
         // @formatter:off
         Element hostSection = new Elements.Builder()
@@ -107,10 +139,39 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .h(1).textContent(Names.HOSTS).end()
                 .p().textContent(hostMetadata.getDescription().getDescription()).end()
                 .add(hostTable)
-                .add(hostForm)
+                .add(tabs)
             .end()
         .build();
         // @formatter:on
+
+        Metadata filterRefMetadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
+        Options<NamedNode> filterRefOptions = new NamedNodeTable.Builder<>(filterRefMetadata)
+                .button(resources.constants().add(), (event, api) -> presenter.addFilterRef())
+                .button(resources.constants().remove(), SELECTED,
+                        (event, api) -> presenter.removeFilterRef(api.selectedRow().getName()))
+                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(PRIORITY)
+                .build();
+        filterRefTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_FILTER_REF_TABLE, filterRefOptions);
+
+        filterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_FILTER_REF_FORM, filterRefMetadata)
+                .onSave((form, changedValues) -> presenter.saveFilterRef(form, changedValues))
+                .build();
+
+        // @formatter:off
+        Element filterRefSection = new Elements.Builder()
+            .section()
+                .h(1).textContent(Names.FILTERS).end()
+                .p().textContent(filterRefMetadata.getDescription().getDescription()).end()
+                .add(filterRefTable)
+                .add(filterRefForm)
+            .end()
+        .build();
+        // @formatter:on
+
+        hostPages = new Pages(Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
+        hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_FILTER_REF_PAGE,
+                () -> presenter.hostSegment(), () -> Names.FILTERS, filterRefSection);
 
         listener = new EnumMap<>(Listener.class);
         listener.put(AJP, new ListenerElement(AJP, metadataRegistry, resources));
@@ -120,7 +181,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.UNDERTOW_SERVER_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"),
                 configurationSection);
-        navigation.addPrimary(Ids.UNDERTOW_HOST_ENTRY, Names.HOSTS, pfIcon("enterprise"), hostSection);
+        navigation.addPrimary(Ids.UNDERTOW_HOST_ENTRY, Names.HOSTS, pfIcon("enterprise"), hostPages);
         navigation.addPrimary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Names.LISTENER, fontAwesome("headphones"));
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(AJP.baseId, Ids.ENTRY_SUFFIX),
                 AJP.type, listener.get(AJP).asElement());
@@ -129,7 +190,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         navigation.addSecondary(Ids.UNDERTOW_SERVER_LISTENER_ENTRY, Ids.build(HTTPS.baseId, Ids.ENTRY_SUFFIX),
                 HTTPS.type, listener.get(HTTPS).asElement());
 
-        registerAttachable(navigation, configurationForm, hostTable, hostForm);
+        registerAttachable(navigation,
+                configurationForm,
+                hostTable, hostForm,
+                filterRefTable, filterRefForm,
+                accessLogForm, singleSignOnForm);
         listener.values().forEach(element -> registerAttachable(element));
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
@@ -142,10 +207,32 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         initElement(root);
     }
 
+    private FailSafeForm<ModelNode> hostSetting(final HostSetting hostSetting) {
+        Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+                .build();
+        return new FailSafeForm<>(dispatcher, () -> presenter.hostSettingOperation(hostSetting), form,
+                () -> presenter.addHostSetting(hostSetting));
+    }
+
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void attach() {
         super.attach();
         hostTable.bindForm(hostForm);
+        hostTable.api().onSelectionChange(api -> {
+            if (api.hasSelection()) {
+                presenter.selectHost(api.selectedRow().getName());
+                accessLogForm.view(failSafeGet(api.selectedRow(), HostSetting.ACCESS_LOG.path()));
+                singleSignOnForm.view(failSafeGet(api.selectedRow(), HostSetting.SINGLE_SIGN_ON.path()));
+            } else {
+                presenter.selectHost(null);
+                accessLogForm.clear();
+                singleSignOnForm.clear();
+            }
+        });
+
+        filterRefTable.bindForm(filterRefForm);
 
         // register the suggest handler here, cause some of them need a valid presenter reference
         configurationForm.getFormItem(DEFAULT_HOST).registerSuggestHandler(
@@ -172,5 +259,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             e.update(items);
             navigation.updateBadge(Ids.build(l.baseId, Ids.ENTRY_SUFFIX), items.size());
         });
+    }
+
+    @Override
+    public void updateFilterRef(final List<NamedNode> filters) {
+        filterRefForm.clear();
+        filterRefTable.update(filters);
+        hostPages.showPage(Ids.UNDERTOW_HOST_FILTER_REF_PAGE);
     }
 }
