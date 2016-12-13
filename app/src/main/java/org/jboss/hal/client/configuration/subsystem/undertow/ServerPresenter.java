@@ -57,6 +57,7 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
@@ -77,6 +78,7 @@ public class ServerPresenter
         void update(ModelNode payload);
         void updateFilterRef(List<NamedNode> filters);
         void updateLocation(List<NamedNode> locations);
+        void updateLocationFilterRef(List<NamedNode> filters);
     }
     // @formatter:on
 
@@ -88,6 +90,7 @@ public class ServerPresenter
     private final Resources resources;
     private String serverName;
     private String hostName;
+    private String locationName;
 
     @Inject
     public ServerPresenter(
@@ -195,7 +198,7 @@ public class ServerPresenter
     }
 
     String hostSegment() {
-        return hostName;
+        return hostName != null ? Names.HOST + ": " + hostName : Names.NOT_AVAILABLE;
     }
 
     Operation hostSettingOperation(final HostSetting hostSetting) {
@@ -204,9 +207,13 @@ public class ServerPresenter
     }
 
     void addHostSetting(final HostSetting hostSetting) {
-        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix())
-                .resolve(statementContext);
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
         crud.addSingleton(hostSetting.type, address, null, (n, a) -> reload());
+    }
+
+    void saveHostSetting(final HostSetting hostSetting, final Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
+        crud.saveSingleton(hostSetting.type, address, changedValues, this::reload);
     }
 
     // ------------------------------------------------------ host filter-ref
@@ -227,8 +234,8 @@ public class ServerPresenter
         AddResourceDialog dialog = new AddResourceDialog(
                 resources.messages().addResourceTitle(Names.FILTER), form,
                 (name, model) -> {
-                    ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=*")
-                            .resolve(statementContext, name);
+                    ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name)
+                            .resolve(statementContext);
                     crud.add(Names.FILTER, name, address, model, (n, a) -> reloadFilterRef());
                 });
         dialog.show();
@@ -236,12 +243,12 @@ public class ServerPresenter
 
     void saveFilterRef(final Form<NamedNode> form, final Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=*").resolve(statementContext, name);
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name).resolve(statementContext);
         crud.save(Names.FILTER, name, address, changedValues, this::reloadFilterRef);
     }
 
     void removeFilterRef(final String name) {
-        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=*").resolve(statementContext, name);
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name).resolve(statementContext);
         crud.remove(Names.FILTER, name, address, this::reloadFilterRef);
     }
 
@@ -255,7 +262,7 @@ public class ServerPresenter
 
     // ------------------------------------------------------ host location
 
-    void showHostLocation(final NamedNode host) {
+    void showLocation(final NamedNode host) {
         selectHost(host.getName());
         getView().updateLocation(asNamedNodes(failSafePropertyList(host, LOCATION)));
     }
@@ -272,8 +279,9 @@ public class ServerPresenter
         AddResourceDialog dialog = new AddResourceDialog(
                 resources.messages().addResourceTitle(Names.LOCATION), form,
                 (name, model) -> {
-                    ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*")
-                            .resolve(statementContext, name);
+                    ResourceAddress address = SELECTED_HOST_TEMPLATE
+                            .append(LOCATION + "=" + encodeValue(name))
+                            .resolve(statementContext);
                     crud.add(Names.LOCATION, name, address, model, (n, a) -> reloadLocation());
                 });
         dialog.show();
@@ -281,20 +289,86 @@ public class ServerPresenter
 
     void saveLocation(final Form<NamedNode> form, final Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*").resolve(statementContext, name);
+        ResourceAddress address = SELECTED_HOST_TEMPLATE
+                .append(LOCATION + "=" + encodeValue(name))
+                .resolve(statementContext);
         crud.save(Names.LOCATION, name, address, changedValues, this::reloadLocation);
     }
 
     void removeLocation(final String name) {
-        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(LOCATION + "=*").resolve(statementContext, name);
+        ResourceAddress address = SELECTED_HOST_TEMPLATE
+                .append(LOCATION + "=" + encodeValue(name))
+                .resolve(statementContext);
         crud.remove(Names.FILTER, name, address, this::reloadLocation);
     }
 
     private void reloadLocation() {
         reload(modelNode -> {
             getView().update(modelNode);
-            getView().updateLocation(
-                    asNamedNodes(failSafePropertyList(modelNode, String.join("/", HOST, hostName, LOCATION))));
+            getView().updateLocation(asNamedNodes(failSafePropertyList(modelNode,
+                    String.join("/", HOST, hostName, LOCATION))));
+        });
+    }
+
+    private void selectLocation(String locationName) {
+        this.locationName = locationName;
+    }
+
+    String locationSegment() {
+        return locationName != null ? Names.LOCATION + ": " + locationName : Names.NOT_AVAILABLE;
+    }
+
+
+    // ------------------------------------------------------ host location filter-ref
+
+    void showLocationFilterRef(final NamedNode location) {
+        selectLocation(location.getName());
+        getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(location, FILTER_REF)));
+    }
+
+    void addLocationFilterRef() {
+        Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_ADD, metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addFromRequestProperties()
+                .build();
+        form.getFormItem(NAME)
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.FILTER), form,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_HOST_TEMPLATE
+                            .append(LOCATION + "=" + encodeValue(locationName))
+                            .append(FILTER_REF + "=" + name)
+                            .resolve(statementContext);
+                    crud.add(Names.FILTER, name, address, model, (n, a) -> reloadLocationFilterRef());
+                });
+        dialog.show();
+    }
+
+    void saveLocationFilterRef(final Form<NamedNode> form, final Map<String, Object> changedValues) {
+        String name = form.getModel().getName();
+        ResourceAddress address = SELECTED_HOST_TEMPLATE
+                .append(LOCATION + "=" + encodeValue(locationName))
+                .append(FILTER_REF + "=" + name)
+                .resolve(statementContext);
+        crud.save(Names.FILTER, name, address, changedValues, this::reloadLocationFilterRef);
+
+    }
+
+    void removeLocationFilterRef(final String name) {
+        ResourceAddress address = SELECTED_HOST_TEMPLATE
+                .append(LOCATION + "=" + encodeValue(locationName))
+                .append(FILTER_REF + "=" + name)
+                .resolve(statementContext);
+        crud.remove(Names.FILTER, name, address, this::reloadLocationFilterRef);
+    }
+
+    private void reloadLocationFilterRef() {
+        reload(modelNode -> {
+            getView().update(modelNode);
+            getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(modelNode,
+                    String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))));
         });
     }
 

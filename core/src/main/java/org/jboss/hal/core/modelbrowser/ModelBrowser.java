@@ -48,6 +48,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -485,7 +486,7 @@ public class ModelBrowser implements HasElements {
                 if (last && node != null && node.data != null && !node.data.hasSingletons()) {
                     segment = name + "=*";
                 } else {
-                    segment = name + "=" + value;
+                    segment = name + "=" + ModelNodeHelper.encodeValue(value);
                 }
             }
             return segment;

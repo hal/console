@@ -37,6 +37,7 @@ interface AddressTemplates {
     String HOST_ADDRESS = SERVER_ADDRESS + "/host=*";
     String FILTER_REF_ADDRESS = HOST_ADDRESS + "/filter-ref=*";
     String LOCATION_ADDRESS = HOST_ADDRESS + "/location=*";
+    String LOCATION_FILTER_REF_ADDRESS = LOCATION_ADDRESS + "/filter-ref=*";
 
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
 
@@ -53,6 +54,7 @@ interface AddressTemplates {
     AddressTemplate HOST_TEMPLATE = AddressTemplate.of(HOST_ADDRESS);
     AddressTemplate FILTER_REF_TEMPLATE = AddressTemplate.of(FILTER_REF_ADDRESS);
     AddressTemplate LOCATION_TEMPLATE = AddressTemplate.of(LOCATION_ADDRESS);
+    AddressTemplate LOCATION_FILTER_REF_TEMPLATE = AddressTemplate.of(LOCATION_FILTER_REF_ADDRESS);
 
     AddressTemplate SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SERVLET_CONTAINER_ADDRESS);
 

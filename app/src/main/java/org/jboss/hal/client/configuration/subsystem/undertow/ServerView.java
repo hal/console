@@ -72,6 +72,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final Form<NamedNode> filterRefForm;
     private final NamedNodeTable<NamedNode> locationTable;
     private final Form<NamedNode> locationForm;
+    private final NamedNodeTable<NamedNode> locationFilterRefTable;
+    private final Form<NamedNode> locationFilterRefForm;
     private final Pages hostPages;
     private final Map<Listener, ListenerElement> listener;
     private final VerticalNavigation navigation;
@@ -114,7 +116,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                             String id1 = Ids.uniqueId();
                             String id2 = Ids.uniqueId();
                             columnActions.add(id1, row1 -> presenter.showFilterRef(row1));
-                            columnActions.add(id2, row2 -> presenter.showHostLocation(row2));
+                            columnActions.add(id2, row2 -> presenter.showLocation(row2));
                             return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.FILTERS + "</a> / " +
                                     "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.LOCATIONS + "</a>";
                         })
@@ -186,6 +188,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         (event, api) -> presenter.removeLocation(api.selectedRow().getName()))
                 .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
                 .column(HANDLER)
+                .column(Names.FILTERS, row -> presenter.showLocationFilterRef(row))
                 .build();
         locationTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_LOCATION_TABLE, locationOptions);
 
@@ -204,13 +207,44 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         .build();
         // @formatter:on
 
-        // ------------------------------------------------------ pages, listener and navigation 
+        // ------------------------------------------------------ host location filter refs
+
+        Metadata locationFilterRefMetadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
+        Options<NamedNode> locationFilterRefOptions = new NamedNodeTable.Builder<>(locationFilterRefMetadata)
+                .button(resources.constants().add(), (event, api) -> presenter.addLocationFilterRef())
+                .button(resources.constants().remove(), SELECTED,
+                        (event, api) -> presenter.removeLocationFilterRef(api.selectedRow().getName()))
+                .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
+                .column(PRIORITY)
+                .build();
+        locationFilterRefTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_TABLE,
+                locationFilterRefOptions);
+
+        locationFilterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_FORM,
+                locationFilterRefMetadata)
+                .onSave((form, changedValues) -> presenter.saveLocationFilterRef(form, changedValues))
+                .build();
+
+        // @formatter:off
+        Element locationFilterRefSection = new Elements.Builder()
+            .section()
+                .h(1).textContent(Names.FILTERS).end()
+                .p().textContent(locationFilterRefMetadata.getDescription().getDescription()).end()
+                .add(locationFilterRefTable)
+                .add(locationFilterRefForm)
+            .end()
+        .build();
+        // @formatter:on
+
+        // ------------------------------------------------------ pages, listener and navigation
 
         hostPages = new Pages(Ids.UNDERTOW_HOST_MAIN_PAGE, hostSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_FILTER_REF_PAGE,
                 () -> presenter.hostSegment(), () -> Names.FILTERS, filterRefSection);
         hostPages.addPage(Ids.UNDERTOW_HOST_MAIN_PAGE, Ids.UNDERTOW_HOST_LOCATION_PAGE,
                 () -> presenter.hostSegment(), () -> Names.LOCATIONS, locationSection);
+        hostPages.addPage(Ids.UNDERTOW_HOST_LOCATION_PAGE, Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE,
+                () -> presenter.locationSegment(), () -> Names.FILTERS, locationFilterRefSection);
 
         listener = new EnumMap<>(Listener.class);
         listener.put(AJP, new ListenerElement(AJP, metadataRegistry, resources));
@@ -234,6 +268,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 hostTable, hostForm,
                 filterRefTable, filterRefForm,
                 locationTable, locationForm,
+                locationFilterRefTable, locationFilterRefForm,
                 accessLogForm, singleSignOnForm);
         listener.values().forEach(element -> registerAttachable(element));
 
@@ -250,6 +285,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private FailSafeForm<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+                .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
                 .build();
         return new FailSafeForm<>(dispatcher, () -> presenter.hostSettingOperation(hostSetting), form,
                 () -> presenter.addHostSetting(hostSetting));
@@ -274,6 +310,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         filterRefTable.bindForm(filterRefForm);
         locationTable.bindForm(locationForm);
+        locationFilterRefTable.bindForm(locationFilterRefForm);
     }
 
     @Override
@@ -294,8 +331,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     @Override
     public void update(final ModelNode payload) {
         configurationForm.view(payload);
+
         hostForm.clear();
         hostTable.update(asNamedNodes(failSafePropertyList(payload, HOST)));
+
         listener.forEach((l, e) -> {
             List<NamedNode> items = asNamedNodes(failSafePropertyList(payload, l.resource));
             e.update(items);
@@ -315,5 +354,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         locationForm.clear();
         locationTable.update(locations);
         hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_PAGE);
+    }
+
+    @Override
+    public void updateLocationFilterRef(final List<NamedNode> filters) {
+        locationFilterRefForm.clear();
+        locationFilterRefTable.update(filters);
+        hostPages.showPage(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE);
     }
 }

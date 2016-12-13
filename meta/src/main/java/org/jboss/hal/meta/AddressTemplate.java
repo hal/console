@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Wrapper for a DMR address which might contain multiple variable parts.
@@ -57,8 +59,17 @@ import org.jetbrains.annotations.NonNls;
  * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)}
  * method.
  * <p>
- * TODO Handle special characters like '/' inside the value part of a segment
- * /foo=bar/special=java:jboss/x/y/z/another=segment
+ * <strong>Please note:<br/></strong>
+ * If a value of your template contains a '/', you have to encode those values using {@link
+ * ModelNodeHelper#encodeValue(String)}:
+ * <pre>
+ *     AddressTemplate safe1 = AddressTemplate.of("/foo=bar")
+ *          .append(AddressTemplate.encode("special=java:jboss/x/y/z"))
+ *          .append("another=segment);
+ *     AddressTemplate safe2 = AddressTemplate.of("/foo=bar" +
+ *          AddressTemplate.encode("special=java:jboss/x/y/z") +
+ *          "another=segment);
+ * </pre>
  *
  * @author Harald Pehl
  */
@@ -73,25 +84,43 @@ public final class AddressTemplate {
 
     public static AddressTemplate ROOT = AddressTemplate.of("/");
 
+    /**
+     * Creates a new address template from a well known placeholder.
+     */
     public static AddressTemplate of(StatementContext.Tuple placeholder) {
         return AddressTemplate.of(String.join("/", placeholder.variable()));
     }
 
+    /**
+     * Creates a new address template from a placeholder and an encoded string template. '/' characters inside values
+     * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     */
     public static AddressTemplate of(StatementContext.Tuple placeholder, @NonNls String template) {
         return AddressTemplate.of(String.join("/", placeholder.variable(), withoutSlash(template)));
     }
 
+    /**
+     * Creates a new address template from two placeholders.
+     */
     public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2) {
         return AddressTemplate.of(
                 String.join("/", placeholder1.variable(), placeholder2.variable()));
     }
 
+    /**
+     * Creates a new address template from two placeholders and an encoded string template. '/' characters inside
+     * values must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     */
     public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2,
             @NonNls String template) {
         return AddressTemplate.of(
                 String.join("/", placeholder1.variable(), placeholder2.variable(), withoutSlash(template)));
     }
 
+    /**
+     * Creates a new address template from an encoded string template. '/' characters inside values must have been
+     * encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     */
     public static AddressTemplate of(@NonNls String template) {
         return new AddressTemplate(withSlash(template));
     }
@@ -149,6 +178,7 @@ public final class AddressTemplate {
     }
 
 
+
     // ------------------------------------------------------ template methods
 
     public static final String OPTIONAL = "opt://";
@@ -158,6 +188,12 @@ public final class AddressTemplate {
     private final LinkedList<Token> tokens;
     private final boolean optional;
 
+    /**
+     * Creates a new instance from an encoded string template. '/' characters inside values must have been encoded
+     * using {@link ModelNodeHelper#encodeValue(String)}.
+     *
+     * @param template the encoded template.
+     */
     private AddressTemplate(String template) {
         assert template != null : "template must not be null";
 
@@ -188,14 +224,9 @@ public final class AddressTemplate {
         return tokens;
     }
 
-    private String join(boolean optional, LinkedList<Token> tokens) {
-        StringBuilder builder = new StringBuilder();
-        if (optional) {
-            builder.append(OPTIONAL);
-        }
-        //noinspection ResultOfMethodCallIgnored
-        Joiner.on('/').appendTo(builder, tokens);
-        return builder.toString();
+    private String join(boolean optional, List<Token> tokens) {
+        String path = String.join("/", tokens.stream().map(Token::toString).collect(toList()));
+        return optional ? OPTIONAL + path : path;
     }
 
     @Override
@@ -231,10 +262,11 @@ public final class AddressTemplate {
     public int size() {return tokens.size();}
 
     /**
-     * Appends the specified template to this template and returns a new template. If the specified template does
-     * not start with a slash, "/" is automatically appended.
+     * Appends the specified encoded template to this template and returns a new template. If the specified template
+     * does not start with a slash, '/' is automatically appended. '/' characters inside values must have been encoded
+     * using {@link ModelNodeHelper#encodeValue(String)}.
      *
-     * @param template the template to append (makes no difference whether it starts with "/" or not)
+     * @param template the encoded template to append (makes no difference whether it starts with '/' or not)
      *
      * @return a new template
      */
@@ -353,7 +385,7 @@ public final class AddressTemplate {
                 }
 
                 if (resolvedValue != null) {
-                    model.add(resolvedValue[0], resolvedValue[1]);
+                    model.add(resolvedValue[0], ModelNodeHelper.decodeValue(resolvedValue[1]));
                 }
 
             } else {
@@ -374,7 +406,7 @@ public final class AddressTemplate {
                     addressValue = wildcards[wildcardCount];
                     wildcardCount++;
                 }
-                model.add(resolvedKey, addressValue);
+                model.add(resolvedKey, ModelNodeHelper.decodeValue(addressValue));
             }
         }
         return new ResourceAddress(model);
@@ -434,8 +466,6 @@ public final class AddressTemplate {
     }
 
 
-    // TODO tokenizer does not work for addresses like
-    // "subsystem=undertow/server=default-server/host=default-host/location=/"
     private static class StringTokenizer {
 
         private final String delim;

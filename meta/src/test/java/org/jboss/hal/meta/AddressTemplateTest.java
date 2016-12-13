@@ -199,6 +199,17 @@ public class AddressTemplateTest {
         assertResolved(new String[][]{{"a", "b"}, {"c", "d"}}, resolved);
     }
 
+    @Test
+    public void slashes() {
+        AddressTemplate at = AddressTemplate.of("a=b/" + AddressTemplate.encode("c=/") + "/d=e");
+        assertEquals("a=b/c=%2F/d=e", at.getTemplate());
+
+        at = AddressTemplate.of("a=b")
+                .append(AddressTemplate.encode("c=/"))
+                .append("d=e");
+        assertEquals("a=b/c=%2F/d=e", at.getTemplate());
+    }
+
     private void assertResolved(String[][] tuples, ResourceAddress resourceAddress) {
         List<Property> properties = resourceAddress.asPropertyList();
         assertEquals(tuples.length, properties.size());
