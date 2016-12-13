@@ -3,6 +3,7 @@ package org.jboss.hal.meta;
 
 import java.util.List;
 
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.junit.Test;
@@ -201,11 +202,11 @@ public class AddressTemplateTest {
 
     @Test
     public void slashes() {
-        AddressTemplate at = AddressTemplate.of("a=b/" + AddressTemplate.encode("c=/") + "/d=e");
+        AddressTemplate at = AddressTemplate.of("a=b/" + ModelNodeHelper.encodeValue("c=/") + "/d=e");
         assertEquals("a=b/c=%2F/d=e", at.getTemplate());
 
         at = AddressTemplate.of("a=b")
-                .append(AddressTemplate.encode("c=/"))
+                .append(ModelNodeHelper.encodeValue("c=/"))
                 .append("d=e");
         assertEquals("a=b/c=%2F/d=e", at.getTemplate());
     }
