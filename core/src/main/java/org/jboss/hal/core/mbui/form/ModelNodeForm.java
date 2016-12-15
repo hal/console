@@ -83,6 +83,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
+        boolean hideDeprecated;
         String attributePath;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
@@ -105,6 +106,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.unsorted = false;
             this.requiredOnly = false;
             this.includeRuntime = false;
+            this.hideDeprecated = true;
             this.attributePath = ATTRIBUTES;
         }
 
@@ -175,6 +177,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> includeRuntime() {
             this.includeRuntime = true;
+            return this;
+        }
+
+        public Builder<T> showDeprecated() {
+            this.hideDeprecated = false;
             return this;
         }
 

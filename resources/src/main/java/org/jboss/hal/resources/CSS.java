@@ -85,6 +85,7 @@ public interface CSS {
 
     String dataTable = "datatable";
     String defaultValue = "default-value";
+    String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
     String dlHorizontal = "dl-horizontal";

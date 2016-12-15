@@ -92,4 +92,8 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
     boolean isRestricted();
 
     void setRestricted(boolean restricted);
+
+    boolean isDeprecated();
+
+    void setDeprecated(boolean deprecated);
 }

@@ -29,6 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
@@ -59,20 +60,22 @@ class AttributesTable implements IsElement {
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
             ModelNode attribute = property.getValue();
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
+            boolean deprecated = attribute.hasDefined(DEPRECATED) && attribute.get(DEPRECATED).asBoolean();
             SafeHtml description = helpTextBuilder.helpText(property);
 
             builder.tr();
 
             // attribute name & description
-            SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<strong>") //NON-NLS
+            @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
+            html.appendHtmlConstant(
+                    "<strong" + (deprecated ? " class=\"" + CSS.deprecated + "\" title=\"deprecated\"" : "") + ">")
                     .appendEscaped(property.getName())
-                    .appendHtmlConstant("</strong>"); //NON-NLS
+                    .appendHtmlConstant("</strong>");
             if (required) {
                 html.appendHtmlConstant(NBSP).append(resources.messages().requiredMarker());
             }
             if (description != null) {
-                html.appendHtmlConstant("<br/>").append(description); //NON-NLS
+                html.appendHtmlConstant("<br/>").append(description);
             }
             builder.td().innerHtml(html.toSafeHtml()).end();
 

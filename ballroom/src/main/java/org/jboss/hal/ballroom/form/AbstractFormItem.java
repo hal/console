@@ -66,6 +66,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private static final String FORM_ITEM_GROUP = "formItemGroup";
     private static final String RESTRICTED = "restricted";
     private static final String RESTRICTED_ELEMENT = "restrictedElement";
+    private static final String DEPRECATED_WARNING = " (deprecated!)";
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
@@ -77,6 +78,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
+    private boolean deprecated;
     private SuggestHandler suggestHandler;
     private T defaultValue;
 
@@ -114,6 +116,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.undefined = true;
         this.restricted = false;
         this.expressionAllowed = true;
+        this.deprecated = false;
 
         this.eventBus = new SimpleEventBus();
         this.validationHandlers = new LinkedList<>();
@@ -758,6 +761,45 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setUndefined(boolean undefined) {
         this.undefined = undefined;
+    }
+
+    @Override
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    @Override
+    public void setDeprecated(final boolean deprecated) {
+        if (deprecated != this.deprecated) {
+            if (deprecated) {
+                inputLabelElement.getClassList().add(CSS.deprecated);
+                readonlyLabelElement.getClassList().add(CSS.deprecated);
+                addTitleSuffix(inputLabelElement, DEPRECATED_WARNING);
+                addTitleSuffix(readonlyLabelElement, DEPRECATED_WARNING);
+            } else {
+                inputLabelElement.getClassList().remove(CSS.deprecated);
+                readonlyLabelElement.getClassList().remove(CSS.deprecated);
+                removeTitleSuffix(inputLabelElement, DEPRECATED_WARNING);
+                removeTitleSuffix(readonlyLabelElement, DEPRECATED_WARNING);
+            }
+        }
+        this.deprecated = deprecated;
+    }
+
+    private void addTitleSuffix(Element element, String suffix) {
+        String title = element.getTitle();
+        int index = title.indexOf(suffix);
+        if (index == -1) {
+            element.setTitle(title + suffix);
+        }
+    }
+
+    private void removeTitleSuffix(Element element, String suffix) {
+        String title = element.getTitle();
+        int index = title.indexOf(suffix);
+        if (index != -1) {
+            element.setTitle(title.substring(0, index));
+        }
     }
 
     InputElement<T> inputElement() {

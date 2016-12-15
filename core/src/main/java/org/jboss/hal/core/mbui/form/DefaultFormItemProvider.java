@@ -81,6 +81,8 @@ class DefaultFormItemProvider implements FormItemProvider {
                 RUNTIME.equals(attributeDescription.get(STORAGE).asString());
         boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
                 READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
+        boolean deprecated = attributeDescription.hasDefined(DEPRECATED) &&
+                attributeDescription.get(DEPRECATED).asBoolean();
         String unit = attributeDescription.hasDefined(UNIT) ? attributeDescription.get(UNIT).asString() : null;
 
         if (attributeDescription.hasDefined(TYPE)) {
@@ -198,6 +200,7 @@ class DefaultFormItemProvider implements FormItemProvider {
 
             if (formItem != null) {
                 formItem.setRequired(required);
+                formItem.setDeprecated(deprecated);
                 if (formItem.supportsExpressions()) {
                     formItem.setExpressionAllowed(expressionAllowed);
                 }

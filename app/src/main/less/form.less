@@ -9,6 +9,12 @@
   .make-lg-column(@hal-form-label-columns);
   .make-md-column(@hal-form-label-columns);
   .make-sm-column(@hal-form-label-columns);
+
+  &.deprecated {
+    color: @color-pf-black-500;
+    cursor: help;
+    text-decoration: line-through;
+  }
 }
 
 .hal-form-input {
