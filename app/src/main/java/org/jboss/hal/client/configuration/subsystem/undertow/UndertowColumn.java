@@ -25,6 +25,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -47,6 +48,7 @@ public class UndertowColumn
     public UndertowColumn(final Finder finder,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
+            final Places places,
             final Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.UNDERTOW_SETTINGS, resources.constants().settings())
@@ -57,11 +59,12 @@ public class UndertowColumn
         List<StaticItem> items = asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
                         .id(Ids.UNDERTOW_GLOBAL_SETTINGS)
-                        .action(itemActionFactory.view(NameTokens.UNDERTOW))
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW).build()))
                         .onPreview(new UndertowSubsystemPreview(crud, resources))
                         .build(),
                 new StaticItem.Builder(Names.BUFFER_CACHES)
-                        .action(itemActionFactory.view(NameTokens.UNDERTOW_BUFFER_CACHE))
+                        .action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.UNDERTOW_BUFFER_CACHE).build()))
                         .onPreview(new PreviewContent(Names.BUFFER_CACHES,
                                 resources.previews().configurationUndertowBufferCaches()))
                         .build(),
@@ -76,12 +79,12 @@ public class UndertowColumn
                                 resources.previews().configurationUndertowServletContainer()))
                         .build(),
                 new StaticItem.Builder(Names.FILTERS)
-                        .action(itemActionFactory.view(NameTokens.UNDERTOW_FILTER))
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW_FILTER).build()))
                         .onPreview(new PreviewContent<>(Names.FILTERS,
                                 resources.previews().configurationUndertowFilters()))
                         .build(),
                 new StaticItem.Builder(Names.HANDLERS)
-                        .action(itemActionFactory.view(NameTokens.UNDERTOW_HANDLER))
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW_HANDLER).build()))
                         .onPreview(new PreviewContent<>(Names.HANDLERS,
                                 resources.previews().configurationUndertowHandlers()))
                         .build()

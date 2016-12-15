@@ -213,6 +213,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
+    String hostsUsingThisFilter();
+    String hostsUsingThisHandler();
     String hostScopedRole();
     String hour();
     String hours();

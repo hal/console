@@ -26,6 +26,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -50,6 +51,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
     public ServerColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final Places places,
             final CrudOperations crud) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.UNDERTOW_SERVER, Names.SERVER)
@@ -80,7 +82,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             @Override
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.UNDERTOW_SERVER, NAME, item.getName()));
+                actions.add(itemActionFactory.view(
+                        places.selectedProfile(NameTokens.UNDERTOW_SERVER).with(NAME, item.getName()).build()));
                 actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), SERVER_TEMPLATE,
                         ServerColumn.this));
                 return actions;
