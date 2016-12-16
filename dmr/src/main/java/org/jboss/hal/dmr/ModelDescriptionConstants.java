@@ -315,6 +315,7 @@ public interface ModelDescriptionConstants {
 
     String UNIT = "unit";
     String URL = "url";
+    String USER_NAME = "user-name";
     String USERNAME = "username";
 
     String VALUE = "value";

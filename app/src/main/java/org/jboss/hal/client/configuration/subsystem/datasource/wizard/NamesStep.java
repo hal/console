@@ -35,11 +35,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-public class NamesStep extends WizardStep<Context, State> {
+class NamesStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    public NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources,
+    NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources,
             final boolean xa) {
         super(Ids.DATA_SOURCE_NAMES_STEP, resources.constants().attributes());
 

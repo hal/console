@@ -35,11 +35,11 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 /**
  * @author Harald Pehl
  */
-public class ChooseTemplateStep extends WizardStep<Context, State> {
+class ChooseTemplateStep extends WizardStep<Context, State> {
 
     private final Element root;
 
-    public ChooseTemplateStep(final DataSourceTemplates templates,
+    ChooseTemplateStep(final DataSourceTemplates templates,
             final Resources resources, final boolean xa) {
         super(Ids.DATA_SOURCE_CHOOSE_TEMPLATE_STEP, resources.constants().chooseTemplate());
 

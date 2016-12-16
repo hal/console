@@ -22,7 +22,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 /**
  * @author Harald Pehl
  */
-interface AddressTemplates {
+public interface AddressTemplates {
 
     String DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
     String XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
