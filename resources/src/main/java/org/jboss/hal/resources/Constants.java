@@ -363,6 +363,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String test();
     String testConnection();
+    String testConnectionError();
+    String testConnectionSuccess();
     String timeout();
     String timeouts();
     String toggleDropdown();

@@ -18,7 +18,7 @@
 <view>
     <vertical-navigation id="batch-vertical-navigation">
 
-        <item id="batch-configuration-item" title="Configuration" icon="fa fa-cogs">
+        <item id="batch-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=batch-jberet">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>

@@ -39,16 +39,11 @@ public class NamesStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    public NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources) {
+    public NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources,
+            final boolean xa) {
         super(Ids.DATA_SOURCE_NAMES_STEP, resources.constants().attributes());
 
-        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_NAMES_FORM, metadata)
-                .unboundFormItem(new NameItem(), 0)
-                .include(JNDI_NAME)
-                .onSave((form, changedValues) -> wizard().getContext().dataSource = form.getModel())
-                .build();
-
-        FormItem<String> nameItem = form.getFormItem(NAME);
+        FormItem<String> nameItem = new NameItem();
         nameItem.addValidationHandler(value -> {
             for (DataSource dataSource : existingDataSources) {
                 if (dataSource.getName().equals(value)) {
@@ -57,6 +52,16 @@ public class NamesStep extends WizardStep<Context, State> {
             }
             return ValidationResult.OK;
         });
+
+        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_NAMES_FORM, metadata)
+                .unboundFormItem(nameItem, 0)
+                .include(JNDI_NAME)
+                .onSave((form, changedValues) -> {
+                    wizard().getContext().dataSource = new DataSource(nameItem.getValue(), xa);
+                    wizard().getContext().dataSource.update(form.getModel());
+
+                })
+                .build();
         registerAttachable(form);
     }
 
@@ -72,6 +77,8 @@ public class NamesStep extends WizardStep<Context, State> {
         nameItem.setValue(context.dataSource.getName());
         nameItem.setUndefined(false);
 
+        nameItem.setEnabled(!context.isCreated());
+        form.getFormItem(JNDI_NAME).setEnabled(!context.isCreated());
         form.edit(context.dataSource);
     }
 

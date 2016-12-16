@@ -25,8 +25,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
-import org.jboss.hal.ballroom.table.Column;
-import org.jboss.hal.ballroom.table.Column.RenderCallback;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
@@ -41,6 +39,7 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * Dialog used to deploy and undeploy content to one or more server groups.
@@ -111,13 +110,7 @@ public class DeployContentDialog1 {
 
         Options<ServerGroup> options = new OptionsBuilder<ServerGroup>()
                 .checkboxColumn()
-                .column(Names.SERVER_GROUP, new RenderCallback<ServerGroup, String>() {
-                    @Override
-                    public String render(final String cell, final String type, final ServerGroup row,
-                            final Column.Meta meta) {
-                        return row.serverGroup;
-                    }
-                })
+                .column(Names.SERVER_GROUP, (cell, type, row, meta) -> row.serverGroup)
                 .keys(false)
                 .paging(false)
                 .searching(false)
@@ -133,7 +126,7 @@ public class DeployContentDialog1 {
             .div().add(noServerGroupSelected).end()
             .p().innerHtml(description).end()
             .add(table)
-            .div().rememberAs(ENABLE_CONTAINER)
+            .div().css(marginTopLarge).rememberAs(ENABLE_CONTAINER)
                 .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                 .label().css(CSS.marginLeft5)
                     .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)

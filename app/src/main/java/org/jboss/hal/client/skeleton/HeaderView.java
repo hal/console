@@ -307,8 +307,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .css(clickable)
                         .data(UIConstants.TARGET, "#")
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                        .aria(UIConstants.HAS_POPUP, String.valueOf(true))
-                        .aria(UIConstants.EXPANDED, String.valueOf(false))
+                        .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                        .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                         .on(click, event -> {
                             Element ul = ((Element) event.getCurrentTarget()).getNextElementSibling();

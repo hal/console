@@ -115,6 +115,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
+    String DATA_SOURCE_TEST_STEP = build(DATA_SOURCE_CONFIGURATION, "test", WIZARD_STEP_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";

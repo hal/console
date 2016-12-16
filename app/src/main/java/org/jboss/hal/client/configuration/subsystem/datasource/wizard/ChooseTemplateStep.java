@@ -43,18 +43,20 @@ public class ChooseTemplateStep extends WizardStep<Context, State> {
             final Resources resources, final boolean xa) {
         super(Ids.DATA_SOURCE_CHOOSE_TEMPLATE_STEP, resources.constants().chooseTemplate());
 
-        Elements.Builder builder = new Elements.Builder().div();
+        Elements.Builder builder = new Elements.Builder().div()
+                .p().textContent(resources.messages().chooseTemplate(resources.constants().custom())).end();
+
         // @formatter:off
-            builder.div().css(CSS.radio)
-                .label()
-                    .input(InputType.radio)
-                        .attr("name", "template") //NON-NLS
-                        .attr("value", "custom")
-                        .on(click, event -> wizard().getContext().template  = null)
-                    .span().textContent(resources.constants().custom()).end()
-                .end()
-            .end();
-            // @formatter:on
+        builder.div().css(CSS.radio)
+            .label()
+                .input(InputType.radio)
+                    .attr("name", "template") //NON-NLS
+                    .attr("value", "custom")
+                    .on(click, event -> wizard().getContext().template  = null)
+                .span().textContent(resources.constants().custom()).end()
+            .end()
+        .end();
+        // @formatter:on
 
         List<DataSourceTemplate> matchingTemplates = stream(templates.spliterator(), false)
                 .filter(t -> t.getDataSource().isXa() == xa).collect(toList());

@@ -46,7 +46,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * This view is half generated, half hand written. The navigation, tables and outbound forms are generated using MBUI
@@ -110,7 +109,6 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                         SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(presenter.selectedConnectorContext))
                         .build(),
                 csf, () -> presenter.createConnectorSecurity());
-        connectorSecurityForm.asElement().getClassList().add(marginTopLarge);
         registerAttachable(connectorSecurityForm);
 
         // remote connector security policy
@@ -125,7 +123,6 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                         .resolve(presenter.selectedHttpConnectorContext))
                         .build(),
                 cspf, () -> presenter.createConnectorSecurityPolicy());
-        connectorSecurityPolicyForm.asElement().getClassList().add(marginTopLarge);
         registerAttachable(connectorSecurityPolicyForm);
 
         // remote connector tabs
@@ -160,7 +157,6 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                         .resolve(presenter.selectedHttpConnectorContext))
                         .build(),
                 hcsf, () -> presenter.createHttpConnectorSecurity());
-        httpConnectorSecurityForm.asElement().getClassList().add(marginTopLarge);
         registerAttachable(httpConnectorSecurityForm);
 
         // http connector security policy
@@ -175,7 +171,6 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                         .resolve(presenter.selectedHttpConnectorContext))
                         .build(),
                 hcspf, () -> presenter.createHttpConnectorSecurityPolicy());
-        httpConnectorSecurityPolicyForm.asElement().getClassList().add(marginTopLarge);
         registerAttachable(httpConnectorSecurityPolicyForm);
 
         // http connector tabs

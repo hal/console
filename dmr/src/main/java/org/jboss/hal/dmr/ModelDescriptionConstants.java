@@ -303,6 +303,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";
 
+    String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String TIMEOUT = "timeout";
     String TO = "to";

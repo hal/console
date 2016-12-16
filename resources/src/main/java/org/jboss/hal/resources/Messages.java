@@ -58,6 +58,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseServerGroupsToUndeploy(String name);
     SafeHtml chooseServerGroupsToDeploy(String name);
+    String chooseTemplate(String custom);
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);
@@ -278,8 +279,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml switchToRbacProvider();
     SafeHtml switchToSimpleProvider();
 
-    SafeHtml testConnectionError();
-    SafeHtml testConnectionSuccess();
+    SafeHtml testConnectionCancelError(String datasource);
+    SafeHtml testConnectionDomain(String testConnection);
+    SafeHtml testConnectionError(String datasource);
+    SafeHtml testConnectionStandalone(String testConnection);
+    SafeHtml testConnectionSuccess(String datasource);
     SafeHtml topologyError();
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();

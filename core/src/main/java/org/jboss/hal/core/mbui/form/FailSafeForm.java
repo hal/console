@@ -32,6 +32,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.hal.resources.CSS.failSafeForm;
+
 /**
  * An element which uses the dispatcher and an operation to check whether a resource exists. If it exists the specified
  * form is displayed in view mode, otherwise an empty state element is displayed which can be used to create the
@@ -66,7 +68,7 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
         this.emptyState = emptyState;
         this.form = form;
         this.readOperation = readOperation;
-        this.root = new Elements.Builder().div().add(emptyState).add(form).end().build();
+        this.root = new Elements.Builder().div().css(failSafeForm).add(emptyState).add(form).end().build();
 
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(form.asElement(), false);

@@ -53,6 +53,7 @@ public interface UIConstants {
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";
+    String FALSE = "false";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN_MODAL = "hidden.bs.modal";
@@ -76,4 +77,5 @@ public interface UIConstants {
     String TOGGLE = "toggle";
     String TOP = "top";
     String TOOLTIP = "tooltip";
+    String TRUE = "true";
 }

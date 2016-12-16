@@ -27,6 +27,7 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.ALERT;
 import static org.jboss.hal.resources.UIConstants.DISMISS;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
  * @author Harald Pehl
@@ -49,7 +50,7 @@ class MessageElement implements IsElement {
             builder.button()
                     .css(close)
                     .data(DISMISS, ALERT)
-                    .aria(HIDDEN, String.valueOf(true))
+                    .aria(HIDDEN, TRUE)
                     .on(click, event -> messagePanel.closeSticky(message))
                     .span().css(pfIcon(close)).end()
                     .end();

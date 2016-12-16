@@ -95,7 +95,7 @@ class FormLinks<T> implements IsElement {
                 .li()
                     .a().attr("href", "#" + helpId + "")
                             .data(UIConstants.TOGGLE,  UIConstants.COLLAPSE)
-                            .aria(UIConstants.EXPANDED, String.valueOf(false))
+                            .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                             .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()
                         .span().css(formLinkLabel).textContent(CONSTANTS.help()).end()

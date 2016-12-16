@@ -127,13 +127,13 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                     .css(unpin, pfIcon("close"))
                     .title(CONSTANTS.unpin())
                     .on(click, e -> column.unpin(FinderRow.this))
-                    .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                    .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                     .end();
             eb.span()
                     .css(pin, pfIcon("thumb-tack-o"))
                     .title(CONSTANTS.pin())
                     .on(click, e -> column.pin(FinderRow.this))
-                    .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                    .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                     .end();
         }
         if (display.nextColumn() != null) {
@@ -146,7 +146,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
-                eb.div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, String.valueOf(true))
+                eb.div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                         .rememberAs(BUTTON_CONTAINER);
                 for (ItemAction<T> action : display.actions()) {
                     if (firstAction) {
@@ -155,12 +155,12 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
-                                .aria(UIConstants.HAS_POPUP, String.valueOf(true))
-                                .aria(UIConstants.EXPANDED, String.valueOf(false))
-                            .span().css(caret).data(PREVENT_SET_ITEMS, String.valueOf(true)).end()
+                                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                                .aria(UIConstants.EXPANDED, UIConstants.FALSE)
+                            .span().css(caret).data(PREVENT_SET_ITEMS, UIConstants.TRUE).end()
                             .span()
-                                .css(srOnly).data(PREVENT_SET_ITEMS, String.valueOf(true))
+                                .css(srOnly).data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                 .textContent(CONSTANTS.toggleDropdown())
                             .end()
                         .end();
@@ -169,10 +169,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
                     } else {
                         if (!ulCreated) {
-                            eb.ul().css(dropdownMenu).data(PREVENT_SET_ITEMS, String.valueOf(true));
+                            eb.ul().css(dropdownMenu).data(PREVENT_SET_ITEMS, UIConstants.TRUE);
                             ulCreated = true;
                         }
-                        eb.li().data(PREVENT_SET_ITEMS, String.valueOf(true));
+                        eb.li().data(PREVENT_SET_ITEMS, UIConstants.TRUE);
                         actionLink(eb, action, true, null);
                         eb.end();
                     }
@@ -191,7 +191,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     private void actionLink(Elements.Builder builder, ItemAction<T> action, boolean li, String reference) {
         builder.a().css(clickable, li ? new String[]{} : new String[]{btn, btnFinder})
-                .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                 .textContent(action.title);
         if (action.handler != null) {
             builder.on(click, event -> action.handler.execute(item));

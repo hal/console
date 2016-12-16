@@ -24,14 +24,13 @@ import org.jboss.hal.core.datasource.JdbcDriver;
  */
 public class Context {
 
-    private final boolean standalone;
     private final boolean xa;
+    private boolean created;
     DataSourceTemplate template;
     DataSource dataSource;
     JdbcDriver driver;
 
-    public Context(boolean standalone, boolean xa) {
-        this.standalone = standalone;
+    public Context(boolean xa) {
         this.xa = xa;
     }
 
@@ -51,5 +50,13 @@ public class Context {
 
     public DataSource getDataSource() {
         return dataSource;
+    }
+
+    public boolean isCreated() {
+        return created;
+    }
+
+    public void setCreated(final boolean created) {
+        this.created = created;
     }
 }

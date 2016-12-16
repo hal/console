@@ -52,7 +52,7 @@ public class Accordion implements IsElement {
         root = new Elements.Builder().div()
                 .id(id)
                 .css(panelGroup)
-                .aria("multiselectable", String.valueOf(true))
+                .aria("multiselectable", UIConstants.TRUE)
                 .attr(UIConstants.ROLE, UIConstants.TABLIST)
                 .build();
     }

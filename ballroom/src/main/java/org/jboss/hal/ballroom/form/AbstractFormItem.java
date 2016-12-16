@@ -50,6 +50,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
  * TODO Show resolved expressions using a dismissable inline notification
@@ -198,7 +199,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRestricted = new Elements.Builder()
                 .span()
                 .css(fontAwesome("lock"), CSS.restricted)
-                .aria(HIDDEN, String.valueOf(true))
+                .aria(HIDDEN, TRUE)
                 .end()
                 .build();
 
