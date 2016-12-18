@@ -72,6 +72,7 @@ public interface Names {
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
     String JPA = "JPA";
     String JSP = "JSP";

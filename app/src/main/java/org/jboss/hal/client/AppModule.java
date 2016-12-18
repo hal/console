@@ -56,6 +56,8 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView_Provider;
+import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView_Provider;
 import org.jboss.hal.client.configuration.subsystem.modcluster.ModclusterPresenter;
 import org.jboss.hal.client.configuration.subsystem.remoting.Mbui_RemotingView_Provider;
@@ -331,6 +333,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 MailSessionView.class,
                 MailSessionPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(MessagingSubsystemPresenter.class,
+                MessagingSubsystemPresenter.MyView.class,
+                Mbui_MessagingSubsystemView_Provider.class,
+                MessagingSubsystemPresenter.MyProxy.class);
+
         bindPresenter(PatchingPresenter.class,
                 PatchingPresenter.MyView.class,
                 PatchingView.class,
@@ -375,6 +382,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 SecurityDomainPresenter.MyView.class,
                 Mbui_SecurityDomainView_Provider.class,
                 SecurityDomainPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(org.jboss.hal.client.configuration.subsystem.messaging.ServerPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.messaging.ServerPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ServerView_Provider.class,
+                org.jboss.hal.client.configuration.subsystem.messaging.ServerPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.configuration.subsystem.undertow.ServerPresenter.class,
                 org.jboss.hal.client.configuration.subsystem.undertow.ServerPresenter.MyView.class,

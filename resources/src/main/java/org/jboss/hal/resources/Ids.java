@@ -265,6 +265,14 @@ public interface Ids {
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
+    String MESSAGING = "messaging";
+    String MESSAGING_CATEGORY = "messaging-category";
+    String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
+    String MESSAGING_JMS_BRIDGE = "messaging-jms-bridge";
+    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
+    String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
+    String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
     String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
@@ -470,6 +478,14 @@ public interface Ids {
         return build(LOGGING, name);
     }
 
+    static String messagingJmsBridge(String name) {
+        return build(MESSAGING_JMS_BRIDGE, name);
+    }
+
+    static String messagingServer(String name) {
+        return build(MESSAGING_SERVER, name);
+    }
+
     /**
      * @param type must be one of "user" or "group"
      */
@@ -506,11 +522,11 @@ public interface Ids {
     }
 
     static String undertowServer(String name) {
-        return build(UNDERTOW_SETTINGS, SERVER, name);
+        return build(UNDERTOW_SERVER, name);
     }
 
     static String undertowServletContainer(String name) {
-        return build(UNDERTOW_SETTINGS, UNDERTOW_SERVLET_CONTAINER, name);
+        return build(UNDERTOW_SERVLET_CONTAINER, name);
     }
 
 

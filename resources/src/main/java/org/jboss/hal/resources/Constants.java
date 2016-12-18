@@ -57,6 +57,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browseBy();
 
     String cancel();
+    String category();
     String chooseFile();
     String chooseSingleton();
     String chooseTemplate();

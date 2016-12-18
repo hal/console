@@ -16,10 +16,14 @@
   ~ limitations under the License.
   -->
 <view>
-    <metadata address="/{selected.profile}/subsystem=iiop-openjdk">
-        <h1>IIOP OpenJDK</h1>
+    <metadata address="/{selected.profile}/subsystem=messaging-activemq">
+        <h1>Messaging Configuration</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <!-- TODO Use attribute groups -->
-        <form id="iiop-openjdk-form" title="IIOP OpenJDK" auto-save="true"/>
+        <form id="messaging-global-settings-form" title="Messaging Configuration" auto-save="true">
+            <attributes>
+                <attribute name="global-client-scheduled-thread-pool-max-size"/>
+                <attribute name="global-client-thread-pool-max-size"/>
+            </attributes>
+        </form>
     </metadata>
 </view>

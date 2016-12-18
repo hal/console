@@ -89,6 +89,8 @@ public class Subsystems {
                 .build());
         add(new SubsystemMetadata.Builder(MESSAGING_ACTIVEMQ, "Messaging")
                 .subtitle("ActiveMQ")
+                .nextColumn(Ids.MESSAGING_CATEGORY)
+                .preview(resources.previews().configurationMessaging())
                 .build());
         add(new SubsystemMetadata.Builder(MODCLUSTER, "Modcluster")
                 .token(NameTokens.MODCLUSTER)
