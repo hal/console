@@ -57,6 +57,7 @@ public interface ModelDescriptionConstants {
     String ANY = "any";
     String ARCHIVE = "archive";
     String ATTRIBUTES = "attributes";
+    String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
 

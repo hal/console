@@ -68,27 +68,31 @@ final class ${context.subclass} extends ${context.base} {
             <#if form.groups?has_content>
         ${form.name} = new GroupedForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 <#list form.groups as group>
-            .group("${group.id}", ${group.title})
-                    <#if group.hasAttributesWithProvider>
-                        <#list group.attributes as attribute>
-                            <#if attribute.provider??>
+                    <#if group.attributes?has_content>
+            .customGroup("${group.id}", ${group.title})
+                        <#if group.hasAttributesWithProvider>
+                            <#list group.attributes as attribute>
+                                <#if attribute.provider??>
                 .customFormItem("${attribute.name}", attributeDescription -> ${attribute.provider})
-                            <#else>
+                                <#else>
                 .include("${attribute.name}")
-                            </#if>
-                        </#list>
-                    <#elseif group.hasUnboundAttributes>
-                        <#list group.attributes as attribute>
-                            <#if attribute.formItem??>
+                                </#if>
+                            </#list>
+                        <#elseif group.hasUnboundAttributes>
+                            <#list group.attributes as attribute>
+                                <#if attribute.formItem??>
                 .unboundFormItem(${attribute.formItem}, ${attribute_index})
-                            <#else>
+                                <#else>
                 .include("${attribute.name}")
-                            </#if>
-                        </#list>
-                    <#else>
+                                </#if>
+                            </#list>
+                        <#else>
                 .include(<#list group.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
-                    </#if>
+                        </#if>
             .end()
+                    <#else>
+            .attributeGroup(<#if group.id??>"${group.id}", </#if>"${group.name}"<#if group.title??>, ${group.title}</#if>).end()
+                    </#if>
                 </#list>
             <#else>
                 <#if form.failSafe>

@@ -19,7 +19,19 @@
     <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*">
         <h1>Messaging Server</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <!-- TODO Use attribute groups -->
-        <form id="messaging-server-form" title="Messaging Server" auto-save="true"/>
+        <form id="messaging-server-form" title="Messaging Server" auto-save="true"
+              name-resolver="{{form.getModel().getName()}}">
+            <attributes>
+                <!-- Use the attribute groups from the resource description -->
+                <group name="management"/>
+                <group name="security"/>
+                <group name="journal"/>
+                <group name="cluster"/>
+                <group name="message-expiry"/>
+                <group name="transaction"/>
+                <group name="statistics"/>
+                <group name="debug"/>
+            </attributes>
+        </form>
     </metadata>
 </view>

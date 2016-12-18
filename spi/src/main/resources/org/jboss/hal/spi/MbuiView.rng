@@ -223,16 +223,33 @@
 
     <define name="group-definition">
         <element name="group">
-            <attribute name="id">
-                <data type="NCName"/>
-            </attribute>
-            <attribute name="title">
-                <ref name="token-or-code"/>
-            </attribute>
+            <choice>
+                <group>
+                    <attribute name="name">
+                        <data type="NCName"/>
+                    </attribute>
+                    <optional>
+                        <attribute name="id">
+                            <data type="NCName"/>
+                        </attribute>
+                        <attribute name="title">
+                            <ref name="token-or-code"/>
+                        </attribute>
+                    </optional>
+                </group>
+                <group>
+                    <attribute name="id">
+                        <data type="NCName"/>
+                    </attribute>
+                    <attribute name="title">
+                        <ref name="token-or-code"/>
+                    </attribute>
+                </group>
+            </choice>
         </element>
-        <oneOrMore>
+        <zeroOrMore>
             <ref name="attribute-definition"/>
-        </oneOrMore>
+        </zeroOrMore>
     </define>
 
     <define name="attribute-definition">

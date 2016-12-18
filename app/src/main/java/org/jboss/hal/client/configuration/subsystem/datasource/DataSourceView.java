@@ -201,7 +201,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            nonXaFormBuilder.group(groupId, group)
+            nonXaFormBuilder.customGroup(groupId, group)
                     .include(nonXaNames)
                     .end();
 
@@ -218,7 +218,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            xaFormBuilder.group(groupId, group)
+            xaFormBuilder.customGroup(groupId, group)
                     .include(xaNames)
                     .end();
             // form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.XA_DATA_SOURCE, "form", groupId), xaMeta)

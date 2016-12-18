@@ -47,6 +47,8 @@ public class LabelBuilder {
             .put("jsf", "JSF")
             .put("sar", "SAR")
             .put("sql", "SQL")
+            .put("ssl", "SSL")
+            .put("tcp", "TCP")
             .put("uri", "URI")
             .put("url", "URL")
             .put("wsdl", "WSDL")

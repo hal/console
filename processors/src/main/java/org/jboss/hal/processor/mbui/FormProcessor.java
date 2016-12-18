@@ -82,8 +82,9 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             } else {
                 for (Element groupElement : groupElements) {
                     String id = groupElement.getAttributeValue(XmlTags.ID);
+                    String name = groupElement.getAttributeValue(XmlTags.NAME);
                     String groupTitle = groupElement.getAttributeValue(XmlTags.TITLE);
-                    FormInfo.Group group = new FormInfo.Group(id, groupTitle);
+                    FormInfo.Group group = new FormInfo.Group(id, name, groupTitle);
                     groupElement.getChildren(XmlTags.ATTRIBUTE)
                             .forEach(attributeElement -> group.addAttribute(processAttribute(field, attributeElement)));
                     formInfo.addGroup(group);

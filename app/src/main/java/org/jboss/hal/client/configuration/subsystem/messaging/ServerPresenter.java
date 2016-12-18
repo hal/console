@@ -30,8 +30,8 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -61,7 +61,7 @@ public class ServerPresenter
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
     public interface MyView extends MbuiView<ServerPresenter> {
-        void update(ModelNode payload);
+        void update(NamedNode server);
     }
     // @formatter:on
 
@@ -121,7 +121,8 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(SELECTED_SERVER_TEMPLATE.resolve(statementContext), result -> getView().update(result));
+        crud.readRecursive(SELECTED_SERVER_TEMPLATE.resolve(statementContext),
+                result -> getView().update(new NamedNode(serverName, result)));
     }
 
     void saveServer(final Map<String, Object> changedValues) {

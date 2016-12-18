@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
@@ -32,14 +32,14 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
         return new Mbui_ServerView(mbuiContext);
     }
 
-    @MbuiElement("messaging-server-form") Form<ModelNode> form;
+    @MbuiElement("messaging-server-form") Form<NamedNode> form;
 
     ServerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
     @Override
-    public void update(final ModelNode modelNode) {
-        form.view(modelNode);
+    public void update(final NamedNode server) {
+        form.view(server);
     }
 }
