@@ -16,20 +16,14 @@
   ~ limitations under the License.
   -->
 <view>
-    <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*">
-        <h1>Messaging Server</h1>
+    <metadata address="/{selected.profile}/subsystem=messaging-activemq/jms-bridge=*">
+        <h1>JMS Bridge</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="messaging-server-form" title="Messaging Server" on-save="{{presenter.saveServer(changedValues)}}">
+        <form id="jms-bridge-form" title="JMS Bridge" on-save="{{presenter.saveJmsBridge(changedValues)}}">
             <attributes>
                 <!-- Use the attribute groups from the resource description -->
-                <group name="management"/>
-                <group name="security"/>
-                <group name="journal"/>
-                <group name="cluster"/>
-                <group name="message-expiry"/>
-                <group name="transaction"/>
-                <group name="statistics"/>
-                <group name="debug"/>
+                <group name="source"/>
+                <group name="target"/>
             </attributes>
         </form>
     </metadata>

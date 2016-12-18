@@ -217,6 +217,9 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JMS_BRIDGE = "jms-bridge";
+    String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
+    String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -268,7 +271,6 @@ public interface Ids {
     String MESSAGING = "messaging";
     String MESSAGING_CATEGORY = "messaging-category";
     String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
-    String MESSAGING_JMS_BRIDGE = "messaging-jms-bridge";
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
     String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
@@ -470,16 +472,16 @@ public interface Ids {
         return build(host, server);
     }
 
+    static String jmsBridge(String name) {
+        return build(JMS_BRIDGE, name);
+    }
+
     static String jpaStatistic(final String deployment, final String persistenceUnit) {
         return build(deployment, persistenceUnit);
     }
 
     static String loggingProfile(final String name) {
         return build(LOGGING, name);
-    }
-
-    static String messagingJmsBridge(String name) {
-        return build(MESSAGING_JMS_BRIDGE, name);
     }
 
     static String messagingServer(String name) {

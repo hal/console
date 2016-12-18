@@ -40,25 +40,25 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
-public class ServerPresenter
-        extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
+public class JmsBridgePresenter
+        extends MbuiPresenter<JmsBridgePresenter.MyView, JmsBridgePresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.MESSAGING_SERVER)
-    @Requires(value = SERVER_ADDRESS, recursive = false)
-    public interface MyProxy extends ProxyPlace<ServerPresenter> {}
+    @NameToken(NameTokens.JMS_BRIDGE)
+    @Requires(value = JMS_BRIDGE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JmsBridgePresenter> {}
 
-    public interface MyView extends MbuiView<ServerPresenter> {
+    public interface MyView extends MbuiView<JmsBridgePresenter> {
         void update(NamedNode server);
     }
     // @formatter:on
@@ -67,10 +67,10 @@ public class ServerPresenter
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String serverName;
+    private String jmsBridgeName;
 
     @Inject
-    public ServerPresenter(
+    public JmsBridgePresenter(
             final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
@@ -82,7 +82,7 @@ public class ServerPresenter
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
-        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> serverName);
+        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> jmsBridgeName);
         this.resources = resources;
     }
 
@@ -95,30 +95,30 @@ public class ServerPresenter
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        serverName = request.getParameter(NAME, null);
+        jmsBridgeName = request.getParameter(NAME, null);
     }
 
     @Override
     public ResourceAddress resourceAddress() {
-        return SELECTED_SERVER_TEMPLATE.resolve(statementContext);
+        return SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
-                .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
-                        resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName), Names.SERVER, serverName);
+                .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.JMS_BRIDGE),
+                        resources.constants().category(), Names.JMS_BRIDGE)
+                .append(Ids.JMS_BRIDGE, Ids.jmsBridge(jmsBridgeName), Names.JMS_BRIDGE, jmsBridgeName);
     }
 
     @Override
     protected void reload() {
-        crud.readRecursive(SELECTED_SERVER_TEMPLATE.resolve(statementContext),
-                result -> getView().update(new NamedNode(serverName, result)));
+        crud.readRecursive(SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
+                result -> getView().update(new NamedNode(jmsBridgeName, result)));
     }
 
-    void saveServer(final Map<String, Object> changedValues) {
-        crud.save(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), changedValues,
-                this::reload);
+    void saveJmsBridge(final Map<String, Object> changedValues) {
+        crud.save(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
+                changedValues, this::reload);
     }
 }

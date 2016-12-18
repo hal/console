@@ -152,6 +152,7 @@ public interface ModelDescriptionConstants {
 
     String JCA = "jca";
     String JDBC_DRIVER = "jdbc-driver";
+    String JMS_BRIDGE = "jms-bridge";
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";

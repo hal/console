@@ -27,8 +27,12 @@ interface AddressTemplates {
     String MESSAGING_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=messaging-activemq";
     String SERVER_ADDRESS = MESSAGING_SUBSYSTEM_ADDRESS + "/server=*";
     String SELECTED_SERVER_ADDRESS = MESSAGING_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
+    String JMS_BRIDGE_ADDRESS = MESSAGING_SUBSYSTEM_ADDRESS + "/jms-bridge=*";
+    String SELECTED_JMS_BRIDGE_ADDRESS = MESSAGING_SUBSYSTEM_ADDRESS + "/jms-bridge=" + SELECTION_EXPRESSION;
 
     AddressTemplate MESSAGING_SUBSYSTEM_TEMPLATE = AddressTemplate.of(MESSAGING_SUBSYSTEM_ADDRESS);
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
     AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
+    AddressTemplate JMS_BRIDGE_TEMPLATE = AddressTemplate.of(JMS_BRIDGE_ADDRESS);
+    AddressTemplate SELECTED_JMS_BRIDGE_TEMPLATE = AddressTemplate.of(SELECTED_JMS_BRIDGE_ADDRESS);
 }
