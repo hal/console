@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -45,7 +47,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.MESSAGING_SERVER)
-@Requires(value = SERVER_ADDRESS, recursive = false)
+@Requires(value = SERVER_ADDRESS)
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
@@ -53,6 +55,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
+            final PlaceManager placeManager,
             final Places places) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER, Names.SERVER)
@@ -64,8 +67,16 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
+                .onBreadcrumbItem((item, context) -> {
+                    // replace 'server' request parameter
+                    PlaceRequest current = placeManager.getCurrentPlaceRequest();
+                    PlaceRequest place = places.replaceParameter(current, SERVER, item.getName()).build();
+                    placeManager.revealPlace(place);
+                })
+
                 .onPreview(ServerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
+                .pinnable()
                 .withFilter()
         );
 

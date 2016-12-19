@@ -57,7 +57,7 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                                 resources.previews().configurationMessagingServer()))
                         .build(),
                 new StaticItem.Builder(Names.JMS_BRIDGE)
-                        .nextColumn(Ids.MESSAGING_JMS_BRIDGE)
+                        .nextColumn(Ids.JMS_BRIDGE)
                         .onPreview(new PreviewContent(Names.JMS_BRIDGE,
                                 resources.previews().configurationMessagingJmsBridge()))
                         .build()

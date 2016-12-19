@@ -118,7 +118,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 })
 
                 .onBreadcrumbItem((item, context) -> {
-                    PlaceRequest.Builder builder = null;
+                    PlaceRequest.Builder builder;
                     PlaceRequest current = placeManager.getCurrentPlaceRequest();
 
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {

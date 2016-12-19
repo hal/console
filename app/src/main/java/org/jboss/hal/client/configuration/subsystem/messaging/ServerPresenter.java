@@ -54,8 +54,8 @@ public class ServerPresenter
 
     // @formatter:off
     @ProxyCodeSplit
+    @Requires(value = SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER)
-    @Requires(value = SERVER_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
     public interface MyView extends MbuiView<ServerPresenter> {

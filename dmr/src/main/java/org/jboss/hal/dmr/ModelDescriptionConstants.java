@@ -51,6 +51,7 @@ public interface ModelDescriptionConstants {
     String ACL_MODULE = "acl-module";
     String ADD = "add";
     String ADDRESS = "address";
+    String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
@@ -97,6 +98,7 @@ public interface ModelDescriptionConstants {
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
+    String DIVERT = "divert";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
@@ -153,6 +155,8 @@ public interface ModelDescriptionConstants {
     String JCA = "jca";
     String JDBC_DRIVER = "jdbc-driver";
     String JMS_BRIDGE = "jms-bridge";
+    String JMS_QUEUE = "jms-queue";
+    String JMS_TOPIC = "jms-topic";
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
@@ -221,6 +225,7 @@ public interface ModelDescriptionConstants {
     String PROXIES = "proxies";
 
     String QUERY = "query";
+    String QUEUE = "queue";
     String QUEUE_LENGTH = "queue-length";
 
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
@@ -233,7 +238,6 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
-    String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTING = "remoting";
     String REMOVE = "remove";
@@ -267,6 +271,7 @@ public interface ModelDescriptionConstants {
 
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_SETTING = "security-setting";
     String SELECT = "select";
     String SELECTOR = "selector";
     String SERVER = "server";

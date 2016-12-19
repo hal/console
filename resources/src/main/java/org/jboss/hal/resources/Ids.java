@@ -77,6 +77,7 @@ public interface Ids {
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = build(ABOUT_MODAL, "title");
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ADDRESS_SETTING_ADD = build("address-setting", ADD_SUFFIX);
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
@@ -93,6 +94,7 @@ public interface Ids {
     String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
     String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
     String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
+    String CORE_QUEUE_ADD = build("core-queue", ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
@@ -124,6 +126,7 @@ public interface Ids {
     String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);
     String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
+    String DIVERT_ADD = build("divert", ADD_SUFFIX);
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -220,6 +223,8 @@ public interface Ids {
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
+    String JMS_QUEUE_ADD = build("jms-queue", ADD_SUFFIX);
+    String JMS_TOPIC_ADD = build("jms-topic", ADD_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -273,6 +278,10 @@ public interface Ids {
     String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
+    String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");
+    String MESSAGING_SERVER_CLUSTERING = build(MESSAGING_SERVER, "clustering");
+    String MESSAGING_SERVER_DESTINATION = build(MESSAGING_SERVER, "destination");
+    String MESSAGING_SERVER_HA_POLICY = build(MESSAGING_SERVER, "ha-policy");
     String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
     String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
     String MODEL_BROWSER = "model-browser";

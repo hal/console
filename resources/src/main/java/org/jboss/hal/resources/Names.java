@@ -24,6 +24,7 @@ public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
     String ACCESS_LOG = "Access Log";
+    String ADDRESS_SETTING = "Address Setting";
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
@@ -35,17 +36,22 @@ public interface Names {
     String BOOTSTRAP = "Bootstrap";
     String BUFFER_CACHES = "Buffer Caches";
     String CLIENT_CONFIGURATION = "Client Configuration";
+    String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
     String CONNECTION_DEFINITION = "Connection Definition";
+    String CONNECTIONS = "Connections";
     String COOKIES = "Cookies";
+    String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
+    String DESTINATIONS = "Destinations";
+    String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
@@ -54,6 +60,7 @@ public interface Names {
     String FILTER = "Filter";
     String FILTERS = "Filters";
     String GLOBAL_MODULES = "Global Modules";
+    String HA_POLICY = "HA Policy";
     String HAL = "HAL";
     String HANDLER = "Handler";
     String HANDLERS = "Handlers";
@@ -75,6 +82,8 @@ public interface Names {
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
     String JPA = "JPA";
+    String JMS_QUEUE = "JMS Queue";
+    String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
     String LISTENER = "Listener";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";

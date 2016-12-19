@@ -26,7 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class JmsBridgeView extends MbuiViewImpl<ServerPresenter> implements JmsBridgePresenter.MyView {
+public abstract class JmsBridgeView extends MbuiViewImpl<JmsBridgePresenter> implements JmsBridgePresenter.MyView {
 
     public static JmsBridgeView create(final MbuiContext mbuiContext) {
         return new Mbui_JmsBridgeView(mbuiContext);

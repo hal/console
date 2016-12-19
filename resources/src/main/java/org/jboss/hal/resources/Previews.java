@@ -127,8 +127,8 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/messaging-destinations.html")
     ExternalTextResource configurationMessagingDestinations();
 
-    @Source("previews/configuration/messaging-ha.html")
-    ExternalTextResource configurationMessagingHa();
+    @Source("previews/configuration/messaging-ha-policy.html")
+    ExternalTextResource configurationMessagingHaPolicy();
 
     @Source("previews/configuration/messaging-jms-bridge.html")
     ExternalTextResource configurationMessagingJmsBridge();

@@ -56,6 +56,10 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.messaging.DestinationPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgePresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_DestinationView_Provider;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_JmsBridgeView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView_Provider;
@@ -218,6 +222,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_DeploymentScannerView_Provider.class,
                 DeploymentScannerPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(DestinationPresenter.class,
+                DestinationPresenter.MyView.class,
+                Mbui_DestinationView_Provider.class,
+                DestinationPresenter.MyProxy.class);
+
         bindTemplatedPresenter(EjbPresenter.class,
                 EjbPresenter.MyView.class,
                 Mbui_EjbView_Provider.class,
@@ -277,6 +286,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaView.class,
                 JcaPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(JmsBridgePresenter.class,
+                JmsBridgePresenter.MyView.class,
+                Mbui_JmsBridgeView_Provider.class,
+                JmsBridgePresenter.MyProxy.class);
 
         bindPresenter(JmxPresenter.class,
                 JmxPresenter.MyView.class,
