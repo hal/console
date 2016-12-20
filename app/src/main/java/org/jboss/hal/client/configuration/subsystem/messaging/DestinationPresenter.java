@@ -18,11 +18,17 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
@@ -41,6 +47,8 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceCheck;
+import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -48,6 +56,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
@@ -88,6 +97,7 @@ public class DestinationPresenter
 
 
     private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
     private final Resources resources;
     private String securitySetting;
 
@@ -102,9 +112,11 @@ public class DestinationPresenter
             final MetadataRegistry metadataRegistry,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
+            @Footer final Provider<Progress> progress,
             final Resources resources) {
         super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
         this.dispatcher = dispatcher;
+        this.progress = progress;
         this.resources = resources;
     }
 
@@ -148,29 +160,49 @@ public class DestinationPresenter
     void addSecuritySettingRole() {
         Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
         TextBoxItem patternItem = new TextBoxItem(PATTERN, Names.PATTERN);
+        patternItem.setRequired(true);
         NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_ADD, metadata)
                 .unboundFormItem(patternItem, 0)
                 .unboundFormItem(nameItem, 1)
                 .addFromRequestProperties()
                 .build();
-        // TODO Only add security role if not already present
+
         new AddResourceDialog(Names.SECURITY_SETTING, form, (name, model) -> {
             String pattern = patternItem.getValue();
             ResourceAddress securitySettingAddress = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + "=" + pattern)
                     .resolve(statementContext);
-            Operation securitySettingOp = new Operation.Builder(ADD, securitySettingAddress).build();
             ResourceAddress roleAddress = SELECTED_SERVER_TEMPLATE
                     .append(SECURITY_SETTING + "=" + pattern)
                     .append(ROLE + "=" + name)
                     .resolve(statementContext);
-            Operation roleOp = new Operation.Builder(ADD, roleAddress).build();
-            dispatcher.execute(new Composite(securitySettingOp, roleOp), (CompositeResult result) -> {
-                MessageEvent.fire(getEventBus(), Message.success(
-                        resources.messages().addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
-                reload();
-            });
+
+            ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
+            Function<FunctionContext> add = control -> {
+                Operation addSecuritySetting = new Operation.Builder(ADD, securitySettingAddress).build();
+                Operation addRole = new Operation.Builder(ADD, roleAddress).payload(model).build();
+
+                int status = control.getContext().pop();
+                if (status == 404) {
+                    dispatcher.executeInFunction(control, new Composite(addSecuritySetting, addRole),
+                            (CompositeResult result) -> control.proceed());
+                } else {
+                    dispatcher.executeInFunction(control, addRole, result -> control.proceed());
+                }
+            };
+
+            new Async<FunctionContext>(progress.get()).waterfall(
+                    new FunctionContext(),
+                    new SuccessfulOutcome(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(final FunctionContext context) {
+                            MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                    .addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
+                            reload();
+                        }
+                    },
+                    check, add);
         }).show();
     }
 
@@ -181,21 +213,69 @@ public class DestinationPresenter
                     .append(SECURITY_SETTING + "=" + securitySetting)
                     .append(ROLE + "=" + name)
                     .resolve(statementContext);
-            crud.save(resources.constants().role(), name, address, changedValues, this::reload);
+            crud.save(Names.SECURITY_SETTING, securitySetting + "/" + name, address, changedValues, this::reload);
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
         }
     }
 
     void removeSecuritySettingRole(NamedNode role) {
-        // TODO Remove security-setting if there are no more roles
         if (securitySetting != null) {
-            String name = role.getName();
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE
-                    .append(SECURITY_SETTING + "=" + securitySetting)
-                    .append(ROLE + "=" + name)
-                    .resolve(statementContext);
-            crud.remove(resources.constants().role(), name, address, this::reload);
+            String roleName = role.getName();
+            String combinedName = securitySetting + "/" + roleName;
+
+            DialogFactory.showConfirmation(
+                    resources.messages().removeResourceConfirmationTitle(Names.SECURITY_SETTING),
+                    resources.messages().removeResourceConfirmationQuestion(combinedName),
+                    () -> {
+                        Function<FunctionContext> removeRole = control -> {
+                            ResourceAddress address = SELECTED_SERVER_TEMPLATE
+                                    .append(SECURITY_SETTING + "=" + securitySetting)
+                                    .append(ROLE + "=" + roleName)
+                                    .resolve(statementContext);
+                            Operation operation = new Operation.Builder(REMOVE, address).build();
+                            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                        };
+
+                        Function<FunctionContext> readRemainingRoles = control -> {
+                            ResourceAddress address = SELECTED_SERVER_TEMPLATE
+                                    .append(SECURITY_SETTING + "=" + securitySetting)
+                                    .resolve(statementContext);
+                            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                                    .param(CHILD_TYPE, ROLE)
+                                    .build();
+                            dispatcher.executeInFunction(control, operation, result -> {
+                                control.getContext().push(result.asList());
+                                control.proceed();
+                            });
+                        };
+
+                        Function<FunctionContext> removeSecuritySetting = control -> {
+                            List<ModelNode> roles = control.getContext().pop();
+                            if (roles.isEmpty()) {
+                                ResourceAddress address = SELECTED_SERVER_TEMPLATE
+                                        .append(SECURITY_SETTING + "=" + securitySetting)
+                                        .resolve(statementContext);
+                                Operation operation = new Operation.Builder(REMOVE, address).build();
+                                dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                            } else {
+                                control.proceed();
+                            }
+                        };
+
+                        new Async<FunctionContext>(progress.get()).waterfall(
+                                new FunctionContext(),
+                                new SuccessfulOutcome(getEventBus(), resources) {
+                                    @Override
+                                    public void onSuccess(final FunctionContext context) {
+                                        MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                                .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
+                                        reload();
+                                    }
+                                },
+                                removeRole, readRemainingRoles, removeSecuritySetting);
+                    });
+
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
         }

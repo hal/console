@@ -117,7 +117,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
         roleTable.api().onSelectionChange(api -> {
             if (api.hasSelection()) {
                 //noinspection ConstantConditions
-                presenter.selectSecuritySetting(api.selectedRow().getName());
+                presenter.selectSecuritySetting(api.selectedRow().get(SECURITY_SETTING).asString());
                 roleForm.view(api.selectedRow());
             } else {
                 presenter.selectSecuritySetting(null);
