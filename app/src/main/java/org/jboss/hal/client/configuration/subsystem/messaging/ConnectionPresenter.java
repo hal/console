@@ -22,14 +22,23 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -78,7 +87,7 @@ public class ConnectionPresenter
     // @formatter:on
 
 
-    private final Resources resources;
+    private final Dispatcher dispatcher;
 
     @Inject
     public ConnectionPresenter(
@@ -87,12 +96,13 @@ public class ConnectionPresenter
             final ConnectionPresenter.MyProxy myProxy,
             final Finder finder,
             final MetadataRegistry metadataRegistry,
+            final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
-        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
-        this.resources = resources;
+        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -121,8 +131,8 @@ public class ConnectionPresenter
                 result -> {
                     getView().updateAcceptor(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
                     getView().updateInVmAcceptor(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateRemoteAcceptor(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateHttpAcceptor(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
+                    getView().updateHttpAcceptor(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
+                    getView().updateRemoteAcceptor(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
                     getView().updateConnector(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
                     getView().updateInVmConnector(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
                     getView().updateHttpConnector(asNamedNodes(result.step(6).get(RESULT).asPropertyList()));
@@ -133,5 +143,39 @@ public class ConnectionPresenter
                 });
     }
 
-    // TODO Add suggestion handlers for add dialogs
+    void addHttp(ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addFromRequestProperties()
+                .requiredOnly()
+                .build();
+        form.getFormItem(HTTP_LISTENER).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        AddressTemplate.of("/{selected.profile}/subsystem=undertow/server=*/http-listener=*")));
+
+        new AddResourceDialog(ssr.type, form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
+
+    void addRemote(ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addFromRequestProperties()
+                .requiredOnly()
+                .build();
+        form.getFormItem(SOCKET_BINDING).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        AddressTemplate.of("/socket-binding-group=*/socket-binding=*")));
+
+        new AddResourceDialog(ssr.type, form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
 }

@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -46,6 +47,7 @@ abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyP
     final MetadataRegistry metadataRegistry;
     final FinderPathFactory finderPathFactory;
     final StatementContext statementContext;
+    final Resources resources;
     String serverName;
 
     ServerSettingsPresenter(final EventBus eventBus,
@@ -55,12 +57,14 @@ abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyP
             final CrudOperations crud,
             final MetadataRegistry metadataRegistry,
             final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+            final StatementContext statementContext,
+            final Resources resources) {
         super(eventBus, view, proxy_, finder);
         this.crud = crud;
         this.metadataRegistry = metadataRegistry;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> serverName);
+        this.resources = resources;
     }
 
     @Override
@@ -75,7 +79,7 @@ abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyP
     }
 
     void add(ServerSubResource ssr) {
-        ssr.add(metadataRegistry, statementContext, crud, (n, a) -> reload());
+        ssr.add(metadataRegistry, statementContext, crud, resources, (n, a) -> reload());
     }
 
     void save(ServerSubResource ssr, Form<NamedNode> form, Map<String, Object> changedValues) {

@@ -68,9 +68,9 @@ public class AddResourceDialog {
             final Iterable<String> attributes, final Callback callback) {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
+                .unboundFormItem(new NameItem(), 0)
                 .addFromRequestProperties()
                 .requiredOnly()
-                .unboundFormItem(new NameItem(), 0)
                 .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
 
         if (!Iterables.isEmpty(attributes)) {

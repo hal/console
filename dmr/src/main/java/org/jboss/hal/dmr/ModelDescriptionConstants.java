@@ -86,6 +86,8 @@ public interface ModelDescriptionConstants {
     String CONNECTION_FACTORY = "connection-factory";
     String CONNECTION_URL = "connection-url";
     String CONNECTOR = "connector";
+    String CONNECTORS = "connectors";
+    String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -242,6 +244,7 @@ public interface ModelDescriptionConstants {
     String QUERY = "query";
     String QUEUE = "queue";
     String QUEUE_LENGTH = "queue-length";
+    String QUEUE_NAME = "queue-name";
 
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -313,6 +316,7 @@ public interface ModelDescriptionConstants {
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
     String START_SERVERS = "start-servers";
+    String STATIC_CONNECTORS = "static-connectors";
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";

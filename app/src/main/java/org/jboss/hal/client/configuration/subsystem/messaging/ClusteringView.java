@@ -18,13 +18,19 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -52,6 +58,36 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
     ClusteringView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @Override
+    public void setPresenter(final ClusteringPresenter presenter) {
+        super.setPresenter(presenter);
+
+        // register the suggestion handlers here rather than in a @PostConstruct method
+        // they need a valid presenter reference!
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+
+        broadcastGroupForm.getFormItem(CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
+
+        clusterConnectionForm.getFormItem(CONNECTOR_NAME).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
+        clusterConnectionForm.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
+        clusterConnectionForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+
+        bridgeForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+        bridgeForm.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
@@ -94,13 +95,14 @@ enum ServerSubResource {
     }
 
     void add(MetadataRegistry metadataRegistry, StatementContext statementContext,
-            CrudOperations crud, CrudOperations.AddCallback callback) {
+            CrudOperations crud, Resources resources, CrudOperations.AddCallback callback) {
         Metadata metadata = metadataRegistry.lookup(template);
-        new AddResourceDialog(Ids.build(baseId, Ids.ADD_SUFFIX), type, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(resource + "=" + name)
-                    .resolve(statementContext);
-            crud.add(type, name, address, model, callback);
-        }).show();
+        new AddResourceDialog(Ids.build(baseId, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(type), metadata,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(resource + "=" + name)
+                            .resolve(statementContext);
+                    crud.add(type, name, address, model, callback);
+                }).show();
     }
 
     void save(Form<NamedNode> form, Map<String, Object> changedValues, StatementContext statementContext,
@@ -112,7 +114,7 @@ enum ServerSubResource {
 
     void remove(NamedNode item, StatementContext statementContext, CrudOperations crud, Callback callback) {
         String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(type + "=" + name).resolve(statementContext);
+        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(resource + "=" + name).resolve(statementContext);
         crud.remove(type, name, address, callback);
     }
 }

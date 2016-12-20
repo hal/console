@@ -22,14 +22,23 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -72,7 +81,7 @@ public class ClusteringPresenter
     // @formatter:on
 
 
-    private final Resources resources;
+    private final Dispatcher dispatcher;
 
     @Inject
     public ClusteringPresenter(
@@ -81,12 +90,13 @@ public class ClusteringPresenter
             final ClusteringPresenter.MyProxy myProxy,
             final Finder finder,
             final MetadataRegistry metadataRegistry,
+            final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
-        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
-        this.resources = resources;
+        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -120,5 +130,53 @@ public class ClusteringPresenter
                 });
     }
 
-    // TODO Add suggestion handlers for add dialogs
+    void addClusterConnection(ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addFromRequestProperties()
+                .requiredOnly()
+                .build();
+
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+        form.getFormItem(CONNECTOR_NAME).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
+
+    void addBridge(ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .addOnly()
+                .include(QUEUE_NAME, DISCOVERY_GROUP, STATIC_CONNECTORS)
+                .unsorted()
+                .build();
+
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+        form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+        form.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
 }

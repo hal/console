@@ -97,7 +97,7 @@
                        form-ref="messaging-cluster-connection-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.CLUSTER_CONNECTION)}}"/>
+                                handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, api.selectedRow())}}"
                                 scope="selected"/>
@@ -107,39 +107,7 @@
                     </columns>
                 </table>
                 <form id="messaging-cluster-connection-form" title="Cluster Connection"
-                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}">
-                    <attributes include-all="true">
-                        <attribute name="allow-direct-connections-only"/>
-                        <attribute name="call-failover-timeout"/>
-                        <attribute name="call-timeout"/>
-                        <attribute name="check-period"/>
-                        <attribute name="cluster-connection-address"/>
-                        <attribute name="confirmation-window-size"/>
-                        <attribute name="connection-ttl"/>
-                        <attribute name="connector-name"/>
-                        <attribute name="discovery-group">
-                            <suggest-handler>
-                                <templates>
-                                    <template
-                                            address="/{selected.profile}/subsystem=messaging-activemq/server=*/discovery-group=*"/>
-                                </templates>
-                            </suggest-handler>
-                        </attribute>
-                        <attribute name="initial-connect-attempts"/>
-                        <attribute name="max-hops"/>
-                        <attribute name="max-retry-interval"/>
-                        <attribute name="message-load-balancing-type"/>
-                        <attribute name="min-large-message-size"/>
-                        <attribute name="notification-attempts"/>
-                        <attribute name="notification-interval"/>
-                        <attribute name="producer-window-size"/>
-                        <attribute name="reconnect-attempts"/>
-                        <attribute name="retry-interval"/>
-                        <attribute name="retry-interval-multiplier"/>
-                        <attribute name="static-connectors"/>
-                        <attribute name="use-duplicate-detection"/>
-                    </attributes>
-                </form>
+                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}"/>
             </metadata>
         </item>
 
@@ -172,7 +140,7 @@
                 <table id="messaging-bridge-table" title="Bridge" form-ref="messaging-bridge-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.BRIDGE)}}"/>
+                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.BRIDGE, api.selectedRow())}}"
                                 scope="selected"/>

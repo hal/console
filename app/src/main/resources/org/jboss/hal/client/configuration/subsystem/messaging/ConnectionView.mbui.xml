@@ -86,7 +86,7 @@
                            form-ref="messaging-http-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.HTTP_ACCEPTOR)}}"/>
+                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_ACCEPTOR)}}"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.HTTP_ACCEPTOR, api.selectedRow())}}"
                                     scope="selected"/>
@@ -120,7 +120,7 @@
                            form-ref="messaging-remote-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.REMOTE_ACCEPTOR)}}"/>
+                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_ACCEPTOR)}}"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.REMOTE_ACCEPTOR, api.selectedRow())}}"
                                     scope="selected"/>
@@ -214,7 +214,7 @@
                            form-ref="messaging-http-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.HTTP_CONNECTOR)}}"/>
+                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_CONNECTOR)}}"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.HTTP_CONNECTOR, api.selectedRow())}}"
                                     scope="selected"/>
@@ -254,7 +254,7 @@
                            form-ref="messaging-remote-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.REMOTE_CONNECTOR)}}"/>
+                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_CONNECTOR)}}"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.REMOTE_CONNECTOR, api.selectedRow())}}"
                                     scope="selected"/>

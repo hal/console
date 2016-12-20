@@ -98,7 +98,6 @@ public class DestinationPresenter
 
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
-    private final Resources resources;
     private String securitySetting;
 
     @Inject
@@ -114,10 +113,9 @@ public class DestinationPresenter
             final StatementContext statementContext,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
-        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
+        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext, resources);
         this.dispatcher = dispatcher;
         this.progress = progress;
-        this.resources = resources;
     }
 
     @Override
@@ -166,6 +164,7 @@ public class DestinationPresenter
                 .unboundFormItem(patternItem, 0)
                 .unboundFormItem(nameItem, 1)
                 .addFromRequestProperties()
+                .requiredOnly()
                 .build();
 
         new AddResourceDialog(Names.SECURITY_SETTING, form, (name, model) -> {
