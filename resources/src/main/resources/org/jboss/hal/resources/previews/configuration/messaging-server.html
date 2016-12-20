@@ -1,1 +1,26 @@
-<p>A messaging server...</p>
+<p>An Apache ActiveMQ Artemis server. Each Apache ActiveMQ Artemis server has its own ultra high performance persistent journal, which it uses for message and other persistence.</p>
+
+<p>Using a high performance journal allows outrageous persistence message performance, something not achievable when using a relational database for persistence.</p>
+
+<p>Apache ActiveMQ Artemis clients, potentially on different physical machines interact with the Apache ActiveMQ Artemis server. Apache ActiveMQ Artemis currently provides two APIs for messaging at the client side:</p>
+
+<ol>
+    <li>Core client API. This is a simple intuitive Java API that allows the full set of messaging functionality without some of the complexities of JMS.</li>
+    <li>JMS client API. The standard JMS API is available at the client side.</li>
+</ol>
+
+<p>Apache ActiveMQ Artemis also provides different protocol implementations on the server so you can use respective clients for these protocols:</p>
+
+<ol>
+    <li>Stomp</li>
+    <li>OpenWire</li>
+    <li>AMQP</li>
+</ol>
+
+<p>JMS semantics are implemented by a JMS facade layer on the client side.</p>
+
+<p>The Apache ActiveMQ Artemis server does not speak JMS and in fact does not know anything about JMS, it is a protocol agnostic messaging server designed to be used with multiple different protocols.</p>
+
+<p>When a user uses the JMS API on the client side, all JMS interactions are translated into operations on the Apache ActiveMQ Artemis core client API before being transferred over the wire using the Apache ActiveMQ Artemis wire format.</p>
+
+<p>The server always just deals with core API interactions.</p>

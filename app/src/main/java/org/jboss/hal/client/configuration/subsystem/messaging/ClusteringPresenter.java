@@ -55,7 +55,8 @@ public class ClusteringPresenter
     @ProxyCodeSplit
     // TODO Replace with
     // TODO value = {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
-    // TODO         CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS}
+    // TODO         CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS,
+    // TODO         BRIDGE_ADDRESS}
     // TODO once WFCORE-2022 is resolved
     @Requires(value = SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
@@ -66,6 +67,7 @@ public class ClusteringPresenter
         void updateDiscoveryGroup(List<NamedNode> discoveryGroups);
         void updateClusterConnection(List<NamedNode> clusterConnections);
         void updateGroupingHandler(List<NamedNode> groupingHandlers);
+        void updateBridge(List<NamedNode> bridges);
     }
     // @formatter:on
 
@@ -107,12 +109,14 @@ public class ClusteringPresenter
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-        crud.readChildren(address, asList(BROADCAST_GROUP, DISCOVERY_GROUP, CLUSTER_CONNECTION, GROUPING_HANDLER),
+        crud.readChildren(address, asList(BROADCAST_GROUP, DISCOVERY_GROUP,
+                CLUSTER_CONNECTION, GROUPING_HANDLER, BRIDGE),
                 result -> {
                     getView().updateBroadcastGroup(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
                     getView().updateDiscoveryGroup(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
                     getView().updateClusterConnection(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
                     getView().updateGroupingHandler(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
+                    getView().updateBridge(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
                 });
     }
 

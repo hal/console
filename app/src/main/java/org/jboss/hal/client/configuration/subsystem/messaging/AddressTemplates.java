@@ -59,7 +59,6 @@ interface AddressTemplates {
     String CONNECTOR_SERVICE_ADDRESS = SERVER_ADDRESS + "/connector-service=*";
     String CONNECTION_FACTORY_ADDRESS = SERVER_ADDRESS + "/connection-factory=*";
     String POOLED_CONNECTION_FACTORY_ADDRESS = SERVER_ADDRESS + "/pooled-connection-factory=*";
-    String BRIDGE_ADDRESS = SERVER_ADDRESS + "/bridge=*";
     AddressTemplate ACCEPTOR_TEMPLATE = AddressTemplate.of(ACCEPTOR_ADDRESS);
     AddressTemplate IN_VM_ACCEPTOR_TEMPLATE = AddressTemplate.of(IN_VM_ACCEPTOR_ADDRESS);
     AddressTemplate HTTP_ACCEPTOR_TEMPLATE = AddressTemplate.of(HTTP_ACCEPTOR_ADDRESS);
@@ -71,17 +70,18 @@ interface AddressTemplates {
     AddressTemplate CONNECTOR_SERVICE_TEMPLATE = AddressTemplate.of(CONNECTOR_SERVICE_ADDRESS);
     AddressTemplate CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(CONNECTION_FACTORY_ADDRESS);
     AddressTemplate POOLED_CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(POOLED_CONNECTION_FACTORY_ADDRESS);
-    AddressTemplate BRIDGE_TEMPLATE = AddressTemplate.of(BRIDGE_ADDRESS);
 
     // clustering
     String BROADCAST_GROUP_ADDRESS = SERVER_ADDRESS + "/broadcast-group=*";
     String DISCOVERY_GROUP_ADDRESS = SERVER_ADDRESS + "/discovery-group=*";
     String CLUSTER_CONNECTION_ADDRESS = SERVER_ADDRESS + "/cluster-connection=*";
     String GROUPING_HANDLER_ADDRESS = SERVER_ADDRESS + "/grouping-handler=*";
+    String BRIDGE_ADDRESS = SERVER_ADDRESS + "/bridge=*";
     AddressTemplate BROADCAST_GROUP_TEMPLATE = AddressTemplate.of(BROADCAST_GROUP_ADDRESS);
     AddressTemplate DISCOVERY_GROUP_TEMPLATE = AddressTemplate.of(DISCOVERY_GROUP_ADDRESS);
     AddressTemplate CLUSTER_CONNECTION_TEMPLATE = AddressTemplate.of(CLUSTER_CONNECTION_ADDRESS);
     AddressTemplate GROUPING_HANDLER_TEMPLATE = AddressTemplate.of(GROUPING_HANDLER_ADDRESS);
+    AddressTemplate BRIDGE_TEMPLATE = AddressTemplate.of(BRIDGE_ADDRESS);
 
     // TODO HA-* resources
 

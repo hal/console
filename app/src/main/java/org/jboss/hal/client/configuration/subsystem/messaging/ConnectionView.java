@@ -61,8 +61,6 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     @MbuiElement("messaging-connection-factory-form") Form<NamedNode> connectionFactoryForm;
     @MbuiElement("messaging-pooled-connection-factory-table") NamedNodeTable<NamedNode> pooledConnectionFactoryTable;
     @MbuiElement("messaging-pooled-connection-factory-form") Form<NamedNode> pooledConnectionFactoryForm;
-    @MbuiElement("messaging-bridge-table") NamedNodeTable<NamedNode> bridgeTable;
-    @MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
 
     ConnectionView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -140,11 +138,5 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     public void updatePooledConnectionFactory(final List<NamedNode> pooledConnectionFactories) {
         pooledConnectionFactoryForm.clear();
         pooledConnectionFactoryTable.update(pooledConnectionFactories);
-    }
-
-    @Override
-    public void updateBridge(final List<NamedNode> bridges) {
-        bridgeForm.clear();
-        bridgeTable.update(bridges);
     }
 }

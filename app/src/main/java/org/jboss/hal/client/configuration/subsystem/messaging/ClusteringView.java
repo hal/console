@@ -40,13 +40,15 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
     @MbuiElement("messaging-clustering-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("messaging-broadcast-group-table") NamedNodeTable<NamedNode> broadcastGroupTable;
-    @MbuiElement("messaging-broadcast-group-form") Form<NamedNode> broadcastGreoupForm;
+    @MbuiElement("messaging-broadcast-group-form") Form<NamedNode> broadcastGroupForm;
     @MbuiElement("messaging-discovery-group-table") NamedNodeTable<NamedNode> discoveryGroupTable;
-    @MbuiElement("messaging-discovery-group-form") Form<NamedNode> discocveryGroupForm;
+    @MbuiElement("messaging-discovery-group-form") Form<NamedNode> discoveryGroupForm;
     @MbuiElement("messaging-cluster-connection-table") NamedNodeTable<NamedNode> clusterConnectionTable;
     @MbuiElement("messaging-cluster-connection-form") Form<NamedNode> clusterConnectionForm;
     @MbuiElement("messaging-grouping-handler-table") NamedNodeTable<NamedNode> groupingHandlerTable;
     @MbuiElement("messaging-grouping-handler-form") Form<NamedNode> groupingHandlerForm;
+    @MbuiElement("messaging-bridge-table") NamedNodeTable<NamedNode> bridgeTable;
+    @MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
 
     ClusteringView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -54,13 +56,13 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
     @Override
     public void updateBroadcastGroup(final List<NamedNode> broadcastGroups) {
-        broadcastGreoupForm.clear();
+        broadcastGroupForm.clear();
         broadcastGroupTable.update(broadcastGroups);
     }
 
     @Override
     public void updateDiscoveryGroup(final List<NamedNode> discoveryGroups) {
-        discocveryGroupForm.clear();
+        discoveryGroupForm.clear();
         discoveryGroupTable.update(discoveryGroups);
     }
 
@@ -74,5 +76,11 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     public void updateGroupingHandler(final List<NamedNode> groupingHandlers) {
         groupingHandlerForm.clear();
         groupingHandlerTable.update(groupingHandlers);
+    }
+
+    @Override
+    public void updateBridge(final List<NamedNode> bridges) {
+        bridgeForm.clear();
+        bridgeTable.update(bridges);
     }
 }

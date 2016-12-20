@@ -74,7 +74,6 @@ public class ConnectionPresenter
         void updateConnectorService(List<NamedNode> connectorServices);
         void updateConnectionFactory(List<NamedNode> connectionFactories);
         void updatePooledConnectionFactory(List<NamedNode> pooledConnectionFactories);
-        void updateBridge(List<NamedNode> bridges);
     }
     // @formatter:on
 
@@ -118,8 +117,7 @@ public class ConnectionPresenter
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(ACCEPTOR, IN_VM_ACCEPTOR, HTTP_ACCEPTOR, REMOTE_ACCEPTOR,
                 CONNECTOR, IN_VM_CONNECTOR, HTTP_CONNECTOR, REMOTE_CONNECTOR,
-                CONNECTOR_SERVICE, CONNECTION_FACTORY, POOLED_CONNECTION_FACTORY,
-                BRIDGE),
+                CONNECTOR_SERVICE, CONNECTION_FACTORY, POOLED_CONNECTION_FACTORY),
                 result -> {
                     getView().updateAcceptor(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
                     getView().updateInVmAcceptor(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
@@ -132,7 +130,6 @@ public class ConnectionPresenter
                     getView().updateConnectorService(asNamedNodes(result.step(8).get(RESULT).asPropertyList()));
                     getView().updateConnectionFactory(asNamedNodes(result.step(9).get(RESULT).asPropertyList()));
                     getView().updatePooledConnectionFactory(asNamedNodes(result.step(10).get(RESULT).asPropertyList()));
-                    getView().updateBridge(asNamedNodes(result.step(11).get(RESULT).asPropertyList()));
                 });
     }
 
