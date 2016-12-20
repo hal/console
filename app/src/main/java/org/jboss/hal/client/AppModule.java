@@ -56,8 +56,12 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.messaging.ClusteringPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.ConnectionPresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.DestinationPresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgePresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ClusteringView_Provider;
+import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ConnectionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_DestinationView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_JmsBridgeView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView_Provider;
@@ -197,10 +201,20 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_BufferCacheView_Provider.class,
                 BufferCachePresenter.MyProxy.class);
 
+        bindTemplatedPresenter(ClusteringPresenter.class,
+                ClusteringPresenter.MyView.class,
+                Mbui_ClusteringView_Provider.class,
+                ClusteringPresenter.MyProxy.class);
+
         bindPresenter(ConfigurationPresenter.class,
                 ConfigurationPresenter.MyView.class,
                 ConfigurationView.class,
                 ConfigurationPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(ConnectionPresenter.class,
+                ConnectionPresenter.MyView.class,
+                Mbui_ConnectionView_Provider.class,
+                ConnectionPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.class,
                 org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyView.class,

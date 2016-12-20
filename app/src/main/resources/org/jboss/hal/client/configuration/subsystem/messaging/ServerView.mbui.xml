@@ -16,21 +16,62 @@
   ~ limitations under the License.
   -->
 <view>
-    <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*">
-        <h1>Messaging Server</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="messaging-server-form" title="Messaging Server" on-save="{{presenter.saveServer(changedValues)}}">
-            <attributes>
-                <!-- Use the attribute groups from the resource description -->
-                <group name="management"/>
-                <group name="security"/>
-                <group name="journal"/>
-                <group name="cluster"/>
-                <group name="message-expiry"/>
-                <group name="transaction"/>
-                <group name="statistics"/>
-                <group name="debug"/>
-            </attributes>
-        </form>
-    </metadata>
+    <vertical-navigation id="messaging-server-vertical-navigation">
+        <item id="messaging-server-entry" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*">
+                <h1>Messaging Server</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="messaging-server-form" title="Messaging Server"
+                      on-save="{{presenter.saveServer(changedValues)}}">
+                    <attributes>
+                        <!-- Use the attribute groups from the resource description -->
+                        <group name="management"/>
+                        <group name="security"/>
+                        <group name="journal"/>
+                        <group name="cluster"/>
+                        <group name="message-expiry"/>
+                        <group name="transaction"/>
+                        <group name="statistics"/>
+                        <group name="debug"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-server-directory-entry" title="Directories" icon="pficon pficon-repository">
+            <sub-item id="messaging-server-paging-directory-entry" title="Paging">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=paging-directory">
+                    <h1>Paging Directory</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <fail-safe-form id="messaging-server-paging-directory-form" title="Paging Directory"
+                                    auto-save="true"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="messaging-server-bindings-directory-entry" title="Bindings">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=bindings-directory">
+                    <h1>Bindings Directory</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <fail-safe-form id="messaging-server-bindings-directory-form" title="Bindings Directory"
+                                    auto-save="true"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="messaging-server-large-messages-directory-entry" title="Large Messages">
+                <metadata
+                        address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=large-messages-directory">
+                    <h1>Large Messages Directory</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <fail-safe-form id="messaging-server-large-messages-directory-form" title="Large Messages Directory"
+                                    auto-save="true"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="messaging-server-journal-directory-entry" title="Journal">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=journal-directory">
+                    <h1>Journal Directory</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <fail-safe-form id="messaging-server-journal-directory-form" title="Journal Directory"
+                                    auto-save="true"/>
+                </metadata>
+            </sub-item>
+        </item>
+    </vertical-navigation>
 </view>

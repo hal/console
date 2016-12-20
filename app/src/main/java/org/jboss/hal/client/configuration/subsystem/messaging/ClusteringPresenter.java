@@ -15,24 +15,22 @@
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
-import java.util.Map;
+import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.SelectionAwareStatementContext;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -40,49 +38,52 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
  * @author Harald Pehl
  */
-public class ServerPresenter
-        extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
+public class ClusteringPresenter
+        extends ServerSettingsPresenter<ClusteringPresenter.MyView, ClusteringPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
+    // TODO Replace with
+    // TODO value = {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
+    // TODO         CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS}
+    // TODO once WFCORE-2022 is resolved
     @Requires(value = SERVER_ADDRESS)
-    @NameToken(NameTokens.MESSAGING_SERVER) // TODO Add recursive = false once WFCORE-2022 is resolved
-    public interface MyProxy extends ProxyPlace<ServerPresenter> {}
+    @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
+    public interface MyProxy extends ProxyPlace<ClusteringPresenter> {}
 
-    public interface MyView extends MbuiView<ServerPresenter> {
-        void update(NamedNode server);
+    public interface MyView extends MbuiView<ClusteringPresenter> {
+        void updateBroadcastGroup(List<NamedNode> broadcastGroups);
+        void updateDiscoveryGroup(List<NamedNode> discoveryGroups);
+        void updateClusterConnection(List<NamedNode> clusterConnections);
+        void updateGroupingHandler(List<NamedNode> groupingHandlers);
     }
     // @formatter:on
 
-    private final CrudOperations crud;
-    private final FinderPathFactory finderPathFactory;
-    private final StatementContext statementContext;
+
     private final Resources resources;
-    private String serverName;
 
     @Inject
-    public ServerPresenter(
+    public ClusteringPresenter(
             final EventBus eventBus,
-            final MyView view,
-            final MyProxy myProxy,
+            final ClusteringPresenter.MyView view,
+            final ClusteringPresenter.MyProxy myProxy,
             final Finder finder,
+            final MetadataRegistry metadataRegistry,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
-        super(eventBus, view, myProxy, finder);
-        this.crud = crud;
-        this.finderPathFactory = finderPathFactory;
-        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> serverName);
+        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
         this.resources = resources;
     }
 
@@ -93,32 +94,27 @@ public class ServerPresenter
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        serverName = request.getParameter(SERVER, null);
-    }
-
-    @Override
-    public ResourceAddress resourceAddress() {
-        return SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-    }
-
-    @Override
     public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName), Names.SERVER, serverName);
+                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName),
+                        Names.SERVER, serverName)
+                .append(Ids.MESSAGING_SERVER_SETTINGS, Ids.MESSAGING_SERVER_CLUSTERING,
+                        resources.constants().settings(), Names.CLUSTERING);
     }
 
     @Override
     protected void reload() {
-        crud.readRecursive(SELECTED_SERVER_TEMPLATE.resolve(statementContext),
-                result -> getView().update(new NamedNode(serverName, result)));
+        ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
+        crud.readChildren(address, asList(BROADCAST_GROUP, DISCOVERY_GROUP, CLUSTER_CONNECTION, GROUPING_HANDLER),
+                result -> {
+                    getView().updateBroadcastGroup(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
+                    getView().updateDiscoveryGroup(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
+                    getView().updateClusterConnection(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
+                    getView().updateGroupingHandler(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
+                });
     }
 
-    void saveServer(final Map<String, Object> changedValues) {
-        crud.save(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), changedValues,
-                this::reload);
-    }
+    // TODO Add suggestion handlers for add dialogs
 }

@@ -163,6 +163,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noChanges();
     SafeHtml noContent();
     SafeHtml noContentSelected();
+    SafeHtml noContextForNormalMode();
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
     SafeHtml noLogFile();
@@ -170,6 +171,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
     SafeHtml noResource();
+    SafeHtml noSecuritySettingSelected();
     SafeHtml noServerGroupSelected();
     SafeHtml normalLogFile(String size);
 

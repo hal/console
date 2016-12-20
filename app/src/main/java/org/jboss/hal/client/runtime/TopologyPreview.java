@@ -65,6 +65,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
@@ -194,7 +195,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
-        // remeber selection
+        // remember selection
         Element element = Browser.getDocument().querySelector("." + topology + " ." + selected);
         String hostName = element != null ? String.valueOf(element.getDataset().at("host")) : null;
         String serverGroupName = element != null ? String.valueOf(element.getDataset().at("serverGroup")) : null;
@@ -392,7 +393,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             }
                             builder.span().textContent(host.getName()).end()
                         .end()
-                        .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, hostDropDownId);
+                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, hostDropDownId);
                             hostActions(builder, host);
                         builder.end();
                     } else {
@@ -430,7 +431,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             .title(serverGroup.getName())
                             .textContent(serverGroup.getName())
                         .end()
-                        .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverGroupDropDownId);
+                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, serverGroupDropDownId);
                             serverGroupActions(builder, serverGroup);
                         builder.end();
                     } else {
@@ -468,7 +469,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         .title(srv.getName())
                         .textContent(srv.getName())
                     .end()
-                    .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverDropDownId);
+                    .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, serverDropDownId);
                         serverActions(builder, srv);
                     builder.end();
                 } else {
@@ -519,7 +520,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void actionLink(Elements.Builder builder, EventListener listener, String text) {
-        builder.li().attr(ROLE, PRESENTATION)
+        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
                 .a().css(clickable).on(click, listener).textContent(text).end()
                 .end();
     }

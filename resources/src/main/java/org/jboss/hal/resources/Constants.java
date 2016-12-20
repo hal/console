@@ -291,6 +291,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String orDragItHere();
     String output();
 
+    String pattern();
     String pending();
     String pin();
     String ping();

@@ -23,16 +23,18 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -41,48 +43,53 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
+import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
  * @author Harald Pehl
  */
-public class DestinationPresenter extends MbuiPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
+public class DestinationPresenter
+        extends ServerSettingsPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
+    // TODO Replace with
+    // TODO value = {CORE_QUEUE_ADDRESS, JMS_QUEUE_ADDRESS, JMS_TOPIC_ADDRESS,
+    // TODO         SECURITY_SETTING_ADDRESS, ADDRESS_SETTING_ADDRESS, DIVERT_ADDRESS}
+    // TODO once WFCORE-2022 is resolved
     @Requires(value = SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
     public interface MyProxy extends ProxyPlace<DestinationPresenter> {}
 
     public interface MyView extends MbuiView<DestinationPresenter> {
-        void updateCoreQueues(List<NamedNode> coreQueues);
-        void updateJmsQueues(List<NamedNode> jmsQueues);
-        void updateJmsTopics(List<NamedNode> jmsTopics);
-        void updateSecuritySettings(List<NamedNode> securitySettings);
-        void updateAddressSettings(List<NamedNode> addressSettings);
-        void updateDiverts(List<NamedNode> diverts);
+        void updateCoreQueue(List<NamedNode> coreQueues);
+        void updateJmsQueue(List<NamedNode> jmsQueues);
+        void updateJmsTopic(List<NamedNode> jmsTopics);
+        void updateSecuritySetting(List<NamedNode> securitySettings);
+        void updateAddressSetting(List<NamedNode> addressSettings);
+        void updateDivert(List<NamedNode> diverts);
     }
     // @formatter:on
 
 
     private final Dispatcher dispatcher;
-    private final CrudOperations crud;
-    private final MetadataRegistry metadataRegistry;
-    private final FinderPathFactory finderPathFactory;
-    private final StatementContext statementContext;
     private final Resources resources;
-    private String serverName;
+    private String securitySetting;
 
     @Inject
     public DestinationPresenter(
@@ -96,12 +103,8 @@ public class DestinationPresenter extends MbuiPresenter<DestinationPresenter.MyV
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
-        super(eventBus, view, myProxy, finder);
+        super(eventBus, view, myProxy, finder, crud, metadataRegistry, finderPathFactory, statementContext);
         this.dispatcher = dispatcher;
-        this.crud = crud;
-        this.metadataRegistry = metadataRegistry;
-        this.finderPathFactory = finderPathFactory;
-        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> serverName);
         this.resources = resources;
     }
 
@@ -109,17 +112,6 @@ public class DestinationPresenter extends MbuiPresenter<DestinationPresenter.MyV
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        serverName = request.getParameter(SERVER, null);
-    }
-
-    @Override
-    public ResourceAddress resourceAddress() {
-        return SELECTED_SERVER_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -136,141 +128,76 @@ public class DestinationPresenter extends MbuiPresenter<DestinationPresenter.MyV
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-        Operation coreQueueOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, QUEUE).param(RECURSIVE, true).build();
-        Operation jmsQueueOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, JMS_QUEUE).param(RECURSIVE, true).build();
-        Operation jmsTopicOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, JMS_TOPIC).param(RECURSIVE, true).build();
-        Operation securitySettingOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, SECURITY_SETTING).param(RECURSIVE, true).build();
-        Operation addressSettingOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, ADDRESS_SETTING).param(RECURSIVE, true).build();
-        Operation divertOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                .param(CHILD_TYPE, DIVERT).param(RECURSIVE, true).build();
-
-        dispatcher.execute(
-                new Composite(coreQueueOp, jmsQueueOp, jmsTopicOp, securitySettingOp, addressSettingOp, divertOp),
-                (CompositeResult result) -> {
-                    getView().updateCoreQueues(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
-                    getView().updateJmsQueues(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateJmsTopics(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateSecuritySettings(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateAddressSettings(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
-                    getView().updateDiverts(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
+        crud.readChildren(address, asList(QUEUE, JMS_QUEUE, JMS_TOPIC, SECURITY_SETTING, ADDRESS_SETTING, DIVERT), 2,
+                result -> {
+                    getView().updateCoreQueue(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
+                    getView().updateJmsQueue(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
+                    getView().updateJmsTopic(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
+                    getView().updateSecuritySetting(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
+                    getView().updateAddressSetting(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
+                    getView().updateDivert(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
                 });
     }
 
-    // ------------------------------------------------------ core queue
+    // ------------------------------------------------------ security setting
 
-    void addCoreQueue() {
-        Metadata metadata = metadataRegistry.lookup(CORE_QUEUE_TEMPLATE);
-        new AddResourceDialog(Ids.CORE_QUEUE_ADD, Names.CORE_QUEUE, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(QUEUE + "=" + name).resolve(statementContext);
-            crud.add(Names.CORE_QUEUE, name, address, model, (n, a) -> reload());
-        }).show();
+    void selectSecuritySetting(String securitySetting) {
+        this.securitySetting = securitySetting;
     }
 
-    void saveCoreQueue(Form<NamedNode> form, Map<String, Object> changedValues) {
-        String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(QUEUE + "=" + name).resolve(statementContext);
-        crud.save(Names.CORE_QUEUE, name, address, changedValues, this::reload);
-    }
-
-    void removeCoreQueue(NamedNode item) {
-        String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(QUEUE + "=" + name).resolve(statementContext);
-        crud.remove(Names.CORE_QUEUE, name, address, this::reload);
-    }
-
-    // ------------------------------------------------------ jms queue
-
-    void addJmsQueue() {
-        Metadata metadata = metadataRegistry.lookup(JMS_QUEUE_TEMPLATE);
-        new AddResourceDialog(Ids.JMS_QUEUE_ADD, Names.JMS_QUEUE, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_QUEUE + "=" + name).resolve(statementContext);
-            crud.add(Names.JMS_QUEUE, name, address, model, (n, a) -> reload());
-        }).show();
-    }
-
-    void saveJmsQueue(Form<NamedNode> form, Map<String, Object> changedValues) {
-        String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_QUEUE + "=" + name).resolve(statementContext);
-        crud.save(Names.JMS_QUEUE, name, address, changedValues, this::reload);
-    }
-
-    void removeJmsQueue(NamedNode item) {
-        String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_QUEUE + "=" + name).resolve(statementContext);
-        crud.remove(Names.JMS_QUEUE, name, address, this::reload);
-    }
-
-    // ------------------------------------------------------ jms topic
-
-    void addJmsTopic() {
-        Metadata metadata = metadataRegistry.lookup(JMS_TOPIC_TEMPLATE);
-        new AddResourceDialog(Ids.JMS_TOPIC_ADD, Names.JMS_TOPIC, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_TOPIC + "=" + name).resolve(statementContext);
-            crud.add(Names.JMS_TOPIC, name, address, model, (n, a) -> reload());
-        }).show();
-    }
-
-    void saveJmsTopic(Form<NamedNode> form, Map<String, Object> changedValues) {
-        String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_TOPIC + "=" + name).resolve(statementContext);
-        crud.save(Names.JMS_TOPIC, name, address, changedValues, this::reload);
-    }
-
-    void removeJmsTopic(NamedNode item) {
-        String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(JMS_TOPIC + "=" + name).resolve(statementContext);
-        crud.remove(Names.JMS_TOPIC, name, address, this::reload);
-    }
-
-    // ------------------------------------------------------ address setting
-
-    void addAddressSetting() {
-        Metadata metadata = metadataRegistry.lookup(ADDRESS_SETTING_TEMPLATE);
-        new AddResourceDialog(Ids.ADDRESS_SETTING_ADD, Names.ADDRESS_SETTING, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ADDRESS_SETTING + "=" + name)
+    void addSecuritySettingRole() {
+        Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
+        TextBoxItem patternItem = new TextBoxItem(PATTERN, Names.PATTERN);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_ADD, metadata)
+                .unboundFormItem(patternItem, 0)
+                .unboundFormItem(nameItem, 1)
+                .addFromRequestProperties()
+                .build();
+        // TODO Only add security role if not already present
+        new AddResourceDialog(Names.SECURITY_SETTING, form, (name, model) -> {
+            String pattern = patternItem.getValue();
+            ResourceAddress securitySettingAddress = SELECTED_SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + pattern)
                     .resolve(statementContext);
-            crud.add(Names.ADDRESS_SETTING, name, address, model, (n, a) -> reload());
+            Operation securitySettingOp = new Operation.Builder(ADD, securitySettingAddress).build();
+            ResourceAddress roleAddress = SELECTED_SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + pattern)
+                    .append(ROLE + "=" + name)
+                    .resolve(statementContext);
+            Operation roleOp = new Operation.Builder(ADD, roleAddress).build();
+            dispatcher.execute(new Composite(securitySettingOp, roleOp), (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(), Message.success(
+                        resources.messages().addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
+                reload();
+            });
         }).show();
     }
 
-    void saveAddressSetting(Form<NamedNode> form, Map<String, Object> changedValues) {
-        String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ADDRESS_SETTING + "=" + name)
-                .resolve(statementContext);
-        crud.save(Names.ADDRESS_SETTING, name, address, changedValues, this::reload);
+    void saveSecuritySettingRole(Form<NamedNode> form, Map<String, Object> changedValues) {
+        if (securitySetting != null) {
+            String name = form.getModel().getName();
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + securitySetting)
+                    .append(ROLE + "=" + name)
+                    .resolve(statementContext);
+            crud.save(resources.constants().role(), name, address, changedValues, this::reload);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
+        }
     }
 
-    void removeAddressSetting(NamedNode item) {
-        String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ADDRESS_SETTING + "=" + name)
-                .resolve(statementContext);
-        crud.remove(Names.ADDRESS_SETTING, name, address, this::reload);
-    }
-
-    // ------------------------------------------------------ divert
-
-    void addDivert() {
-        Metadata metadata = metadataRegistry.lookup(DIVERT_TEMPLATE);
-        new AddResourceDialog(Ids.DIVERT_ADD, Names.DIVERT, metadata, (name, model) -> {
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(DIVERT + "=" + name).resolve(statementContext);
-            crud.add(Names.DIVERT, name, address, model, (n, a) -> reload());
-        }).show();
-    }
-
-    void saveDivert(Form<NamedNode> form, Map<String, Object> changedValues) {
-        String name = form.getModel().getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(DIVERT + "=" + name).resolve(statementContext);
-        crud.save(Names.DIVERT, name, address, changedValues, this::reload);
-    }
-
-    void removeDivert(NamedNode item) {
-        String name = item.getName();
-        ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(DIVERT + "=" + name).resolve(statementContext);
-        crud.remove(Names.DIVERT, name, address, this::reload);
+    void removeSecuritySettingRole(NamedNode role) {
+        // TODO Remove security-setting if there are no more roles
+        if (securitySetting != null) {
+            String name = role.getName();
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + securitySetting)
+                    .append(ROLE + "=" + name)
+                    .resolve(statementContext);
+            crud.remove(resources.constants().role(), name, address, this::reload);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
+        }
     }
 }

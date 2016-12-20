@@ -39,7 +39,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -47,7 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.MESSAGING_SERVER)
-@Requires(value = SERVER_ADDRESS)
+@Requires(value = SERVER_ADDRESS) // TODO Add recursive = false once WFCORE-2022 is resolved
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
@@ -100,7 +99,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(
-                        places.selectedProfile(NameTokens.MESSAGING_SERVER).with(NAME, item.getName()).build()));
+                        places.selectedProfile(NameTokens.MESSAGING_SERVER).with(SERVER, item.getName()).build()));
                 actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), SERVER_TEMPLATE, ServerColumn.this));
                 return actions;
             }

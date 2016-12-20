@@ -77,7 +77,6 @@ public interface Ids {
     String ABOUT_MODAL = "about-modal";
     String ABOUT_MODAL_TITLE = build(ABOUT_MODAL, "title");
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
-    String ADDRESS_SETTING_ADD = build("address-setting", ADD_SUFFIX);
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
@@ -94,7 +93,6 @@ public interface Ids {
     String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
     String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
     String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
-    String CORE_QUEUE_ADD = build("core-queue", ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
@@ -126,7 +124,6 @@ public interface Ids {
     String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);
     String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
-    String DIVERT_ADD = build("divert", ADD_SUFFIX);
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -204,10 +201,6 @@ public interface Ids {
     String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
     String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, PAGE_SUFFIX);
     String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
-    // Please note that the JCA_THREAD_POOL_* constants are not used on its own. They're prefixed with either
-    // JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
-    // So the final id of the thread pool attributes tab for the distributed workmanager reads as
-    // "jca-distributed-workmanager-thread-pool-attributes-tab"
     String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
@@ -223,8 +216,6 @@ public interface Ids {
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
-    String JMS_QUEUE_ADD = build("jms-queue", ADD_SUFFIX);
-    String JMS_TOPIC_ADD = build("jms-topic", ADD_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -274,8 +265,34 @@ public interface Ids {
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MESSAGING = "messaging";
+    String MESSAGING_ACCEPTOR = build(MESSAGING, "acceptor");
+    String MESSAGING_ADDRESS_SETTING = build("address-setting");
     String MESSAGING_CATEGORY = "messaging-category";
+    String MESSAGING_BRIDGE = build(MESSAGING, "bridge");
+    String MESSAGING_BROADCAST_GROUP = build(MESSAGING, "broadcast-group");
+    String MESSAGING_CONNECTION_FACTORY = build(MESSAGING, "connection-factory");
+    String MESSAGING_POOLED_CONNECTION_FACTORY = build(MESSAGING, "pooled-connection-factory");
+    String MESSAGING_CLUSTER_CONNECTION = build(MESSAGING, "cluster-connection");
+    String MESSAGING_CONNECTOR = build(MESSAGING, "connector");
+    String MESSAGING_CONNECTOR_SERVICE= build(MESSAGING, "connector-service");
+    String MESSAGING_CORE_QUEUE = build(MESSAGING, "core-queue");
+    String MESSAGING_DISCOVERY_GROUP = build(MESSAGING, "discovery-group");
+    String MESSAGING_DIVERT = build(MESSAGING, "divert");
     String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
+    String MESSAGING_GROUPING_HANDLER = build(MESSAGING, "grouping-handler");
+    String MESSAGING_HTTP_ACCEPTOR = build(MESSAGING, "http-acceptor");
+    String MESSAGING_HTTP_CONNECTOR = build(MESSAGING, "http-connector");
+    String MESSAGING_IN_VM_ACCEPTOR = build(MESSAGING, "in-vm-acceptor");
+    String MESSAGING_IN_VM_CONNECTOR = build(MESSAGING, "in-vm-connector");
+    String MESSAGING_JMS_QUEUE = build(MESSAGING, "jms-queue");
+    String MESSAGING_JMS_TOPIC = build(MESSAGING, "jms-topic");
+    String MESSAGING_REMOTE_ACCEPTOR = build(MESSAGING, "remote-acceptor");
+    String MESSAGING_REMOTE_CONNECTOR = build(MESSAGING, "remote-connector");
+    String MESSAGING_SECURITY_SETTING_ROLE = build(MESSAGING, "security-setting-role");
+    String MESSAGING_SECURITY_SETTING_ROLE_ADD = build(MESSAGING_SECURITY_SETTING_ROLE, ADD_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_ENTRY = build(MESSAGING_SECURITY_SETTING_ROLE, ENTRY_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_FORM = build(MESSAGING_SECURITY_SETTING_ROLE, FORM_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_TABLE = build(MESSAGING_SECURITY_SETTING_ROLE, TABLE_SUFFIX);
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
     String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");

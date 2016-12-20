@@ -289,7 +289,7 @@ final class ${context.subclass} extends ${context.base} {
             <#list context.verticalNavigation.items as primaryItem>
                 <#if primaryItem.content?has_content>
         Elements.Builder ${primaryItem.name}Builder = new Elements.Builder()
-            .div()
+            .section()
                     <#list primaryItem.content as content>
                         <#if content.html??>
                 .div()
@@ -313,7 +313,7 @@ final class ${context.subclass} extends ${context.base} {
                     <#list primaryItem.subItems as subItem>
                         <#if subItem.content?has_content>
         Elements.Builder ${subItem.name}Builder = new Elements.Builder()
-            .div()
+            .section()
                             <#list subItem.content as content>
                                 <#if content.html??>
                 .div()

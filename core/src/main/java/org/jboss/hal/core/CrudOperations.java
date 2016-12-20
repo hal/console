@@ -46,6 +46,8 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -104,6 +106,13 @@ public class CrudOperations {
     public interface ReadChildrenCallback {
 
         void execute(final List<Property> children);
+    }
+
+
+    @FunctionalInterface
+    public interface ReadCompositeCallback {
+
+        void execute(final CompositeResult result);
     }
 
 
@@ -322,7 +331,7 @@ public class CrudOperations {
     }
 
     /**
-     * Executes an add operation using the specified template and payload. After the resource has been added a success
+     * Executes an add operation using the specified address and payload. After the resource has been added a success
      * message is fired and the specified callback is executed.
      *
      * @param type     the human readable resource type used in the dialog header and success message
@@ -422,7 +431,7 @@ public class CrudOperations {
 
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the specified
-     * template and passes the result to the specified callback.
+     * address and passes the result to the specified callback.
      *
      * @param address  the fq address for the {@code read-resource} operation
      * @param callback the callback which gets the result of the {@code read-resource} operation
@@ -433,7 +442,7 @@ public class CrudOperations {
 
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} with the specified depth
-     * on the specified template and passes the result to the specified callback.
+     * on the specified address and passes the result to the specified callback.
      *
      * @param address  the fq address for the {@code read-resource} operation
      * @param depth    the depth used for the {@code recursive-depth} parameter
@@ -449,7 +458,7 @@ public class CrudOperations {
 
     /**
      * Executes a recursive {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the
-     * specified template and passes the result to the specified callback.
+     * specified address and passes the result to the specified callback.
      *
      * @param address  the fq address for the {@code read-resource} operation
      * @param callback the callback which gets the result of the {@code read-resource} operation
@@ -464,7 +473,7 @@ public class CrudOperations {
 
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
-     * specified template and passes the result as {@code List<Property>} to the specified callback.
+     * specified address and passes the result as {@code List<Property>} to the specified callback.
      *
      * @param address  the fq address for the {@code read-children-resource} operation
      * @param resource the child resource (not human readable, but the actual child resource name!)
@@ -485,6 +494,47 @@ public class CrudOperations {
 
     private void readChildren(final Operation operation, final ReadChildrenCallback callback) {
         dispatcher.execute(operation, result -> callback.execute(result.asPropertyList()));
+    }
+
+
+    // ------------------------------------------------------ read different child resources
+
+    /**
+     * Read multiple different child resources using a composite operation. The steps in the composite result map to the
+     * position of the resource in the {@code resources} collection.
+     *
+     * @param address   the fq address for the {@code read-children-resource} operation
+     * @param resources the child resources (not human readable, but the actual child resource name!)
+     * @param callback  the callback which gets the composite result
+     */
+    public void readChildren(final ResourceAddress address, final Iterable<String> resources,
+            final ReadCompositeCallback callback) {
+        List<Operation> operations = stream(resources.spliterator(), false)
+                .map(resource -> new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                        .param(CHILD_TYPE, resource)
+                        .build())
+                .collect(toList());
+        dispatcher.execute(new Composite(operations), callback::execute);
+    }
+
+    /**
+     * Read multiple different child resources using a composite operation. The steps in the composite result map to the
+     * position of the resource in the {@code resources} collection.
+     *
+     * @param address   the fq address for the {@code read-children-resource} operation
+     * @param resources the child resources (not human readable, but the actual child resource name!)
+     * @param depth     the depth used for the {@code recursive-depth} parameter
+     * @param callback  the callback which gets the composite result
+     */
+    public void readChildren(final ResourceAddress address, final Iterable<String> resources, final int depth,
+            final ReadCompositeCallback callback) {
+        List<Operation> operations = stream(resources.spliterator(), false)
+                .map(resource -> new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                        .param(CHILD_TYPE, resource)
+                        .param(RECURSIVE_DEPTH, depth)
+                        .build())
+                .collect(toList());
+        dispatcher.execute(new Composite(operations), callback::execute);
     }
 
 
