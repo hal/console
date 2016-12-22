@@ -106,7 +106,7 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
                             form, (name, model) -> crud.add(Names.JMS_BRIDGE, name, JMS_BRIDGE_TEMPLATE, model,
                             (n, a) -> {
                                 refresh(Ids.jmsBridge(n));
-                            }));
+                            })).show();
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.JMS_BRIDGE_REFRESH));
 
