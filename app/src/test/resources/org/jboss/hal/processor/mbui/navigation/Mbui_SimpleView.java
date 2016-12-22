@@ -73,7 +73,7 @@ final class Mbui_SimpleView extends SimpleView {
         navigation = new VerticalNavigation();
 
         Elements.Builder itemBuilder = new Elements.Builder()
-                .div()
+                .section()
                 .div()
                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
                 .rememberAs("html0")
