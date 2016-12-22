@@ -201,10 +201,6 @@ public interface Ids {
     String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
     String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, PAGE_SUFFIX);
     String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
-    // Please note that the JCA_THREAD_POOL_* constants are not used on its own. They're prefixed with either
-    // JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
-    // So the final id of the thread pool attributes tab for the distributed workmanager reads as
-    // "jca-distributed-workmanager-thread-pool-attributes-tab"
     String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
@@ -217,6 +213,9 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JMS_BRIDGE = "jms-bridge";
+    String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
+    String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -265,6 +264,62 @@ public interface Ids {
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
+    String MESSAGING = "messaging";
+    String MESSAGING_ACCEPTOR = build(MESSAGING, "acceptor");
+    String MESSAGING_ADDRESS_SETTING = build("address-setting");
+    String MESSAGING_CATEGORY = "messaging-category";
+    String MESSAGING_BRIDGE = build(MESSAGING, "bridge");
+    String MESSAGING_BROADCAST_GROUP = build(MESSAGING, "broadcast-group");
+    String MESSAGING_CONNECTION_FACTORY = build(MESSAGING, "connection-factory");
+    String MESSAGING_POOLED_CONNECTION_FACTORY = build(MESSAGING, "pooled-connection-factory");
+    String MESSAGING_CLUSTER_CONNECTION = build(MESSAGING, "cluster-connection");
+    String MESSAGING_CONNECTOR = build(MESSAGING, "connector");
+    String MESSAGING_CONNECTOR_SERVICE = build(MESSAGING, "connector-service");
+    String MESSAGING_CORE_QUEUE = build(MESSAGING, "core-queue");
+    String MESSAGING_DISCOVERY_GROUP = build(MESSAGING, "discovery-group");
+    String MESSAGING_DIVERT = build(MESSAGING, "divert");
+    String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
+    String MESSAGING_GROUPING_HANDLER = build(MESSAGING, "grouping-handler");
+    String MESSAGING_HA = build(MESSAGING, "ha");
+    String MESSAGING_HA_CHOOSE_REPLICATION_STEP = build(MESSAGING_HA, "choose-replication", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_CHOOSE_SHARED_STORE_STEP = build(MESSAGING_HA, "choose-shared-store", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_CHOOSE_STRATEGY = build(MESSAGING_HA, "choose-strategy");
+    String MESSAGING_HA_CHOOSE_STRATEGY_STEP = build(MESSAGING_HA_CHOOSE_STRATEGY, WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_REVIEW_STEP = build(MESSAGING_HA, "review", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_REPLICATION = build(MESSAGING_HA, "replication");
+    String MESSAGING_HA_REPLICATION_COLOCATED = build(MESSAGING_HA_REPLICATION, "colocated");
+    String MESSAGING_HA_REPLICATION_COLOCATED_MASTER = build(MESSAGING_HA_REPLICATION_COLOCATED, "master");
+    String MESSAGING_HA_REPLICATION_COLOCATED_SLAVE = build(MESSAGING_HA_REPLICATION_COLOCATED, "slave");
+    String MESSAGING_HA_REPLICATION_LIVE_ONLY = build(MESSAGING_HA_REPLICATION, "live-only");
+    String MESSAGING_HA_REPLICATION_MASTER = build(MESSAGING_HA_REPLICATION, "master");
+    String MESSAGING_HA_REPLICATION_SLAVE = build(MESSAGING_HA_REPLICATION, "replication-slave");
+    String MESSAGING_HA_SHARED_STORE = build(MESSAGING_HA, "shared-store");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED = build(MESSAGING_HA_SHARED_STORE, "colocated");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED_MASTER = build(MESSAGING_HA_SHARED_STORE_COLOCATED, "master");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED_SLAVE = build(MESSAGING_HA_SHARED_STORE_COLOCATED, "slave");
+    String MESSAGING_HA_SHARED_STORE_MASTER = build(MESSAGING_HA_SHARED_STORE, "master");
+    String MESSAGING_HA_SHARED_STORE_SLAVE = build(MESSAGING_HA_SHARED_STORE, "slave");
+    String MESSAGING_HTTP_ACCEPTOR = build(MESSAGING, "http-acceptor");
+    String MESSAGING_HTTP_CONNECTOR = build(MESSAGING, "http-connector");
+    String MESSAGING_IN_VM_ACCEPTOR = build(MESSAGING, "in-vm-acceptor");
+    String MESSAGING_IN_VM_CONNECTOR = build(MESSAGING, "in-vm-connector");
+    String MESSAGING_JMS_QUEUE = build(MESSAGING, "jms-queue");
+    String MESSAGING_JMS_TOPIC = build(MESSAGING, "jms-topic");
+    String MESSAGING_REMOTE_ACCEPTOR = build(MESSAGING, "remote-acceptor");
+    String MESSAGING_REMOTE_CONNECTOR = build(MESSAGING, "remote-connector");
+    String MESSAGING_SECURITY_SETTING_ROLE = build(MESSAGING, "security-setting-role");
+    String MESSAGING_SECURITY_SETTING_ROLE_ADD = build(MESSAGING_SECURITY_SETTING_ROLE, ADD_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_ENTRY = build(MESSAGING_SECURITY_SETTING_ROLE, ENTRY_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_FORM = build(MESSAGING_SECURITY_SETTING_ROLE, FORM_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_TABLE = build(MESSAGING_SECURITY_SETTING_ROLE, TABLE_SUFFIX);
+    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
+    String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");
+    String MESSAGING_SERVER_CLUSTERING = build(MESSAGING_SERVER, "clustering");
+    String MESSAGING_SERVER_DESTINATION = build(MESSAGING_SERVER, "destination");
+    String MESSAGING_SERVER_HA_POLICY = build(MESSAGING_SERVER, "ha-policy");
+    String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
+    String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
     String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
@@ -462,12 +517,20 @@ public interface Ids {
         return build(host, server);
     }
 
+    static String jmsBridge(String name) {
+        return build(JMS_BRIDGE, name);
+    }
+
     static String jpaStatistic(final String deployment, final String persistenceUnit) {
         return build(deployment, persistenceUnit);
     }
 
     static String loggingProfile(final String name) {
         return build(LOGGING, name);
+    }
+
+    static String messagingServer(String name) {
+        return build(MESSAGING_SERVER, name);
     }
 
     /**
@@ -506,11 +569,11 @@ public interface Ids {
     }
 
     static String undertowServer(String name) {
-        return build(UNDERTOW_SETTINGS, SERVER, name);
+        return build(UNDERTOW_SERVER, name);
     }
 
     static String undertowServletContainer(String name) {
-        return build(UNDERTOW_SETTINGS, UNDERTOW_SERVLET_CONTAINER, name);
+        return build(UNDERTOW_SERVLET_CONTAINER, name);
     }
 
 

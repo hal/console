@@ -28,17 +28,23 @@ public class FormInfo extends MbuiElementInfo {
     public static class Group {
 
         private final String id;
+        private final String name;
         private final String title;
         private final List<Attribute> attributes;
 
-        Group(final String id, final String title) {
+        Group(final String id, final String name, final String title) {
             this.id = id;
+            this.name = name;
             this.title = Handlebars.templateSafeValue(title);
             this.attributes = new ArrayList<>();
         }
 
         public String getId() {
             return id;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public String getTitle() {

@@ -233,7 +233,7 @@ public class RoleColumn extends FinderColumn<Role> {
                             : resources.constants().serverGroupScopedRole();
                     actions.add(new ItemAction<>(resources.constants().remove(), itm ->
                             DialogFactory.showConfirmation(
-                                    resources.messages().removeResourceConfirmationTitle(type),
+                                    resources.messages().removeConfirmationTitle(type),
                                     resources.messages().removeRoleQuestion(itm.getName()),
                                     () -> removeScopedRole(itm, type))
 

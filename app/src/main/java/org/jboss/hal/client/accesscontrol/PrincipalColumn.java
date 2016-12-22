@@ -177,7 +177,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
                         .removeUserSuccess(item.getName()) : resources.messages().removeGroupSuccess(item.getName());
                 return singletonList(new ItemAction<Principal>(resources.constants().remove(), itm ->
                         DialogFactory.showConfirmation(
-                                resources.messages().removeResourceConfirmationTitle(title), question,
+                                resources.messages().removeConfirmationTitle(title), question,
                                 () -> {
                                     List<Operation> operations = accessControl.assignments().byPrincipal(item)
                                             .map(assignment -> new Operation.Builder(REMOVE,

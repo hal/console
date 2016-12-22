@@ -115,6 +115,27 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/mail.html")
     ExternalTextResource configurationMail();
 
+    @Source("previews/configuration/messaging.html")
+    ExternalTextResource configurationMessaging();
+
+    @Source("previews/configuration/messaging-clustering.html")
+    ExternalTextResource configurationMessagingClustering();
+
+    @Source("previews/configuration/messaging-connections.html")
+    ExternalTextResource configurationMessagingConnections();
+
+    @Source("previews/configuration/messaging-destinations.html")
+    ExternalTextResource configurationMessagingDestinations();
+
+    @Source("previews/configuration/messaging-ha-policy.html")
+    ExternalTextResource configurationMessagingHaPolicy();
+
+    @Source("previews/configuration/messaging-jms-bridge.html")
+    ExternalTextResource configurationMessagingJmsBridge();
+
+    @Source("previews/configuration/messaging-server.html")
+    ExternalTextResource configurationMessagingServer();
+
     @Source("previews/configuration/modcluster.html")
     ExternalTextResource configurationModcluster();
 

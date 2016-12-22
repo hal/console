@@ -430,8 +430,8 @@ public class ContentColumn extends FinderColumn<Content> {
 
     private void remove(Content content) {
         DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(content.getName()),
-                resources.messages().removeResourceConfirmationQuestion(content.getName()),
+                resources.messages().removeConfirmationTitle(content.getName()),
+                resources.messages().removeConfirmationQuestion(content.getName()),
                 () -> {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                     Operation operation = new Operation.Builder(REMOVE, address).build();

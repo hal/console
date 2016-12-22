@@ -48,6 +48,17 @@ public class ResourceDescription extends ModelNode {
         return Collections.emptyList();
     }
 
+    public List<Property> getAttributes(final String path, final String group) {
+        List<Property> attributes = getAttributes(path);
+        return attributes.stream()
+                .filter(property -> {
+                    ModelNode attributeDescription = property.getValue();
+                    return attributeDescription.hasDefined(ATTRIBUTE_GROUP) &&
+                            group.equals(attributeDescription.get(ATTRIBUTE_GROUP).asString());
+                })
+                .collect(toList());
+    }
+
     public List<Property> getRequiredAttributes(final String path) {
         return getAttributes(path).stream()
                 .filter(property -> {
@@ -74,16 +85,8 @@ public class ResourceDescription extends ModelNode {
         }
         return null;
     }
-    
+
     public boolean isDeprecated() {
         return hasDefined(DEPRECATED);
-    }
-    
-    public String getDeprecatedMessage() {
-        String message = "";
-        if (hasDefined(DEPRECATED)) {
-            message = get(DEPRECATED).get(REASON).asString();
-        }
-        return message;
     }
 }

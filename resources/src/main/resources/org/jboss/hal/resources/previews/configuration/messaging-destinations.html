@@ -1,0 +1,50 @@
+<p>Contains the configuration for the following topics:</p>
+<ul>
+    <li>Core Queues</li>
+    <li>JMS Destinations</li>
+    <li>Security Settings</li>
+    <li>Address Settings</li>
+    <li>Diverts</li>
+</ul>
+
+<h2>Core Queues</h2>
+<p>Apache ActiveMQ Artemis core is JMS-agnostic. It does not have any concept of a JMS topic. A JMS topic is implemented in core as an address (the topic name) with zero or more queues bound to it. Each queue bound to that address represents a topic subscription. Likewise, a JMS queue is implemented as an address (the JMS queue name) with one single queue bound to it which represents the JMS queue.</p>
+
+<p>By convention, all JMS queues map to core queues where the core queue name has the string "jms.queue." prepended to it. E.g. the JMS queue with the name "orders.europe" would map to the core queue with the name "jms.queue.orders.europe". The address at which the core queue is bound is also given by the core queue name.</p>
+
+<p>For JMS topics the address at which the queues that represent the subscriptions are bound is given by prepending the string "jms.topic." to the name of the JMS topic. E.g. the JMS topic with name "news.europe" would map to the core address "jms.topic.news.europe"</p>
+
+<h2>JMS Destinations</h2>
+<p>JMS destinations, along with JMS connection factories, are JMS administrative objects. Destinations are used by JMS clients for both producing and consuming messages. The destination allows the JMS client to specify the target when it produces messages and the source of messages when consuming messages. When using a publish-subscribe pattern, destinations are referred to as topics. When using a point-to-point pattern, destinations are referred to as queues.</p>
+
+<p>Applications may use many different JMS destinations which are configured on the server side and usually accessed via JNDI.</p>
+
+<h2>Security Settings</h2>
+<p>Security settings are used to configure security around specific destinations. This is done by adding a security constraint using the security-setting configuration element. JBoss EAP messaging comes with a
+    <code>security-setting</code> configured by default.</p>
+
+<p>The security-setting option makes use of wildcards to handle which destinations to apply the security constraint. The value of a single
+    <code>#</code> patterm will match any address. For more information on using wildcards in security constraints, see
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring-security#role_based_security_for_address">Role Based Security for Addresses</a>.
+</p>
+
+<h2>Address Settings</h2>
+<p>The messaging-activemq subsystem has several configurable options which control aspects of how and when a message is delivered, how many attempts should be made, and when the message expires. These configuration options all exist within the
+    <code>&lt;address-setting&gt;</code> configuration element. You can have JBoss EAP apply a single
+    <code>&lt;address-setting&gt;</code> to multiple destinations by using a wildcard syntax.</p>
+
+<p>For more information on using wildcards in address settings, see
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">Wildcard Syntax</a>.
+</p>
+
+<h2>Diverts</h2>
+<p>Diverts are objects configured in JBoss EAP messaging that help in diverting messages from one address to another. Diverts can be classified into the following types:
+
+<dl>
+    <dt>Exclusive</dt>
+    <dd>A message is only diverted to a new address and never sent to the old address.</dd>
+    <dt>Non-exclusive</dt>
+    <dd>A message is sent the old address, and a copy of it is also sent to the new address. Non-exclusive diverts can be used for splitting the flow of messages.</dd>
+</dl>
+
+<p>A divert will only divert a message to an address on the same server. If you want to divert to an address on a different server, a common pattern would be to divert to a local store-and-forward queue, then set up a bridge that consumes from that queue and forwards to an address on a different server.</p>

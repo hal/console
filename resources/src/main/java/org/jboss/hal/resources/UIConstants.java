@@ -63,6 +63,7 @@ public interface UIConstants {
     String LABELLED_BY = "labelledby";
     String MENU = "menu";
     String MENUITEM = "menuitem";
+    String NAME = "name";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEHOLDER = "placeholder";

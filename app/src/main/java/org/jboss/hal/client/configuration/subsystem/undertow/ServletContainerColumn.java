@@ -65,6 +65,7 @@ public class ServletContainerColumn extends FinderColumn<NamedNode> {
 
                 .onPreview(ServletContainerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
+                .pinnable()
                 .withFilter()
         );
 

@@ -41,11 +41,11 @@ import static java.util.stream.Collectors.toList;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.UNDERTOW_SETTINGS)
-public class UndertowColumn
+public class UndertowSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
 
     @Inject
-    public UndertowColumn(final Finder finder,
+    public UndertowSettingsColumn(final Finder finder,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud,
             final Places places,
@@ -70,8 +70,7 @@ public class UndertowColumn
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.UNDERTOW_SERVER)
-                        .onPreview(new PreviewContent(Names.SERVER,
-                                resources.previews().configurationUndertowServer()))
+                        .onPreview(new PreviewContent(Names.SERVER, resources.previews().configurationUndertowServer()))
                         .build(),
                 new StaticItem.Builder(Names.SERVLET_CONTAINER)
                         .nextColumn(Ids.UNDERTOW_SERVLET_CONTAINER)

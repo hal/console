@@ -86,8 +86,8 @@ public class ItemActionFactory {
      */
     public <T> ItemAction<T> remove(String type, String name, ItemActionHandler<T> handler) {
         return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(type),
-                resources.messages().removeResourceConfirmationQuestion(name),
+                resources.messages().removeConfirmationTitle(type),
+                resources.messages().removeConfirmationQuestion(name),
                 () -> handler.execute(item)));
     }
 

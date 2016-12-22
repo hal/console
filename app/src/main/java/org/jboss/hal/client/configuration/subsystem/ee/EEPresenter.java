@@ -173,8 +173,8 @@ public class EEPresenter
     void removeGlobalModule(ModelNode globalModule) {
         String name = globalModule.get(NAME).asString();
         DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(Names.GLOBAL_MODULES),
-                resources.messages().removeResourceConfirmationQuestion(name),
+                resources.messages().removeConfirmationTitle(Names.GLOBAL_MODULES),
+                resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(LIST_REMOVE, address)

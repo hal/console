@@ -19,6 +19,18 @@
     <metadata address="/{selected.profile}/subsystem=iiop-openjdk">
         <h1>IIOP OpenJDK</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="iiop-openjdk-form" title="IIOP OpenJDK" auto-save="true"/>
+        <form id="iiop-openjdk-form" title="IIOP OpenJDK" auto-save="true">
+            <attributes>
+                <!-- Use the attribute groups from the resource description -->
+                <group name="orb"/>
+                <group name="naming"/>
+                <group name="initializers"/>
+                <group name="as-context" title="AS Context"/>
+                <group name="sas-context" title="SAS Context"/>
+                <group name="security"/>
+                <group name="tcp"/>
+                <group name="transport-config"/>
+            </attributes>
+        </form>
     </metadata>
 </view>

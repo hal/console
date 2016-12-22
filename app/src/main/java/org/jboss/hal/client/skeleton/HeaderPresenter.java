@@ -42,6 +42,7 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
@@ -111,6 +112,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     private final Environment environment;
     private final Endpoints endpoints;
     private final User user;
+    private final Resources resources;
 
     private PresenterType presenterType;
     private PlaceRequest normalMode;
@@ -122,12 +124,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             final PlaceManager placeManager,
             final Environment environment,
             final Endpoints endpoints,
-            final User user) {
+            final User user,
+            final Resources resources) {
         super(eventBus, view);
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
+        this.resources = resources;
     }
 
     @Override
@@ -236,6 +240,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     void backToNormalMode() {
         if (normalMode != null) {
             placeManager.revealPlace(normalMode);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.warning(resources.messages().noContextForNormalMode()));
         }
     }
 

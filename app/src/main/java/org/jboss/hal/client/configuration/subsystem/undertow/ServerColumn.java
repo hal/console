@@ -65,6 +65,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
                 .onPreview(ServerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
+                .pinnable()
                 .withFilter()
         );
 
