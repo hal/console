@@ -82,6 +82,7 @@ public interface ModelDescriptionConstants {
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONFIG_PROPERTIES = "config-properties";
+    String CONFIGURATION = "configuration";
     String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_FACTORY = "connection-factory";
     String CONNECTION_URL = "connection-url";
@@ -89,7 +90,6 @@ public interface ModelDescriptionConstants {
     String CONNECTORS = "connectors";
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
-    String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
@@ -139,6 +139,7 @@ public interface ModelDescriptionConstants {
     String GROUP = "group";
     String GROUPING_HANDLER = "grouping-handler";
 
+    String HA_POLICY = "ha-policy";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
@@ -184,6 +185,7 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
+    String LIVE_ONLY = "live-only";
     String LOCATION = "location";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
@@ -199,6 +201,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MAPPING_MODULE = "mapping-module";
+    String MASTER = "master";
     String MAX = "max";
     String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
@@ -270,6 +273,9 @@ public interface ModelDescriptionConstants {
     String RELOAD_HOST = "reload-host";
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
+    String REPLICATION_COLOCATED = "replication-colocated";
+    String REPLICATION_MASTER = "replication-master";
+    String REPLICATION_SLAVE = "replication-slave";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
@@ -305,12 +311,16 @@ public interface ModelDescriptionConstants {
     String SERVLET_CONTAINER = "servlet-container";
     String SERVICE = "service";
     String SESSION_COOKIE = "session-cookie";
+    String SHARED_STORE_COLOCATED = "shared-store-colocated";
+    String SHARED_STORE_MASTER = "shared-store-master";
+    String SHARED_STORE_SLAVE = "shared-store-slave";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SHUTDOWN = "shutdown";
     String SINGLE_SIGN_ON = "single-sign-on";
+    String SLAVE = "slave";
     String SMTP = "smtp";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";

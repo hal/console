@@ -163,8 +163,8 @@ public class FilterPresenter
         String name = responseHeader.get(HEADER_NAME).asString();
 
         DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(Names.RESPONSE_HEADER),
-                resources.messages().removeResourceConfirmationQuestion(name),
+                resources.messages().removeConfirmationTitle(Names.RESPONSE_HEADER),
+                resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     Operation operation = new Operation.Builder(REMOVE, address).build();
                     dispatcher.execute(operation, result -> {

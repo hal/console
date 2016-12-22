@@ -21,7 +21,7 @@
         <p>{{metadata.getDescription().getDescription()}}</p>
         <form id="jms-bridge-form" title="JMS Bridge" on-save="{{presenter.saveJmsBridge(changedValues)}}">
             <attributes>
-                <!-- Use the attribute groups from the resource description -->
+                <!-- Use the attribute groups from the singleton description -->
                 <group name="source"/>
                 <group name="target"/>
             </attributes>

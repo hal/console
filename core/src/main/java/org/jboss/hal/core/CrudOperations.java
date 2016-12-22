@@ -488,6 +488,25 @@ public class CrudOperations {
                 callback);
     }
 
+    /**
+     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
+     * specified address and passes the result as {@code List<Property>} to the specified callback.
+     *
+     * @param address  the fq address for the {@code read-children-resource} operation
+     * @param resource the child resource (not human readable, but the actual child resource name!)
+     * @param depth    the depth used for the {@code recursive-depth} parameter
+     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
+     *                 List<Property>}
+     */
+    public void readChildren(final ResourceAddress address, final String resource, final int depth,
+            final ReadChildrenCallback callback) {
+        readChildren(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                        .param(CHILD_TYPE, resource)
+                        .param(RECURSIVE_DEPTH, depth)
+                        .build(),
+                callback);
+    }
+
     private void read(final Operation operation, final ReadCallback callback) {
         dispatcher.execute(operation, callback::execute);
     }
@@ -759,8 +778,8 @@ public class CrudOperations {
      */
     public void remove(final String type, final String name, final ResourceAddress address, final Callback callback) {
         DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(type),
-                resources.messages().removeResourceConfirmationQuestion(name),
+                resources.messages().removeConfirmationTitle(type),
+                resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     Operation operation = new Operation.Builder(REMOVE, address).build();
                     dispatcher.execute(operation, result -> {

@@ -41,6 +41,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
+    SafeHtml addHaPolicy();
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
@@ -56,8 +57,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String blacklist(String blacklist);
 
     SafeHtml chooseContentToDeploy(String serverGroup);
+    SafeHtml chooseReplication();
     SafeHtml chooseServerGroupsToUndeploy(String name);
     SafeHtml chooseServerGroupsToDeploy(String name);
+    SafeHtml chooseSharedStore();
+    SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
@@ -196,14 +200,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerQuestion(String name);
     SafeHtml reloadServerSuccess(String name);
 
+    String removeConfirmationTitle(String name);
+    SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
-    String removeResourceConfirmationTitle(String name);
-    SafeHtml removeResourceConfirmationQuestion(String name);
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
+    SafeHtml removeSingletonSuccess(String type);
     SafeHtml removeUserQuestion(String name);
     SafeHtml removeUserSuccess(String name);
+    SafeHtml replicationColocated();
+    SafeHtml replicationLiveOnly();
+    SafeHtml replicationMaster();
+    SafeHtml replicationSlave();
+    SafeHtml replicationStrategy();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     SafeHtml resourceDisabled(String type, String name);
@@ -232,15 +242,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerSuccess(String name);
 
     SafeHtml simpleProviderWarning();
-    SafeHtml serverConfigurationChanged();
-    String serverGroupScopedRole(String name, String scope);
 
     SafeHtml serverGroupNoStartedServers(String name);
     SafeHtml serverGroupNoStoppedServers(String name);
     SafeHtml serverGroupNoSuspendedServers(String name);
+    String serverGroupScopedRole(String name, String scope);
     SafeHtml serverGroupTimeout(String name);
 
     SafeHtml serverAdminMode(String name);
+    SafeHtml serverConfigurationChanged();
     SafeHtml serverFailed(String name);
     SafeHtml serverNeedsReload(String name);
     SafeHtml serverNeedsRestart(String name);
@@ -252,6 +262,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
 
+    SafeHtml sharedStoreColocated();
+    SafeHtml sharedStoreMaster();
+    SafeHtml sharedStoreSlave();
+    SafeHtml sharedStoreStrategy();
     SafeHtml staleStatistics();
 
     SafeHtml startServerGroupError(String name);

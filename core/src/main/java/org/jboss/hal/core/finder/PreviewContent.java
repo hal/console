@@ -41,7 +41,6 @@ import static org.jboss.hal.resources.CSS.finderPreview;
  */
 public class PreviewContent<T> implements HasElements, Attachable, SecurityContextAware {
 
-    private static final String CONTENT_ELEMENT = "contentElement";
     private static final int MAX_HEADER_LENGTH = 30;
 
     private final List<Attachable> attachables;
@@ -85,7 +84,7 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
         if (lead != null) {
             builder.p().css(CSS.lead).textContent(lead).end();
         }
-        builder.section().rememberAs(CONTENT_ELEMENT).add(first);
+        builder.section().add(first);
         if (rest != null) {
             for (Element element : rest) {
                 builder.add(element);
@@ -98,26 +97,32 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
         this(header, null, resource);
     }
 
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     public PreviewContent(final String header, final String lead, final ExternalTextResource resource) {
         attachables = new ArrayList<>();
         builder = header(header);
         if (lead != null) {
             builder.p().css(CSS.lead).textContent(lead).end();
         }
-        builder.section().rememberAs(CONTENT_ELEMENT).end();
-        Element content = builder.referenceFor(CONTENT_ELEMENT);
-        Previews.innerHtml(content, resource);
+        builder.section().rememberAs("externalResource").end();
+        Element element = builder.referenceFor("externalResource");
+        Previews.innerHtml(element, resource);
     }
 
     private Elements.Builder header(final String header) {
-        String readableHeader = header.length() > MAX_HEADER_LENGTH
-                ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
-                : header;
+        String readableHeader = shorten(header);
         Elements.Builder builder = new Elements.Builder().h(1).textContent(readableHeader);
         if (!readableHeader.equals(header)) {
             builder.title(header);
         }
-        return builder.end();
+        builder.end();
+        return builder;
+    }
+
+    private String shorten(String header) {
+        return header.length() > MAX_HEADER_LENGTH
+                ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
+                : header;
     }
 
     protected Elements.Builder previewBuilder() {
@@ -144,10 +149,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
 
     @SuppressWarnings("UnusedParameters")
     public void update(T item) {}
-
-    public Element getContentSection() {
-        return builder.referenceFor(CONTENT_ELEMENT);
-    }
 
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {

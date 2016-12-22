@@ -108,6 +108,7 @@ public interface Names {
     String JSP = "JSP";
 
     String LISTENER = "Listener";
+    String LIVE_ONLY = "Live Only";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
     String LOCATIONS = "Locations";
@@ -120,6 +121,7 @@ public interface Names {
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPING_MODULE = "Mapping Module";
+    String MASTER = "Master";
     String MIME_MAPPING = "Mime Mapping";
     String MB = "MB";
     String MODULE = "Module";
@@ -149,6 +151,9 @@ public interface Names {
     String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
     String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
     String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
+    String REPLICATION_COLOCATED = "Replication Colocated";
+    String REPLICATION_MASTER = "Replication Master";
+    String REPLICATION_SLAVE = "Replication Slave";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
     String RESPONSE_HEADER = "Response Header";
@@ -163,8 +168,12 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SERVLET_CONTAINER = "Servlet Container";
     String SESSIONS = "Sessions";
+    String SHARED_STORE_COLOCATED = "Shared Store Colocated";
+    String SHARED_STORE_MASTER = "Shared Store Master";
+    String SHARED_STORE_SLAVE = "Shared Store Slave";
     String SINGLE_SIGN_ON = "Single Sign On";
     String SHORT_RUNNING = "short running";
+    String SLAVE = "Slave";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";

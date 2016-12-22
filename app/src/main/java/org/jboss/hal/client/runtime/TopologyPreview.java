@@ -77,7 +77,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * @author Harald Pehl
@@ -208,7 +207,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         // show the loading indicator if the dmr operation take too long
         int timeoutHandle = Browser.getWindow()
-                .setTimeout(() -> Elements.setVisible(loadingSection, true), MEDIUM_TIMEOUT);
+                .setTimeout(() -> Elements.setVisible(loadingSection, true), UIConstants.MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {
@@ -385,15 +384,15 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         builder.a()
                             .id(hostDropDownId)
                             .css(clickable, dropdownToggle, name)
-                            .data(TOGGLE, DROPDOWN)
-                            .aria(HAS_POPUP, "true") //NON-NLS
+                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                            .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                             .title(host.getName());
                             if (host.isDomainController()) {
                                 builder.span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).end();
                             }
                             builder.span().textContent(host.getName()).end()
                         .end()
-                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, hostDropDownId);
+                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(UIConstants.LABELLED_BY, hostDropDownId);
                             hostActions(builder, host);
                         builder.end();
                     } else {
@@ -426,12 +425,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup)) {
                         builder.a().id(serverGroupDropDownId)
                             .css(clickable, dropdownToggle, name)
-                            .data(TOGGLE, DROPDOWN)
-                            .aria(HAS_POPUP, "true") //NON-NLS
+                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                            .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                             .title(serverGroup.getName())
                             .textContent(serverGroup.getName())
                         .end()
-                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, serverGroupDropDownId);
+                        .ul().css(dropdownMenu)
+                                .attr(UIConstants.ROLE, UIConstants.MENU)
+                                .aria(UIConstants.LABELLED_BY, serverGroupDropDownId);
                             serverGroupActions(builder, serverGroup);
                         builder.end();
                     } else {
@@ -464,12 +465,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     builder.a()
                         .id(serverDropDownId)
                         .css(clickable, dropdownToggle, name)
-                        .data(TOGGLE, DROPDOWN)
-                        .aria(HAS_POPUP, "true") //NON-NLS
+                        .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                        .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                         .title(srv.getName())
                         .textContent(srv.getName())
                     .end()
-                    .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(LABELLED_BY, serverDropDownId);
+                    .ul().css(dropdownMenu)
+                            .attr(UIConstants.ROLE, UIConstants.MENU)
+                            .aria(UIConstants.LABELLED_BY, serverDropDownId);
                         serverActions(builder, srv);
                     builder.end();
                 } else {

@@ -59,7 +59,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cancel();
     String category();
     String chooseFile();
+    String choosePolicy();
     String chooseSingleton();
+    String chooseStrategy();
     String chooseTemplate();
     String clear();
     String clearMessages();
@@ -263,6 +265,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noConfiguredMailServers();
     String noContentSelected();
     String noDetails();
+    String noHaPolicy();
     String noItems();
     String noMacros();
     String noPrincipalsExcluded();

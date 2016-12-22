@@ -224,8 +224,8 @@ public class DestinationPresenter
             String combinedName = securitySetting + "/" + roleName;
 
             DialogFactory.showConfirmation(
-                    resources.messages().removeResourceConfirmationTitle(Names.SECURITY_SETTING),
-                    resources.messages().removeResourceConfirmationQuestion(combinedName),
+                    resources.messages().removeConfirmationTitle(Names.SECURITY_SETTING),
+                    resources.messages().removeConfirmationQuestion(combinedName),
                     () -> {
                         Function<FunctionContext> removeRole = control -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE

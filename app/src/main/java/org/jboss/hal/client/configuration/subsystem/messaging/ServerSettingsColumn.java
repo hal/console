@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
 
-import org.jboss.hal.core.Strings;
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderSegment;
@@ -29,13 +30,23 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.SelectionAwareStatementContext;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.core.Strings.substringAfterLast;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 /**
@@ -45,66 +56,113 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 public class ServerSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility
 
+    private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final Resources resources;
+
     @Inject
     public ServerSettingsColumn(final Finder finder,
             final ItemActionFactory itemActionFactory,
             final Places places,
+            final EventBus eventBus,
+            final Dispatcher dispatcher,
+            final CrudOperations crud,
+            final StatementContext statementContext,
             final Resources resources) {
 
         super(new Builder<StaticItem>(finder, Ids.MESSAGING_SERVER_SETTINGS, resources.constants().settings())
+                .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
+                .useFirstActionAsBreadcrumbHandler()
+                .onPreview(StaticItem::getPreviewContent));
+        this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
+        this.resources = resources;
 
-                .itemsProvider((context, callback) -> {
-                    List<StaticItem> items = new ArrayList<>();
-                    Optional<String> optional = stream(context.getPath().spliterator(), false)
-                            .filter(segment -> Ids.MESSAGING_SERVER.equals(segment.getColumnId()))
-                            .findAny()
-                            .map(FinderSegment::getItemId);
-                    if (optional.isPresent()) {
-                        // Extract the server name from the item id "messaging-server-<server name>"
-                        String server = Strings.substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
-                        items.add(new StaticItem.Builder(Names.DESTINATIONS)
-                                .id(Ids.MESSAGING_SERVER_DESTINATION)
-                                .action(itemActionFactory.view(
-                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_DESTINATION)
-                                                .with(SERVER, server)
-                                                .build()))
-                                .onPreview(new PreviewContent(Names.DESTINATIONS,
-                                        resources.previews().configurationMessagingDestinations()))
-                                .build());
-                        items.add(new StaticItem.Builder(Names.CONNECTIONS)
-                                .id(Ids.MESSAGING_SERVER_CONNECTION)
-                                .action(itemActionFactory.view(
-                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_CONNECTION)
-                                                .with(SERVER, server)
-                                                .build()))
-                                .onPreview(new PreviewContent(Names.CONNECTIONS,
-                                        resources.previews().configurationMessagingConnections()))
-                                .build());
-                        items.add(new StaticItem.Builder(Names.CLUSTERING)
-                                .id(Ids.MESSAGING_SERVER_CLUSTERING)
-                                .action(itemActionFactory.view(
-                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_CLUSTERING)
-                                                .with(SERVER, server)
-                                                .build()))
-                                .onPreview(new PreviewContent(Names.CLUSTERING,
-                                        resources.previews().configurationMessagingClustering()))
-                                .build());
-                        items.add(new StaticItem.Builder(Names.HA_POLICY)
-                                .id(Ids.MESSAGING_SERVER_HA_POLICY)
+        setItemsProvider((context, callback) -> {
+            List<StaticItem> items = new ArrayList<>();
+            Optional<String> optional = stream(context.getPath().spliterator(), false)
+                    .filter(segment -> Ids.MESSAGING_SERVER.equals(segment.getColumnId()))
+                    .findAny()
+                    .map(FinderSegment::getItemId);
+            if (optional.isPresent()) {
+                // Extract the server name from the item id "messaging-server-<server name>"
+                String server = substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
+                StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
+                        () -> server);
+                ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);
+                crud.readChildren(address, HA_POLICY, children -> {
+
+                    items.add(new StaticItem.Builder(Names.DESTINATIONS)
+                            .id(Ids.MESSAGING_SERVER_DESTINATION)
+                            .action(itemActionFactory.view(
+                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_DESTINATION)
+                                            .with(SERVER, server)
+                                            .build()))
+                            .onPreview(new PreviewContent(Names.DESTINATIONS,
+                                    resources.previews().configurationMessagingDestinations()))
+                            .build());
+                    items.add(new StaticItem.Builder(Names.CONNECTIONS)
+                            .id(Ids.MESSAGING_SERVER_CONNECTION)
+                            .action(itemActionFactory.view(
+                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_CONNECTION)
+                                            .with(SERVER, server)
+                                            .build()))
+                            .onPreview(new PreviewContent(Names.CONNECTIONS,
+                                    resources.previews().configurationMessagingConnections()))
+                            .build());
+                    items.add(new StaticItem.Builder(Names.CLUSTERING)
+                            .id(Ids.MESSAGING_SERVER_CLUSTERING)
+                            .action(itemActionFactory.view(
+                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_CLUSTERING)
+                                            .with(SERVER, server)
+                                            .build()))
+                            .onPreview(new PreviewContent(Names.CLUSTERING,
+                                    resources.previews().configurationMessagingClustering()))
+                            .build());
+
+                    StaticItem.Builder builder = new StaticItem.Builder(Names.HA_POLICY)
+                            .id(Ids.MESSAGING_SERVER_HA_POLICY);
+                    if (children.isEmpty()) {
+                        builder.action(resources.constants().add(), item -> addHaPolicy(serverStatementContext))
                                 .action(itemActionFactory.view(
                                         places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
                                                 .with(SERVER, server)
                                                 .build()))
-                                .onPreview(new PreviewContent(Names.HA_POLICY,
-                                        resources.previews().configurationMessagingHaPolicy()))
-                                .build());
-                    }
-                    callback.onSuccess(items);
-                })
+                                .onPreview(new PreviewContent<>(Names.HA_POLICY,
+                                        resources.previews().configurationMessagingHaPolicy()));
 
-                .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
-                .useFirstActionAsBreadcrumbHandler()
-                .onPreview(StaticItem::getPreviewContent)
-        );
+                    } else {
+                        Property child = children.get(0);
+                        HaPolicy haPolicy = HaPolicy.fromResourceName(child.getName());
+                        builder.action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
+                                        .with(SERVER, server)
+                                        .build()))
+                                .action(resources.constants().remove(),
+                                        item -> removeHaPolicy(serverStatementContext, haPolicy))
+                                .onPreview(new HaPolicyPreview(haPolicy, child.getValue()));
+                    }
+                    items.add(builder.build());
+
+                    callback.onSuccess(items);
+                });
+
+            } else {
+                callback.onSuccess(items);
+            }
+        });
+    }
+
+    private void addHaPolicy(final StatementContext statementContext) {
+        new HaPolicyWizard(resources, (wizard, context) ->
+                context.haPolicy.add(dispatcher, statementContext, () -> {
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().addSingleResourceSuccess(context.haPolicy.type)));
+                    refresh(RefreshMode.RESTORE_SELECTION);
+                })).show();
+    }
+
+    private void removeHaPolicy(final StatementContext statementContext, final HaPolicy haPolicy) {
+        haPolicy.remove(dispatcher, statementContext, resources, () -> refresh(RefreshMode.RESTORE_SELECTION));
     }
 }

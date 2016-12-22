@@ -83,7 +83,29 @@ interface AddressTemplates {
     AddressTemplate GROUPING_HANDLER_TEMPLATE = AddressTemplate.of(GROUPING_HANDLER_ADDRESS);
     AddressTemplate BRIDGE_TEMPLATE = AddressTemplate.of(BRIDGE_ADDRESS);
 
-    // TODO HA-* resources
+    // ha-* resources
+    String LIVE_ONLY_ADDRESS = SERVER_ADDRESS + "/ha-policy=live-only";
+    String REPLICATION_COLOCATED_ADDRESS = SERVER_ADDRESS + "/ha-policy=replication-colocated";
+    String REPLICATION_COLOCATED_MASTER_ADDRESS = REPLICATION_COLOCATED_ADDRESS + "/configuration=master";
+    String REPLICATION_COLOCATED_SLAVE_ADDRESS = REPLICATION_COLOCATED_ADDRESS + "/configuration=slave";
+    String REPLICATION_MASTER_ADDRESS = SERVER_ADDRESS + "/ha-policy=replication-master";
+    String REPLICATION_SLAVE_ADDRESS = SERVER_ADDRESS + "/ha-policy=replication-slave";
+    String SHARED_STORE_COLOCATED_ADDRESS = SERVER_ADDRESS + "/ha-policy=shared-store-colocated";
+    String SHARED_STORE_COLOCATED_MASTER_ADDRESS = SHARED_STORE_COLOCATED_ADDRESS + "/configuration=master";
+    String SHARED_STORE_COLOCATED_SLAVE_ADDRESS = SHARED_STORE_COLOCATED_ADDRESS + "/configuration=slave";
+    String SHARED_STORE_MASTER_ADDRESS = SERVER_ADDRESS + "/ha-policy=shared-store-master";
+    String SHARED_STORE_SLAVE_ADDRESS = SERVER_ADDRESS + "/ha-policy=shared-store-slave";
+    AddressTemplate LIVE_ONLY_TEMPLATE = AddressTemplate.of(LIVE_ONLY_ADDRESS);
+    AddressTemplate REPLICATION_COLOCATED_TEMPLATE = AddressTemplate.of(REPLICATION_COLOCATED_ADDRESS);
+    AddressTemplate REPLICATION_COLOCATED_MASTER_TEMPLATE = AddressTemplate.of(REPLICATION_COLOCATED_MASTER_ADDRESS);
+    AddressTemplate REPLICATION_COLOCATED_SLAVE_TEMPLATE = AddressTemplate.of(REPLICATION_COLOCATED_SLAVE_ADDRESS);
+    AddressTemplate REPLICATION_MASTER_TEMPLATE = AddressTemplate.of(REPLICATION_MASTER_ADDRESS);
+    AddressTemplate REPLICATION_SLAVE_TEMPLATE = AddressTemplate.of(REPLICATION_SLAVE_ADDRESS);
+    AddressTemplate SHARED_STORE_COLOCATED_TEMPLATE = AddressTemplate.of(SHARED_STORE_COLOCATED_ADDRESS);
+    AddressTemplate SHARED_STORE_COLOCATED_MASTER_TEMPLATE = AddressTemplate.of(SHARED_STORE_COLOCATED_MASTER_ADDRESS);
+    AddressTemplate SHARED_STORE_COLOCATED_SLAVE_TEMPLATE = AddressTemplate.of(SHARED_STORE_COLOCATED_SLAVE_ADDRESS);
+    AddressTemplate SHARED_STORE_MASTER_TEMPLATE = AddressTemplate.of(SHARED_STORE_MASTER_ADDRESS);
+    AddressTemplate SHARED_STORE_SLAVE_TEMPLATE = AddressTemplate.of(SHARED_STORE_SLAVE_ADDRESS);
 
     // jms-bridge
     String JMS_BRIDGE_ADDRESS = MESSAGING_SUBSYSTEM_ADDRESS + "/jms-bridge=*";

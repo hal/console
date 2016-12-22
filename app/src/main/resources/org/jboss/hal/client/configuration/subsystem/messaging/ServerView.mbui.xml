@@ -24,7 +24,7 @@
                 <form id="messaging-server-form" title="Messaging Server"
                       on-save="{{presenter.saveServer(changedValues)}}">
                     <attributes>
-                        <!-- Use the attribute groups from the resource description -->
+                        <!-- Use the attribute groups from the singleton description -->
                         <group name="management"/>
                         <group name="security"/>
                         <group name="journal"/>

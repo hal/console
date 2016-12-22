@@ -90,7 +90,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
         connectionFactoryForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
-        pooledConnectionFactoryForm.getFormItem(CONNECTOR).registerSuggestHandler(
+        pooledConnectionFactoryForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
     }
 

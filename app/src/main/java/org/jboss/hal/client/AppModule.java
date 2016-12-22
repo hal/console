@@ -59,6 +59,8 @@ import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
 import org.jboss.hal.client.configuration.subsystem.messaging.ClusteringPresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.ConnectionPresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.DestinationPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyView;
 import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgePresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ClusteringView_Provider;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ConnectionView_Provider;
@@ -265,6 +267,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 GenericSubsystemPresenter.MyView.class,
                 GenericSubsystemView.class,
                 GenericSubsystemPresenter.MyProxy.class);
+
+        bindPresenter(HaPolicyPresenter.class,
+                HaPolicyPresenter.MyView.class,
+                HaPolicyView.class,
+                HaPolicyPresenter.MyProxy.class);
 
         bindTemplatedPresenter(HandlerPresenter.class,
                 HandlerPresenter.MyView.class,
