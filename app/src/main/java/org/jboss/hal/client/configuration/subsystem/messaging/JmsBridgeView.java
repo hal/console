@@ -15,12 +15,16 @@
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgeColumn.registerSuggestionHandler;
 
 /**
  * @author Harald Pehl
@@ -36,6 +40,11 @@ public abstract class JmsBridgeView extends MbuiViewImpl<JmsBridgePresenter> imp
 
     JmsBridgeView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    void init() {
+        registerSuggestionHandler(mbuiContext.dispatcher(), mbuiContext.statementContext(), form);
     }
 
     @Override

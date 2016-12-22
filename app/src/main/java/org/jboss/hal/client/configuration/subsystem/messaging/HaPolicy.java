@@ -50,13 +50,13 @@ public enum HaPolicy {
             AddressTemplates.LIVE_ONLY_TEMPLATE),
 
     REPLICATION_COLOCATED_MASTER(Ids.MESSAGING_HA_REPLICATION_COLOCATED_MASTER,
-            Names.REPLICATION_COLOCATED + "/" + Names.MASTER,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + " / " + CONFIGURATION + "=" + MASTER,
+            Names.REPLICATION_COLOCATED + " / " + Names.MASTER,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + "=" + MASTER,
             AddressTemplates.REPLICATION_COLOCATED_MASTER_TEMPLATE),
 
     REPLICATION_COLOCATED_SLAVE(Ids.MESSAGING_HA_REPLICATION_COLOCATED_SLAVE,
-            Names.REPLICATION_COLOCATED + "/" + Names.SLAVE,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + " / " + CONFIGURATION + "=" + SLAVE,
+            Names.REPLICATION_COLOCATED + " / " + Names.SLAVE,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + "=" + SLAVE,
             AddressTemplates.REPLICATION_COLOCATED_SLAVE_TEMPLATE),
 
     REPLICATION_COLOCATED(Ids.MESSAGING_HA_REPLICATION_COLOCATED,
@@ -76,13 +76,13 @@ public enum HaPolicy {
             AddressTemplates.REPLICATION_SLAVE_TEMPLATE),
 
     SHARED_STORE_COLOCATED_MASTER(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_MASTER,
-            Names.SHARED_STORE_COLOCATED + "/" + Names.MASTER,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + " / " + CONFIGURATION + "=" + MASTER,
+            Names.SHARED_STORE_COLOCATED + " / " + Names.MASTER,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + "=" + MASTER,
             AddressTemplates.SHARED_STORE_COLOCATED_MASTER_TEMPLATE),
 
     SHARED_STORE_COLOCATED_SLAVE(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_SLAVE,
-            Names.SHARED_STORE_COLOCATED + "/" + Names.SLAVE,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + " / " + CONFIGURATION + "=" + SLAVE,
+            Names.SHARED_STORE_COLOCATED + " / " + Names.SLAVE,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + "=" + SLAVE,
             AddressTemplates.SHARED_STORE_COLOCATED_SLAVE_TEMPLATE),
 
     SHARED_STORE_COLOCATED(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED,
