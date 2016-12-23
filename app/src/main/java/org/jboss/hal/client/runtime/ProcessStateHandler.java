@@ -124,7 +124,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
 
     @Override
     public void onProcessState(final ProcessStateEvent event) {
-        // adjust the standalone server's state
+        // adjust the static standalone server's state
         if (environment.isStandalone()) {
             ServerState serverState = event.getProcessState().first();
             if (serverState.getState() == State.RELOAD_REQUIRED) {

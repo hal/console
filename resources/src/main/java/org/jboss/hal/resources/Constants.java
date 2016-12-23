@@ -101,6 +101,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String directory();
     String disable();
     String disabled();
+    String domainConfigurationChanged();
+    String domainConfigurationChangedTooltip();
     String download();
     String duplicateMacro();
 
@@ -314,6 +316,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String releaseName();
     String releaseVersion();
     String reload();
+    String reloadRequired();
+    String reloadStandaloneTooltip();
     String remove();
     String rename();
     String replace();
@@ -325,7 +329,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
+    String restartRequired();
     String restartResourceServices();
+    String restartStandaloneTooltip();
     String restricted();
     String resume();
     String review();

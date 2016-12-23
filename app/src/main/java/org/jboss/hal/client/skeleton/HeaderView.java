@@ -30,6 +30,7 @@ import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
@@ -88,6 +89,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @DataElement Element logoFirst;
     @DataElement Element logoLast;
+    @DataElement Element reloadContainer;
+    @DataElement Element reloadLink;
+    @DataElement Element reloadLabel;
     @DataElement Element messagesIcon;
     @DataElement Element messagesLabel;
     @DataElement Element userName;
@@ -110,6 +114,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @PostConstruct
     void init() {
         Element root = asElement();
+        Elements.setVisible(reloadContainer, false);
         messagePanel = new MessagePanel(); // message panel adds itself to the body
 
         backPlaceRequest = HOMEPAGE;
@@ -176,11 +181,28 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
 
-    // ------------------------------------------------------ logo, messages & global state
+    // ------------------------------------------------------ logo, reload, messages & global state
 
     @EventHandler(element = "logoLink", on = click)
     void onLogo() {
         presenter.goTo(NameTokens.HOMEPAGE);
+    }
+
+    @Override
+    public void showReload(final String text, final String tooltip) {
+        reloadLabel.setTextContent(text);
+        Tooltip.element(reloadLink).setTitle(tooltip);
+        Elements.setVisible(reloadContainer, true);
+    }
+
+    @Override
+    public void hideReload() {
+        Elements.setVisible(reloadContainer, false);
+    }
+
+    @EventHandler(element = "reloadLink", on = click)
+    void onReload() {
+        presenter.reload();
     }
 
     @EventHandler(element = "messages", on = click)

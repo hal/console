@@ -740,11 +740,7 @@ public class CrudOperations {
      */
     public void saveSingleton(final ResourceAddress address, final Map<String, Object> changedValues,
             final SafeHtml successMessage, final Callback callback) {
-        Composite operation = operationFactory.fromChangeSet(address, changedValues);
-        dispatcher.execute(operation, (CompositeResult result) -> {
-            MessageEvent.fire(eventBus, Message.success(successMessage));
-            callback.execute();
-        });
+        save(operationFactory.fromChangeSet(address, changedValues), successMessage, callback);
     }
 
 

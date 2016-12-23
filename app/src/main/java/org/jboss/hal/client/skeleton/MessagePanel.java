@@ -80,7 +80,7 @@ class MessagePanel implements IsElement {
 
     void closeSticky(Message message) {
         stickyMessages.remove(message.getId());
-        logger.debug("Closed stick message: {}", message);
+        logger.debug("Closed sticky message: {}", message);
     }
 
     private boolean containsStickyMessage(Message message) {
