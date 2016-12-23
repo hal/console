@@ -143,13 +143,13 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
                     MessageEvent.fire(eventBus, Message.warning(UIConstants.RELOAD_MESSAGE_ID,
                             resources.messages().serverConfigurationChanged(),
                             resources.constants().reload(),
-                            () -> serverActions.reload(Server.STANDALONE), true));
+                            () -> serverActions.reload(Server.STANDALONE)));
 
                 } else if (serverState.getState() == State.RESTART_REQUIRED) {
                     MessageEvent.fire(eventBus, Message.warning(UIConstants.RESTART_MESSAGE_ID,
                             resources.messages().serverConfigurationChanged(),
                             resources.constants().restart(),
-                            () -> serverActions.restart(Server.STANDALONE), true));
+                            () -> serverActions.restart(Server.STANDALONE)));
                 }
 
             } else {
@@ -157,7 +157,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
                 PlaceRequest place = places.finderPlace(NameTokens.RUNTIME, path).build();
                 MessageEvent.fire(eventBus, Message.warning(UIConstants.DOMAIN_CHANGED_MESSAGE_ID,
                         resources.messages().domainConfigurationChanged(),
-                        Names.TOPOLOGY, () -> placeManager.revealPlace(place), true));
+                        Names.TOPOLOGY, () -> placeManager.revealPlace(place)));
             }
         }
     }
