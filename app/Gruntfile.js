@@ -22,12 +22,13 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('../npm/package.json'),
+        theme: grunt.option('theme') || 'hal',
         config: {
             bower: 'bower_components',
             less: 'src/main/less',
-            public: 'src/main/resources/org/jboss/hal/public'
+            public: 'src/main/resources/org/jboss/hal/public',
+            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>'
         },
-        theme: grunt.option('theme') || 'hal',
 
         clean: {
             public: [
@@ -36,8 +37,6 @@ module.exports = function (grunt) {
                 '<%= config.public %>/img/**',
                 '<%= config.public %>/js/*.js',
                 '<%= config.public %>/js/*.swf',
-                '!<%= config.public %>/favicon.png',
-                '!<%= config.public %>/img/icon-*.png',
                 '!<%= config.public %>/js/mode-logfile.js',
                 '!<%= config.public %>/js/theme-logfile.js'
             ]
@@ -60,12 +59,6 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.bower %>/patternfly/dist/img',
-                        src: '*',
-                        dest: '<%= config.public %>/img'
-                    },
-                    {
-                        expand: true,
                         cwd: '<%= config.bower %>/jstree/dist/themes/default',
                         src: ['*.gif', '*.png'],
                         dest: '<%= config.public %>/img'
@@ -75,6 +68,12 @@ module.exports = function (grunt) {
                         cwd: '<%= config.bower %>/zeroclipboard/dist',
                         src: 'ZeroClipboard.swf',
                         dest: '<%= config.public %>/js'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= config.themeDir %>',
+                        src: ['favicon.ico', 'apple-touch-icon.png'],
+                        dest: '<%= config.public %>'
                     }
                 ]
             }
