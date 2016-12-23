@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Bower setup for HAL",
   "license": "Apache-2.0",
   "private": true,
