@@ -16,7 +16,6 @@
 package org.jboss.hal.theme.wildfly;
 
 import com.google.gwt.core.client.GWT;
-import org.jboss.hal.resources.Favicons;
 import org.jboss.hal.resources.Logos;
 import org.jboss.hal.resources.Theme;
 
@@ -25,7 +24,6 @@ import org.jboss.hal.resources.Theme;
  */
 public class WildFlyTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(WildFlyFavicons.class);
     private static final Logos LOGOS = GWT.create(WildFlyLogos.class);
 
     @Override
@@ -46,11 +44,6 @@ public class WildFlyTheme implements Theme {
     @Override
     public String getLastName() {
         return "Fly";
-    }
-
-    @Override
-    public Favicons favicons() {
-        return FAVICONS;
     }
 
     @Override

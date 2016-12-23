@@ -31,8 +31,6 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -134,23 +132,31 @@ public class PropertiesOperations {
 
             List<Operation> operations = new ArrayList<>();
             add.stream()
-                    .map(property -> new Operation.Builder(ADD,
-                            new ResourceAddress(address).add(propertiesResource, property))
-                            .param(VALUE, properties.get(property))
-                            .build())
+                    .map(property -> {
+                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
+                        Operation.Builder builder = new Operation.Builder(ADD, address);
+                        if (properties.get(property) != null) {
+                            builder.param(VALUE, properties.get(property));
+                        }
+                        return builder.build();
+                    })
                     .forEach(operations::add);
             modify.stream()
-                    .map(property -> new Operation.Builder(WRITE_ATTRIBUTE_OPERATION,
-                            new ResourceAddress(address).add(propertiesResource, property))
-                            .param(NAME, VALUE)
-                            .param(VALUE, properties.get(property))
-                            .build())
+                    .filter(property -> properties.get(property) != null)
+                    .map(property -> {
+                        ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
+                        return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                                .param(NAME, VALUE)
+                                .param(VALUE, properties.get(property))
+                                .build();
+                    })
                     .forEach(operations::add);
             remove.stream()
                     .map(property -> new Operation.Builder(REMOVE,
                             new ResourceAddress(address).add(propertiesResource, property))
                             .build())
                     .forEach(operations::add);
+
             Composite composite = new Composite(operations);
             if (composite.isEmpty()) {
                 control.proceed();
@@ -206,26 +212,22 @@ public class PropertiesOperations {
      * @param name          the resource name
      * @param template      the address template which is resolved against the current statement context and the
      *                      resource name to get the resource address for the operation
-     * @param form          the form containing an unbound form item for the properties
      * @param changedValues the changed values / payload for the operation
      * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public <T extends ModelNode> void saveWithProperties(final String type, final String name,
-            final AddressTemplate template, final Form<T> form, final Map<String, Object> changedValues,
-            final String psr, final Callback callback) {
+    public void saveWithProperties(final String type, final String name, final AddressTemplate template,
+            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
+            final Callback callback) {
 
         changedValues.remove(psr);
-        FormItem<Map<String, String>> properties = form.getFormItem(psr);
-
-        if (properties == null || !properties.isModified()) {
-            if (!changedValues.isEmpty()) {
-                crud.save(type, name, template, changedValues, callback);
-            }
+        if (properties.isEmpty()) {
+            crud.save(type, name, template, changedValues, callback);
         } else {
             ResourceAddress address = template.resolve(statementContext, name);
             Composite operations = operationFactory.fromChangeSet(address, changedValues);
-            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
+            saveInternal(type, name, address, operations, psr, properties, callback);
         }
     }
 
@@ -244,25 +246,21 @@ public class PropertiesOperations {
      * @param type          the human readable resource type used in the success message
      * @param name          the resource name
      * @param address       the fq address for the operation
-     * @param form          the form containing an unbound form item for the properties
      * @param changedValues the changed values / payload for the operation
      * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public <T extends ModelNode> void saveWithProperties(final String type, final String name,
-            final ResourceAddress address, final Form<T> form, final Map<String, Object> changedValues,
-            final String psr, final Callback callback) {
+    public void saveWithProperties(final String type, final String name, final ResourceAddress address,
+            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
+            final Callback callback) {
 
         changedValues.remove(psr);
-        FormItem<Map<String, String>> properties = form.getFormItem(psr);
-
-        if (properties == null || !properties.isModified()) {
-            if (!changedValues.isEmpty()) {
-                crud.save(type, name, address, changedValues, callback);
-            }
+        if (properties.isEmpty()) {
+            crud.save(type, name, address, changedValues, callback);
         } else {
             Composite operations = operationFactory.fromChangeSet(address, changedValues);
-            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
+            saveInternal(type, name, address, operations, psr, properties, callback);
         }
     }
 
@@ -280,23 +278,19 @@ public class PropertiesOperations {
      * @param type       the human readable resource type used in the success message
      * @param name       the resource name
      * @param address    the fq address for the operation
-     * @param form       the form containing an unbound form item for the properties
      * @param operations the composite operation to persist the changed values
      * @param psr        the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties the properties to save
      * @param callback   the callback executed after saving the resource
      */
-    public <T extends ModelNode> void saveWithProperties(final String type, final String name,
-            final ResourceAddress address, final Form<T> form, final Composite operations,
-            final String psr, final Callback callback) {
+    public void saveWithProperties(final String type, final String name, final ResourceAddress address,
+            final Composite operations, final String psr, final Map<String, String> properties,
+            final Callback callback) {
 
-        FormItem<Map<String, String>> properties = form.getFormItem(psr);
-
-        if (properties == null || !properties.isModified()) {
-            if (!operations.isEmpty()) {
-                crud.save(type, name, operations, callback);
-            }
+        if (properties.isEmpty()) {
+            crud.save(type, name, operations, callback);
         } else {
-            saveWithProperties(type, name, address, operations, properties.getValue(), psr, callback);
+            saveInternal(type, name, address, operations, psr, properties, callback);
         }
     }
 
@@ -314,31 +308,27 @@ public class PropertiesOperations {
      *
      * @param type          the human readable resource type used in the success message
      * @param address       the fq address for the operation
-     * @param form          the form containing an unbound form item for the properties
      * @param changedValues the changed values / payload for the operation
      * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
-    public <T extends ModelNode> void saveSingletonWithProperties(final String type, final ResourceAddress address,
-            final Form<T> form, final Map<String, Object> changedValues, final String psr,
+    public void saveSingletonWithProperties(final String type, final ResourceAddress address,
+            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
             final Callback callback) {
 
         changedValues.remove(psr);
-        FormItem<Map<String, String>> properties = form.getFormItem(psr);
 
-        if (properties == null || !properties.isModified()) {
-            if (!changedValues.isEmpty()) {
-                crud.saveSingleton(type, address, changedValues, callback);
-            }
+        if (properties.isEmpty()) {
+            crud.saveSingleton(type, address, changedValues, callback);
         } else {
             Composite operations = operationFactory.fromChangeSet(address, changedValues);
-            saveWithProperties(type, null, address, operations, properties.getValue(), psr,
-                    callback);
+            saveInternal(type, null, address, operations, psr, properties, callback);
         }
     }
 
-    private void saveWithProperties(String type, String name, ResourceAddress address,
-            Composite operations, Map<String, String> properties, String psr, Callback callback) {
+    private void saveInternal(String type, String name, ResourceAddress address,
+            Composite operations, String psr, Map<String, String> properties, Callback callback) {
 
         // TODO Check if the functions can be replaced with a composite operation
         Function[] functions = new Function[]{

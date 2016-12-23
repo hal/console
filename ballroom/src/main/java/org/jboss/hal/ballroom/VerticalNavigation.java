@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,6 +30,7 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,12 +153,14 @@ public class VerticalNavigation implements Attachable {
         Browser.getDocument().getBody().insertBefore(root, rootContainer);
     }
 
-    private final LinkedHashMap<String, Entry> entries;
-    private final LinkedHashMap<String, Pane> panes;
+    private LinkedHashMap<String, Entry> entries;
+    private LinkedHashMap<String, Pane> panes;
+    private Map<String, Callback> callbacks;
 
     public VerticalNavigation() {
         this.entries = new LinkedHashMap<>();
         this.panes = new LinkedHashMap<>();
+        this.callbacks = new HashMap<>();
     }
 
     @Override
@@ -200,11 +205,11 @@ public class VerticalNavigation implements Attachable {
      * Adds a primary navigation entry which acts a container for secondary navigation entries.
      */
     public VerticalNavigation addPrimary(String id, String text) {
-        return addPrimary(id, text, null, (Pane) null);
+        return addPrimary(entries, panes, id, text, null, null);
     }
 
     public VerticalNavigation addPrimary(String id, String text, String iconClass) {
-        return addPrimary(id, text, iconClass, (Pane) null);
+        return addPrimary(entries, panes, id, text, iconClass, null);
     }
 
     /**
@@ -213,15 +218,82 @@ public class VerticalNavigation implements Attachable {
      * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
      * navigation. The element should be rather a child of the root container.
      */
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
-        return addPrimary(id, text, iconClass, new Pane(id, element));
-    }
-
     public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
-        return addPrimary(id, text, iconClass, new Pane(id, element));
+        return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
     }
 
-    private VerticalNavigation addPrimary(String id, String text, String iconClass, Pane pane) {
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
+        return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
+    }
+
+    /**
+     * Inserts a primary navigation entry <em>before</em> the specified entry. If {@code beforeId} is {@code null}, the
+     * entry is inserted as first entry. If there's not entry with id {@code beforeId}, an error message is logged and
+     * no entry is inserted.
+     * <p>
+     * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
+     * {@linkplain #attach() attached}.
+     */
+    public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
+        insertPrimary(id, beforeId, text, iconClass, element.asElement());
+    }
+
+    public void insertPrimary(String id, String beforeId, String text, String iconClass, Element element) {
+        if (entries.isEmpty()) {
+            logger.error("Cannot insert {}: There has to at least one other entry.", id);
+            return;
+        }
+
+        if (beforeId == null) {
+            // as first entry
+            LinkedHashMap<String, Entry> reshuffledEntries = new LinkedHashMap<>();
+            LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
+
+            Pane pane = new Pane(id, element);
+            addPrimary(reshuffledEntries, reshuffledPanes, id, text, iconClass, pane);
+            Pane refPane = panes.values().iterator().next();
+            refPane.asElement().getParentElement().insertBefore(pane.asElement(), refPane.asElement());
+
+            reshuffledEntries.putAll(entries);
+            reshuffledPanes.putAll(panes);
+            entries = reshuffledEntries;
+            panes = reshuffledPanes;
+
+        } else {
+            if (entries.containsKey(beforeId)) {
+                LinkedHashMap<String, Entry> reshuffledEntries = new LinkedHashMap<>();
+                LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
+                Iterator<String> entryIterator = entries.keySet().iterator();
+                Iterator<String> paneIterator = panes.keySet().iterator();
+
+                while (entryIterator.hasNext() && paneIterator.hasNext()) {
+                    String currentId = entryIterator.next();
+                    paneIterator.next();
+
+                    if (currentId.equals(beforeId)) {
+                        Pane pane = new Pane(id, element);
+                        addPrimary(reshuffledEntries, reshuffledPanes, id, text, iconClass, pane);
+                        Pane refPane = panes.get(currentId);
+                        refPane.asElement().getParentElement().insertBefore(pane.asElement(), refPane.asElement());
+                        reshuffledEntries.put(currentId, entries.get(currentId));
+                        reshuffledPanes.put(currentId, panes.get(currentId));
+
+                    } else {
+                        reshuffledEntries.put(currentId, entries.get(currentId));
+                        reshuffledPanes.put(currentId, panes.get(currentId));
+                    }
+                }
+                entries = reshuffledEntries;
+                panes = reshuffledPanes;
+
+            } else {
+                logger.error("Cannot insert {} before {}: No entry with id {} found!", id, beforeId, beforeId);
+            }
+        }
+    }
+
+    private VerticalNavigation addPrimary(LinkedHashMap<String, Entry> entries, LinkedHashMap<String, Pane> panes,
+            String id, String text, String iconClass, Pane pane) {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .li().css(listGroupItem).id(id)
@@ -338,10 +410,17 @@ public class VerticalNavigation implements Attachable {
                 Elements.setVisible(pane.asElement(), pane.id.equals(id));
             }
             show.asElement().click();
+            if (callbacks.containsKey(id)) {
+                callbacks.get(id).execute();
+            }
 
         } else {
             logger.error("Unable to show entry for id '{}': No such entry!", id);
         }
+    }
+
+    public void onShow(String id, Callback callback) {
+        callbacks.put(id, callback);
     }
 
     public void updateBadge(String id, int count) {

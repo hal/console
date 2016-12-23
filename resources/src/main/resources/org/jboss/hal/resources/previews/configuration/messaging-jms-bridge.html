@@ -1,0 +1,7 @@
+<p>JBoss EAP messaging includes a fully functional JMS message bridge. The function of a JMS bridge is to consume messages from a source queue or topic and send them to a target queue or topic, typically on a different server.</p>
+
+<p>The source and target servers do not have to be in the same cluster, which makes bridging suitable for reliably sending messages from one cluster to another, for instance across a WAN, and where the connection may be unreliable.</p>
+
+<p>
+    <strong>Note</strong><br/>Do not confuse a JMS bridge with a core bridge. A JMS bridge can be used to bridge any two JMS 1.1 compliant JMS providers and uses the JMS API. A core bridge is used to bridge any two JBoss EAP messaging instances and uses the core API. It is preferable to use a core bridge instead of a JMS bridge whenever possible.
+</p>

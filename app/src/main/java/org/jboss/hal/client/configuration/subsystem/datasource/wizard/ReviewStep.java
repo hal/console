@@ -29,21 +29,16 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
-public class ReviewStep extends WizardStep<Context, State> {
+class ReviewStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    public ReviewStep(final Metadata metadata, final Resources resources,
-            final boolean xa) {
+    ReviewStep(final Metadata metadata, final Resources resources, final boolean xa) {
         super(Ids.DATA_SOURCE_REVIEW_STEP, resources.constants().review());
 
         List<String> attributes = new ArrayList<>();

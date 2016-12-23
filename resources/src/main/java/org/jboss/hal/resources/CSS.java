@@ -85,6 +85,7 @@ public interface CSS {
 
     String dataTable = "datatable";
     String defaultValue = "default-value";
+    String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
     String dlHorizontal = "dl-horizontal";
@@ -108,6 +109,7 @@ public interface CSS {
     String external = "external";
 
     String fade = "fade";
+    String failSafeForm = "fail-safe-form";
     String filter = "filter";
     String finder = "finder";
     String finderColumn = "finder-column";
@@ -195,10 +197,10 @@ public interface CSS {
     String modalDialog = "modal-dialog";
     String modalFooter = "modal-footer";
     String modalHeader = "modal-header";
-    String modalLarge = "modal-lg";
-    String modalMax = "modal-mx";
-    String modalMedium = "modal-md";
-    String modelSmall = "modal-sm";
+    String modalLg = "modal-lg";
+    String modalMx = "modal-mx";
+    String modalMd = "modal-md";
+    String modelSm = "modal-sm";
     String modalTitle = "modal-title";
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
@@ -315,11 +317,16 @@ public interface CSS {
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
     String wizardHalErrorText = "wizard-hal-error-text";
+    String wizardHalNoSidebar = "wizard-hal-no-sidebar";
     String wizardPf = "wizard-pf";
     String wizardPfBody = "wizard-pf-body";
+    String wizardPfComplete = "wizard-pf-complete";
+    String wizardPfContents = "wizard-pf-contents";
     String wizardPfErrorIcon = "wizard-pf-error-icon";
     String wizardPfFooter = "wizard-pf-footer";
     String wizardPfMain = "wizard-pf-main";
+    String wizardPfProcess = "wizard-pf-process";
+    String wizardPfRow = "wizard-pf-row";
     String wizardPfStepNumber = "wizard-pf-step-number";
     String wizardPfStepTitle = "wizard-pf-step-title";
     String wizardPfSteps = "wizard-pf-steps";

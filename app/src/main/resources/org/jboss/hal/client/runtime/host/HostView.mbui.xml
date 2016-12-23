@@ -17,7 +17,7 @@
   -->
 <view>
     <vertical-navigation id="host-navigation">
-        <item id="host-configuration-item" title="Configuration" icon="pficon pficon-cluster">
+        <item id="host-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.host}">
                 <h1 id="host-configuration-title"/>
                 <p>{{metadata.getDescription().getDescription()}}</p>

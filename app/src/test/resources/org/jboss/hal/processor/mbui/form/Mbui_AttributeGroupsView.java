@@ -66,10 +66,10 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
         this.handlebarElements = new HashMap<>();
 
         form = new GroupedForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
-                .group("group-1", "Group 1")
+                .customGroup("group-1", "Group 1")
                 .include("foo", "bar")
                 .end()
-                .group("group-2", "Group 2")
+                .customGroup("group-2", "Group 2")
                 .include("baz", "qux")
                 .end()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))

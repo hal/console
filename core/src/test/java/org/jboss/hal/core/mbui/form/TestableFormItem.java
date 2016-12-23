@@ -373,6 +373,16 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public boolean isDeprecated() {
+        return false;
+    }
+
+    @Override
+    public void setDeprecated(final boolean deprecated) {
+
+    }
+
+    @Override
     public int getTabIndex() {
         return 0;
     }

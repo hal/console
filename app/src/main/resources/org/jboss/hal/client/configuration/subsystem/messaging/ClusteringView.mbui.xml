@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="messaging-clustering-vertical-navigation">
+        <item id="messaging-broadcast-group-entry" title="Broadcast Group" icon="fa fa-video-camera">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/broadcast-group=*">
+                <h1>Broadcast Group</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-broadcast-group-table" title="Broadcast Group"
+                       form-ref="messaging-broadcast-group-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.BROADCAST_GROUP)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.BROADCAST_GROUP, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-broadcast-group-form" title="Broadcast Group"
+                      on-save="{{presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}}">
+                    <attributes>
+                        <attribute name="broadcast-period"/>
+                        <attribute name="connectors"/>
+                        <attribute name="jgroups-channel"/>
+                        <attribute name="jgroups-stack"/>
+                        <attribute name="socket-binding">
+                            <suggest-handler>
+                                <templates>
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-discovery-group-entry" title="Discovery Group" icon="fa fa-map-o">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/discovery-group=*">
+                <h1>Discovery Group</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-discovery-group-table" title="Discovery Group"
+                       form-ref="messaging-discovery-group-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.DISCOVERY_GROUP)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.DISCOVERY_GROUP, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-discovery-group-form" title="Discovery Group"
+                      on-save="{{presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}}">
+                    <attributes>
+                        <attribute name="initial-wait-timeout"/>
+                        <attribute name="refresh-timeout"/>
+                        <attribute name="jgroups-channel"/>
+                        <attribute name="jgroups-stack"/>
+                        <attribute name="socket-binding">
+                            <suggest-handler>
+                                <templates>
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-cluster-connection-entry" title="Cluster Connection" icon="pficon pficon-network">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/cluster-connection=*">
+                <h1>Cluster Connection</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-cluster-connection-table" title="Cluster Connection"
+                       form-ref="messaging-cluster-connection-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-cluster-connection-form" title="Cluster Connection"
+                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}"/>
+            </metadata>
+        </item>
+
+        <item id="messaging-grouping-handler-entry" title="Grouping Handler" icon="fa fa-object-group">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/grouping-handler=*">
+                <h1>Grouping Handler</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-grouping-handler-table" title="Grouping Handler"
+                       form-ref="messaging-grouping-handler-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.GROUPING_HANDLER)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.GROUPING_HANDLER, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-grouping-handler-form" title="Grouping Handler"
+                      on-save="{{presenter.save(ServerSubResource.GROUPING_HANDLER, form, changedValues)}}"/>
+            </metadata>
+        </item>
+
+        <item id="messaging-bridge-entry" title="Bridge" icon="fa fa-road">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/bridge=*">
+                <h1>Bridge</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-bridge-table" title="Bridge" form-ref="messaging-bridge-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.BRIDGE, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-bridge-form" title="Bridge"
+                      on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"/>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

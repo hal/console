@@ -77,7 +77,7 @@ public class RhcpColumns {
                             new StaticItem.Builder("Cold").build(),
                             new StaticItem.Builder("Lukewarm").build(),
                             new StaticItem.Builder("Warm").build(),
-                            new StaticItem.Builder("Hot").nextColumn("rhcp-vegetables").build(),
+                            new StaticItem.Builder("Hot").nextColumn("rhcp-vegetable").build(),
                             new StaticItem.Builder("Sun's Surface").build()));
         }
     }

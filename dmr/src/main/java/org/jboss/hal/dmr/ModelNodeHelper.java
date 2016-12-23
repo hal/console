@@ -36,10 +36,19 @@ import static java.util.stream.Collectors.toList;
  */
 public final class ModelNodeHelper {
 
-    private ModelNodeHelper() {}
+    private static final String ENCODED_SLASH = "%2F";
+
+    public static String encodeValue(String value) {
+        return value.replace("/", ENCODED_SLASH);
+    }
+
+    public static String decodeValue(String value) {
+        return value.replace(ENCODED_SLASH, "/");
+    }
 
     /**
      * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with "/".
+     * "/" inside a path segment must have been encoded using {@link #encodeValue(String)}.
      *
      * @param modelNode The model node to read from
      * @param path      A path separated with "/"
@@ -54,8 +63,9 @@ public final class ModelNodeHelper {
             if (!Iterables.isEmpty(keys)) {
                 ModelNode context = modelNode;
                 for (String key : keys) {
-                    if (context.hasDefined(key)) {
-                        context = context.get(key);
+                    String safeKey = decodeValue(key);
+                    if (context.hasDefined(safeKey)) {
+                        context = context.get(safeKey);
                     } else {
                         context = undefined;
                         break;
@@ -127,4 +137,7 @@ public final class ModelNodeHelper {
     public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
         return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
+
+
+    private ModelNodeHelper() {}
 }

@@ -57,8 +57,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browseBy();
 
     String cancel();
+    String category();
     String chooseFile();
+    String choosePolicy();
     String chooseSingleton();
+    String chooseStrategy();
     String chooseTemplate();
     String clear();
     String clearMessages();
@@ -98,6 +101,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String directory();
     String disable();
     String disabled();
+    String domainConfigurationChanged();
+    String domainConfigurationChangedTooltip();
     String download();
     String duplicateMacro();
 
@@ -131,6 +136,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formErrors();
     String formResetDesc();
 
+    String globalSettings();
     String gotoDeployment();
     String group();
     String groups();
@@ -212,6 +218,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
+    String hostsUsingThisFilter();
+    String hostsUsingThisHandler();
     String hostScopedRole();
     String hour();
     String hours();
@@ -227,6 +235,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String jcaConfiguration();
     String jdbcDriver();
     String jndiTree();
+
+    String kill();
 
     String lastModified();
     String loading();
@@ -257,6 +267,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noConfiguredMailServers();
     String noContentSelected();
     String noDetails();
+    String noHaPolicy();
     String noItems();
     String noMacros();
     String noPrincipalsExcluded();
@@ -285,6 +296,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String orDragItHere();
     String output();
 
+    String pattern();
     String pending();
     String pin();
     String ping();
@@ -297,15 +309,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String processors();
     String productName();
     String productVersion();
-    String properties();
     String providedBy();
 
+    String references();
     String refresh();
     String releaseName();
     String releaseVersion();
     String reload();
+    String reloadRequired();
+    String reloadStandaloneTooltip();
     String remove();
-    String removeResource();
     String rename();
     String replace();
     String replaceContent();
@@ -316,7 +329,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
+    String restartRequired();
     String restartResourceServices();
+    String restartStandaloneTooltip();
     String restricted();
     String resume();
     String review();
@@ -359,6 +374,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String test();
     String testConnection();
+    String testConnectionError();
+    String testConnectionSuccess();
     String timeout();
     String timeouts();
     String toggleDropdown();

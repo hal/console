@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="undertow-handler-vertical-navigation">
+
+        <item id="undertow-file-handler-item" title="File Handler" icon="fa fa-file-text-o">
+            <metadata address="/{selected.profile}/subsystem=undertow/configuration=handler/file=*">
+                <h1>File Handler</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="undertow-file-handler-table" title="File Handler" form-ref="undertow-file-handler-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="path"/>
+                    </columns>
+                </table>
+                <form id="undertow-file-handler-form" title="File Handler" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
+                    <attributes>
+                        <attribute name="cache-buffer-size"/>
+                        <attribute name="cache-buffers"/>
+                        <attribute name="case-sensitive"/>
+                        <attribute name="directory-listing"/>
+                        <attribute name="follow-symlink"/>
+                        <attribute name="path"/>
+                        <attribute name="safe-symlink-paths"/>
+                        <attribute
+                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}}'/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="undertow-reverse-proxy-item" title="Reverse Proxy" icon="fa fa-undo">
+            <metadata address="/{selected.profile}/subsystem=undertow/configuration=handler/reverse-proxy=*">
+                <h1>Reverse Proxy</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="undertow-reverse-proxy-table" title="Reverse Proxy" form-ref="undertow-reverse-proxy-form">
+                    <actions>
+                        <action handler-ref="add-resource"/>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="undertow-reverse-proxy-form" title="Reverse Proxy" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
+                    <attributes>
+                        <attribute name="cached-connections-per-thread"/>
+                        <attribute name="connection-idle-timeout"/>
+                        <attribute name="connections-per-thread"/>
+                        <attribute name="max-request-time"/>
+                        <attribute name="max-retries"/>
+                        <attribute name="problem-server-retry"/>
+                        <attribute name="request-queue-size"/>
+                        <attribute name="session-cookie-names"/>
+                        <attribute
+                                form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}}'/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

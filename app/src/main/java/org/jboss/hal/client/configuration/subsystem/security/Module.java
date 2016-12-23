@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
+ * Enum struct to collect all settings for a specific security module.
+ *
  * @author Harald Pehl
  */
 enum Module {

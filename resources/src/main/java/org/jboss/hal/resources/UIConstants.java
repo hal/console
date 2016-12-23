@@ -37,6 +37,10 @@ public interface UIConstants {
      */
     int MESSAGE_TIMEOUT = 6000; // ms
 
+    long RELOAD_MESSAGE_ID = 5102007;
+    long RESTART_MESSAGE_ID = 1102010;
+    long DOMAIN_CHANGED_MESSAGE_ID = 291973;
+
 
     String ALERT = "alert";
     String BODY = "body";
@@ -49,6 +53,7 @@ public interface UIConstants {
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";
+    String FALSE = "false";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN_MODAL = "hidden.bs.modal";
@@ -58,6 +63,7 @@ public interface UIConstants {
     String LABELLED_BY = "labelledby";
     String MENU = "menu";
     String MENUITEM = "menuitem";
+    String NAME = "name";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEHOLDER = "placeholder";
@@ -72,4 +78,5 @@ public interface UIConstants {
     String TOGGLE = "toggle";
     String TOP = "top";
     String TOOLTIP = "tooltip";
+    String TRUE = "true";
 }

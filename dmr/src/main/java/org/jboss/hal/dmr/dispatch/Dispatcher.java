@@ -55,6 +55,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /**
  * The dispatcher executes operations / uploads against the management endpoint.
@@ -110,12 +113,17 @@ public class Dispatcher implements RecordingHandler {
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
 
-    private static final String HEADER_ACCEPT = "Accept";
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+
+    private static boolean pendingLifecycleAction = false;
+
+    public static void setPendingLifecycleAction(final boolean value) {
+        pendingLifecycleAction = value;
+        logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
+    }
+
 
     private final Endpoints endpoints;
     private final EventBus eventBus;
@@ -123,7 +131,6 @@ public class Dispatcher implements RecordingHandler {
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
     private Macros macros;
-    private boolean pendingLifecycleAction;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
@@ -133,16 +140,20 @@ public class Dispatcher implements RecordingHandler {
         this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
         this.macros = macros;
-        this.pendingLifecycleAction = false;
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
+            if (!pendingLifecycleAction) {
+                eventBus.fireEvent(
+                        new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
+            }
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
-            eventBus.fireEvent(
-                    new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
+            if (!pendingLifecycleAction) {
+                eventBus.fireEvent(
+                        new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
+            }
         };
     }
 
@@ -217,8 +228,8 @@ public class Dispatcher implements RecordingHandler {
 
         XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
                 exceptionCallback);
-        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         if (method == GET) {
             xhr.send();
         } else {
@@ -300,8 +311,8 @@ public class Dispatcher implements RecordingHandler {
                 }
             }
         });
-        request.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-        request.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        request.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+        request.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         request.send();
         // Downloads are not supported in macros!
     }
@@ -321,7 +332,8 @@ public class Dispatcher implements RecordingHandler {
         ResourceAddress address = operation.getAddress();
         if (!address.isEmpty()) {
             String path = address.asPropertyList().stream()
-                    .map(property -> property.getName() + "/" + property.getValue().asString())
+                    .map(property -> Browser.encodeURIComponent(property.getName()) + "/" +
+                            Browser.encodeURIComponent(property.getValue().asString()))
                     .collect(joining("/"));
             builder.append(path);
         }
@@ -337,9 +349,9 @@ public class Dispatcher implements RecordingHandler {
         // 3. parameter
         if (operation.hasParamter()) {
             operation.getParameter().asPropertyList().forEach(property -> {
-                builder.append("&").append(property.getName());
+                builder.append("&").append(Browser.encodeURIComponent(property.getName()));
                 if (property.getValue().isDefined()) {
-                    builder.append("=").append(property.getValue().asString());
+                    builder.append("=").append(Browser.encodeURIComponent(property.getValue().asString()));
                 }
             });
         }
@@ -358,7 +370,7 @@ public class Dispatcher implements RecordingHandler {
             if (readyState == 4) {
                 int status = xhr.getStatus();
                 String responseText = xhr.getResponseText();
-                String contentType = xhr.getResponseHeader(HEADER_CONTENT_TYPE);
+                String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
 
                 if (status == 200 || status == 500) {
                     ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
@@ -397,7 +409,7 @@ public class Dispatcher implements RecordingHandler {
         xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
                 .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
         xhr.open(method.name(), url, true);
-        xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+        xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         xhr.setWithCredentials(true);
 
         return xhr;
@@ -474,12 +486,5 @@ public class Dispatcher implements RecordingHandler {
         } else {
             return operation.getName().startsWith("read") || operation.getName().equals(QUERY);
         }
-    }
-
-
-    // ------------------------------------------------------ getter / setter
-
-    public void setPendingLifecycleAction(final boolean pendingLifecycleAction) {
-        this.pendingLifecycleAction = pendingLifecycleAction;
     }
 }

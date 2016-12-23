@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.table;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -140,7 +139,7 @@ public class Api<T> {
 
     // Does not map to something in DataTables, but necessary in refresh()
     String id;
-    Map<String, ColumnAction<T>> columnActions;
+    ColumnActions<T> columnActions;
 
 
     // ------------------------------------------------------ API a-z
@@ -260,6 +259,7 @@ public class Api<T> {
                 ColumnAction<T> columnAction = columnActions.get(link.getId());
                 if (columnAction != null) {
                     link.setOnclick(event -> {
+                        event.stopPropagation();
                         Element e = link; // find enclosing tr
                         while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
                             e = e.getParentElement();

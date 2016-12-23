@@ -62,6 +62,7 @@ public interface Ids {
     String ADD_SUFFIX = "add";
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
+    String PAGE_SUFFIX = "page";
     String REFRESH_SUFFIX = "refresh";
     String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
@@ -114,6 +115,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
+    String DATA_SOURCE_TEST_STEP = build(DATA_SOURCE_CONFIGURATION, "test", WIZARD_STEP_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
@@ -187,6 +189,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_ADD = build(JCA_DISTRIBUTED_WORKMANAGER, ADD_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_ENTRY = build(JCA_DISTRIBUTED_WORKMANAGER, ENTRY_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_FORM = build(JCA_DISTRIBUTED_WORKMANAGER, FORM_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_PAGE = build(JCA_DISTRIBUTED_WORKMANAGER, PAGE_SUFFIX);
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
     String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
     String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
@@ -196,15 +199,13 @@ public interface Ids {
     String JCA_WORKMANAGER = build(JCA, "workmanager");
     String JCA_WORKMANAGER_ADD = build(JCA_WORKMANAGER, ADD_SUFFIX);
     String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_WORKMANAGER_PAGE = build(JCA_WORKMANAGER, PAGE_SUFFIX);
     String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
-    // Please note that the JCA_THREAD_POOL_* constants are prefixed with JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
-    // Thus the JCA_THREAD_POOL_ATTRIBUTES_TAB used for the distributed workmanager reads as
-    // "jca-distributed-workmanager-thread-pool-attributes-tab"
     String JCA_THREAD_POOL = "thread-pool";
     String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
     String JCA_THREAD_POOL_ATTRIBUTES_TAB = build(JCA_THREAD_POOL, "attributes", TAB_SUFFIX);
-    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, "page");
+    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, PAGE_SUFFIX);
     String JCA_THREAD_POOL_SIZING_FORM = build(JCA_THREAD_POOL, "sizing", FORM_SUFFIX);
     String JCA_THREAD_POOL_SIZING_TAB = build(JCA_THREAD_POOL, "sizing", TAB_SUFFIX);
     String JCA_THREAD_POOL_TABLE = build(JCA_THREAD_POOL, TABLE_SUFFIX);
@@ -212,6 +213,9 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JMS_BRIDGE = "jms-bridge";
+    String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
+    String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -260,6 +264,62 @@ public interface Ids {
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
+    String MESSAGING = "messaging";
+    String MESSAGING_ACCEPTOR = build(MESSAGING, "acceptor");
+    String MESSAGING_ADDRESS_SETTING = build("address-setting");
+    String MESSAGING_CATEGORY = "messaging-category";
+    String MESSAGING_BRIDGE = build(MESSAGING, "bridge");
+    String MESSAGING_BROADCAST_GROUP = build(MESSAGING, "broadcast-group");
+    String MESSAGING_CONNECTION_FACTORY = build(MESSAGING, "connection-factory");
+    String MESSAGING_POOLED_CONNECTION_FACTORY = build(MESSAGING, "pooled-connection-factory");
+    String MESSAGING_CLUSTER_CONNECTION = build(MESSAGING, "cluster-connection");
+    String MESSAGING_CONNECTOR = build(MESSAGING, "connector");
+    String MESSAGING_CONNECTOR_SERVICE = build(MESSAGING, "connector-service");
+    String MESSAGING_CORE_QUEUE = build(MESSAGING, "core-queue");
+    String MESSAGING_DISCOVERY_GROUP = build(MESSAGING, "discovery-group");
+    String MESSAGING_DIVERT = build(MESSAGING, "divert");
+    String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
+    String MESSAGING_GROUPING_HANDLER = build(MESSAGING, "grouping-handler");
+    String MESSAGING_HA = build(MESSAGING, "ha");
+    String MESSAGING_HA_CHOOSE_REPLICATION_STEP = build(MESSAGING_HA, "choose-replication", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_CHOOSE_SHARED_STORE_STEP = build(MESSAGING_HA, "choose-shared-store", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_CHOOSE_STRATEGY = build(MESSAGING_HA, "choose-strategy");
+    String MESSAGING_HA_CHOOSE_STRATEGY_STEP = build(MESSAGING_HA_CHOOSE_STRATEGY, WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_REVIEW_STEP = build(MESSAGING_HA, "review", WIZARD_STEP_SUFFIX);
+    String MESSAGING_HA_REPLICATION = build(MESSAGING_HA, "replication");
+    String MESSAGING_HA_REPLICATION_COLOCATED = build(MESSAGING_HA_REPLICATION, "colocated");
+    String MESSAGING_HA_REPLICATION_COLOCATED_MASTER = build(MESSAGING_HA_REPLICATION_COLOCATED, "master");
+    String MESSAGING_HA_REPLICATION_COLOCATED_SLAVE = build(MESSAGING_HA_REPLICATION_COLOCATED, "slave");
+    String MESSAGING_HA_REPLICATION_LIVE_ONLY = build(MESSAGING_HA_REPLICATION, "live-only");
+    String MESSAGING_HA_REPLICATION_MASTER = build(MESSAGING_HA_REPLICATION, "master");
+    String MESSAGING_HA_REPLICATION_SLAVE = build(MESSAGING_HA_REPLICATION, "replication-slave");
+    String MESSAGING_HA_SHARED_STORE = build(MESSAGING_HA, "shared-store");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED = build(MESSAGING_HA_SHARED_STORE, "colocated");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED_MASTER = build(MESSAGING_HA_SHARED_STORE_COLOCATED, "master");
+    String MESSAGING_HA_SHARED_STORE_COLOCATED_SLAVE = build(MESSAGING_HA_SHARED_STORE_COLOCATED, "slave");
+    String MESSAGING_HA_SHARED_STORE_MASTER = build(MESSAGING_HA_SHARED_STORE, "master");
+    String MESSAGING_HA_SHARED_STORE_SLAVE = build(MESSAGING_HA_SHARED_STORE, "slave");
+    String MESSAGING_HTTP_ACCEPTOR = build(MESSAGING, "http-acceptor");
+    String MESSAGING_HTTP_CONNECTOR = build(MESSAGING, "http-connector");
+    String MESSAGING_IN_VM_ACCEPTOR = build(MESSAGING, "in-vm-acceptor");
+    String MESSAGING_IN_VM_CONNECTOR = build(MESSAGING, "in-vm-connector");
+    String MESSAGING_JMS_QUEUE = build(MESSAGING, "jms-queue");
+    String MESSAGING_JMS_TOPIC = build(MESSAGING, "jms-topic");
+    String MESSAGING_REMOTE_ACCEPTOR = build(MESSAGING, "remote-acceptor");
+    String MESSAGING_REMOTE_CONNECTOR = build(MESSAGING, "remote-connector");
+    String MESSAGING_SECURITY_SETTING_ROLE = build(MESSAGING, "security-setting-role");
+    String MESSAGING_SECURITY_SETTING_ROLE_ADD = build(MESSAGING_SECURITY_SETTING_ROLE, ADD_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_ENTRY = build(MESSAGING_SECURITY_SETTING_ROLE, ENTRY_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_FORM = build(MESSAGING_SECURITY_SETTING_ROLE, FORM_SUFFIX);
+    String MESSAGING_SECURITY_SETTING_ROLE_TABLE = build(MESSAGING_SECURITY_SETTING_ROLE, TABLE_SUFFIX);
+    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
+    String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");
+    String MESSAGING_SERVER_CLUSTERING = build(MESSAGING_SERVER, "clustering");
+    String MESSAGING_SERVER_DESTINATION = build(MESSAGING_SERVER, "destination");
+    String MESSAGING_SERVER_HA_POLICY = build(MESSAGING_SERVER, "ha-policy");
+    String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
+    String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
     String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
@@ -287,6 +347,7 @@ public interface Ids {
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
+    String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = build(RESOURCE_ADAPTER, "admin-object", ADD_SUFFIX);
     String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = build(RESOURCE_ADAPTER, "connection-definition", ADD_SUFFIX);
     String ROLE = "role";
@@ -344,6 +405,62 @@ public interface Ids {
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
 
+    String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
+    String UNDERTOW_HOST = "undertow-host";
+    String UNDERTOW_HOST_ACCESS_LOG = build(UNDERTOW_HOST, "access-log");
+    String UNDERTOW_HOST_ACTION_COLUMN = build(UNDERTOW_HOST, "action-column");
+    String UNDERTOW_HOST_ADD = build(UNDERTOW_HOST, ADD_SUFFIX);
+    String UNDERTOW_HOST_ENTRY = build(UNDERTOW_HOST, ENTRY_SUFFIX);
+    String UNDERTOW_HOST_ATTRIBUTES_FORM = build(UNDERTOW_HOST, FORM_SUFFIX);
+    String UNDERTOW_HOST_ATTRIBUTES_TAB = build(UNDERTOW_HOST, TAB_SUFFIX);
+    String UNDERTOW_HOST_FILTER_REF_ADD = build(UNDERTOW_HOST, "filter-ref", ADD_SUFFIX);
+    String UNDERTOW_HOST_FILTER_REF_FORM = build(UNDERTOW_HOST, "filter-ref", FORM_SUFFIX);
+    String UNDERTOW_HOST_FILTER_REF_PAGE = build(UNDERTOW_HOST, "filter-ref", PAGE_SUFFIX);
+    String UNDERTOW_HOST_FILTER_REF_TABLE = build(UNDERTOW_HOST, "filter-ref", TABLE_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_ADD = build(UNDERTOW_HOST, "location", ADD_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_FORM = build(UNDERTOW_HOST, "location", FORM_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_PAGE = build(UNDERTOW_HOST, "location", PAGE_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_TABLE = build(UNDERTOW_HOST, "location", TABLE_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_FILTER_REF_ADD = build(UNDERTOW_HOST, "location", "filter-ref", ADD_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_FILTER_REF_FORM = build(UNDERTOW_HOST, "location", "filter-ref", FORM_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_FILTER_REF_PAGE = build(UNDERTOW_HOST, "location", "filter-ref", PAGE_SUFFIX);
+    String UNDERTOW_HOST_LOCATION_FILTER_REF_TABLE = build(UNDERTOW_HOST, "location", "filter-ref", TABLE_SUFFIX);
+    String UNDERTOW_HOST_MAIN_PAGE = build(UNDERTOW_HOST, "main", PAGE_SUFFIX);
+    String UNDERTOW_HOST_SINGLE_SIGN_ON = build(UNDERTOW_HOST, "single-sign-on");
+    String UNDERTOW_HOST_TABLE = build(UNDERTOW_HOST, TABLE_SUFFIX);
+    String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
+    String UNDERTOW_SERVER = "undertow-server";
+    String UNDERTOW_SERVER_ADD = build(UNDERTOW_SERVER, ADD_SUFFIX);
+    String UNDERTOW_SERVER_AJP_LISTENER = build(UNDERTOW_SERVER, "ajp-listener");
+    String UNDERTOW_SERVER_CONFIGURATION_ENTRY = build(UNDERTOW_SERVER, "configuration", ENTRY_SUFFIX);
+    String UNDERTOW_SERVER_CONFIGURATION_FORM = build(UNDERTOW_SERVER, "configuration", FORM_SUFFIX);
+    String UNDERTOW_SERVER_HTTP_LISTENER = build(UNDERTOW_SERVER, "http-listener");
+    String UNDERTOW_SERVER_HTTPS_LISTENER = build(UNDERTOW_SERVER, "https-listener");
+    String UNDERTOW_SERVER_LISTENER_ENTRY = build(UNDERTOW_SERVER, "listener", ENTRY_SUFFIX);
+    String UNDERTOW_SERVER_REFRESH = build(UNDERTOW_SERVER, REFRESH_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
+    String UNDERTOW_SERVLET_CONTAINER_ADD = build(UNDERTOW_SERVLET_CONTAINER, ADD_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_ENTRY = build(UNDERTOW_SERVLET_CONTAINER, "configuration",
+            ENTRY_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_FORM = build(UNDERTOW_SERVLET_CONTAINER, "configuration",
+            FORM_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_TAB = build(UNDERTOW_SERVLET_CONTAINER, "configuration",
+            TAB_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_COOKIE = build(UNDERTOW_SERVLET_CONTAINER, "cookie");
+    String UNDERTOW_SERVLET_CONTAINER_CRAWLER = build(UNDERTOW_SERVLET_CONTAINER, "crawler");
+    String UNDERTOW_SERVLET_CONTAINER_JSP = build(UNDERTOW_SERVLET_CONTAINER, "jsp");
+    String UNDERTOW_SERVLET_CONTAINER_REFRESH = build(UNDERTOW_SERVLET_CONTAINER, REFRESH_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM = build(UNDERTOW_SERVLET_CONTAINER, "mime-mapping",
+            FORM_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB = build(UNDERTOW_SERVLET_CONTAINER, "mime-mapping",
+            TAB_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_SESSION = build(UNDERTOW_SERVLET_CONTAINER, "session");
+    String UNDERTOW_SERVLET_CONTAINER_WEBSOCKET = build(UNDERTOW_SERVLET_CONTAINER, "websocket");
+    String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM = build(UNDERTOW_SERVLET_CONTAINER, "welcome-file",
+            FORM_SUFFIX);
+    String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB = build(UNDERTOW_SERVLET_CONTAINER, "welcome-file",
+            TAB_SUFFIX);
+    String UNDERTOW_SETTINGS = "undertow-settings";
     String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
     String UPLOAD = "upload";
@@ -352,6 +469,17 @@ public interface Ids {
     String UPLOAD_NAMES_FORM = build(UPLOAD, "names", FORM_SUFFIX);
     String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
+
+    String WEBSERVICES = "webservices";
+    String WEBSERVICES_FORM = build(WEBSERVICES, FORM_SUFFIX);
+    String WEBSERVICES_ENTRY = build(WEBSERVICES, ENTRY_SUFFIX);
+    String WEBSERVICES_CLIENT_CONFIG = build(WEBSERVICES, "client-config");
+    String WEBSERVICES_CLIENT_CONFIG_ENTRY = build(WEBSERVICES, "client-config", ENTRY_SUFFIX);
+    String WEBSERVICES_ENDPOINT_CONFIG = build(WEBSERVICES, "endpoint-config");
+    String WEBSERVICES_ENDPOINT_CONFIG_ENTRY = build(WEBSERVICES, "endpoint-config", ENTRY_SUFFIX);
+    String WEBSERVICES_HANDLER_ADD = build(WEBSERVICES, "handler", ADD_SUFFIX);
+    String WEBSERVICES_HANDLER_CHAIN_ADD = build(WEBSERVICES, "handler-chain", ADD_SUFFIX);
+    String WEBSERVICES_HANDLER_CHAIN_COLUMN = build(WEBSERVICES, "handler-chain-column");
 
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
@@ -389,12 +517,20 @@ public interface Ids {
         return build(host, server);
     }
 
+    static String jmsBridge(String name) {
+        return build(JMS_BRIDGE, name);
+    }
+
     static String jpaStatistic(final String deployment, final String persistenceUnit) {
         return build(deployment, persistenceUnit);
     }
 
     static String loggingProfile(final String name) {
         return build(LOGGING, name);
+    }
+
+    static String messagingServer(String name) {
+        return build(MESSAGING_SERVER, name);
     }
 
     /**
@@ -430,6 +566,14 @@ public interface Ids {
 
     static String serverGroupServer(final String serverGroup, final String server) {
         return build(serverGroup, server);
+    }
+
+    static String undertowServer(String name) {
+        return build(UNDERTOW_SERVER, name);
+    }
+
+    static String undertowServletContainer(String name) {
+        return build(UNDERTOW_SERVLET_CONTAINER, name);
     }
 
 

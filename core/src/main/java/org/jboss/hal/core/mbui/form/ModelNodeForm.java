@@ -17,7 +17,7 @@ package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -83,6 +83,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
+        boolean hideDeprecated;
         String attributePath;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
@@ -105,6 +106,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.unsorted = false;
             this.requiredOnly = false;
             this.includeRuntime = false;
+            this.hideDeprecated = true;
             this.attributePath = ATTRIBUTES;
         }
 
@@ -175,6 +177,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> includeRuntime() {
             this.includeRuntime = true;
+            return this;
+        }
+
+        public Builder<T> showDeprecated() {
+            this.hideDeprecated = false;
             return this;
         }
 
@@ -299,7 +306,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             properties.addAll(filteredByName.values());
         } else {
             properties.addAll(filteredProperties);
-            Collections.sort(properties, (p1, p2) -> p1.getName().compareTo(p2.getName()));
+            properties.sort(Comparator.comparing(Property::getName));
         }
         this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
 

@@ -37,6 +37,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * Dialog used to deploy one or several one content items to one server group.
@@ -93,7 +94,7 @@ public class DeployContentDialog2 {
             .div().add(noContentSelected).end()
             .p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)).end()
             .add(table)
-            .div()
+            .div().css(marginTopLarge)
                 .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                 .label().css(CSS.marginLeft5)
                     .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)

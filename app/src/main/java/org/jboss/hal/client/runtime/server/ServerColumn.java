@@ -118,7 +118,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 })
 
                 .onBreadcrumbItem((item, context) -> {
-                    PlaceRequest.Builder builder = null;
+                    PlaceRequest.Builder builder;
                     PlaceRequest current = placeManager.getCurrentPlaceRequest();
 
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
@@ -363,7 +363,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (!item.isStarted()) {
                         actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                         AddressTemplate template = AddressTemplate
-                                .of("/host=" + item.getHost() + "/item-config=" + item.getName());
+                                .of("/host=" + item.getHost() + "/server-config=" + item.getName());
                         actions.add(
                                 itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                     }
@@ -383,6 +383,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         actions.add(new ItemAction<>(resources.constants().stop(), serverActions::stop));
                     }
                 }
+                // add kill action regardless of server state to kill servers which might show a wrong state
+                actions.add(new ItemAction<>(resources.constants().kill(), serverActions::kill));
                 return actions;
             }
 

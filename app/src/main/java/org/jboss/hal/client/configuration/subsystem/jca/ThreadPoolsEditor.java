@@ -20,9 +20,9 @@ import java.util.List;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.Column.RenderCallback;
@@ -111,14 +111,12 @@ class ThreadPoolsEditor implements IsElement, Attachable {
                         sizingForm.asElement());
 
         // @formatter:off
-        LayoutBuilder builder = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent(THREAD_POOLS).end()
-                    .p().textContent(metadata.getDescription().getDescription()).end()
-                    .add(table)
-                    .add(tabs)
-                .end()
+        Elements.Builder builder = new Elements.Builder()
+            .section()
+                .h(1).textContent(THREAD_POOLS).end()
+                .p().textContent(metadata.getDescription().getDescription()).end()
+                .add(table)
+                .add(tabs)
             .end();
         // @formatter:on
 

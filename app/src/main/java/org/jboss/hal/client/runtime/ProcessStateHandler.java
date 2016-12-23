@@ -48,6 +48,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -123,7 +124,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
 
     @Override
     public void onProcessState(final ProcessStateEvent event) {
-        // adjust the standalone server's state
+        // adjust the static standalone server's state
         if (environment.isStandalone()) {
             ServerState serverState = event.getProcessState().first();
             if (serverState.getState() == State.RELOAD_REQUIRED) {
@@ -139,19 +140,24 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
             if (environment.isStandalone()) {
                 ServerState serverState = event.getProcessState().first();
                 if (serverState.getState() == State.RELOAD_REQUIRED) {
-                    MessageEvent.fire(eventBus, Message.warning(resources.messages().serverConfigurationChanged(),
-                            resources.constants().reload(), () -> serverActions.reload(Server.STANDALONE), true));
+                    MessageEvent.fire(eventBus, Message.warning(UIConstants.RELOAD_MESSAGE_ID,
+                            resources.messages().serverConfigurationChanged(),
+                            resources.constants().reload(),
+                            () -> serverActions.reload(Server.STANDALONE)));
 
                 } else if (serverState.getState() == State.RESTART_REQUIRED) {
-                    MessageEvent.fire(eventBus, Message.warning(resources.messages().serverConfigurationChanged(),
-                            resources.constants().restart(), () -> serverActions.restart(Server.STANDALONE), true));
+                    MessageEvent.fire(eventBus, Message.warning(UIConstants.RESTART_MESSAGE_ID,
+                            resources.messages().serverConfigurationChanged(),
+                            resources.constants().restart(),
+                            () -> serverActions.restart(Server.STANDALONE)));
                 }
 
             } else {
                 FinderPath path = new FinderPath().append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.TOPOLOGY));
                 PlaceRequest place = places.finderPlace(NameTokens.RUNTIME, path).build();
-                MessageEvent.fire(eventBus, Message.warning(resources.messages().domainConfigurationChanged(),
-                        Names.TOPOLOGY, () -> placeManager.revealPlace(place), true));
+                MessageEvent.fire(eventBus, Message.warning(UIConstants.DOMAIN_CHANGED_MESSAGE_ID,
+                        resources.messages().domainConfigurationChanged(),
+                        Names.TOPOLOGY, () -> placeManager.revealPlace(place)));
             }
         }
     }

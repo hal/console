@@ -30,26 +30,30 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USER_NAME;
 
 /**
  * @author Harald Pehl
  */
-public class ConnectionStep extends WizardStep<Context, State> {
+class ConnectionStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    public ConnectionStep(final Metadata metadata, final Resources resources, final boolean xa) {
+    ConnectionStep(final Metadata metadata, final Resources resources, final boolean xa) {
         super(Ids.DATA_SOURCE_CONNECTION_STEP, resources.constants().connection());
 
         List<String> attributes = new ArrayList<>();
         if (!xa) {
             attributes.add(CONNECTION_URL);
         }
-        attributes.addAll(asList("user-name", PASSWORD, SECURITY_DOMAIN)); //NON-NLS
+        attributes.addAll(asList(USER_NAME, PASSWORD, SECURITY_DOMAIN));
         form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_CONNECTION_FORM, metadata)
                 .include(attributes)
                 .unsorted()
-                .onSave((form, changedValues) -> wizard().getContext().dataSource = form.getModel())
+                .onSave((form, changedValues) -> {
+                    changedValues.forEach((k, v) -> wizard().getContext().recordChange(k, v));
+                    wizard().getContext().dataSource = form.getModel();
+                })
                 .build();
     }
 

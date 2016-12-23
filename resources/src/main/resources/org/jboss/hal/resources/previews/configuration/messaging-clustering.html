@@ -1,0 +1,47 @@
+<p>JBoss EAP messaging clusters allow groups of JBoss EAP messaging servers to be grouped together in order to share message processing load. Each active node in the cluster is an active JBoss EAP messaging server which manages its own messages and handles its own connections.</p>
+
+<p>The cluster is formed by each node declaring cluster connections to other nodes in the JBoss EAP configuration file. When a node forms a cluster connection to another node, it internally creates a core bridge connection between itself and the other node. This is done transparently behind the scenes; you do not have to declare an explicit bridge for each node. These cluster connections allow messages to flow between the nodes of the cluster to balance the load.</p>
+
+<p>For a complete documentation about clustering, see
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-28-clusters-overview">Clusters Overview</a>.
+</p>
+
+<p>This section contains the configuration for the following topics:</p>
+<ul>
+    <li>Broadcast Groups</li>
+    <li>Discovery Groups</li>
+    <li>Cluster Connections</li>
+    <li>Grouping Handlers</li>
+    <li>Core Bridges</li>
+</ul>
+
+<h2>Broadcast Groups</h2>
+<p>A broadcast group is the means by which a server broadcasts connectors over the network. A connector defines a way in which a client, or other server, can make connections to the server.</p>
+
+<p>The broadcast group takes a set of connectors and broadcasts them on the network. Depending on which broadcasting technique you configure the cluster, it uses either UDP or JGroups to broadcast connector pairs information.</p>
+
+<p>Broadcast groups are defined in the messaging-activemq subsystem of the server configuration. There can be many broadcast groups per JBoss EAP messaging server.</p>
+
+<h2>Discovery Groups</h2>
+<p>While the broadcast group defines how connector information is broadcasted from a server, a discovery group defines how connector information is received from a broadcast endpoint, for example, a UDP multicast address or JGroup channel.</p>
+
+<p>A discovery group maintains a list of connectors, one for each broadcast by a different server. As it receives broadcasts on the broadcast endpoint from a particular server, it updates its entry in the list for that server. If it has not received a broadcast from a particular server for a length of time it will remove that server’s entry from its list.</p>
+
+<h2>Cluster Connections</h2>
+<p>Cluster connections group servers into clusters so that messages can be load balanced between the nodes of the cluster. Cluster connections are defined in the JBoss EAP server configuration using the
+    <code>cluster-connection</code> element. There can be zero or more cluster connections defined per JBoss EAP messaging server.
+</p>
+
+<h2>Grouping Handlers</h2>
+<p>In a cluster, message groups with specific group ids can arrive on any of the nodes. It is important for a node to determine which group ids are bound to which consumer on which node. Each node is responsible for routing message groups correctly to the node which has the consumer processing those group ids, irrespective of where the message groups arrive by default. Once messages with a given group id are sent to a specific consumer connected to the given node in the cluster, then those messages are never sent to another node even if the consumer is disconnected.</p>
+
+<p>This situation is addressed by a grouping handler. Each node has a grouping handler and this grouping handler (along with other handlers) is responsible for routing the message groups to the correct node.</p>
+
+<h2>Core Bridges</h2>
+<p>The function of a bridge is to consume messages from one destination and forward them to another one, typically on a different JBoss EAP messaging server.</p>
+
+<p>The source and target servers do not have to be in the same cluster which makes bridging suitable for reliably sending messages from one cluster to another, for instance across a WAN, or internet and where the connection may be unreliable.</p>
+
+<p>The bridge has built-in resilience to failure so if the target server connection is lost, for example, due to network failure, the bridge will retry connecting to the target until it comes back online. When it comes back online it will resume operation as normal.</p>
+
+<p>Bridges are a way to reliably connect two separate JBoss EAP messaging servers together. With a core bridge both source and target servers must be JBoss EAP 7 messaging servers.</p>

@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mbui.form;
 
 import java.util.function.Predicate;
+
 import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -38,8 +39,8 @@ class PropertyFilter implements Predicate<Property> {
                 (p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean()) ||
                         (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean()));
 
-        // do not include "deprecated" attribute
-        if (property.getValue().hasDefined(DEPRECATED)) {
+        // do not include "deprecated" attributes
+        if (builder.hideDeprecated && property.getValue().hasDefined(DEPRECATED)) {
             return false;
         }
 

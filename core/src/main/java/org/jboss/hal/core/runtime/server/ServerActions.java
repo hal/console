@@ -130,6 +130,7 @@ public class ServerActions {
     public static final int SERVER_RESUME_TIMEOUT = 3;
     public static final int SERVER_START_TIMEOUT = 15;
     public static final int SERVER_STOP_TIMEOUT = 4;
+    public static final int SERVER_KILL_TIMEOUT = 3;
     public static final int SERVER_RELOAD_TIMEOUT = 5;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
@@ -377,6 +378,25 @@ public class ServerActions {
         });
     }
 
+    public void kill(Server server) {
+        DialogFactory.showConfirmation(resources.messages().kill(server.getName()),
+                resources.messages().killServerQuestion(server.getName()),
+                () -> {
+                    prepare(server, Action.KILL);
+                    Operation operation = new Operation.Builder(KILL, server.getServerConfigAddress()).build();
+                    dispatcher.execute(operation,
+                            result -> new TimeoutHandler(dispatcher, SERVER_KILL_TIMEOUT).execute(
+                                    readServerConfigStatus(server),
+                                    checkServerConfigStatus(STOPPED, DISABLED),
+                                    new ServerTimeoutCallback(server,
+                                            resources.messages().killServerSuccess(server.getName()))),
+                            new ServerFailedCallback(server,
+                                    resources.messages().killServerError(server.getName())),
+                            new ServerExceptionCallback(server,
+                                    resources.messages().killServerError(server.getName())));
+                });
+    }
+
     public void start(Server server) {
         prepare(server, Action.START);
         Operation operation = new Operation.Builder(START, server.getServerConfigAddress())
@@ -403,13 +423,13 @@ public class ServerActions {
     }
 
     public void markAsPending(Server server) {
-        dispatcher.setPendingLifecycleAction(true);
+        Dispatcher.setPendingLifecycleAction(true);
         pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
-        dispatcher.setPendingLifecycleAction(false);
+        Dispatcher.setPendingLifecycleAction(false);
         pendingServers.remove(Ids.hostServer(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }

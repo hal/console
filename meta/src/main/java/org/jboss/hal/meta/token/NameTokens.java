@@ -44,6 +44,7 @@ public interface NameTokens {
     String INTERFACE = "interface";
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
+    String JMS_BRIDGE = ModelDescriptionConstants.JMS_BRIDGE;
     String JMX = ModelDescriptionConstants.JMX;
     String JNDI = "jndi";
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
@@ -53,6 +54,12 @@ public interface NameTokens {
     String LOGGING_PROFILE = "logging-profile";
     String MACRO_EDITOR = "macro-editor";
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
+    String MESSAGING = "messaging";
+    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";
+    String MESSAGING_SERVER_CLUSTERING = "messaging-server-clustering";
+    String MESSAGING_SERVER_DESTINATION = "messaging-server-destination";
+    String MESSAGING_SERVER_HA_POLICY = "messaging-server-ha-policy";
     String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
@@ -70,6 +77,12 @@ public interface NameTokens {
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
+    String UNDERTOW = "undertow";
+    String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
+    String UNDERTOW_FILTER = "undertow-filter";
+    String UNDERTOW_HANDLER = "undertow-handler";
+    String UNDERTOW_SERVER = "undertow-server";
+    String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
 
     Set<String> getTokens();

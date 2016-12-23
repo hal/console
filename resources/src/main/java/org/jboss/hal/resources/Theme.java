@@ -18,14 +18,14 @@ package org.jboss.hal.resources;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * Theme interface meant to be implemented by specific themes.
+ * Theme interface is meant to be implemented by specific themes.
  *
  * @author Harald Pehl
  */
 public interface Theme {
 
     /**
-     * A name to be used the UI.
+     * A name to be used in the UI.
      */
     @NonNls
     String getName();
@@ -51,8 +51,6 @@ public interface Theme {
     default String getLastName() {
         return null;
     }
-
-    Favicons favicons();
 
     Logos logos();
 }

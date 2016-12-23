@@ -21,8 +21,12 @@ import java.util.Map;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
 import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
@@ -34,11 +38,15 @@ import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
  */
 class MessagePanel implements IsElement {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+
     private final Map<String, Integer> messageIds;
+    private final Map<Long, Message> stickyMessages;
     private final Element root;
 
     MessagePanel() {
         this.messageIds = new HashMap<>();
+        this.stickyMessages = new HashMap<>();
         this.root = Browser.getDocument().createDivElement();
         this.root.getClassList().add(toastNotificationsListPf);
         Browser.getDocument().getBody().appendChild(root);
@@ -51,17 +59,34 @@ class MessagePanel implements IsElement {
     }
 
     void add(Message message) {
-        String id = Ids.uniqueId();
-        Element element = new MessageElement(message).asElement();
-        element.setId(id);
-        root.appendChild(element);
+        if (message.isSticky() && containsStickyMessage(message)) {
+            logger.debug("Swallow sticky message {}. The same message is still open", message);
 
-        if (!message.isSticky()) {
-            startMessageTimeout(id);
-            element.setOnmouseover(e1 -> stopMessageTimeout(id));
-            element.setOnmouseout(e2 -> startMessageTimeout(id));
+        } else {
+            String id = Ids.uniqueId();
+            Element element = new MessageElement(this, message).asElement();
+            element.setId(id);
+            root.appendChild(element);
+
+            if (!message.isSticky()) {
+                startMessageTimeout(id);
+                element.setOnmouseover(e1 -> stopMessageTimeout(id));
+                element.setOnmouseout(e2 -> startMessageTimeout(id));
+            } else {
+                stickyMessages.put(message.getId(), message);
+            }
         }
     }
+
+    void closeSticky(Message message) {
+        stickyMessages.remove(message.getId());
+        logger.debug("Closed sticky message: {}", message);
+    }
+
+    private boolean containsStickyMessage(Message message) {
+        return stickyMessages.containsKey(message.getId());
+    }
+
 
     private void startMessageTimeout(String id) {
         int timeoutHandle = Browser.getWindow().setTimeout(() -> removeMessage(id), MESSAGE_TIMEOUT);

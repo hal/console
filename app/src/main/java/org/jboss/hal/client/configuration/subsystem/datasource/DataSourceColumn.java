@@ -30,15 +30,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.ChooseTemplateStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.ConnectionStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.Context;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.DriverStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NamesStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.PropertiesStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.ReviewStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.wizard.State;
+import org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.DataSource;
@@ -60,8 +52,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -78,7 +68,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -202,14 +192,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(builder.build()));
-                actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
-                        dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (dataSource.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), ds -> disable(ds)));
                     actions.add(new ItemAction<>(resources.constants().testConnection(), ds -> testConnection(ds)));
                 } else {
                     actions.add(new ItemAction<>(resources.constants().enable(), ds -> enable(ds)));
                 }
+                actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
+                        dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 return actions;
             }
         });
@@ -218,6 +208,15 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void prepareWizard(final boolean xa) {
+        Function<FunctionContext> readDataSources =
+                control -> crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE,
+                        children -> {
+                            List<DataSource> dataSources = children.stream()
+                                    .map(property -> new DataSource(property, xa)).collect(toList());
+                            control.getContext().set(DATASOURCES, dataSources);
+                            control.proceed();
+                        });
+
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
@@ -232,15 +231,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
         };
 
-        Function<FunctionContext> readDataSources = control -> {
-            crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE, children -> {
-                List<DataSource> dataSources = children.stream()
-                        .map(property -> new DataSource(property, xa)).collect(toList());
-                control.getContext().set(DATASOURCES, dataSources);
-                control.proceed();
-            });
-        };
-
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
                 readDataSources,
                 new JdbcDriverFunctions.ReadConfiguration(crud),
@@ -251,93 +241,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void showWizard(List<DataSource> dataSources, List<JdbcDriver> drivers, final boolean xa) {
-
-        Wizard.Builder<Context, State> builder = new Wizard.Builder<Context, State>(
-                resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
-                new Context(environment.isStandalone(), xa))
-
-                .onBack((context, currentState) -> {
-                    State previous = null;
-                    switch (currentState) {
-                        case CHOOSE_TEMPLATE:
-                            break;
-                        case NAMES:
-                            previous = CHOOSE_TEMPLATE;
-                            break;
-                        case DRIVER:
-                            previous = NAMES;
-                            break;
-                        case PROPERTIES:
-                            previous = DRIVER;
-                            break;
-                        case CONNECTION:
-                            previous = context.isXa() ? PROPERTIES : DRIVER;
-                            break;
-                        case REVIEW:
-                            previous = CONNECTION;
-                    }
-                    return previous;
-                })
-
-                .onNext((context, currentState) -> {
-                    State next = null;
-                    switch (currentState) {
-                        case CHOOSE_TEMPLATE:
-                            next = NAMES;
-                            break;
-                        case NAMES:
-                            next = DRIVER;
-                            break;
-                        case DRIVER:
-                            next = context.isXa() ? PROPERTIES : CONNECTION;
-                            break;
-                        case PROPERTIES:
-                            next = CONNECTION;
-                            break;
-                        case CONNECTION:
-                            next = REVIEW;
-                            break;
-                        case REVIEW:
-                            break;
-                    }
-                    return next;
-                })
-
-                .stayOpenAfterFinish()
-                .onFinish((wizard, context) -> {
-                    DataSource dataSource = context.getDataSource();
-                    ResourceAddress address = dataSource.isXa()
-                            ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                            : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
-                    Operation operation = new Operation.Builder(ADD, address)
-                            .payload(dataSource)
-                            .build();
-                    dispatcher.execute(operation,
-                            result -> {
-                                refresh(Ids.dataSourceConfiguration(dataSource.getName(), dataSource.isXa()));
-                                wizard.showSuccess(resources.constants().operationSuccessful(),
-                                        resources.messages().addResourceSuccess(Names.DATASOURCE, dataSource.getName()),
-                                        resources.messages().view(Names.DATASOURCE),
-                                        cxt -> { /* nothing to do, datasource is already selected */ });
-                            },
-                            (operation1, failure) -> wizard.showError(resources.constants().operationFailed(),
-                                    resources.messages().dataSourceAddError(), failure));
-                });
-
-        AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
-        Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
-        Metadata driverMetadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
-
-        builder.addStep(CHOOSE_TEMPLATE, new ChooseTemplateStep(templates, resources, xa));
-        builder.addStep(NAMES, new NamesStep(dataSources, dataSourceMetadata, resources));
-        builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources));
-        if (xa) {
-            builder.addStep(PROPERTIES, new PropertiesStep(resources));
-        }
-        builder.addStep(CONNECTION, new ConnectionStep(dataSourceMetadata, resources, xa));
-        builder.addStep(REVIEW, new ReviewStep(dataSourceMetadata, resources, xa));
-
-        builder.build().show();
+        DataSourceWizard wizard = new DataSourceWizard(this, metadataRegistry, dispatcher, eventBus,
+                statementContext, environment, progress, resources, templates, dataSources, drivers, xa);
+        wizard.show();
     }
 
     private ResourceAddress dataSourceAddress(DataSource dataSource) {
@@ -361,7 +267,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 .build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(message));
-            refresh(RefreshMode.RESTORE_SELECTION);
+            refresh(RESTORE_SELECTION);
         });
     }
 
@@ -374,7 +280,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
                         .add(DATA_SOURCE, dataSource.getName());
-                Operation operation = new Operation.Builder("test-connection-in-pool", address).build(); //NON-NLS
+                Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, address).build();
                 dispatcher.executeInFunction(control, operation, result -> control.proceed());
 
             } else {
@@ -387,12 +293,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             public void onFailure(final FunctionContext context) {
                 MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().testConnectionError(), context.getErrorMessage()));
+                        Message.error(resources.messages().testConnectionError(dataSource.getName()),
+                                context.getErrorMessage()));
             }
 
             @Override
             public void onSuccess(final FunctionContext context) {
-                MessageEvent.fire(eventBus, Message.success(resources.messages().testConnectionSuccess()));
+                MessageEvent.fire(eventBus,
+                        Message.success(resources.messages().testConnectionSuccess(dataSource.getName())));
             }
         };
 

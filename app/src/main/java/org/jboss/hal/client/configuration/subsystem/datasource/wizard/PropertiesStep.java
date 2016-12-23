@@ -25,11 +25,11 @@ import org.jboss.hal.resources.Resources;
 /**
  * @author Harald Pehl
  */
-public class PropertiesStep extends WizardStep<Context, State> {
+class PropertiesStep extends WizardStep<Context, State> {
 
     private final Element root;
 
-    public PropertiesStep(final Resources resources) {
+    PropertiesStep(final Resources resources) {
         super(Ids.DATA_SOURCE_PROPERTIES_STEP, resources.constants().xaProperties());
         root = new Elements.Builder().p().textContent(Names.NYI).end().build();
     }

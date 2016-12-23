@@ -50,7 +50,6 @@ public class IiopPresenter
 
     public interface MyView extends MbuiView<IiopPresenter> {
         void update(ModelNode modelNode);
-        void clear();
     }
     // @formatter:on
 

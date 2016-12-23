@@ -101,8 +101,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                                 macro -> presenter.rename(macro)),
                         new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
                                 macro -> DialogFactory.showConfirmation(
-                                        resources.messages().removeResourceConfirmationTitle(macro.getName()),
-                                        resources.messages().removeResourceConfirmationQuestion(macro.getName()),
+                                        resources.messages().removeConfirmationTitle(macro.getName()),
+                                        resources.messages().removeConfirmationQuestion(macro.getName()),
                                         () -> presenter.remove(macro))));
             }
         });

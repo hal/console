@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -46,16 +47,34 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
         final String label;
         final String value;
+        final SafeHtml htmlValue;
         final String href;
 
         public PreviewAttribute(final String label, final String value) {
-            this(label, value, null);
+            this(label, value, null, null);
         }
 
         public PreviewAttribute(final String label, final String value, final String href) {
+            this(label, value, null, href);
+        }
+
+        public PreviewAttribute(final String label, final SafeHtml value) {
+            this(label, null, value, null);
+        }
+
+        public PreviewAttribute(final String label, final SafeHtml value, final String href) {
+            this(label, null, value, href);
+        }
+
+        private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href) {
             this.label = label;
             this.value = value;
+            this.htmlValue = htmlValue;
             this.href = href;
+        }
+
+        private boolean isUndefined() {
+            return value == null && htmlValue == null;
         }
     }
 
@@ -129,10 +148,17 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             if (previewAttribute.href != null) {
                 builder.a(previewAttribute.href);
             }
-            builder.span().rememberAs(valueId).css(CSS.value).textContent(
-                    previewAttribute.value == null ? Names.NOT_AVAILABLE : previewAttribute.value);
-            if (previewAttribute.value != null && previewAttribute.value.length() > 15) {
-                builder.title(previewAttribute.value);
+            builder.span().rememberAs(valueId).css(CSS.value);
+            if (previewAttribute.isUndefined()) {
+                builder.textContent(Names.NOT_AVAILABLE);
+            }
+            else if (previewAttribute.htmlValue != null) {
+                builder.innerHtml(previewAttribute.htmlValue);
+            } else {
+                builder.textContent(previewAttribute.value);
+                if (previewAttribute.value.length() > 15) {
+                    builder.title(previewAttribute.value);
+                }
             }
             builder.end(); // </span>
             if (previewAttribute.href != null) {

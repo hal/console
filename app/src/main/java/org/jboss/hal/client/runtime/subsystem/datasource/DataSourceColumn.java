@@ -16,7 +16,6 @@
 package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -38,6 +37,7 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -52,6 +52,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
@@ -126,7 +127,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         .map(property -> new DataSource(property, false)).collect(toList()));
                 combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new DataSource(property, true)).collect(toList()));
-                Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
+                combined.sort(comparing(NamedNode::getName));
                 server = environment.isStandalone()
                         ? Server.STANDALONE
                         : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
@@ -223,22 +224,21 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
         });
 
-        setPreviewCallback(item ->
-                new
-
-                        DataSourcePreview(this, server, item, environment, dispatcher, statementContext, serverActions,
-                        resources));
+        setPreviewCallback(item -> new DataSourcePreview(this, server, item, environment, dispatcher, statementContext,
+                serverActions, resources));
     }
 
     private void testConnection(DataSource dataSource) {
-        //noinspection HardCodedStringLiteral
-        Operation operation = new Operation.Builder("test-connection-in-pool", dataSourceAddress(dataSource)).build();
+        Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, dataSourceAddress(dataSource)).build();
         dispatcher.execute(operation,
-                result -> MessageEvent.fire(eventBus, Message.success(resources.messages().testConnectionSuccess())),
-                (o1, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages().testConnectionError(),
-                        failure)),
-                (o2, exception) -> MessageEvent.fire(eventBus, Message.error(resources.messages().testConnectionError(),
-                        exception.getMessage())));
+                result -> MessageEvent.fire(eventBus,
+                        Message.success(resources.messages().testConnectionSuccess(dataSource.getName()))),
+                (o1, failure) -> MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().testConnectionError(dataSource.getName()),
+                                failure)),
+                (o2, exception) -> MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().testConnectionError(dataSource.getName()),
+                                exception.getMessage())));
     }
 
     private void flush(DataSource dataSource, String flushMode) {

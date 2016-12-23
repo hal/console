@@ -152,7 +152,9 @@ public class TimeoutHandler {
                                         .map(stepResult -> !stepResult.isFailure())
                                         .allMatch(flag -> true);
                             }
-                        }, NOOP_FAILED_CALLBACK, NOOP_EXCEPTIONAL_CALLBACK),
+                        },
+                        NOOP_FAILED_CALLBACK,
+                        NOOP_EXCEPTIONAL_CALLBACK),
                 PERIOD);
     }
 

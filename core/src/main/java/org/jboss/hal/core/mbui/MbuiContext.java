@@ -22,6 +22,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.OperationFactory;
@@ -39,6 +40,7 @@ public class MbuiContext {
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final PropertiesOperations po;
     private final Environment environment;
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
@@ -50,6 +52,7 @@ public class MbuiContext {
 
     @Inject
     public MbuiContext(final CrudOperations crud,
+            final PropertiesOperations po,
             final Dispatcher dispatcher,
             final Environment environment,
             final EventBus eventBus,
@@ -60,6 +63,7 @@ public class MbuiContext {
             final StatementContext statementContext,
             final TableButtonFactory tableButtonFactory) {
         this.crud = crud;
+        this.po = po;
         this.environment = environment;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -73,6 +77,10 @@ public class MbuiContext {
 
     public CrudOperations crud() {
         return crud;
+    }
+
+    public PropertiesOperations po() {
+        return po;
     }
 
     public Dispatcher dispatcher() {

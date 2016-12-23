@@ -51,6 +51,10 @@ public class DataSource extends NamedNode {
         this.xa = xa;
     }
 
+    public DataSource newName(final String name) {
+        return new DataSource(name, xa);
+    }
+
     public boolean isXa() {
         return xa;
     }

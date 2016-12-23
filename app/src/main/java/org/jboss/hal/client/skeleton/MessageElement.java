@@ -27,6 +27,7 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.ALERT;
 import static org.jboss.hal.resources.UIConstants.DISMISS;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
  * @author Harald Pehl
@@ -37,7 +38,7 @@ class MessageElement implements IsElement {
 
     private final Element root;
 
-    MessageElement(final Message message) {
+    MessageElement(final MessagePanel messagePanel, final Message message) {
         String[] cssIcon = cssIcon(message.getLevel());
         if (message.isSticky()) {
             cssIcon[0] = cssIcon[0] + " " + alertDismissable;
@@ -46,7 +47,11 @@ class MessageElement implements IsElement {
         Elements.Builder builder = new Elements.Builder()
                 .div().css(toastPf, alert, cssIcon[0]);
         if (message.isSticky()) {
-            builder.button().css(close).data(DISMISS, ALERT).aria(HIDDEN, String.valueOf(true))
+            builder.button()
+                    .css(close)
+                    .data(DISMISS, ALERT)
+                    .aria(HIDDEN, TRUE)
+                    .on(click, event -> messagePanel.closeSticky(message))
                     .span().css(pfIcon(close)).end()
                     .end();
         }

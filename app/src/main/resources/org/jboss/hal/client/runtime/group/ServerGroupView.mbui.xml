@@ -17,7 +17,7 @@
   -->
 <view>
     <vertical-navigation id="server-group-navigation">
-        <item id="server-group-configuration-item" title="Configuration" icon="pficon pficon-cluster">
+        <item id="server-group-configuration-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.group}">
                 <h1>Server Group Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>

@@ -9,6 +9,12 @@
   .make-lg-column(@hal-form-label-columns);
   .make-md-column(@hal-form-label-columns);
   .make-sm-column(@hal-form-label-columns);
+
+  &.deprecated {
+    color: @color-pf-black-500;
+    cursor: help;
+    text-decoration: line-through;
+  }
 }
 
 .hal-form-input {
@@ -112,7 +118,7 @@ fieldset.form-section {
 .form-help-content {
   border: 1px solid @alert-success-border;
   > div {
-    padding: 10px;
+    padding: 10px 10px 10px 0;
     color: @alert-success-text;
     background-color: @alert-success-bg;
     .form-group {

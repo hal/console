@@ -51,6 +51,7 @@ import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.M
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.*;
 
 /**
@@ -130,7 +131,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .add(globalModulesTable.asElement())
                 .end()
                 .build();
-        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), navigationElement);
+        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
 
         // ============================================
         // service=default-bindings
@@ -156,7 +157,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // services
-        navigation.addPrimary(EE_SERVICES_ENTRY, SERVICES_NAME, fontAwesome("cogs"));
+        navigation.addPrimary(EE_SERVICES_ENTRY, SERVICES_NAME, pfIcon("service"));
 
         navigation.addSecondary(EE_SERVICES_ENTRY, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
                 buildServicePanel(EE_CONTEXT_SERVICE, CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));

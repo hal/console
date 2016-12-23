@@ -296,13 +296,13 @@ public class HostActions {
     }
 
     private void markAsPending(Host host) {
-        dispatcher.setPendingLifecycleAction(true);
+        Dispatcher.setPendingLifecycleAction(true);
         pendingHosts.put(host.getName(), host);
         logger.debug("Mark host {} as pending", host.getName());
     }
 
     private void clearPending(Host host) {
-        dispatcher.setPendingLifecycleAction(false);
+        Dispatcher.setPendingLifecycleAction(false);
         pendingHosts.remove(host.getName());
         logger.debug("Clear pending state for host {}", host.getName());
     }

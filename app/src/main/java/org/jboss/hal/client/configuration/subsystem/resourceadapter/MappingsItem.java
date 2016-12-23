@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 
@@ -25,7 +24,7 @@ import org.jboss.hal.ballroom.form.PropertiesItem;
 class MappingsItem extends PropertiesItem {
 
     MappingsItem(final String name) {
-        super(name, new LabelBuilder().label(name));
+        super(name);
     }
 
     @Override

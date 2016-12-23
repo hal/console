@@ -60,7 +60,7 @@ import static org.jboss.hal.resources.UIConstants.*;
 public class Dialog implements IsElement {
 
     public enum Size {
-        SMALL(modelSmall), MEDIUM(modalMedium), LARGE(modalLarge), MAX(modalMax);
+        SMALL(modelSm), MEDIUM(modalMd), LARGE(modalLg), MAX(modalMx);
 
         final String css;
 
@@ -286,7 +286,7 @@ public class Dialog implements IsElement {
                     .div().css(modalContent)
                         .div().css(modalHeader)
                             .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
-                                .span().css(pfIcon("close")).aria(HIDDEN, String.valueOf(true)).end()
+                                .span().css(pfIcon("close")).aria(HIDDEN, TRUE).end()
                             .end()
                             .h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).rememberAs(TITLE_ELEMENT).end()
                         .end()

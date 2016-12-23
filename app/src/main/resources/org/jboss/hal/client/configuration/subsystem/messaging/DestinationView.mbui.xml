@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="messaging-destination-vertical-navigation">
+
+        <item id="messaging-core-queue-entry" title="Core Queue" icon="fa fa-cog">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/queue=*">
+                <h1>Core Queue</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-core-queue-table" title="Core Queue" form-ref="messaging-core-queue-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.CORE_QUEUE)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.CORE_QUEUE, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="queue-address"/>
+                    </columns>
+                </table>
+                <form id="messaging-core-queue-form" title="Core Queue"
+                      on-save="{{presenter.save(ServerSubResource.CORE_QUEUE, form, changedValues)}}">
+                    <attributes>
+                        <attribute name="queue-address"/>
+                        <attribute name="filter"/>
+                        <attribute name="durable"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-jms-queue-entry" title="JMS Queue" icon="fa fa-long-arrow-right">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jms-queue=*">
+                <h1>JMS Queue</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-jms-queue-table" title="JMS Queue" form-ref="messaging-jms-queue-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.JMS_QUEUE)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.JMS_QUEUE, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="selector"/>
+                    </columns>
+                </table>
+                <form id="messaging-jms-queue-form" title="JMS Queue"
+                      on-save="{{presenter.save(ServerSubResource.JMS_QUEUE, form, changedValues)}}">
+                    <attributes>
+                        <attribute name="selector"/>
+                        <attribute name="entries"/>
+                        <attribute name="durable"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-jms-topic-entry" title="JMS Topic" icon="fa fa-arrows">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jms-topic=*">
+                <h1>JMS Topic</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-jms-topic-table" title="JMS Topic" form-ref="messaging-jms-topic-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.JMS_TOPIC)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.JMS_TOPIC, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-jms-topic-form" title="JMS Topic"
+                      on-save="{{presenter.save(ServerSubResource.JMS_TOPIC, form, changedValues)}}">
+                    <attributes>
+                        <attribute name="entries"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="messaging-address-setting-entry" title="Address Setting" icon="fa fa-address-card-o">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/address-setting=*">
+                <h1>Address Setting</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-address-setting-table" title="Address Setting"
+                       form-ref="messaging-address-setting-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.ADDRESS_SETTING)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.ADDRESS_SETTING, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-address-setting-form" title="Address Setting"
+                      on-save="{{presenter.save(ServerSubResource.ADDRESS_SETTING, form, changedValues)}}"/>
+            </metadata>
+        </item>
+
+        <item id="messaging-divert-entry" title="Divert" icon="fa fa-exchange">
+            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/divert=*">
+                <h1>Divert</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="messaging-divert-table" title="Divert" form-ref="messaging-divert-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.add(ServerSubResource.DIVERT)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.remove(ServerSubResource.DIVERT, api.selectedRow())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="messaging-divert-form" title="Divert"
+                      on-save="{{presenter.save(ServerSubResource.DIVERT, form, changedValues)}}"/>
+            </metadata>
+        </item>
+    </vertical-navigation>
+</view>

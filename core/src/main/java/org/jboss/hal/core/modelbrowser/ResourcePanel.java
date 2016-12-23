@@ -111,6 +111,7 @@ class ResourcePanel implements HasElements {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM_SUFFIX), metadata)
                         .includeRuntime()
+                        .showDeprecated()
                         .onReset(modelBrowser::reset)
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))
                         .build();

@@ -61,7 +61,8 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                         Ids.SECURITY_DOMAIN_ADD,
                         Names.SECURITY_DOMAIN,
                         AddressTemplates.SECURITY_DOMAIN_TEMPLATE,
-                        Collections.singletonList(CACHE_TYPE)))
+                        Collections.singletonList(CACHE_TYPE),
+                        Ids::securityDomain))
 
                 .itemsProvider((context, callback) -> {
                     crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {

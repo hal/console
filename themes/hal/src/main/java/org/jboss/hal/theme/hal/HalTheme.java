@@ -16,7 +16,6 @@
 package org.jboss.hal.theme.hal;
 
 import com.google.gwt.core.client.GWT;
-import org.jboss.hal.resources.Favicons;
 import org.jboss.hal.resources.Logos;
 import org.jboss.hal.resources.Theme;
 
@@ -28,7 +27,6 @@ import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
  */
 public class HalTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(HalFavicons.class);
     private static final Logos LOGOS = GWT.create(HalLogos.class);
 
     public HalTheme() {
@@ -52,11 +50,6 @@ public class HalTheme implements Theme {
     @Override
     public String getLastName() {
         return MANAGEMENT_CONSOLE;
-    }
-
-    @Override
-    public Favicons favicons() {
-        return FAVICONS;
     }
 
     @Override

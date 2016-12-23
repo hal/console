@@ -18,6 +18,8 @@ package org.jboss.hal.dmr.dispatch;
 import org.jboss.hal.dmr.ModelNode;
 
 /**
+ * Extracts the process state from the DMR response.
+ *
  * @author Heiko Braun
  * @date 1/17/12
  */

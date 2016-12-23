@@ -65,6 +65,11 @@ public class MetadataProcessor {
 
 
     /**
+     * Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size
+     */
+    static final int RRD_DEPTH = 3;
+
+    /**
      * Number of r-r-d operations part of one composite operation.
      */
     private final static int BATCH_SIZE = 3;

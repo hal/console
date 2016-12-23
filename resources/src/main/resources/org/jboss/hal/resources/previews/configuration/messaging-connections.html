@@ -1,0 +1,33 @@
+<p>Contains the configuration for the following topics:</p>
+<ul>
+    <li>Acceptors & Connectors</li>
+    <li>Connector Services</li>
+    <li>(Pooled) Connection Factories</li>
+</ul>
+
+<h2>Acceptors & Connectors</h2>
+<p>An acceptor defines which types of connection are accepted by the JBoss EAP embedded messaging server. You can define any number of acceptors per server.</p>
+
+<p>A connector defines how to connect to an embedded JBoss EAP messaging server, and is used by a client to make connections.</p>
+
+<p>For more information about acceptors and connectors, see the
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-8-configuring-the-messaging-transports">Acceptors and Connectors section</a>.
+</p>
+
+<h2>Connector Services</h2>
+<p>A connector service allows to integrate external components with Apache ActiveMQ Artemis to send and receive messages.</p>
+
+<h2>Connection Factories</h2>
+<p>By default, the JBoss EAP messaging subsystem provides the <code>InVmConnectionFactory</code> and
+    <code>RemoteConnectionFactory</code> connection factories, as well as the
+    <code>activemq-ra</code> pooled connection factory.</p>
+
+<p><code>InVmConnectionFactory</code> references an
+    <code>in-vm-connector</code> and can be used to send and receive messages when both the client and server are running in the same JVM.
+    <code>RemoteConnectionFactory</code> references an
+    <code>http-connector</code> and can be used to send and receive messages over HTTP when the client and server are running in different JVMs.
+</p>
+
+<p>Pooled connection factories allow you to configure the inbound and outbound connectors of the integrated ActiveMQ Artemis resource adapter. For more information on configuring a pooled-connection-factory to connect to a remote ActiveMQ Artemis server, see
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-30-resource-adapters#use_provided_amq_adapter">Using the Integrated Resource Adapter for Remote Connections</a>.
+</p>

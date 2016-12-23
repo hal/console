@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.dmr.Property;
 
 /**
- * Generates a human readable label from terms used in the management model.
+ * Generates human readable labels from terms used in the management model.
  *
  * @author Harald Pehl
  */
@@ -35,18 +35,24 @@ public class LabelBuilder {
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ee", "EE")
             .put("ejb3", "EJB3")
+            .put("http", "HTTP")
+            .put("http2", "HTTP/2")
             .put("jaxrs", "JAX-RS")
             .put("jca", "JCA")
             .put("jdr", "JDA")
-            .put("jsr", "JSR")
+            .put("jgroups", "JGroups")
             .put("jmx", "JMX")
             .put("jndi", "JNDI")
             .put("jpa", "JPA")
             .put("jsf", "JSF")
+            .put("jsr", "JSR")
             .put("sar", "SAR")
             .put("sql", "SQL")
+            .put("ssl", "SSL")
+            .put("tcp", "TCP")
             .put("uri", "URI")
             .put("url", "URL")
+            .put("wsdl", "WSDL")
             .build();
 
     public String label(Property property) {

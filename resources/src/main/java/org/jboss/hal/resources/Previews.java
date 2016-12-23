@@ -115,6 +115,27 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/mail.html")
     ExternalTextResource configurationMail();
 
+    @Source("previews/configuration/messaging.html")
+    ExternalTextResource configurationMessaging();
+
+    @Source("previews/configuration/messaging-clustering.html")
+    ExternalTextResource configurationMessagingClustering();
+
+    @Source("previews/configuration/messaging-connections.html")
+    ExternalTextResource configurationMessagingConnections();
+
+    @Source("previews/configuration/messaging-destinations.html")
+    ExternalTextResource configurationMessagingDestinations();
+
+    @Source("previews/configuration/messaging-ha-policy.html")
+    ExternalTextResource configurationMessagingHaPolicy();
+
+    @Source("previews/configuration/messaging-jms-bridge.html")
+    ExternalTextResource configurationMessagingJmsBridge();
+
+    @Source("previews/configuration/messaging-server.html")
+    ExternalTextResource configurationMessagingServer();
+
     @Source("previews/configuration/modcluster.html")
     ExternalTextResource configurationModcluster();
 
@@ -144,6 +165,27 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource configurationSystemProperties();
+
+    @Source("previews/configuration/undertow.html")
+    ExternalTextResource configurationUndertow();
+
+    @Source("previews/configuration/undertow-buffer-caches.html")
+    ExternalTextResource configurationUndertowBufferCaches();
+
+    @Source("previews/configuration/undertow-filters.html")
+    ExternalTextResource configurationUndertowFilters();
+
+    @Source("previews/configuration/undertow-handlers.html")
+    ExternalTextResource configurationUndertowHandlers();
+
+    @Source("previews/configuration/undertow-server.html")
+    ExternalTextResource configurationUndertowServer();
+
+    @Source("previews/configuration/undertow-servlet-container.html")
+    ExternalTextResource configurationUndertowServletContainer();
+
+    @Source("previews/configuration/webservices.html")
+    ExternalTextResource configurationWebservices();
 
 
     // ------------------------------------------------------ deployments

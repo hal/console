@@ -24,6 +24,7 @@
                 <form id="security-configuration-form" title="Configuration" auto-save="true"/>
             </metadata>
         </item>
+
         <item id="security-elytron-key-manager-item" title="Key Manager" icon="fa fa-key">
             <metadata address="/{selected.profile}/subsystem=security/elytron-key-manager=*">
                 <h1>Elytron Key Manager</h1>
@@ -44,6 +45,7 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
+
         <item id="security-elytron-key-store-item" title="Key Store" icon="fa fa-key">
             <metadata address="/{selected.profile}/subsystem=security/elytron-key-store=*">
                 <h1>Elytron Key Store</h1>
@@ -64,7 +66,8 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
-        <item id="security-elytron-realm-item" title="Realm" icon="fa fa-object-group">
+
+        <item id="security-elytron-realm-item" title="Realm" icon="fa fa-map">
             <metadata address="/{selected.profile}/subsystem=security/elytron-realm=*">
                 <h1>Elytron Realm</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
@@ -83,6 +86,7 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
+
         <item id="security-elytron-trust-manager-item" title="Trust Manager" icon="fa fa-lock">
             <metadata address="/{selected.profile}/subsystem=security/elytron-trust-manager=*">
                 <h1>Elytron Trust Manager</h1>
@@ -103,6 +107,7 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
+
         <item id="security-elytron-trust-store-item" title="Trust Store" icon="fa fa-lock">
             <metadata address="/{selected.profile}/subsystem=security/elytron-trust-store=*">
                 <h1>Elytron Trust Store</h1>
@@ -123,6 +128,7 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
+
         <item id="security-vault-item" title="Vault" icon="fa fa-shield">
             <metadata address="/{selected.profile}/subsystem=security/vault=classic">
                 <h1>Vault</h1>

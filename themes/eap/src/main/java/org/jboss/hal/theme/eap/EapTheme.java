@@ -24,7 +24,6 @@ import org.jboss.hal.resources.Theme;
  */
 public class EapTheme implements Theme {
 
-    private static final org.jboss.hal.resources.Favicons FAVICONS = GWT.create(EapFavicons.class);
     private static final Logos LOGOS = GWT.create(EapLogos.class);
 
     @Override
@@ -45,11 +44,6 @@ public class EapTheme implements Theme {
     @Override
     public String getLastName() {
         return "Enterprise Application Platform";
-    }
-
-    @Override
-    public org.jboss.hal.resources.Favicons favicons() {
-        return FAVICONS;
     }
 
     @Override

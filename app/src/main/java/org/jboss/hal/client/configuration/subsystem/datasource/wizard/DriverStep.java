@@ -22,8 +22,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
-import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -38,29 +36,25 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class DriverStep extends WizardStep<Context, State> {
+class DriverStep extends WizardStep<Context, State> {
 
-    private final Map<String, JdbcDriver> drivers;
     private final ModelNodeForm<JdbcDriver> form;
-    private final FormItem<String> nameItem;
-    private SuggestHandler suggestHandler;
 
-    public DriverStep(final List<JdbcDriver> drivers, final Metadata metadata, final Resources resources) {
+    DriverStep(final List<JdbcDriver> drivers,
+            final Metadata metadata,
+            final Resources resources) {
+
         super(Ids.DATA_SOURCE_DRIVER_STEP, resources.constants().jdbcDriver());
-
-        this.drivers = Maps.uniqueIndex(drivers, JdbcDriver::getName);
-        this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM,
-                adjustMetadata(metadata))
-                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
-                        DRIVER_MINOR_VERSION)
+        Map<String, JdbcDriver> driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
+        this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
+                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION, DRIVER_MINOR_VERSION)
                 .unsorted()
                 .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();
-        this.nameItem = form.getFormItem(DRIVER_NAME);
 
-        if (!this.drivers.isEmpty()) {
-            this.suggestHandler = new StaticAutoComplete(new ArrayList<>(this.drivers.keySet()));
-            nameItem.registerSuggestHandler(suggestHandler);
+        if (!driversByName.isEmpty()) {
+            form.getFormItem(DRIVER_NAME)
+                    .registerSuggestHandler(new StaticAutoComplete(new ArrayList<>(driversByName.keySet())));
         }
         registerAttachable(form);
     }
@@ -95,6 +89,10 @@ public class DriverStep extends WizardStep<Context, State> {
         if (valid) {
             JdbcDriver driver = form.getModel();
             context.dataSource.setDriver(driver);
+            if (context.isCreated()) {
+                context.recordChange(DRIVER_NAME, driver.getName());
+                context.recordChange(DRIVER_CLASS, driver.get(DRIVER_CLASS_NAME).asString());
+            }
         }
         return valid;
     }

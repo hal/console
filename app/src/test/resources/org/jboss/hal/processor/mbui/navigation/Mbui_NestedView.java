@@ -74,7 +74,7 @@ final class Mbui_NestedView extends NestedView {
         navigation.addPrimary("item", "Main Item", "fa fa-list-ul");
 
         Elements.Builder subItemBuilder = new Elements.Builder()
-                .div()
+                .section()
                 .div()
                 .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
                 .rememberAs("html0")

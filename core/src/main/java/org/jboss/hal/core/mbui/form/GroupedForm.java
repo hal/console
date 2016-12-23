@@ -26,6 +26,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -33,17 +34,21 @@ import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**
  * A form which groups attributes on different tabs. Each group will include the attributes specified by the
  * {@linkplain Builder grouped form builder}. The builder only supports to include attributes, exclusions are not
  * supported.
  * <p>
- * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and
- * reset callbacks.
+ * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
+ * callbacks.
  *
  * @author Harald Pehl
  */
@@ -92,9 +97,33 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             this.mode = null;
         }
 
-        public Builder<T> group(String id, String title) {
+        /**
+         * Starts a custom group with custom attributes. Use one of the {@code include()} methods to include attributes.
+         */
+        public Builder<T> customGroup(final String id, final String title) {
             assertNoCurrentGroup();
             currentGroup = new Group(id, title);
+            return this;
+        }
+
+        /**
+         * Starts an attribute group backed by a group definition from the resource description. All attributes defined
+         * in the specified group are included in alphabetic order. The id and title of the group is derived from the
+         * attribute group name.
+         */
+        public Builder<T> attributeGroup(final String name) {
+            return attributeGroup(Ids.build(id, "group", name), name, new LabelBuilder().label(name));
+        }
+
+        public Builder<T> attributeGroup(final String name, final String title) {
+            return attributeGroup(Ids.build(id, "group", name), name, title);
+        }
+
+        public Builder<T> attributeGroup(final String id, final String name, final String title) {
+            assertNoCurrentGroup();
+            currentGroup = new Group(id, title);
+            List<Property> attributes = metadata.getDescription().getAttributes(ATTRIBUTES, name);
+            include(attributes.stream().map(Property::getName).sorted().collect(toList()));
             return this;
         }
 

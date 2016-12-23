@@ -26,7 +26,7 @@ public interface Logos extends ClientBundle {
     String ABOUT_FILE_NAME = "logo-about.png";
 
     /**
-     * A logo which is displayed in the lower right corner of the about dialog. Should be a 64x64px transparent images.
+     * A logo which is displayed in the lower right corner of the about dialog. Should be a 64x64px transparent image.
      */
     ImageResource about();
 }

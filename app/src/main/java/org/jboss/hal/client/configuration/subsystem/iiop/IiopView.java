@@ -42,9 +42,4 @@ public abstract class IiopView extends MbuiViewImpl<IiopPresenter> implements Ii
     public void update(final ModelNode modelNode) {
         form.view(modelNode);
     }
-
-    @Override
-    public void clear() {
-        form.clear();
-    }
 }

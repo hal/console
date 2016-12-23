@@ -162,9 +162,8 @@ public class RemotingPresenter
     }
 
     void saveConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
-        propertiesOperations
-                .saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE, form,
-                        changedValues, PROPERTY, this::reload);
+        propertiesOperations.saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE,
+                changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void createConnectorSecurity() {
@@ -174,9 +173,9 @@ public class RemotingPresenter
     }
 
     void saveConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
-        propertiesOperations.saveSingletonWithProperties(Names.REMOTE_CONNECTOR_SECURITY,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, changedValues, PROPERTY,
-                this::reload);
+        ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        propertiesOperations.saveSingletonWithProperties(Names.REMOTE_CONNECTOR_SECURITY, address, changedValues,
+                PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),  this::reload);
     }
 
     void createConnectorSecurityPolicy() {
@@ -200,9 +199,9 @@ public class RemotingPresenter
     }
 
     void saveHttpConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
-        propertiesOperations
-                .saveWithProperties(Names.HTTP_CONNECTOR, form.getModel().getName(), HTTP_CONNECTOR_TEMPLATE, form,
-                        changedValues, PROPERTY, this::reload);
+        propertiesOperations.saveWithProperties(Names.HTTP_CONNECTOR, form.getModel().getName(),
+                HTTP_CONNECTOR_TEMPLATE, changedValues, PROPERTY,
+                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void createHttpConnectorSecurity() {
@@ -212,9 +211,9 @@ public class RemotingPresenter
     }
 
     void saveHttpConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
-        propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, changedValues,
-                PROPERTY, this::reload);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY, address, changedValues,
+                PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void createHttpConnectorSecurityPolicy() {
@@ -238,9 +237,9 @@ public class RemotingPresenter
     }
 
     void saveLocalOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
-        propertiesOperations
-                .saveWithProperties(Names.LOCAL_OUTBOUND_CONNECTION, form.getModel().getName(), LOCAL_OUTBOUND_TEMPLATE,
-                        form, changedValues, PROPERTY, this::reload);
+        propertiesOperations.saveWithProperties(Names.LOCAL_OUTBOUND_CONNECTION, form.getModel().getName(),
+                LOCAL_OUTBOUND_TEMPLATE, changedValues, PROPERTY,
+                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
 
@@ -254,7 +253,7 @@ public class RemotingPresenter
 
     void saveOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.OUTBOUND_CONNECTION, form.getModel().getName(), OUTBOUND_TEMPLATE,
-                form, changedValues, PROPERTY, this::reload);
+                changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
 
@@ -268,8 +267,8 @@ public class RemotingPresenter
 
     void saveRemoteOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.REMOTE_OUTBOUND_CONNECTION, form.getModel().getName(),
-                REMOTE_OUTBOUND_TEMPLATE,
-                form, changedValues, PROPERTY, this::reload);
+                REMOTE_OUTBOUND_TEMPLATE, changedValues, PROPERTY,
+                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
 

@@ -39,9 +39,16 @@
     </div>
     <div class="collapse navbar-collapse hal-header-collapse">
         <ul class="nav navbar-nav navbar-utility">
+            <li data-element="reloadContainer">
+                <a class="clickable" data-element="reloadLink" data-toggle="tooltip" data-placement="bottom" data-container="body" title="n/a">
+                    <span class="pficon pficon-restart"></span>
+                    <span data-element="reloadLabel">Reload Required</span>
+                </a>
+            </li>
             <li class="dropdown">
                 <a class="clickable" data-element="messages" data-toggle="dropdown">
-                    <span class="fa fa-bell" data-element="messagesIcon"></span><span id="{{resources().HEADER_MESSAGES}}" class="padding-left-4" data-element="messagesLabel">Messages (23)</span>
+                    <span class="fa fa-bell" data-element="messagesIcon"></span>
+                    <span id="{{resources().HEADER_MESSAGES}}" data-element="messagesLabel">Messages (23)</span>
                     <b class="caret"></b>
                 </a>
                 <div class="dropdown-menu infotip messages bottom-right">
@@ -69,7 +76,8 @@
             </li>
             <li class="dropdown">
                 <a class="clickable dropdown-toggle" data-toggle="dropdown">
-                    <span class="pficon pficon-user"></span><span id="{{resources().HEADER_USERNAME}}" data-element="userName">John Doe</span>
+                    <span class="pficon pficon-user"></span>
+                    <span id="{{resources().HEADER_USERNAME}}" data-element="userName">John Doe</span>
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
@@ -138,7 +146,8 @@
             </li>
             <li>
                 <a data-element="showVersion" class="tool clickable">
-                    <span data-element="updateAvailable" class="pficon pficon-info"></span><span data-element="halVersion">0.8.15</span>
+                    <span data-element="updateAvailable" class="pficon pficon-info"></span>
+                    <span data-element="halVersion">0.8.15</span>
                 </a>
             </li>
             <li class="dropdown">
@@ -163,7 +172,10 @@
                 </ul>
             </li>
             <li>
-                <a data-element="settings" class="tool clickable"><span class="fa fa-cogs"></span>{{resources().constants().settings()}}</a>
+                <a data-element="settings" class="tool clickable">
+                    <span class="fa fa-cogs"></span>
+                    <span>{{resources().constants().settings()}}</span>
+                </a>
             </li>
         </ul>
     </nav>

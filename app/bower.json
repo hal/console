@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Bower setup for HAL",
   "license": "Apache-2.0",
   "private": true,
@@ -18,13 +18,12 @@
     "javascript-auto-complete": "1.0.4",
     "jquery": "~2.2.4",
     "jstree": "~3.3.1",
-    "patternfly": "~3.14.0",
+    "patternfly": "~3.16.0",
     "tagmanager": "~3.0.2",
     "zeroclipboard": "^2.2.0"
   },
   "resolutions": {
     "font-awesome": "~4.7.0",
-    "jquery": "~2.2.4",
-    "patternfly-bootstrap-treeview": "~2.1.0"
+    "jquery": "~2.2.4"
   }
 }

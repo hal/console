@@ -15,24 +15,28 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
-import org.jboss.hal.core.datasource.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 
 /**
  * @author Harald Pehl
  */
-public class Context {
+class Context {
 
-    private final boolean standalone;
     private final boolean xa;
+    private final Map<String, Object> changedValues;
+    private boolean created;
     DataSourceTemplate template;
     DataSource dataSource;
     JdbcDriver driver;
 
-    public Context(boolean standalone, boolean xa) {
-        this.standalone = standalone;
+    Context(boolean xa) {
         this.xa = xa;
+        this.changedValues = new HashMap<>();
     }
 
     void custom() {
@@ -45,11 +49,31 @@ public class Context {
         driver = template.getDriver();
     }
 
-    public boolean isXa() {
+    void recordChange(String name, Object value) {
+        changedValues.put(name, value);
+    }
+
+    boolean isXa() {
         return xa;
     }
 
-    public DataSource getDataSource() {
+    DataSource getDataSource() {
         return dataSource;
+    }
+
+    boolean isCreated() {
+        return created;
+    }
+
+    void setCreated(final boolean created) {
+        this.created = created;
+    }
+
+    boolean hasChanges() {
+        return isCreated() && !changedValues.isEmpty();
+    }
+
+    Map<String, Object> changes() {
+        return changedValues;
     }
 }
