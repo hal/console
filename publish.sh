@@ -20,7 +20,7 @@ stop_spinner $?
 
 start_spinner "Compiling app..."
 cd app
-mvn -q clean install > /dev/null 2>&1
+mvn -q clean install -P prod,theme-hal > /dev/null 2>&1
 cd ${ROOT}
 stop_spinner $?
 
