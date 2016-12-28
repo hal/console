@@ -69,4 +69,12 @@ public class ItemAction<T> {
             }
         }
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public ItemActionHandler<T> getHandler() {
+        return handler;
+    }
 }

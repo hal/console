@@ -25,6 +25,7 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -72,8 +73,20 @@ public class ServerSettingsColumn
 
         super(new Builder<StaticItem>(finder, Ids.MESSAGING_SERVER_SETTINGS, resources.constants().settings())
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
-                .useFirstActionAsBreadcrumbHandler()
-                .onPreview(StaticItem::getPreviewContent));
+                .onPreview(StaticItem::getPreviewContent)
+                .onBreadcrumbItem((item, context) -> {
+                    if (item.getId().equals(Ids.MESSAGING_SERVER_HA_POLICY)) {
+                        // the first action for HA policy might be 'add'
+                        Optional<ItemAction<StaticItem>> itemAction = item.getActions().stream()
+                                .filter(ia -> resources.constants().view().equals(ia.getTitle()))
+                                .findAny();
+                        itemAction.ifPresent(ia -> ia.getHandler().execute(item));
+                    } else {
+                        item.getActions().get(0).getHandler().execute(item);
+                    }
+                })
+        );
+
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.resources = resources;
