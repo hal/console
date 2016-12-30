@@ -44,6 +44,8 @@
         <guava.version>20.0</guava.version>
         <gwt.version>2.8.0</gwt.version>
         <gwtp.version>1.5.3</gwtp.version>
+        <javax.enterprise.version>1.2</javax.enterprise.version>
+        <javax.inject.version>1</javax.inject.version>
         <jaxen.version>1.1.6</jaxen.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
         <jdom.version>2.0.2</jdom.version>
@@ -56,6 +58,7 @@
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>1.3.18.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
+        <wildfly-core.version>3.0.0.Alpha16</wildfly-core.version>
         <wildfly-swarm.version>2016.12.1</wildfly-swarm.version>
     </properties>
 
@@ -154,7 +157,29 @@
                 <version>${slf4j-gwt.version}</version>
             </dependency>
 
-            <!-- WildFly Swarm -->
+            <!-- CDI -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${javax.enterprise.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.interceptor</groupId>
+                        <artifactId>javax.interceptor-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.el</groupId>
+                        <artifactId>javax.el-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- WildFly -->
             <dependency>
                 <groupId>org.wildfly.swarm</groupId>
                 <artifactId>bom-all</artifactId>
@@ -162,17 +187,29 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wildfly.swarm</groupId>
+                <artifactId>spi</artifactId>
+                <version>${wildfly-swarm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-core-feature-pack</artifactId>
+                <version>${wildfly-core.version}</version>
+                <type>zip</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-core</artifactId>
+                <version>${undertow.version}</version>
+            </dependency>
 
             <!-- Misc -->
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-core</artifactId>
-                <version>${undertow.version}</version>
             </dependency>
 
             <!-- Annotation Processing -->
@@ -196,6 +233,7 @@
                 <artifactId>jaxen</artifactId>
                 <version>${jaxen.version}</version>
             </dependency>
+
             <!-- Test -->
             <dependency>
                 <groupId>junit</groupId>

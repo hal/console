@@ -26,7 +26,7 @@
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-swarm</artifactId>
+    <artifactId>hal-fraction</artifactId>
     <name>HAL :: WildFly Swarm Fraction</name>
     <description>WildFly Swarm fraction for HAL.next</description>
 
@@ -39,10 +39,60 @@
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-app</artifactId>
             <classifier>resources</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+<!--
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>spi</artifactId>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-core-feature-pack</artifactId>
+            <type>zip</type>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+-->
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.wildfly.swarm</groupId>
@@ -69,8 +119,8 @@
                             <includeGroupIds>org.jboss.hal</includeGroupIds>
                             <includeArtifactIds>hal-app</includeArtifactIds>
                             <includeClassifiers>resources</includeClassifiers>
-                            <outputDirectory>${project.build.directory}/classes/modules/org/jboss/as/console/main/</outputDirectory>
-                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.directory}/classes/modules/org/jboss/as/console/main/
+                            </outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

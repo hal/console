@@ -89,6 +89,7 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
+        <module>fraction</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
@@ -96,7 +97,6 @@
         <module>resources</module>
         <module>spi</module>
         <module>standalone</module>
-        <module>swarm</module>
         <module>themes</module>
     </modules>
 
