@@ -109,7 +109,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
-    SafeHtml endpointError(String url);
+    SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
 
     SafeHtml flushConnectionSuccess();

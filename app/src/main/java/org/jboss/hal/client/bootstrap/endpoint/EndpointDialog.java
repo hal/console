@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
@@ -37,9 +38,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
-import static com.google.common.base.Strings.emptyToNull;
 import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
-import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
@@ -70,7 +69,6 @@ class EndpointDialog {
     private final Element addPage;
     private final Alert alert;
     private final Form<Endpoint> form;
-    private final ButtonItem ping;
 
     private Mode mode;
     private NamedNodeTable<Endpoint> table;
@@ -100,13 +98,14 @@ class EndpointDialog {
                 .end().build();
 
         alert = new Alert();
-        ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
+        ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
         ping.onClick((event) -> {
             Endpoint endpoint = transientEndpoint();
             manager.pingServer(endpoint, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    alert.setIcon(Icons.ERROR).setText(MESSAGES.endpointError(Endpoints.getBaseUrl()));
+                    alert.setIcon(Icons.ERROR)
+                            .setText(MESSAGES.endpointError(endpoint.getUrl(), Endpoints.getBaseUrl()));
                     Elements.setVisible(alert.asElement(), true);
                 }
 
@@ -117,7 +116,6 @@ class EndpointDialog {
                 }
             });
         });
-        ping.setEnabled(false);
 
         form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, metadata)
                 .addOnly()
@@ -127,6 +125,9 @@ class EndpointDialog {
                 .onCancel((form) -> switchTo(SELECT))
                 .onSave((form, changedValues) -> {
                     Endpoint endpoint = form.getModel();
+                    if (!endpoint.hasDefined(HOST)) {
+                        endpoint.get(HOST).set(EndpointManager.DEFAULT_HOST);
+                    }
                     if (!endpoint.hasDefined(PORT)) {
                         endpoint.get(PORT).set(EndpointManager.DEFAULT_PORT);
                     }
@@ -165,7 +166,11 @@ class EndpointDialog {
         FormItem<String> scheme = form.getFormItem(SCHEME);
         endpoint.get(SCHEME).set(scheme.getValue());
         FormItem<String> host = form.getFormItem(HOST);
-        endpoint.get(HOST).set(host.getValue());
+        if (Strings.isNullOrEmpty(host.getValue())) {
+            endpoint.get(HOST).set(EndpointManager.DEFAULT_HOST);
+        } else {
+            endpoint.get(HOST).set(host.getValue());
+        }
         FormItem<Number> port = form.getFormItem(PORT);
         if (port.getValue() == null) {
             endpoint.get(PORT).set(EndpointManager.DEFAULT_PORT);
@@ -220,10 +225,6 @@ class EndpointDialog {
 
     void show() {
         dialog.show();
-
-        FormItem<String> host = form.getFormItem(HOST);
-        host.asElement(EDITING).setOnkeyup(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
-        host.addValueChangeHandler(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
 
         table.api().onSelectionChange(api -> dialog.getButton(PRIMARY_POSITION).setDisabled(!api.hasSelection()));
         table.api().add(storage.list()).refresh(RESET);

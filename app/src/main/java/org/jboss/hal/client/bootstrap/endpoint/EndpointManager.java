@@ -42,6 +42,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  */
 public class EndpointManager {
 
+    static final String DEFAULT_HOST = "localhost"; // must be in sync with the default value in endpoint.dmr!
     static final int DEFAULT_PORT = 9990; // must be in sync with the default value in endpoint.dmr!
     private static final String CONNECT_PARAMETER = "connect";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
