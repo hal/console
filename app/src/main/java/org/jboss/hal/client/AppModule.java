@@ -50,6 +50,8 @@ import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView_Provider;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaView;
+import org.jboss.hal.client.configuration.subsystem.jgroups.JGroupsPresenter;
+import org.jboss.hal.client.configuration.subsystem.jgroups.JGroupsView;
 import org.jboss.hal.client.configuration.subsystem.jmx.JmxPresenter;
 import org.jboss.hal.client.configuration.subsystem.jmx.JmxView;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
@@ -289,7 +291,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepagePresenter.MyView.class,
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
-        
+
         bindTemplatedPresenter(HostPresenter.class,
                 HostPresenter.MyView.class,
                 Mbui_HostView_Provider.class,
@@ -299,7 +301,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 IiopPresenter.MyView.class,
                 Mbui_IiopView_Provider.class,
                 IiopPresenter.MyProxy.class);
-        
+
         bindTemplatedPresenter(IOPresenter.class,
                 IOPresenter.MyView.class,
                 Mbui_IOView_Provider.class,
@@ -314,6 +316,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaView.class,
                 JcaPresenter.MyProxy.class);
+
+        bindPresenter(JGroupsPresenter.class,
+                JGroupsPresenter.MyView.class,
+                JGroupsView.class,
+                JGroupsPresenter.MyProxy.class);
 
         bindTemplatedPresenter(JmsBridgePresenter.class,
                 JmsBridgePresenter.MyView.class,

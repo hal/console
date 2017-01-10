@@ -1,0 +1,61 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.configuration.subsystem.jgroups;
+
+import org.jboss.hal.meta.AddressTemplate;
+
+/**
+ * @author Claudio Miranda
+ */
+interface AddressTemplates {
+
+    String JGROUPS_ADDRESS = "/{selected.profile}/subsystem=jgroups";
+    String STACK_ADDRESS = JGROUPS_ADDRESS + "/stack=*";
+    String RELAY_ADDRESS = JGROUPS_ADDRESS + "/stack=*/relay=relay.RELAY2";
+    String SELECTED_RELAY_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/relay=relay.RELAY2";
+    String REMOTE_SITE_ADDRESS = JGROUPS_ADDRESS + "/stack=*/relay=relay.RELAY2/remote-site=*";
+    String SELECTED_REMOTE_SITE_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/relay=relay.RELAY2/remote-site=*";
+    String PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/stack=*/protocol=*";
+    String SELECTED_PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/protocol=*";
+    String TRANSPORT_THREAD_POOL_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*/thread-pool=default";
+    String SELECTED_TRANSPORT_THREAD_POOL_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/transport=*/thread-pool=*";
+    String TRANSPORT_ADDRESS = JGROUPS_ADDRESS + "/stack=*/transport=*";
+    String SELECTED_TRANSPORT_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/transport=*";
+    String CHANNEL_ADDRESS = JGROUPS_ADDRESS + "/channel=*";
+    String CHANNEL_FORK_ADDRESS = JGROUPS_ADDRESS + "/channel=*/fork=*";
+    String CHANNEL_FORK_PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/channel=*/fork=*/protocol=*";
+    String SELECTED_CHANNEL_FORK_ADDRESS = JGROUPS_ADDRESS + "/channel={selected.channel}/fork=*";
+    String SELECTED_CHANNEL_FORK_PROTOCOL_ADDRESS = JGROUPS_ADDRESS + "/channel={selected.channel}/fork={selected.fork}/protocol=*";
+
+    AddressTemplate JGROUPS_TEMPLATE = AddressTemplate.of(JGROUPS_ADDRESS);
+    AddressTemplate STACK_TEMPLATE = AddressTemplate.of(STACK_ADDRESS);
+    AddressTemplate RELAY_TEMPLATE = AddressTemplate.of(RELAY_ADDRESS);
+    AddressTemplate SELECTED_RELAY_TEMPLATE = AddressTemplate.of(SELECTED_RELAY_ADDRESS);
+    AddressTemplate SELECTED_PROTOCOL_TEMPLATE = AddressTemplate.of(SELECTED_PROTOCOL_ADDRESS);
+    AddressTemplate PROTOCOL_TEMPLATE = AddressTemplate.of(PROTOCOL_ADDRESS);
+    AddressTemplate TRANSPORT_TEMPLATE = AddressTemplate.of(TRANSPORT_ADDRESS);
+    AddressTemplate SELECTED_TRANSPORT_TEMPLATE = AddressTemplate.of(SELECTED_TRANSPORT_ADDRESS);
+    AddressTemplate SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE = AddressTemplate.of(SELECTED_TRANSPORT_THREAD_POOL_ADDRESS);
+    AddressTemplate TRANSPORT_THREAD_POOL_TEMPLATE = AddressTemplate.of(TRANSPORT_THREAD_POOL_ADDRESS);
+    AddressTemplate REMOTE_SITE_TEMPLATE = AddressTemplate.of(REMOTE_SITE_ADDRESS);
+    AddressTemplate SELECTED_REMOTE_SITE_TEMPLATE = AddressTemplate.of(SELECTED_REMOTE_SITE_ADDRESS);
+    AddressTemplate CHANNEL_TEMPLATE = AddressTemplate.of(CHANNEL_ADDRESS);
+    AddressTemplate CHANNEL_FORK_TEMPLATE = AddressTemplate.of(CHANNEL_FORK_ADDRESS);
+    AddressTemplate SELECTED_CHANNEL_FORK_TEMPLATE = AddressTemplate.of(SELECTED_CHANNEL_FORK_ADDRESS);
+    AddressTemplate CHANNEL_FORK_PROTOCOL_TEMPLATE = AddressTemplate.of(CHANNEL_FORK_PROTOCOL_ADDRESS);
+    AddressTemplate SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE = AddressTemplate.of(SELECTED_CHANNEL_FORK_PROTOCOL_ADDRESS);
+
+}
