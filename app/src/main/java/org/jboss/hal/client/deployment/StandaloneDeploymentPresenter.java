@@ -24,6 +24,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -37,6 +38,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
@@ -68,6 +70,7 @@ public class StandaloneDeploymentPresenter extends
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
+    private final Environment environment;
     private final Resources resources;
     private String deployment;
 
@@ -79,11 +82,13 @@ public class StandaloneDeploymentPresenter extends
             final FinderPathFactory finderPathFactory,
             final Dispatcher dispatcher,
             @Footer final Provider<Progress> progress,
+            final Environment environment,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
         this.progress = progress;
+        this.environment = environment;
         this.resources = resources;
     }
 
@@ -105,15 +110,20 @@ public class StandaloneDeploymentPresenter extends
 
     @Override
     protected void reload() {
+        boolean supportsBrowseContent = ManagementModel.supportsReadContentFromDeployment(
+                environment.getManagementVersion());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         Operation browseContent = new Operation.Builder(BROWSE_CONTENT, address).build();
         Operation readDeployment = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Composite composite = new Composite(browseContent, readDeployment);
+        Composite composite = new Composite(readDeployment);
+        if (supportsBrowseContent) {
+            composite.add(browseContent);
+        }
         dispatcher.execute(composite, (CompositeResult result) -> {
-            ModelNode readContentResult = result.step(0).get(RESULT);
-            Deployment d = new Deployment(Server.STANDALONE, result.step(1).get(RESULT));
+            Deployment d = new Deployment(Server.STANDALONE, result.step(0).get(RESULT));
+            ModelNode readContentResult = supportsBrowseContent ? result.step(1).get(RESULT) : new ModelNode();
             getView().reset();
             getView().update(readContentResult, d);
         });

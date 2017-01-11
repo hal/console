@@ -48,7 +48,7 @@ public interface Environment {
 
     boolean isStandalone();
 
-    void setOperationMode(String launchType);
+    void setOperationMode(OperationMode operationMode);
 
     String getDomainController();
 

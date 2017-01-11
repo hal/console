@@ -29,6 +29,7 @@ public interface Names {
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
     String ARCHIVE = "Archive";
+    String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
     String AUDIT_LOG = "Audit Log";
     String AUDIT_MODULE = "Audit Module";
     String AUTHENTICATION_MODULE = "Authentication Module";

@@ -22,16 +22,18 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
@@ -56,6 +58,7 @@ public class BrowseContentPresenter
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
+    private final Environment environment;
     private String content;
 
     @Inject
@@ -64,10 +67,12 @@ public class BrowseContentPresenter
             final MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher) {
+            final Dispatcher dispatcher,
+            final Environment environment) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
+        this.environment = environment;
     }
 
     @Override
@@ -89,8 +94,11 @@ public class BrowseContentPresenter
 
     @Override
     protected void reload() {
-        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-        Operation operation = new Operation.Builder(BROWSE_CONTENT, address).build();
-        dispatcher.execute(operation, result -> getView().setContent(content, result));
+        if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
+            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
+            Operation operation = new Operation.Builder(BROWSE_CONTENT, address).build();
+            dispatcher.execute(operation, result -> getView().setContent(content, result));
+        }
+        // TODO Fallback when browse-content is not supported
     }
 }

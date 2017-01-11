@@ -21,7 +21,7 @@ import org.jboss.hal.config.rebind.EnvironmentGenerator;
 import org.jboss.hal.config.semver.Version;
 
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
-import static org.jboss.hal.config.OperationMode.DOMAIN;
+import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
 
 /**
@@ -80,12 +80,12 @@ public abstract class AbstractEnvironment implements Environment {
 
     @Override
     public boolean isStandalone() {
-        return operationMode == STANDALONE;
+        return operationMode == SELF_CONTAINED || operationMode == STANDALONE;
     }
 
     @Override
-    public void setOperationMode(final String launchType) {
-        operationMode = (STANDALONE.name().equals(launchType)) ? STANDALONE : DOMAIN;
+    public void setOperationMode(final OperationMode operationMode) {
+        this.operationMode = operationMode;
     }
 
     @Override

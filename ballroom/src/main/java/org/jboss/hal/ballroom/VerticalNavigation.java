@@ -228,7 +228,7 @@ public class VerticalNavigation implements Attachable {
 
     /**
      * Inserts a primary navigation entry <em>before</em> the specified entry. If {@code beforeId} is {@code null}, the
-     * entry is inserted as first entry. If there's not entry with id {@code beforeId}, an error message is logged and
+     * entry is inserted as last entry. If there's not entry with id {@code beforeId}, an error message is logged and
      * no entry is inserted.
      * <p>
      * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
@@ -240,24 +240,16 @@ public class VerticalNavigation implements Attachable {
 
     public void insertPrimary(String id, String beforeId, String text, String iconClass, Element element) {
         if (entries.isEmpty()) {
-            logger.error("Cannot insert {}: There has to at least one other entry.", id);
+            logger.error("Cannot insert {}: There has to be at least one other entry.", id);
             return;
         }
 
         if (beforeId == null) {
-            // as first entry
-            LinkedHashMap<String, Entry> reshuffledEntries = new LinkedHashMap<>();
-            LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
-
+            // as last entry
+            Pane lastPane = panes.values().iterator().next();
             Pane pane = new Pane(id, element);
-            addPrimary(reshuffledEntries, reshuffledPanes, id, text, iconClass, pane);
-            Pane refPane = panes.values().iterator().next();
-            refPane.asElement().getParentElement().insertBefore(pane.asElement(), refPane.asElement());
-
-            reshuffledEntries.putAll(entries);
-            reshuffledPanes.putAll(panes);
-            entries = reshuffledEntries;
-            panes = reshuffledPanes;
+            addPrimary(entries, panes, id, text, iconClass, pane);
+            lastPane.asElement().getParentElement().appendChild(pane.asElement());
 
         } else {
             if (entries.containsKey(beforeId)) {
