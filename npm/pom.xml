@@ -34,7 +34,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-app</artifactId>
+            <artifactId>hal-console</artifactId>
             <classifier>resources</classifier>
         </dependency>
     </dependencies>
@@ -66,7 +66,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-app</artifactId>
+                                    <artifactId>hal-console</artifactId>
                                     <classifier>resources</classifier>
                                     <version>${project.version}</version>
                                     <outputDirectory>hal</outputDirectory>

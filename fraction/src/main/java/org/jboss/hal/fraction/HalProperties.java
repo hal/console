@@ -15,29 +15,10 @@
  */
 package org.jboss.hal.fraction;
 
-import org.wildfly.swarm.spi.api.Fraction;
-import org.wildfly.swarm.spi.api.annotations.Configurable;
-
 /**
  * @author Harald Pehl
  */
-@Configurable("swarm.management-hal")
-public class HalFraction implements Fraction<HalFraction> {
+public interface HalProperties {
 
-    private static final String DEFAULT_CONTEXT = "/hal";
-
-    private String context = DEFAULT_CONTEXT;
-
-    public HalFraction() {
-        contextRoot(DEFAULT_CONTEXT);
-    }
-
-    public HalFraction contextRoot(String context) {
-        this.context = context;
-        return this;
-    }
-
-    public String contextRoot() {
-        return context;
-    }
+    String CONTEXT = "swarm.management.hal.context";
 }

@@ -47,15 +47,21 @@
             -->
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-app</artifactId>
+                <artifactId>hal-console</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-app</artifactId>
+                <artifactId>hal-console</artifactId>
                 <version>${project.version}</version>
                 <classifier>mbui</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-console</artifactId>
+                <version>${project.version}</version>
+                <classifier>resources</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>

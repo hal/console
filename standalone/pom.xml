@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-app</artifactId>
+            <artifactId>hal-console</artifactId>
             <type>war</type>
         </dependency>
         <dependency>
@@ -56,7 +56,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>org.jboss.hal:hal-app</include>
+                                    <include>org.jboss.hal:hal-console</include>
                                     <include>io.undertow:undertow-core</include>
                                     <include>org.jboss.logging:jboss-logging</include>
                                     <include>org.jboss.xnio:*</include>

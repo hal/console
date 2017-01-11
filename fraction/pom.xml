@@ -27,7 +27,8 @@
     </parent>
 
     <artifactId>hal-fraction</artifactId>
-    <name>HAL :: WildFly Swarm Fraction</name>
+    <!-- Doesn't follow the naming scheme of the other modules, but produces a nicer output when Swarm starts -->
+    <name>HAL Console</name>
     <description>WildFly Swarm fraction for HAL.next</description>
 
     <properties>
@@ -37,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-app</artifactId>
+            <artifactId>hal-console</artifactId>
             <classifier>resources</classifier>
             <exclusions>
                 <exclusion>
@@ -46,7 +47,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -57,7 +57,6 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
--->
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>container</artifactId>
@@ -70,29 +69,9 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>spi</artifactId>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.wildfly.core</groupId>
-            <artifactId>wildfly-core-feature-pack</artifactId>
-            <type>zip</type>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
--->
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.wildfly.swarm</groupId>
@@ -117,10 +96,11 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>org.jboss.hal</includeGroupIds>
-                            <includeArtifactIds>hal-app</includeArtifactIds>
+                            <includeArtifactIds>hal-console</includeArtifactIds>
                             <includeClassifiers>resources</includeClassifiers>
-                            <outputDirectory>${project.build.directory}/classes/modules/org/jboss/as/console/main/
+                            <outputDirectory>${project.build.directory}/classes/modules/org/jboss/hal/main/
                             </outputDirectory>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>

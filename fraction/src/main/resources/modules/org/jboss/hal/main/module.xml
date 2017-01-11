@@ -14,17 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<module xmlns="urn:jboss:module:1.5" name="org.jboss.as.console">
-    <properties>
-        <property name="jboss.api" value="private"/>
-    </properties>
-
+<module xmlns="urn:jboss:module:1.5" name="org.jboss.hal" slot="main">
     <resources>
-        <resource-root path="hal-app-${project.version}-resources.jar"/>
+        <resource-root path="."/>
     </resources>
-
-    <dependencies>
-        <!-- Do not add dependencies to the console as resources in any
-             dependencies could be served up through the HTTP interface. -->
-    </dependencies>
 </module>
