@@ -243,6 +243,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @NonNls Logger logger = LoggerFactory.getLogger(Previews.class);
 
+    /**
+     * Sets the inner HTML of the specified element to the HTML from the specified resource.
+     */
     @SuppressWarnings("DuplicateStringLiteralInspection")
     static void innerHtml(Element element, ExternalTextResource resource) {
         if (resource != null) {
