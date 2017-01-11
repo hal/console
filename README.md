@@ -55,7 +55,7 @@ HAL.next requires **WildFly 11.x** (it makes use of the new capabilities service
         
 ### Standalone
 
-The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
+The module `hal-standalone` contains an executable jar which launches a local web server at http://localhost:9090.
   
 1. Add http://localhost:9090 as allowed origin
 1. `mvn install`
@@ -66,7 +66,7 @@ If you don't want to or cannot build locally you can download `hal-standalone.ja
 
 ### NPM
 
-The `npm` module provides a npm package which launches a local web server at http://localhost:3000.
+The module `hal-npm` provides a npm package which launches a local web server at http://localhost:3000.
   
 1. Add http://localhost:3000 as allowed origin
 1. `mvn install`
@@ -79,6 +79,23 @@ The package is also available on npmjs.com: https://www.npmjs.com/package/hal-ne
  
 1. `npm install -g hal-next`
 1. `hal-next`
+
+### WildFly Swarm Fraction
+
+The module `hal-fraction` contains the WildFly Swarm fraction `org.jboss.hal.fraction.HalFraction`.
+ 
+1. Add the following dependency to your POM:
+
+    ```xml
+    <dependency>
+        <groupId>org.jboss.hal</groupId>
+        <artifactId>hal-fraction</artifactId>
+    </dependency>
+    ```
+        
+1. Build and start your WildFly Swarm application
+1. Add http://localhost:8080 as allowed origin
+1. Open http://localhost:8080/hal
 
 ### Docker 
 
