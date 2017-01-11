@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.4.5</version>
+        <version>0.4.6</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-app</artifactId>
-    <name>HAL :: Application</name>
-    <description>The HAL application containing the GWT entry point and the UI.</description>
+    <artifactId>hal-console</artifactId>
+    <name>HAL :: Console</name>
+    <description>The HAL console containing the GWT entry point and the UI.</description>
     <packaging>gwt-app</packaging>
 
     <properties>

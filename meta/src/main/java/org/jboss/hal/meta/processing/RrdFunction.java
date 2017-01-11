@@ -67,15 +67,15 @@ class RrdFunction implements Function<FunctionContext> {
                         Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
                         for (RrdResult rr : results) {
                             if (rr.securityContext != null) {
-                                logger.debug("Add security context for {}", rr.address);
+                                logger.debug("Add security context for {}", rr.template);
                                 securityFramework.add(rr.address, rr.securityContext);
                             }
                             if (rr.resourceDescription != null) {
-                                logger.debug("Add resource description for {}", rr.address);
+                                logger.debug("Add resource description for {}", rr.template);
                                 resourceDescriptions.add(rr.address, rr.resourceDescription);
                             }
                             if (rr.resourceDescription != null && rr.securityContext != null) {
-                                logger.debug("Add metadata for {}", rr.address);
+                                logger.debug("Add metadata for {}", rr.template);
                                 metadataRegistry.add(rr.address, new Metadata(rr.template, rr.securityContext,
                                         rr.resourceDescription, capabilities));
                             }

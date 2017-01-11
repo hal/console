@@ -22,6 +22,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
@@ -47,17 +48,21 @@ class RrdResult {
 
                 if (first && last) {
                     segment = name + "=*";
-                }
-                switch (name) {
-                    case PROFILE:
-                        segment = SELECTED_PROFILE.variable();
-                        break;
-                    case SERVER_GROUP:
-                        segment = SELECTED_GROUP.variable();
-                        break;
-                    default:
-                        segment = name + "=" + (last ? "*" : value);
-                        break;
+                } else {
+                    switch (name) {
+                        case PROFILE:
+                            segment = SELECTED_PROFILE.variable();
+                            break;
+                        case SERVER_GROUP:
+                            segment = SELECTED_GROUP.variable();
+                            break;
+                        case SUBSYSTEM:
+                            segment = SUBSYSTEM + "=" + value;
+                            break;
+                        default:
+                            segment = name + "=" + (last ? "*" : value);
+                            break;
+                    }
                 }
                 return segment;
             });

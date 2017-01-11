@@ -19,7 +19,8 @@
         "host" => {
             "type" => STRING,
             "description" => "The hostname of the management endpoint",
-            "nillable" => false
+            "nillable" => true,
+            "default" => "localhost"
         },
         "port" => {
             "type" => INT,

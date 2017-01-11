@@ -19,5 +19,7 @@ package org.jboss.hal.config;
  * @author Harald Pehl
  */
 public enum OperationMode {
-    STANDALONE, DOMAIN
+    SELF_CONTAINED, // WildFly Swarm
+    STANDALONE,
+    DOMAIN
 }

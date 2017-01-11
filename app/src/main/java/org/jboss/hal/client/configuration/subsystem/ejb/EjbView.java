@@ -15,21 +15,36 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
+import javax.annotation.PostConstruct;
+
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * @author Claudio Miranda
@@ -40,9 +55,11 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     // ------------------------------------------------------ initialization
 
-    public static EjbView create(final MbuiContext mbuiContext) {
-        return new Mbui_EjbView(mbuiContext);
+    public static EjbView create(final MbuiContext mbuiContext, final Environment environment) {
+        return new Mbui_EjbView(mbuiContext, environment);
     }
+
+    abstract Environment environment();
 
     @MbuiElement("ejb-vertical-navigation") VerticalNavigation navigation;
 
@@ -71,11 +88,52 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @MbuiElement("ejb-mdb-delivery-group-table") DataTable<NamedNode> mdbDeliveryGroupTable;
     @MbuiElement("ejb-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
 
-    @MbuiElement("ejb-app-security-domain-table") DataTable<NamedNode> appSecurityDomainTable;
-    @MbuiElement("ejb-app-security-domain-form") Form<NamedNode> appSecurityDomainForm;
+    DataTable<NamedNode> appSecurityDomainTable;
+    Form<NamedNode> appSecurityDomainForm;
 
     EjbView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    @SuppressWarnings("ConstantConditions")
+    void init() {
+        if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
+            AddressTemplate template = AddressTemplate.of(
+                    "/{selected.profile}/subsystem=ejb3/application-security-domain=*");
+            Metadata metadata = mbuiContext.metadataRegistry().lookup(template);
+
+            Options<NamedNode> options = new NamedNodeTable.Builder<>(metadata)
+                    .button(mbuiContext.tableButtonFactory()
+                            .add(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
+                                    (name, address) -> presenter.reload()))
+                    .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
+                            (api) -> api.selectedRow().getName(),
+                            () -> presenter.reload()))
+                    .column(NAME, (cell, type, row, meta) -> row.getName())
+                    .build();
+            appSecurityDomainTable = new NamedNodeTable<>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE, options);
+
+            appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_FORM,
+                    metadata)
+                    .onSave((form, changedValues) -> {
+                        String name = form.getModel().getName();
+                        saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                template.resolve(mbuiContext.statementContext(), name), changedValues);
+                    })
+                    .build();
+
+            Element section = new Elements.Builder()
+                    .section()
+                    .h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN).end()
+                    .p().textContent(metadata.getDescription().getDescription()).end()
+                    .add(appSecurityDomainTable)
+                    .add(appSecurityDomainForm)
+                    .end()
+                    .build();
+            navigation.insertPrimary(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
+                    fontAwesome("fa-link"), section);
+        }
     }
 
 
@@ -126,10 +184,12 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                 .refresh(RefreshMode.RESET);
         mdbDeliveryGroupForm.clear();
 
-        appSecurityDomainTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
-        appSecurityDomainForm.clear();
+        if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
+            appSecurityDomainTable.api()
+                    .clear()
+                    .add(asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())))
+                    .refresh(RefreshMode.RESET);
+            appSecurityDomainForm.clear();
+        }
     }
 }

@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -25,6 +26,7 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
@@ -55,6 +57,10 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
 
     @PostConstruct
     void init() {
+        form.getFormItem("journal-datasource")
+                .registerSuggestHandler(
+                        new ReadChildrenAutoComplete(mbuiContext.dispatcher(), mbuiContext.statementContext(),
+                                AddressTemplate.of("/{selected.profile}/subsystem=datasources/data-source=*")));
         pagingDirectoryForm.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         bindingsDirectoryForm.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         largeMessagesDirectoryForm.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());

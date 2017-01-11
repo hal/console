@@ -252,25 +252,5 @@
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
-
-        <item id="ejb-app-security-domain-item" title="Security Domain" icon="fa fa-link">
-            <metadata address="/{selected.profile}/subsystem=ejb3/application-security-domain=*">
-                <h1>Application Security Domain</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="ejb-app-security-domain-table" title="Application Security Domain"
-                       form-ref="ejb-app-security-domain-form">
-                    <actions>
-                        <action handler-ref="add-resource"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="ejb-app-security-domain-form" title="Application Security Domain" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
-            </metadata>
-        </item>
     </vertical-navigation>
 </view>

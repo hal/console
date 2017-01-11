@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -72,10 +72,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <plugin.version.docker>0.17.1</plugin.version.docker>
-        <plugin.version.frontend>1.2</plugin.version.frontend>
-        <plugin.version.gwt.maven>1.0-rc-6</plugin.version.gwt.maven>
-        <plugin.version.processor.plugin>3.2.0</plugin.version.processor.plugin>
+        <plugin.docker.version>0.17.1</plugin.docker.version>
+        <plugin.frontend.version>1.2</plugin.frontend.version>
+        <plugin.gwt.version>1.0-rc-6</plugin.gwt.version>
+        <plugin.processor.version>3.2.0</plugin.processor.version>
+        <plugin.swarm.version>40</plugin.swarm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -88,6 +89,7 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
+        <module>fraction</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
@@ -105,23 +107,28 @@
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
-                    <version>${plugin.version.docker}</version>
+                    <version>${plugin.docker.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>${plugin.version.frontend}</version>
+                    <version>${plugin.frontend.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>net.ltgt.gwt.maven</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>${plugin.version.gwt.maven}</version>
+                    <version>${plugin.gwt.version}</version>
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.bsc.maven</groupId>
                     <artifactId>maven-processor-plugin</artifactId>
-                    <version>${plugin.version.processor.plugin}</version>
+                    <version>${plugin.processor.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.wildfly.swarm</groupId>
+                    <artifactId>wildfly-swarm-fraction-plugin</artifactId>
+                    <version>${plugin.swarm.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

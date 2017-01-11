@@ -43,11 +43,11 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -57,6 +57,7 @@ import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
  * Reads important information from the root resource like product name and version, operation mode and management
@@ -102,16 +103,19 @@ public class ReadEnvironment implements BootstrapFunction {
                             node.get(PRODUCT_VERSION).asString(),
                             node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
                             node.get(NAME).asString());
-                    if (environment.isStandalone()) {
-                        Server.STANDALONE.addServerAttributes(node);
-                    }
 
                     // operation mode
-                    environment.setOperationMode(node.get(LAUNCH_TYPE).asString());
+                    OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, OperationMode::valueOf,
+                            OperationMode.STANDALONE);
+                    environment.setOperationMode(operationMode);
 
                     // management version
                     Version version = ManagementModel.parseVersion(node);
                     environment.setManagementVersion(version);
+
+                    if (environment.isStandalone()) {
+                        Server.STANDALONE.addServerAttributes(node);
+                    }
 
                     // user info
                     logger.debug("{}: Parse whoami data", name());
@@ -127,8 +131,8 @@ public class ReadEnvironment implements BootstrapFunction {
                     }
 
                     // access control provider
-                    AccessControlProvider accessControlProvider = ModelNodeHelper
-                            .asEnumValue(result.step(2).get(RESULT), AccessControlProvider::valueOf, SIMPLE);
+                    AccessControlProvider accessControlProvider =
+                            asEnumValue(result.step(2).get(RESULT), AccessControlProvider::valueOf, SIMPLE);
                     environment.setAccessControlProvider(accessControlProvider);
 
                     logDone();
