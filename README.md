@@ -41,7 +41,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
 ## Running
 
-HAL.next requires **WildFly 11.x** (it makes use of the new capabilities service)! There are different ways to launch HAL.next and connect to a running WildFly instance. Most of them require to configure the allowed origins of the HTTP management endpoint.
+HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilities service)! There are different ways to launch HAL.next and connect to a running WildFly instance. Most of them require to configure the allowed origins of the HTTP management endpoint.
  
 - Standalone mode
 
