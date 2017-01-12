@@ -77,15 +77,43 @@
                             <alias>hal-next</alias>
                             <name>hpehl/hal-next</name>
                             <build>
-                                <from>hpehl/wildfly-upstream</from>
+                                <from>jboss/base-jdk:8</from>
                                 <tags>
                                     <tag>${project.version}</tag>
                                     <tag>latest</tag>
                                 </tags>
+                                <env>
+                                    <WILDFLY_VERSION>${wildfly.version}</WILDFLY_VERSION>
+                                    <JBOSS_HOME>/opt/jboss/wildfly</JBOSS_HOME>
+                                    <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND>
+                                </env>
+                                <ports>
+                                    <port>8080</port>
+                                    <port>9990</port>
+                                </ports>
+                                <runCmds>
+                                    <run><![CDATA[
+                                        cd $HOME \
+                                        && curl -s -O https://ci.wildfly.org/guestAuth/app/rest/builds/project:WF,buildType:WF_Nightly,count:1/artifacts/content/wildfly-$WILDFLY_VERSION.zip \
+                                        && unzip -o -q wildfly-$WILDFLY_VERSION.zip \
+                                        && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
+                                        && rm wildfly-$WILDFLY_VERSION.zip \
+                                        && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
+                                    ]]></run>
+                                    <run>
+                                        mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
+                                    </run>
+                                </runCmds>
+                                <cmd>
+                                    <arg>/opt/jboss/wildfly/bin/standalone.sh</arg>
+                                    <arg>-b</arg>
+                                    <arg>0.0.0.0</arg>
+                                    <arg>-bmanagement</arg>
+                                    <arg>0.0.0.0</arg>
+                                </cmd>
                                 <assembly>
                                     <mode>dir</mode>
-                                    <basedir>/opt/jboss/wildfly/modules/system/layers/base/org/jboss/as/console/main
-                                    </basedir>
+                                    <user>jboss:jboss:jboss</user>
                                     <inline>
                                         <fileSets>
                                             <fileSet>
@@ -106,9 +134,6 @@
                                         </fileSets>
                                     </inline>
                                 </assembly>
-                                <runCmds>
-                                    <run>/opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent</run>
-                                </runCmds>
                             </build>
                         </image>
                     </images>

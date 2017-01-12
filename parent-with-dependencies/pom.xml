@@ -58,8 +58,9 @@
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>1.3.18.Final</undertow.version>
         <validation.version>1.0.0.GA</validation.version>
+        <wildfly.version>11.0.0.Alpha1-SNAPSHOT</wildfly.version>
         <wildfly-core.version>3.0.0.Alpha16</wildfly-core.version>
-        <wildfly-swarm.version>2016.12.1</wildfly-swarm.version>
+        <wildfly-swarm.version>2017.1.1</wildfly-swarm.version>
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->
