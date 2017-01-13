@@ -356,7 +356,7 @@ public class Dispatcher implements RecordingHandler {
             });
         }
 
-        return Browser.encodeURI(builder.toString());
+        return builder.toString();
     }
 
 
