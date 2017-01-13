@@ -56,6 +56,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.token.NameTokens;
@@ -190,7 +191,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 } else {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
                 }
-                if (!item.isExploded() && !item.isEnabled()) {
+                if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
+                        && !item.isExploded() && !item.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
                 actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,

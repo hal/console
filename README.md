@@ -29,7 +29,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - PatternFly compliance
     - Enhanced form items for lists, properties and booleans
     - Use capabilities & requirements to generate combo boxes with type-ahead support
-    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui..xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
+    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
     - Remove deprecated APIs 
 
 - Finder
@@ -41,7 +41,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
 ## Running
 
-HAL.next requires **WildFly 11.x** (it makes use of the new capabilities service)! There are different ways to launch HAL.next and connect to a running WildFly instance. Most of them require to configure the allowed origins of the HTTP management endpoint.
+HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilities service). There are different ways to launch HAL.next. Most of them require to configure the allowed origins of the HTTP management endpoint and connect to a running WildFly instance.
  
 - Standalone mode
 
@@ -75,7 +75,7 @@ The module `hal-npm` provides a npm package which launches a local web server at
 1. `node server.js`
 1. Open http://localhost:3000
 
-The package is also available on npmjs.com: https://www.npmjs.com/package/hal-next
+The npm package is also available on npmjs.com: https://www.npmjs.com/package/hal-next
  
 1. `npm install -g hal-next`
 1. `hal-next`
@@ -99,7 +99,7 @@ The module `hal-fraction` contains the WildFly Swarm fraction `org.jboss.hal.fra
 
 ### Docker 
 
-The `docker` module is used to build a docker image with WildFly 11.0.0.Alpha1 and HAL.next.
+The `docker` module provides a docker image with WildFly 11.x and HAL.next.
 
 1. `cd docker`
 1. `mvn install`
@@ -108,6 +108,8 @@ The `docker` module is used to build a docker image with WildFly 11.0.0.Alpha1 a
 1. Open http://localhost:9990 and log in with `admin:admin`
 
 The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-next/
+
+`docker pull hpehl/hal-next`
 
 ### GitHub Pages
 

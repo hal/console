@@ -20,7 +20,7 @@
     </properties>
 
     <resources>
-        <resource-root path="hal-app-${project.version}-resources.jar"/>
+        <resource-root path="hal-console-${project.version}-resources.jar"/>
     </resources>
 
     <dependencies>

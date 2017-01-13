@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.4.6</version>
+        <version>0.4.7</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -34,7 +34,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-app</artifactId>
+            <artifactId>hal-console</artifactId>
             <classifier>resources</classifier>
         </dependency>
     </dependencies>
@@ -55,12 +55,28 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>hal-app</artifactId>
+                                    <artifactId>hal-console</artifactId>
                                     <classifier>resources</classifier>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-wildfly</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://ci.wildfly.org/guestAuth/app/rest/builds/project:WF,buildType:WF_Nightly,count:1/artifacts/content/wildfly-${wildfly.version}.zip</url>
                         </configuration>
                     </execution>
                 </executions>
@@ -77,15 +93,9 @@
                             <alias>hal-next</alias>
                             <name>hpehl/hal-next</name>
                             <build>
-                                <from>hpehl/wildfly-upstream</from>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                    <tag>latest</tag>
-                                </tags>
                                 <assembly>
                                     <mode>dir</mode>
-                                    <basedir>/opt/jboss/wildfly/modules/system/layers/base/org/jboss/as/console/main
-                                    </basedir>
+                                    <user>jboss:jboss:jboss</user>
                                     <inline>
                                         <fileSets>
                                             <fileSet>
@@ -100,15 +110,46 @@
                                                 <directory>${project.build.directory}</directory>
                                                 <outputDirectory>.</outputDirectory>
                                                 <includes>
-                                                    <include>hal-app-${project.version}-resources.jar</include>
+                                                    <include>wildfly-${wildfly.version}.zip</include>
+                                                    <include>hal-console-${project.version}-resources.jar</include>
                                                 </includes>
                                             </fileSet>
                                         </fileSets>
                                     </inline>
                                 </assembly>
+                                <from>jboss/base-jdk:8</from>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                    <tag>latest</tag>
+                                </tags>
+                                <env>
+                                    <WILDFLY_VERSION>${wildfly.version}</WILDFLY_VERSION>
+                                    <JBOSS_HOME>/opt/jboss/wildfly</JBOSS_HOME>
+                                    <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND>
+                                </env>
+                                <ports>
+                                    <port>8080</port>
+                                    <port>9990</port>
+                                </ports>
                                 <runCmds>
-                                    <run>/opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent</run>
+                                    <run><![CDATA[
+                                        cd $HOME \
+                                        && unzip -o -q /maven/wildfly-$WILDFLY_VERSION.zip \
+                                        && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
+                                        && rm /maven/wildfly-$WILDFLY_VERSION.zip \
+                                        && $JBOSS_HOME/bin/add-user.sh -u admin -p admin --silent
+                                    ]]></run>
+                                    <run>
+                                        mv /maven/* $JBOSS_HOME/modules/system/layers/base/org/jboss/as/console/main
+                                    </run>
                                 </runCmds>
+                                <cmd>
+                                    <arg>/opt/jboss/wildfly/bin/standalone.sh</arg>
+                                    <arg>-b</arg>
+                                    <arg>0.0.0.0</arg>
+                                    <arg>-bmanagement</arg>
+                                    <arg>0.0.0.0</arg>
+                                </cmd>
                             </build>
                         </image>
                     </images>

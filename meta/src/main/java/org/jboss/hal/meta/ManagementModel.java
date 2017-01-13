@@ -69,6 +69,16 @@ public class ManagementModel {
     }
 
     /**
+     * Check support for {@code :explode} operation on deployment resources.
+     *
+     * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
+     * equal {@code 5.0.0}
+     */
+    public static boolean supportsExplodeDeployment(Version version) {
+        return ensureVersion(version, V_5_0_0);
+    }
+
+    /**
      * Check support for {@code :list-log-files} operation.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or

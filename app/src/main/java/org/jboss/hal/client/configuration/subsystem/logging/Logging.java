@@ -17,8 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
