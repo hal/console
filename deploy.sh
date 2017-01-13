@@ -30,27 +30,23 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 
-# Steps
-source "$ROOT/spinner.sh"
+# Deploying hal.next
+mvn clean deploy -P prod,theme-hal,docker
 
-start_spinner "Building and deploying hal.next..."
-mvn -q clean deploy -P prod,theme-hal,docker > /dev/null 2>&1
-stop_spinner $?
-
-start_spinner "Publishing to gh-pages..."
+# Publishing to gh-pages
 rm -rf /tmp/hal.next
 cd /tmp/
-git clone -b gh-pages --single-branch git@github.com:hal/hal.next.git > /dev/null 2>&1
+git clone -b gh-pages --single-branch git@github.com:hal/hal.next.git
 cd hal.next
 rm -rf *.gif *.html *.ico *.js *.png *.txt css deferredjs fonts img js previews
 cp -R ${ROOT}/app/target/hal-console-*/hal/ .
 date > .build
-git add --all > /dev/null 2>&1
-git commit -am "Update hal.next" > /dev/null 2>&1
-git push -f origin gh-pages > /dev/null 2>&1
+git add --all
+git commit -am "Update hal.next"
+git push -f origin gh-pages
 cd ${ROOT}
-stop_spinner $?
 
+echo
 echo
 echo "HAL.next successfully build, deployed and published to branch 'gh-pages'."
 echo
