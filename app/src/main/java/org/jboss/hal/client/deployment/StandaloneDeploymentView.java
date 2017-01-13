@@ -30,6 +30,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.hal.resources.CSS.navTabsHal;
 
 /**
@@ -51,13 +52,18 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
         browseContent = new BrowseContentElement(dispatcher, resources, () -> presenter.reload());
         deploymentModel = new DeploymentModelElement(modelBrowser, resources);
 
-        tabs = new Tabs()
-                .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
-                .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
-        Element root = Browser.getDocument().createDivElement();
-        deploymentModel.asElements().forEach(root::appendChild);
-
-        initElement(supportsReadContent ? tabs.asElement() : root);
+        if (supportsReadContent) {
+            tabs = new Tabs()
+                    .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
+                    .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
+            tabs.asElement().querySelector("." + navTabsHal).getStyle().setMarginTop(0, PX);
+            initElement(tabs.asElement());
+        } else {
+            tabs = null;
+            Element root = Browser.getDocument().createDivElement();
+            deploymentModel.asElements().forEach(root::appendChild);
+            initElement(root);
+        }
     }
 
     @Override
@@ -96,9 +102,10 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
     }
 
     @Override
-    public void update(final ModelNode browseContentResult, final Deployment deployment) {
+    public void update(final ModelNode browseContentResult, final Deployment deployment, final int tab) {
         if (supportsReadContent) {
             browseContent.setContent(deployment.getName(), browseContentResult);
+            tabs.showTab(tab);
         }
         deploymentModel.update(deployment, () -> presenter.enable(deployment.getName()));
     }

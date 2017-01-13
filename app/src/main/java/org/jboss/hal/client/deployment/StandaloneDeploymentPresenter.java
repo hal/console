@@ -63,7 +63,7 @@ public class StandaloneDeploymentPresenter extends
 
     public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
         void reset();
-        void update(ModelNode browseContentResult, Deployment deployment);
+        void update(ModelNode browseContentResult, Deployment deployment, int tab);
     }
     // @formatter:on
 
@@ -110,6 +110,10 @@ public class StandaloneDeploymentPresenter extends
 
     @Override
     protected void reload() {
+        reload(0);
+    }
+
+    private void reload(int tab) {
         boolean supportsBrowseContent = ManagementModel.supportsReadContentFromDeployment(
                 environment.getManagementVersion());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
@@ -125,7 +129,7 @@ public class StandaloneDeploymentPresenter extends
             Deployment d = new Deployment(Server.STANDALONE, result.step(0).get(RESULT));
             ModelNode readContentResult = supportsBrowseContent ? result.step(1).get(RESULT) : new ModelNode();
             getView().reset();
-            getView().update(readContentResult, d);
+            getView().update(readContentResult, d, tab);
         });
     }
 
@@ -136,7 +140,7 @@ public class StandaloneDeploymentPresenter extends
         Operation operation = new Operation.Builder(DEPLOY, address).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
-            reload();
+            reload(1); // stay on model browser tab
             MessageEvent
                     .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
         });

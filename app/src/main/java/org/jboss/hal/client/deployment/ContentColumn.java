@@ -208,7 +208,8 @@ public class ContentColumn extends FinderColumn<Content> {
                 // order is: view, (explode), deploy, replace, download, undeploy / remove
                 actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
                         .with(CONTENT, item.getName()).build()));
-                if (item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
+                if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
+                        && item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
                 actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
