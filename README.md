@@ -29,7 +29,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - PatternFly compliance
     - Enhanced form items for lists, properties and booleans
     - Use capabilities & requirements to generate combo boxes with type-ahead support
-    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui..xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
+    - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
     - Remove deprecated APIs 
 
 - Finder
@@ -41,7 +41,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
 ## Running
 
-HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilities service)! There are different ways to launch HAL.next and connect to a running WildFly instance. Most of them require to configure the allowed origins of the HTTP management endpoint.
+HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilities service). There are different ways to launch HAL.next. Most of them require to configure the allowed origins of the HTTP management endpoint and connect to a running WildFly instance.
  
 - Standalone mode
 
