@@ -83,62 +83,70 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                 } else {
                     ModelType descriptionType = attributeDescription.get(TYPE).asType();
-                    switch (descriptionType) {
-                        case BOOLEAN:
-                            formItem.setValue(value.asBoolean());
-                            break;
+                    try {
+                        switch (descriptionType) {
+                            case BOOLEAN:
+                                formItem.setValue(value.asBoolean());
+                                break;
 
-                        case INT:
-                            // NumberFormItem uses *always* long
-                            try {
-                                formItem.setValue((long) value.asInt());
-                            } catch (IllegalArgumentException e) {
-                                logger.error(
-                                        "{}: Unable to populate form item '{}': Metadata says it's an INT, but value is not '{}'",
-                                        id(form), name, value.asString());
+                            case INT:
+                                // NumberFormItem uses *always* long
+                                try {
+                                    formItem.setValue((long) value.asInt());
+                                } catch (IllegalArgumentException e) {
+                                    logger.error(
+                                            "{}: Unable to populate form item '{}': Metadata says it's an INT, but value is not '{}'",
+                                            id(form), name, value.asString());
 
-                            }
-                            break;
-                        case BIG_INTEGER:
-                        case LONG:
-                            try {
-                                formItem.setValue(value.asLong());
-                            } catch (IllegalArgumentException e) {
-                                logger.error(
-                                        "{}: Unable to populate form item '{}': Metadata says it's a {}, but value is not '{}'",
-                                        id(form), name, descriptionType.name(), value.asString());
-                            }
-                            break;
+                                }
+                                break;
+                            case BIG_INTEGER:
+                            case LONG:
+                                try {
+                                    formItem.setValue(value.asLong());
+                                } catch (IllegalArgumentException e) {
+                                    logger.error(
+                                            "{}: Unable to populate form item '{}': Metadata says it's a {}, but value is not '{}'",
+                                            id(form), name, descriptionType.name(), value.asString());
+                                }
+                                break;
 
-                        case LIST:
-                            List<String> list = value.asList().stream().map(ModelNode::asString).collect(toList());
-                            formItem.setValue(list);
-                            break;
+                            case LIST:
+                                List<String> list = value.asList().stream().map(ModelNode::asString).collect(toList());
+                                formItem.setValue(list);
+                                break;
 
-                        case OBJECT:
-                            List<Property> properties = value.asPropertyList();
-                            Map<String, String> map = new HashMap<>();
-                            for (Property property : properties) {
-                                map.put(property.getName(), property.getValue().asString());
-                            }
-                            formItem.setValue(map);
-                            break;
+                            case OBJECT:
+                                List<Property> properties = value.asPropertyList();
+                                Map<String, String> map = new HashMap<>();
+                                for (Property property : properties) {
+                                    map.put(property.getName(), property.getValue().asString());
+                                }
+                                formItem.setValue(map);
+                                break;
 
-                        case STRING:
-                            formItem.setValue(value.asString());
-                            break;
+                            case STRING:
+                                formItem.setValue(value.asString());
+                                break;
 
-                        // unsupported types
-                        case BIG_DECIMAL:
-                        case DOUBLE:
-                        case BYTES:
-                        case EXPRESSION:
-                        case PROPERTY:
-                        case TYPE:
-                        case UNDEFINED:
-                            logger.warn("{}: populating form field '{}' of type '{}' not implemented", id(form), name,
-                                    descriptionType);
-                            break;
+                            // unsupported types
+                            case BIG_DECIMAL:
+                            case DOUBLE:
+                            case BYTES:
+                            case EXPRESSION:
+                            case PROPERTY:
+                            case TYPE:
+                            case UNDEFINED:
+                                logger.warn("{}: populating form field '{}' of type '{}' not implemented", id(form),
+                                        name,
+                                        descriptionType);
+                                break;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        logger.error(
+                                "{}: Unable to populate form item '{}'. Declared type in r-r-d does not match type in model node: '{}' != '{}'",
+                                id(form), name, descriptionType.name(), valueType.name());
+                        formItem.setEnabled(false);
                     }
                 }
                 formItem.setUndefined(false);
