@@ -69,7 +69,7 @@ If you don't want to or cannot build locally you can download `hal-standalone.ja
 The module `hal-npm` provides a npm package which launches a local web server at http://localhost:3000.
   
 1. Add http://localhost:3000 as allowed origin
-1. `mvn install`
+1. `mvn clean install -P prod,theme-hal`
 1. `cd npm`
 1. `npm install`
 1. `node server.js`
