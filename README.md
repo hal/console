@@ -58,7 +58,7 @@ HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilit
 The module `hal-standalone` contains an executable jar which launches a local web server at http://localhost:9090.
   
 1. Add http://localhost:9090 as allowed origin
-1. `mvn install`
+1. `mvn clean install -P prod,theme-hal`
 1. `java -jar standalone/target/hal-standalone-<version>.jar`
 1. Open http://localhost:9090
 
