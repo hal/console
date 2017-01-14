@@ -96,6 +96,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element messagesLabel;
     @DataElement Element userName;
     @DataElement Element roles;
+    @DataElement Element connectedToContainer;
     @DataElement Element connectedTo;
     @DataElement Element accessControl;
     @DataElement Element patching;
@@ -234,6 +235,11 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
         presenter.reconnect();
+    }
+
+    @Override
+    public void hideReconnect() {
+        Elements.setVisible(connectedToContainer, false);
     }
 
 

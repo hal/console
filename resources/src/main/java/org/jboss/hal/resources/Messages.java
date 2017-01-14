@@ -63,6 +63,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseSharedStore();
     SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
+    SafeHtml closeToLogout();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);

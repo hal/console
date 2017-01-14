@@ -119,6 +119,11 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
+    public boolean isSingleSignOn() {
+        return false; // not yet implemented
+    }
+
+    @Override
     public String toString() {
         return "Environment(HAL " + halVersion + ", " + instanceInfo + ", management version " + managementVersion +
                 ", " + accessControlProvider.name().toLowerCase() + " provider)";

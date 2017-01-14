@@ -23,7 +23,10 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.Location;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
@@ -108,6 +111,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void showReload(String text, String tooltip);
         void hideReload();
         void showMessage(Message message);
+        void hideReconnect();
 
         void selectTopLevelCategory(String nameToken);
         void updateLinks(FinderContext finderContext);
@@ -181,6 +185,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        if (endpoints.isSameOrigin()) {
+            getView().hideReconnect();
+        }
     }
 
 
@@ -261,11 +273,25 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        Browser.getWindow().alert(Names.NYI);
+        Location location = Browser.getWindow().getLocation();
+        String url = Endpoints.getBaseUrl() + location.getPathname() + "?" + EndpointManager.CONNECT_PARAMETER;
+        Browser.getWindow().getLocation().assign(url);
     }
 
     void logout() {
-        Browser.getWindow().alert(Names.NYI);
+        if (environment.isSingleSignOn()) {
+            Browser.getWindow().alert(Names.NYI);
+        } else {
+            Element p = Browser.getDocument().createElement("p");
+            p.setInnerHTML(resources.messages().closeToLogout().asString());
+            Dialog dialog = new Dialog.Builder(resources.constants().logout())
+                    .add(p)
+                    .closeIcon(true)
+                    .closeOnEsc(true)
+                    .primary(resources.constants().ok(), () -> true)
+                    .build();
+            dialog.show();
+        }
     }
 
 
