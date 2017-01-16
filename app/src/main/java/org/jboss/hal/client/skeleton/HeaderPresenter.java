@@ -282,7 +282,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         if (environment.isSingleSignOn()) {
             Browser.getWindow().alert(Names.NYI);
         } else {
-            Element p = Browser.getDocument().createElement("p");
+            Element p = Browser.getDocument().createElement("p"); //NON-NLS
             p.setInnerHTML(resources.messages().closeToLogout().asString());
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
                     .add(p)
