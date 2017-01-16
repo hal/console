@@ -249,7 +249,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String mainAttributes();
     String managed();
     String managementVersion();
-    String markAllRead();
     String maxUsed();
     String membership();
     String membershipOfRole();

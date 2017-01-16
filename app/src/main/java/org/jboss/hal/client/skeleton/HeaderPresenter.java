@@ -269,7 +269,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         getView().showMessage(event.getMessage());
     }
 
-    void markAllRead() {
+    void clearMessages() {
         getView().clearMessages();
     }
 
