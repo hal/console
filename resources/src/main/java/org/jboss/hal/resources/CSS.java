@@ -373,6 +373,10 @@ public interface CSS {
         }
     }
 
+    static String vh(int offset) {
+        return "calc(100vh - " + offset + "px)"; //NON-NLS
+    }
+
     /**
      * Builds a FontAwesome icons class.
      *

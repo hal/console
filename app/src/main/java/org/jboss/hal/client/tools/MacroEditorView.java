@@ -152,13 +152,18 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     @Override
     public void attach() {
         super.attach();
-        Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
+        adjustEditorHeight();
+        Browser.getWindow().setOnresize(event -> adjustEditorHeight());
     }
 
     private void adjustHeight() {
+        int offset = Skeleton.applicationOffset() + 2 * MARGIN_BIG + 1;
+        macroList.asElement().getStyle().setHeight(vh(offset));
+    }
+
+    private void adjustEditorHeight() {
         int height = max(Skeleton.applicationHeight() - 2 * MARGIN_BIG - 1, MIN_HEIGHT);
-        macroList.asElement().getStyle().setHeight(height, PX);
         editor.asElement().getStyle().setHeight(height, PX);
         editor.getEditor().resize();
     }

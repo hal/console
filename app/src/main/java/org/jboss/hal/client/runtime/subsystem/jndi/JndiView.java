@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 
 import javax.inject.Inject;
 
-import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
@@ -28,17 +27,16 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
@@ -126,16 +124,14 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
     @Override
     public void attach() {
         super.attach();
-        Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
     }
 
     private void adjustHeight() {
-        int height = Skeleton.applicationHeight();
         int headerHeight = header.getOffsetHeight();
         int searchHeight = search.asElement().getOffsetHeight();
-        treeContainer.getStyle()
-                .setHeight(height - 2 * MARGIN_BIG - headerHeight - searchHeight - 2 * MARGIN_SMALL, PX);
+        int offset = applicationOffset() + 2 * MARGIN_BIG + headerHeight + searchHeight + 2 * MARGIN_SMALL;
+        treeContainer.getStyle().setHeight(vh(offset));
     }
 
     private void collapse(final Node<JndiContext> node) {

@@ -48,6 +48,10 @@ public final class Skeleton {
         return footer;
     }
 
+    public static int applicationOffset() {
+        return navigationHeight() + footerHeight();
+    }
+
     public static int applicationHeight() {
         return Browser.getWindow().getInnerHeight() - navigationHeight() - footerHeight();
     }

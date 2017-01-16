@@ -131,11 +131,11 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         editor.getEditor().setTheme("ace/theme/logfile"); //NON-NLS
         editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
 
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
+        adjustEditorHeight();
+        Browser.getWindow().setOnresize(event -> adjustEditorHeight());
     }
 
-    private void adjustHeight() {
+    private void adjustEditorHeight() {
         int height = Skeleton.applicationHeight();
         height -= 2 * MARGIN_BIG;
         height -= (header.getOffsetHeight() + logFileControls.getOffsetHeight() + 20);
