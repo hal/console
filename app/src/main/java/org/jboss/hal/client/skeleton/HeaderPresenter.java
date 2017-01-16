@@ -111,6 +111,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void showReload(String text, String tooltip);
         void hideReload();
         void showMessage(Message message);
+        void clearMessages();
         void hideReconnect();
 
         void selectTopLevelCategory(String nameToken);
@@ -268,8 +269,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         getView().showMessage(event.getMessage());
     }
 
-    void toggleMessages() {
-        Browser.getWindow().alert(Names.NYI);
+    void markAllRead() {
+        getView().clearMessages();
     }
 
     void reconnect() {

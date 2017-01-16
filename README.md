@@ -84,9 +84,13 @@ The npm package is also available on npmjs.com: https://www.npmjs.com/package/ha
 
 The module `hal-fraction` contains the WildFly Swarm fraction `org.jboss.hal.fraction.HalFraction`.
  
-1. Add the following dependency to your POM:
+1. Add the following dependencies to your POM:
 
     ```xml
+    <dependency>
+        <groupId>org.wildfly.swarm</groupId>
+        <artifactId>management</artifactId>
+    </dependency>
     <dependency>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-fraction</artifactId>

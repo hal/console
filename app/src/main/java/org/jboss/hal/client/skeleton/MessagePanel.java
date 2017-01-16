@@ -23,6 +23,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -32,7 +33,9 @@ import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
 import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
 
 /**
- * A container around the messages / toast notifications to prevent overlapping of simultaneous messages.
+ * A container around the messages / toast notifications which are shown to the user in the upper right corner.
+ * Prevents overlapping of simultaneous messages and handles the mouse over / out events in order to pause the
+ * automatic fade out time.
  *
  * @author Harald Pehl
  */
@@ -40,18 +43,19 @@ class MessagePanel implements IsElement {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
+    private final Resources resources;
     private final Map<String, Integer> messageIds;
     private final Map<Long, Message> stickyMessages;
     private final Element root;
 
-    MessagePanel() {
+    MessagePanel(final Resources resources) {
+        this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
         this.root = Browser.getDocument().createDivElement();
         this.root.getClassList().add(toastNotificationsListPf);
         Browser.getDocument().getBody().appendChild(root);
     }
-
 
     @Override
     public Element asElement() {
@@ -60,11 +64,11 @@ class MessagePanel implements IsElement {
 
     void add(Message message) {
         if (message.isSticky() && containsStickyMessage(message)) {
-            logger.debug("Swallow sticky message {}. The same message is still open", message);
+            logger.debug("Swallow sticky message {}. The same message is already open", message);
 
         } else {
             String id = Ids.uniqueId();
-            Element element = new MessageElement(this, message).asElement();
+            Element element = new MessagePanelElement(this, message, resources).asElement();
             element.setId(id);
             root.appendChild(element);
 
@@ -89,7 +93,7 @@ class MessagePanel implements IsElement {
 
 
     private void startMessageTimeout(String id) {
-        int timeoutHandle = Browser.getWindow().setTimeout(() -> removeMessage(id), MESSAGE_TIMEOUT);
+        int timeoutHandle = Browser.getWindow().setTimeout(() -> remove(id), MESSAGE_TIMEOUT);
         messageIds.put(id, timeoutHandle);
     }
 
@@ -100,7 +104,7 @@ class MessagePanel implements IsElement {
         }
     }
 
-    private void removeMessage(String id) {
+    private void remove(String id) {
         Element element = Browser.getDocument().getElementById(id);
         if (element != null && root.contains(element)) {
             root.removeChild(element);

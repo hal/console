@@ -86,6 +86,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     private Map<String, Element> tlc;
     private HeaderPresenter presenter;
     private MessagePanel messagePanel;
+    private MessageSink messageSink;
 
     @DataElement Element logoFirst;
     @DataElement Element logoLast;
@@ -93,7 +94,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element reloadLink;
     @DataElement Element reloadLabel;
     @DataElement Element messagesIcon;
-    @DataElement Element messagesLabel;
     @DataElement Element userName;
     @DataElement Element roles;
     @DataElement Element connectedToContainer;
@@ -116,7 +116,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     void init() {
         Element root = asElement();
         Elements.setVisible(reloadContainer, false);
-        messagePanel = new MessagePanel(); // message panel adds itself to the body
+        messagePanel = new MessagePanel(resources()); // message panel adds itself to the body
+        messageSink = new MessageSink(resources());
+        topLevelCategories.getParentElement().insertBefore(messageSink.asElement(), topLevelCategories);
 
         backPlaceRequest = HOMEPAGE;
         backLink.setOnclick(event -> presenter.goTo(backPlaceRequest));
@@ -157,6 +159,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @Override
     public void setPresenter(final HeaderPresenter presenter) {
         this.presenter = presenter;
+        messageSink.setPresenter(presenter);
     }
 
     @Override
@@ -208,7 +211,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
-        presenter.toggleMessages();
+        messageSink.asElement().getClassList().toggle(hide);
     }
 
     @Override
@@ -225,6 +228,16 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                 break;
         }
         messagePanel.add(message);
+        messageSink.add(message);
+        messagesIcon.getClassList().remove("fa-bell-o"); //NON-NLS
+        messagesIcon.getClassList().add("fa-bell"); //NON-NLS
+    }
+
+    @Override
+    public void clearMessages() {
+        messageSink.clear();
+        messagesIcon.getClassList().remove("fa-bell"); //NON-NLS
+        messagesIcon.getClassList().add("fa-bell-o"); //NON-NLS
     }
 
     @EventHandler(element = "logout", on = click)

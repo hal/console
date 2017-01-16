@@ -55,6 +55,7 @@ public interface CSS {
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
     String btn = "btn";
+    String btnBlock = "btn-block";
     String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -84,11 +85,20 @@ public interface CSS {
     String copy = "copy";
 
     String dataTable = "datatable";
+    String date = "date";
     String defaultValue = "default-value";
     String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
     String dlHorizontal = "dl-horizontal";
+    String drawerPf = "drawer-pf";
+    String drawerPfAction = "drawer-pf-action";
+    String drawerPfHal = "drawer-pf-hal";
+    String drawerPfNotification = "drawer-pf-notification";
+    String drawerPfNotificationMessage = "drawer-pf-notification-message";
+    String drawerPfNotificationInfo = "drawer-pf-notification-info";
+    String drawerPfTitle = "drawer-pf-title";
+    String drawerPfNotificationsNonClickable = "drawer-pf-notifications-non-clickable";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
     String dropdownMenu = "dropdown-menu";
@@ -139,6 +149,7 @@ public interface CSS {
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
     String hidden = "hidden";
+    String hide = "hide";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
@@ -293,6 +304,8 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String textCenter = "text-center";
+    String time = "time";
     String timestamp = "timestamp";
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
@@ -305,6 +318,7 @@ public interface CSS {
     String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
+    String unread = "unread";
     String upload = "upload";
     String uploadAdvanced = "upload-advanced";
     String uploadIcon = "upload-icon";
