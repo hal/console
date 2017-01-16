@@ -40,6 +40,7 @@ public interface Names {
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
 
+    String CACHE_CONTAINER = "Cache Container";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";

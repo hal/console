@@ -94,6 +94,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/ejb3.html")
     ExternalTextResource configurationEjb3();
 
+    @Source("previews/configuration/infinispan.html")
+    ExternalTextResource configurationInfinispan();
+
     @Source("previews/configuration/interfaces.html")
     ExternalTextResource configurationInterfaces();
 

@@ -1,0 +1,33 @@
+<p>Infinispan is a Java data grid platform. It provides a
+    <a href="http://www.jcp.org/en/jsr/detail?id=107">JSR-107</a> compatible cache interface for managing cached data.
+</p>
+<p>The following Infinispan cache containers are used in JBoss Enterprise Application Platform:</p>
+<ul>
+    <li><code>web</code> for Web Session Clustering</li>
+    <li><code>ejb</code> for Stateful Session Bean Clustering</li>
+    <li><code>hibernate</code> for Entity Caching</li>
+    <li><code>singleton</code> for Singleton Caching</li>
+</ul>
+<p>Each cache container defines a "repl" and a "dist" cache. These caches should not be used directly by user applications.</p>
+
+<p>For more information about Infinispan functionality and configuration options see the
+    <a href="http://infinispan.org/docs/5.3.x/index.html">Infinispan Documentation</a>.</p>
+
+<h2>Clustering Modes</h2>
+<p>Clustering can be configured in two different ways in JBoss EAP using Infinispan. The correct method for your application will depend on your requirements. There is a trade off between availability, consistency, reliability and scalability with each mode. Before choosing a clustering mode, you must identify what are the most important features of your network for you, and balance those requirements.</p>
+
+<h3>Replication Mode</h3>
+<p>Replicated Mode automatically detects and adds new instances on the cluster. Changes made to these instances will be replicated to all nodes on the cluster. Replicated mode typically works best in small clusters because of the amount of information that has to be replicated over the network. Infinispan can be configured to use UDP multicast, which alleviates network traffic congestion to a degree.</p>
+
+<h3>Distribution Mode</h3>
+<p>Distribution mode allows Infinispan to scale the cluster linearly. Distribution mode uses a consistent hash algorithm to determine where in a cluster a new node should be placed. The number of copies of information to be kept is configurable. There is a trade off between the number of copies kept, durability of the data and performance: the more copies that are kept, the more impact on performance, but the less likely you are to lose data in a server failure. The hash algorithm also works to reduce network traffic by locating entries without multicasting or storing metadata.
+</p>
+<p>One should consider using Distribution (dist) mode as a caching strategy when the cluster size exceeds 6-8 nodes. With Distribution mode, data is distributed to only a subset of nodes within the cluster, as opposed to all nodes (default Replicated mode).
+</p>
+
+<h3>Synchronous and Asynchronous Replication</h3>
+<p>Replication can be performed either in synchronous or asynchronous mode, and the mode chosen depends on your requirements and your application. With synchronous replication, the thread that handles the user request is blocked until replication has been successful. Only when the replication is successful, a response is sent back to the client and the thread is released. Synchronous replication has an impact on network traffic because it requires a response from each node in the cluster. It has the advantage, however, of ensuring that all modifications have been made to all nodes in the cluster.</p>
+<p>Asynchronous replication is carried out in the background. Infinispan implements a replication queue, which is used by a background thread to carry out replication. Replication is triggered either on a time basis, or on the queue size. A replication queue allows increased performance because there is no conversation being carried out between the cluster nodes. The trade off with asynchronous replication is that it is not quite so accurate. Failed replication attempts are written to a log, not notified in real time.</p>
+
+<h2>Cache Container</h2>
+<p>A cache container is repository for the caches used by a subsystem. For Infinispan default cache containers are defined in the configuration xml files. One cache is defined as the default cache, which is the cache that will be used for clustering.</p>

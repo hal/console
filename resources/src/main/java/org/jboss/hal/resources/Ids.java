@@ -81,6 +81,9 @@ public interface Ids {
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
+    String CACHE_CONTAINER = "cache-container";
+    String CACHE_CONTAINER_ADD = build(CACHE_CONTAINER, ADD_SUFFIX);
+    String CACHE_CONTAINER_REFRESH = build(CACHE_CONTAINER, REFRESH_SUFFIX);
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
@@ -497,6 +500,10 @@ public interface Ids {
 
 
     // ------------------------------------------------------ resource ids (a-z)
+
+    static String cacheContainer(String name) {
+        return Ids.build(CACHE_CONTAINER, name);
+    }
 
     static String content(String name) {
         return name;

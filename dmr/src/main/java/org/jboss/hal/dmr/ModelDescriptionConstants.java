@@ -55,6 +55,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
+    String ALIASES = "aliases";
     String ALLOWED = "allowed";
     String ANY = "any";
     String ARCHIVE = "archive";
@@ -72,6 +73,8 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
 
+    String CACHE_CONTAINER = "cache-container";
+    String CACHE_MANAGER_STATUS = "cache-manager-status";
     String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
@@ -98,6 +101,7 @@ public interface ModelDescriptionConstants {
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
@@ -292,6 +296,7 @@ public interface ModelDescriptionConstants {
     String ROLE = "role";
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "HEADER_ROLES";
+    String RUNNING = "running";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
