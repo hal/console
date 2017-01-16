@@ -235,7 +235,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 readDataSources,
                 new JdbcDriverFunctions.ReadConfiguration(crud),
                 new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                        new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
+                        environment.isStandalone()
+                                ? null
+                                : new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
                 new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
                 new JdbcDriverFunctions.CombineDriverResults());
     }
@@ -273,7 +275,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private void testConnection(final DataSource dataSource) {
         TopologyFunctions.RunningServersQuery runningServers = new TopologyFunctions.RunningServersQuery(
-                environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile()));
+                environment, dispatcher, environment.isStandalone() ? null : new ModelNode().set(PROFILE_NAME,
+                statementContext.selectedProfile()));
         Function<FunctionContext> testConnection = control -> {
             List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
             if (!servers.isEmpty()) {
