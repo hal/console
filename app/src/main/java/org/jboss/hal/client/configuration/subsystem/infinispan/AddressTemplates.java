@@ -17,14 +17,30 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
+
 /**
  * @author Harald Pehl
  */
 interface AddressTemplates {
 
     String INFINISPAN_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=infinispan";
+
     String CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/cache-container=*";
+    String SELECTED_CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/cache-container=" + SELECTION_EXPRESSION;
+
+    String DISTRIBUTED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/distributed-cache=*";
+    String INVALIDATION_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/invalidation-cache=*";
+    String LOCAL_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/local-cache=*";
+    String REPLICATED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/replicated-cache=*";
 
     AddressTemplate INFINISPAN_SUBSYSTEM_TEMPLATE = AddressTemplate.of(INFINISPAN_SUBSYSTEM_ADDRESS);
+
     AddressTemplate CACHE_CONTAINER_TEMPLATE = AddressTemplate.of(CACHE_CONTAINER_ADDRESS);
+    AddressTemplate SELECTED_CACHE_CONTAINER_TEMPLATE = AddressTemplate.of(SELECTED_CACHE_CONTAINER_ADDRESS);
+
+    AddressTemplate DISTRIBUTED_CACHE_TEMPLATE = AddressTemplate.of(DISTRIBUTED_CACHE_ADDRESS);
+    AddressTemplate INVALIDATION_CACHE_TEMPLATE = AddressTemplate.of(INVALIDATION_CACHE_ADDRESS);
+    AddressTemplate LOCAL_CACHE_TEMPLATE = AddressTemplate.of(LOCAL_CACHE_ADDRESS);
+    AddressTemplate REPLICATED_CACHE_TEMPLATE = AddressTemplate.of(REPLICATED_CACHE_ADDRESS);
 }

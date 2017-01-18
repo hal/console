@@ -44,6 +44,8 @@ import org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter;
 import org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView_Provider;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
+import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerView;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView_Provider;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
@@ -202,6 +204,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 BufferCachePresenter.MyView.class,
                 Mbui_BufferCacheView_Provider.class,
                 BufferCachePresenter.MyProxy.class);
+
+        bindPresenter(CacheContainerPresenter.class,
+                CacheContainerPresenter.MyView.class,
+                CacheContainerView.class,
+                CacheContainerPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ClusteringPresenter.class,
                 ClusteringPresenter.MyView.class,

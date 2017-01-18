@@ -35,8 +35,8 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INFINISPAN_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INFINISPAN_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
@@ -46,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.CACHE_CONTAINER)
-@Requires(value = INFINISPAN_SUBSYSTEM_ADDRESS, recursive = false)
+@Requires(CACHE_CONTAINER_ADDRESS)
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
     @Inject

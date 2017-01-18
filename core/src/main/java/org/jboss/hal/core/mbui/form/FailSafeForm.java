@@ -93,8 +93,8 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     }
 
     public void clear() {
-        form.clear();
         formMode();
+        form.clear();
     }
 
     public void view(T model) {

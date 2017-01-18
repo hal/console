@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 
@@ -25,5 +26,9 @@ class CacheContainer extends NamedNode {
 
     CacheContainer(final Property property) {
         super(property);
+    }
+
+    CacheContainer(final String name, final ModelNode node) {
+        super(name, node);
     }
 }

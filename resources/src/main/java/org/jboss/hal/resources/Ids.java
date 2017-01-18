@@ -81,9 +81,31 @@ public interface Ids {
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
+    String CACHE_COMPONENT_EVICTION = "cache-component-eviction";
+    String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
+    String CACHE_COMPONENT_LOCKING = "cache-component-locking";
+    String CACHE_COMPONENT_TRANSACTION = "cache-component-transaction";
+    String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";
+    String CACHE_STORE_CUSTOM = "cache-store-custom";
+    String CACHE_STORE_FILE = "cache-store-file";
+    String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
+    String CACHE_STORE_NONE = "cache-store-none";
+    String CACHE_STORE_REMOTE = "cache-store-remote";
+    String CACHE_STORE_STORE = "cache-store-store";
+    String CACHE_STORE_STRING_JDBC = "cache-store-string-jdbc";
     String CACHE_CONTAINER = "cache-container";
     String CACHE_CONTAINER_ADD = build(CACHE_CONTAINER, ADD_SUFFIX);
+    String CACHE_CONTAINER_ENTRY = build(CACHE_CONTAINER, ENTRY_SUFFIX);
+    String CACHE_CONTAINER_FORM = build(CACHE_CONTAINER, FORM_SUFFIX);
     String CACHE_CONTAINER_REFRESH = build(CACHE_CONTAINER, REFRESH_SUFFIX);
+    String CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS = build(CACHE_CONTAINER, "thread-pool", "async-operations");
+    String CACHE_CONTAINER_THREAD_POOL_EXPIRATION = build(CACHE_CONTAINER, "thread-pool", "expiration");
+    String CACHE_CONTAINER_THREAD_POOL_LISTENER = build(CACHE_CONTAINER, "thread-pool", "listener");
+    String CACHE_CONTAINER_THREAD_POOL_PERSISTENCE = build(CACHE_CONTAINER, "thread-pool", "persistence");
+    String CACHE_CONTAINER_THREAD_POOL_REMOTE_COMMAND = build(CACHE_CONTAINER, "thread-pool", "remote-command");
+    String CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER = build(CACHE_CONTAINER, "thread-pool", "state-transfer");
+    String CACHE_CONTAINER_THREAD_POOL_TRANSPORT = build(CACHE_CONTAINER, "thread-pool", "transport");
+    String CACHE_CONTAINER_THREAD_POOLS_ENTRY = build(CACHE_CONTAINER, "thread-pool", "async-operations");
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
@@ -127,6 +149,7 @@ public interface Ids {
     String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);
     String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
+    String DISTRIBUTED_CACHE = "distributed-cache";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -165,7 +188,6 @@ public interface Ids {
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
-    String HEADER_MESSAGES = build(HEADER, "messages");
     String HEADER_ROLES = build(HEADER, "roles");
     String HEADER_USERNAME = build(HEADER, "username");
     String HOMEPAGE = "homepage";
@@ -183,6 +205,7 @@ public interface Ids {
     String INTERFACE = "interface";
     String INTERFACE_ADD = build(INTERFACE, ADD_SUFFIX);
     String INTERFACE_REFRESH = build(INTERFACE, REFRESH_SUFFIX);
+    String INVALIDATION_CACHE = "invalidation-cache";
 
     String JCA = "jca";
     String JCA_ARCHIVE_VALIDATION_FORM = build(JCA, "archive-validation", FORM_SUFFIX);
@@ -244,6 +267,7 @@ public interface Ids {
     String JPA_RUNTIME_QUERY_CACHE_ENTRY = build(JPA_RUNTIME, "query-cache", ENTRY_SUFFIX);
     String JPA_RUNTIME_COLLECTION_ENTRY = build(JPA_RUNTIME, "collection", ENTRY_SUFFIX);
 
+    String LOCAL_CACHE = "local-cache";
     String LOG_FILE = "log-file";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
@@ -290,10 +314,8 @@ public interface Ids {
     String MESSAGING_GROUPING_HANDLER = build(MESSAGING, "grouping-handler");
     String MESSAGING_HA = build(MESSAGING, "ha");
     String MESSAGING_HA_CHOOSE_REPLICATION_STEP = build(MESSAGING_HA, "choose-replication", WIZARD_STEP_SUFFIX);
-    String MESSAGING_HA_CHOOSE_SHARED_STORE_STEP = build(MESSAGING_HA, "choose-shared-store", WIZARD_STEP_SUFFIX);
     String MESSAGING_HA_CHOOSE_STRATEGY = build(MESSAGING_HA, "choose-strategy");
     String MESSAGING_HA_CHOOSE_STRATEGY_STEP = build(MESSAGING_HA_CHOOSE_STRATEGY, WIZARD_STEP_SUFFIX);
-    String MESSAGING_HA_REVIEW_STEP = build(MESSAGING_HA, "review", WIZARD_STEP_SUFFIX);
     String MESSAGING_HA_REPLICATION = build(MESSAGING_HA, "replication");
     String MESSAGING_HA_REPLICATION_COLOCATED = build(MESSAGING_HA_REPLICATION, "colocated");
     String MESSAGING_HA_REPLICATION_COLOCATED_MASTER = build(MESSAGING_HA_REPLICATION_COLOCATED, "master");
@@ -353,6 +375,7 @@ public interface Ids {
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM = build(REMOTING, "http-connector-security-policy",
             FORM_SUFFIX);
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
+    String REPLICATED_CACHE = "replicated-cache";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
     String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);

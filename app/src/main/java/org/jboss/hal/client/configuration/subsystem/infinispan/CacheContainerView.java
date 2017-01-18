@@ -15,8 +15,117 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.CSS.pfIcon;
+
 /**
+ * Implementation note: Not based on MBUI XML due to special cache container singleton resources.
+ *
  * @author Harald Pehl
  */
-public class CacheContainerView {
+public class CacheContainerView extends HalViewImpl
+        implements CacheContainerPresenter.MyView {
+
+    private final Form<ModelNode> configurationForm;
+    private final Map<Cache, CacheElement> caches;
+    private final Map<ThreadPool, ThreadPoolElement> threadPools;
+    private final VerticalNavigation navigation;
+    private CacheContainerPresenter presenter;
+
+    @Inject
+    public CacheContainerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
+            final Resources resources) {
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
+        configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
+                .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
+                .build();
+
+        caches = new HashMap<>();
+        for (Cache cache : Cache.values()) {
+            caches.put(cache, new CacheElement(cache, dispatcher, metadataRegistry, resources));
+        }
+
+        threadPools = new HashMap<>();
+        for (ThreadPool threadPool : ThreadPool.values()) {
+            threadPools.put(threadPool, new ThreadPoolElement(threadPool, dispatcher, metadataRegistry));
+        }
+
+        navigation = new VerticalNavigation();
+        Element section = new Elements.Builder()
+                .section()
+                .h(1).textContent(Names.CONFIGURATION).end()
+                .p().textContent(metadata.getDescription().getDescription()).end()
+                .add(configurationForm)
+                .end()
+                .build();
+        navigation.addPrimary(Ids.CACHE_CONTAINER_ENTRY, Names.CONFIGURATION, pfIcon("settings"), section);
+
+        caches.forEach((cache, cacheElement) ->
+                navigation.addPrimary(Ids.build(cache.baseId, Ids.ENTRY_SUFFIX), cache.type, cache.icon,
+                        cacheElement.asElement()));
+
+        navigation.addPrimary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY, Names.THREAD_POOLS, pfIcon("resource-pool"));
+        threadPools.forEach((threadPool, threadPoolElement) ->
+                navigation.addSecondary(Ids.CACHE_CONTAINER_THREAD_POOLS_ENTRY,
+                        Ids.build(threadPool.baseId, Ids.ENTRY_SUFFIX), threadPool.type,
+                        threadPoolElement.asElement()));
+
+        registerAttachable(navigation);
+        registerAttachable(configurationForm);
+        caches.values().forEach(cacheElement -> registerAttachable(cacheElement));
+        threadPools.values().forEach(threadPoolElement -> registerAttachable(threadPoolElement));
+
+        LayoutBuilder layoutBuilder = new LayoutBuilder()
+                .row()
+                .column()
+                .addAll(navigation.panes())
+                .end()
+                .end();
+        Element root = layoutBuilder.build();
+        initElement(root);
+    }
+
+    @Override
+    public void setPresenter(final CacheContainerPresenter presenter) {
+        this.presenter = presenter;
+        caches.values().forEach(cacheElement -> cacheElement.setPresenter(presenter));
+        threadPools.values().forEach(threadPoolElement -> threadPoolElement.setPresenter(presenter));
+    }
+
+    @Override
+    public void update(final CacheContainer cacheContainer) {
+        configurationForm.view(cacheContainer);
+        caches.forEach((cache, cacheElement) -> {
+            List<NamedNode> caches = asNamedNodes(failSafePropertyList(cacheContainer, cache.resource()));
+            cacheElement.update(caches);
+        });
+        threadPools.forEach((threadPool, threadPoolElement) -> {
+            ModelNode modelNode = failSafeGet(cacheContainer, threadPool.path());
+            threadPoolElement.update(modelNode);
+        });
+    }
 }
