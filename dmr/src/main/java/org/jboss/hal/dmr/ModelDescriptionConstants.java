@@ -64,6 +64,9 @@ public interface ModelDescriptionConstants {
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
 
+    String BACKUP_FOR = "backup-for";
+    String BACKUP = "backup";
+    String BACKUPS = "backups";
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BINARY_JDBC = "binary-jdbc";
@@ -235,6 +238,7 @@ public interface ModelDescriptionConstants {
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
 
+    String PARTITION_HANDLING = "partition-handling";
     String PASSWORD = "password";
     String PATH = "path";
     String PATTERN = "pattern";

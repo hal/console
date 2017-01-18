@@ -28,9 +28,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
  */
 enum Component {
 
+    BACKUP_FOR(Ids.CACHE_COMPONENT_BACKUP_FOR, Names.BACKUP_FOR, ModelDescriptionConstants.BACKUP_FOR),
     EVICTION(Ids.CACHE_COMPONENT_EVICTION, Names.EVICTION, ModelDescriptionConstants.EVICTION),
     EXPIRATION(Ids.CACHE_COMPONENT_EXPIRATION, Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION),
     LOCKING(Ids.CACHE_COMPONENT_LOCKING, Names.LOCKING, ModelDescriptionConstants.LOCKING),
+    PARTITION_HANDLING(Ids.CACHE_COMPONENT_PARTITION_HANDLING, Names.PARTITION_HANDLING,
+            ModelDescriptionConstants.PARTITION_HANDLING),
+    STATE_TRANSFER(Ids.CACHE_COMPONENT_STATE_TRANSFER, Names.STATE_TRANSFER, ModelDescriptionConstants.STATE_TRANSFER),
     TRANSACTION(Ids.CACHE_COMPONENT_TRANSACTION, Names.TRANSACTION, ModelDescriptionConstants.TRANSACTION);
 
     final String baseId;

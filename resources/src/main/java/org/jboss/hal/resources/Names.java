@@ -22,6 +22,7 @@ package org.jboss.hal.resources;
  */
 public interface Names {
 
+    // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "Access Control";
     String ACCESS_LOG = "Access Log";
     String ADDRESS_SETTING = "Address Setting";
@@ -36,13 +37,15 @@ public interface Names {
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
 
+    String BACKUP_FOR = "Backup For";
+    String BACKUP = "Backup";
+    String BACKUPS = "Backups";
     String BINARY_JDBC = "Binary JDBC";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
 
-    String CACHES = "Caches";
     String CACHE_CONTAINER = "Cache Container";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLUSTER_CONNECTION = "Cluster Connection";
@@ -148,6 +151,7 @@ public interface Names {
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
 
+    String PARTITION_HANDLING = "Partition Handling";
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN = "Pattern";

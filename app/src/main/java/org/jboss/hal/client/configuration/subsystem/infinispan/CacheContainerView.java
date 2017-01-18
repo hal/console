@@ -128,4 +128,9 @@ public class CacheContainerView extends HalViewImpl
             threadPoolElement.update(modelNode);
         });
     }
+
+    @Override
+    public void updateCacheBackups(final Cache cache, final List<NamedNode> backups) {
+        caches.get(cache).updateBackups(backups);
+    }
 }

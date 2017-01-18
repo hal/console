@@ -23,9 +23,11 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -42,6 +44,8 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCAL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BACKUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BACKUPS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -54,15 +58,20 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
  */
 class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
 
+    private final Cache cache;
     private final NamedNodeTable<NamedNode> table;
     private final Form<NamedNode> form;
     private final Map<Component, FailSafeForm<ModelNode>> components;
     private final Element root;
+    private Pages pages;
+    private NamedNodeTable<NamedNode> backupTable;
+    private Form<NamedNode> backupForm;
     private CacheContainerPresenter presenter;
-    private String cacheName;
 
     @SuppressWarnings("ConstantConditions")
     CacheElement(Cache cache, Dispatcher dispatcher, MetadataRegistry metadataRegistry, Resources resources) {
+        this.cache = cache;
+
         Metadata metadata = metadataRegistry.lookup(cache.template);
         ModelNodeTable.Builder<NamedNode> builder = new NamedNodeTable.Builder<>(metadata)
                 .button(resources.constants().add(), (event, api) -> presenter.addCache(cache))
@@ -71,6 +80,12 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName());
         if (cache != LOCAL) {
             builder.column(MODE);
+        }
+        if (cache.backups) {
+            builder.column(Names.BACKUPS, row -> {
+                presenter.selectCache(cache, row.getName());
+                presenter.showCacheBackups();
+            });
         }
         table = new NamedNodeTable<>(Ids.build(cache.baseId, Ids.TABLE_SUFFIX), builder.build());
 
@@ -81,17 +96,16 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         tabs.add(Ids.build(cache.baseId, Ids.TAB_SUFFIX), resources.constants().attributes(), form.asElement());
 
         components = new HashMap<>();
-        for (Component component : Component.values()) {
+        for (Component component : cache.components) {
             String tabId = Ids.build(cache.baseId, component.baseId, Ids.TAB_SUFFIX);
             String formId = Ids.build(cache.baseId, component.baseId, Ids.FORM_SUFFIX);
             Metadata cm = metadataRegistry.lookup(cache.template.append(COMPONENT + "=" + component.resource));
             Form<ModelNode> cf = new ModelNodeForm.Builder<>(formId, cm)
-                    .onSave((form, changedValues) -> presenter.saveCacheComponent(cache, cacheName, component,
-                            changedValues))
+                    .onSave((form, changedValues) -> presenter.saveCacheComponent(component, changedValues))
                     .build();
             FailSafeForm<ModelNode> fsf = new FailSafeForm<>(dispatcher,
-                    () -> presenter.readCacheComponent(cache, cacheName, component), cf,
-                    () -> presenter.addCacheComponent(cache, cacheName, component));
+                    () -> presenter.readCacheComponent(component), cf,
+                    () -> presenter.addCacheComponent(component));
             tabs.add(tabId, component.type, fsf.asElement());
             components.put(component, fsf);
         }
@@ -106,11 +120,47 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             .end()
         .build();
         // @formatter:on
+
+        if (cache.backups) {
+            Metadata backupMeta = metadataRegistry.lookup(
+                    cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*"));
+
+            Options<NamedNode> backupOptions = new NamedNodeTable.Builder<>(backupMeta)
+                    .button(resources.constants().add(), (event, api) -> presenter.addCacheBackup())
+                    .button(resources.constants().remove(), SELECTED,
+                            (event, api) -> presenter.removeCacheBackup(api.selectedRow().getName()))
+                    .column(Names.NAME, (cell, type, row, meta) -> row.getName())
+                    .build();
+            backupTable = new NamedNodeTable<>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),
+                    backupOptions);
+
+            backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.FORM_SUFFIX),
+                    backupMeta)
+                    .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
+                            changedValues))
+                    .build();
+
+            // @formatter:off
+            Element backupSection = new Elements.Builder()
+                .section()
+                    .h(1).textContent(Names.BACKUPS).end()
+                    .p().textContent(backupMeta.getDescription().getDescription()).end()
+                    .add(backupTable)
+                    .add(backupForm)
+                .end()
+            .build();
+            // @formatter:on
+
+            String mainId = Ids.build(cache.baseId, Ids.PAGE_SUFFIX);
+            pages = new Pages(mainId, root);
+            pages.addPage(mainId, Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX),
+                    () -> presenter.cacheSegment(), () -> Names.BACKUPS, backupSection);
+        }
     }
 
     @Override
     public Element asElement() {
-        return root;
+        return cache.backups ? pages.asElement() : root;
     }
 
     @Override
@@ -119,18 +169,22 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         table.attach();
         form.attach();
         components.values().forEach(Attachable::attach);
+        if (cache.backups) {
+            backupTable.attach();
+            backupForm.attach();
+            backupTable.bindForm(backupForm);
+        }
 
         table.api().onSelectionChange((Api<NamedNode> api) -> {
             if (api.hasSelection()) {
-                NamedNode cache = api.selectedRow();
-                cacheName = cache.getName();
-                form.view(cache);
+                NamedNode selectedCache = api.selectedRow();
+                presenter.selectCache(cache, selectedCache.getName());
+                form.view(selectedCache);
                 components.forEach((component, form) -> {
-                    ModelNode modelNode = failSafeGet(cache, component.path());
+                    ModelNode modelNode = failSafeGet(selectedCache, component.path());
                     form.view(modelNode);
                 });
             } else {
-                cacheName = null;
                 form.clear();
                 //noinspection Convert2MethodRef
                 components.values().forEach((fsf) -> fsf.clear());
@@ -140,6 +194,10 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
     @Override
     public void detach() {
+        if (cache.backups) {
+            backupTable.detach();
+            backupForm.detach();
+        }
         components.values().forEach(Attachable::detach);
         form.detach();
         table.detach();
@@ -155,5 +213,11 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         //noinspection Convert2MethodRef
         components.values().forEach((fsf) -> fsf.clear());
         table.update(caches);
+    }
+
+    void updateBackups(final List<NamedNode> backups) {
+        pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX));
+        backupForm.clear();
+        backupTable.update(backups);
     }
 }

@@ -81,9 +81,12 @@ public interface Ids {
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
+    String CACHE_COMPONENT_BACKUP_FOR = "cache-component-backup-for";
     String CACHE_COMPONENT_EVICTION = "cache-component-eviction";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";
     String CACHE_COMPONENT_LOCKING = "cache-component-locking";
+    String CACHE_COMPONENT_PARTITION_HANDLING = "cache-component-partition-handling";
+    String CACHE_COMPONENT_STATE_TRANSFER = "cache-component-state-transfer";
     String CACHE_COMPONENT_TRANSACTION = "cache-component-transaction";
     String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";
     String CACHE_STORE_CUSTOM = "cache-store-custom";

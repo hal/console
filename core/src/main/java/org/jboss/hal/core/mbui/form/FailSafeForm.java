@@ -82,9 +82,13 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     @Override
     public void attach() {
         form.attach();
-        dispatcher.execute(readOperation.get(),
-                result -> formMode(),
-                (op, failure) -> emptyStateMode());
+        if (readOperation.get() != null) {
+            dispatcher.execute(readOperation.get(),
+                    result -> formMode(),
+                    (op, failure) -> emptyStateMode());
+        } else {
+            emptyStateMode();
+        }
     }
 
     @Override

@@ -16,10 +16,14 @@
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.DISTRIBUTED_CACHE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INVALIDATION_CACHE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.LOCAL_CACHE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REPLICATED_CACHE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.Component.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -30,24 +34,33 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 enum Cache {
 
-    DISTRIBUTED(Ids.DISTRIBUTED_CACHE, Names.DISTRIBUTED_CACHE, AddressTemplates.DISTRIBUTED_CACHE_TEMPLATE,
-            pfIcon("cluster")),
-    INVALIDATION(Ids.INVALIDATION_CACHE, Names.INVALIDATION_CACHE, AddressTemplates.INVALIDATION_CACHE_TEMPLATE,
-            fontAwesome("ban")),
-    LOCAL(Ids.LOCAL_CACHE, Names.LOCAL_CACHE, AddressTemplates.LOCAL_CACHE_TEMPLATE, CSS.pfIcon("home")),
-    REPLICATED(Ids.REPLICATED_CACHE, Names.REPLICATED_CACHE, AddressTemplates.REPLICATED_CACHE_TEMPLATE,
-            CSS.pfIcon("replicator"));
+    DISTRIBUTED(Ids.DISTRIBUTED_CACHE, Names.DISTRIBUTED_CACHE, DISTRIBUTED_CACHE_TEMPLATE, pfIcon("cluster"),
+            true, BACKUP_FOR, EVICTION, EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION),
+
+    INVALIDATION(Ids.INVALIDATION_CACHE, Names.INVALIDATION_CACHE, INVALIDATION_CACHE_TEMPLATE, fontAwesome("ban"),
+            false, EVICTION, EXPIRATION, LOCKING, TRANSACTION),
+
+    LOCAL(Ids.LOCAL_CACHE, Names.LOCAL_CACHE, LOCAL_CACHE_TEMPLATE, pfIcon("home"),
+            false, EVICTION, EXPIRATION, LOCKING, TRANSACTION),
+
+    REPLICATED(Ids.REPLICATED_CACHE, Names.REPLICATED_CACHE, REPLICATED_CACHE_TEMPLATE, pfIcon("replicator"),
+            true, BACKUP_FOR, EVICTION, EXPIRATION, LOCKING, PARTITION_HANDLING, STATE_TRANSFER, TRANSACTION);
 
     final String baseId;
     final String type;
     final AddressTemplate template;
     final String icon;
+    final boolean backups; // whether there's a nested page for the backups
+    final Component[] components;
 
-    Cache(final String baseId, final String type, final AddressTemplate template, final String icons) {
+    Cache(final String baseId, final String type, final AddressTemplate template, final String icons,
+            final boolean backups, final Component... components) {
         this.baseId = baseId;
         this.type = type;
         this.template = template;
         this.icon = icons;
+        this.backups = backups;
+        this.components = components;
     }
 
     String resource() {

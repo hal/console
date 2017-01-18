@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -32,6 +33,7 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
@@ -46,11 +48,8 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INFINISPAN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
  * @author Harald Pehl
@@ -67,6 +66,7 @@ public class CacheContainerPresenter
 
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
         void update(CacheContainer cacheContainer);
+        void updateCacheBackups(Cache cache, List<NamedNode> backups);
     }
     // @formatter:on
 
@@ -77,6 +77,8 @@ public class CacheContainerPresenter
     private final StatementContext statementContext;
     private final Resources resources;
     private String cacheContainer;
+    private Cache cacheType;
+    private String cacheName;
 
     @Inject
     public CacheContainerPresenter(final EventBus eventBus,
@@ -137,54 +139,101 @@ public class CacheContainerPresenter
 
     // ------------------------------------------------------ cache
 
-    void addCache(Cache cache) {
+    void addCache(final Cache cache) {
         Metadata metadata = metadataRegistry.lookup(cache.template);
         AddResourceDialog dialog = new AddResourceDialog(Ids.build(cache.baseId, Ids.ADD_SUFFIX),
                 resources.messages().addResourceTitle(cache.type), metadata,
-                (name, model) -> {
-                    ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
-                            .append(cache.resource() + "=" + name)
-                            .resolve(statementContext);
-                    crud.add(cache.type, name, address, model, (n, a) -> reload());
-                });
+                (name, model) -> crud.add(cache.type, name, cacheAddress(cache, name), model, (n, a) -> reload()));
         dialog.show();
     }
 
     void saveCache(final Cache cache, final String name, final Map<String, Object> changedValues) {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.append(cache.resource() + "=" + name)
-                .resolve(statementContext);
-        crud.save(cache.type, name, address, changedValues, this::reload);
+        crud.save(cache.type, name, cacheAddress(cache, name), changedValues, this::reload);
     }
 
     void removeCache(final Cache cache, final String name) {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.append(cache.resource() + "=" + name)
-                .resolve(statementContext);
-        crud.remove(cache.type, name, address, this::reload);
+        crud.remove(cache.type, name, cacheAddress(cache, name), this::reload);
+    }
+
+    void selectCache(final Cache cacheType, final String cacheName) {
+        this.cacheType = cacheType;
+        this.cacheName = cacheName;
+    }
+
+    String cacheSegment() {
+        return cacheType.type + ": " + cacheName;
+    }
+
+    private ResourceAddress cacheAddress(final Cache cache, final String name) {
+        // cannot use this.cacheType and this.cacheName here, since they might be null
+        return SELECTED_CACHE_CONTAINER_TEMPLATE.append(cache.resource() + "=" + name).resolve(statementContext);
     }
 
 
     // ------------------------------------------------------ cache component
 
-    void addCacheComponent(final Cache cache, final String name, final Component component) {
-        ResourceAddress address = cacheComponentAddress(cache, name, component);
-        crud.addSingleton(component.type, address, null, (n, a) -> reload());
+    void addCacheComponent(final Component component) {
+        crud.addSingleton(component.type, cacheComponentAddress(component), null, (n, a) -> reload());
     }
 
-    Operation readCacheComponent(final Cache cache, final String name, final Component component) {
-        ResourceAddress address = cacheComponentAddress(cache, name, component);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+    Operation readCacheComponent(final Component component) {
+        if (cacheType != null && cacheName != null) {
+            return new Operation.Builder(READ_RESOURCE_OPERATION, cacheComponentAddress(component)).build();
+        } else {
+            return null;
+        }
     }
 
-    void saveCacheComponent(final Cache cache, final String name, final Component component,
+    void saveCacheComponent(final Component component,
             final Map<String, Object> changedValues) {
-        ResourceAddress address = cacheComponentAddress(cache, name, component);
-        crud.saveSingleton(component.type, address, changedValues, this::reload);
+        crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, this::reload);
     }
 
-    private ResourceAddress cacheComponentAddress(final Cache cache, final String name, final Component component) {
+    private ResourceAddress cacheComponentAddress(final Component component) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
-                .append(cache.resource() + "=" + name)
+                .append(cacheType.resource() + "=" + cacheName)
                 .append(COMPONENT + "=" + component.resource)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ cache backups
+
+    void addCacheBackup() {
+        Metadata metadata = metadataRegistry.lookup(cacheType.template
+                .append(COMPONENT + "=" + BACKUPS)
+                .append(BACKUP + "=*"));
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.TABLE_SUFFIX),
+                resources.messages().addResourceTitle(Names.BACKUP), metadata,
+                (name, model) -> {
+                    ResourceAddress address = cacheBackupAddress(name);
+                    crud.add(Names.BACKUP, name, address, model, (n, a) -> showCacheBackups());
+                });
+        dialog.show();
+    }
+
+    void showCacheBackups() {
+        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .append(COMPONENT + "=" + BACKUPS)
+                .resolve(statementContext);
+        crud.readChildren(address, BACKUP,
+                children -> getView().updateCacheBackups(cacheType, asNamedNodes(children)));
+    }
+
+    void saveCacheBackup(final String name, final Map<String, Object> changedValues) {
+        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, this::showCacheBackups);
+    }
+
+    void removeCacheBackup(final String name) {
+        crud.remove(Names.BACKUP, name, cacheBackupAddress(name), this::showCacheBackups);
+    }
+
+    private ResourceAddress cacheBackupAddress(final String name) {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .append(COMPONENT + "=" + BACKUPS)
+                .append(BACKUP + "=" + name)
                 .resolve(statementContext);
     }
 
