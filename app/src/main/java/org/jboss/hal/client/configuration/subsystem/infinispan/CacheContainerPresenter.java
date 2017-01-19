@@ -33,6 +33,10 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -65,13 +69,14 @@ public class CacheContainerPresenter
     public interface MyProxy extends ProxyPlace<CacheContainerPresenter> {}
 
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
-        void update(CacheContainer cacheContainer);
+        void update(CacheContainer cacheContainer, boolean jgroups);
         void updateCacheBackups(Cache cache, List<NamedNode> backups);
     }
     // @formatter:on
 
 
     private final MetadataRegistry metadataRegistry;
+    private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -86,12 +91,14 @@ public class CacheContainerPresenter
             final CacheContainerPresenter.MyProxy myProxy,
             final Finder finder,
             final MetadataRegistry metadataRegistry,
+            final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.metadataRegistry = metadataRegistry;
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> cacheContainer);
@@ -124,8 +131,25 @@ public class CacheContainerPresenter
 
     @Override
     protected void reload() {
+        ResourceAddress profileAddress = new ResourceAddress().add(PROFILE, statementContext.selectedProfile());
+        Operation subsystems = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, profileAddress)
+                .param(CHILD_TYPE, SUBSYSTEM)
+                .build();
+
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
-        crud.readRecursive(address, result -> getView().update(new CacheContainer(cacheContainer, result)));
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                .param(INCLUDE_ALIASES, true)
+                .param(RECURSIVE, true)
+                .build();
+
+        dispatcher.execute(new Composite(subsystems, operation), (CompositeResult result) -> {
+            boolean jgroups = result.step(0).get(RESULT).asList().stream()
+                    .map(ModelNode::asString)
+                    .anyMatch(JGROUPS::equals);
+
+            CacheContainer cc = new CacheContainer(this.cacheContainer, result.step(1).get(RESULT));
+            getView().update(cc, jgroups);
+        });
     }
 
 
@@ -241,23 +265,44 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ thread pool
 
     void addThreadPool(final ThreadPool threadPool) {
-        ResourceAddress address = threadPoolAddress(threadPool);
-        crud.addSingleton(threadPool.type, address, null, (n, a) -> reload());
+        crud.addSingleton(threadPool.type, threadPoolAddress(threadPool), null, (n, a) -> reload());
     }
 
     Operation readThreadPool(final ThreadPool threadPool) {
-        ResourceAddress address = threadPoolAddress(threadPool);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        return new Operation.Builder(READ_RESOURCE_OPERATION, threadPoolAddress(threadPool)).build();
     }
 
     void saveThreadPool(final ThreadPool threadPool, final Map<String, Object> changedValues) {
-        ResourceAddress address = threadPoolAddress(threadPool);
-        crud.saveSingleton(threadPool.type, address, changedValues, this::reload);
+        crud.saveSingleton(threadPool.type, threadPoolAddress(threadPool), changedValues, this::reload);
     }
 
     private ResourceAddress threadPoolAddress(final ThreadPool threadPool) {
         return SELECTED_CACHE_CONTAINER_TEMPLATE
                 .append(THREAD_POOL + "=" + threadPool.resource)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ transport - jgroups
+
+    void addJgroups() {
+        crud.addSingleton(Names.JGROUPS, jgroupsAddress(), null, (n, a) -> reload());
+    }
+
+    void saveJgroups(final Map<String, Object> changedValues) {
+        crud.saveSingleton(Names.JGROUPS, jgroupsAddress(), changedValues, this::reload);
+    }
+
+    Operation readTransportChildren() {
+        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
+        return new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                .param(CHILD_TYPE, TRANSPORT)
+                .build();
+    }
+
+    private ResourceAddress jgroupsAddress() {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(TRANSPORT + "=" + JGROUPS)
                 .resolve(statementContext);
     }
 }

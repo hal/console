@@ -102,12 +102,16 @@ public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable 
     }
 
     public void view(T model) {
-        dispatcher.execute(readOperation.get(),
-                result -> {
-                    formMode();
-                    form.view(model);
-                },
-                (op, failure) -> emptyStateMode());
+        if (readOperation.get() != null) {
+            dispatcher.execute(readOperation.get(),
+                    result -> {
+                        formMode();
+                        form.view(model);
+                    },
+                    (op, failure) -> emptyStateMode());
+        } else {
+            emptyStateMode();
+        }
     }
 
     public <F> FormItem<F> getFormItem(final String name) {return form.getFormItem(name);}

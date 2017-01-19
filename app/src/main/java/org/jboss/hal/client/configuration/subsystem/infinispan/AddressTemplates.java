@@ -34,6 +34,8 @@ interface AddressTemplates {
     String LOCAL_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/local-cache=*";
     String REPLICATED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/replicated-cache=*";
 
+    String TRANSPORT_JGROUPS_ADDRESS = CACHE_CONTAINER_ADDRESS + "/transport=jgroups";
+
     AddressTemplate INFINISPAN_SUBSYSTEM_TEMPLATE = AddressTemplate.of(INFINISPAN_SUBSYSTEM_ADDRESS);
 
     AddressTemplate CACHE_CONTAINER_TEMPLATE = AddressTemplate.of(CACHE_CONTAINER_ADDRESS);
@@ -43,4 +45,6 @@ interface AddressTemplates {
     AddressTemplate INVALIDATION_CACHE_TEMPLATE = AddressTemplate.of(INVALIDATION_CACHE_ADDRESS);
     AddressTemplate LOCAL_CACHE_TEMPLATE = AddressTemplate.of(LOCAL_CACHE_ADDRESS);
     AddressTemplate REPLICATED_CACHE_TEMPLATE = AddressTemplate.of(REPLICATED_CACHE_ADDRESS);
+
+    AddressTemplate TRANSPORT_JGROUPS_TEMPLATE = AddressTemplate.of(TRANSPORT_JGROUPS_ADDRESS);
 }

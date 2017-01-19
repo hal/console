@@ -37,9 +37,12 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
@@ -53,6 +56,7 @@ public class CacheContainerView extends HalViewImpl
     private final Form<ModelNode> configurationForm;
     private final Map<Cache, CacheElement> caches;
     private final Map<ThreadPool, ThreadPoolElement> threadPools;
+    private final TransportElement transport;
     private final VerticalNavigation navigation;
     private CacheContainerPresenter presenter;
 
@@ -74,6 +78,8 @@ public class CacheContainerView extends HalViewImpl
             threadPools.put(threadPool, new ThreadPoolElement(threadPool, dispatcher, metadataRegistry));
         }
 
+        transport = new TransportElement(dispatcher, metadataRegistry, resources);
+
         navigation = new VerticalNavigation();
         Element section = new Elements.Builder()
                 .section()
@@ -94,10 +100,14 @@ public class CacheContainerView extends HalViewImpl
                         Ids.build(threadPool.baseId, Ids.ENTRY_SUFFIX), threadPool.type,
                         threadPoolElement.asElement()));
 
+        navigation.addPrimary(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, Names.TRANSPORT, fontAwesome("road"),
+                transport.asElement());
+
         registerAttachable(navigation);
         registerAttachable(configurationForm);
         caches.values().forEach(cacheElement -> registerAttachable(cacheElement));
         threadPools.values().forEach(threadPoolElement -> registerAttachable(threadPoolElement));
+        registerAttachable(transport);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
@@ -114,10 +124,11 @@ public class CacheContainerView extends HalViewImpl
         this.presenter = presenter;
         caches.values().forEach(cacheElement -> cacheElement.setPresenter(presenter));
         threadPools.values().forEach(threadPoolElement -> threadPoolElement.setPresenter(presenter));
+        transport.setPresenter(presenter);
     }
 
     @Override
-    public void update(final CacheContainer cacheContainer) {
+    public void update(final CacheContainer cacheContainer, boolean jgroups) {
         configurationForm.view(cacheContainer);
         caches.forEach((cache, cacheElement) -> {
             List<NamedNode> caches = asNamedNodes(failSafePropertyList(cacheContainer, cache.resource()));
@@ -127,6 +138,12 @@ public class CacheContainerView extends HalViewImpl
             ModelNode modelNode = failSafeGet(cacheContainer, threadPool.path());
             threadPoolElement.update(modelNode);
         });
+
+        navigation.setVisible(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, jgroups);
+        if (jgroups) {
+            ModelNode modelNode = failSafeGet(cacheContainer, TRANSPORT + "/" + JGROUPS);
+            transport.update(modelNode);
+        }
     }
 
     @Override

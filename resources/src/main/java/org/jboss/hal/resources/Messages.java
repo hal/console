@@ -178,6 +178,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noResource();
     SafeHtml noSecuritySettingSelected();
     SafeHtml noServerGroupSelected();
+    SafeHtml noTransport();
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);

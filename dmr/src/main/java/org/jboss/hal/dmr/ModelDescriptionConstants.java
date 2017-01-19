@@ -181,6 +181,7 @@ public interface ModelDescriptionConstants {
 
     String JCA = "jca";
     String JDBC_DRIVER = "jdbc-driver";
+    String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_QUEUE = "jms-queue";
     String JMS_TOPIC = "jms-topic";
