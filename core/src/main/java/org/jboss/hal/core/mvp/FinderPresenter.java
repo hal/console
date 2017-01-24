@@ -30,7 +30,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 /**
- * A presenter which contains a finder.
+ * A presenter which contains a finder. Should only be used as base class for the top level categories.
  *
  * @author Harald Pehl
  */
