@@ -58,13 +58,21 @@ public interface ModelDescriptionConstants {
     String ALLOWED = "allowed";
     String ANY = "any";
     String ARCHIVE = "archive";
+    String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
 
+    String BACKUP_FOR = "backup-for";
+    String BACKUP = "backup";
+    String BACKUPS = "backups";
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
+    String BATCH_SIZE = "batch-size";
+    String BEHIND = "behind";
+    String BINARY = "binary";
+    String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
@@ -72,6 +80,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
 
+    String CACHE_CONTAINER = "cache-container";
     String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
@@ -80,6 +89,7 @@ public interface ModelDescriptionConstants {
     String CLIENT_CONFIG = "client-config";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
+    String COMPONENT = "component";
     String COMPOSITE = "composite";
     String CONFIG_PROPERTIES = "config-properties";
     String CONFIGURATION = "configuration";
@@ -93,11 +103,14 @@ public interface ModelDescriptionConstants {
     String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
+    String CUSTOM = "custom";
 
+    String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
@@ -123,13 +136,16 @@ public interface ModelDescriptionConstants {
     String EJB3 = "ejb3";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENABLED = "enabled";
+    String EVICTION = "eviction";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
+    String EXPIRATION = "expiration";
     String EXPLODED = "exploded";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILTER_REF = "filter-ref";
     String FROM = "from";
@@ -153,6 +169,7 @@ public interface ModelDescriptionConstants {
     String HTTP_LISTENER = "http-listener";
     String HTTPS_LISTENER = "https-listener";
 
+    String ID_COLUMN = "id-column";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
@@ -170,6 +187,7 @@ public interface ModelDescriptionConstants {
 
     String JCA = "jca";
     String JDBC_DRIVER = "jdbc-driver";
+    String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_QUEUE = "jms-queue";
     String JMS_TOPIC = "jms-topic";
@@ -185,8 +203,10 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
+    String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOCATION = "location";
+    String LOCKING = "locking";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
     String LOGIN_MODULE = "login-module";
@@ -208,12 +228,15 @@ public interface ModelDescriptionConstants {
     String METRIC = "metric";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
+    String MIXED_JDBC = "mixed-jdbc";
+    String MODE = "mode";
     String MODULE = "module";
     String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
 
     String NAME = "name";
     String NILLABLE = "nillable";
+    String NONE = "none";
     String NOT = "not";
 
     String OP = "operation";
@@ -222,9 +245,11 @@ public interface ModelDescriptionConstants {
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
 
+    String PARTITION_HANDLING = "partition-handling";
     String PASSWORD = "password";
     String PATH = "path";
     String PATTERN = "pattern";
+    String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";
     String POLICY = "policy";
     String POLICY_MODULE = "policy-module";
@@ -233,6 +258,7 @@ public interface ModelDescriptionConstants {
     String PORT = "port";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
+    String PREFIX = "prefix";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
@@ -260,7 +286,9 @@ public interface ModelDescriptionConstants {
     String READ_WRITE = "read-write";
     String REALM = "realm";
     String RELATIVE_TO = "relative-to";
+    String REMOTE = "remote";
     String REMOTE_ACCEPTOR = "remote-acceptor";
+    String REMOTE_COMMAND = "remote-command";
     String REMOTE_CONNECTOR = "remote-connector";
     String REMOTING = "remoting";
     String REMOVE = "remove";
@@ -326,6 +354,7 @@ public interface ModelDescriptionConstants {
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
     String START_SERVERS = "start-servers";
+    String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
@@ -333,6 +362,9 @@ public interface ModelDescriptionConstants {
     String STORAGE = "storage";
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
+    String STORE = "store";
+    String STRING = "string";
+    String STRING_JDBC = "string-jdbc";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
@@ -342,12 +374,18 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";
 
+    String TABLE = "table";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
+    String THREAD_POOL = "thread-pool";
+    String THROUGH = "through";
     String TIMEOUT = "timeout";
+    String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TRANSACTION_SUPPORT = "transaction-support";
+    String TRANSACTION = "transaction";
     String TRANSACTIONS = "transactions";
+    String TRANSPORT = "transport";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
@@ -370,6 +408,7 @@ public interface ModelDescriptionConstants {
     String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
     String WORKER = "worker";
     String WORKMANAGER = "workmanager";
+    String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";

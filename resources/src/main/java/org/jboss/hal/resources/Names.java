@@ -22,6 +22,7 @@ package org.jboss.hal.resources;
  */
 public interface Names {
 
+    // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "Access Control";
     String ACCESS_LOG = "Access Log";
     String ADDRESS_SETTING = "Address Setting";
@@ -30,16 +31,23 @@ public interface Names {
     String AJP_LISTENER = "AJP Listener";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
+    String ASYNC_OPERATIONS = "Async Operations";
     String AUDIT_LOG = "Audit Log";
     String AUDIT_MODULE = "Audit Module";
     String AUTHENTICATION_MODULE = "Authentication Module";
     String AUTHORIZATION_MODULE = "Authorization Module";
 
+    String BACKUP_FOR = "Backup For";
+    String BACKUP = "Backup";
+    String BACKUPS = "Backups";
+    String BINARY_JDBC = "Binary JDBC";
+    String BINARY_TABLE = "Binary Table";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
 
+    String CACHE_CONTAINER = "Cache Container";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";
@@ -53,6 +61,7 @@ public interface Names {
     String COOKIES = "Cookies";
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
+    String CUSTOM = "Custom";
 
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
@@ -61,6 +70,7 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DESTINATIONS = "Destinations";
     String DISCOVERY_GROUP = "Discovery Group";
+    String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
 
@@ -68,7 +78,10 @@ public interface Names {
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
+    String EVICTION = "Eviction";
+    String EXPIRATION = "Expiration";
 
+    String FILE = "File";
     String FILTER = "Filter";
     String FILTERS = "Filters";
 
@@ -97,10 +110,12 @@ public interface Names {
     String IN_VM_CONNECTOR = "In VM Connector";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
+    String INVALIDATION_CACHE = "Invalidation Cache";
 
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JGROUPS = "JGroups";
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
     String JPA = "JPA";
@@ -110,9 +125,11 @@ public interface Names {
 
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
+    String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
     String LOCATIONS = "Locations";
+    String LOCKING = "Locking";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
@@ -123,20 +140,23 @@ public interface Names {
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
-    String MIME_MAPPING = "Mime Mapping";
     String MB = "MB";
+    String MIME_MAPPING = "Mime Mapping";
+    String MIXED_JDBC = "Mixed JDBC";
     String MODULE = "Module";
-    String NAME = "Name";
 
+    String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
 
+    String PARTITION_HANDLING = "Partition Handling";
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN = "Pattern";
+    String PERSISTENCE = "Persistence";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
@@ -147,11 +167,14 @@ public interface Names {
     String QUERY_CACHE = "Query Cache";
 
     String REALM = "Realm";
+    String REMOTE = "Remote";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
+    String REMOTE_COMMAND = "Remote Command";
     String REMOTE_CONNECTOR = "Remote Connector";
     String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
     String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
     String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
+    String REPLICATED_CACHE = "Replicated Cache";
     String REPLICATION_COLOCATED = "Replication Colocated";
     String REPLICATION_MASTER = "Replication Master";
     String REPLICATION_SLAVE = "Replication Slave";
@@ -178,6 +201,10 @@ public interface Names {
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";
+    String STATE_TRANSFER = "State Transfer";
+    String STORE = "Store";
+    String STRING_JDBC = "String JDBC";
+    String STRING_TABLE = "String Table";
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
@@ -187,6 +214,8 @@ public interface Names {
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
+    String TRANSACTION = "Transaction";
+    String TRANSPORT = "Transport";
     String TRUST_MODULE = "Trust Module";
 
     String UNKNOWN = "unknown";
@@ -197,6 +226,9 @@ public interface Names {
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
+    String WRITE_BEHAVIOUR = "Write Behaviour";
+    String WRITE_BEHIND = "Write Behind";
+    String WRITE_THROUGH = "Write Through";
 
     String XA_DATASOURCE = "XA Datasource";
 }

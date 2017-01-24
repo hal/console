@@ -185,7 +185,7 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
         pages.showPage(handlerChainPageId(configType));
     }
 
-    void updateHandlers(Config configType, HandlerChain handlerChainType, List<NamedNode> handlers) {
+    void updateHandlers(Config configType, List<NamedNode> handlers) {
         handler.update(handlers);
         pages.showPage(handlerPageId(configType));
     }

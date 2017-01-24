@@ -65,6 +65,8 @@ public class Subsystems {
                 .token(NameTokens.IIOP)
                 .build());
         add(new SubsystemMetadata.Builder(INFINISPAN, "Infinispan")
+                .nextColumn(Ids.CACHE_CONTAINER)
+                .preview(resources.previews().configurationInfinispan())
                 .build());
         add(new SubsystemMetadata.Builder(IO, "IO")
                 .token(NameTokens.IO)

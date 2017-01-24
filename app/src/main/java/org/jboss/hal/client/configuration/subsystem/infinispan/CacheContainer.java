@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.NamedNode;
 
 /**
  * @author Harald Pehl
  */
-public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
-        extends ApplicationFinderPresenter<V, Proxy_> {
+class CacheContainer extends NamedNode {
 
-    protected MbuiPresenter(final EventBus eventBus, final V view,
-            final Proxy_ proxy_, final Finder finder) {
-        super(eventBus, view, proxy_, finder);
+    CacheContainer(final Property property) {
+        super(property);
     }
 
-    // re-overridden here in order to use in MbuiViewImpl
-    @Override
-    protected abstract void reload();
+    CacheContainer(final String name, final ModelNode node) {
+        super(name, node);
+    }
 }
