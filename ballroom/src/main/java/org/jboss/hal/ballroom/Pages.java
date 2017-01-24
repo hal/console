@@ -178,10 +178,6 @@ public class Pages implements IsElement {
         }
     }
 
-    public String getCurrentPageId() {
-        return currentId;
-    }
-
     @Override
     public Element asElement() {
         return root;

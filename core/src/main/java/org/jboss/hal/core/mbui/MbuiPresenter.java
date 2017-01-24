@@ -31,7 +31,7 @@ public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlac
         super(eventBus, view, proxy_, finder);
     }
 
-    // re-override here in order to use in MbuiViewImpl
+    // re-overridden here in order to use in MbuiViewImpl
     @Override
     protected abstract void reload();
 }

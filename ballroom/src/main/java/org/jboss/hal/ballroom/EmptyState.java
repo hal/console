@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -48,14 +49,14 @@ public class EmptyState implements IsElement {
     public static class Builder {
 
         private final String title;
-        private final List<Element> paragraphs;
+        private final List<Element> elements;
         private final List<TitleAndAction> secondaryActions;
         private String icon;
         private TitleAndAction primaryAction;
 
         public Builder(final String title) {
             this.title = title;
-            this.paragraphs = new ArrayList<>();
+            this.elements = new ArrayList<>();
             this.secondaryActions = new ArrayList<>();
         }
 
@@ -67,14 +68,24 @@ public class EmptyState implements IsElement {
         public Builder description(String description) {
             Element p = Browser.getDocument().createElement("p"); //NON-NLS
             p.setTextContent(description);
-            paragraphs.add(p);
+            elements.add(p);
             return this;
         }
 
         public Builder description(SafeHtml description) {
             Element p = Browser.getDocument().createElement("p"); //NON-NLS
             p.setInnerHTML(description.asString());
-            paragraphs.add(p);
+            elements.add(p);
+            return this;
+        }
+
+        public Builder add(Element element) {
+            elements.add(element);
+            return this;
+        }
+
+        public Builder addAll(Iterable<Element> elements) {
+            Iterables.addAll(this.elements, elements);
             return this;
         }
 
@@ -112,7 +123,7 @@ public class EmptyState implements IsElement {
         }
         eb.h(1).rememberAs(HEADER).textContent(builder.title).end();
         eb.div().rememberAs(PARAGRAPHS_DIV);
-        builder.paragraphs.forEach(eb::add);
+        builder.elements.forEach(eb::add);
         eb.end();
 
         eb.div().css(blankSlatePfMainAction).rememberAs(PRIMARY_ACTION_DIV);

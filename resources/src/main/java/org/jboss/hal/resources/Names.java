@@ -41,6 +41,7 @@ public interface Names {
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
     String BINARY_JDBC = "Binary JDBC";
+    String BINARY_TABLE = "Binary Table";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
@@ -147,7 +148,6 @@ public interface Names {
     String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
-    String NONE = "None";
     String NYI = "not yet implemented";
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
@@ -204,6 +204,7 @@ public interface Names {
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
     String STRING_JDBC = "String JDBC";
+    String STRING_TABLE = "String Table";
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
@@ -225,6 +226,9 @@ public interface Names {
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
+    String WRITE_BEHAVIOUR = "Write Behaviour";
+    String WRITE_BEHIND = "Write Behind";
+    String WRITE_THROUGH = "Write Through";
 
     String XA_DATASOURCE = "XA Datasource";
 }

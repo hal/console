@@ -56,6 +56,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String blacklist(String blacklist);
 
+    String cacheStore();
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
     SafeHtml chooseServerGroupsToUndeploy(String name);
@@ -164,6 +165,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
+    SafeHtml moreThanOneCacheStore();
+    String moreThanOneCacheStoreDetails();
 
     SafeHtml noChanges();
     SafeHtml noContent();
@@ -178,7 +181,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noResource();
     SafeHtml noSecuritySettingSelected();
     SafeHtml noServerGroupSelected();
+    SafeHtml noStore();
     SafeHtml noTransport();
+    SafeHtml noWrite();
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
@@ -320,5 +325,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String used(double value);
 
     String view(String type);
+
+    SafeHtml writeBehaviour(String current, String switchTo);
     //@formatter:on
 }

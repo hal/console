@@ -31,11 +31,9 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
-import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INFINISPAN_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
@@ -46,7 +44,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.CACHE_CONTAINER)
-@Requires(CACHE_CONTAINER_ADDRESS)
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
     @Inject
@@ -93,7 +90,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             @Override
             public List<ItemAction<CacheContainer>> actions() {
                 return asList(
-                        itemActionFactory.view(
+                        itemActionFactory.viewAndMonitor(Ids.cacheContainer(item.getName()),
                                 places.selectedProfile(NameTokens.CACHE_CONTAINER).with(NAME, item.getName()).build()),
                         itemActionFactory.remove(Names.CACHE_CONTAINER, item.getName(),
                                 CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this)

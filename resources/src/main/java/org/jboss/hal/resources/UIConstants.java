@@ -45,6 +45,7 @@ public interface UIConstants {
     String ALERT = "alert";
     String BODY = "body";
     String BUTTON = "button";
+    String CHECKED = "checked";
     String COLLAPSE = "collapse";
     String CONTAINER = "container";
     String CONTROLS = "controls";
@@ -79,4 +80,5 @@ public interface UIConstants {
     String TOP = "top";
     String TOOLTIP = "tooltip";
     String TRUE = "true";
+    String VALUE = "value";
 }

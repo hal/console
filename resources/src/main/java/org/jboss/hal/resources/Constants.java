@@ -280,7 +280,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noRootLogger();
     String noRootLoggerDescription();
     String noRunningServers();
+    String noStore();
     String noTransport();
+    String noWrite();
     String notANumber();
 
     String notEnabled();
@@ -368,7 +370,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String supportsExpressions();
     String suspend();
     String suspended();
+    String switchBehaviour();
     String switchProvider();
+    String switchStore();
 
     String tags();
     String tailMode();

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -24,16 +25,19 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -48,6 +52,8 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
@@ -71,6 +77,7 @@ public class CacheContainerPresenter
     public interface MyView extends HalView, HasPresenter<CacheContainerPresenter> {
         void update(CacheContainer cacheContainer, boolean jgroups);
         void updateCacheBackups(Cache cache, List<NamedNode> backups);
+        void updateCacheStore(Cache cache, List<Property> stores);
     }
     // @formatter:on
 
@@ -84,6 +91,7 @@ public class CacheContainerPresenter
     private String cacheContainer;
     private Cache cacheType;
     private String cacheName;
+    private Store store;
 
     @Inject
     public CacheContainerPresenter(final EventBus eventBus,
@@ -208,8 +216,7 @@ public class CacheContainerPresenter
         }
     }
 
-    void saveCacheComponent(final Component component,
-            final Map<String, Object> changedValues) {
+    void saveCacheComponent(final Component component, final Map<String, Object> changedValues) {
         crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, this::reload);
     }
 
@@ -221,22 +228,22 @@ public class CacheContainerPresenter
     }
 
 
-    // ------------------------------------------------------ cache backups
+    // ------------------------------------------------------ cache backup
 
     void addCacheBackup() {
         Metadata metadata = metadataRegistry.lookup(cacheType.template
                 .append(COMPONENT + "=" + BACKUPS)
                 .append(BACKUP + "=*"));
-        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.TABLE_SUFFIX),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, BACKUPS, Ids.ADD_SUFFIX),
                 resources.messages().addResourceTitle(Names.BACKUP), metadata,
                 (name, model) -> {
                     ResourceAddress address = cacheBackupAddress(name);
-                    crud.add(Names.BACKUP, name, address, model, (n, a) -> showCacheBackups());
+                    crud.add(Names.BACKUP, name, address, model, (n, a) -> showCacheBackup());
                 });
         dialog.show();
     }
 
-    void showCacheBackups() {
+    void showCacheBackup() {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
                 .append(cacheType.resource() + "=" + cacheName)
                 .append(COMPONENT + "=" + BACKUPS)
@@ -246,11 +253,11 @@ public class CacheContainerPresenter
     }
 
     void saveCacheBackup(final String name, final Map<String, Object> changedValues) {
-        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, this::showCacheBackups);
+        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, this::showCacheBackup);
     }
 
     void removeCacheBackup(final String name) {
-        crud.remove(Names.BACKUP, name, cacheBackupAddress(name), this::showCacheBackups);
+        crud.remove(Names.BACKUP, name, cacheBackupAddress(name), this::showCacheBackup);
     }
 
     private ResourceAddress cacheBackupAddress(final String name) {
@@ -258,6 +265,147 @@ public class CacheContainerPresenter
                 .append(cacheType.resource() + "=" + cacheName)
                 .append(COMPONENT + "=" + BACKUPS)
                 .append(BACKUP + "=" + name)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ cache store
+
+    void addCacheStore(final Store store) {
+        if (store.addWithDialog) {
+            Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
+            String id = Ids.build(cacheType.baseId, store.baseId, Ids.ADD_SUFFIX);
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
+                    .addFromRequestProperties()
+                    .requiredOnly()
+                    .build();
+            AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(store.type), form,
+                    (name, model) -> crud.addSingleton(store.type, cacheStoreAddress(store), model,
+                            (n, a) -> showCacheStore()));
+            dialog.show();
+
+        } else {
+            crud.addSingleton(store.type, cacheStoreAddress(store), null, (n, a) -> showCacheStore());
+        }
+    }
+
+    void showCacheStore() {
+        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .resolve(statementContext);
+        crud.readChildren(address, STORE, 2, children -> {
+            if (children.isEmpty()) {
+                store = null;
+            } else {
+                if (children.size() > 1) {
+                    MessageEvent.fire(getEventBus(), Message.warning(resources.messages().moreThanOneCacheStore(),
+                            resources.messages().moreThanOneCacheStoreDetails()));
+                }
+                store = Store.fromResource(children.get(0).getName());
+            }
+            getView().updateCacheStore(cacheType, children);
+        });
+    }
+
+    void saveCacheStore(final Store store, final Map<String, Object> changedValues) {
+        crud.saveSingleton(store.type, cacheStoreAddress(store), changedValues, this::showCacheStore);
+    }
+
+    void switchStore(final Store newStore) {
+        if (newStore != null && newStore != this.store) {
+            List<Operation> operations = new ArrayList<>();
+            if (this.store != null) {
+                operations.add(new Operation.Builder(REMOVE, cacheStoreAddress(this.store)).build());
+            }
+
+            if (newStore.addWithDialog) {
+                Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + newStore.resource));
+                String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD_SUFFIX);
+                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
+                        .addFromRequestProperties()
+                        .requiredOnly()
+                        .build();
+                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
+                        form, (name, model) -> {
+                    operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore))
+                            .payload(model)
+                            .build());
+                    dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
+                        showCacheStore();
+                    });
+                });
+                dialog.show();
+
+            } else {
+                operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore)).build());
+                dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
+                    showCacheStore();
+                });
+            }
+        }
+    }
+
+    String storeSegment() {
+        StringBuilder builder = new StringBuilder().append(Names.STORE);
+        if (store != null) {
+            builder.append(": ").append(store.type);
+        }
+        return builder.toString();
+    }
+
+    private ResourceAddress cacheStoreAddress(final Store store) {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .append(STORE + "=" + store.resource)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ write through / behind
+
+    void addWrite(final Write write) {
+        crud.addSingleton(write.type, writeAddress(write), null, (n, a) -> showCacheStore());
+    }
+
+    void saveWrite(final Write write, final Map<String, Object> changedValues) {
+        crud.saveSingleton(Names.WRITE_BEHIND, writeAddress(write), changedValues, this::showCacheStore);
+    }
+
+    void switchWrite(final Write currentWrite, final Write newWrite) {
+        List<Operation> operations = new ArrayList<>();
+        operations.add(new Operation.Builder(REMOVE, writeAddress(currentWrite)).build());
+        operations.add(new Operation.Builder(ADD, writeAddress(newWrite)).build());
+        dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().addSingleResourceSuccess(newWrite.type)));
+            showCacheStore();
+        });
+    }
+
+    private ResourceAddress writeAddress(final Write write) {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .append(STORE + "=" + store.resource)
+                .append(WRITE + "=" + write.resource)
+                .resolve(statementContext);
+    }
+
+
+    // ------------------------------------------------------ tables of jdbc stores
+
+    void saveStoreTable(final Table table, final Map<String, Object> changedValues) {
+        crud.saveSingleton(table.type, storeTableAddress(store, table), changedValues, this::showCacheStore);
+    }
+
+    private ResourceAddress storeTableAddress(final Store store, final Table table) {
+        return SELECTED_CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=" + cacheName)
+                .append(STORE + "=" + store.resource)
+                .append(TABLE + "=" + table.resource)
                 .resolve(statementContext);
     }
 
@@ -291,13 +439,6 @@ public class CacheContainerPresenter
 
     void saveJgroups(final Map<String, Object> changedValues) {
         crud.saveSingleton(Names.JGROUPS, jgroupsAddress(), changedValues, this::reload);
-    }
-
-    Operation readTransportChildren() {
-        ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
-        return new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
-                .param(CHILD_TYPE, TRANSPORT)
-                .build();
     }
 
     private ResourceAddress jgroupsAddress() {

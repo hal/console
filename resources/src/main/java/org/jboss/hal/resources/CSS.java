@@ -52,6 +52,7 @@ public interface CSS {
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String blue = "blue";
+    String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
     String btn = "btn";
@@ -147,6 +148,8 @@ public interface CSS {
     String hasClear = "has-clear";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
+    String headerForm = "header-form";
+    String header = "header";
     String helpBlock = "help-block";
     String hidden = "hidden";
     String hide = "hide";
@@ -199,7 +202,6 @@ public interface CSS {
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
     String marginTopLarge = "margin-top-large";
-    String marginTopSmall = "margin-top-small";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
     String modal = "modal";

@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -34,6 +35,7 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -44,11 +46,10 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCAL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BACKUP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BACKUPS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
+import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
  * Element to manage the cache resources of a specific {@linkplain Cache cache type}. The element contains a table and
@@ -62,8 +63,8 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     private final NamedNodeTable<NamedNode> table;
     private final Form<NamedNode> form;
     private final Map<Component, FailSafeForm<ModelNode>> components;
-    private final Element root;
-    private Pages pages;
+    private final StoreElement storeElement;
+    private final Pages pages;
     private NamedNodeTable<NamedNode> backupTable;
     private Form<NamedNode> backupForm;
     private CacheContainerPresenter presenter;
@@ -82,9 +83,35 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             builder.column(MODE);
         }
         if (cache.backups) {
-            builder.column(Names.BACKUPS, row -> {
+            // two action links: 1) store, 2) backups
+            builder.column(
+                    columnActions -> {
+                        String columnId = Ids.build(cache.baseId, STORE, "column");
+                        return new ColumnBuilder<NamedNode>(columnId, resources.constants().action(),
+                                (cell, t, row, meta) -> {
+                                    String id1 = Ids.uniqueId();
+                                    String id2 = Ids.uniqueId();
+                                    columnActions.add(id1, row1 -> {
+                                        presenter.selectCache(cache, row.getName());
+                                        presenter.showCacheStore();
+                                    });
+                                    columnActions.add(id2, row2 -> {
+                                        presenter.selectCache(cache, row.getName());
+                                        presenter.showCacheBackup();
+                                    });
+                                    return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.STORE + "</a> / " +
+                                            "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.BACKUPS + "</a>";
+                                })
+                                .orderable(false)
+                                .searchable(false)
+                                .width("12em")
+                                .build();
+                    });
+        } else {
+            // one action link: store
+            builder.column(Names.STORE, row -> {
                 presenter.selectCache(cache, row.getName());
-                presenter.showCacheBackups();
+                presenter.showCacheStore();
             });
         }
         table = new NamedNodeTable<>(Ids.build(cache.baseId, Ids.TABLE_SUFFIX), builder.build());
@@ -110,8 +137,10 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             components.put(component, fsf);
         }
 
+        storeElement = new StoreElement(cache, metadataRegistry, resources);
+
         // @formatter:off
-        root = new Elements.Builder()
+        Element root = new Elements.Builder()
             .section()
                 .h(1).textContent(cache.type).end()
                 .p().textContent(metadata.getDescription().getDescription()).end()
@@ -120,6 +149,11 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             .end()
         .build();
         // @formatter:on
+
+        String mainId = Ids.build(cache.baseId, Ids.PAGE_SUFFIX);
+        pages = new Pages(mainId, root);
+        pages.addPage(mainId, Ids.build(cache.baseId, STORE, Ids.PAGE_SUFFIX),
+                () -> presenter.cacheSegment(), () -> presenter.storeSegment(), storeElement);
 
         if (cache.backups) {
             Metadata backupMeta = metadataRegistry.lookup(
@@ -151,8 +185,6 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             .build();
             // @formatter:on
 
-            String mainId = Ids.build(cache.baseId, Ids.PAGE_SUFFIX);
-            pages = new Pages(mainId, root);
             pages.addPage(mainId, Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX),
                     () -> presenter.cacheSegment(), () -> Names.BACKUPS, backupSection);
         }
@@ -160,7 +192,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
     @Override
     public Element asElement() {
-        return cache.backups ? pages.asElement() : root;
+        return pages.asElement();
     }
 
     @Override
@@ -169,6 +201,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         table.attach();
         form.attach();
         components.values().forEach(Attachable::attach);
+        storeElement.attach();
         if (cache.backups) {
             backupTable.attach();
             backupForm.attach();
@@ -184,6 +217,8 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                     ModelNode modelNode = failSafeGet(selectedCache, component.path());
                     form.view(modelNode);
                 });
+                List<Property> stores = failSafePropertyList(selectedCache, STORE);
+                storeElement.update(stores);
             } else {
                 form.clear();
                 //noinspection Convert2MethodRef
@@ -198,6 +233,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             backupTable.detach();
             backupForm.detach();
         }
+        storeElement.detach();
         components.values().forEach(Attachable::detach);
         form.detach();
         table.detach();
@@ -206,6 +242,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     @Override
     public void setPresenter(final CacheContainerPresenter presenter) {
         this.presenter = presenter;
+        storeElement.setPresenter(presenter);
     }
 
     void update(List<NamedNode> caches) {
@@ -213,11 +250,17 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         //noinspection Convert2MethodRef
         components.values().forEach((fsf) -> fsf.clear());
         table.update(caches);
+        pages.showPage(Ids.build(cache.baseId, Ids.PAGE_SUFFIX));
     }
 
     void updateBackups(final List<NamedNode> backups) {
         pages.showPage(Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX));
         backupForm.clear();
         backupTable.update(backups);
+    }
+
+    void updateStore(final List<Property> stores) {
+        pages.showPage(Ids.build(cache.baseId, STORE, Ids.PAGE_SUFFIX));
+        storeElement.update(stores);
     }
 }

@@ -69,6 +69,9 @@ public interface ModelDescriptionConstants {
     String BACKUPS = "backups";
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
+    String BATCH_SIZE = "batch-size";
+    String BEHIND = "behind";
+    String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
     String BRIDGE = "bridge";
@@ -102,6 +105,7 @@ public interface ModelDescriptionConstants {
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CUSTOM = "custom";
 
+    String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
@@ -141,6 +145,7 @@ public interface ModelDescriptionConstants {
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILTER_REF = "filter-ref";
     String FROM = "from";
@@ -164,6 +169,7 @@ public interface ModelDescriptionConstants {
     String HTTP_LISTENER = "http-listener";
     String HTTPS_LISTENER = "https-listener";
 
+    String ID_COLUMN = "id-column";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
@@ -252,6 +258,7 @@ public interface ModelDescriptionConstants {
     String PORT = "port";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
+    String PREFIX = "prefix";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
@@ -355,7 +362,8 @@ public interface ModelDescriptionConstants {
     String STORAGE = "storage";
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
-    String STORE = "STORE"; // yes upper case!
+    String STORE = "store";
+    String STRING = "string";
     String STRING_JDBC = "string-jdbc";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
@@ -366,10 +374,13 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";
 
+    String TABLE = "table";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";
+    String THROUGH = "through";
     String TIMEOUT = "timeout";
+    String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTION = "transaction";
@@ -397,6 +408,7 @@ public interface ModelDescriptionConstants {
     String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
     String WORKER = "worker";
     String WORKMANAGER = "workmanager";
+    String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";

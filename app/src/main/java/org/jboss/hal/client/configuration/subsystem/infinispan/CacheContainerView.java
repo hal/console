@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -37,7 +38,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -78,7 +78,7 @@ public class CacheContainerView extends HalViewImpl
             threadPools.put(threadPool, new ThreadPoolElement(threadPool, dispatcher, metadataRegistry));
         }
 
-        transport = new TransportElement(dispatcher, metadataRegistry, resources);
+        transport = new TransportElement(metadataRegistry, resources);
 
         navigation = new VerticalNavigation();
         Element section = new Elements.Builder()
@@ -141,13 +141,18 @@ public class CacheContainerView extends HalViewImpl
 
         navigation.setVisible(Ids.CACHE_CONTAINER_TRANSPORT_ENTRY, jgroups);
         if (jgroups) {
-            ModelNode modelNode = failSafeGet(cacheContainer, TRANSPORT + "/" + JGROUPS);
-            transport.update(modelNode);
+            List<Property> transports = failSafePropertyList(cacheContainer, TRANSPORT);
+            transport.update(transports);
         }
     }
 
     @Override
     public void updateCacheBackups(final Cache cache, final List<NamedNode> backups) {
         caches.get(cache).updateBackups(backups);
+    }
+
+    @Override
+    public void updateCacheStore(final Cache cache, final List<Property> stores) {
+        caches.get(cache).updateStore(stores);
     }
 }

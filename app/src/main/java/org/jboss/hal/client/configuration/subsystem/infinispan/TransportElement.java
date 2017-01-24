@@ -15,22 +15,25 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
+import java.util.List;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NONE;
 
 /**
  * Element to view and modify the {@code transport=jgroups} singleton of a cache container. Kind of a fail safe form
@@ -40,15 +43,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
  */
 class TransportElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
 
-    private final Dispatcher dispatcher;
     private final EmptyState emptyState;
-    private final ModelNodeForm<ModelNode> form;
+    private final Form<ModelNode> form;
     private final Element root;
     private CacheContainerPresenter presenter;
 
-    TransportElement(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
-            final Resources resources) {
-        this.dispatcher = dispatcher;
+    TransportElement(final MetadataRegistry metadataRegistry, final Resources resources) {
 
         emptyState = new EmptyState.Builder(resources.constants().noTransport())
                 .description(resources.messages().noTransport())
@@ -84,16 +84,6 @@ class TransportElement implements IsElement, Attachable, HasPresenter<CacheConta
     @Override
     public void attach() {
         form.attach();
-        dispatcher.execute(presenter.readTransportChildren(),
-                result -> {
-                    boolean jgroups = result.asList().stream().map(ModelNode::asString).anyMatch(JGROUPS::equals);
-                    if (jgroups) {
-                        formMode();
-                    } else {
-                        emptyStateMode();
-                    }
-                },
-                (op, failure) -> emptyStateMode());
     }
 
     @Override
@@ -106,18 +96,13 @@ class TransportElement implements IsElement, Attachable, HasPresenter<CacheConta
         this.presenter = presenter;
     }
 
-    void update(ModelNode modelNode) {
-        dispatcher.execute(presenter.readTransportChildren(),
-                result -> {
-                    boolean jgroups = result.asList().stream().map(ModelNode::asString).anyMatch(JGROUPS::equals);
-                    if (jgroups) {
-                        formMode();
-                        form.view(modelNode);
-                    } else {
-                        emptyStateMode();
-                    }
-                },
-                (op, failure) -> emptyStateMode());
+    void update(final List<Property> transports) {
+        if (transports.isEmpty() || NONE.equals(transports.get(0).getName())) {
+            emptyStateMode();
+        } else {
+            formMode();
+            form.view(transports.get(0).getValue());
+        }
     }
 
     private void emptyStateMode() {

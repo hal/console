@@ -19,31 +19,51 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.BINARY;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.STRING;
+
 /**
  * @author Harald Pehl
  */
 public enum Store {
 
-    BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC),
-    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM),
-    FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE),
-    MIXED_JDBC(Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC),
-    NONE(Ids.CACHE_STORE_NONE, Names.NONE, ModelDescriptionConstants.NONE),
-    REMOTE(Ids.CACHE_STORE_REMOTE, Names.REMOTE, ModelDescriptionConstants.REMOTE),
-    STORE(Ids.CACHE_STORE_STORE, Names.STORE, ModelDescriptionConstants.STORE),
-    STRING_JDBC(Ids.CACHE_STORE_STRING_JDBC, Names.STRING_JDBC, ModelDescriptionConstants.STRING_JDBC);
+    BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY),
+    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true),
+    FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false),
+    MIXED_JDBC(Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC, true,
+            BINARY, STRING),
+    REMOTE(Ids.CACHE_STORE_REMOTE, Names.REMOTE, ModelDescriptionConstants.REMOTE, true),
+    STRING_JDBC(Ids.CACHE_STORE_STRING_JDBC, Names.STRING_JDBC, ModelDescriptionConstants.STRING_JDBC, true, STRING);
+
+    static Store fromResource(String resource) {
+        if (resource != null) {
+            // STORE is an alias for custom
+            if (resource.equals("STORE")) { //NON-NLS
+                return CUSTOM;
+            } else {
+                for (Store store : Store.values()) {
+                    if (store.resource.equals(resource)) {
+                        return store;
+                    }
+                }
+
+            }
+        }
+        return null;
+    }
 
     final String baseId;
     final String type;
     final String resource;
+    final boolean addWithDialog;
+    final Table[] tables;
 
-    Store(final String baseId, final String type, final String resource) {
+    Store(final String baseId, final String type, final String resource, final boolean addWithDialog,
+            final Table... tables) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;
-    }
-
-    String path() {
-        return STORE + "/" + resource;
+        this.addWithDialog = addWithDialog;
+        this.tables = tables;
     }
 }
