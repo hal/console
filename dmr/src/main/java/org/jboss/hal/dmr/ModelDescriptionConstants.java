@@ -83,6 +83,7 @@ public interface ModelDescriptionConstants {
     String CACHE_CONTAINER = "cache-container";
     String CACHE_TYPE = "cache-type";
     String CAPABILITY_REFERENCE = "capability-reference";
+    String CHANNEL = "channel";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
@@ -148,6 +149,7 @@ public interface ModelDescriptionConstants {
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILTER_REF = "filter-ref";
+    String FORK = "fork";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
@@ -266,6 +268,7 @@ public interface ModelDescriptionConstants {
     String PROFILE = "profile";
     String PROFILE_NAME = "profile-name";
     String PROPERTY = "property";
+    String PROTOCOL = "protocol";
     String PROVIDER = "provider";
     String PROVIDER_MODULE = "provider-module";
     String PROXIES = "proxies";
@@ -287,6 +290,7 @@ public interface ModelDescriptionConstants {
     String REALM = "realm";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";
+    String RELAY = "relay";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_COMMAND = "remote-command";
     String REMOTE_CONNECTOR = "remote-connector";
@@ -350,6 +354,7 @@ public interface ModelDescriptionConstants {
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";
     String SMTP = "smtp";
+    String STACK = "stack";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";

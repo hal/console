@@ -48,6 +48,7 @@ public interface Names {
     String BUFFER_CACHES = "Buffer Caches";
 
     String CACHE_CONTAINER = "Cache Container";
+    String CHANNEL = "Channel";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";
@@ -84,6 +85,7 @@ public interface Names {
     String FILE = "File";
     String FILTER = "Filter";
     String FILTERS = "Filters";
+    String FORK = "Fork";
 
     String GENERIC_ACCEPTOR = "Generic Acceptor";
     String GENERIC_CONNECTOR = "Generic Connector";
@@ -162,11 +164,13 @@ public interface Names {
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
+    String PROTOCOL = "Protocol";
 
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
 
     String REALM = "Realm";
+    String RELAY = "Relay";
     String REMOTE = "Remote";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
     String REMOTE_COMMAND = "Remote Command";
@@ -174,6 +178,7 @@ public interface Names {
     String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
     String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
     String REMOTE_OUTBOUND_CONNECTION = "Remote Outbound Connection";
+    String REMOTE_SITE = "Remote Site";
     String REPLICATED_CACHE = "Replicated Cache";
     String REPLICATION_COLOCATED = "Replication Colocated";
     String REPLICATION_MASTER = "Replication Master";
@@ -205,6 +210,7 @@ public interface Names {
     String STORE = "Store";
     String STRING_JDBC = "String JDBC";
     String STRING_TABLE = "String Table";
+    String STACK = "Stack";
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
@@ -214,8 +220,8 @@ public interface Names {
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
-    String TRANSACTION = "Transaction";
     String TRANSPORT = "Transport";
+    String TRANSACTION = "Transaction";
     String TRUST_MODULE = "Trust Module";
 
     String UNKNOWN = "unknown";

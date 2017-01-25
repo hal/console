@@ -106,6 +106,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/jdbc-drivers.html")
     ExternalTextResource configurationJdbcDrivers();
 
+    @Source("previews/configuration/jgroups.html")
+    ExternalTextResource configurationJgroups();
+
     @Source("previews/configuration/logging.html")
     ExternalTextResource configurationLogging();
 

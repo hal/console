@@ -75,6 +75,10 @@ public class Subsystems {
         add(new SubsystemMetadata.Builder(JCA, "JCA")
                 .token(NameTokens.JCA)
                 .build());
+        add(new SubsystemMetadata.Builder(JGROUPS, "JGroups")
+                .token(NameTokens.JGROUPS)
+                .preview(resources.previews().configurationJgroups())
+                .build());
         add(new SubsystemMetadata.Builder(JMX, "JMX")
                 .token(NameTokens.JMX)
                 .build());
