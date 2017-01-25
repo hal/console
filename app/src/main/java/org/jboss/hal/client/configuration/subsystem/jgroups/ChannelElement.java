@@ -24,7 +24,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -41,7 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
  * Element to configure the fork resource
@@ -75,24 +73,13 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
                         (event, api) -> presenter
                                 .removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(), Names.CHANNEL))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_CHANNEL_COLUMN,
-                        "Action",
-                        (cell, t, row, meta) -> {
-                            String id1 = Ids.uniqueId();
-                            columnActions.add(id1, row1 -> {
-                                selectedChannel = row1.getName();
-                                presenter.showForks(row1);
-                                presenter.showChannelInnerPage(FORK_ID);
-                            });
-
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">Forks</a>";
-                        })
-                        .orderable(false)
-                        .searchable(false)
-                        .width("12em")
-                        .build())
+                .column("Forks", row -> {
+                    selectedChannel = row.getName();
+                    presenter.showForks(row);
+                    presenter.showChannelInnerPage(FORK_ID);
+                })
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, "MANE", Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues,

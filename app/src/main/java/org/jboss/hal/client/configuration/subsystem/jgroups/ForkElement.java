@@ -22,7 +22,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
@@ -38,7 +37,6 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.ChannelElement.PROTOCOL_ID;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -67,21 +65,10 @@ public class ForkElement implements IsElement, Attachable, HasPresenter<JGroupsP
                                 .removeResource(SELECTED_CHANNEL_FORK_TEMPLATE, api.selectedRow().getName(),
                                         Names.FORK))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
-                .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_CHANNEL_FORK,
-                        "Action",
-                        (cell, t, row, meta) -> {
-                            String id1 = Ids.uniqueId();
-                            columnActions.add(id1, row1 -> {
-                                presenter.showChannelProtocol(row1);
-                                presenter.showChannelInnerPage(PROTOCOL_ID);
-                            });
-
-                            return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">Protocol</a>";
+                .column("Protocols", row -> {
+                        presenter.showChannelProtocol(row);
+                        presenter.showChannelInnerPage(PROTOCOL_ID);
                         })
-                        .orderable(false)
-                        .searchable(false)
-                        .width("12em")
-                        .build())
                 .build();
         table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_FORK_ENTRY, Ids.TABLE_SUFFIX), options);
 
