@@ -36,10 +36,10 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
@@ -247,19 +247,20 @@ public class PropertiesOperations {
      * @param name          the resource name
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
+     * @param metadata      the metadata for the of the attributes in the change set
      * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
      * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
     public void saveWithProperties(final String type, final String name, final ResourceAddress address,
-            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
-            final Callback callback) {
+            final Map<String, Object> changedValues, final Metadata metadata, final String psr,
+            final Map<String, String> properties, final Callback callback) {
 
         changedValues.remove(psr);
         if (properties.isEmpty()) {
-            crud.save(type, name, address, changedValues, callback);
+            crud.save(type, name, address, changedValues, metadata, callback);
         } else {
-            Composite operations = operationFactory.fromChangeSet(address, changedValues);
+            Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
             saveInternal(type, name, address, operations, psr, properties, callback);
         }
     }
@@ -309,20 +310,21 @@ public class PropertiesOperations {
      * @param type          the human readable resource type used in the success message
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
+     * @param metadata      the metadata for the of the attributes in the change set
      * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
      * @param properties    the properties to save
      * @param callback      the callback executed after saving the resource
      */
     public void saveSingletonWithProperties(final String type, final ResourceAddress address,
-            final Map<String, Object> changedValues, final String psr, final Map<String, String> properties,
-            final Callback callback) {
+            final Map<String, Object> changedValues, final Metadata metadata, final String psr,
+            final Map<String, String> properties, final Callback callback) {
 
         changedValues.remove(psr);
 
         if (properties.isEmpty()) {
-            crud.saveSingleton(type, address, changedValues, callback);
+            crud.saveSingleton(type, address, changedValues, metadata, callback);
         } else {
-            Composite operations = operationFactory.fromChangeSet(address, changedValues);
+            Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
             saveInternal(type, null, address, operations, psr, properties, callback);
         }
     }

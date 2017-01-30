@@ -36,7 +36,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -177,7 +177,8 @@ public class HostPresenter
         }
 
         ResourceAddress address = template.resolve(statementContext);
-        Composite composite = new OperationFactory().fromChangeSet(address, changedValues);
+        Metadata metadata = metadataRegistry.lookup(template);
+        Composite composite = new OperationFactory().fromChangeSet(address, changedValues, metadata);
         dispatcher.execute(composite, (CompositeResult result) -> {
             reload();
             MessageEvent.fire(getEventBus(),

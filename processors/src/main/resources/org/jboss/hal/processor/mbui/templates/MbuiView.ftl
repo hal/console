@@ -130,10 +130,10 @@ final class ${context.subclass} extends ${context.base} {
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
                 String name = ${form.nameResolver};
-                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), changedValues);
+                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), changedValues, ${form.metadata.name});
             })
                 <#else>
-            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), changedValues))
+            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), changedValues, ${form.metadata.name}))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})

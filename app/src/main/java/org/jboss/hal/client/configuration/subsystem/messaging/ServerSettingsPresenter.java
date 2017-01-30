@@ -83,7 +83,7 @@ abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyP
     }
 
     void save(ServerSubResource ssr, Form<NamedNode> form, Map<String, Object> changedValues) {
-        ssr.save(form, changedValues, statementContext, crud, this::reload);
+        ssr.save(form, changedValues, metadataRegistry, statementContext, crud, this::reload);
     }
 
     void remove(ServerSubResource ssr, NamedNode item) {

@@ -32,6 +32,8 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -41,6 +43,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -65,6 +68,7 @@ public class JmsBridgePresenter
 
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
     private String jmsBridgeName;
@@ -77,11 +81,13 @@ public class JmsBridgePresenter
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> jmsBridgeName);
         this.resources = resources;
     }
@@ -118,7 +124,8 @@ public class JmsBridgePresenter
     }
 
     void saveJmsBridge(final Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
         crud.save(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
-                changedValues, this::reload);
+                changedValues, metadata, this::reload);
     }
 }

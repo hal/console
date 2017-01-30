@@ -27,7 +27,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.ResourceCheck;
 

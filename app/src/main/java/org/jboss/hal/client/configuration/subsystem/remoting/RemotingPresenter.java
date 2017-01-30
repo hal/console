@@ -45,6 +45,8 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.ResourceCheck;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -91,6 +93,7 @@ public class RemotingPresenter
     private final PropertiesOperations propertiesOperations;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Provider<Progress> progress;
     private final Resources resources;
@@ -110,6 +113,7 @@ public class RemotingPresenter
             final PropertiesOperations propertiesOperations,
             final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
@@ -119,6 +123,7 @@ public class RemotingPresenter
         this.propertiesOperations = propertiesOperations;
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.progress = progress;
         this.resources = resources;
@@ -174,8 +179,9 @@ public class RemotingPresenter
 
     void saveConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
         propertiesOperations.saveSingletonWithProperties(Names.REMOTE_CONNECTOR_SECURITY, address, changedValues,
-                PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),  this::reload);
+                metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void createConnectorSecurityPolicy() {
@@ -184,8 +190,10 @@ public class RemotingPresenter
     }
 
     void saveConnectorSecurityPolicy(Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
         crud.saveSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, this::reload);
+                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
+                this::reload);
     }
 
 
@@ -212,8 +220,9 @@ public class RemotingPresenter
 
     void saveHttpConnectorSecurity(Form<ModelNode> form, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY, address, changedValues,
-                PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void createHttpConnectorSecurityPolicy() {
@@ -222,8 +231,9 @@ public class RemotingPresenter
     }
 
     void saveHttpConnectorSecurityPolicy(final Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         crud.saveSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues,
+                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
                 this::reload);
     }
 

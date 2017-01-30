@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,10 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +43,27 @@ public class OperationFactory {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
     /**
-     * Turns a change-set into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
-     * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
+     * Turns a change-set into a composite operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute}
+     * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations.
+     * <p>
+     * This method does not take any metadata into account when assembling the composite operations. In particular
+     * alternative attributes won't be turned into {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION}
+     * operations. Please use this signature for simple change-sets only or if you're sure that the attributes in the
+     * change-set don't have alternative attributes.
      */
     public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet) {
+        return fromChangeSet(address, changeSet, null);
+    }
+
+    /**
+     * Turns a change-set into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
+     * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
+     * <p>
+     * The composite operation will contain {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION}
+     * operations which reflect the alternative attributes as defined in the specified metadata.
+     */
+    public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
+            final Metadata metadata) {
 
         List<Operation> operations = new ArrayList<>();
         for (String name : changeSet.keySet()) {

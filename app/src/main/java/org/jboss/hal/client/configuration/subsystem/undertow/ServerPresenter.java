@@ -164,8 +164,9 @@ public class ServerPresenter
     }
 
     void saveServer(final Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.save(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), changedValues,
-                this::reload);
+                metadata, this::reload);
     }
 
     // ------------------------------------------------------ host
@@ -185,7 +186,8 @@ public class ServerPresenter
 
     void saveHost(final String name, final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(HOST + "=" + name).resolve(statementContext);
-        crud.save(Names.HOST, name, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE);
+        crud.save(Names.HOST, name, address, changedValues, metadata, this::reload);
     }
 
     void removeHost(final String name) {
@@ -213,7 +215,8 @@ public class ServerPresenter
 
     void saveHostSetting(final HostSetting hostSetting, final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
-        crud.saveSingleton(hostSetting.type, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
+        crud.saveSingleton(hostSetting.type, address, changedValues, metadata, this::reload);
     }
 
     // ------------------------------------------------------ host filter-ref
@@ -244,7 +247,8 @@ public class ServerPresenter
     void saveFilterRef(final Form<NamedNode> form, final Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name).resolve(statementContext);
-        crud.save(Names.FILTER, name, address, changedValues, this::reloadFilterRef);
+        Metadata metadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
+        crud.save(Names.FILTER, name, address, changedValues, metadata, this::reloadFilterRef);
     }
 
     void removeFilterRef(final String name) {
@@ -292,7 +296,8 @@ public class ServerPresenter
         ResourceAddress address = SELECTED_HOST_TEMPLATE
                 .append(LOCATION + "=" + encodeValue(name))
                 .resolve(statementContext);
-        crud.save(Names.LOCATION, name, address, changedValues, this::reloadLocation);
+        Metadata metadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
+        crud.save(Names.LOCATION, name, address, changedValues, metadata, this::reloadLocation);
     }
 
     void removeLocation(final String name) {
@@ -352,7 +357,8 @@ public class ServerPresenter
                 .append(LOCATION + "=" + encodeValue(locationName))
                 .append(FILTER_REF + "=" + name)
                 .resolve(statementContext);
-        crud.save(Names.FILTER, name, address, changedValues, this::reloadLocationFilterRef);
+        Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
+        crud.save(Names.FILTER, name, address, changedValues, metadata, this::reloadLocationFilterRef);
 
     }
 
@@ -389,7 +395,8 @@ public class ServerPresenter
     void saveListener(final Listener listenerType, final String name, final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + "=" + name)
                 .resolve(statementContext);
-        crud.save(listenerType.type, name, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
+        crud.save(listenerType.type, name, address, changedValues, metadata, this::reload);
     }
 
     void removeListener(final Listener listenerType, final String name) {

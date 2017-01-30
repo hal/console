@@ -22,7 +22,7 @@
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="security-domain-configuration-form" title="Configuration"
-                      on-save="{{presenter.saveSecurityDomain(form, changedValues)}}"/>
+                      on-save="{{presenter.saveSecurityDomain(changedValues)}}"/>
             </metadata>
         </item>
 

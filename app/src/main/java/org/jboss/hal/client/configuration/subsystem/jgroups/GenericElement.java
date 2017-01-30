@@ -62,7 +62,7 @@ public class GenericElement implements IsElement, Attachable, HasPresenter<JGrou
         table = new NamedNodeTable<>(Ids.build(resourceId, Ids.TABLE_SUFFIX), options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
-                        .saveResource(template, table.api().selectedRow().getName(), changedValues,
+                        .saveResource(template, table.api().selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(name)))
                 .build();
 
