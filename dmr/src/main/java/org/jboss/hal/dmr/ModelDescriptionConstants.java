@@ -56,7 +56,7 @@ public interface ModelDescriptionConstants {
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
-    String ALTERNATIVES = "alternatives";
+    String ALTERNATIVES = "alternativesHelp";
     String ANY = "any";
     String ARCHIVE = "archive";
     String ASYNC_OPERATIONS = "async-operations";

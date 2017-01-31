@@ -158,7 +158,7 @@ public class OperationFactoryTest {
         // Turn elytron 'off'
         Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
                 ImmutableMap.of("elytron-enabled", false, "security-domain", "foo"), metadata);
-        
+
         assertEquals(6, composite.size());
         assertUndefine(composite, "security-application");
         assertUndefine(composite, "security-domain-and-application");

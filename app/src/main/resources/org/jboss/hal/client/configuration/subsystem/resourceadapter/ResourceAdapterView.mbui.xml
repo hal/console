@@ -92,9 +92,15 @@
                         </group>
                         <group id="resource-adapter-connection-definition-security"
                                title="{{mbuiContext.resources().constants().security()}}">
+                            <attribute name="elytron-enabled"/>
+                            <attribute name="authentication-context"/>
+                            <attribute name="authentication-context-and-application"/>
                             <attribute name="security-application"/>
                             <attribute name="security-domain"/>
                             <attribute name="security-domain-and-application"/>
+                            <attribute name="recovery-elytron-enabled"/>
+                            <attribute name="recovery-authentication-context"/>
+                            <attribute name="recovery-security-domain"/>
                         </group>
                         <group id="resource-adapter-connection-definition-validation"
                                title="{{mbuiContext.resources().constants().validation()}}">
