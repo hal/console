@@ -49,6 +49,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
+    String alternativesHelp(String alternatives);
+    String alternativesError(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String atLeastOneIsRequired(String attribute1, String attribute2);
@@ -223,6 +225,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml replicationStrategy();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
+    String requires(String requires);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     SafeHtml resourceAdapterProvidedBy(String type, String name);

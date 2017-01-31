@@ -35,6 +35,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -88,6 +89,7 @@ public class HaPolicyPresenter
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
     private String serverName;
@@ -101,12 +103,14 @@ public class HaPolicyPresenter
             final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, proxy_, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> serverName);
         this.resources = resources;
     }
@@ -155,17 +159,16 @@ public class HaPolicyPresenter
     }
 
     void addHaPolicy() {
-        new HaPolicyWizard(resources, (wizard, context) -> {
-            context.haPolicy.add(dispatcher, statementContext, () -> {
-                MessageEvent.fire(getEventBus(),
-                        Message.success(resources.messages().addSingleResourceSuccess(context.haPolicy.type)));
-                reload();
-            });
-        }).show();
+        new HaPolicyWizard(resources, (wizard, context) -> context.haPolicy.add(dispatcher, statementContext,
+                () -> {
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().addSingleResourceSuccess(context.haPolicy.type)));
+                    reload();
+                })).show();
     }
 
     void saveHaPolicy(HaPolicy haPolicy, Map<String, Object> changedValues) {
-        haPolicy.save(changedValues, statementContext, crud, this::reload);
+        haPolicy.save(changedValues, metadataRegistry, statementContext, crud, this::reload);
     }
 
     void resetHaPolicy() {

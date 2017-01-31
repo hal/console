@@ -65,6 +65,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -208,11 +209,13 @@ public class DestinationPresenter
     void saveSecuritySettingRole(Form<NamedNode> form, Map<String, Object> changedValues) {
         if (securitySetting != null) {
             String name = form.getModel().getName();
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE
+            ResourceAddress address = SERVER_TEMPLATE
                     .append(SECURITY_SETTING + "=" + securitySetting)
                     .append(ROLE + "=" + name)
                     .resolve(statementContext);
-            crud.save(Names.SECURITY_SETTING, securitySetting + "/" + name, address, changedValues, this::reload);
+            Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
+            crud.save(Names.SECURITY_SETTING, securitySetting + "/" + name, address, changedValues, metadata,
+                    this::reload);
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
         }

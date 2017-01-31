@@ -505,8 +505,8 @@ public class ModelBrowser implements HasElements {
         Browser.getWindow().alert(NYI);
     }
 
-    void save(ResourceAddress address, Map<String, Object> changedValues) {
-        crud.save(address.lastName(), address.lastValue(), address, changedValues,
+    void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata) {
+        crud.save(address.lastName(), address.lastValue(), address, changedValues, metadata,
                 () -> refresh(tree.api().getSelected()));
     }
 

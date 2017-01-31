@@ -142,8 +142,9 @@ public class EEPresenter
         crud.readRecursive(EE_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
     }
 
-    void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues, SafeHtml successMessage) {
-        crud.save(addressTemplate.resolve(statementContext), changedValues, successMessage, this::reload);
+    void save(AddressTemplate addressTemplate, Map<String, Object> changedValues, Metadata metadata,
+            SafeHtml successMessage) {
+        crud.save(addressTemplate.resolve(statementContext), changedValues, metadata, successMessage, this::reload);
     }
 
     void launchAddDialogGlobalModule() {

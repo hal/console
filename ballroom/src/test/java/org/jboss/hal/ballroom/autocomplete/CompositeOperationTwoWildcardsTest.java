@@ -37,7 +37,7 @@ public class CompositeOperationTwoWildcardsTest {
     public void setUp() throws Exception {
         resultProcessor = new CompositeReadChildrenProcessor();
         compositeResult = new CompositeResult(ExternalModelNode
-                .read(NamesResultProcessorTest.class.getResourceAsStream("composite_operation_two_wildcards.dmr")));
+                .read(NamesResultProcessorTest.class.getResourceAsStream("composite-operation-two-wildcards.dmr")));
     }
 
     @Test

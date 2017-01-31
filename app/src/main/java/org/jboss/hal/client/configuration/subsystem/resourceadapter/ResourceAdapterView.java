@@ -21,6 +21,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -30,7 +31,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -85,7 +85,8 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
 
         ResourceAddress address = SELECTED_RESOURCE_ADAPTER_TEMPLATE.resolve(selectionAwareStatementContext);
         OperationFactory operationFactory = new OperationFactory();
-        Composite operations = operationFactory.fromChangeSet(address, changedValues);
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(RESOURCE_ADAPTER_TEMPLATE);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
 
         Operation groupMappings = mappingsOperation(address, form, WM_SECURITY_MAPPING_GROUPS);
         if (groupMappings != null) {
@@ -141,7 +142,8 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext,
                 name);
-        mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues,
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
+        mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
                 CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
                 () -> presenter.reload());
     }
@@ -167,8 +169,10 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     void saveAdminObject(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
-        mbuiContext.po().saveWithProperties(Names.ADMIN_OBJECT, name, address, changedValues, CONFIG_PROPERTIES,
-                form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(), () -> presenter.reload());
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(ADMIN_OBJECTS_TEMPLATE);
+        mbuiContext.po().saveWithProperties(Names.ADMIN_OBJECT, name, address, changedValues, metadata,
+                CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
+                () -> presenter.reload());
     }
 
     void removeAdminObject(Api<NamedNode> api) {

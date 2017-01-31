@@ -29,6 +29,8 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
  * <li>{@code selection}</li>
  * </ul>
  * to "*".
+ * <p>
+ * Used by registries such as {@link MetadataRegistry} which need generic templates.
  *
  * @author Harald Pehl
  */

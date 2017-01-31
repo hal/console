@@ -35,6 +35,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
@@ -47,6 +48,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Collections.emptyMap;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -130,24 +132,30 @@ public class ServletContainerPresenter
     }
 
     void saveServletContainer(final Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.save(Names.SERVLET_CONTAINER, servletContainerName,
-                SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), changedValues, this::reload);
+                SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), changedValues, metadata, this::reload);
     }
 
     void saveMimeMapping(final Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
-        po.saveSingletonWithProperties(Names.MIME_MAPPING, address, emptyMap(), MIME_MAPPING, properties, this::reload);
+        Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
+        po.saveSingletonWithProperties(Names.MIME_MAPPING, address, emptyMap(), metadata, MIME_MAPPING, properties,
+                this::reload);
     }
 
     void saveWelcomeFile(final Map<String, String> properties) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
-        po.saveSingletonWithProperties(Names.WELCOME_FILE, address, emptyMap(), WELCOME_FILE, properties, this::reload);
+        Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
+        po.saveSingletonWithProperties(Names.WELCOME_FILE, address, emptyMap(), metadata, WELCOME_FILE, properties,
+                this::reload);
     }
 
     void saveSettings(final ServletContainerSetting settingType, final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
-        crud.saveSingleton(settingType.type, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix()));
+        crud.saveSingleton(settingType.type, address, changedValues, metadata, this::reload);
     }
 
     Operation pingSettings(final ServletContainerSetting settingType) {

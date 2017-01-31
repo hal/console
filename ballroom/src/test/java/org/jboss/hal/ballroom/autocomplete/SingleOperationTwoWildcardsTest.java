@@ -84,7 +84,7 @@ public class SingleOperationTwoWildcardsTest {
     public void setUp() throws Exception {
         resultProcessor = new SingleReadChildrenProcessor();
         nodes = ExternalModelNode
-                .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_two_wildcards.dmr"));
+                .read(NamesResultProcessorTest.class.getResourceAsStream("single-operation-two-wildcards.dmr"));
     }
 
     @Test

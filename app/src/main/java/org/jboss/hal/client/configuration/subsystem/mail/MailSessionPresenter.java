@@ -64,6 +64,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -146,7 +147,8 @@ public class MailSessionPresenter
 
     void save(final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
+        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, metadata, this::reload);
     }
 
     void launchAddServer() {

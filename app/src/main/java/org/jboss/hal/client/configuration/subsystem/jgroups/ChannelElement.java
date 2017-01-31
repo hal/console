@@ -48,16 +48,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  */
 class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
 
-    static final String CHANNEL_ID = Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGE_SUFFIX);
-    static final String FORK_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
     static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_CHANNEL_FORK_PROTOCOL, Ids.PAGE_SUFFIX);
+    private static final String CHANNEL_ID = Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGE_SUFFIX);
+    private static final String FORK_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
 
     private final Pages innerPages;
     private final NamedNodeTable<NamedNode> table;
     private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
     private String selectedChannel;
-    private String selectedFork;
 
     private final ForkElement forkElement;
     private final GenericElement protocolElement;
@@ -82,7 +81,7 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
         table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
-                        .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues,
+                        .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))
                 .build();
 
@@ -154,11 +153,11 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
         protocolElement.update(node);
     }
 
-    public void updateForks(final List<NamedNode> model) {
+    void updateForks(final List<NamedNode> model) {
         forkElement.update(model);
     }
 
-    public void showInnerPage(final String id) {
+    void showInnerPage(final String id) {
         innerPages.showPage(id);
     }
 

@@ -38,7 +38,6 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
@@ -146,7 +145,7 @@ public class SecurityDomainPresenter
         crud.readRecursive(address, result -> getView().update(new SecurityDomain(securityDomain, result)));
     }
 
-    void saveSecurityDomain(Form<ModelNode> form, Map<String, Object> changedValues) {
+    void saveSecurityDomain(Map<String, Object> changedValues) {
         crud.save(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, changedValues,
                 this::reload);
     }
@@ -211,13 +210,16 @@ public class SecurityDomainPresenter
     }
 
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {
+        Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE
+                .append(module.singleton)
+                .append(module.resource + "=*"));
         String name = form.getModel().getName();
         crud.save(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)
                         .append(module.resource + "=*")
                         .resolve(statementContext, name),
-                changedValues, this::reload);
+                changedValues, metadata, this::reload);
     }
 
     void removeModule(Api<NamedNode> api, Module module) {

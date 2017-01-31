@@ -20,6 +20,7 @@ import java.util.Map;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 
 /**
  * Base class for views generated using {@code @MbuiView}.
@@ -49,12 +50,12 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
     }
 
     protected void saveForm(final String type, final String name, final ResourceAddress address,
-            final Map<String, Object> changedValues) {
-        mbuiContext.crud().save(type, name, address, changedValues, () -> presenter.reload());
+            final Map<String, Object> changedValues, final Metadata metadata) {
+        mbuiContext.crud().save(type, name, address, changedValues, metadata, () -> presenter.reload());
     }
 
     protected void saveSingletonForm(final String type, final ResourceAddress address,
-            final Map<String, Object> changedValues) {
-        mbuiContext.crud().saveSingleton(type, address, changedValues, () -> presenter.reload());
+            final Map<String, Object> changedValues, final Metadata metadata) {
+        mbuiContext.crud().saveSingleton(type, address, changedValues, metadata, () -> presenter.reload());
     }
 }

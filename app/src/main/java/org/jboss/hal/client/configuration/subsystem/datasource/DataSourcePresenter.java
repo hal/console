@@ -33,6 +33,8 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -72,6 +74,7 @@ public class DataSourcePresenter
 
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private String name;
     private boolean xa;
@@ -83,10 +86,12 @@ public class DataSourcePresenter
             final Finder finder,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
     }
 
@@ -129,10 +134,14 @@ public class DataSourcePresenter
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        crud.save(type(), name, resourceAddress(), changedValues, this::reload);
+        crud.save(type(), name, resourceAddress(), changedValues, metadata(), this::reload);
     }
 
     private String type() {
         return xa ? Names.DATASOURCE : Names.XA_DATASOURCE;
+    }
+
+    private Metadata metadata() {
+        return metadataRegistry.lookup(xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE);
     }
 }

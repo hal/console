@@ -109,25 +109,26 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         this.metadataRegistry = metadataRegistry;
         this.finderPathFactory = finderPathFactory;
         this.crud = crud;
-        this.filterStatementContext = new FilteringStatementContext(statementContext, new FilteringStatementContext.Filter() {
-            @Override
-            public String filter(final String filterKey) {
-                switch (filterKey) {
-                    case "selected.channel":
-                        return currentChannel;
-                    case "selected.fork":
-                        return currentFork;
-                    case "selected.stack":
-                        return currentStack;
-                }
-                return null;
-            }
+        this.filterStatementContext = new FilteringStatementContext(statementContext,
+                new FilteringStatementContext.Filter() {
+                    @Override
+                    public String filter(final String filterKey) {
+                        switch (filterKey) {
+                            case "selected.channel":
+                                return currentChannel;
+                            case "selected.fork":
+                                return currentFork;
+                            case "selected.stack":
+                                return currentStack;
+                        }
+                        return null;
+                    }
 
-            @Override
-            public String[] filterTuple(final String placeholder) {
-                return null;
-            }
-        });
+                    @Override
+                    public String[] filterTuple(final String placeholder) {
+                        return null;
+                    }
+                });
     }
 
     @Override
@@ -158,27 +159,33 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
             getView().update(modelNode);
 
             // stack / relays
-            List<NamedNode> relayNode = asNamedNodes(failSafePropertyList(modelNode, String.join("/", STACK, currentStack, RELAY)));
+            List<NamedNode> relayNode = asNamedNodes(
+                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, RELAY)));
             getView().updateRelays(relayNode);
 
             // stack / relay / remote-site
-            List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode, String.join("/", STACK, currentStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
+            List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode,
+                    String.join("/", STACK, currentStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
             getView().updateRemoteSite(remoteSite);
 
             // stack / protocols
-            List<NamedNode> protocol = asNamedNodes(failSafePropertyList(modelNode, String.join("/", STACK, currentStack, PROTOCOL)));
+            List<NamedNode> protocol = asNamedNodes(
+                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, PROTOCOL)));
             getView().updateProtocols(protocol);
 
             // stack / transport
-            List<NamedNode> transport = asNamedNodes(failSafePropertyList(modelNode, String.join("/", STACK, currentStack, TRANSPORT)));
+            List<NamedNode> transport = asNamedNodes(
+                    failSafePropertyList(modelNode, String.join("/", STACK, currentStack, TRANSPORT)));
             getView().updateTransports(transport);
 
             // channel / fork
-            List<NamedNode> forks = asNamedNodes(failSafePropertyList(modelNode, String.join("/", CHANNEL, currentChannel, FORK)));
+            List<NamedNode> forks = asNamedNodes(
+                    failSafePropertyList(modelNode, String.join("/", CHANNEL, currentChannel, FORK)));
             getView().updateForks(forks);
 
             // channel / fork / protocol
-            List<NamedNode> channelProtocols = asNamedNodes(failSafePropertyList(modelNode, String.join("/", CHANNEL, currentChannel, FORK, currentFork, PROTOCOL)));
+            List<NamedNode> channelProtocols = asNamedNodes(failSafePropertyList(modelNode,
+                    String.join("/", CHANNEL, currentChannel, FORK, currentFork, PROTOCOL)));
             getView().updateChannelProtocols(channelProtocols);
 
         });
@@ -190,12 +197,15 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
             final SafeHtml successMessage) {
-        crud.saveSingleton(template.resolve(filterStatementContext), changedValues, successMessage, this::reload);
+        Metadata metadata = metadataRegistry.lookup(template);
+        crud.saveSingleton(template.resolve(filterStatementContext), changedValues, metadata, successMessage,
+                this::reload);
     }
 
-    void saveResource(final AddressTemplate template, final String resourceName, final Map<String, Object> changedValues,
-            final SafeHtml successMessage) {
-        crud.save(template.resolve(filterStatementContext, resourceName), changedValues, successMessage, this::reload);
+    void saveResource(final AddressTemplate template, final String resourceName,
+            final Map<String, Object> changedValues, final Metadata metadata, final SafeHtml successMessage) {
+        crud.save(template.resolve(filterStatementContext, resourceName), changedValues, metadata, successMessage,
+                this::reload);
     }
 
     void removeResource(final AddressTemplate template, String name, String displayName) {

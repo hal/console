@@ -57,6 +57,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -165,7 +166,8 @@ public class CacheContainerPresenter
 
     void saveCacheContainer(Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
-        crud.save(Names.CACHE_CONTAINER, cacheContainer, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
+        crud.save(Names.CACHE_CONTAINER, cacheContainer, address, changedValues, metadata, this::reload);
     }
 
 
@@ -180,7 +182,8 @@ public class CacheContainerPresenter
     }
 
     void saveCache(final Cache cache, final String name, final Map<String, Object> changedValues) {
-        crud.save(cache.type, name, cacheAddress(cache, name), changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(cache.template);
+        crud.save(cache.type, name, cacheAddress(cache, name), changedValues, metadata, this::reload);
     }
 
     void removeCache(final Cache cache, final String name) {
@@ -217,7 +220,10 @@ public class CacheContainerPresenter
     }
 
     void saveCacheComponent(final Component component, final Map<String, Object> changedValues) {
-        crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=*")
+                .append(COMPONENT + "=" + component.resource));
+        crud.saveSingleton(component.type, cacheComponentAddress(component), changedValues, metadata, this::reload);
     }
 
     private ResourceAddress cacheComponentAddress(final Component component) {
@@ -253,7 +259,11 @@ public class CacheContainerPresenter
     }
 
     void saveCacheBackup(final String name, final Map<String, Object> changedValues) {
-        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, this::showCacheBackup);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=*")
+                .append(COMPONENT + "=" + BACKUPS)
+                .append(BACKUP + "=*"));
+        crud.save(Names.BACKUP, name, cacheBackupAddress(name), changedValues, metadata, this::showCacheBackup);
     }
 
     void removeCacheBackup(final String name) {
@@ -308,7 +318,8 @@ public class CacheContainerPresenter
     }
 
     void saveCacheStore(final Store store, final Map<String, Object> changedValues) {
-        crud.saveSingleton(store.type, cacheStoreAddress(store), changedValues, this::showCacheStore);
+        Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
+        crud.saveSingleton(store.type, cacheStoreAddress(store), changedValues, metadata, this::showCacheStore);
     }
 
     void switchStore(final Store newStore) {
@@ -372,7 +383,11 @@ public class CacheContainerPresenter
     }
 
     void saveWrite(final Write write, final Map<String, Object> changedValues) {
-        crud.saveSingleton(Names.WRITE_BEHIND, writeAddress(write), changedValues, this::showCacheStore);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=*")
+                .append(STORE + "=" + store.resource)
+                .append(WRITE + "=" + write.resource));
+        crud.saveSingleton(Names.WRITE_BEHIND, writeAddress(write), changedValues, metadata, this::showCacheStore);
     }
 
     void switchWrite(final Write currentWrite, final Write newWrite) {
@@ -398,7 +413,11 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ tables of jdbc stores
 
     void saveStoreTable(final Table table, final Map<String, Object> changedValues) {
-        crud.saveSingleton(table.type, storeTableAddress(store, table), changedValues, this::showCacheStore);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(cacheType.resource() + "=*")
+                .append(STORE + "=" + store.resource)
+                .append(TABLE + "=" + table.resource));
+        crud.saveSingleton(table.type, storeTableAddress(store, table), changedValues, metadata, this::showCacheStore);
     }
 
     private ResourceAddress storeTableAddress(final Store store, final Table table) {
@@ -421,7 +440,9 @@ public class CacheContainerPresenter
     }
 
     void saveThreadPool(final ThreadPool threadPool, final Map<String, Object> changedValues) {
-        crud.saveSingleton(threadPool.type, threadPoolAddress(threadPool), changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
+                .append(THREAD_POOL + "=" + threadPool.resource));
+        crud.saveSingleton(threadPool.type, threadPoolAddress(threadPool), changedValues, metadata, this::reload);
     }
 
     private ResourceAddress threadPoolAddress(final ThreadPool threadPool) {
@@ -438,7 +459,8 @@ public class CacheContainerPresenter
     }
 
     void saveJgroups(final Map<String, Object> changedValues) {
-        crud.saveSingleton(Names.JGROUPS, jgroupsAddress(), changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE.append(TRANSPORT + "=" + JGROUPS));
+        crud.saveSingleton(Names.JGROUPS, jgroupsAddress(), changedValues, metadata, this::reload);
     }
 
     private ResourceAddress jgroupsAddress() {

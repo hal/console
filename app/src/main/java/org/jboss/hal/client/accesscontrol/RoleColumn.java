@@ -357,7 +357,7 @@ public class RoleColumn extends FinderColumn<Role> {
             changedValues.remove(INCLUDE_ALL); // must not be in changedValues when calling ModifyScopedRole
 
             List<Function<FunctionContext>> functions = new ArrayList<>();
-            functions.add(new ModifyScopedRole(dispatcher, role, changedValues));
+            functions.add(new ModifyScopedRole(dispatcher, role, changedValues, metadata));
             if (hasIncludesAll) {
                 functions.add(new CheckRoleMapping(dispatcher, role));
                 functions.add(new AddRoleMapping(dispatcher, role, status -> status == 404));
