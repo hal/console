@@ -70,7 +70,7 @@ public class OperationFactory {
             final Metadata metadata) {
 
         // TODO Is it safe to always use ATTRIBUTES as path when calling ResourceDescription methods?
-        List<Operation> operations = new ArrayList<>();
+        Map<String, Operation> operations = new HashMap<>();
         HashMap<String, Object> localChanges = new HashMap<>(changeSet);
 
         // look for alternatives
@@ -86,12 +86,12 @@ public class OperationFactory {
                 // the easy part: no conflicts
                 logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
                 alternatives.forEach(alternative -> {
-                    operations.add(undefineAttribute(address, alternative));
+                    operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
                     List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, alternative);
                     if (!requires.isEmpty()) {
                         logger.debug("Add undefine operations for attributes which require {}: [{}]", alternative,
                                 String.join(", ", requires));
-                        requires.forEach(r -> operations.add(undefineAttribute(address, r)));
+                        requires.forEach(r -> operations.putIfAbsent(r, undefineAttribute(address, r)));
                     }
                 });
 
@@ -125,17 +125,23 @@ public class OperationFactory {
             logger.debug("Add undefine operations for {[]}, write operation for {[]}",
                     String.join(", ", undefine), String.join(", ", write));
             undefine.forEach(u -> {
-                operations.add(undefineAttribute(address, u));
+                operations.putIfAbsent(u, undefineAttribute(address, u));
                 localChanges.remove(u);
+                // process requires of the current undefine attribute
+                List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, u);
+                requires.forEach(ur -> {
+                    operations.putIfAbsent(ur, undefineAttribute(address, ur));
+                    localChanges.remove(ur);
+                });
             });
+
             write.forEach(w -> {
-                operations.add(writeAttribute(address, w, changeSet.get(w), metadata));
+                operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), metadata));
                 localChanges.remove(w);
                 List<String> writeAlternatives = metadata.getDescription().findAlternatives(ATTRIBUTES, w);
-                // process alternatives of the current write attribute which are not in undefine
-                writeAlternatives.removeAll(undefine);
+                // process alternatives of the current write attribute
                 writeAlternatives.forEach(wa -> {
-                    operations.add(undefineAttribute(address, wa));
+                    operations.putIfAbsent(wa, undefineAttribute(address, wa));
                     localChanges.remove(wa);
                 });
             });
@@ -143,8 +149,9 @@ public class OperationFactory {
 
         // handle the remaining attributes
         logger.debug("Process remaining attributes {[]}", String.join(", ", localChanges.keySet()));
-        localChanges.forEach((name, value) -> operations.add(writeAttribute(address, name, value, metadata)));
-        return new Composite(operations.stream().filter(Objects::nonNull).collect(toList()));
+        localChanges.forEach((name, value) ->
+                operations.putIfAbsent(name, writeAttribute(address, name, value, metadata)));
+        return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
     }
 
     private boolean isDefaultValue(String name, Object value, Metadata metadata) {
