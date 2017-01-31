@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 
 import static java.util.stream.Collectors.toList;
@@ -129,6 +130,20 @@ public class ResourceDescription extends ModelNode {
                 })
                 .map(Property::getName)
                 .collect(toList());
+    }
+
+    public boolean isDefaultValue(final String path, final String name, final Object value) {
+        if (value != null) {
+            Property attribute = findAttribute(path, name);
+            if (attribute != null) {
+                if (attribute.getValue().hasDefined(DEFAULT)) {
+                    ModelType type = attribute.getValue().get(TYPE).asType();
+                    Object defaultValue = attribute.getValue().get(DEFAULT).as(type);
+                    return value.equals(defaultValue);
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isDeprecated() {

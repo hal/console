@@ -34,6 +34,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.description.ResourceDescription;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +73,12 @@ public class OperationFactory {
         // TODO Is it safe to always use ATTRIBUTES as path when calling ResourceDescription methods?
         Map<String, Operation> operations = new HashMap<>();
         HashMap<String, Object> localChanges = new HashMap<>(changeSet);
+        ResourceDescription resourceDescription = metadata.getDescription();
 
         // look for alternatives
         Set<String> conflicts = new HashSet<>();
         Map<String, List<String>> allAlternatives = localChanges.keySet().stream()
-                .collect(toMap(identity(), name -> metadata.getDescription().findAlternatives(ATTRIBUTES, name)));
+                .collect(toMap(identity(), name -> resourceDescription.findAlternatives(ATTRIBUTES, name)));
         allAlternatives.forEach((attribute, alternatives) -> {
 
             logger.debug("Alternatives resolution for {} -> [{}]", attribute, String.join(", ", alternatives));
@@ -88,7 +90,7 @@ public class OperationFactory {
                     logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
                     alternatives.forEach(alternative -> {
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
-                        List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, alternative);
+                        List<String> requires = resourceDescription.findRequires(ATTRIBUTES, alternative);
                         if (!requires.isEmpty()) {
                             logger.debug("Add undefine operations for attributes which require {}: [{}]", alternative,
                                     String.join(", ", requires));
@@ -114,7 +116,7 @@ public class OperationFactory {
             logger.debug("Try to resolve conflicts between alternatives {[]}", String.join(", ", conflicts));
             Map<Boolean, List<String>> resolution = conflicts.stream().collect(groupingBy(conflict -> {
                 Object value = changeSet.get(conflict);
-                return isNullOrEmpty(value) || isDefaultValue(conflict, value, metadata);
+                return isNullOrEmpty(value) || resourceDescription.isDefaultValue(ATTRIBUTES, conflict, value);
             }));
             List<String> undefine = resolution.getOrDefault(true, Collections.emptyList());
             List<String> write = resolution.getOrDefault(false, Collections.emptyList());
@@ -130,7 +132,7 @@ public class OperationFactory {
                 operations.putIfAbsent(u, undefineAttribute(address, u));
                 localChanges.remove(u);
                 // process requires of the current undefine attribute
-                List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, u);
+                List<String> requires = resourceDescription.findRequires(ATTRIBUTES, u);
                 requires.forEach(ur -> {
                     operations.putIfAbsent(ur, undefineAttribute(address, ur));
                     localChanges.remove(ur);
@@ -138,9 +140,9 @@ public class OperationFactory {
             });
 
             write.forEach(w -> {
-                operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), metadata));
+                operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), resourceDescription));
                 localChanges.remove(w);
-                List<String> writeAlternatives = metadata.getDescription().findAlternatives(ATTRIBUTES, w);
+                List<String> writeAlternatives = resourceDescription.findAlternatives(ATTRIBUTES, w);
                 // process alternatives of the current write attribute
                 writeAlternatives.forEach(wa -> {
                     operations.putIfAbsent(wa, undefineAttribute(address, wa));
@@ -152,22 +154,8 @@ public class OperationFactory {
         // handle the remaining attributes
         logger.debug("Process remaining attributes {[]}", String.join(", ", localChanges.keySet()));
         localChanges.forEach((name, value) ->
-                operations.putIfAbsent(name, writeAttribute(address, name, value, metadata)));
+                operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription)));
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
-    }
-
-    private boolean isDefaultValue(String name, Object value, Metadata metadata) {
-        if (value != null) {
-            Property attribute = metadata.getDescription().findAttribute(ATTRIBUTES, name);
-            if (attribute != null) {
-                if (attribute.getValue().hasDefined(DEFAULT)) {
-                    ModelType type = attribute.getValue().get(TYPE).asType();
-                    Object defaultValue = attribute.getValue().get(DEFAULT).as(type);
-                    return value.equals(defaultValue);
-                }
-            }
-        }
-        return false;
     }
 
     private boolean isNullOrEmpty(Object value) {
@@ -181,12 +169,13 @@ public class OperationFactory {
         return new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address).param(NAME, name).build();
     }
 
-    private Operation writeAttribute(ResourceAddress address, String name, Object value, Metadata metadata) {
-        if (isNullOrEmpty(value) || isDefaultValue(name, value, metadata)) { // TODO check for default value?
+    private Operation writeAttribute(ResourceAddress address, String name, Object value,
+            ResourceDescription resourceDescription) {
+        if (isNullOrEmpty(value) || resourceDescription.isDefaultValue(ATTRIBUTES, name, value)) {
             return undefineAttribute(address, name);
 
         } else {
-            ModelNode valueNode = asValueNode(name, value, metadata);
+            ModelNode valueNode = asValueNode(name, value, resourceDescription);
             if (valueNode != null) {
                 return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
                         .param(NAME, name)
@@ -199,10 +188,10 @@ public class OperationFactory {
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private ModelNode asValueNode(String name, Object value, Metadata metadata) {
+    private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
         ModelNode valueNode = new ModelNode();
 
-        Property attribute = metadata.getDescription().findAttribute(ATTRIBUTES, name);
+        Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
         if (attribute != null) {
             ModelNode attributeDescription = attribute.getValue();
             ModelType type = attributeDescription.get(TYPE).asType();

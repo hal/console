@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -143,9 +144,11 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext,
                 name);
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
+        Map<String, String> properties = form.getFormItem(CONFIG_PROPERTIES) != null
+                ? form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue()
+                : Collections.emptyMap();
         mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
-                CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
-                () -> presenter.reload());
+                CONFIG_PROPERTIES, properties, () -> presenter.reload());
     }
 
     void removeConnectionDefinition(Api<NamedNode> api) {

@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
@@ -42,10 +43,13 @@ import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
@@ -269,6 +273,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
     private final Map<String, ModelNode> attributeMetadata;
+    private final ResourceDescription resourceDescription;
+    private final String attributePath;
 
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
@@ -280,9 +286,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
+        this.resourceDescription = builder.metadata.getDescription();
+        this.attributePath = builder.attributePath;
 
         List<Property> properties = new ArrayList<>();
-        List<Property> filteredProperties = builder.metadata.getDescription().getAttributes(builder.attributePath)
+        List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
                 .stream()
                 .filter(new PropertyFilter(builder))
                 .collect(toList());
@@ -359,19 +367,36 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             }
         }
 
-        // requires
-        getFormItems().forEach(formItem -> {
-            List<String> requires = builder.metadata.getDescription()
-                    .findRequires(builder.attributePath, formItem.getName());
+        Set<String> processedAlternatives = new HashSet<>();
+        getFormItems().forEach((FormItem formItem) -> {
+            String name = formItem.getName();
+
+            // requires
+            List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+                    .map(this::getFormItem)
+                    .filter(Objects::nonNull)
+                    .collect(toList());
             if (!requires.isEmpty()) {
                 //noinspection unchecked
-                formItem.addValueChangeHandler(event ->
-                        requires.forEach(r -> {
-                            FormItem rf = getFormItem(r);
-                            if (rf != null) {
-                                rf.setEnabled(!formItem.isEmpty());
-                            }
-                        }));
+                formItem.addValueChangeHandler(event -> requires.forEach(rf -> rf.setEnabled(!isEmpty(formItem))));
+            }
+
+            // alternatives
+            List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
+            HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
+            uniqueAlternatives.add(name);
+            uniqueAlternatives.removeAll(processedAlternatives);
+            if (!uniqueAlternatives.isEmpty()) {
+                addFormValidation(form -> {
+                    long modifiedNonEmptyItems = uniqueAlternatives.stream()
+                            .map(ua -> getFormItem(ua))
+                            .filter(fi -> fi != null && fi.isModified() && !isEmpty(fi))
+                            .count();
+                    return modifiedNonEmptyItems > 1
+                            ? ValidationResult.invalid("Alternatives error!")
+                            : ValidationResult.OK;
+                });
+                processedAlternatives.addAll(uniqueAlternatives);
             }
         });
     }
@@ -386,6 +411,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
     }
 
+    @Override
+    protected void prepareEditState() {
+        super.prepareEditState();
+        getFormItems().forEach(this::evalRequires);
+    }
+
     /**
      * @return only the changed values w/ {@code "access-type" => "read-write"}.
      */
@@ -398,5 +429,32 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
         return writableChanges;
+    }
+
+    private void evalRequires(FormItem formItem) {
+        String name = formItem.getName();
+        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+                .map(this::getFormItem)
+                .filter(Objects::nonNull)
+                .collect(toList());
+        if (!requires.isEmpty()) {
+            requires.forEach(rf -> rf.setEnabled(!isEmpty(formItem)));
+        }
+    }
+
+    private boolean isEmpty(FormItem formItem) {
+        String name = formItem.getName();
+        Object value = formItem.getValue();
+        ModelNode attributeDescription = attributeMetadata.get(name);
+        if (attributeDescription != null) {
+            if (attributeDescription.hasDefined(DEFAULT)) {
+                return resourceDescription.isDefaultValue(attributePath, name, value);
+            } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
+                return !(Boolean) value;
+            } else {
+                return formItem.isEmpty();
+            }
+        }
+        return formItem.isEmpty();
     }
 }
