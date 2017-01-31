@@ -56,6 +56,7 @@ public interface ModelDescriptionConstants {
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
+    String ALTERNATIVES = "alternatives";
     String ANY = "any";
     String ARCHIVE = "archive";
     String ASYNC_OPERATIONS = "async-operations";
@@ -311,6 +312,7 @@ public interface ModelDescriptionConstants {
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
+    String REQUIRES = "requires";
     String RESPONSE = "response";
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESOURCE_ADAPTER = "resource-adapter";

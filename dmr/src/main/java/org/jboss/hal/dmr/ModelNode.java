@@ -35,8 +35,6 @@
 
 package org.jboss.hal.dmr;
 
-import elemental.client.Browser;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -47,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import elemental.client.Browser;
 
 /**
  * A dynamic model representation node object.
@@ -309,6 +309,66 @@ public class ModelNode implements Cloneable {
      */
     public ModelNode asObject() throws IllegalArgumentException {
         return value.asObject();
+    }
+
+    /**
+     * Get the value of this node as {@code type}. This method simply delegates to the various {@code asXXX()}
+     * methods depending on the specified type.
+     *
+     * @return the value as {@code type} or null if the type is {@link ModelType#UNDEFINED}
+     *
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    public Object as(ModelType type) {
+        Object result;
+        switch (type) {
+            case BIG_DECIMAL:
+                result = asBigDecimal();
+                break;
+            case BIG_INTEGER:
+                result = asBigInteger();
+                break;
+            case BOOLEAN:
+                result = asBoolean();
+                break;
+            case BYTES:
+                result = asBytes();
+                break;
+            case DOUBLE:
+                result = asDouble();
+                break;
+            case EXPRESSION:
+                result = asString();
+                break;
+            case INT:
+                result = asInt();
+                break;
+            case LIST:
+                result = asList();
+                break;
+            case LONG:
+                result = asLong();
+                break;
+            case OBJECT:
+                result = asObject();
+                break;
+            case PROPERTY:
+                result = asProperty();
+                break;
+            case STRING:
+                result = asString();
+                break;
+            case TYPE:
+                result = asType();
+                break;
+            case UNDEFINED:
+                result = null;
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
     }
 
     /**

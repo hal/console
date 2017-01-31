@@ -1,0 +1,633 @@
+{
+    "description" => "Specifies a connection definition.",
+    "access-constraints" => {"application" => {"resource-adapter" => {"type" => "resource-adapters"}}},
+    "attributes" => {
+        "allocation-retry" => {
+            "type" => INT,
+            "description" => "The allocation retry element indicates the number of times that allocating a connection should be tried before throwing an exception.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "allocation-retry-wait-millis" => {
+            "type" => LONG,
+            "description" => "The allocation retry wait millis element specifies the amount of time, in milliseconds, to wait between retrying to allocate a connection.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "authentication-context" => {
+            "type" => STRING,
+            "description" => "The Elytron authentication context which defines the javax.security.auth.Subject that is used to distinguish connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "alternatives" => ["authentication-context-and-application"],
+            "requires" => ["elytron-enabled"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {"resource-adapter-security" => {"type" => "resource-adapters"}}},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "authentication-context-and-application" => {
+            "type" => STRING,
+            "description" => "Indicates that either application-supplied parameters, such as from getConnection(user, pw), or Subject (provided by Elytron after authenticating using configured authentication-context), are used to distinguish connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "alternatives" => ["authentication-context"],
+            "requires" => ["elytron-enabled"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {"resource-adapter-security" => {"type" => "resource-adapters"}}},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "background-validation" => {
+            "type" => BOOLEAN,
+            "description" => "An element to specify that connections should be validated on a background thread versus being validated prior to use. Changing this value requires a server restart.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "background-validation-millis" => {
+            "type" => LONG,
+            "description" => "The background-validation-millis element specifies the amount of time, in milliseconds, that background validation will run. Changing this value requires a server restart.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "unit" => "MILLISECONDS",
+            "min" => 1L,
+            "max" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "blocking-timeout-wait-millis" => {
+            "type" => LONG,
+            "description" => "The blocking-timeout-millis element specifies the maximum time, in milliseconds, to block while waiting for a connection before throwing an exception. Note that this blocks only while waiting for locking a connection, and will never throw an exception if creating a new connection takes an inordinately long time.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "unit" => "MILLISECONDS",
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-decrementer-class" => {
+            "type" => STRING,
+            "description" => "Class defining the policy for decrementing connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-decrementer-properties" => {
+            "type" => OBJECT,
+            "description" => "Properties to inject in class defining the policy for decrementing connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-incrementer-class" => {
+            "type" => STRING,
+            "description" => "Class defining the policy for incrementing connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-incrementer-properties" => {
+            "type" => OBJECT,
+            "description" => "Properties to inject in class defining the policy for incrementing connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "class-name" => {
+            "type" => STRING,
+            "description" => "Specifies the fully qualified class name of a managed connection factory or admin object.",
+            "expressions-allowed" => true,
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connectable" => {
+            "type" => BOOLEAN,
+            "description" => "Enable the use of CMR. This feature means that a local resource can reliably participate in an XA transaction.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "elytron-enabled" => {
+            "type" => BOOLEAN,
+            "description" => "Enables Elytron security for handling authentication of connections. The Elytron authentication-context to be used will be current context if no context is specified (see authentication-context).",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "alternatives" => [
+                "security-domain",
+                "security-domain-and-application",
+                "security-application"
+            ],
+            "access-constraints" => {"sensitive" => {"resource-adapter-security" => {"type" => "resource-adapters"}}},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "enabled" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the resource adapter should be enabled.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "enlistment" => {
+            "type" => BOOLEAN,
+            "description" => "Defines if lazy enlistment should be used if supported by the resource adapter.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "enlistment-trace" => {
+            "type" => BOOLEAN,
+            "description" => "Defines if WildFly/IronJacamar should record enlistment traces.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "flush-strategy" => {
+            "type" => STRING,
+            "description" => "Specifies how the pool should be flushed in case of an error.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => "FailingConnectionOnly",
+            "allowed" => [
+                "FailingConnectionOnly",
+                "InvalidIdleConnections",
+                "IdleConnections",
+                "Gracefully",
+                "EntirePool",
+                "AllInvalidIdleConnections",
+                "AllIdleConnections",
+                "AllGracefully",
+                "AllConnections"
+            ],
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "idle-timeout-minutes" => {
+            "type" => LONG,
+            "description" => "Specifies the maximum time, in minutes, a connection may be idle before being closed. The actual maximum time depends also on the IdleRemover scan time, which is half of the smallest idle-timeout-minutes value of any pool. Changing this value requires a server restart.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "unit" => "MINUTES",
+            "min" => 0L,
+            "max" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "initial-pool-size" => {
+            "type" => INT,
+            "description" => "Specifies the initial number of connections a pool should hold.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "interleaving" => {
+            "type" => BOOLEAN,
+            "description" => "An element to enable interleaving for XA connections.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "jndi-name" => {
+            "type" => STRING,
+            "description" => "Specifies the JNDI name for the connection factory.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "max-pool-size" => {
+            "type" => INT,
+            "description" => "Specifies the maximum number of connections for a pool. No more connections will be created in each sub-pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => 20,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "mcp" => {
+            "type" => STRING,
+            "description" => "Defines the ManagedConnectionPool implementation. For example: org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "min-pool-size" => {
+            "type" => INT,
+            "description" => "Specifies the minimum number of connections for a pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => 0,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "no-recovery" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the connection pool should be excluded from recovery.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "no-tx-separate-pool" => {
+            "type" => BOOLEAN,
+            "description" => "Oracle does not like XA connections getting used both inside and outside a JTA transaction. To workaround the problem you can create separate sub-pools for the different contexts.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pad-xid" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies whether the Xid should be padded.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pool-fair" => {
+            "type" => BOOLEAN,
+            "description" => "Defines if pool use should be fair.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pool-prefill" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the pool should be prefilled. Changing this value requires a server restart.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pool-use-strict-min" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the min-pool-size should be considered strict.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-authentication-context" => {
+            "type" => STRING,
+            "description" => "The Elytron authentication context used for recovery (current authentication-context will be used if unspecified).",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "requires" => ["recovery-elytron-enabled"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {"resource-adapter-security" => {"type" => "resource-adapters"}}},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-elytron-enabled" => {
+            "type" => BOOLEAN,
+            "description" => "Indicates that an Elytron authentication context will be used for recovery.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "alternatives" => ["recovery-security-domain"],
+            "access-constraints" => {"sensitive" => {"resource-adapter-security" => {"type" => "resource-adapters"}}},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-password" => {
+            "type" => STRING,
+            "description" => "The password used for recovery.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "credential" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-plugin-class-name" => {
+            "type" => STRING,
+            "description" => "The fully qualified class name of the recovery plugin implementation.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-plugin-properties" => {
+            "type" => OBJECT,
+            "description" => "The properties for the recovery plugin.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-security-domain" => {
+            "type" => STRING,
+            "description" => "The PicketBox security domain used for recovery.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "alternatives" => ["recovery-elytron-enabled"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "security-domain-ref" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "recovery-username" => {
+            "type" => STRING,
+            "description" => "The user name used for recovery.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "credential" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "same-rm-override" => {
+            "type" => BOOLEAN,
+            "description" => "Using this attribute, you can unconditionally set whether javax.transaction.xa.XAResource.isSameRM(XAResource) returns true or false.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "security-application" => {
+            "type" => BOOLEAN,
+            "description" => "Indicates that application-supplied parameters, such as from getConnection(user, pw), are used to distinguish connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "alternatives" => [
+                "security-domain",
+                "security-domain-and-application",
+                "elytron-enabled"
+            ],
+            "access-constraints" => {"sensitive" => {
+                "security-domain-ref" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "security-domain" => {
+            "type" => STRING,
+            "description" => "Specifies the PicketBox security domain which defines the javax.security.auth.Subject that is used to distinguish connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "alternatives" => [
+                "security-domain-and-application",
+                "security-application",
+                "elytron-enabled"
+            ],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "security-domain-ref" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "security-domain-and-application" => {
+            "type" => STRING,
+            "description" => "Indicates that either application-supplied parameters, such as from getConnection(user, pw), or Subject (from PicketBox security domain), are used to distinguish connections in the pool.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "alternatives" => [
+                "security-domain",
+                "security-application",
+                "elytron-enabled"
+            ],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "security-domain-ref" => {"type" => "core"},
+                "resource-adapter-security" => {"type" => "resource-adapters"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "sharable" => {
+            "type" => BOOLEAN,
+            "description" => "Enable the use of sharable connections, which allows lazy association to be enabled if supported.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "tracking" => {
+            "type" => BOOLEAN,
+            "description" => "Defines if IronJacamar should track connection handles across transaction boundaries.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-ccm" => {
+            "type" => BOOLEAN,
+            "description" => "Enable the use of a cached connection manager.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-fast-fail" => {
+            "type" => BOOLEAN,
+            "description" => "Whether to fail a connection allocation on the first try if it is invalid (true) or keep trying until the pool is exhausted of all potential connections (false).",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-java-context" => {
+            "type" => BOOLEAN,
+            "description" => "Setting this to false will bind the object into global JNDI.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "validate-on-match" => {
+            "type" => BOOLEAN,
+            "description" => "This specifies if connection validation should be done when a connection factory attempts to match a managed connection. This is typically exclusive to the use of background validation.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "wrap-xa-resource" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies whether XAResource instances should be wrapped in an org.jboss.tm.XAResourceWrapper instance.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "xa-resource-timeout" => {
+            "type" => INT,
+            "description" => "The value is passed to XAResource.setTransactionTimeout(), in seconds.",
+            "expressions-allowed" => true,
+            "required" => false,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        }
+    }
+}

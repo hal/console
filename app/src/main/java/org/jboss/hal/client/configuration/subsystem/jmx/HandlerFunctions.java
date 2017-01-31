@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.core.OperationFactory;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
@@ -48,19 +49,21 @@ class HandlerFunctions {
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
         private final Map<String, Object> changedValues;
+        private final Metadata metadata;
 
         SaveAuditLog(final Dispatcher dispatcher, final StatementContext statementContext,
-                final Map<String, Object> changedValues) {
+                final Map<String, Object> changedValues, final Metadata metadata) {
             this.dispatcher = dispatcher;
             this.statementContext = statementContext;
             this.changedValues = changedValues;
+            this.metadata = metadata;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
-                    .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues);
+                    .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
             if (operation.isEmpty()) {
                 control.proceed();
             } else {

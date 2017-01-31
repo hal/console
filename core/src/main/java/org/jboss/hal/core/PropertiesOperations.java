@@ -41,6 +41,8 @@ import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
@@ -170,6 +172,7 @@ public class PropertiesOperations {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
+    private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
     private final StatementContext statementContext;
     private final Resources resources;
@@ -179,12 +182,14 @@ public class PropertiesOperations {
     @Inject
     public PropertiesOperations(final EventBus eventBus,
             final Dispatcher dispatcher,
+            final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
             final StatementContext statementContext,
             final Resources resources,
             final CrudOperations crud) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
+        this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.statementContext = statementContext;
         this.resources = resources;
@@ -225,9 +230,14 @@ public class PropertiesOperations {
         if (properties.isEmpty()) {
             crud.save(type, name, template, changedValues, callback);
         } else {
-            ResourceAddress address = template.resolve(statementContext, name);
-            Composite operations = operationFactory.fromChangeSet(address, changedValues);
-            saveInternal(type, name, address, operations, psr, properties, callback);
+            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+                @Override
+                public void onMetadata(final Metadata metadata) {
+                    ResourceAddress address = template.resolve(statementContext, name);
+                    Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+                    saveInternal(type, name, address, operations, psr, properties, callback);
+                }
+            });
         }
     }
 
