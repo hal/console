@@ -70,8 +70,7 @@ public class OperationFactoryTest {
 
     @Test
     public void notInMetadata() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(address,
-                ImmutableMap.of("foo", "bar"), metadata);
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("foo", "bar"), metadata);
 
         assertEquals(1, composite.size());
         assertWrite(composite, "foo", "bar");
@@ -79,8 +78,8 @@ public class OperationFactoryTest {
 
     @Test
     public void write() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(address,
-                ImmutableMap.of("allocation-retry", 23), metadata);
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23),
+                metadata);
 
         assertEquals(1, composite.size());
         assertWrite(composite, "allocation-retry", 23);
@@ -88,8 +87,7 @@ public class OperationFactoryTest {
 
     @Test
     public void undefine() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
-                ImmutableMap.of("class-name", ""), metadata);
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("class-name", ""), metadata);
 
         assertEquals(1, composite.size());
         assertUndefine(composite, "class-name");
@@ -97,8 +95,7 @@ public class OperationFactoryTest {
 
     @Test
     public void defaultValue() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
-                ImmutableMap.of("enlistment", true), metadata);
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("enlistment", true), metadata);
 
         assertEquals(1, composite.size());
         assertUndefine(composite, "enlistment");
@@ -106,7 +103,7 @@ public class OperationFactoryTest {
 
     @Test
     public void mixed() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
+        Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("class-name", "", "jndi-name", "java:/foo"), metadata);
 
         assertEquals(2, composite.size());
@@ -116,7 +113,7 @@ public class OperationFactoryTest {
 
     @Test
     public void alternativesNoConflicts() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
+        Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("authentication-context", "foo"), metadata);
 
         assertEquals(2, composite.size());
@@ -126,7 +123,7 @@ public class OperationFactoryTest {
 
     @Test
     public void alternativesNoConflictsWithRequires() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
+        Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("security-domain", "foo"), metadata);
 
         assertEquals(6, composite.size());
@@ -141,7 +138,7 @@ public class OperationFactoryTest {
     @Test
     public void alternativesWithConflicts1() throws Exception {
         // Turn elytron 'on'
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
+        Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("elytron-enabled", true, "authentication-context", "foo"), metadata);
 
         assertEquals(6, composite.size());
@@ -156,7 +153,7 @@ public class OperationFactoryTest {
     @Test
     public void alternativesWithConflicts2() throws Exception {
         // Turn elytron 'off'
-        Composite composite = operationFactory.fromChangeSet(ResourceAddress.root(),
+        Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("elytron-enabled", false, "security-domain", "foo"), metadata);
 
         assertEquals(6, composite.size());
