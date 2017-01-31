@@ -358,6 +358,22 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
             }
         }
+
+        // requires
+        getFormItems().forEach(formItem -> {
+            List<String> requires = builder.metadata.getDescription()
+                    .findRequires(builder.attributePath, formItem.getName());
+            if (!requires.isEmpty()) {
+                //noinspection unchecked
+                formItem.addValueChangeHandler(event ->
+                        requires.forEach(r -> {
+                            FormItem rf = getFormItem(r);
+                            if (rf != null) {
+                                rf.setEnabled(!formItem.isEmpty());
+                            }
+                        }));
+            }
+        });
     }
 
     @Override

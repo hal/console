@@ -84,16 +84,18 @@ public class OperationFactory {
             if (intersection.isEmpty()) {
 
                 // the easy part: no conflicts
-                logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
-                alternatives.forEach(alternative -> {
-                    operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
-                    List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, alternative);
-                    if (!requires.isEmpty()) {
-                        logger.debug("Add undefine operations for attributes which require {}: [{}]", alternative,
-                                String.join(", ", requires));
-                        requires.forEach(r -> operations.putIfAbsent(r, undefineAttribute(address, r)));
-                    }
-                });
+                if (!alternatives.isEmpty()) {
+                    logger.debug("Add undefine operations for alternatives [{}]", String.join(", ", alternatives));
+                    alternatives.forEach(alternative -> {
+                        operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
+                        List<String> requires = metadata.getDescription().findRequires(ATTRIBUTES, alternative);
+                        if (!requires.isEmpty()) {
+                            logger.debug("Add undefine operations for attributes which require {}: [{}]", alternative,
+                                    String.join(", ", requires));
+                            requires.forEach(r -> operations.putIfAbsent(r, undefineAttribute(address, r)));
+                        }
+                    });
+                }
 
             } else {
                 // possible conflicts: one or more alternatives are also in the change-set

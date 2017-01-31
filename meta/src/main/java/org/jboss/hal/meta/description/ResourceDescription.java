@@ -99,9 +99,7 @@ public class ResourceDescription extends ModelNode {
         Property attribute = findAttribute(path, name);
         if (attribute != null) {
             if (attribute.getValue().hasDefined(ALTERNATIVES)) {
-                return attribute.getValue().get(ALTERNATIVES)
-                        .asList()
-                        .stream()
+                return attribute.getValue().get(ALTERNATIVES).asList().stream()
                         .map(ModelNode::asString)
                         .collect(toList());
             }

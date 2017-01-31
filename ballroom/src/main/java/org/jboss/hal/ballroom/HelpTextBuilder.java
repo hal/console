@@ -109,18 +109,22 @@ public class HelpTextBuilder {
         if (!requires.isEmpty()) {
             String textModule;
             if (requires.size() == 1) {
-                textModule = labelBuilder.label(requires.get(0));
+                textModule = "'" + labelBuilder.label(requires.get(0)) + "'";
             } else {
-                textModule = requires.stream().map(labelBuilder::label).collect(joining(", "));
+                textModule = requires.stream()
+                        .map((name) -> "'" + labelBuilder.label(name) + "'")
+                        .collect(joining(", "));
             }
             textModules.add(MESSAGES.requires(textModule));
         }
         if (!alternatives.isEmpty()) {
             String textModule;
             if (alternatives.size() == 1) {
-                textModule = labelBuilder.label(alternatives.get(0));
+                textModule = "'" + labelBuilder.label(alternatives.get(0)) + "'";
             } else {
-                textModule = alternatives.stream().map(labelBuilder::label).collect(joining(", "));
+                textModule = alternatives.stream()
+                        .map((name) -> "'" + labelBuilder.label(name) + "'")
+                        .collect(joining(", "));
             }
             textModules.add(MESSAGES.alternativesHelp(textModule));
         }
