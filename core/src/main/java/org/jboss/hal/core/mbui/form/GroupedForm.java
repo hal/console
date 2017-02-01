@@ -18,12 +18,13 @@ package org.jboss.hal.core.mbui.form;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -39,6 +40,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 
+import static com.google.common.collect.Lists.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
@@ -59,6 +61,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         final String id;
         final String title;
         final LinkedHashSet<String> includes;
+        final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
 
@@ -66,6 +69,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             this.id = id;
             this.title = title;
             this.includes = new LinkedHashSet<>();
+            this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
         }
@@ -148,7 +152,19 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
         public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
             assertCurrentGroup();
-            currentGroup.includes.addAll(Lists.asList(first, rest));
+            currentGroup.includes.addAll(asList(first, rest));
+            return this;
+        }
+
+        public Builder<T> exclude(final Iterable<String> attributes) {
+            assertCurrentGroup();
+            Iterables.addAll(currentGroup.excludes, attributes);
+            return this;
+        }
+
+        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
+            assertCurrentGroup();
+            currentGroup.excludes.addAll(asList(first, rest));
             return this;
         }
 
@@ -248,10 +264,15 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         this.forms = new ArrayList<>();
 
         builder.groups.forEach(group -> {
-            ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<T>(Ids.build(group.id, Ids.FORM_SUFFIX),
-                    builder.metadata)
-                    .include(group.includes)
-                    .unsorted();
+            ModelNodeForm.Builder<T> fb = new ModelNodeForm.Builder<>(Ids.build(group.id, Ids.FORM_SUFFIX),
+                    builder.metadata);
+            if (!group.excludes.isEmpty()) {
+                fb.exclude(group.excludes);
+            }
+            if (!group.includes.isEmpty()) {
+                fb.include(group.includes);
+                fb.unsorted();
+            }
             group.providers.forEach(fb::customFormItem);
             group.unboundFormItems.forEach(fb::unboundFormItem);
 

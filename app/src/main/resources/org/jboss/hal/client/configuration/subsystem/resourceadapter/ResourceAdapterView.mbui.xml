@@ -29,13 +29,14 @@
                             <attribute name="archive"/>
                             <attribute name="beanvalidationgroups"/>
                             <attribute name="bootstrap-context"/>
-                            <attribute name="module"/>
                             <attribute
                                     form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
+                            <attribute name="module"/>
                             <attribute name="statistics-enabled"/>
                             <attribute name="transaction-support"/>
                         </group>
                         <group id="resource-adapter-configuration-wm-security" title="Work Manager Security">
+                            <attribute name="wm-elytron-enabled"/>
                             <attribute name="wm-security"/>
                             <attribute name="wm-security-default-groups"/>
                             <attribute name="wm-security-default-principal"/>
@@ -72,12 +73,12 @@
                     <attributes>
                         <group id="resource-adapter-connection-definition-attributes"
                                title="{{mbuiContext.resources().constants().attributes()}}">
-                            <attribute name="allocation-retry"/>
-                            <attribute name="allocation-retry-wait-millis"/>
-                            <attribute name="blocking-timeout-wait-millis"/>
-                            <attribute name="class-name"/>
-                            <attribute name="connectable"/>
-                            <attribute name="enabled"/>
+                            <exclude>
+                                <group id="resource-adapter-connection-definition-pool"/>
+                                <group id="resource-adapter-connection-definition-security"/>
+                                <group id="resource-adapter-connection-definition-recovery"/>
+                                <group id="resource-adapter-connection-definition-validation"/>
+                            </exclude>
                             <attribute
                                     form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
                         </group>
@@ -89,6 +90,11 @@
                             <attribute name="pool-prefill"/>
                             <attribute name="pool-use-strict-min"/>
                             <attribute name="flush-strategy"/>
+                            <attribute name="use-fast-fail"/>
+                            <attribute name="capacity-decrementer-class"/>
+                            <attribute name="capacity-decrementer-properties"/>
+                            <attribute name="capacity-incrementer-class"/>
+                            <attribute name="capacity-incrementer-properties"/>
                         </group>
                         <group id="resource-adapter-connection-definition-security"
                                title="{{mbuiContext.resources().constants().security()}}">
@@ -98,9 +104,17 @@
                             <attribute name="security-application"/>
                             <attribute name="security-domain"/>
                             <attribute name="security-domain-and-application"/>
+                        </group>
+                        <group id="resource-adapter-connection-definition-recovery"
+                               title="{{mbuiContext.resources().constants().recovery()}}">
+                            <attribute name="no-recovery"/>
+                            <attribute name="recovery-username"/>
+                            <attribute name="recovery-password"/>
                             <attribute name="recovery-elytron-enabled"/>
                             <attribute name="recovery-authentication-context"/>
                             <attribute name="recovery-security-domain"/>
+                            <attribute name="recovery-plugin-class-name"/>
+                            <attribute name="recovery-plugin-properties"/>
                         </group>
                         <group id="resource-adapter-connection-definition-validation"
                                title="{{mbuiContext.resources().constants().validation()}}">
@@ -132,10 +146,10 @@
                       on-save="{{saveAdminObject(form, changedValues)}}">
                     <attributes>
                         <attribute name="class-name"/>
-                        <attribute name="enabled"/>
-                        <attribute name="jndi-name"/>
                         <attribute
                                 form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("config-properties")}}'/>
+                        <attribute name="enabled"/>
+                        <attribute name="jndi-name"/>
                         <attribute name="use-java-context"/>
                     </attributes>
                 </form>

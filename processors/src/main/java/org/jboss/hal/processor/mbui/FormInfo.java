@@ -16,7 +16,9 @@
 package org.jboss.hal.processor.mbui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -31,12 +33,14 @@ public class FormInfo extends MbuiElementInfo {
         private final String name;
         private final String title;
         private final List<Attribute> attributes;
+        private final Set<String> excludes;
 
         Group(final String id, final String name, final String title) {
             this.id = id;
             this.name = name;
             this.title = Handlebars.templateSafeValue(title);
             this.attributes = new ArrayList<>();
+            this.excludes = new HashSet<>();
         }
 
         public String getId() {
@@ -55,8 +59,20 @@ public class FormInfo extends MbuiElementInfo {
             attributes.add(attribute);
         }
 
+        void exclude(final String name) {
+            excludes.add(name);
+        }
+
+        void exclude(final Group group) {
+            excludes.addAll(group.getAttributes().stream().map(Attribute::getName).collect(toList()));
+        }
+
         public List<Attribute> getAttributes() {
             return attributes;
+        }
+
+        public Set<String> getExcludes() {
+            return excludes;
         }
 
         public boolean isHasAttributesWithProvider() {

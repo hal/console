@@ -250,6 +250,26 @@
         <zeroOrMore>
             <ref name="attribute-definition"/>
         </zeroOrMore>
+        <optional>
+            <ref name="exclude-definition"/>
+        </optional>
+    </define>
+
+    <define name="group-ref-definition">
+        <element name="group">
+            <attribute name="id">
+                <data type="NCName"/>
+            </attribute>
+        </element>
+    </define>
+
+    <define name="exclude-definition">
+        <zeroOrMore>
+            <ref name="attribute-definition"/>
+        </zeroOrMore>
+        <zeroOrMore>
+            <ref name="group-ref-definition"/>
+        </zeroOrMore>
     </define>
 
     <define name="attribute-definition">

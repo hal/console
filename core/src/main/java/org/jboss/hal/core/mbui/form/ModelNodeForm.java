@@ -120,7 +120,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> include(final Iterable<String> attributes) {
-            //noinspection ResultOfMethodCallIgnored
             Iterables.addAll(includes, attributes);
             return this;
         }
@@ -132,6 +131,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> exclude(final String[] attributes) {
             excludes.addAll(Arrays.asList(attributes));
+            return this;
+        }
+
+        public Builder<T> exclude(final Iterable<String> attributes) {
+            Iterables.addAll(excludes, attributes);
             return this;
         }
 
