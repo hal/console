@@ -50,6 +50,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
     String alternativesHelp(String alternatives);
+    String alternativeError(String alternatives);
     String alternativesError(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);

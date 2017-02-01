@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
@@ -107,26 +106,10 @@ public class HelpTextBuilder {
             textModules.add(MESSAGES.unit(attribute.get(UNIT).asString().toLowerCase()));
         }
         if (!requires.isEmpty()) {
-            String textModule;
-            if (requires.size() == 1) {
-                textModule = "'" + labelBuilder.label(requires.get(0)) + "'";
-            } else {
-                textModule = requires.stream()
-                        .map((name) -> "'" + labelBuilder.label(name) + "'")
-                        .collect(joining(", "));
-            }
-            textModules.add(MESSAGES.requires(textModule));
+            textModules.add(MESSAGES.requires(labelBuilder.enumeration(requires, CONSTANTS.and())));
         }
         if (!alternatives.isEmpty()) {
-            String textModule;
-            if (alternatives.size() == 1) {
-                textModule = "'" + labelBuilder.label(alternatives.get(0)) + "'";
-            } else {
-                textModule = alternatives.stream()
-                        .map((name) -> "'" + labelBuilder.label(name) + "'")
-                        .collect(joining(", "));
-            }
-            textModules.add(MESSAGES.alternativesHelp(textModule));
+            textModules.add(MESSAGES.alternativesHelp(labelBuilder.enumeration(alternatives, CONSTANTS.and())));
         }
         if (showRestartHelp) {
             textModules.add(restartMode.description());

@@ -43,6 +43,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String activeLower();
     String add();
     String adminOnly();
+    String and();
     String archived();
     String assignment();
     String assignmentsOfGroup();
@@ -298,6 +299,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationMode();
     String operationSuccessful();
     String operations();
+    String or();
     String orDragItHere();
     String output();
 

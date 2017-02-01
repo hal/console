@@ -43,13 +43,13 @@ import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
-import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
@@ -269,6 +269,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     }
 
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
@@ -367,6 +368,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             }
         }
 
+        // requires & alternatives
         Set<String> processedAlternatives = new HashSet<>();
         getFormItems().forEach((FormItem formItem) -> {
             String name = formItem.getName();
@@ -378,7 +380,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     .collect(toList());
             if (!requires.isEmpty()) {
                 //noinspection unchecked
-                formItem.addValueChangeHandler(event -> requires.forEach(rf -> rf.setEnabled(!isEmpty(formItem))));
+                formItem.addValueChangeHandler(
+                        event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
             }
 
             // alternatives
@@ -386,16 +389,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
             uniqueAlternatives.add(name);
             uniqueAlternatives.removeAll(processedAlternatives);
-            if (!uniqueAlternatives.isEmpty()) {
-                addFormValidation(form -> {
-                    long modifiedNonEmptyItems = uniqueAlternatives.stream()
-                            .map(ua -> getFormItem(ua))
-                            .filter(fi -> fi != null && fi.isModified() && !isEmpty(fi))
-                            .count();
-                    return modifiedNonEmptyItems > 1
-                            ? ValidationResult.invalid("Alternatives error!")
-                            : ValidationResult.OK;
-                });
+            if (uniqueAlternatives.size() > 1) {
+                addFormValidation(form ->
+                        new AlternativesValidation<>(uniqueAlternatives, this, CONSTANTS, MESSAGES).validate(form));
                 processedAlternatives.addAll(uniqueAlternatives);
             }
         });
@@ -438,11 +434,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 .filter(Objects::nonNull)
                 .collect(toList());
         if (!requires.isEmpty()) {
-            requires.forEach(rf -> rf.setEnabled(!isEmpty(formItem)));
+            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
         }
     }
 
-    private boolean isEmpty(FormItem formItem) {
+    boolean isEmptyOrDefault(FormItem formItem) {
         String name = formItem.getName();
         Object value = formItem.getValue();
         ModelNode attributeDescription = attributeMetadata.get(name);
