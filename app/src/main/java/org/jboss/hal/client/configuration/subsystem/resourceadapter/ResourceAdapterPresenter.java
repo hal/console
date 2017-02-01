@@ -39,7 +39,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.SELECTED_RESOURCE_ADAPTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTERS;
 
 /**
  * @author Harald Pehl
@@ -102,7 +102,7 @@ public class ResourceAdapterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(RESOURCE_ADAPTER)
+        return finderPathFactory.subsystemPath(RESOURCE_ADAPTERS)
                 .append(Ids.RESOURCE_ADAPTER, Ids.resourceAdapter(resourceAdapter),
                         Names.RESOURCE_ADAPTER, resourceAdapter);
     }

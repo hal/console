@@ -46,8 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**
  * A form which groups attributes on different tabs. Each group will include the attributes specified by the
- * {@linkplain Builder grouped form builder}. The builder only supports to include attributes, exclusions are not
- * supported.
+ * {@linkplain Builder grouped form builder}.
  * <p>
  * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
  * callbacks.
@@ -102,7 +101,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         /**
-         * Starts a custom group with custom attributes. Use one of the {@code include()} methods to include attributes.
+         * Starts a custom group with custom attributes. Use one of the {@code include()} and {@code exclude()} methods
+         * to include and exclude attributes.
          */
         public Builder<T> customGroup(final String id, final String title) {
             assertNoCurrentGroup();

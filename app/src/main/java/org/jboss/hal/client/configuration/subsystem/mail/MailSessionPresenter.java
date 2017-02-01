@@ -135,7 +135,7 @@ public class MailSessionPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MAIL)
+        return finderPathFactory.subsystemPath(MAIL)
                 .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
