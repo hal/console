@@ -52,6 +52,7 @@ public interface CSS {
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String blue = "blue";
+    String bootstrapError = "bootstrap-error";
     String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";

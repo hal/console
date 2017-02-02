@@ -15,33 +15,34 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.core.client.GWT;
+import javax.annotation.PostConstruct;
+
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.resources.Constants;
 
-import javax.annotation.PostConstruct;
+import static org.jboss.hal.resources.CSS.bootstrapError;
 
 @Templated
 public abstract class BootstrapFailed implements IsElement {
 
-    static final Constants CONSTANTS = GWT.create(Constants.class);
-
     // @formatter:off
-    public static BootstrapFailed create(String error, String details) {
-        return new Templated_BootstrapFailed(error, details);
+    public static BootstrapFailed create(String error, Constants constants) {
+        return new Templated_BootstrapFailed(error, constants);
     }
 
     public abstract String error();
-    public abstract String details();
+    public abstract Constants constants();
     // @formatter:on
 
-    @DataElement Element code;
+    @DataElement Element errorHolder;
 
     @PostConstruct
     void init() {
-        code.setInnerText(details());
+        Browser.getDocument().getDocumentElement().getClassList().add(bootstrapError);
+        errorHolder.setInnerText(error());
     }
 }

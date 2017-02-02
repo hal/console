@@ -14,10 +14,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html class="layout-pf layout-pf-fixed">
+
+<!--suppress HtmlUnknownTarget -->
+<html class="bootstrap-error layout-pf layout-pf-fixed">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Bootstrap Failed</title>
+    <title>HAL Management Console</title>
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -25,13 +27,23 @@
     <script src="../../public/js/external.js"></script>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-offset-2 col-md-8">
-            <div class="alert alert-danger">
-                <span class="pficon pficon-error-circle-o"></span> {{error}}
+<div>
+    <nav class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand logo">
+                <span class="logo-text logo-text-first">Management </span><span class="logo-text logo-text-last">Console</span>
+            </a>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <h1>Bootstrap Error</h1>
+                <p>{{constants().bootstrapError()}}</p>
+                <div class="alert alert-danger margin-top-large">
+                    <span class="pficon pficon-error-circle-o"></span><span data-element="errorHolder">n/a</span>
+                </div>
             </div>
-            <pre data-element="code">Details code</pre>
         </div>
     </div>
 </div>

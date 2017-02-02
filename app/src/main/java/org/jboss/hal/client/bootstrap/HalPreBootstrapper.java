@@ -38,8 +38,8 @@ public class HalPreBootstrapper implements PreBootstrapper {
             LoadingPanel.get().off();
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
             logger.error("Uncaught bootstrap error: {}", errorMessage);
-            Browser.getDocument().getBody()
-                    .appendChild(BootstrapFailed.create(CONSTANTS.bootstrapException(), errorMessage).asElement());
+            Browser.getDocument().getBody().appendChild(
+                    BootstrapFailed.create(errorMessage, CONSTANTS).asElement());
         });
     }
 }
