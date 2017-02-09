@@ -39,9 +39,31 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <h1>Bootstrap Error</h1>
-                <p>{{constants().bootstrapError()}}</p>
                 <div class="alert alert-danger margin-top-large">
                     <span class="pficon pficon-error-circle-o"></span><span data-element="errorHolder">n/a</span>
+                </div>
+                <div>
+                    <p>The management console could not be loaded.</p>
+                    <ul>
+                        <li><p>Make sure the server is <strong>up and running</strong>. Please check the log files for possible errors during startup.</p>
+                        </li>
+                        <li><p>Verify you have <strong>added users</strong> which are able to access the admin console.</p>
+                            <p>To add a new user execute the
+                                <code>add-user.sh</code> script within the bin folder of your installation and enter the requested information.
+                            </p>
+                        </li>
+                        <li data-element="allowedOriginServer"><p>Check that the management endpoint at <a href="{{endpoints().dmr()}}" target="_blank">{{endpoints().dmr()}}</a> is available.</p></li>
+                        <li data-element="allowedOriginConfig"><p>Make sure you've added {{org.jboss.hal.config.Endpoints.getBaseUrl()}} as <strong>allowed origin</strong> using one of the following CLI commands:</p>
+                            <ul>
+                                <li><p>Standalone:</p>
+                                    <pre>/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value={{org.jboss.hal.config.Endpoints.getBaseUrl()}}</pre>
+                                </li>
+                                <li><p>Domain:</p>
+                                    <pre>/host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value={{org.jboss.hal.config.Endpoints.getBaseUrl()}}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

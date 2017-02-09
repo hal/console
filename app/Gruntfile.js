@@ -124,6 +124,7 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/jstree/dist/jstree.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.js',
+                    '<%= config.bower %>/google-code-prettify/src/prettify.js',
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.js'
                 ],
@@ -171,6 +172,7 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/jstree/dist/jstree.min.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.min.js',
+                    '<%= config.bower %>/google-code-prettify/bin/prettify.min.js',
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.min.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.min.js'
                 ],

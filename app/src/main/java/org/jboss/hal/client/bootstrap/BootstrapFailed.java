@@ -20,9 +20,10 @@ import javax.annotation.PostConstruct;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.config.Endpoints;
 
 import static org.jboss.hal.resources.CSS.bootstrapError;
 
@@ -30,19 +31,23 @@ import static org.jboss.hal.resources.CSS.bootstrapError;
 public abstract class BootstrapFailed implements IsElement {
 
     // @formatter:off
-    public static BootstrapFailed create(String error, Constants constants) {
-        return new Templated_BootstrapFailed(error, constants);
+    public static BootstrapFailed create(String error, Endpoints endpoints) {
+        return new Templated_BootstrapFailed(error, endpoints);
     }
 
     public abstract String error();
-    public abstract Constants constants();
+    public abstract Endpoints endpoints();
     // @formatter:on
 
     @DataElement Element errorHolder;
+    @DataElement Element allowedOriginServer;
+    @DataElement Element allowedOriginConfig;
 
     @PostConstruct
     void init() {
         Browser.getDocument().getDocumentElement().getClassList().add(bootstrapError);
         errorHolder.setInnerText(error());
+        Elements.setVisible(allowedOriginServer, !endpoints().isSameOrigin());
+        Elements.setVisible(allowedOriginConfig, !endpoints().isSameOrigin());
     }
 }

@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
-import static org.jboss.gwt.elemento.core.InputType.url;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
@@ -307,7 +306,7 @@ public class Dispatcher implements RecordingHandler {
                 if (status == 200) {
                     successCallback.onSuccess(responseText);
                 } else {
-                    handleErrorCodes(status, operation, exceptionCallback);
+                    handleErrorCodes(url, status, operation, exceptionCallback);
                 }
             }
         });
@@ -393,7 +392,7 @@ public class Dispatcher implements RecordingHandler {
                     }
                 } else {
                     if (!pendingLifecycleAction) {
-                        handleErrorCodes(status, operation, exceptionCallback);
+                        handleErrorCodes(url, status, operation, exceptionCallback);
                     }
                 }
             }
@@ -406,8 +405,8 @@ public class Dispatcher implements RecordingHandler {
 
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
         xhr.setOnreadystatechange(event -> readyListener.onReady(xhr));
-        xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
-                .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
+        xhr.addEventListener("error",  //NON-NLS
+                event -> handleErrorCodes(url, xhr.getStatus(), operation, exceptionCallback), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         xhr.setWithCredentials(true);
@@ -415,9 +414,12 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(int status, Operation operation, ExceptionCallback exceptionCallback) {
+    private void handleErrorCodes(String url, int status, Operation operation, ExceptionCallback exceptionCallback) {
         switch (status) {
             case 0:
+                exceptionCallback.onException(operation,
+                        new DispatchException("The response for '" + url + "' could not be processed.", status));
+                break;
             case 401:
             case 403:
                 exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));

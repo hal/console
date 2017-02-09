@@ -28,7 +28,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.config.Endpoints;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,20 +43,20 @@ public class HalBootstrapper implements Bootstrapper {
     private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
+    private final Endpoints endpoints;
     private final BootstrapFunctions bootstrapFunctions;
-    private final Resources resources;
 
     @Inject
     public HalBootstrapper(final EventBus eventBus,
             final PlaceManager placeManager,
             final EndpointManager endpointManager,
-            final BootstrapFunctions bootstrapFunctions,
-            final Resources resources) {
+            final Endpoints endpoints,
+            final BootstrapFunctions bootstrapFunctions) {
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
+        this.endpoints = endpoints;
         this.bootstrapFunctions = bootstrapFunctions;
-        this.resources = resources;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class HalBootstrapper implements Bootstrapper {
                 LoadingPanel.get().off();
                 logger.error("Bootstrap error: {}", context.getErrorMessage());
                 Browser.getDocument().getBody().appendChild(
-                        BootstrapFailed.create(context.getErrorMessage(), resources.constants()).asElement());
+                        BootstrapFailed.create(context.getErrorMessage(), endpoints).asElement());
             }
 
             @Override

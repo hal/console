@@ -281,6 +281,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private final ResourceDescription resourceDescription;
     private final String attributePath;
 
+    @SuppressWarnings("unchecked")
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
@@ -383,7 +384,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     .filter(Objects::nonNull)
                     .collect(toList());
             if (!requires.isEmpty()) {
-                //noinspection unchecked
                 formItem.addValueChangeHandler(
                         event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
             }
