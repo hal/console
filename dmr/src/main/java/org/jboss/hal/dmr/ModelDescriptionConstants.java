@@ -143,6 +143,7 @@ public interface ModelDescriptionConstants {
     String EXCLUDE = "exclude";
     String EXPIRATION = "expiration";
     String EXPLODED = "exploded";
+    String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
 
     String FAILED = "failed";
@@ -314,6 +315,8 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESPONSE = "response";
+    String RESOLVE_EXPRESSION = "resolve-expression";
+    String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESPONSE_HEADERS = "response-headers";

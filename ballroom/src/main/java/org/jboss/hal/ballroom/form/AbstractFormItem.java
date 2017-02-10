@@ -31,11 +31,12 @@ import elemental.dom.Node;
 import elemental.html.ButtonElement;
 import elemental.html.DivElement;
 import elemental.html.LabelElement;
-import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
+import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -71,6 +72,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
+    private final List<ResolveExpressionHandler> resolveExpressionHandlers;
     private final String label;
     private final String hint;
     private Form.State state;
@@ -99,9 +101,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // Form.State#READONLY elements
     private final LabelElement readonlyLabelElement;
     private final DivElement readonlyRoot;
-    private final SpanElement readonlyRestricted;
     protected final DivElement valueContainer;
-    protected final ParagraphElement valueElement;
+    protected final Element valueElement;
+    private final SpanElement expressionLink;
+    private final SpanElement readonlyRestricted;
 
 
     // ------------------------------------------------------ initialization
@@ -121,6 +124,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         this.eventBus = new SimpleEventBus();
         this.validationHandlers = new LinkedList<>();
+        this.resolveExpressionHandlers = new LinkedList<>();
         resetValidationHandlers();
 
         // editing elements
@@ -153,8 +157,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // @formatter:off
         expressionButton = new Elements.Builder()
             .button().css(btn, btnDefault)
-                .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
-                .title(CONSTANTS.expressionResolver())
+                .on(click, event -> {
+                    if (supportsExpressions()) {
+                        resolveExpressionHandlers.forEach(handler ->
+                                handler.onResolveExpression(new ResolveExpressionEvent(getExpressionValue())));
+                    }
+                })
+                .title(CONSTANTS.resolveExpression())
                 .start("i").css(fontAwesome("link")).end()
             .end().build();
 
@@ -196,6 +205,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                 .end()
                 .build();
         valueElement = new Elements.Builder().p().css(formControlStatic).end().build();
+        expressionLink = new Elements.Builder()
+                .span().css(CSS.fontAwesome("link"), clickable)
+                .title(CONSTANTS.resolveExpression())
+                .on(click, event ->
+                        resolveExpressionHandlers.forEach(handler ->
+                                handler.onResolveExpression(new ResolveExpressionEvent(getExpressionValue()))))
+                .end()
+                .build();
         readonlyRestricted = new Elements.Builder()
                 .span()
                 .css(fontAwesome("lock"), CSS.restricted)
@@ -565,7 +582,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
-        eventBus.addHandler(ResolveExpressionEvent.getType(), handler);
+        resolveExpressionHandlers.add(handler);
     }
 
     private boolean hasExpressionScheme(String value) {
@@ -573,23 +590,37 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     boolean toggleExpressionSupport(boolean on) {
+        // TODO Find a way how to use the expression resolver in modals
+        boolean modal = Dialog.isOpen() || Wizard.isOpen();
         // only change the UI if expressions are supported and switch is necessary
-        if (supportsExpressions() && !isRestricted() && on != hasInputButton(expressionButton)) {
-            if (on) {
-                showInputButton(expressionButton);
-                if (suggestHandler != null) {
-                    suggestHandler.close();
-                }
-            } else {
-                if (suggestHandler != null) {
-                    showInputButton(showAllButton);
-                } else if (hint != null) {
-                    showInputAddon(hint);
+        if (!modal && supportsExpressions() && !isRestricted()) {
+            boolean toggled = false;
+            if (on != hasInputButton(expressionButton)) {
+                if (on) {
+                    showInputButton(expressionButton);
+                    if (suggestHandler != null) {
+                        suggestHandler.close();
+                    }
                 } else {
-                    removeInputGroup();
+                    if (suggestHandler != null) {
+                        showInputButton(showAllButton);
+                    } else if (hint != null) {
+                        showInputAddon(hint);
+                    } else {
+                        removeInputGroup();
+                    }
                 }
+                toggled = true;
             }
-            return true;
+            if (on != Elements.isVisible(expressionLink)) {
+                if (on) {
+
+                } else {
+
+                }
+                toggled = true;
+            }
+            return toggled;
         }
         return false;
     }

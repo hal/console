@@ -72,6 +72,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
     @Override
     public boolean supportsExpressions() {
+        // TODO Support expressions
         return false;
     }
 

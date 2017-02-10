@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -160,61 +161,82 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute composite
 
     public void execute(final Composite composite, final CompositeCallback callback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback) {
-        dmr(composite, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
+        dmr(composite, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
+                new ExceptionalFunctionCallback<>(control));
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback, FailedCallback failedCallback) {
-        dmr(composite, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFunctionCallback<>(control));
     }
 
 
     // ------------------------------------------------------ execute operation
 
     public void execute(final Operation operation, final OperationCallback callback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback, final FailedCallback failedCallback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback) {
-        dmr(operation, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
+        dmr(operation, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
+                new ExceptionalFunctionCallback<>(control));
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback, FailedCallback failedCallback) {
-        dmr(operation, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFunctionCallback<>(control));
     }
 
 
     // ------------------------------------------------------ dmr
 
-    private <T> void dmr(final Operation operation, final SuccessCallback<T> callback,
-            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+    private <T> void dmr(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final SuccessCallback<T> callback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
         if (GetOperation.isSupported(operation.getName())) {
@@ -225,8 +247,8 @@ public class Dispatcher implements RecordingHandler {
             method = POST;
         }
 
-        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
-                exceptionCallback);
+        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), getResult, callback,
+                failedCallback, exceptionCallback);
         xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
         xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         if (method == GET) {
@@ -286,8 +308,8 @@ public class Dispatcher implements RecordingHandler {
 
     private void uploadFormData(FormData formData, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
-        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
-                failedCallback, exceptionCallback);
+        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
+                payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
         xhr.send(formData);
         // Uploads are not supported in macros!
     }
@@ -362,7 +384,8 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ xhr
 
     private <T> XMLHttpRequest newDmrXhr(final String url, final HttpMethod method, final Operation operation,
-            final PayloadProcessor payloadProcessor, SuccessCallback<T> callback, final FailedCallback failedCallback,
+            final PayloadProcessor payloadProcessor, final Function<ModelNode, ModelNode> getResult,
+            final SuccessCallback<T> callback, final FailedCallback failedCallback,
             final ExceptionCallback exceptionCallback) {
         return newXhr(url, method, operation, exceptionCallback, xhr -> {
             int readyState = xhr.getReadyState();
@@ -378,7 +401,7 @@ public class Dispatcher implements RecordingHandler {
                             ProcessState processState = processStateProcessor.get().process(payload);
                             eventBus.fireEvent(new ProcessStateEvent(processState));
                         }
-                        ModelNode result = payload.get(RESULT);
+                        ModelNode result = getResult.apply(payload);
                         if (operation instanceof Composite && callback instanceof CompositeCallback) {
                             ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
                         } else if (callback instanceof OperationCallback) {

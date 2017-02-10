@@ -184,6 +184,8 @@ public class MetadataProcessor {
             if (functions.size() == 1) {
                 new Async<FunctionContext>(progress).single(new FunctionContext(), outcome, allFunctions.get(0));
             } else {
+                // Unfortunately we cannot use Async.parallel() here unless someone finds a way
+                // to unambiguously map parallel r-r-d operations to their results (multiple "step-1" results)
                 //noinspection SuspiciousToArrayCall
                 new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
                         (Function[]) allFunctions.toArray(new RrdFunction[allFunctions.size()]));

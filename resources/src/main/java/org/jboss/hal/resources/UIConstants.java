@@ -55,6 +55,7 @@ public interface UIConstants {
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";
     String FALSE = "false";
+    String FOR = "for";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN_MODAL = "hidden.bs.modal";

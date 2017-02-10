@@ -266,6 +266,10 @@ public class Wizard<C, S extends Enum<S>> {
         initEventHandler();
     }
 
+    public static boolean isOpen() {
+        return open;
+    }
+
     private static void initEventHandler() {
         $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Wizard.open = true);
         $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Wizard.open = false);

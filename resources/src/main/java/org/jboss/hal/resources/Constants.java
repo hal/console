@@ -124,6 +124,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expertMode();
     String explode();
     String exploded();
+    String expression();
     String expressionResolver();
 
     String failed();
@@ -231,10 +232,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllDescription();
     String includesAllHeader();
     String input();
+    String invalidExpression();
 
     String jcaConfiguration();
     String jgroupsRelayAlias();
-    String jgroupsTransportAlias();
     String jdbcDriver();
     String jndiTree();
 
@@ -332,6 +333,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String required();
     String requiredField();
     String reset();
+    String resolve();
+    String resolveExpression();
+    String resolvedValue();
     String restart();
     String restartAllServices();
     String restartJvm();

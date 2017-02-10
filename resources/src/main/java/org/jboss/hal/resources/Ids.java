@@ -411,6 +411,8 @@ public interface Ids {
             FORM_SUFFIX);
     String REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB = build(REMOTING, "http-connector-security-policy", TAB_SUFFIX);
     String REPLICATED_CACHE = "replicated-cache";
+    String RESOLVE_EXPRESSION = "resolve-expression";
+    String RESOLVE_EXPRESSION_FORM = build(RESOLVE_EXPRESSION, FORM_SUFFIX);
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = build(RESOURCE_ADAPTER, ADD_SUFFIX);
     String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);

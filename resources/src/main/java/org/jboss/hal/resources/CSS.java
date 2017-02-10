@@ -248,7 +248,7 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
-    String pauseCircle ="pause-circle-o";
+    String pauseCircle = "pause-circle-o";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";

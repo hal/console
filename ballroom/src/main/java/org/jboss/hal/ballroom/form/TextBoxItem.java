@@ -67,6 +67,11 @@ public class TextBoxItem extends AbstractFormItem<String> {
         return isExpressionAllowed();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return isNullOrEmpty(getValue()) || isUndefined();
+    }
+
 
     static class TextBoxElement extends InputElement<String> {
 

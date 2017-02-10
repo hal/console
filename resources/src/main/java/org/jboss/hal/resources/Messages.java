@@ -116,6 +116,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
+    SafeHtml expressionError(String expression);
 
     SafeHtml flushConnectionSuccess();
 

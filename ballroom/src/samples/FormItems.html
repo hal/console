@@ -436,6 +436,31 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label hal-form-label" for="switchExpressionAllowed-markup">Expression Allowed</label>
+                            <div class="hal-form-input">
+                                <input type="checkbox" id="switchExpressionAllowed-markup" class="bootstrap-switch" checked>
+                                <a class="btn btn-default switch-to-expression" title="Expression mode"><span class="fa fa-link"></span></a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label hal-form-label" for="switchExpressionMode-markup">Expression Mode</label>
+                            <div class="hal-form-input">
+                                <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Normal mode">
+                                            <i class="fa fa-toggle-on"></i>
+                                        </button>
+                                    </span>
+                                    <input type="text" id="switchExpressionMode-markup" class="form-control" placeholder="Expression"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label hal-form-label" for="switchDisabled-markup">Disabled</label>
                             <div class="hal-form-input">
                                 <input type="checkbox" id="switchDisabled-markup" class="bootstrap-switch" disabled>
@@ -815,14 +840,7 @@
                             <div class="hal-form-input">
                                 <div class="input-group">
                                     <input type="text" id="timeUnitItem-markup" class="form-control" placeholder="Time"/>
-                                    <span class="input-group-btn">
-                                        <select class="selectpicker" id="timeUnitItem-select" name="timeUnitItem-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                    <span class="input-group-addon">MILISECONDS</span>
                                 </div>
                             </div>
                         </div>
@@ -831,14 +849,7 @@
                             <div class="hal-form-input">
                                 <div class="input-group">
                                     <input type="text" value="read-only" id="timeUnitItemDisabled-markup" class="form-control" disabled>
-                                    <span class="input-group-btn">
-                                        <select class="selectpicker" id="timeUnitItemDisabled-select" name="timeUnitItemDisabled-select" disabled>
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                    <span class="input-group-addon">MILISECONDS</span>
                                 </div>
                             </div>
                         </div>
@@ -858,14 +869,7 @@
                             <div class="hal-form-input">
                                 <div class="input-group">
                                     <input type="text" value="nope" id="timeUnitItemError-markup" class="form-control">
-                                    <span class="input-group-btn">
-                                        <select class="selectpicker" id="timeUnitItemError-select" name="timeUnitItemError-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                    <span class="input-group-addon">MILISECONDS</span>
                                 </div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
@@ -878,21 +882,26 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>StaticItem</legend>
-                        <blockquote>
-                            <p>Target type: <code>String</code></p>
-                        </blockquote>
                         <div class="form-group">
-                            <label class="control-label hal-form-label">Label for</label>
+                            <label class="control-label hal-form-label" for="staticItem-markup">Label for</label>
 
                             <div class="hal-form-input">
-                                <p class="form-control-static">Static text</p>
+                                <p id="staticItem-markup" class="form-control-static">Static text</p>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="control-label hal-form-label">Restricted</label>
+                            <label class="control-label hal-form-label" for="staticItemExpression-markup">Expression</label>
 
                             <div class="hal-form-input">
-                                <p class="form-control-static">The permissions for your role don't allow to access this data</p>
+                                <p id="staticItemExpression-markup" class="form-control-static">Static expression</p>
+                                <span class="fa fa-link form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label hal-form-label" for="staticItemRestricted-markup">Restricted</label>
+
+                            <div class="hal-form-input">
+                                <p id="staticItemRestricted-markup" class="form-control-static">The permissions for your role don't allow to access this data</p>
                                 <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -1340,6 +1349,31 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label hal-form-label" for="md-dialog-switchExpressionAllowed-markup">Expression Allowed</label>
+                                <div class="hal-form-input">
+                                    <input type="checkbox" id="md-dialog-switchExpressionAllowed-markup" class="bootstrap-switch" checked>
+                                    <a class="btn btn-default switch-to-expression" title="Expression mode"><span class="fa fa-link"></span></a>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="md-dialog-switchExpressionMode-markup">Expression Mode</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Normal mode">
+                                            <i class="fa fa-toggle-on"></i>
+                                        </button>
+                                    </span>
+                                        <input type="text" id="md-dialog-switchExpressionMode-markup" class="form-control" placeholder="Expression"/>
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label hal-form-label" for="md-dialog-switchDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <input type="checkbox" id="md-dialog-switchDisabled-markup" class="bootstrap-switch" disabled>
@@ -1688,14 +1722,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" id="md-dialog-timeUnitItem-markup" class="form-control" placeholder="Time"/>
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="md-dialog-timeUnitItem-select" name="md-dialog-timeUnitItem-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">SECONDS</span>
                                     </div>
                                 </div>
                             </div>
@@ -1704,14 +1731,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" value="read-only" id="md-dialog-timeUnitItemDisabled-markup" class="form-control" disabled>
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="md-dialog-timeUnitItemDisabled-select" name="md-dialog-timeUnitItemDisabled-select" disabled>
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">SECONDS</span>
                                     </div>
                                 </div>
                             </div>
@@ -1731,14 +1751,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" value="nope" id="md-dialog-timeUnitItemError-markup" class="form-control">
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="md-dialog-timeUnitItemError-select" name="md-dialog-timeUnitItemError-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">SECONDS</span>
                                     </div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
@@ -1752,17 +1765,25 @@
                         <fieldset class="form-section">
                             <legend>StaticItem</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label">Label for</label>
+                                <label class="control-label hal-form-label" for="md-dialog-staticItem-markup">Label for</label>
 
                                 <div class="hal-form-input">
-                                    <p class="form-control-static">Static text</p>
+                                    <p id="md-dialog-staticItem-markup" class="form-control-static">Static text</p>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label">Restricted</label>
+                                <label class="control-label hal-form-label" for="md-dialog-staticItemExpression-markup">Expression</label>
 
                                 <div class="hal-form-input">
-                                    <p class="form-control-static">The permissions for your role don't allow to access this data</p>
+                                    <p id="md-dialog-staticItemExpression-markup" class="form-control-static">Static expression</p>
+                                    <span class="fa fa-link form-control-feedback" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label hal-form-label" for="md-dialog-staticItemRestrictedMarkup">Restricted</label>
+
+                                <div class="hal-form-input">
+                                    <p id="md-dialog-staticItemRestrictedMarkup" class="form-control-static">The permissions for your role don't allow to access this data</p>
                                     <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
                                 </div>
                             </div>
@@ -2211,6 +2232,31 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label hal-form-label" for="ld-dialog-switchExpressionAllowed-markup">Expression Allowed</label>
+                                <div class="hal-form-input">
+                                    <input type="checkbox" id="ld-dialog-switchExpressionAllowed-markup" class="bootstrap-switch" checked>
+                                    <a class="btn btn-default switch-to-expression" title="Expression mode"><span class="fa fa-link"></span></a>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="ld-dialog-switchExpressionMode-markup">Expression Mode</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Normal mode">
+                                            <i class="fa fa-toggle-on"></i>
+                                        </button>
+                                    </span>
+                                        <input type="text" id="ld-dialog-switchExpressionMode-markup" class="form-control" placeholder="Expression"/>
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label hal-form-label" for="lg-dialog-switchDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <input type="checkbox" id="lg-dialog-switchDisabled-markup" class="bootstrap-switch" disabled>
@@ -2559,14 +2605,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" id="lg-dialog-timeUnitItem-markup" class="form-control" placeholder="Time"/>
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="lg-dialog-timeUnitItem-select" name="lg-dialog-timeUnitItem-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">MINUTES</span>
                                     </div>
                                 </div>
                             </div>
@@ -2575,14 +2614,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" value="read-only" id="lg-dialog-timeUnitItemDisabled-markup" class="form-control" disabled>
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="lg-dialog-timeUnitItemDisabled-select" name="lg-dialog-timeUnitItemDisabled-select" disabled>
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">MINUTES</span>
                                     </div>
                                 </div>
                             </div>
@@ -2602,14 +2634,7 @@
                                 <div class="hal-form-input">
                                     <div class="input-group">
                                         <input type="text" value="nope" id="lg-dialog-timeUnitItemError-markup" class="form-control">
-                                        <span class="input-group-btn">
-                                        <select class="selectpicker" id="lg-dialog-timeUnitItemError-select" name="lg-dialog-timeUnitItemError-select">
-                                            <option>MILLISECONDS</option>
-                                            <option>SECONDS</option>
-                                            <option>MINUTES</option>
-                                            <option>HOURS</option>
-                                        </select>
-                                    </span>
+                                        <span class="input-group-addon">MINUTES</span>
                                     </div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
@@ -2623,17 +2648,25 @@
                         <fieldset class="form-section">
                             <legend>StaticItem</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label">Label for</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-staticItem-markup">Label for</label>
 
                                 <div class="hal-form-input">
-                                    <p class="form-control-static">Static text</p>
+                                    <p id="lg-dialog-staticItem-markup" class="form-control-static">Static text</p>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label">Restricted</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-staticItemExpression-markup">Expression</label>
 
                                 <div class="hal-form-input">
-                                    <p class="form-control-static">The permissions for your role don't allow to access this data</p>
+                                    <p id="lg-dialog-staticItemExpression-markup" class="form-control-static">Static expression</p>
+                                    <span class="fa fa-link form-control-feedback" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label hal-form-label" for="lg-dialog-staticItemRestricted-markup">Restricted</label>
+
+                                <div class="hal-form-input">
+                                    <p id="lg-dialog-staticItemRestricted-markup" class="form-control-static">The permissions for your role don't allow to access this data</p>
                                     <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
                                 </div>
                             </div>

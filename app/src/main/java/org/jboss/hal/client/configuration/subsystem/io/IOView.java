@@ -19,10 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -41,9 +40,9 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     }
 
     @MbuiElement("io-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("io-buffer-pool-table") DataTable<NamedNode> bufferPoolTable;
+    @MbuiElement("io-buffer-pool-table") NamedNodeTable<NamedNode> bufferPoolTable;
     @MbuiElement("io-buffer-pool-form") Form<NamedNode> bufferPoolForm;
-    @MbuiElement("io-worker-table") DataTable<NamedNode> workerTable;
+    @MbuiElement("io-worker-table") NamedNodeTable<NamedNode> workerTable;
     @MbuiElement("io-worker-form") Form<NamedNode> workerForm;
 
     IOView(final MbuiContext mbuiContext) {
@@ -55,8 +54,8 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
 
     @Override
     public void updateBufferPool(final List<NamedNode> items) {
-        bufferPoolTable.api().clear().add(items).refresh(RefreshMode.RESET);
         bufferPoolForm.clear();
+        bufferPoolTable.update(items);
     }
 
 
@@ -64,7 +63,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
 
     @Override
     public void updateWorkers(final List<NamedNode> items) {
-        workerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         workerForm.clear();
+        workerTable.update(items);
     }
 }

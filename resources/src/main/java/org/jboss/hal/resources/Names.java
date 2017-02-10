@@ -81,6 +81,7 @@ public interface Names {
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
     String EXPIRATION = "Expiration";
+    String EXPRESSION_PLACEHOLDER = "${key:default}";
 
     String FILE = "File";
     String FILTER = "Filter";

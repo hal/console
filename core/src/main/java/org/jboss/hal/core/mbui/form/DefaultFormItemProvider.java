@@ -22,6 +22,7 @@ import java.util.Map;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
+import org.jboss.hal.ballroom.form.AbstractFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
@@ -69,7 +70,7 @@ class DefaultFormItemProvider implements FormItemProvider {
 
     @Override
     public FormItem<?> createFrom(final Property property) {
-        FormItem<?> formItem = null;
+        AbstractFormItem<?> formItem = null;
 
         String name = property.getName();
         String label = labelBuilder.label(property);
@@ -202,7 +203,11 @@ class DefaultFormItemProvider implements FormItemProvider {
                 formItem.setRequired(required);
                 formItem.setDeprecated(deprecated);
                 if (formItem.supportsExpressions()) {
-                    formItem.setExpressionAllowed(expressionAllowed);
+                    formItem.setExpressionAllowed(true);
+                    formItem.addResolveExpressionHandler(event -> {
+                        // resend as application event
+                        Core.INSTANCE.eventBus().fireEvent(event);
+                    });
                 }
                 if (readOnly || runtime) {
                     formItem.setEnabled(false);
