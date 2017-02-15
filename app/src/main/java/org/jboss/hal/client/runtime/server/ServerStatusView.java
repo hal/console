@@ -16,21 +16,21 @@
 package org.jboss.hal.client.runtime.server;
 
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
-import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.PreElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.ballroom.form.CreationContext;
+import org.jboss.hal.ballroom.form.Decoration;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
+import org.jboss.hal.ballroom.form.ReadOnlyAppearance;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -46,83 +46,73 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.formControlStatic;
-import static org.jboss.hal.resources.CSS.marginBottom5;
-import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
 public class ServerStatusView extends HalViewImpl implements ServerStatusPresenter.MyView {
 
-    private static class PreTextItem extends TextBoxItem {
+    private static class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
 
-        private PreElement pre;
+        PreReadOnlyAppearance() {
+            super(EnumSet.of(RESTRICTED));
+
+            // @formatter:off
+            Elements.Builder builder = new Elements.Builder()
+                .div().css(formGroup)
+                    .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
+                    .div().css(halFormInput)
+                        .start("pre").css(formControlStatic).rememberAs(VALUE_ELEMENT).end()
+                    .end()
+                .end();
+            // @formatter:on
+
+            valueElement = builder.referenceFor(VALUE_ELEMENT);
+        }
+
+        @Override
+        protected String name() {
+            return "PreReadOnlyAppearance";
+        }
+
+        @Override
+        protected <C> void safeApply(final Decoration decoration, final C context) {
+            if (decoration == RESTRICTED) {
+                valueElement.setTextContent("");
+                valueElement.setTextContent(CONSTANTS.restricted());
+            }
+        }
+    }
+
+
+    private static class PreTextItem extends TextBoxItem {
 
         PreTextItem(String name) {
             super(name, new LabelBuilder().label(name));
-        }
 
-        @Override
-        @SuppressWarnings("Duplicates")
-        protected <C> void assembleUI(CreationContext<C> context) {
-            super.assembleUI(context);
-            Elements.setVisible(valueElement, false);
-            pre = Browser.getDocument().createPreElement();
-            pre.getClassList().add(formControlStatic);
-            pre.getClassList().add(marginBottom5);
-            valueContainer.appendChild(pre);
-        }
-
-        @Override
-        protected void setReadonlyValue(final String value) {
-            super.setReadonlyValue(value);
-            pre.setTextContent(value);
-        }
-
-        @Override
-        public void setText(final String text) {
-            super.setText(text);
-            pre.setTextContent(text);
+            // replace read-only appearance
+            addAppearance(Form.State.READONLY, new PreReadOnlyAppearance<>());
         }
     }
 
 
     private static class PreListItem extends ListItem {
 
-        private PreElement pre;
-
         PreListItem(String name) {
             super(name, new LabelBuilder().label(name));
-        }
 
-        @Override
-        @SuppressWarnings("Duplicates")
-        protected <C> void assembleUI(CreationContext<C> context) {
-            super.assembleUI(context);
-            Elements.setVisible(valueElement, false);
-            pre = Browser.getDocument().createPreElement();
-            pre.getClassList().add(formControlStatic);
-            pre.getClassList().add(marginBottom5);
-            valueContainer.appendChild(pre);
-        }
-
-        @Override
-        protected void setReadonlyValue(final List<String> value) {
-            super.setReadonlyValue(value);
-            if (value != null) {
-                pre.setTextContent(String.join("\n", value));
-            }
-        }
-
-        @Override
-        public void setText(final String text) {
-            super.setText(text);
-            pre.setTextContent(text);
+            // replace read-only appearance
+            addAppearance(Form.State.READONLY, new PreReadOnlyAppearance<List<String>>() {
+                @Override
+                public String asString(final List<String> value) {
+                    return String.join("\n", value);
+                }
+            });
         }
     }
 

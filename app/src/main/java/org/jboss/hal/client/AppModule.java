@@ -20,8 +20,6 @@ import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import org.jboss.gwt.circuit.Dispatcher;
-import org.jboss.gwt.circuit.dag.DAGDispatcher;
 import org.jboss.hal.client.accesscontrol.AccessControl;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlTokens;
@@ -164,7 +162,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
-        bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 

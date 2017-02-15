@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Strings;
+import org.jboss.hal.core.expression.Expression;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -194,76 +195,82 @@ public class OperationFactory {
         Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
         if (attribute != null) {
             ModelNode attributeDescription = attribute.getValue();
-            ModelType type = attributeDescription.get(TYPE).asType();
-            try {
-                switch (type) {
-                    case BIG_DECIMAL:
-                        valueNode.set(BigDecimal.valueOf((double) value));
-                        break;
-                    case BIG_INTEGER:
-                        valueNode.set(BigInteger.valueOf((long) value));
-                        break;
-                    case BOOLEAN:
-                        valueNode.set((boolean) value);
-                        break;
-                    case BYTES:
-                        valueNode.set((byte[]) value);
-                        break;
-                    case DOUBLE:
-                        valueNode.set((double) value);
-                        break;
-                    case EXPRESSION:
-                        valueNode.setExpression((String) value);
-                        break;
-                    case INT:
-                        valueNode.set((int) value);
-                        break;
-                    case LIST: {
-                        ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
-                                ? attributeDescription.get(VALUE_TYPE).asType()
-                                : ModelType.UNDEFINED;
-                        if (valueType == ModelType.STRING) {
-                            valueNode.clear();
-                            List l = (List) value;
-                            for (Object o : l) { valueNode.add(String.valueOf(o)); }
-                        } else {
-                            valueNode = null;
-                            logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                    type);
-                        }
-                        break;
-                    }
-                    case LONG:
-                        valueNode.set((long) value);
-                        break;
-                    case OBJECT:
-                        ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
-                                ? attributeDescription.get(VALUE_TYPE).asType()
-                                : ModelType.UNDEFINED;
-                        if (valueType == ModelType.STRING) {
-                            Map map = (Map) value;
-                            for (Object k : map.keySet()) {
-                                valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+            if (attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
+                    attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
+                    Expression.isExpression(String.valueOf(value))) {
+                valueNode.setExpression(String.valueOf(value));
+            } else {
+                ModelType type = attributeDescription.get(TYPE).asType();
+                try {
+                    switch (type) {
+                        case BIG_DECIMAL:
+                            valueNode.set(BigDecimal.valueOf((double) value));
+                            break;
+                        case BIG_INTEGER:
+                            valueNode.set(BigInteger.valueOf((long) value));
+                            break;
+                        case BOOLEAN:
+                            valueNode.set((boolean) value);
+                            break;
+                        case BYTES:
+                            valueNode.set((byte[]) value);
+                            break;
+                        case DOUBLE:
+                            valueNode.set((double) value);
+                            break;
+                        case EXPRESSION:
+                            valueNode.setExpression((String) value);
+                            break;
+                        case INT:
+                            valueNode.set((int) value);
+                            break;
+                        case LIST: {
+                            ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
+                                    ? attributeDescription.get(VALUE_TYPE).asType()
+                                    : ModelType.UNDEFINED;
+                            if (valueType == ModelType.STRING) {
+                                valueNode.clear();
+                                List l = (List) value;
+                                for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                            } else {
+                                valueNode = null;
+                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
+                                        type);
                             }
-                        } else {
-                            valueNode = null;
-                            logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                    type);
+                            break;
                         }
-                        break;
-                    case STRING:
-                        valueNode.set((String) value);
-                        break;
+                        case LONG:
+                            valueNode.set((long) value);
+                            break;
+                        case OBJECT:
+                            ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
+                                    ? attributeDescription.get(VALUE_TYPE).asType()
+                                    : ModelType.UNDEFINED;
+                            if (valueType == ModelType.STRING) {
+                                Map map = (Map) value;
+                                for (Object k : map.keySet()) {
+                                    valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+                                }
+                            } else {
+                                valueNode = null;
+                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
+                                        type);
+                            }
+                            break;
+                        case STRING:
+                            valueNode.set((String) value);
+                            break;
 
-                    case PROPERTY:
-                    case TYPE:
-                    case UNDEFINED:
-                        valueNode = null;
-                        logger.error("Unsupported type {} for attribute {}", type, name);
-                        break;
+                        case PROPERTY:
+                        case TYPE:
+                        case UNDEFINED:
+                            valueNode = null;
+                            logger.error("Unsupported type {} for attribute {}", type, name);
+                            break;
+                    }
+                } catch (ClassCastException e) {
+                    logger.error("Unable to cast attribute {} as {}", name, type);
                 }
-            } catch (ClassCastException e) {
-                logger.error("Unable to cast attribute {} as {}", name, type);
             }
 
         } else {
@@ -273,7 +280,7 @@ public class OperationFactory {
             try {
                 if (String.class == clazz) {
                     String stringValue = (String) value;
-                    if (stringValue.startsWith("$")) {
+                    if (Expression.isExpression(stringValue)) {
                         valueNode.setExpression(stringValue);
                     } else {
                         valueNode.set(stringValue);

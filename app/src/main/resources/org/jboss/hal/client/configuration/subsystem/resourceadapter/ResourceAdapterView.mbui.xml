@@ -41,9 +41,9 @@
                             <attribute name="wm-security-default-groups"/>
                             <attribute name="wm-security-default-principal"/>
                             <attribute name="wm-security-domain"/>
-                            <attribute form-item='{{new MappingsItem("wm-security-mapping-groups")}}'/>
+                            <attribute form-item='{{new MappingsItem("wm-security-mapping-groups", mbuiContext.resources().messages())}}'/>
                             <attribute name="wm-security-mapping-required"/>
-                            <attribute form-item='{{new MappingsItem("wm-security-mapping-users")}}'/>
+                            <attribute form-item='{{new MappingsItem("wm-security-mapping-users", mbuiContext.resources().messages())}}'/>
                         </group>
                     </attributes>
                 </form>

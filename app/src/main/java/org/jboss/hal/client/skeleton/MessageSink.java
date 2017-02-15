@@ -103,9 +103,7 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
 
     void remove(String id) {
         Element element = Browser.getDocument().getElementById(id);
-        if (element != null && panelBody.contains(element)) {
-            panelBody.removeChild(element);
-        }
+        Elements.failSafeRemove(panelBody, element);
         updateHeader();
     }
 

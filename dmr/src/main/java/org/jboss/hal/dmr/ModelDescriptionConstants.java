@@ -291,6 +291,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";
     String RELAY = "relay";
@@ -352,6 +353,7 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
+    String SINCE = "since";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";

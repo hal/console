@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.dmr.model;
+
+import org.jboss.hal.dmr.ModelNode;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REASON;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SINCE;
 
 /**
- * Helper class to pass data to methods called by the AbstractFormItem constructor.
+ * @author Harald Pehl
  */
-public class CreationContext<C> {
+public class Deprecation extends ModelNode {
 
-    public static final CreationContext<Void> EMPTY_CONTEXT = new CreationContext<>(null);
+    public Deprecation(ModelNode modelNode) {
+        set(modelNode);
+    }
 
-    private final C data;
+    public String getSince() {
+        return hasDefined(SINCE) ? get(SINCE).asString() : null;
+    }
 
-    public CreationContext(final C data) {this.data = data;}
-
-    public C data() {
-        return data;
+    public String getReason() {
+        return hasDefined(REASON) ? get(REASON).asString() : null;
     }
 }

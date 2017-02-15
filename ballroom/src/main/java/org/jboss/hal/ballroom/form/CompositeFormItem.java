@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,8 +26,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.HRElement;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 
@@ -35,11 +34,16 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.separator;
 
 /**
- * A form item composed from a list of other form items. The composite form item uses the following semantics:
+ * A form item composed from a list of other form items. Extend from this class and add the form items which should be
+ * part of the composite in the constructor <strong>before</strong> the composite form item is attached.
+ * <p>
+ * The composite form item uses the following semantics:
  * <dl>
  * <dt>Layout</dt>
  * <dd>The form items are placed into a {@code div} element. In the readonly mode they're separated by {@code hr}
  * elements.</dd>
+ * <dt>Empty</dt>
+ * <dd>The composite form item is empty if <strong>all</strong> form items are empty.</dd>
  * <dt>Modified</dt>
  * <dd>The composite form item is modified as soon as one of the form items is modified.</dd>
  * <dt>Expressions</dt>
@@ -57,19 +61,48 @@ import static org.jboss.hal.resources.CSS.separator;
  *
  * @author Harald Pehl
  */
-public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> implements ModelNodeItem {
+public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> {
 
-    private final String name;
-    private Element editContainer;
-    private Element readonlyContainer;
-    private List<FormItem> formItems;
+    private class FormItemChangeHandler implements ValueChangeHandler {
 
-    protected <C> CompositeFormItem(final String name, CreationContext<C> context) {
-        super(name, new LabelBuilder().label(name), null, context);
-        this.name = name;
+        private final FormItem formItem;
+
+        private FormItemChangeHandler(final FormItem formItem) {this.formItem = formItem;}
+
+        @Override
+        public void onValueChange(final ValueChangeEvent event) {
+            formItem.setModified(true);
+            formItem.setUndefined(Strings.isNullOrEmpty(String.valueOf(event.getValue())));
+            setModified(true);
+        }
     }
 
-    protected abstract <C> List<FormItem> createFormItems(CreationContext<C> context);
+
+    private List<FormItem> formItems;
+    private Element readOnlyContainer;
+    private Element editingContainer;
+
+    public CompositeFormItem(final String name, final String label) {
+        super(name, label, null);
+    }
+
+    protected void addFormItems(List<FormItem> formItems) {
+        this.formItems = new ArrayList<>(formItems);
+
+        editingContainer = Browser.getDocument().createDivElement();
+        readOnlyContainer = Browser.getDocument().createDivElement();
+
+        for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
+            FormItem formItem = iterator.next();
+            editingContainer.appendChild(formItem.asElement(EDITING));
+            readOnlyContainer.appendChild(formItem.asElement(READONLY));
+            if (iterator.hasNext()) {
+                HRElement hr = Browser.getDocument().createHRElement();
+                hr.getClassList().add(separator);
+                readOnlyContainer.appendChild(hr);
+            }
+        }
+    }
 
     /**
      * Called during {@link #setValue(Object)} to set the form items using the provided model.
@@ -82,34 +115,11 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    protected <C> void assembleUI(CreationContext<C> context) {
-        editContainer = Browser.getDocument().createDivElement();
-        readonlyContainer = Browser.getDocument().createDivElement();
-
-        formItems = createFormItems(context);
-        for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
-            FormItem formItem = iterator.next();
-            editContainer.appendChild(formItem.asElement(EDITING));
-            readonlyContainer.appendChild(formItem.asElement(READONLY));
-            if (iterator.hasNext()) {
-                HRElement hr = Browser.getDocument().createHRElement();
-                hr.getClassList().add(separator);
-                readonlyContainer.appendChild(hr);
-            }
-        }
-    }
-
-    @Override
-    protected InputElement<ModelNode> newInputElement(final CreationContext<?> context) {
-        return new NoopInputElement();
-    }
-
-    @Override
     public Element asElement(final Form.State state) {
         if (state == EDITING) {
-            return editContainer;
+            return editingContainer;
         } else if (state == READONLY) {
-            return readonlyContainer;
+            return readOnlyContainer;
         } else {
             throw new IllegalStateException("Unknown state in CompositeFormItem.asElement(" + state + ")");
         }
@@ -125,16 +135,6 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ModelNode> valueChangeHandler) {
-        return null; // not supported
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public ModelNode getValue() {
         ModelNode value = new ModelNode();
         persistModel(value);
@@ -147,16 +147,31 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ModelNode> valueChangeHandler) {
+        return null; // not supported
+    }
+
+    @Override
     public void clearValue() {
         formItems.forEach(FormItem::clearValue);
     }
 
     @Override
+    public boolean isEmpty() {
+        for (FormItem formItem : formItems) {
+            if (!formItem.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public String getId(final Form.State state) {
         if (state == EDITING) {
-            return editContainer.getId();
+            return editingContainer.getId();
         } else if (state == READONLY) {
-            return readonlyContainer.getId();
+            return readOnlyContainer.getId();
         }
         return null;
     }
@@ -165,8 +180,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     public void setId(final String id) {
         String editId = Ids.build(id, EDITING.name().toLowerCase());
         String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
-        editContainer.setId(editId);
-        readonlyContainer.setId(readonlyId);
+        editingContainer.setId(editId);
+        readOnlyContainer.setId(readonlyId);
     }
 
     @Override
@@ -262,85 +277,5 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     @Override
     public void setUndefined(final boolean undefined) {
         formItems.forEach(formItem -> formItem.setUndefined(undefined));
-    }
-
-
-    private class FormItemChangeHandler implements ValueChangeHandler {
-
-        private final FormItem formItem;
-
-        private FormItemChangeHandler(final FormItem formItem) {this.formItem = formItem;}
-
-        @Override
-        public void onValueChange(final ValueChangeEvent event) {
-            formItem.setModified(true);
-            formItem.setUndefined(Strings.isNullOrEmpty(String.valueOf(event.getValue())));
-            setModified(true);
-        }
-    }
-
-    private static class NoopInputElement extends InputElement<ModelNode> {
-
-        private final Element element;
-
-        private NoopInputElement() {
-            element = Browser.getDocument().createDivElement();
-            element.setTextContent("Noop element for CompositeFormItem"); //NON-NLS
-            Elements.setVisible(element, false);
-        }
-
-        @Override
-        public ModelNode getValue() {
-            return new ModelNode();
-        }
-
-        @Override
-        public void setValue(final ModelNode value) {}
-
-        @Override
-        public void clearValue() {}
-
-        @Override
-        public int getTabIndex() {
-            return 0;
-        }
-
-        @Override
-        public void setAccessKey(final char key) {}
-
-        @Override
-        public void setFocus(final boolean focused) {}
-
-        @Override
-        public void setTabIndex(final int index) {}
-
-        @Override
-        public boolean isEnabled() {
-            return false;
-        }
-
-        @Override
-        public void setEnabled(final boolean enabled) {}
-
-        @Override
-        public void setName(final String name) {}
-
-        @Override
-        public String getName() {
-            return null;
-        }
-
-        @Override
-        public String getText() {
-            return null;
-        }
-
-        @Override
-        public void setText(final String text) {}
-
-        @Override
-        public Element asElement() {
-            return element;
-        }
     }
 }

@@ -23,20 +23,9 @@ import com.google.common.base.Strings;
  */
 public class Expression {
 
-    private final String key;
-    private final String defaultValue;
-
-    private Expression(String key, String defaultValue) {
-        this.key = key;
-        this.defaultValue = defaultValue;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
+    public static boolean isExpression(String value) {
+        return !Strings.isNullOrEmpty(value) && value.trim().length() != 0 &&
+                value.startsWith("${") && value.endsWith("}");
     }
 
     public static Expression of(String value) {
@@ -55,6 +44,23 @@ public class Expression {
             }
         }
         throw new IllegalArgumentException("Empty expression: Please use the pattern ${key[:default-value]}");
+    }
+
+
+    private final String key;
+    private final String defaultValue;
+
+    private Expression(String key, String defaultValue) {
+        this.key = key;
+        this.defaultValue = defaultValue;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

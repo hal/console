@@ -264,7 +264,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 .include(BASE_ROLE, scopeAttribute)
                 .customFormItem(BASE_ROLE, attributeDescription -> {
                     SingleSelectBoxItem item = new SingleSelectBoxItem(BASE_ROLE,
-                            new LabelBuilder().label(BASE_ROLE), standardRoleNames);
+                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false);
                     item.setRequired(true);
                     return item;
                 })
@@ -336,7 +336,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 .include(BASE_ROLE, scopeAttribute)
                 .customFormItem(BASE_ROLE, attributeDescription -> {
                     SingleSelectBoxItem item = new SingleSelectBoxItem(BASE_ROLE,
-                            new LabelBuilder().label(BASE_ROLE), standardRoleNames);
+                            new LabelBuilder().label(BASE_ROLE), standardRoleNames, false);
                     item.setRequired(true);
                     return item;
                 })

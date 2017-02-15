@@ -22,7 +22,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 
 /**
- * Helper class to get access to selected dependencies. Please use <em>only</em> if no DI is available!
+ * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
  *
  * @author Harald Pehl
  */

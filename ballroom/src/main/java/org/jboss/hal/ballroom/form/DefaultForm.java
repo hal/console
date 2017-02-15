@@ -390,7 +390,11 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
             FormItem formItem = entry.getValue();
             if (formItem.isModified()) {
-                changed.put(entry.getKey(), formItem.getValue());
+                if (formItem.isExpressionValue()) {
+                    changed.put(entry.getKey(), formItem.getExpressionValue());
+                } else {
+                    changed.put(entry.getKey(), formItem.getValue());
+                }
             }
         }
         return changed;
@@ -452,8 +456,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     protected void prepareEditState() {}
 
     private void flip(State state) {
-        getFormItems().forEach(formItem -> formItem.setState(state));
-
         switch (state) {
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
@@ -549,6 +551,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @SuppressWarnings("unchecked")
     protected boolean validate() {
         boolean valid = true;
+        clearErrors();
 
         // validate form items
         for (FormItem formItem : getFormItems()) {
@@ -569,10 +572,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             valid = false;
             showErrors(messages);
         }
-        if (valid) {
-            clearErrors();
-        }
-
         return valid;
     }
 

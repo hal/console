@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import javax.inject.Inject;
+
 /**
  * Simple wrapper around an ordered array of {@link ResponseHeadersProcessor} implementations.
  *
@@ -24,6 +26,7 @@ public class ResponseHeadersProcessors {
 
     private final ResponseHeadersProcessor[] processors;
 
+    @Inject
     public ResponseHeadersProcessors(final ProcessStateProcessor processStateProcessor) {
         this.processors = new ResponseHeadersProcessor[] {
                 processStateProcessor

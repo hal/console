@@ -118,6 +118,7 @@ public interface CSS {
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
+    String expressionModeSwitcher = "expression-mode-switcher";
     String external = "external";
 
     String fade = "fade";

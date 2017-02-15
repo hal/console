@@ -15,109 +15,46 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import org.jboss.hal.resources.Names;
+import java.util.EnumSet;
 
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
-import static org.jboss.hal.resources.CSS.formControlStatic;
+import com.google.common.base.Strings;
+
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 /**
  * @author Harald Pehl
  */
 public class StaticItem extends AbstractFormItem<String> {
 
+    private static class StaticAppearance extends ReadOnlyAppearance<String> {
+
+        StaticAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, REQUIRED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "StaticAppearance";
+        }
+    }
+
+
     public StaticItem(final String name, final String label) {
-        super(name, label, null, EMPTY_CONTEXT);
+        super(name, label, null);
+        addAppearance(Form.State.READONLY, new StaticAppearance());
+        addAppearance(Form.State.EDITING, new StaticAppearance());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(getValue());
     }
 
     @Override
     public boolean supportsExpressions() {
         return false;
-    }
-
-    @Override
-    protected InputElement<String> newInputElement(final CreationContext<?> context) {
-        StaticElement staticElement = new StaticElement();
-        staticElement.asElement().getClassList().add(formControlStatic);
-        return staticElement;
-    }
-
-    static class StaticElement extends InputElement<String> {
-
-        final Element element;
-
-        StaticElement() {
-            element = Browser.getDocument().createElement("p"); //NON-NLS
-        }
-        @Override
-        public String getValue() {
-            return element.getTextContent();
-        }
-
-        @Override
-        public void setValue(final String value) {
-            element.setTextContent(value);
-        }
-
-        @Override
-        public void clearValue() {
-            element.setTextContent("");
-        }
-
-        @Override
-        public int getTabIndex() {
-            return -1;
-        }
-
-        @Override
-        public void setAccessKey(final char key) {
-            // noop
-        }
-
-        @Override
-        public void setFocus(final boolean focused) {
-            // noop
-        }
-
-        @Override
-        public void setTabIndex(final int index) {
-            // noop
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-
-        @Override
-        public void setEnabled(final boolean enabled) {
-            // noop
-        }
-
-        @Override
-        public void setName(final String name) {
-            // noop
-        }
-
-        @Override
-        public String getName() {
-            return Names.NOT_AVAILABLE;
-        }
-
-        @Override
-        public String getText() {
-            return element.getTextContent();
-        }
-
-        @Override
-        public void setText(final String text) {
-            element.setTextContent(text);
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
-        }
     }
 }

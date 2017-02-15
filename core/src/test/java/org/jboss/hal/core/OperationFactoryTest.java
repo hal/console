@@ -102,6 +102,15 @@ public class OperationFactoryTest {
     }
 
     @Test
+    public void expression() throws Exception {
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("expression", "${foo:bar}"),
+                metadata);
+
+        assertEquals(1, composite.size());
+        assertWrite(composite, "expression", "${foo:bar}");
+    }
+
+    @Test
     public void mixed() throws Exception {
         Composite composite = operationFactory.fromChangeSet(address,
                 ImmutableMap.of("class-name", "", "jndi-name", "java:/foo"), metadata);

@@ -15,11 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import java.util.List;
-
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.CompositeFormItem;
-import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.dmr.ModelNode;
@@ -54,17 +51,14 @@ class ColumnFormItem extends CompositeFormItem {
     private FormItem<String> type;
 
     ColumnFormItem(final String attribute) {
-        super(attribute, new CreationContext<>(attribute));
-    }
+        super(attribute, new LabelBuilder().label(attribute));
 
-    @Override
-    protected <C> List<FormItem> createFormItems(CreationContext<C> context) {
-        String attribute = (String) context.data();
         name = new TextBoxItem(NAME, new LabelBuilder().label(attribute + "-" + NAME));
         name.setId(Ids.uniqueId());
         type = new TextBoxItem(TYPE, new LabelBuilder().label(attribute + "-" + TYPE));
         type.setId(Ids.uniqueId());
-        return asList(name, type);
+
+        addFormItems(asList(name, type));
     }
 
     @Override

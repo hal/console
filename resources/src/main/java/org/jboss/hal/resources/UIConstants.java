@@ -42,6 +42,7 @@ public interface UIConstants {
     long DOMAIN_CHANGED_MESSAGE_ID = 291973;
 
 
+    String ARIA_DESCRIBEDBY = "aria-describedby";
     String ALERT = "alert";
     String BODY = "body";
     String BUTTON = "button";
@@ -72,6 +73,7 @@ public interface UIConstants {
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
     String PROGRESSBAR = "progressbar";
+    String READONLY = "readonly";
     String ROLE = "role";
     String SHOWN_MODAL = "shown.bs.modal";
     String TABINDEX = "tabindex";

@@ -18,13 +18,24 @@ package org.jboss.hal.core.expression;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ExpressionTest {
+
+    @Test
+    public void isExpression() throws Exception {
+        assertFalse(Expression.isExpression(null));
+        assertFalse(Expression.isExpression(""));
+        assertFalse(Expression.isExpression("   "));
+        assertFalse(Expression.isExpression("foo"));
+        assertTrue(Expression.isExpression("${foo}"));
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void nil() throws Exception {

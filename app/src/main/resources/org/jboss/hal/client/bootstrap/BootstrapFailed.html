@@ -53,7 +53,7 @@
                             </p>
                         </li>
                         <li data-element="allowedOriginServer"><p>Check that the management endpoint at <a href="{{endpoints().dmr()}}" target="_blank">{{endpoints().dmr()}}</a> is available.</p></li>
-                        <li data-element="allowedOriginConfig"><p>Make sure you've added {{org.jboss.hal.config.Endpoints.getBaseUrl()}} as <strong>allowed origin</strong> using one of the following CLI commands:</p>
+                        <li data-element="allowedOriginConfig"><p>Make sure you've added {{org.jboss.hal.config.Endpoints.getBaseUrl()}} as <strong>allowed origin</strong> and reload the server. Use one of of the following CLI commands to add allowed origins:</p>
                             <ul>
                                 <li><p>Standalone:</p>
                                     <pre>/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value={{org.jboss.hal.config.Endpoints.getBaseUrl()}}</pre>

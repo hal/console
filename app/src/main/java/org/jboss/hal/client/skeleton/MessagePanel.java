@@ -20,6 +20,7 @@ import java.util.Map;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
@@ -106,9 +107,7 @@ class MessagePanel implements IsElement {
 
     private void remove(String id) {
         Element element = Browser.getDocument().getElementById(id);
-        if (element != null && root.contains(element)) {
-            root.removeChild(element);
-            messageIds.remove(id);
-        }
+        Elements.failSafeRemove(root, element);
+        messageIds.remove(id);
     }
 }

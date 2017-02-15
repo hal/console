@@ -47,7 +47,7 @@ class DriverStep extends WizardStep<Context, State> {
         super(Ids.DATA_SOURCE_DRIVER_STEP, resources.constants().jdbcDriver());
         Map<String, JdbcDriver> driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
         this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
-                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION, DRIVER_MINOR_VERSION)
+                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME)
                 .unsorted()
                 .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();

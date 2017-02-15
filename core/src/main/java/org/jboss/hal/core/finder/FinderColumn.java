@@ -425,13 +425,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
         updateHeader(matched);
         if (matched == 0) {
-            if (!ulElement.contains(noItems)) {
-                ulElement.appendChild(noItems);
-            }
+            Elements.lazyAppend(ulElement, noItems);
         } else {
-            if (ulElement.contains(noItems)) {
-                ulElement.removeChild(noItems);
-            }
+            Elements.failSafeRemove(ulElement, noItems);
         }
     }
 

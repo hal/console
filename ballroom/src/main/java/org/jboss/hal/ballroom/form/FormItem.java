@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
+import org.jboss.hal.dmr.model.Deprecation;
 
 /**
  * @author Harald Pehl
@@ -43,11 +44,7 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     String getId(Form.State state);
 
-    void setState(Form.State state);
-
-    Form.State getState();
-
-    void setDefaultValue(T defaultValue);
+    void assignDefaultValue(T defaultValue);
 
     void registerSuggestHandler(SuggestHandler suggestHandler);
 
@@ -95,5 +92,5 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     boolean isDeprecated();
 
-    void setDeprecated(boolean deprecated);
+    void setDeprecated(Deprecation deprecation);
 }

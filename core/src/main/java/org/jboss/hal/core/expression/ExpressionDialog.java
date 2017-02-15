@@ -21,15 +21,14 @@ import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.dom.Element;
 import elemental.events.KeyboardEvent;
+import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.StaticItem;
-import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.server.Server;
@@ -72,6 +71,7 @@ public class ExpressionDialog {
         Metadata metadata = Metadata.staticDescription(RESOURCES.expression());
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.RESOLVE_EXPRESSION_FORM, metadata)
                 .addOnly()
+                .customFormItem("expression", attributeDescription -> new ExpressionItem(resources))
                 .onSave((f, changedValues) -> resolve(f.getModel()));
         if (standalone) {
             standaloneValue = new StaticItem(VALUE, resources.constants().resolvedValue());
@@ -82,23 +82,17 @@ public class ExpressionDialog {
         form = builder.build();
 
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
-        expressionItem.setExpressionAllowed(false);
-        expressionItem.addValidationHandler(value -> {
-            try {
-                Expression.of(value);
-                return ValidationResult.OK;
-            } catch (IllegalArgumentException e) {
-                return ValidationResult.invalid(resources.constants().invalidExpression());
-            }
-        });
-        Element inputElement = expressionItem.asElement(EDITING).querySelector("." + formControl);
+        InputElement inputElement = (InputElement) expressionItem.asElement(EDITING).querySelector("." + formControl);
         if (inputElement != null) {
             inputElement.setOnkeydown(evt -> {
                 KeyboardEvent keyboardEvent = (KeyboardEvent) evt;
                 if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ENTER) {
                     // this would normally happen in the on change handler of the text box item,
-                    // which is too late for
-                    expressionItem.setUndefined(Strings.isNullOrEmpty(expressionItem.getValue()));
+                    // which is too late
+                    String value = inputElement.getValue();
+                    expressionItem.setValue(value);
+                    expressionItem.setModified(true);
+                    expressionItem.setUndefined(Strings.isNullOrEmpty(value));
                     form.save();
                 }
             });
@@ -131,6 +125,7 @@ public class ExpressionDialog {
         form.add(new ModelNode());
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
         expressionItem.setValue(expression);
+        expressionItem.setModified(true);
         expressionItem.setUndefined(false);
         form.save();
     }

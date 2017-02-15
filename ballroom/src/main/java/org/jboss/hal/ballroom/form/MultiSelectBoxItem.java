@@ -16,110 +16,104 @@
 package org.jboss.hal.ballroom.form;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Joiner;
-import elemental.dom.Element;
+import elemental.client.Browser;
+import elemental.html.SelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
-import static org.jboss.hal.resources.CSS.formControl;
-import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 /**
  * @author Harald Pehl
  */
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
-    private MultiSelectBoxElement selectBox;
+    private static class MultiSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {
+
+        MultiSelectBoxReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "MultiSelectBoxReadOnlyAppearance";
+        }
+
+        @Override
+        public String asString(final List<String> value) {
+            return String.join(", ", value);
+        }
+    }
+
+
+    private class MultiSelectBoxEditingAppearance extends SelectBoxEditingAppearance<List<String>> {
+
+        MultiSelectBoxEditingAppearance(final SelectElement selectElement, final List<String> options) {
+            super(selectElement, options, true);
+        }
+
+        @Override
+        public void attach() {
+            super.attach();
+            Multi.element(selectElement).onChange((event, index) ->
+                    modifyValue(Multi.element(selectElement).getValue()));
+        }
+
+        @Override
+        void refresh() {
+            Multi.element(selectElement).refresh();
+        }
+
+        @Override
+        public void showValue(final List<String> value) {
+            if (attached) {
+                Multi.element(selectElement).setValue(value);
+            }
+        }
+
+        @Override
+        public String asString(final List<String> value) {
+            return String.join(", ", value);
+        }
+
+        @Override
+        public void clearValue() {
+            if (allowEmpty) {
+                if (attached) {
+                    Multi.element(selectElement).setValue(Collections.emptyList());
+                } else {
+                    selectElement.setValue("");
+                }
+            }
+        }
+    }
+
 
     public MultiSelectBoxItem(final String name, final String label, List<String> options) {
-        super(name, label, null, EMPTY_CONTEXT);
-        setOptions(options);
-    }
+        super(name, label, null);
 
-    @Override
-    protected InputElement<List<String>> newInputElement(CreationContext<?> context) {
-        selectBox = new MultiSelectBoxElement();
-        selectBox.setClassName(formControl + " " + selectpicker);
-        return selectBox;
-    }
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new MultiSelectBoxReadOnlyAppearance());
 
-    @Override
-    public void attach() {
-        super.attach();
-        Multi.element(selectBox.asElement()).onChange((event, index) -> {
-            List<String> value = getValue();
-            setModified(true);
-            setUndefined(value.isEmpty());
-            signalChange(value);
-        });
-    }
+        // editing appearance
+        elemental.html.SelectElement selectElement = Browser.getDocument().createSelectElement();
+        selectElement.setSize(1);
+        selectElement.setMultiple(true);
 
-    @Override
-    void markDefaultValue(final boolean on, final List<String> defaultValue) {
-        super.markDefaultValue(on, defaultValue);
-        Multi.element(selectBox.asElement()).refresh();
-    }
-
-    public void setOptions(List<String> options) {
-        selectBox.setOptions(options);
-    }
-
-    @Override
-    String asString(final List<String> value) {
-        return Joiner.on(", ").join(value);
+        addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
     }
 
     @Override
     public boolean isEmpty() {
-        return getValue().isEmpty() || isUndefined();
+        return getValue() == null || getValue().isEmpty();
     }
 
     @Override
     public boolean supportsExpressions() {
         return false;
-    }
-
-
-    private static class MultiSelectBoxElement extends SelectBoxElement<List<String>> {
-
-        MultiSelectBoxElement() {
-            super(true, true);
-        }
-
-        @Override
-        public List<String> getValue() {
-            return isAttached() ? Multi.element(asElement()).getValue() : Collections.emptyList();
-        }
-
-        @Override
-        public void setValue(final List<String> value) {
-            if (isAttached()) {
-                Multi.element(asElement()).setValue(value);
-            }
-        }
-
-        @Override
-        public void clearValue() {
-            if (isAttached()) {
-                Multi.element(asElement()).clear();
-            }
-        }
-
-        @Override
-        public String getText() {
-            return Joiner.on(", ").join(getValue());
-        }
-
-        @Override
-        public void setText(final String s) {
-            // not supported
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
-        }
     }
 }

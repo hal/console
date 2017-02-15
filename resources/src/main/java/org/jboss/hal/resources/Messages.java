@@ -105,11 +105,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentStopped(String name);
     SafeHtml deploymentSuccessful(String name);
     SafeHtml deploymentUnknownState(String name);
+    String deprecated(String since, String reason);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
 
     SafeHtml duplicateAuthenticationModule();
-
     String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
 

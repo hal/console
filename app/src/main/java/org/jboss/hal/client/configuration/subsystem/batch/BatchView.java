@@ -43,7 +43,6 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
     @MbuiElement("batch-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("batch-configuration-form") Form<ModelNode> configurationForm;
     @MbuiElement("batch-in-memory-job-repo-table") NamedNodeTable<NamedNode> inMemoryJobRepoTable;
-    @MbuiElement("batch-in-memory-job-repo-form") Form<NamedNode> inMemoryJobRepoForm;
     @MbuiElement("batch-jdbc-job-repo-table") NamedNodeTable<NamedNode> jdbcJobRepoTable;
     @MbuiElement("batch-jdbc-job-repo-form") Form<NamedNode> jdbcJobRepoForm;
     @MbuiElement("batch-thread-factory-table") NamedNodeTable<NamedNode> threadFactoryTable;
@@ -65,7 +64,6 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
 
     @Override
     public void updateInMemoryJobRepository(final List<NamedNode> items) {
-        inMemoryJobRepoForm.clear();
         inMemoryJobRepoTable.update(items);
     }
 

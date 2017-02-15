@@ -144,6 +144,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String help();
     String hiddenColumns();
+    String hidePassword();
     String hitCount();
     String homepageNewToEap();
     String homepageTakeATour();
@@ -361,6 +362,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sessions();
     String settings();
     String showAll();
+    String showPassword();
     String size();
     String sizing();
     String specifyNames();
@@ -381,6 +383,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String switchBehaviour();
     String switchProvider();
     String switchStore();
+    String switchToExpressionMode();
+    String switchToNormalMode();
 
     String tags();
     String tailMode();

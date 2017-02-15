@@ -15,27 +15,21 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.regexp.shared.RegExp;
-
 /**
+ * Predefined set of decorations which can be {@linkplain Appearance#apply(Decoration, Object) applied} and
+ * {@linkplain Appearance#unapply(Decoration) unapplied} to an {@link Appearance} to modify its L&F.
+ *
  * @author Harald Pehl
  */
-public class PatternValidation implements FormItemValidation<String> {
-
-    private final RegExp regExp;
-    private final String errorMessage;
-
-    public PatternValidation(final String pattern) {
-        this(pattern, MESSAGES.patternMismatch(pattern));
-    }
-
-    public PatternValidation(final String pattern, String errorMessage) {
-        this.errorMessage = errorMessage;
-        regExp = RegExp.compile(pattern);
-    }
-
-    @Override
-    public ValidationResult validate(final String value) {
-        return regExp.test(value) ? ValidationResult.OK : ValidationResult.invalid(errorMessage);
-    }
+public enum Decoration {
+    // The context used with the decoration is given as comment.
+    DEFAULT, // String defaultValue
+    DEPRECATED, // Deprecation deprecationInfo
+    ENABLED, // null
+    EXPRESSION, // ExpressionContext(String expressionValue, ExpressionCallback callback)
+    HINT, // String hint
+    INVALID, // String errorMessage
+    REQUIRED, // null
+    RESTRICTED, // null
+    SUGGESTIONS, // SuggestHandler
 }
