@@ -15,29 +15,38 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.hal.dmr.ModelNode;
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.dmr.dispatch.ServerState.State;
+import org.jboss.hal.resources.Names;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
 
 /**
- * Extracts the process state from the DMR response.
- *
- * @author Heiko Braun
- * @date 1/17/12
+ * @author Harald Pehl
  */
-public interface ProcessStateProcessor {
+public class ProcessStateProcessor implements ResponseHeadersProcessor {
 
-    boolean accepts(ModelNode response);
+    private final EventBus eventBus;
 
-    ProcessState process(ModelNode response);
+    public ProcessStateProcessor(final EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
-    ProcessStateProcessor NOOP = new ProcessStateProcessor() {
-        @Override
-        public boolean accepts(final ModelNode response) {
-            return false;
+    @Override
+    public void process(final Header[] headers) {
+        ProcessState processState = new ProcessState();
+        for (Header header : headers) {
+            String processStateValue = header.getHeader().asString();
+            if (RESTART_REQUIRED.equals(processStateValue)) {
+                ServerState state = new ServerState(header.getHost(), Names.STANDALONE_SERVER, State.RESTART_REQUIRED);
+                processState.add(state);
+
+            } else if (RELOAD_REQUIRED.equals(processStateValue)) {
+                ServerState state = new ServerState(header.getHost(), Names.STANDALONE_SERVER, State.RELOAD_REQUIRED);
+                processState.add(state);
+            }
         }
-
-        @Override
-        public ProcessState process(final ModelNode response) {
-            return ProcessState.EMPTY;
-        }
-    };
+        eventBus.fireEvent(new ProcessStateEvent(processState));
+    }
 }

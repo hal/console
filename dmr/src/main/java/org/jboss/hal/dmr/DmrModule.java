@@ -16,13 +16,10 @@
 package org.jboss.hal.dmr;
 
 import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.DomainProcessStateProcessor;
 import org.jboss.hal.dmr.dispatch.ProcessStateProcessor;
-import org.jboss.hal.dmr.dispatch.StandaloneProcessStateProcessor;
+import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessors;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.spi.GinModule;
 
@@ -32,26 +29,12 @@ import org.jboss.hal.spi.GinModule;
 @GinModule
 public class DmrModule extends AbstractGinModule {
 
-    private final ProcessStateProcessor standalone;
-    private final ProcessStateProcessor domain;
-
-    public DmrModule() {
-        standalone = new StandaloneProcessStateProcessor();
-        domain = new DomainProcessStateProcessor();
-    }
-
     @Override
     protected void configure() {
-        bind(Dispatcher.class);
         bind(Macros.class).in(Singleton.class);
-    }
+        bind(ProcessStateProcessor.class).in(Singleton.class);
+        bind(ResponseHeadersProcessors.class).in(Singleton.class);
 
-    @Provides
-    public ProcessStateProcessor provideProcessStateProcessor(Environment environment) {
-        if (environment.isStandalone()) {
-            return standalone;
-        } else {
-            return domain;
-        }
+        bind(Dispatcher.class);
     }
 }

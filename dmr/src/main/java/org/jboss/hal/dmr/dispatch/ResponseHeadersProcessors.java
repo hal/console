@@ -15,17 +15,22 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.hal.dmr.ModelNode;
-
 /**
- * Interface to turn the raw base64 encoded payload of a DMR response into a model node.
+ * Simple wrapper around an ordered array of {@link ResponseHeadersProcessor} implementations.
  *
  * @author Harald Pehl
  */
-@FunctionalInterface
-interface PayloadProcessor {
+public class ResponseHeadersProcessors {
 
-    String PARSE_ERROR = "Unable to parse response with unexpected content-type ";
+    private final ResponseHeadersProcessor[] processors;
 
-    ModelNode processPayload(Dispatcher.HttpMethod method, String contentType, String payload);
+    public ResponseHeadersProcessors(final ProcessStateProcessor processStateProcessor) {
+        this.processors = new ResponseHeadersProcessor[] {
+                processStateProcessor
+        };
+    }
+
+    public ResponseHeadersProcessor[] processors() {
+        return processors;
+    }
 }

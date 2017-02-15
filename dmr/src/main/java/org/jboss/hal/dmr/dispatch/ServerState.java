@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Strings;
 
 /**
@@ -32,11 +34,11 @@ public class ServerState {
     }
 
 
-    private final String host;
+    @Nullable private final String host;
     private final String server;
     private final State state;
 
-    public ServerState(final String host, final String server, State state) {
+    ServerState(@Nullable final String host, final String server, State state) {
         this.host = host;
         this.server = server;
         this.state = state;
@@ -49,15 +51,14 @@ public class ServerState {
 
         ServerState that = (ServerState) o;
 
-        if (!host.equals(that.host)) { return false; }
+        if (host != null ? !host.equals(that.host) : that.host != null) { return false; }
         if (!server.equals(that.server)) { return false; }
         return state == that.state;
-
     }
 
     @Override
     public int hashCode() {
-        int result = host.hashCode();
+        int result = host != null ? host.hashCode() : 0;
         result = 31 * result + server.hashCode();
         result = 31 * result + state.hashCode();
         return result;
@@ -78,6 +79,7 @@ public class ServerState {
         return server;
     }
 
+    @Nullable
     public String getHost() {
         return host;
     }
