@@ -329,7 +329,7 @@ public interface ModelDescriptionConstants {
     String RESUME_SERVERS = "resume-servers";
     String ROLE = "role";
     String ROLE_MAPPING = "role-mapping";
-    String ROLES = "HEADER_ROLES";
+    String ROLES = "roles";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";

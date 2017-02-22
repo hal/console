@@ -243,8 +243,8 @@ public class CrudOperations {
      * @param successMessage the success message fired after adding the resource
      * @param callback       the callback executed after adding the resource
      */
-    public void add(final String name, final ResourceAddress address,
-            @Nullable final ModelNode payload, final SafeHtml successMessage, final AddCallback callback) {
+    public void add(final String name, final ResourceAddress address, @Nullable final ModelNode payload,
+            final SafeHtml successMessage, final AddCallback callback) {
         Operation operation = new Operation.Builder(ADD, address)
                 .payload(payload)
                 .build();
@@ -344,9 +344,21 @@ public class CrudOperations {
         if (payload != null && payload.isDefined()) {
             builder.payload(payload);
         }
-        dispatcher.execute(builder.build(), result -> {
+        addSingleton(type, builder.build(), callback);
+    }
+
+    /**
+     * Executes the specified add operation. After the resource has been added a success message is fired and the
+     * specified callback is executed.
+     *
+     * @param operation the add operation with the address and payload
+     * @param type      the human readable resource type used in the dialog header and success message
+     * @param callback  the callback executed after adding the singleton resource
+     */
+    public void addSingleton(final String type, final Operation operation, final AddCallback callback) {
+        dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
-            callback.execute(null, address);
+            callback.execute(null, operation.getAddress());
         });
     }
 
