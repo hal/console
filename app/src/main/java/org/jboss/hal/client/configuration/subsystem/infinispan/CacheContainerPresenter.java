@@ -140,7 +140,10 @@ public class CacheContainerPresenter
 
     @Override
     protected void reload() {
-        ResourceAddress profileAddress = new ResourceAddress().add(PROFILE, statementContext.selectedProfile());
+        ResourceAddress profileAddress = new ResourceAddress();
+        if (statementContext.selectedProfile() != null) {
+            profileAddress.add(PROFILE, statementContext.selectedProfile());
+        }
         Operation subsystems = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, profileAddress)
                 .param(CHILD_TYPE, SUBSYSTEM)
                 .build();
@@ -290,12 +293,16 @@ public class CacheContainerPresenter
                     .requiredOnly()
                     .build();
             AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(store.type), form,
-                    (name, model) -> crud.addSingleton(store.type, cacheStoreAddress(store), model,
-                            (n, a) -> showCacheStore()));
+                    (name, model) -> {
+                        model.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
+                        crud.addSingleton(store.type, cacheStoreAddress(store), model, (n, a) -> showCacheStore());
+                    });
             dialog.show();
 
         } else {
-            crud.addSingleton(store.type, cacheStoreAddress(store), null, (n, a) -> showCacheStore());
+            ModelNode opHeader = new ModelNode();
+            opHeader.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
+            crud.addSingleton(store.type, cacheStoreAddress(store), opHeader, (n, a) -> showCacheStore());
         }
     }
 
@@ -341,7 +348,9 @@ public class CacheContainerPresenter
                     operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore))
                             .payload(model)
                             .build());
-                    dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                    Composite composite = new Composite(operations);
+                    composite.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
+                    dispatcher.execute(composite, (CompositeResult result) -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
                         showCacheStore();
@@ -351,7 +360,9 @@ public class CacheContainerPresenter
 
             } else {
                 operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore)).build());
-                dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                Composite composite = new Composite(operations);
+                composite.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
+                dispatcher.execute(composite, (CompositeResult result) -> {
                     MessageEvent.fire(getEventBus(),
                             Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
                     showCacheStore();
