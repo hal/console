@@ -65,6 +65,8 @@ public class Subsystems {
                 .token(NameTokens.IIOP)
                 .build());
         add(new SubsystemMetadata.Builder(INFINISPAN, "Infinispan")
+                .nextColumn(Ids.CACHE_CONTAINER)
+                .preview(resources.previews().configurationInfinispan())
                 .build());
         add(new SubsystemMetadata.Builder(IO, "IO")
                 .token(NameTokens.IO)
@@ -72,6 +74,10 @@ public class Subsystems {
                 .build());
         add(new SubsystemMetadata.Builder(JCA, "JCA")
                 .token(NameTokens.JCA)
+                .build());
+        add(new SubsystemMetadata.Builder(JGROUPS, "JGroups")
+                .token(NameTokens.JGROUPS)
+                .preview(resources.previews().configurationJgroups())
                 .build());
         add(new SubsystemMetadata.Builder(JMX, "JMX")
                 .token(NameTokens.JMX)

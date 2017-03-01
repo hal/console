@@ -46,7 +46,7 @@ public class SingleOperationOneWildcardTest {
     public void setUp() throws Exception {
         resultProcessor = new SingleReadChildrenProcessor();
         nodes = ExternalModelNode
-                .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_one_wildcard.dmr"));
+                .read(NamesResultProcessorTest.class.getResourceAsStream("single-operation-one-wildcard.dmr"));
     }
 
     @Test

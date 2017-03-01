@@ -15,16 +15,12 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
-import org.jboss.hal.resources.Messages;
 
 /**
  * @author Harald Pehl
  */
 public class PatternValidation implements FormItemValidation<String> {
-
-    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private final RegExp regExp;
     private final String errorMessage;

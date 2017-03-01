@@ -17,6 +17,7 @@ package org.jboss.hal.client.bootstrap;
 
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -28,7 +29,11 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
+import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +48,7 @@ public class HalBootstrapper implements Bootstrapper {
     private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
+    private final Endpoints endpoints;
     private final BootstrapFunctions bootstrapFunctions;
     private final Resources resources;
 
@@ -50,11 +56,13 @@ public class HalBootstrapper implements Bootstrapper {
     public HalBootstrapper(final EventBus eventBus,
             final PlaceManager placeManager,
             final EndpointManager endpointManager,
+            final Endpoints endpoints,
             final BootstrapFunctions bootstrapFunctions,
             final Resources resources) {
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
+        this.endpoints = endpoints;
         this.bootstrapFunctions = bootstrapFunctions;
         this.resources = resources;
     }
@@ -66,10 +74,8 @@ public class HalBootstrapper implements Bootstrapper {
             public void onFailure(final FunctionContext context) {
                 LoadingPanel.get().off();
                 logger.error("Bootstrap error: {}", context.getErrorMessage());
-                // TODO Enhance bootstrap error page to look more like the console w/ a fake header
                 Browser.getDocument().getBody().appendChild(
-                        BootstrapFailed.create(resources.constants().bootstrapException(), context.getErrorMessage())
-                                .asElement());
+                        BootstrapFailed.create(context.getErrorMessage(), endpoints).asElement());
             }
 
             @Override
@@ -78,6 +84,14 @@ public class HalBootstrapper implements Bootstrapper {
                 logger.info("Bootstrap finished");
                 placeManager.revealCurrentPlace();
                 eventBus.fireEvent(new ApplicationReadyEvent());
+
+                // reset the uncaught exception handler from HalPreBootstrapper
+                GWT.setUncaughtExceptionHandler(e -> {
+                    String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
+                    logger.error("Uncaught exception: {}", errorMessage);
+                    placeManager.unlock();
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
+                });
             }
         };
 

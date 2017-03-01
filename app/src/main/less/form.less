@@ -2,7 +2,7 @@
  * Generic form classes
  */
 .form-section {
-  margin-top: 20px;
+  margin-top: @margin-large;
 }
 
 .hal-form-label {
@@ -33,46 +33,34 @@
 }
 
 .form {
+  .restricted {
+    cursor: not-allowed;
+  }
+
   &.readonly {
     .separator {
       margin-top: -15px;
       margin-bottom: 5px;
       border-top: 1px solid @hal-light-gray;
     }
-    .restricted {
-      margin-right: .5em
-    }
+
     .form-control-static {
-      &.default-value {
+
+      .hint, .fa {
+        margin-left: 5px;
+      }
+      .empty + .hint {
+        margin-left: 0;
+      }
+
+      .default-value, .hint {
         color: #c7c7cd;
         font-style: italic;
-        cursor: help;
-        .key, .equals, .value {
-          color: #c7c7cd;
-        }
       }
-      &.properties {
-        .key {
-        }
-        .equals {
-          color: #8b8d8f;
-          margin: 0 3px;
-        }
-        .value {
-          &:after {
-            content: ", ";
-          }
-          &:last-child:after {
-            content: "";
-          }
-        }
-      }
-    }
-  }
 
-  &.editing {
-    input.restricted {
-      cursor: not-allowed;
+      .default-value {
+        cursor: help;
+      }
     }
   }
 
@@ -139,12 +127,10 @@ fieldset.form-section {
   .text-overflow();
 }
 
-.help-block {
-  &.hint {
-    color: #999;
-    font-size: 11px;
-    margin-bottom: 0;
-  }
+.help-block.hint, .readonly .hal-form-input .hint {
+  color: #999;
+  font-size: 11px;
+  margin-bottom: 0;
 }
 
 abbr.req {
@@ -192,6 +178,15 @@ abbr.key {
 
 .input-group-btn > .bootstrap-select.btn-group {
   margin-left: -1px;
+}
+
+/*
+ * Bootstrap Switch
+ */
+.btn.expression-mode-switcher {
+  box-shadow: none;
+  margin-right: -1px;
+  outline: none;
 }
 
 /*
@@ -295,4 +290,16 @@ abbr.key {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.header-form {
+  .pull-right;
+  display: inline-flex;
+  align-items: center;
+
+  label {
+    font-weight: normal;
+    margin-bottom: 0;
+    margin-right: 1em;
+  }
 }

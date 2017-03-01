@@ -41,6 +41,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
@@ -75,6 +77,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
 
@@ -87,12 +90,14 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             final Dispatcher dispatcher,
             @Footer final Provider<Progress> progress,
             final FinderPathFactory finderPathFactory,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext, final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
     }
@@ -124,8 +129,9 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::reload);
         } else {
             changedValues.remove(HANDLER);
+            Metadata metadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
             Function[] functions = {
-                    new HandlerFunctions.SaveAuditLog(dispatcher, statementContext, changedValues),
+                    new HandlerFunctions.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
                     new HandlerFunctions.ReadHandlers(dispatcher, statementContext),
                     new HandlerFunctions.MergeHandler(dispatcher, statementContext, new HashSet<>(handler))
             };

@@ -37,6 +37,7 @@ public class DmrPayloadProcessor implements PayloadProcessor {
                     // is not send as part of the response but expressed with the HTTP status code.
                     // In order to not break existing code, we repackage the payload into a
                     // new model node with an "outcome" and "result" key.
+                    // TODO What about response headers?
                     ModelNode repackaged = new ModelNode();
                     repackaged.get(OUTCOME).set(SUCCESS);
                     repackaged.get(RESULT).set(node);

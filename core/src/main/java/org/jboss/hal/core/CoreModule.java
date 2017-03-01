@@ -19,6 +19,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
 import org.jboss.hal.core.finder.Finder;
@@ -46,6 +47,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);
+        bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
         bind(Finder.class).in(Singleton.class);
         bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);

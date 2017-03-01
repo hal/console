@@ -212,6 +212,7 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.dmr.model.Deprecation;
 
 /**
  * @author Harald Pehl
@@ -220,7 +221,7 @@ public class TestableFormItem implements FormItem<String> {
 
     private final String name;
 
-    public TestableFormItem(final String name) {this.name = name;}
+    TestableFormItem(final String name) {this.name = name;}
 
     @Override
     public Element asElement(final Form.State state) {
@@ -254,16 +255,6 @@ public class TestableFormItem implements FormItem<String> {
 
     @Override
     public String getId(final Form.State state) {
-        return null;
-    }
-
-    @Override
-    public void setState(final Form.State state) {
-
-    }
-
-    @Override
-    public Form.State getState() {
         return null;
     }
 
@@ -378,7 +369,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setDeprecated(final boolean deprecated) {
+    public void setDeprecated(final Deprecation deprecation) {
 
     }
 
@@ -448,7 +439,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setDefaultValue(final String defaultValue) {
+    public void assignDefaultValue(final String defaultValue) {
 
     }
 

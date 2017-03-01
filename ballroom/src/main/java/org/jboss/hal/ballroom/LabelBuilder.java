@@ -16,12 +16,15 @@
 package org.jboss.hal.ballroom;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import org.jboss.hal.dmr.Property;
 
 /**
@@ -31,6 +34,7 @@ import org.jboss.hal.dmr.Property;
  */
 public class LabelBuilder {
 
+    private static final String QUOTE = "'";
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
             .put("ee", "EE")
@@ -55,16 +59,60 @@ public class LabelBuilder {
             .put("wsdl", "WSDL")
             .build();
 
-    public String label(Property property) {
+    public String label(final Property property) {
         return label(property.getName());
     }
 
-    public String label(String name) {
+    public String label(final String name) {
         String label = name;
         label = label.replace('-', ' ');
         label = replaceSpecial(label);
         label = capitalize(label);
         return label;
+    }
+
+    /**
+     * Turns a list of names from the management model into a human readable enumeration wrapped in quotes and
+     * separated with commas. The last name is separated with the specified conjunction.
+     *
+     * @return The list of names as human readable string or an empty string if the names are null or empty.
+     */
+    public String enumeration(final Iterable<String> names, final String conjunction) {
+        String enumeration = "";
+        if (names != null && !Iterables.isEmpty(names)) {
+            int size = Iterables.size(names);
+            if (size == 1) {
+                return QUOTE + label(names.iterator().next()) + QUOTE;
+            } else if (size == 2) {
+                return QUOTE + label(Iterables.getFirst(names, "")) + QUOTE +
+                        " " + conjunction + " " +
+                        QUOTE + label(Iterables.getLast(names)) + QUOTE;
+            } else {
+                String last = Iterables.getLast(names);
+                LinkedList<String> allButLast = new LinkedList<>();
+                Iterables.addAll(allButLast, names);
+                allButLast.removeLast();
+                enumeration = allButLast.stream()
+                        .map(name -> QUOTE + label(name) + QUOTE)
+                        .collect(Collectors.joining(", "));
+                enumeration = enumeration + " " + conjunction + " " + QUOTE + label(last) + QUOTE;
+            }
+        }
+        return enumeration;
+    }
+
+    private String replaceSpecial(final String label) {
+        List<String> replacedParts = new ArrayList<>();
+        for (String part : Splitter.on(' ').split(label)) {
+            String replaced = part;
+            for (Map.Entry<String, String> entry : SPECIALS.entrySet()) {
+                if (replaced.length() == entry.getKey().length()) {
+                    replaced = replaced.replace(entry.getKey(), entry.getValue());
+                }
+            }
+            replacedParts.add(replaced);
+        }
+        return Joiner.on(" ").join(replacedParts);
     }
 
     private String capitalize(final String str) {
@@ -80,19 +128,5 @@ public class LabelBuilder {
             }
         }
         return new String(buffer);
-    }
-
-    private String replaceSpecial(final String label) {
-        List<String> replacedParts = new ArrayList<>();
-        for (String part : Splitter.on(' ').split(label)) {
-            String replaced = part;
-            for (Map.Entry<String, String> entry : SPECIALS.entrySet()) {
-                if (replaced.length() == entry.getKey().length()) {
-                    replaced = replaced.replace(entry.getKey(), entry.getValue());
-                }
-            }
-            replacedParts.add(replaced);
-        }
-        return Joiner.on(" ").join(replacedParts);
     }
 }

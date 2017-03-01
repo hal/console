@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.4.7</version>
+        <version>0.4.8</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -36,14 +36,13 @@
         <annotations.version>15.0</annotations.version>
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
-        <circuit.version>0.2.1</circuit.version>
         <compile-testing.version>0.10</compile-testing.version>
-        <elemento.version>0.2.4</elemento.version>
+        <elemento.version>0.2.10</elemento.version>
         <flow.version>0.1.0</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>20.0</guava.version>
         <gwt.version>2.8.0</gwt.version>
-        <gwtp.version>1.5.3</gwtp.version>
+        <gwtp.version>1.6</gwtp.version>
         <javax.enterprise.version>1.2</javax.enterprise.version>
         <javax.inject.version>1</javax.inject.version>
         <jaxen.version>1.1.6</jaxen.version>
@@ -51,7 +50,7 @@
         <jdom.version>2.0.2</jdom.version>
         <jsinterop.version>1.0.0</jsinterop.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>2.0.31-beta</mockito.version>
+        <mockito.version>2.7.10</mockito.version>
         <node.version>v7.2.0</node.version>
         <npm.version>4.0.2</npm.version>
         <slf4j.version>1.7.21</slf4j.version>
@@ -111,21 +110,6 @@
                 <groupId>com.google.gwt.inject</groupId>
                 <artifactId>gin</artifactId>
                 <version>${gin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.circuit</groupId>
-                <artifactId>circuit-core</artifactId>
-                <version>${circuit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.circuit</groupId>
-                <artifactId>circuit-meta</artifactId>
-                <version>${circuit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.circuit</groupId>
-                <artifactId>circuit-processor</artifactId>
-                <version>${circuit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.gwt.flow</groupId>
@@ -255,6 +239,11 @@
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-dmr</artifactId>
                 <version>${jboss.dmr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

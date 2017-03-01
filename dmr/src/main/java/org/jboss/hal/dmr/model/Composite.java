@@ -21,8 +21,10 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 
 /**
@@ -33,7 +35,7 @@ public class Composite extends Operation implements Iterable<Operation> {
     private List<Operation> operations;
 
     public Composite(Operation first, Operation... rest) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptyList());
         this.operations = new ArrayList<>();
 
         add(first);
@@ -45,15 +47,26 @@ public class Composite extends Operation implements Iterable<Operation> {
     }
 
     public Composite(List<Operation> operations) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptyList());
         this.operations = new ArrayList<>();
 
         operations.forEach(this::add);
     }
 
-    public void add(Operation operation) {
+    public Composite add(Operation operation) {
         operations.add(operation);
         get(STEPS).add(operation);
+        return this;
+    }
+
+    public Composite addHeader(String name, String value) {
+        get(OPERATION_HEADERS).get(name).set(value);
+        return this;
+    }
+
+    public Composite addHeader(String name, boolean value) {
+        get(OPERATION_HEADERS).get(name).set(value);
+        return this;
     }
 
     @Override

@@ -24,13 +24,13 @@ import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceColumn;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -150,9 +150,9 @@ public class DataSourceWizard {
 
                 .onFinish((wizard, context) -> {
                     DataSource dataSource = context.getDataSource();
-                    ResourceAddress address = dataSource.isXa()
-                            ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                            : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+                    AddressTemplate template = dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
+                    ResourceAddress address = template.resolve(statementContext, dataSource.getName());
+                    Metadata metadata = metadataRegistry.lookup(template);
                     if (!context.isCreated()) {
                         Operation operation = new Operation.Builder(ADD, address).payload(dataSource).build();
                         dispatcher.execute(operation,
@@ -161,7 +161,8 @@ public class DataSourceWizard {
                                         resources.messages().dataSourceAddError(), failure));
                     } else {
                         if (context.hasChanges()) {
-                            Composite operations = new OperationFactory().fromChangeSet(address, context.changes());
+                            Composite operations = new OperationFactory().fromChangeSet(address, context.changes(),
+                                    metadata);
                             dispatcher.execute(operations,
                                     (CompositeResult result) -> success(dataSource),
                                     (op, failure) -> wizard.showError(resources.constants().operationFailed(),

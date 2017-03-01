@@ -15,33 +15,39 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.core.client.GWT;
+import javax.annotation.PostConstruct;
+
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.config.Endpoints;
 
-import javax.annotation.PostConstruct;
+import static org.jboss.hal.resources.CSS.bootstrapError;
 
 @Templated
 public abstract class BootstrapFailed implements IsElement {
 
-    static final Constants CONSTANTS = GWT.create(Constants.class);
-
     // @formatter:off
-    public static BootstrapFailed create(String error, String details) {
-        return new Templated_BootstrapFailed(error, details);
+    public static BootstrapFailed create(String error, Endpoints endpoints) {
+        return new Templated_BootstrapFailed(error, endpoints);
     }
 
     public abstract String error();
-    public abstract String details();
+    public abstract Endpoints endpoints();
     // @formatter:on
 
-    @DataElement Element code;
+    @DataElement Element errorHolder;
+    @DataElement Element allowedOriginServer;
+    @DataElement Element allowedOriginConfig;
 
     @PostConstruct
     void init() {
-        code.setInnerText(details());
+        Browser.getDocument().getDocumentElement().getClassList().add(bootstrapError);
+        errorHolder.setInnerText(error());
+        Elements.setVisible(allowedOriginServer, !endpoints().isSameOrigin());
+        Elements.setVisible(allowedOriginConfig, !endpoints().isSameOrigin());
     }
 }

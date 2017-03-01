@@ -37,7 +37,6 @@ import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
-import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -55,6 +54,8 @@ import static java.lang.Math.max;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.core.ui.Skeleton.applicationHeight;
+import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
@@ -301,7 +302,9 @@ class BrowseContentElement implements IsElement, Attachable {
     public void attach() {
         editor.attach();
         editor.getEditor().$blockScrolling = 1;
-        Browser.getWindow().setOnresize(event -> adjustHeight());
+        adjustHeight();
+        adjustEditorHeight();
+        Browser.getWindow().setOnresize(event -> adjustEditorHeight());
     }
 
     @Override
@@ -312,24 +315,27 @@ class BrowseContentElement implements IsElement, Attachable {
     void setSurroundingHeight(final int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
         adjustHeight();
+        adjustEditorHeight();
     }
 
     private void adjustHeight() {
-        int height = Skeleton.applicationHeight();
-        int treeHeight = height - 2 * MARGIN_BIG - treeSearch.asElement().getOffsetHeight() - MARGIN_SMALL -
-                surroundingHeight;
-        int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight() -
-                surroundingHeight;
+        int treeOffset = applicationOffset() + 2 * MARGIN_BIG + treeSearch.asElement().getOffsetHeight() + MARGIN_SMALL
+                + surroundingHeight;
         int previewHeaderHeight = previewHeader.getOffsetHeight();
-        int previewHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - previewHeaderHeight - surroundingHeight;
+        int previewOffset = applicationOffset() + 2 * MARGIN_BIG + MARGIN_SMALL + previewHeaderHeight
+                + surroundingHeight;
 
-        treeContainer.getStyle().setHeight(treeHeight, PX);
+        treeContainer.getStyle().setHeight(vh(treeOffset));
+        previewImageContainer.getStyle().setHeight(vh(previewOffset));
+    }
+
+    private void adjustEditorHeight() {
+        int editorHeight = applicationHeight() - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight()
+                - surroundingHeight;
+
         if (Elements.isVisible(editor.asElement())) {
             editor.asElement().getStyle().setHeight(max(editorHeight, MIN_HEIGHT), PX);
             editor.getEditor().resize();
-        }
-        if (Elements.isVisible(previewImageContainer)) {
-            previewImageContainer.getStyle().setHeight(previewHeight, PX);
         }
     }
 
@@ -366,7 +372,6 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
-        adjustHeight();
     }
 
     private void deploymentPreview() {
@@ -376,7 +381,6 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), true);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
-        adjustHeight();
 
         deploymentPreview.setHeader(content);
         deploymentPreview.setPrimaryAction(resources.constants().download(),
@@ -390,7 +394,6 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
-        adjustHeight();
     }
 
     private void viewInEditor(ContentEntry contentEntry) {
@@ -400,7 +403,7 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
-        adjustHeight();
+        adjustEditorHeight();
 
         editorStatus.setTextContent(contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize));
         downloadLink.setAttribute("href", downloadUrl(contentEntry)); //NON-NLS
@@ -417,7 +420,6 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, true);
-        adjustHeight();
 
         previewImage.setSrc(downloadUrl(contentEntry));
     }
@@ -429,7 +431,6 @@ class BrowseContentElement implements IsElement, Attachable {
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), true);
         Elements.setVisible(previewContainer, false);
-        adjustHeight();
     }
 
 

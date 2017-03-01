@@ -15,69 +15,107 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.base.Strings;
+import elemental.client.Browser;
+import elemental.html.SelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.jboss.hal.resources.CSS.formControl;
-import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
 /**
  * @author Harald Pehl
  */
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
-    private final boolean allowEmpty;
-    private SingleSelectBoxElement selectBox;
+    private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
-    public SingleSelectBoxItem(final String name, final String label, List<String> options) {
-        this(name, label, options, false);
+        SingleSelectBoxReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "SingleSelectBoxReadOnlyAppearance";
+        }
     }
+
+
+    private class SingleSelectBoxEditingAppearance extends SelectBoxEditingAppearance<String> {
+
+        SingleSelectBoxEditingAppearance(final SelectElement selectElement, final List<String> options,
+                final boolean allowEmpty) {
+            super(selectElement, options, allowEmpty);
+        }
+
+        @Override
+        public void attach() {
+            super.attach();
+            Single.element(selectElement).onChange((event, index) ->
+                    modifyValue(Single.element(selectElement).getValue()));
+        }
+
+        @Override
+        void refresh() {
+            Single.element(selectElement).refresh();
+        }
+
+        @Override
+        public void showValue(final String value) {
+            if (attached) {
+                Single.element(selectElement).setValue(value);
+            } else {
+                selectElement.setValue(value);
+            }
+        }
+
+        @Override
+        public void clearValue() {
+            if (allowEmpty) {
+                if (attached) {
+                    Single.element(selectElement).setValue("");
+                } else {
+                    selectElement.setValue("");
+                }
+            }
+        }
+    }
+
+
+    private final boolean allowEmpty;
 
     public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
-        super(name, label, null, new CreationContext<>(allowEmpty));
+        super(name, label, null);
         this.allowEmpty = allowEmpty;
-        List<String> localOptions = options;
-        if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
-            localOptions = new ArrayList<>(options);
-            localOptions.add(0, "");
-        }
-        setOptions(localOptions);
-    }
 
-    @Override
-    protected InputElement<String> newInputElement(CreationContext<?> context) {
-        Boolean allowEmpty = (Boolean) context.data();
-        selectBox = new SingleSelectBoxElement(allowEmpty);
-        selectBox.setClassName(formControl + " " + selectpicker);
-        return selectBox;
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-        Single.element(selectBox.asElement()).onChange((event, index) -> {
-            String value = getValue();
+        setUndefined(allowEmpty);
+        if (!allowEmpty) {
             setModified(true);
-            setUndefined(isNullOrEmpty(value));
-            signalChange(value);
-        });
+        }
+
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new SingleSelectBoxReadOnlyAppearance());
+
+        // editing appearance
+        elemental.html.SelectElement selectElement = Browser.getDocument().createSelectElement();
+        selectElement.setSize(1);
+        selectElement.setMultiple(false);
+
+        addAppearance(Form.State.EDITING, new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return allowEmpty && Strings.isNullOrEmpty(getValue());
     }
 
     @Override
     public boolean supportsExpressions() {
         return false;
-    }
-
-    public void setOptions(List<String> options) {
-        selectBox.setOptions(options);
-        setUndefined(allowEmpty);
-        if (!allowEmpty) {
-            setModified(true);
-        }
     }
 
     @Override
@@ -87,58 +125,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
             super.setUndefined(undefined);
         } else {
             // there's always a value and this form item can never get undefined!
-            setUndefined(false);
-        }
-    }
-
-    @Override
-    void markDefaultValue(final boolean on, final String defaultValue) {
-        super.markDefaultValue(on, defaultValue);
-        if (selectBox.isAttached()) {
-            Single.element(selectBox.asElement()).refresh();
-        }
-    }
-
-
-    private static class SingleSelectBoxElement extends SelectBoxElement<String> {
-
-        SingleSelectBoxElement(final boolean allowEmpty) {
-            super(allowEmpty, false);
-        }
-
-        @Override
-        public String getValue() {
-            return isAttached() ? Single.element(asElement()).getValue() : element.getValue();
-        }
-
-        @Override
-        public void setValue(final String value) {
-            if (isAttached()) {
-                Single.element(asElement()).setValue(value);
-            } else {
-                element.setValue(value);
-            }
-        }
-
-        @Override
-        public void clearValue() {
-            if (allowEmpty) {
-                if (isAttached()) {
-                    Single.element(asElement()).setValue("");
-                } else {
-                    element.setValue("");
-                }
-            }
-        }
-
-        @Override
-        public String getText() {
-            return getValue();
-        }
-
-        @Override
-        public void setText(final String s) {
-            setValue(s);
+            super.setUndefined(false);
         }
     }
 }

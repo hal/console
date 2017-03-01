@@ -35,6 +35,10 @@
 
 package org.jboss.hal.ballroom.form;
 
+import com.google.gwt.core.client.GWT;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
+
 /**
  * Simple form item validation handler
  *
@@ -43,6 +47,9 @@ package org.jboss.hal.ballroom.form;
  */
 @FunctionalInterface
 public interface FormItemValidation<T> {
+
+    Constants CONSTANTS = GWT.create(Constants.class);
+    Messages MESSAGES = GWT.create(Messages.class);
 
     ValidationResult validate(T value);
 }

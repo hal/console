@@ -15,126 +15,90 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.EnumSet;
+
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
+import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Button;
+import org.jboss.hal.dmr.model.Deprecation;
 
-import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
+import static org.jboss.hal.resources.CSS.controlLabel;
+import static org.jboss.hal.resources.CSS.formGroup;
 import static org.jboss.hal.resources.CSS.halFormInput;
-import static org.jboss.hal.resources.CSS.halFormOffset;
-import static org.jboss.hal.resources.Names.NOT_SUPPORTED;
+import static org.jboss.hal.resources.CSS.halFormLabel;
 
 /**
  * @author Harald Pehl
  */
 public class ButtonItem extends AbstractFormItem<Void> {
 
-    private ButtonElement button;
-    private Element readonlyNotSupported;
+    private static class ButtonReadOnlyAppearance extends ReadOnlyAppearance<Void> {
 
-    public ButtonItem(final String name, final String label) {
-        super(name, label, null, EMPTY_CONTEXT);
-        button.setText(label);
-    }
+        private final String label;
 
-    @Override
-    public Element asElement(final Form.State state) {
-        if (state == READONLY) {
-            if (readonlyNotSupported == null) {
-                readonlyNotSupported = Browser.getDocument().createDivElement();
-                readonlyNotSupported.setInnerText(NOT_SUPPORTED);
-                Elements.setVisible(readonlyNotSupported, false);
-            }
-            return readonlyNotSupported;
-        } else {
-            return super.asElement(state);
+        ButtonReadOnlyAppearance(String label) {
+            super(EnumSet.noneOf(Decoration.class));
+            this.label = label;
         }
-    }
 
-    @Override
-    protected InputElement<Void> newInputElement(CreationContext<?> context) {
-        button = new ButtonElement();
-        button.setClassName(Button.DEFAULT_CSS);
-        return button;
-    }
+        @Override
+        public String asString(final Void value) {
+            return label;
+        }
 
-    @Override
-    protected <C> void assembleUI(CreationContext<C> context) {
-        inputContainer.getClassList().remove(halFormInput);
-        inputContainer.getClassList().add(halFormOffset);
-        inputContainer.appendChild(inputElement().asElement());
-        editingRoot.appendChild(inputContainer);
-    }
-
-    @Override
-    public boolean supportsExpressions() {
-        return false;
-    }
-
-    @Override
-    protected void toggleRestricted(final boolean on) {
-        button.element.setDisabled(on);
-    }
-
-    public void onClick(EventListener listener) {
-        button.element.setOnclick(listener);
+        @Override
+        protected String name() {
+            return "ButtonReadOnlyAppearance";
+        }
     }
 
 
-    private static class ButtonElement extends InputElement<Void> {
+    private static class ButtonEditingAppearance extends AbstractAppearance<Void> {
 
-        static final String DATA_NAME = "data-name";
-        final elemental.html.ButtonElement element;
+        private final Element root;
+        private final ButtonElement button;
 
-        ButtonElement() {
-            element = Browser.getDocument().createButtonElement();
-            element.setAttribute("type", "button"); //NON-NLS
+        ButtonEditingAppearance(ButtonElement button) {
+            super(EnumSet.of(DEPRECATED, ENABLED));
+            this.button = button;
+
+            // @formatter:off
+            Elements.Builder builder = new Elements.Builder()
+                .div().css(formGroup)
+                    .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
+                    .div().css(halFormInput)
+                        .add(button)
+                    .end()
+                .end();
+            // @formatter:on
+
+            labelElement = builder.referenceFor(LABEL_ELEMENT);
+            root = builder.build();
         }
 
         @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
+        public Element asElement() {
+            return root;
         }
 
         @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
+        public void attach() {
+            // noop
         }
 
         @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
-            } else {
-                element.blur();
-            }
+        protected String name() {
+            return "ButtonEditingAppearance";
         }
 
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
 
         @Override
-        public boolean isEnabled() {
-            return !element.isDisabled();
-        }
-
-        @Override
-        public void setEnabled(final boolean b) {
-            element.setDisabled(!b);
-        }
-
-        @Override
-        public Void getValue() {
-            return null;
-        }
-
-        @Override
-        public void setValue(final Void value) {
+        public void showValue(final Void value) {
             // noop
         }
 
@@ -144,28 +108,117 @@ public class ButtonItem extends AbstractFormItem<Void> {
         }
 
         @Override
-        public void setName(final String s) {
-            element.setAttribute(DATA_NAME, s);
+        public void setId(final String id) {
+            button.setId(id);
         }
 
         @Override
-        public String getName() {
-            return element.getAttribute(DATA_NAME);
+        public void setName(final String name) {
+            button.setName(name);
         }
 
         @Override
-        public String getText() {
-            return element.getInnerText();
+        public void setLabel(final String label) {
+            labelElement.setTextContent("");
         }
 
         @Override
-        public void setText(final String s) {
-            element.setInnerText(s);
+        <C> void safeApply(final Decoration decoration, final C context) {
+            switch (decoration) {
+
+                case DEPRECATED:
+                    markAsDeprecated((Deprecation) context);
+                    break;
+
+                case ENABLED:
+                    button.setDisabled(true);
+                    break;
+
+                // not supported
+                case RESTRICTED:
+                case DEFAULT:
+                case EXPRESSION:
+                case HINT:
+                case INVALID:
+                case REQUIRED:
+                case SUGGESTIONS:
+                    break;
+            }
         }
 
         @Override
-        public Element asElement() {
-            return element;
+        void safeUnapply(final Decoration decoration) {
+            switch (decoration) {
+
+                case DEPRECATED:
+                    clearDeprecation();
+                    break;
+
+                case ENABLED:
+                    button.setDisabled(false);
+                    break;
+
+                // not supported
+                case DEFAULT:
+                case EXPRESSION:
+                case HINT:
+                case INVALID:
+                case REQUIRED:
+                case RESTRICTED:
+                case SUGGESTIONS:
+            }
         }
+
+        @Override
+        public int getTabIndex() {
+            return button.getTabIndex();
+        }
+
+        @Override
+        public void setAccessKey(final char key) {
+            button.setAccessKey(String.valueOf(key));
+        }
+
+        @Override
+        public void setFocus(final boolean focused) {
+            if (focused) {
+                button.focus();
+            } else {
+                button.blur();
+            }
+        }
+
+        @Override
+        public void setTabIndex(final int index) {
+            button.setTabIndex(index);
+        }
+    }
+
+
+    private final ButtonElement button;
+
+    public ButtonItem(final String name, final String label) {
+        super(name, label, null);
+
+        addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
+
+        button = Browser.getDocument().createButtonElement();
+        button.setTextContent(label);
+        button.setClassName(Button.DEFAULT_CSS);
+        addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsExpressions() {
+        return false;
+    }
+
+    public void onClick(EventListener listener) {
+        button.setOnclick(listener);
     }
 }

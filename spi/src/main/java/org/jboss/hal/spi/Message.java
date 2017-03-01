@@ -17,10 +17,12 @@ package org.jboss.hal.spi;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
+import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
+import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_SHORT;
+import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.TIME_MEDIUM;
 import static java.lang.System.currentTimeMillis;
 
 public class Message {
@@ -246,6 +248,8 @@ public class Message {
     // ------------------------------------------------------ message instance
 
     private final long id;
+    private final String date;
+    private final String time;
     private final String timestamp;
     private final Level level;
     private final SafeHtml message;
@@ -256,8 +260,12 @@ public class Message {
 
     private Message(final long id, final Level level, final SafeHtml message, final String details,
             final String actionTitle, final Callback callback, final boolean sticky) {
+        Date now = new Date();
+
         this.id = id;
-        this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(new Date());
+        this.date = DateTimeFormat.getFormat(DATE_SHORT).format(now);
+        this.time = DateTimeFormat.getFormat(TIME_MEDIUM).format(now);
+        this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(now);
         this.level = level;
         this.message = message;
         this.details = details;
@@ -268,6 +276,14 @@ public class Message {
 
     public long getId() {
         return id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
     }
 
     public String getTimestamp() {

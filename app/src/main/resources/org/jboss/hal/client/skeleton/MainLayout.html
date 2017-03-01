@@ -45,34 +45,10 @@
                     <span data-element="reloadLabel">Reload Required</span>
                 </a>
             </li>
-            <li class="dropdown">
-                <a class="clickable" data-element="messages" data-toggle="dropdown">
-                    <span class="fa fa-bell" data-element="messagesIcon"></span>
-                    <span id="{{resources().HEADER_MESSAGES}}" data-element="messagesLabel">Messages (23)</span>
-                    <b class="caret"></b>
+            <li class="drawer-pf-trigger dropdown">
+                <a class="nav-item-iconic drawer-pf-trigger-icon" data-element="messages">
+                    <span class="fa fa-bell-o" style="padding-right: 0" data-element="messagesIcon"></span>
                 </a>
-                <div class="dropdown-menu infotip messages bottom-right">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <span class="i pficon pficon-ok"></span><span class="message">Sever restarted successfully</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="i pficon pficon-info"></span><span class="message">Just an info</span>
-                        </li>
-                        <li class="list-group-item visited">
-                            <span class="i pficon pficon-info"></span><span class="message">Another info, which was already read</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="i pficon pficon-warning-triangle-o"></span><span class="message">Please reload server group</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="i pficon pficon-error-circle-o"></span><span class="message">Error: System Failure</span>
-                        </li>
-                    </ul>
-                    <div class="footer">
-                        <a class="clickable">{{resources().constants().clearMessages()}}</a>
-                    </div>
-                </div>
             </li>
             <li class="dropdown">
                 <a class="clickable dropdown-toggle" data-toggle="dropdown">
@@ -86,7 +62,7 @@
                     <li><a data-element="logout" class="clickable">{{resources().constants().logout()}}</a></li>
                 </ul>
             </li>
-            <li class="dropdown">
+            <li class="dropdown" data-element="connectedToContainer">
                 <a class="clickable dropdown-toggle" data-toggle="dropdown">
                     <span class="fa fa-globe"></span>
                     <b class="caret"></b>

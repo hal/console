@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -37,7 +38,7 @@ public class ModelNodeFormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        Core.INSTANCE = new Core(mock(Dispatcher.class), mock(StatementContext.class));
+        Core.INSTANCE = new Core(mock(Dispatcher.class), mock(StatementContext.class), mock(EventBus.class));
         attributes = new ResourceDescriptionBuilder().attributes("foo", "bar", "baz", "qux");
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));

@@ -20,8 +20,6 @@ import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import org.jboss.gwt.circuit.Dispatcher;
-import org.jboss.gwt.circuit.dag.DAGDispatcher;
 import org.jboss.hal.client.accesscontrol.AccessControl;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlTokens;
@@ -44,10 +42,14 @@ import org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter;
 import org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView_Provider;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
+import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
+import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerView;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView_Provider;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaView;
+import org.jboss.hal.client.configuration.subsystem.jgroups.JGroupsPresenter;
+import org.jboss.hal.client.configuration.subsystem.jgroups.JGroupsView;
 import org.jboss.hal.client.configuration.subsystem.jmx.JmxPresenter;
 import org.jboss.hal.client.configuration.subsystem.jmx.JmxView;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
@@ -160,7 +162,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
-        bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 
@@ -202,6 +203,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 BufferCachePresenter.MyView.class,
                 Mbui_BufferCacheView_Provider.class,
                 BufferCachePresenter.MyProxy.class);
+
+        bindPresenter(CacheContainerPresenter.class,
+                CacheContainerPresenter.MyView.class,
+                CacheContainerView.class,
+                CacheContainerPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ClusteringPresenter.class,
                 ClusteringPresenter.MyView.class,
@@ -282,7 +288,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepagePresenter.MyView.class,
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
-        
+
         bindTemplatedPresenter(HostPresenter.class,
                 HostPresenter.MyView.class,
                 Mbui_HostView_Provider.class,
@@ -292,7 +298,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 IiopPresenter.MyView.class,
                 Mbui_IiopView_Provider.class,
                 IiopPresenter.MyProxy.class);
-        
+
         bindTemplatedPresenter(IOPresenter.class,
                 IOPresenter.MyView.class,
                 Mbui_IOView_Provider.class,
@@ -307,6 +313,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaView.class,
                 JcaPresenter.MyProxy.class);
+
+        bindPresenter(JGroupsPresenter.class,
+                JGroupsPresenter.MyView.class,
+                JGroupsView.class,
+                JGroupsPresenter.MyProxy.class);
 
         bindTemplatedPresenter(JmsBridgePresenter.class,
                 JmsBridgePresenter.MyView.class,

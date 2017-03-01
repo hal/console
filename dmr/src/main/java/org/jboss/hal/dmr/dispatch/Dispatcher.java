@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
@@ -27,7 +29,10 @@ import elemental.xml.XMLHttpRequest;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
 import org.jboss.hal.dmr.macro.Action;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
@@ -48,11 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
-import static org.jboss.gwt.elemento.core.InputType.url;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
@@ -125,22 +126,24 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
+    private final Environment environment;
     private final Endpoints endpoints;
     private final EventBus eventBus;
-    private final Provider<ProcessStateProcessor> processStateProcessor;
+    private final ResponseHeadersProcessors responseHeadersProcessors;
+    private final Macros macros;
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
-    private Macros macros;
 
     @Inject
-    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
-            Provider<ProcessStateProcessor> processStateProcessor, final Macros macros) {
+    public Dispatcher(final Environment environment, final Endpoints endpoints, final EventBus eventBus,
+            final Resources resources, final ResponseHeadersProcessors responseHeadersProcessors, final Macros macros) {
+        this.environment = environment;
         this.endpoints = endpoints;
         this.eventBus = eventBus;
-        this.eventBus.addHandler(RecordingEvent.getType(), this);
-        this.processStateProcessor = processStateProcessor;
+        this.responseHeadersProcessors = responseHeadersProcessors;
         this.macros = macros;
 
+        this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
             if (!pendingLifecycleAction) {
@@ -161,61 +164,82 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute composite
 
     public void execute(final Composite composite, final CompositeCallback callback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
-        dmr(composite, callback, failedCallback, exceptionCallback);
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback) {
-        dmr(composite, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
+        dmr(composite, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
+                new ExceptionalFunctionCallback<>(control));
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback, FailedCallback failedCallback) {
-        dmr(composite, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFunctionCallback<>(control));
     }
 
 
     // ------------------------------------------------------ execute operation
 
     public void execute(final Operation operation, final OperationCallback callback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
-        dmr(operation, callback, failedCallback, exceptionCallback);
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback, final FailedCallback failedCallback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final OperationCallback callback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
+        dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback) {
-        dmr(operation, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
+        dmr(operation, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
+                new ExceptionalFunctionCallback<>(control));
     }
 
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback, FailedCallback failedCallback) {
-        dmr(operation, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFunctionCallback<>(control));
     }
 
 
     // ------------------------------------------------------ dmr
 
-    private <T> void dmr(final Operation operation, final SuccessCallback<T> callback,
-            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+    private <T> void dmr(final Operation operation, final Function<ModelNode, ModelNode> getResult,
+            final SuccessCallback<T> callback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
         if (GetOperation.isSupported(operation.getName())) {
@@ -226,8 +250,8 @@ public class Dispatcher implements RecordingHandler {
             method = POST;
         }
 
-        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
-                exceptionCallback);
+        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), getResult, callback,
+                failedCallback, exceptionCallback);
         xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
         xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         if (method == GET) {
@@ -287,8 +311,8 @@ public class Dispatcher implements RecordingHandler {
 
     private void uploadFormData(FormData formData, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
-        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
-                failedCallback, exceptionCallback);
+        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
+                payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
         xhr.send(formData);
         // Uploads are not supported in macros!
     }
@@ -307,7 +331,7 @@ public class Dispatcher implements RecordingHandler {
                 if (status == 200) {
                     successCallback.onSuccess(responseText);
                 } else {
-                    handleErrorCodes(status, operation, exceptionCallback);
+                    handleErrorCodes(url, status, operation, exceptionCallback);
                 }
             }
         });
@@ -363,7 +387,8 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ xhr
 
     private <T> XMLHttpRequest newDmrXhr(final String url, final HttpMethod method, final Operation operation,
-            final PayloadProcessor payloadProcessor, SuccessCallback<T> callback, final FailedCallback failedCallback,
+            final PayloadProcessor payloadProcessor, final Function<ModelNode, ModelNode> getResult,
+            final SuccessCallback<T> callback, final FailedCallback failedCallback,
             final ExceptionCallback exceptionCallback) {
         return newXhr(url, method, operation, exceptionCallback, xhr -> {
             int readyState = xhr.getReadyState();
@@ -375,11 +400,24 @@ public class Dispatcher implements RecordingHandler {
                 if (status == 200 || status == 500) {
                     ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
                     if (!payload.isFailure()) {
-                        if (processStateProcessor.get().accepts(payload)) {
-                            ProcessState processState = processStateProcessor.get().process(payload);
-                            eventBus.fireEvent(new ProcessStateEvent(processState));
+                        if (environment.isStandalone()) {
+                            if (payload.hasDefined(RESPONSE_HEADERS)) {
+                                Header[] headers = new Header[]{new Header(payload.get(RESPONSE_HEADERS))};
+                                for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
+                                    processor.process(headers);
+                                }
+                            }
+                        } else {
+                            if (payload.hasDefined(SERVER_GROUPS)) {
+                                Header[] headers = collectHeaders(payload.get(SERVER_GROUPS));
+                                if (headers.length != 0) {
+                                    for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
+                                        processor.process(headers);
+                                    }
+                                }
+                            }
                         }
-                        ModelNode result = payload.get(RESULT);
+                        ModelNode result = getResult.apply(payload);
                         if (operation instanceof Composite && callback instanceof CompositeCallback) {
                             ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
                         } else if (callback instanceof OperationCallback) {
@@ -393,7 +431,7 @@ public class Dispatcher implements RecordingHandler {
                     }
                 } else {
                     if (!pendingLifecycleAction) {
-                        handleErrorCodes(status, operation, exceptionCallback);
+                        handleErrorCodes(url, status, operation, exceptionCallback);
                     }
                 }
             }
@@ -406,8 +444,8 @@ public class Dispatcher implements RecordingHandler {
 
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
         xhr.setOnreadystatechange(event -> readyListener.onReady(xhr));
-        xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
-                .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
+        xhr.addEventListener("error",  //NON-NLS
+                event -> handleErrorCodes(url, xhr.getStatus(), operation, exceptionCallback), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         xhr.setWithCredentials(true);
@@ -415,9 +453,12 @@ public class Dispatcher implements RecordingHandler {
         return xhr;
     }
 
-    private void handleErrorCodes(int status, Operation operation, ExceptionCallback exceptionCallback) {
+    private void handleErrorCodes(String url, int status, Operation operation, ExceptionCallback exceptionCallback) {
         switch (status) {
             case 0:
+                exceptionCallback.onException(operation,
+                        new DispatchException("The response for '" + url + "' could not be processed.", status));
+                break;
             case 401:
             case 403:
                 exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));
@@ -438,6 +479,31 @@ public class Dispatcher implements RecordingHandler {
                 exceptionCallback.onException(operation, new DispatchException("Unexpected status code.", status));
                 break;
         }
+    }
+
+
+    // ------------------------------------------------------ response headers in domain
+
+    private Header[] collectHeaders(ModelNode serverGroups) {
+        List<Header> headers = new ArrayList<>();
+        for (Property serverGroup : serverGroups.asPropertyList()) {
+            ModelNode serverGroupValue = serverGroup.getValue();
+            if (serverGroupValue.hasDefined(HOST)) {
+                List<Property> hosts = serverGroupValue.get(HOST).asPropertyList();
+                for (Property host : hosts) {
+                    ModelNode hostValue = host.getValue();
+                    List<Property> servers = hostValue.asPropertyList();
+                    for (Property server : servers) {
+                        ModelNode serverResponse = server.getValue().get(RESPONSE);
+                        if (serverResponse.hasDefined(RESPONSE_HEADERS)) {
+                            headers.add(new Header(serverGroup.getName(), host.getName(), server.getName(),
+                                    serverResponse.get(RESPONSE_HEADERS)));
+                        }
+                    }
+                }
+            }
+        }
+        return headers.toArray(new Header[headers.size()]);
     }
 
 

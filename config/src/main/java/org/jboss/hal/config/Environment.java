@@ -61,4 +61,6 @@ public interface Environment {
     AccessControlProvider getAccessControlProvider();
 
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
+
+    boolean isSingleSignOn();
 }

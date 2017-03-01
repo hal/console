@@ -105,8 +105,9 @@ public class ReadEnvironment implements BootstrapFunction {
                             node.get(NAME).asString());
 
                     // operation mode
-                    OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, OperationMode::valueOf,
-                            OperationMode.STANDALONE);
+                    //noinspection Convert2MethodRef (conflicts with second method reference below)
+                    OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, (name) -> OperationMode.valueOf(name),
+                            OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);
 
                     // management version

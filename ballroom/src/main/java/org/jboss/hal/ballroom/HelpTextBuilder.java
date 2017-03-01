@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.RESOURCE_SERVICES;
@@ -42,9 +44,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * Class to build a help text from an attribute description. Besides the description itself includes information about
  * whether a attribute is required, supports expressions or needs some kind of restart after modification.
  * <p>
- * TODO Add info about "alternatives"
  * TODO Add info about capabilities & requirements
- * TODO Add info about "requires"
  */
 public class HelpTextBuilder {
 
@@ -74,10 +74,17 @@ public class HelpTextBuilder {
     public SafeHtml helpText(Property property) {
         SafeHtmlBuilder help = new SafeHtmlBuilder();
         ModelNode attribute = property.getValue();
-        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
-        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
         boolean supportsExpression = attribute.hasDefined(EXPRESSIONS_ALLOWED) && attribute.get(EXPRESSIONS_ALLOWED)
                 .asBoolean();
+        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
+        List<String> requires = attribute.hasDefined(REQUIRES)
+                ? attribute.get(REQUIRES).asList().stream().map(ModelNode::asString).collect(toList())
+                : Collections.emptyList();
+        List<String> alternatives = attribute.hasDefined(ALTERNATIVES)
+                ? attribute.get(ALTERNATIVES).asList().stream().map(ModelNode::asString).collect(toList())
+                : Collections.emptyList();
+
+        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
         help.append(desc);
 
         RestartMode restartMode = restartRequired(attribute);
@@ -87,6 +94,7 @@ public class HelpTextBuilder {
         }
         boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM || restartMode == RESOURCE_SERVICES);
 
+        LabelBuilder labelBuilder = new LabelBuilder();
         List<String> textModules = new ArrayList<>();
         if (required) {
             textModules.add(CONSTANTS.requiredField());
@@ -96,6 +104,12 @@ public class HelpTextBuilder {
         }
         if (attribute.hasDefined(UNIT)) {
             textModules.add(MESSAGES.unit(attribute.get(UNIT).asString().toLowerCase()));
+        }
+        if (!requires.isEmpty()) {
+            textModules.add(MESSAGES.requires(labelBuilder.enumeration(requires, CONSTANTS.and())));
+        }
+        if (!alternatives.isEmpty()) {
+            textModules.add(MESSAGES.alternativesHelp(labelBuilder.enumeration(alternatives, CONSTANTS.and())));
         }
         if (showRestartHelp) {
             textModules.add(restartMode.description());

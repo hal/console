@@ -1,0 +1,11 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Not used",
+    "attributes" => {
+        "expression" => {
+            "type" => STRING,
+            "description" => "The expression as ${key} or ${key:default}",
+            "nillable" => false
+        }
+    }
+}

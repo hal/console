@@ -49,6 +49,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
+    String alternativesHelp(String alternatives);
+    String alternativeError(String alternatives);
+    String alternativesError(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String atLeastOneIsRequired(String attribute1, String attribute2);
@@ -56,6 +59,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String blacklist(String blacklist);
 
+    String cacheStore();
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
     SafeHtml chooseServerGroupsToUndeploy(String name);
@@ -63,6 +67,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseSharedStore();
     SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
+    SafeHtml closeToLogout();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);
@@ -100,17 +105,18 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentStopped(String name);
     SafeHtml deploymentSuccessful(String name);
     SafeHtml deploymentUnknownState(String name);
+    String deprecated(String since, String reason);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
 
     SafeHtml duplicateAuthenticationModule();
-
     String duplicateAuthenticationModuleReason();
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
+    SafeHtml expressionError(String expression);
 
     SafeHtml flushConnectionSuccess();
 
@@ -163,6 +169,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
+    SafeHtml moreThanOneCacheStore();
+    String moreThanOneCacheStoreDetails();
 
     SafeHtml noChanges();
     SafeHtml noContent();
@@ -177,6 +185,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noResource();
     SafeHtml noSecuritySettingSelected();
     SafeHtml noServerGroupSelected();
+    SafeHtml noStore();
+    SafeHtml noTransport();
+    SafeHtml noWrite();
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
@@ -216,6 +227,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml replicationStrategy();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
+    String requires(String requires);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     SafeHtml resourceAdapterProvidedBy(String type, String name);
@@ -318,5 +330,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String used(double value);
 
     String view(String type);
+
+    SafeHtml writeBehaviour(String current, String switchTo);
     //@formatter:on
 }

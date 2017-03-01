@@ -24,11 +24,11 @@ import java.util.Set;
  */
 public class ProcessState implements Iterable<ServerState> {
 
-    public static final ProcessState EMPTY = new ProcessState();
+    static final ProcessState EMPTY = new ProcessState();
 
     private final Set<ServerState> serverStates;
 
-    public ProcessState() {
+    ProcessState() {
         serverStates = new HashSet<>();
     }
 

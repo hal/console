@@ -42,9 +42,11 @@ public interface UIConstants {
     long DOMAIN_CHANGED_MESSAGE_ID = 291973;
 
 
+    String ARIA_DESCRIBEDBY = "aria-describedby";
     String ALERT = "alert";
     String BODY = "body";
     String BUTTON = "button";
+    String CHECKED = "checked";
     String COLLAPSE = "collapse";
     String CONTAINER = "container";
     String CONTROLS = "controls";
@@ -54,6 +56,7 @@ public interface UIConstants {
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";
     String FALSE = "false";
+    String FOR = "for";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN_MODAL = "hidden.bs.modal";
@@ -70,6 +73,7 @@ public interface UIConstants {
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
     String PROGRESSBAR = "progressbar";
+    String READONLY = "readonly";
     String ROLE = "role";
     String SHOWN_MODAL = "shown.bs.modal";
     String TABINDEX = "tabindex";
@@ -79,4 +83,5 @@ public interface UIConstants {
     String TOP = "top";
     String TOOLTIP = "tooltip";
     String TRUE = "true";
+    String VALUE = "value";
 }

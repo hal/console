@@ -43,6 +43,12 @@
             "nillable" => true,
             "type" => STRING,
         },
+        "password" => {
+            "description" => "A password attribute",
+            "expressions-allowed" => false,
+            "nillable" => true,
+            "type" => STRING,
+        },
 
 
         "int-required" => {
@@ -130,8 +136,14 @@
             "type" => BOOLEAN,
         },
         "boolean-default" => {
-            "default" => true,
             "description" => "A boolean attribute w/ a default value",
+            "default" => true,
+            "nillable" => true,
+            "type" => BOOLEAN,
+        },
+        "boolean-expression" => {
+            "description" => "A boolean attribute w/ expression support",
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => BOOLEAN,
         },
@@ -264,22 +276,8 @@
             "type" => LIST,
             "value-type" => STRING
         },
-        "list-expression" => {
-            "description" => "A list of strings w/ expression support",
-            "expressions-allowed" => true,
-            "nillable" => true,
-            "type" => LIST,
-            "value-type" => STRING
-        },
         "list-suggestion" => {
             "description" => "A list of strings w/ a suggestion handler for subsystems",
-            "nillable" => true,
-            "type" => LIST,
-            "value-type" => STRING
-        },
-        "list-suggestion-expression" => {
-            "description" => "A list of strings w/ a suggestion handler and expression support",
-            "expressions-allowed" => true,
             "nillable" => true,
             "type" => LIST,
             "value-type" => STRING
@@ -301,13 +299,6 @@
         "properties-default" => {
             "default" => { "foo" => "bar", "one" => "two" },
             "description" => "A set of properties w/ a default value",
-            "nillable" => true,
-            "type" => OBJECT,
-            "value-type" => STRING
-        },
-        "properties-expression" => {
-            "description" => "A set of properties w/ expression support",
-            "expressions-allowed" => true,
             "nillable" => true,
             "type" => OBJECT,
             "value-type" => STRING

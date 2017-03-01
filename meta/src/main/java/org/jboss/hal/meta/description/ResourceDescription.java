@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 
 import static java.util.stream.Collectors.toList;
@@ -84,6 +85,65 @@ public class ResourceDescription extends ModelNode {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the alternatives for the specified attribute.
+     *
+     * @param path the path to look for the attribute
+     * @param name the name of the attribute
+     *
+     * @return the alternatives for {@code name} or an empty list if {@code name} has no alternatives or if there's no
+     * attribute {@code name}
+     */
+    public List<String> findAlternatives(final String path, final String name) {
+        Property attribute = findAttribute(path, name);
+        if (attribute != null) {
+            if (attribute.getValue().hasDefined(ALTERNATIVES)) {
+                return attribute.getValue().get(ALTERNATIVES).asList().stream()
+                        .map(ModelNode::asString)
+                        .collect(toList());
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the attributes which require the specified attribute.
+     *
+     * @param path the path to look for the attribute
+     * @param name the name of the attribute which is required by the matching attributes
+     *
+     * @return the attributes which require {@code} or an empty list if no attributes require {@code name} or if there's
+     * no attribute {@code name}
+     */
+    public List<String> findRequires(final String path, final String name) {
+        return getAttributes(path).stream()
+                .filter(attribute -> {
+                    if (attribute.getValue().hasDefined(REQUIRES)) {
+                        List<String> requires = attribute.getValue().get(REQUIRES).asList().stream()
+                                .map(ModelNode::asString)
+                                .collect(toList());
+                        return requires.contains(name);
+                    }
+                    return false;
+                })
+                .map(Property::getName)
+                .collect(toList());
+    }
+
+    public boolean isDefaultValue(final String path, final String name, final Object value) {
+        if (value != null) {
+            Property attribute = findAttribute(path, name);
+            if (attribute != null) {
+                if (attribute.getValue().hasDefined(DEFAULT)) {
+                    ModelType type = attribute.getValue().get(TYPE).asType();
+                    Object defaultValue = attribute.getValue().get(DEFAULT).as(type);
+                    return value.equals(defaultValue);
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isDeprecated() {

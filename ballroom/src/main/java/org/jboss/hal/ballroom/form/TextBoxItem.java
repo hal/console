@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import java.util.EnumSet;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
+import com.google.common.base.Strings;
+import elemental.client.Browser;
+
+import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -27,39 +29,81 @@ import static org.jboss.hal.resources.CSS.formControl;
  */
 public class TextBoxItem extends AbstractFormItem<String> {
 
+    private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
+
+        TextBoxReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "TextBoxReadOnlyAppearance";
+        }
+    }
+
+
+    private static class TextBoxEditingAppearance extends EditingAppearance<String> {
+
+        TextBoxEditingAppearance(elemental.html.InputElement inputElement) {
+            super(EnumSet.allOf(Decoration.class), inputElement);
+        }
+
+        @Override
+        protected String name() {
+            return "TextBoxEditingAppearance";
+        }
+
+        @Override
+        public void showValue(final String value) {
+            inputElement.setValue(value);
+        }
+
+        @Override
+        public void showExpression(final String expression) {
+            inputElement.setValue(expression);
+        }
+
+        @Override
+        public void clearValue() {
+            inputElement.setValue("");
+        }
+    }
+
+
     public TextBoxItem(final String name, final String label) {
-        super(name, label, null, EMPTY_CONTEXT);
+        this(name, label, null);
     }
 
-    @Override
-    protected InputElement<String> newInputElement(CreationContext<?> context) {
-        TextBoxElement textBox = new TextBoxElement();
-        setupInputElement(textBox);
-        return textBox;
-    }
+    public TextBoxItem(final String name, final String label, final String hint) {
+        super(name, label, hint);
 
-    final void setupInputElement(final TextBoxElement textBox) {
-        textBox.setClassName(formControl);
-        //noinspection Duplicates
-        textBox.element.setOnchange(event -> {
-            String newValue = inputElement().getValue();
-            setModified(true);
-            setUndefined(isNullOrEmpty(newValue));
-            signalChange(newValue);
-        });
-        // toggle expression support on the fly
-        textBox.element.setOnkeyup(event -> {
-            if (toggleExpressionSupport(isExpressionValue())) {
-                setFocus(true);
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new TextBoxReadOnlyAppearance());
+
+        // editing appearance
+        elemental.html.InputElement inputElement = Browser.getDocument().createInputElement();
+        inputElement.setType("text"); //NON-NLS
+        inputElement.getClassList().add(formControl);
+
+        inputElement.setOnchange(event -> {
+            String value = inputElement.getValue();
+            if (hasExpressionScheme(value)) {
+                modifyExpressionValue(value);
+            } else {
+                modifyValue(value);
             }
         });
+        inputElement.setOnkeyup(event -> {
+            toggleExpressionSupport(inputElement.getValue());
+            inputElement.focus();
+        });
+
+        addAppearance(EDITING, new TextBoxEditingAppearance(inputElement));
     }
 
     @Override
-    public void onSuggest(final String suggestion) {
-        setValue(suggestion);
-        setModified(true);
-        setUndefined(false);
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(isExpressionValue() ? getExpressionValue() : getValue());
     }
 
     @Override
@@ -67,97 +111,8 @@ public class TextBoxItem extends AbstractFormItem<String> {
         return isExpressionAllowed();
     }
 
-
-    static class TextBoxElement extends InputElement<String> {
-
-        final elemental.html.InputElement element;
-
-        TextBoxElement() {
-            element = Browser.getDocument().createInputElement();
-            element.setType("text"); //NON-NLS
-        }
-
-        TextBoxElement(final elemental.html.InputElement element) {
-            this.element = element;
-        }
-
-        @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
-        }
-
-        @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
-        }
-
-        @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
-            } else {
-                element.blur();
-            }
-        }
-
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return !element.isDisabled();
-        }
-
-        @Override
-        public void setEnabled(final boolean b) {
-            element.setDisabled(!b);
-        }
-
-        @Override
-        public String getValue() {
-            return element.getValue();
-        }
-
-        @Override
-        public void setValue(final String value) {
-            element.setValue(value);
-        }
-
-        @Override
-        public void clearValue() {
-            element.setValue("");
-        }
-
-        @Override
-        public void setName(final String s) {
-            element.setName(s);
-        }
-
-        @Override
-        public String getName() {
-            return element.getName();
-        }
-
-        @Override
-        public String getText() {
-            return getValue();
-        }
-
-        @Override
-        public void setText(final String s) {
-            setValue(s);
-        }
-
-        @Override
-        public void setPlaceholder(final String placeholder) {
-            element.setPlaceholder(placeholder);
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
-        }
+    @Override
+    public void onSuggest(final String suggestion) {
+        modifyValue(suggestion);
     }
 }

@@ -30,7 +30,7 @@
             <metadata address="/{selected.profile}/subsystem=batch-jberet/in-memory-job-repository=*">
                 <h1>In Memory Job Repository</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="batch-in-memory-job-repo-table" title="In Memory Job" form-ref="batch-in-memory-job-repo-form">
+                <table id="batch-in-memory-job-repo-table" title="In Memory Job">
                     <actions>
                         <action handler-ref="add-resource">
                         </action>
@@ -41,9 +41,6 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="batch-in-memory-job-repo-form" title="In Memory Job Repository" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}">
-                </form>
             </metadata>
         </item>
 

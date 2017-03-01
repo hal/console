@@ -119,7 +119,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .onSave((form, changedValues) -> {
                         String name = form.getModel().getName();
                         saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(mbuiContext.statementContext(), name), changedValues);
+                                template.resolve(mbuiContext.statementContext(), name), changedValues, metadata);
                     })
                     .build();
 
@@ -132,8 +132,22 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .end()
                     .build();
             navigation.insertPrimary(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
-                    fontAwesome("fa-link"), section);
+                    fontAwesome("link"), section);
         }
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        appSecurityDomainTable.attach();
+        appSecurityDomainForm.attach();
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        appSecurityDomainForm.detach();
+        appSecurityDomainTable.detach();
     }
 
 

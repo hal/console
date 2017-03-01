@@ -15,11 +15,10 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -30,15 +29,15 @@ import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
+ * A message inside the {@link MessagePanel} element.
+ *
  * @author Harald Pehl
  */
-class MessageElement implements IsElement {
-
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
+class MessagePanelElement implements IsElement {
 
     private final Element root;
 
-    MessageElement(final MessagePanel messagePanel, final Message message) {
+    MessagePanelElement(final MessagePanel messagePanel, final Message message, final Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
         if (message.isSticky()) {
             cssIcon[0] = cssIcon[0] + " " + alertDismissable;
@@ -65,7 +64,7 @@ class MessageElement implements IsElement {
                                 .textContent(message.getActionTitle());
                     } else {
                         builder.on(click, event -> showMessage(message))
-                                .textContent(CONSTANTS.details());
+                                .textContent(resources.constants().details());
                     }
                 builder.end()
             .end();

@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
@@ -44,8 +45,11 @@ import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
@@ -116,7 +120,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> include(final Iterable<String> attributes) {
-            //noinspection ResultOfMethodCallIgnored
             Iterables.addAll(includes, attributes);
             return this;
         }
@@ -128,6 +131,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> exclude(final String[] attributes) {
             excludes.addAll(Arrays.asList(attributes));
+            return this;
+        }
+
+        public Builder<T> exclude(final Iterable<String> attributes) {
+            Iterables.addAll(excludes, attributes);
             return this;
         }
 
@@ -265,11 +273,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     }
 
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
     private final Map<String, ModelNode> attributeMetadata;
+    private final ResourceDescription resourceDescription;
+    private final String attributePath;
 
+    @SuppressWarnings("unchecked")
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
@@ -280,9 +292,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
+        this.resourceDescription = builder.metadata.getDescription();
+        this.attributePath = builder.attributePath;
 
         List<Property> properties = new ArrayList<>();
-        List<Property> filteredProperties = builder.metadata.getDescription().getAttributes(builder.attributePath)
+        List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
                 .stream()
                 .filter(new PropertyFilter(builder))
                 .collect(toList());
@@ -358,6 +372,33 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
             }
         }
+
+        // requires & alternatives
+        Set<String> processedAlternatives = new HashSet<>();
+        getFormItems().forEach((FormItem formItem) -> {
+            String name = formItem.getName();
+
+            // requires
+            List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+                    .map(this::getFormItem)
+                    .filter(Objects::nonNull)
+                    .collect(toList());
+            if (!requires.isEmpty()) {
+                formItem.addValueChangeHandler(
+                        event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
+            }
+
+            // alternatives
+            List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
+            HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
+            uniqueAlternatives.add(name);
+            uniqueAlternatives.removeAll(processedAlternatives);
+            if (uniqueAlternatives.size() > 1) {
+                addFormValidation(form ->
+                        new AlternativesValidation<>(uniqueAlternatives, this, CONSTANTS, MESSAGES).validate(form));
+                processedAlternatives.addAll(uniqueAlternatives);
+            }
+        });
     }
 
     @Override
@@ -368,6 +409,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(alert.asElement());
         }
+    }
+
+    @Override
+    protected void prepareEditState() {
+        super.prepareEditState();
+        getFormItems().forEach(this::evalRequires);
     }
 
     /**
@@ -382,5 +429,32 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
         return writableChanges;
+    }
+
+    private void evalRequires(FormItem formItem) {
+        String name = formItem.getName();
+        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+                .map(this::getFormItem)
+                .filter(Objects::nonNull)
+                .collect(toList());
+        if (!requires.isEmpty()) {
+            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
+        }
+    }
+
+    boolean isEmptyOrDefault(FormItem formItem) {
+        String name = formItem.getName();
+        Object value = formItem.getValue();
+        ModelNode attributeDescription = attributeMetadata.get(name);
+        if (attributeDescription != null) {
+            if (attributeDescription.hasDefined(DEFAULT)) {
+                return resourceDescription.isDefaultValue(attributePath, name, value);
+            } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
+                return !(Boolean) value;
+            } else {
+                return formItem.isEmpty();
+            }
+        }
+        return formItem.isEmpty();
     }
 }

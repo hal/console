@@ -129,11 +129,12 @@ enum ServerSubResource {
                 }).show();
     }
 
-    void save(Form<NamedNode> form, Map<String, Object> changedValues, StatementContext statementContext,
-            CrudOperations crud, Callback callback) {
+    void save(Form<NamedNode> form, Map<String, Object> changedValues, MetadataRegistry metadataRegistry,
+            StatementContext statementContext, CrudOperations crud, Callback callback) {
         String name = form.getModel().getName();
         ResourceAddress address = namedTemplate(name).resolve(statementContext);
-        crud.save(type, name, address, changedValues, callback);
+        Metadata metadata = metadataRegistry.lookup(template);
+        crud.save(type, name, address, changedValues, metadata, callback);
     }
 
     void remove(NamedNode item, StatementContext statementContext, CrudOperations crud, Callback callback) {

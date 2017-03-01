@@ -43,6 +43,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String activeLower();
     String add();
     String adminOnly();
+    String and();
     String archived();
     String assignment();
     String assignmentsOfGroup();
@@ -52,7 +53,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String back();
     String backToNormalMode();
-    String bootstrapException();
     String browse();
     String browseBy();
 
@@ -124,6 +124,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expertMode();
     String explode();
     String exploded();
+    String expression();
     String expressionResolver();
 
     String failed();
@@ -143,6 +144,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String help();
     String hiddenColumns();
+    String hidePassword();
     String hitCount();
     String homepageNewToEap();
     String homepageTakeATour();
@@ -231,8 +233,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllDescription();
     String includesAllHeader();
     String input();
+    String invalidExpression();
 
     String jcaConfiguration();
+    String jgroupsRelayAlias();
     String jdbcDriver();
     String jndiTree();
 
@@ -280,6 +284,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noRootLogger();
     String noRootLoggerDescription();
     String noRunningServers();
+    String noStore();
+    String noTransport();
+    String noWrite();
     String notANumber();
 
     String notEnabled();
@@ -293,6 +300,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationMode();
     String operationSuccessful();
     String operations();
+    String or();
     String orDragItHere();
     String output();
 
@@ -311,6 +319,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productVersion();
     String providedBy();
 
+    String recovery();
     String references();
     String refresh();
     String releaseName();
@@ -325,6 +334,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String required();
     String requiredField();
     String reset();
+    String resolve();
+    String resolveExpression();
+    String resolvedValue();
     String restart();
     String restartAllServices();
     String restartJvm();
@@ -350,6 +362,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sessions();
     String settings();
     String showAll();
+    String showPassword();
     String size();
     String sizing();
     String specifyNames();
@@ -367,7 +380,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String supportsExpressions();
     String suspend();
     String suspended();
+    String switchBehaviour();
     String switchProvider();
+    String switchStore();
+    String switchToExpressionMode();
+    String switchToNormalMode();
 
     String tags();
     String tailMode();

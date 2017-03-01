@@ -47,7 +47,7 @@ public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ exten
 
     /**
      * Updates the breadcrumb by taking the information from {@link #finderPath()} and fires a {@link
-     * FinderContextEvent}. Finally calls {@code reload(null)}.
+     * FinderContextEvent}. Finally calls {@code reload()}.
      */
     @Override
     protected void onReset() {

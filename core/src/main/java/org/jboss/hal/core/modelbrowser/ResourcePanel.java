@@ -113,7 +113,7 @@ class ResourcePanel implements HasElements {
                         .includeRuntime()
                         .showDeprecated()
                         .onReset(modelBrowser::reset)
-                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))
+                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
                         .build();
                 tabs.setContent(dataId, form.asElement());
                 PatternFly.initComponents();

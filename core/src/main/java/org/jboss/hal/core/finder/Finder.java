@@ -30,7 +30,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -43,7 +42,6 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
-import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Ids;
@@ -52,13 +50,10 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.resources.CSS.column;
-import static org.jboss.hal.resources.CSS.finder;
-import static org.jboss.hal.resources.CSS.finderPreview;
-import static org.jboss.hal.resources.CSS.row;
+import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
+import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
@@ -219,18 +214,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     @Override
     public void attach() {
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
-    }
-
-    private void adjustHeight() {
-        int window = Browser.getWindow().getInnerHeight();
-        int navigation = Skeleton.navigationHeight();
-        int footer = Skeleton.footerHeight();
-        if (navigation > 0 && footer > 0) {
-            int finder = window - navigation - footer;
-            root.getStyle().setHeight(finder, PX);
-        }
+        root.getStyle().setHeight(vh(applicationOffset()));
     }
 
     private FinderColumn initialColumn() {

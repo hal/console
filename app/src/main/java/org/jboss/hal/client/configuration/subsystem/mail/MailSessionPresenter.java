@@ -62,10 +62,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -134,7 +131,7 @@ public class MailSessionPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MAIL)
+        return finderPathFactory.subsystemPath(MAIL)
                 .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
@@ -146,7 +143,8 @@ public class MailSessionPresenter
 
     void save(final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::reload);
+        Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
+        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, metadata, this::reload);
     }
 
     void launchAddServer() {
@@ -176,7 +174,7 @@ public class MailSessionPresenter
 
                 } else {
                     serverTypeItem = new SingleSelectBoxItem(ModelDescriptionConstants.SERVER_TYPE,
-                            resources.constants().type(), new ArrayList<>(availableServers));
+                            resources.constants().type(), new ArrayList<>(availableServers), false);
                     serverTypeItem.setRequired(true);
                 }
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);

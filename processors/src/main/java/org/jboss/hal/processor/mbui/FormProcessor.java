@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -80,6 +82,10 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
                 processAttributes(field, attributesContainer).forEach(formInfo::addAttribute);
 
             } else {
+                Map<String, Element> excludes = new HashMap<>();
+                Map<String, FormInfo.Group> groupsById = new HashMap<>();
+
+                // round one: process groups
                 for (Element groupElement : groupElements) {
                     String id = groupElement.getAttributeValue(XmlTags.ID);
                     String name = groupElement.getAttributeValue(XmlTags.NAME);
@@ -88,7 +94,34 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
                     groupElement.getChildren(XmlTags.ATTRIBUTE)
                             .forEach(attributeElement -> group.addAttribute(processAttribute(field, attributeElement)));
                     formInfo.addGroup(group);
+                    if (id != null) {
+                        groupsById.put(id, group);
+                    }
+                    Element excludeElement = groupElement.getChild(XmlTags.EXCLUDE);
+                    if (id != null && excludeElement != null) {
+                        excludes.put(id, excludeElement);
+                    }
                 }
+
+                // round two: process group excludes (which might reference other groups)
+                excludes.forEach((id, excludeElement) -> {
+                    FormInfo.Group group = groupsById.get(id);
+                    if (group != null) {
+                        excludeElement.getChildren(XmlTags.ATTRIBUTE).forEach(attributeElement -> {
+                            String name = attributeElement.getAttributeValue(XmlTags.NAME);
+                            if (name != null) {
+                                group.exclude(name);
+                            }
+                        });
+                        excludeElement.getChildren(XmlTags.GROUP).forEach(groupElement -> {
+                            String excludedGroupId = groupElement.getAttributeValue(XmlTags.ID);
+                            if (excludedGroupId != null && groupsById.get(excludedGroupId) != null) {
+                                FormInfo.Group excludedGroup = groupsById.get(excludedGroupId);
+                                group.exclude(excludedGroup);
+                            }
+                        });
+                    }
+                });
             }
         }
     }

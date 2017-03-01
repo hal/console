@@ -27,9 +27,10 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.ResourceCheck;
+import org.jboss.hal.meta.Metadata;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -253,17 +254,20 @@ final class AccessControlFunctions {
         private final Dispatcher dispatcher;
         private final Role role;
         private final Map<String, Object> changedValues;
+        private final Metadata metadata;
 
-        ModifyScopedRole(final Dispatcher dispatcher, final Role role, final Map<String, Object> changedValues) {
+        ModifyScopedRole(final Dispatcher dispatcher, final Role role, final Map<String, Object> changedValues,
+                final Metadata metadata) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.changedValues = changedValues;
+            this.metadata = metadata;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
-            Operation operation = new OperationFactory().fromChangeSet(address, changedValues);
+            Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
             dispatcher.executeInFunction(control, operation, result -> control.proceed());
         }
     }

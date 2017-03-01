@@ -15,20 +15,21 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.hasError;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
 import static org.jboss.hal.resources.CSS.tags;
 import static org.jboss.hal.resources.Ids.uniqueId;
@@ -38,82 +39,144 @@ import static org.jboss.hal.resources.Ids.uniqueId;
  */
 public class ListItem extends AbstractFormItem<List<String>> {
 
-    private ListElement listElement;
-    private Element tagsContainer;
+    private static class ListReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {
+
+        ListReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+        }
+
+        @Override
+        protected String name() {
+            return "ListReadOnlyAppearance";
+        }
+
+        @Override
+        public String asString(final List<String> value) {
+            return String.join(", ", value);
+        }
+    }
+
+
+    private class ListEditingAppearance extends EditingAppearance<List<String>> {
+
+        private final Element tagsContainer;
+
+        ListEditingAppearance(InputElement inputElement) {
+            super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS), inputElement);
+
+            // @formatter:off
+            tagsContainer = new Elements.Builder()
+                .div()
+                    .id(Ids.build("tags", "container", uniqueId())).css(tagManagerContainer)
+                .end()
+            .build();
+            // @formatter:on
+
+            helpBlock.getClassList().add(CSS.hint);
+            helpBlock.setInnerHTML(MESSAGES.listHint().asString());
+
+            inputContainer.appendChild(tagsContainer);
+            inputContainer.appendChild(helpBlock);
+            inputGroup.getClassList().add(tags);
+        }
+
+        @Override
+        protected String name() {
+            return "ListEditingAppearance";
+        }
+
+        @Override
+        public void attach() {
+            super.attach();
+            TagsManager.Options options = TagsManager.Defaults.get();
+            options.tagsContainer = "#" + tagsContainer.getId();
+
+            TagsManager.Bridge bridge = TagsManager.Bridge.element(inputElement);
+            bridge.tagsManager(options);
+            bridge.onRefresh((event, cst) -> {
+                List<String> value = Splitter.on(',')
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .splitToList(cst);
+                modifyValue(value);
+            });
+        }
+
+        @Override
+        public void showValue(final List<String> value) {
+            if (attached) {
+                TagsManager.Bridge.element(inputElement).setTags(value);
+            } else {
+                inputElement.setValue(asString(value));
+            }
+        }
+
+        @Override
+        public String asString(final List<String> value) {
+            return String.join(", ", value);
+        }
+
+        @Override
+        public void clearValue() {
+            if (attached) {
+                TagsManager.Bridge.element(inputElement).removeAll();
+            } else {
+                inputElement.setValue("");
+            }
+        }
+
+        void onSuggest(final String suggestion) {
+            if (attached) {
+                TagsManager.Bridge.element(inputElement).addTag(suggestion);
+            }
+            setModified(true);
+            setUndefined(false);
+        }
+
+        @Override
+        void applyEnabled() {
+            super.applyEnabled();
+            inputContainer.getClassList().remove(disabled);
+        }
+
+        @Override
+        void unapplyEnabled() {
+            super.unapplyEnabled();
+            inputContainer.getClassList().add(disabled);
+        }
+
+        @Override
+        void applyInvalid(final String errorMessage) {
+            root.getClassList().add(hasError);
+            helpBlock.getClassList().remove(CSS.hint);
+            helpBlock.setTextContent(errorMessage);
+        }
+
+        @Override
+        void unapplyInvalid() {
+            root.getClassList().remove(hasError);
+            helpBlock.getClassList().add(CSS.hint);
+            helpBlock.setTextContent(MESSAGES.listHint().asString());
+        }
+    }
+
+
+    private final ListEditingAppearance editingAppearance;
 
     public ListItem(final String name, final String label) {
-        super(name, label, null, EMPTY_CONTEXT);
-    }
+        super(name, label, null);
 
-    @Override
-    protected InputElement<List<String>> newInputElement(CreationContext<?> context) {
-        listElement = new ListElement();
-        listElement.setClassName(formControl + " " + tags);
-        return listElement;
-    }
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new ListReadOnlyAppearance());
 
-    @Override
-    protected <C> void assembleUI(CreationContext<C> context) {
-        super.assembleUI(context);
+        // editing appearance
+        InputElement inputElement = Browser.getDocument().createInputElement();
+        inputElement.setType("text"); //NON-NLS
+        inputElement.getClassList().add(formControl);
+        inputElement.getClassList().add(tags);
 
-        inputGroupContainer.getClassList().add(tags);
-
-        errorText.setInnerHTML(MESSAGES.listHint().asString());
-        errorText.getClassList().add(CSS.hint);
-        Elements.setVisible(errorText, true);
-
-        //noinspection DuplicateStringLiteralInspection
-        tagsContainer = new Elements.Builder().div()
-                .id(Ids.build("tags", "container", uniqueId()))
-                .css(tagManagerContainer)
-                .end()
-                .build();
-        inputContainer.insertBefore(tagsContainer, errorText);
-    }
-
-    @Override
-    public void clearError() {
-        super.clearError();
-        errorText.setInnerHTML(MESSAGES.listHint().asString());
-        errorText.getClassList().add(CSS.hint);
-        Elements.setVisible(errorText, true);
-    }
-
-    @Override
-    public void showError(final String message) {
-        super.showError(message);
-        errorText.getClassList().remove(CSS.hint);
-    }
-
-    @Override
-    public void onSuggest(final String suggestion) {
-        Bridge.element(listElement.asElement()).addTag(suggestion);
-        setModified(true);
-        setUndefined(false);
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-        TagsManager.Options options = TagsManager.Defaults.get();
-        options.tagsContainer = "#" + tagsContainer.getId();
-
-        Bridge bridge = Bridge.element(listElement.asElement());
-        bridge.tagsManager(options);
-        bridge.onRefresh((event, cst) -> {
-            List<String> value = Splitter.on(',')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(cst);
-            setModified(true);
-            setUndefined(value.isEmpty());
-            signalChange(value);
-        });
-    }
-
-    @Override
-    String asString(final List<String> value) {
-        return Joiner.on(", ").join(value);
+        editingAppearance = new ListEditingAppearance(inputElement);
+        addAppearance(Form.State.EDITING, editingAppearance);
     }
 
     @Override
@@ -123,95 +186,11 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
     @Override
     public boolean isEmpty() {
-        return getValue().isEmpty() || isUndefined();
+        return getValue() == null || getValue().isEmpty();
     }
 
-
-    private static class ListElement extends InputElement<List<String>> {
-
-        final elemental.html.InputElement element;
-
-        ListElement() {
-            element = Browser.getDocument().createInputElement();
-            element.setType("text"); //NON-NLS
-        }
-
-        @Override
-        public List<String> getValue() {
-            return isAttached() ? Bridge.element(asElement()).getTags() : Collections.emptyList();
-        }
-
-        @Override
-        public void setValue(final List<String> value) {
-            if (isAttached()) {
-                Bridge.element(asElement()).setTags(value);
-            }
-        }
-
-        @Override
-        public void clearValue() {
-            if (isAttached()) {
-                Bridge.element(asElement()).removeAll();
-            }
-        }
-
-        @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
-        }
-
-        @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
-        }
-
-        @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
-            } else {
-                element.blur();
-            }
-        }
-
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return !element.isDisabled();
-        }
-
-        @Override
-        public void setEnabled(final boolean b) {
-            element.setDisabled(!b);
-        }
-
-        @Override
-        public void setName(final String s) {
-            element.setName(s);
-        }
-
-        @Override
-        public String getName() {
-            return element.getName();
-        }
-
-        @Override
-        public String getText() {
-            return Joiner.on(", ").join(getValue());
-        }
-
-        @Override
-        public void setText(final String s) {
-            // not supported
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
-        }
+    @Override
+    public void onSuggest(final String suggestion) {
+        editingAppearance.onSuggest(suggestion);
     }
 }

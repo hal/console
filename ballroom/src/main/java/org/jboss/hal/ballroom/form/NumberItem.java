@@ -15,15 +15,15 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
 import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental.html.InputElement;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
-import static org.jboss.hal.ballroom.form.CreationContext.EMPTY_CONTEXT;
+import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -31,60 +31,44 @@ import static org.jboss.hal.resources.CSS.formControl;
  */
 public class NumberItem extends AbstractFormItem<Long> {
 
-    /**
-     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
-     */
-    public static final long MIN_SAFE_LONG = -9007199254740991L;
+    private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
-    /**
-     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
-     */
-    public static final long MAX_SAFE_LONG = 9007199254740991L;
+        NumberReadOnlyAppearance() {
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
+        }
 
-    private long min;
-    private long max;
-
-    public NumberItem(final String name, final String label, final String unit) {
-        this(name, label, unit, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        @Override
+        protected String name() {
+            return "NumberReadOnlyAppearance";
+        }
     }
 
-    public NumberItem(final String name, final String label, final String unit, long min, long max) {
-        super(name, label, unit, EMPTY_CONTEXT);
-        setRange(min, max);
-    }
 
-    @Override
-    protected List<FormItemValidation<Long>> defaultValidationHandlers() {
-        return asList(new RequiredValidation<>(this), new NumberValidation(), new RangeValidation());
-    }
+    private static class NumberEditingAppearance extends EditingAppearance<Long> {
 
-    @Override
-    protected InputElement<Long> newInputElement(CreationContext<?> context) {
-        NumberElement number = new NumberElement();
-        number.setClassName(formControl);
-        number.element.setOnchange(event -> {
-            String newText = inputElement().getText();
-            Long newValue = inputElement().getValue();
-            setModified(true);
-            setUndefined(isNullOrEmpty(newText));
-            signalChange(newValue);
-        });
-        // toggle expression support on the fly
-        number.element.setOnkeyup(event -> {
-            if (toggleExpressionSupport(isExpressionValue())) {
-                setFocus(true);
-            }
-        });
-        return number;
-    }
+        NumberEditingAppearance(InputElement inputElement) {
+            super(EnumSet.allOf(Decoration.class), inputElement);
+        }
 
-    public void setRange(long min, long max) {
-        this.min = Math.max(MIN_SAFE_LONG, min);
-        this.max = Math.min(MAX_SAFE_LONG, max);    }
+        @Override
+        protected String name() {
+            return "NumberEditingAppearance";
+        }
 
-    @Override
-    public boolean supportsExpressions() {
-        return isExpressionAllowed();
+        @Override
+        public void showValue(final Long value) {
+            inputElement.setValue(String.valueOf(value));
+        }
+
+        @Override
+        public void showExpression(final String expression) {
+            inputElement.setValue(expression);
+        }
+
+        @Override
+        public void clearValue() {
+            inputElement.setValue("");
+        }
     }
 
 
@@ -95,7 +79,7 @@ public class NumberItem extends AbstractFormItem<Long> {
             if (!isExpressionValue()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
-                    Long.parseLong(getText());
+                    Long.parseLong(inputElement.getValue());
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {
                     return ValidationResult.invalid(CONSTANTS.notANumber());
@@ -120,102 +104,87 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
 
-    static class NumberElement extends InputElement<Long> {
+    /**
+     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
+     */
+    public static final long MIN_SAFE_LONG = -9007199254740991L;
 
-        final elemental.html.InputElement element;
+    /**
+     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+     */
+    public static final long MAX_SAFE_LONG = 9007199254740991L;
 
-        NumberElement() {
-            element = Browser.getDocument().createInputElement();
-            // type="number" not possible because of expression support
-            element.setType("text"); //NON-NLS
-        }
+    private final InputElement inputElement;
+    private long min;
+    private long max;
 
-        @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
-        }
+    public NumberItem(final String name, final String label, final String unit, long min, long max) {
+        super(name, label, unit);
+        setRange(min, max);
 
-        @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
-        }
+        // read-only appearance
+        addAppearance(Form.State.READONLY, new NumberReadOnlyAppearance());
 
-        @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
+        // editing appearance
+        inputElement = Browser.getDocument().createInputElement();
+        // type="number" not possible because of expression support
+        inputElement.setType("text"); //NON-NLS
+        inputElement.getClassList().add(formControl);
+
+        inputElement.setOnchange(event -> {
+            String stringValue = inputElement.getValue();
+            if (isExpressionAllowed() && hasExpressionScheme(stringValue)) {
+                modifyExpressionValue(stringValue);
             } else {
-                element.blur();
-            }
-        }
-
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return !element.isDisabled();
-        }
-
-        @Override
-        public void setEnabled(final boolean b) {
-            element.setDisabled(!b);
-        }
-
-        @Override
-        public Long getValue() {
-            String value = element.getValue();
-            if (Strings.isNullOrEmpty(value)) {
-                return null;
-            } else {
-                try {
-                    return Long.parseLong(value);
-                } catch (NumberFormatException e) {
-                    return null;
+                if (!Strings.isNullOrEmpty(stringValue)) {
+                    try {
+                        Long value = Long.parseLong(stringValue);
+                        modifyValue(value);
+                    } catch (NumberFormatException e) {
+                        // at least mark as modified and undefined
+                        setModified(true);
+                        setUndefined(false);
+                    }
                 }
             }
-        }
+        });
 
-        @Override
-        public void setValue(final Long value) {
-            element.setValue(String.valueOf(value));
-        }
+        inputElement.setOnkeyup(event -> {
+            toggleExpressionSupport(inputElement.getValue());
+            inputElement.focus();
+        });
 
-        @Override
-        public void clearValue() {
-            element.setValue("");
-        }
+        addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
+    }
 
-        @Override
-        public void setName(final String s) {
-            element.setName(s);
-        }
+    private void setRange(long min, long max) {
+        this.min = Math.max(MIN_SAFE_LONG, min);
+        this.max = Math.min(MAX_SAFE_LONG, max);
+    }
 
-        @Override
-        public String getName() {
-            return element.getName();
-        }
+    @Override
+    public boolean isEmpty() {
+        return isExpressionValue() ? Strings.isNullOrEmpty(getExpressionValue()) : getValue() == null;
+    }
 
-        @Override
-        public String getText() {
-            return element.getValue();
-        }
+    @Override
+    protected List<FormItemValidation<Long>> defaultValidationHandlers() {
+        return asList(new RequiredValidation<>(this), new NumberValidation(), new RangeValidation());
+    }
 
-        @Override
-        public void setText(final String s) {
-            element.setValue(s);
-        }
+    @Override
+    public boolean supportsExpressions() {
+        return isExpressionAllowed();
+    }
 
-        @Override
-        public void setPlaceholder(final String placeholder) {
-            element.setPlaceholder(placeholder);
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
+    @Override
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void setExpressionAllowed(final boolean expressionAllowed) {
+        super.setExpressionAllowed(expressionAllowed);
+        if (!expressionAllowed) {
+            inputElement.setType("number");
+        } else {
+            inputElement.setType("text");
         }
     }
 }

@@ -15,11 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
-import java.util.List;
-
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.CompositeFormItem;
-import org.jboss.hal.ballroom.form.CreationContext;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
@@ -32,7 +29,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
 /**
- * Form item used in the subsystems  to configure the complex attribute {@code file} which is roughly defined as
+ * Form item used in the logging subsystem to configure the complex attribute {@code file} which is roughly defined as
  * <pre>
  * "file" => {
  *   "type" => OBJECT,
@@ -49,24 +46,22 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
  *
  * @author Harald Pehl
  */
-public class FileFormItem extends CompositeFormItem {
+class FileFormItem extends CompositeFormItem {
 
     private FormItem<String> path;
     private FormItem<String> relativeTo;
 
     FileFormItem() {
-        super(FILE, CreationContext.EMPTY_CONTEXT);
-    }
+        super(FILE, new LabelBuilder().label(FILE));
 
-    @Override
-    protected <C> List<FormItem> createFormItems(CreationContext<C> context) {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(true);
         path.setId(Ids.uniqueId());
         relativeTo = new TextBoxItem(RELATIVE_TO, new LabelBuilder().label(RELATIVE_TO));
         relativeTo.setId(Ids.uniqueId());
         relativeTo.registerSuggestHandler(new PathsAutoComplete());
-        return asList(path, relativeTo);
+
+        addFormItems(asList(path, relativeTo));
     }
 
     @Override

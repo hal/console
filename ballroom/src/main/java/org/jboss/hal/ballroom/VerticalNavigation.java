@@ -411,6 +411,22 @@ public class VerticalNavigation implements Attachable {
         }
     }
 
+    /**
+     * Controls the visibility of the specified entry.
+     */
+    public void setVisible(String id, boolean visible) {
+        Entry entry = entries.get(id);
+        Pane pane = panes.get(id);
+        if (entry != null && pane != null) {
+            Elements.setVisible(entry.asElement(), visible);
+            if (!visible && Elements.isVisible(pane.asElement())) {
+                Elements.setVisible(pane.asElement(), false);
+            }
+        } else {
+            logger.error("Unable to hide entry for id '{}': No such entry!", id);
+        }
+    }
+
     public void onShow(String id, Callback callback) {
         callbacks.put(id, callback);
     }
@@ -443,6 +459,6 @@ public class VerticalNavigation implements Attachable {
     }
 
     private boolean hasSecondary() {
-        return entries.values().stream().filter(entry -> !entry.children.isEmpty()).findAny().isPresent();
+        return entries.values().stream().anyMatch(entry -> !entry.children.isEmpty());
     }
 }

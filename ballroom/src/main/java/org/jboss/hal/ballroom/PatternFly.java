@@ -60,6 +60,9 @@ public class PatternFly {
     @JsMethod(namespace = GLOBAL)
     public native static PatternFly $(@NonNls String selector);
 
+    @JsMethod(namespace = GLOBAL)
+    public native static void prettyPrint();
+
     public native void bootstrapSwitch();
 
     public native void selectpicker(SelectBoxBridge.Options options);

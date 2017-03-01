@@ -46,7 +46,6 @@ import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -67,7 +66,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.JsHelper.asList;
@@ -75,6 +73,7 @@ import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -230,11 +229,12 @@ public class ModelBrowser implements HasElements {
     }
 
     private void adjustHeight() {
-        int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
-        treeContainer.getStyle()
-                .setHeight(height - 2 * MARGIN_BIG - buttonGroup - MARGIN_SMALL - surroundingHeight, PX);
-        content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight, PX);
+        int treeContainerOffset = applicationOffset() + 2 * MARGIN_BIG + buttonGroup + MARGIN_SMALL + surroundingHeight;
+        int contentOffset = applicationOffset() + 2 * MARGIN_BIG + surroundingHeight;
+
+        treeContainer.getStyle().setHeight(vh(treeContainerOffset));
+        content.getStyle().setHeight(vh((contentOffset)));
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -505,8 +505,8 @@ public class ModelBrowser implements HasElements {
         Browser.getWindow().alert(NYI);
     }
 
-    void save(ResourceAddress address, Map<String, Object> changedValues) {
-        crud.save(address.lastName(), address.lastValue(), address, changedValues,
+    void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata) {
+        crud.save(address.lastName(), address.lastValue(), address, changedValues, metadata,
                 () -> refresh(tree.api().getSelected()));
     }
 
@@ -549,7 +549,6 @@ public class ModelBrowser implements HasElements {
                     tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
                     tree.select(MODEL_BROWSER_ROOT, false);
 
-                    Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
                 },
 
@@ -558,7 +557,6 @@ public class ModelBrowser implements HasElements {
                     MessageEvent.fire(eventBus, Message.error(resources.messages().unknownResource(),
                             resources.messages().unknownResourceDetails(root.toString(), failure)));
 
-                    Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
                 },
 
@@ -567,7 +565,6 @@ public class ModelBrowser implements HasElements {
                     MessageEvent.fire(eventBus, Message.error(resources.messages().unknownResource(),
                             resources.messages().unknownResourceDetails(root.toString(), exception.getMessage())));
 
-                    Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
                 });
     }

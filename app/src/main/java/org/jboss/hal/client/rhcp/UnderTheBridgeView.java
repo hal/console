@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -55,7 +55,8 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                 "string-expression",
                 "string-restart",
                 "string-suggestion",
-                "string-suggestion-expression"});
+                "string-suggestion-expression",
+                "password"});
         ATTRIBUTES.put("int-attributes", new String[]{
                 "int-required",
                 "int-optional",
@@ -75,7 +76,8 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
         ATTRIBUTES.put("boolean-attributes", new String[]{
                 "boolean-required",
                 "boolean-optional",
-                "boolean-default"});
+                "boolean-default",
+                "boolean-expression"});
         ATTRIBUTES.put("single-select-attributes", new String[]{
                 "single-select-required",
                 "single-select-optional",
@@ -88,16 +90,11 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                 "list-required",
                 "list-optional",
                 "list-default",
-                "list-expression",
-                "list-suggestion",
-                "list-suggestion-expression"});
+                "list-suggestion"});
         ATTRIBUTES.put("property-attributes", new String[]{
                 "properties-required",
                 "properties-optional",
-                "properties-default",
-                "properties-expression",
-                "properties-suggestion",
-                "properties-suggestion-expression"});
+                "properties-default"});
     }
 
     private final List<ModelNodeForm<ModelNode>> forms;
@@ -105,7 +102,8 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
 
     @Inject
     public UnderTheBridgeView(final Dispatcher dispatcher,
-            final StatementContext statementContext) {
+            final StatementContext statementContext,
+            final Environment environment) {
         this.forms = new ArrayList<>();
 
         Tabs tabs = new Tabs();
@@ -120,12 +118,13 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                     forms.get(forms.size() - 1).asElement());
         }
 
-        SuggestHandler suggestHandler = new ReadChildrenAutoComplete(dispatcher, statementContext,
-                AddressTemplate.of("/profile=full-ha/subsystem=*"));
+        AddressTemplate template = AddressTemplate.of(
+                environment.isStandalone() ? "/subsystem=*" : "/profile=full-ha/subsystem=*");
         for (ModelNodeForm<ModelNode> form : forms) {
             for (FormItem item : form.getFormItems()) {
                 if (item.getName().contains("-suggestion")) {
-                    item.registerSuggestHandler(suggestHandler);
+                    item.registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
+                            template));
                 }
             }
             registerAttachable(form);

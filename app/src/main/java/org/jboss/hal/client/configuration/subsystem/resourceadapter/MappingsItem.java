@@ -15,27 +15,16 @@
  */
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
-import org.jboss.hal.ballroom.form.CreationContext;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.PropertiesItem;
+import org.jboss.hal.resources.Messages;
 
 /**
  * @author Harald Pehl
  */
 class MappingsItem extends PropertiesItem {
 
-    MappingsItem(final String name) {
-        super(name);
-    }
-
-    @Override
-    protected <C> void assembleUI(CreationContext<C> context) {
-        super.assembleUI(context);
-        errorText.setInnerHTML(MESSAGES.mappingHint().asString());
-    }
-
-    @Override
-    public void clearError() {
-        super.clearError();
-        errorText.setInnerHTML(MESSAGES.mappingHint().asString());
+    MappingsItem(final String name, final Messages messages) {
+        super(name, new LabelBuilder().label(name), messages.mappingHint());
     }
 }

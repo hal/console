@@ -37,7 +37,7 @@ public class SingleOperationThreeWildcardsTest {
     public void setUp() throws Exception {
         resultProcessor = new SingleReadChildrenProcessor();
         nodes = ExternalModelNode
-                .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_three_wildcards.dmr"));
+                .read(NamesResultProcessorTest.class.getResourceAsStream("single-operation-three-wildcards.dmr"));
     }
 
     @Test

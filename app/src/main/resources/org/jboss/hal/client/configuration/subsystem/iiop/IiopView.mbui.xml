@@ -29,7 +29,10 @@
                 <group name="sas-context" title="SAS Context"/>
                 <group name="security"/>
                 <group name="tcp"/>
-                <group name="transport-config"/>
+                <group id="iiop-openjdk-properties" title="Properties">
+                    <!-- Not part of any group -->
+                    <attribute name="properties"/>
+                </group>
             </attributes>
         </form>
     </metadata>

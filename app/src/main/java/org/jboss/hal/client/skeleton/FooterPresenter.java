@@ -30,6 +30,8 @@ import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.core.expression.ExpressionDialog;
+import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
@@ -65,6 +67,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     private final Environment environment;
     private final PlaceManager placeManager;
     private final Macros macros;
+    private final ExpressionResolver expressionResolver;
     private final Resources resources;
     private final AboutDialog aboutDialog;
     private final CheckForUpdate checkForUpdate;
@@ -78,11 +81,13 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             final Endpoints endpoints,
             final PlaceManager placeManager,
             final Macros macros,
+            final ExpressionResolver expressionResolver,
             final Resources resources) {
         super(eventBus, view);
         this.environment = environment;
         this.placeManager = placeManager;
         this.macros = macros;
+        this.expressionResolver = expressionResolver;
         this.resources = resources;
         this.aboutDialog = new AboutDialog(environment, endpoints, resources);
         this.checkForUpdate = new CheckForUpdate(environment);
@@ -118,7 +123,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     }
 
     void onExpressionResolver() {
-        Window.alert(NYI);
+        new ExpressionDialog(expressionResolver, environment, resources).show();
     }
 
     void onMacroRecording() {

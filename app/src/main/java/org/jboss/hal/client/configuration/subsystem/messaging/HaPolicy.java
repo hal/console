@@ -28,6 +28,8 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -178,10 +180,11 @@ public enum HaPolicy {
     /**
      * Saves a HA policy. The statement context must be able to resolve the selected server!
      */
-    void save(Map<String, Object> changedValues, StatementContext statementContext, CrudOperations crud,
-            Callback callback) {
+    void save(Map<String, Object> changedValues, MetadataRegistry metadataRegistry, StatementContext statementContext,
+            CrudOperations crud, Callback callback) {
         ResourceAddress address = singleton().resolve(statementContext);
-        crud.saveSingleton(type, address, changedValues, callback);
+        Metadata metadata = metadataRegistry.lookup(template);
+        crud.saveSingleton(type, address, changedValues, metadata, callback);
     }
 
     /**

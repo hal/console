@@ -39,6 +39,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Deprecation;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -81,9 +82,9 @@ class DefaultFormItemProvider implements FormItemProvider {
                 RUNTIME.equals(attributeDescription.get(STORAGE).asString());
         boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
                 READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
-        boolean deprecated = attributeDescription.hasDefined(DEPRECATED) &&
-                attributeDescription.get(DEPRECATED).asBoolean();
         String unit = attributeDescription.hasDefined(UNIT) ? attributeDescription.get(UNIT).asString() : null;
+        Deprecation deprecation = attributeDescription.hasDefined(DEPRECATED) ? new Deprecation(
+                attributeDescription.get(DEPRECATED)) : null;
 
         if (attributeDescription.hasDefined(TYPE)) {
             ModelType type = attributeDescription.get(TYPE).asType();
@@ -95,7 +96,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case BOOLEAN: {
                     SwitchItem switchItem = new SwitchItem(name, label);
                     if (attributeDescription.hasDefined(DEFAULT)) {
-                        switchItem.setDefaultValue(attributeDescription.get(DEFAULT).asBoolean());
+                        switchItem.assignDefaultValue(attributeDescription.get(DEFAULT).asBoolean());
                     }
                     formItem = switchItem;
                     break;
@@ -115,7 +116,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                     NumberItem numberItem = new NumberItem(name, label, unit, min, max);
                     if (attributeDescription.hasDefined(DEFAULT)) {
                         long defaultValue = attributeDescription.get(DEFAULT).asLong();
-                        numberItem.setDefaultValue(defaultValue);
+                        numberItem.assignDefaultValue(defaultValue);
                     }
                     formItem = numberItem;
                     break;
@@ -129,7 +130,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                             if (attributeDescription.hasDefined(DEFAULT)) {
                                 List<String> defaultValues = stringValues(attributeDescription, DEFAULT);
                                 if (!defaultValues.isEmpty()) {
-                                    multiSelectBoxItem.setDefaultValue(defaultValues);
+                                    multiSelectBoxItem.assignDefaultValue(defaultValues);
                                 }
                             }
                             formItem = multiSelectBoxItem;
@@ -138,7 +139,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                             if (attributeDescription.hasDefined(DEFAULT)) {
                                 List<String> defaultValues = stringValues(attributeDescription, DEFAULT);
                                 if (!defaultValues.isEmpty()) {
-                                    listItem.setDefaultValue(defaultValues);
+                                    listItem.assignDefaultValue(defaultValues);
                                 }
                             }
                             formItem = listItem;
@@ -158,7 +159,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                             for (Property p : properties) {
                                 defaultValues.put(p.getName(), p.getValue().asString());
                             }
-                            propertiesItem.setDefaultValue(defaultValues);
+                            propertiesItem.assignDefaultValue(defaultValues);
                         }
                         formItem = propertiesItem;
                     }
@@ -168,10 +169,10 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case STRING: {
                     List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                     if (allowedValues.isEmpty()) {
-                        TextBoxItem textBoxItem = PASSWORD.equals(name) ? new PasswordItem(name,
-                                label) : new TextBoxItem(name, label);
+                        FormItem<String> textBoxItem = PASSWORD.equals(name) ? new PasswordItem(name,
+                                label) : new TextBoxItem(name, label, null);
                         if (attributeDescription.hasDefined(DEFAULT)) {
-                            textBoxItem.setDefaultValue(attributeDescription.get(DEFAULT).asString());
+                            textBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
                         }
                         formItem = textBoxItem;
                         checkCapabilityReference(attributeDescription, formItem);
@@ -179,7 +180,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         SingleSelectBoxItem singleSelectBoxItem = new SingleSelectBoxItem(name, label,
                                 allowedValues, !required);
                         if (attributeDescription.hasDefined(DEFAULT)) {
-                            singleSelectBoxItem.setDefaultValue(attributeDescription.get(DEFAULT).asString());
+                            singleSelectBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
                         }
                         formItem = singleSelectBoxItem;
                     }
@@ -194,15 +195,21 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case PROPERTY:
                 case TYPE:
                 case UNDEFINED:
-                    logger.warn("Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.", type.name(), property.getName(), metadata.getTemplate());
+                    logger.warn(
+                            "Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.",
+                            type.name(), property.getName(), metadata.getTemplate());
                     break;
             }
 
             if (formItem != null) {
                 formItem.setRequired(required);
-                formItem.setDeprecated(deprecated);
+                formItem.setDeprecated(deprecation);
                 if (formItem.supportsExpressions()) {
                     formItem.setExpressionAllowed(expressionAllowed);
+                    formItem.addResolveExpressionHandler(event -> {
+                        // resend as application event
+                        Core.INSTANCE.eventBus().fireEvent(event);
+                    });
                 }
                 if (readOnly || runtime) {
                     formItem.setEnabled(false);

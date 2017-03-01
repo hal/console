@@ -16,8 +16,10 @@
 package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
@@ -25,12 +27,15 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+
 /**
  * @author Claudio Miranda
  */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
-public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScannerPresenter> implements DeploymentScannerPresenter.MyView {
+public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScannerPresenter>
+        implements DeploymentScannerPresenter.MyView {
 
     // ------------------------------------------------------ initialization
 
@@ -43,6 +48,11 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
 
     DeploymentScannerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    void init() {
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
     }
 
     // ------------------------------------------------------ scanners

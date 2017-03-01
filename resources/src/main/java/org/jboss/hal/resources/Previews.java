@@ -94,6 +94,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/ejb3.html")
     ExternalTextResource configurationEjb3();
 
+    @Source("previews/configuration/infinispan.html")
+    ExternalTextResource configurationInfinispan();
+
     @Source("previews/configuration/interfaces.html")
     ExternalTextResource configurationInterfaces();
 
@@ -102,6 +105,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/jdbc-drivers.html")
     ExternalTextResource configurationJdbcDrivers();
+
+    @Source("previews/configuration/jgroups.html")
+    ExternalTextResource configurationJgroups();
 
     @Source("previews/configuration/logging.html")
     ExternalTextResource configurationLogging();

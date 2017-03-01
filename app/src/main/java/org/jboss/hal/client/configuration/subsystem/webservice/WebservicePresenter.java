@@ -189,7 +189,8 @@ public class WebservicePresenter
     void saveConfig(Form<NamedNode> form, Map<String, Object> changedValues, String property) {
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
-        po.saveWithProperties(configType.type, name, address, changedValues, property,
+        Metadata metadata = metadataRegistry.lookup(configType.template);
+        po.saveWithProperties(configType.type, name, address, changedValues, metadata, property,
                 form.<Map<String, String>>getFormItem(property).getValue(), this::reload);
     }
 
@@ -238,7 +239,8 @@ public class WebservicePresenter
 
     void saveHandlerChain(String name, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
-        crud.save(handlerChainType.type, name, address, changedValues, this::reloadHandlerChains);
+        Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
+        crud.save(handlerChainType.type, name, address, changedValues, metadata, this::reloadHandlerChains);
     }
 
     void removeHandlerChain(String name) {
@@ -283,7 +285,8 @@ public class WebservicePresenter
 
     void saveHandler(String name, Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
-        crud.save(Names.HANDLER, name, address, changedValues, this::reloadHandlers);
+        Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
+        crud.save(Names.HANDLER, name, address, changedValues, metadata, this::reloadHandlers);
     }
 
     void removeHandler(String name) {

@@ -33,8 +33,8 @@ class MessageDialog {
 
     private final Dialog dialog;
 
-    public MessageDialog(final Message message) {
-        String[] cssIcon = MessageElement.cssIcon(message.getLevel());
+    MessageDialog(final Message message) {
+        String[] cssIcon = MessagePanelElement.cssIcon(message.getLevel());
         Elements.Builder elementBuilder = new Elements.Builder();
 
         // header

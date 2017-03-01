@@ -15,303 +15,131 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
-import elemental.client.Browser;
+import com.google.gwt.user.client.ui.Focusable;
 import elemental.dom.Element;
-import elemental.dom.Node;
-import elemental.html.ButtonElement;
-import elemental.html.DivElement;
-import elemental.html.LabelElement;
-import elemental.html.ParagraphElement;
-import elemental.html.SpanElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
-import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Messages;
+import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.dmr.model.Deprecation;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.InputType.text;
-import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
-import static org.jboss.hal.resources.UIConstants.TRUE;
+import static org.jboss.hal.ballroom.form.Decoration.*;
 
 /**
- * TODO Show resolved expressions using a dismissable inline notification
- * https://www.patternfly.org/patterns/inline-notifications/
+ * Base class for all form item implementations. Contains central logic for handling (default) values, various flags,
+ * validation, expressions and event handling. All UI and DOM related code can be found in {@linkplain Appearance
+ * appearances}.
+ * <p>
+ * A form item carries three different values:
+ * <ol>
+ * <li>{@linkplain #getValue() value}: The value of this form item which has the type {@code T}</li>
+ * <li>{@linkplain #getExpressionValue() expression value}: The expression value of this form item (if expressions are
+ * {@linkplain #supportsExpressions() supported}). The expression value is <em>always</em> a string.</li>
+ * <li>default value: The default value of this form item (if any) which has the type {@code T}</li>
+ * </ol>
+ * <p>
+ * The value and the expression value are mutual exclusive. Only one of them is allowed to be non-null.
+ *
+ * @param <T> The type of the form item's value.
  *
  * @author Harald Pehl
  */
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
-    static final Constants CONSTANTS = GWT.create(Constants.class);
-    protected static final Messages MESSAGES = GWT.create(Messages.class);
+    @FunctionalInterface
+    interface ExpressionCallback {
 
-    private static final String ARIA_DESCRIBEDBY = "aria-describedby";
-    private static final String FORM_ITEM_GROUP = "formItemGroup";
-    private static final String RESTRICTED = "restricted";
-    private static final String RESTRICTED_ELEMENT = "restrictedElement";
-    private static final String DEPRECATED_WARNING = " (deprecated!)";
+        void resolveExpression(String expression);
+    }
 
-    private final EventBus eventBus;
-    private final List<FormItemValidation<T>> validationHandlers;
+
+    static class ExpressionContext {
+
+        final String expression;
+        final ExpressionCallback callback;
+
+        ExpressionContext(final String expression, final ExpressionCallback callback) {
+            this.expression = expression;
+            this.callback = callback;
+        }
+    }
+
+
+    // all form items share the same event bus
+    private static final EventBus EVENT_BUS = new SimpleEventBus();
+
+
+    private String name;
     private final String label;
     private final String hint;
-    private Form.State state;
+    private T value;
+    private T defaultValue;
+    private String expressionValue;
+
     private boolean required;
     private boolean modified;
     private boolean undefined;
     private boolean restricted;
+    private boolean enabled;
     private boolean expressionAllowed;
-    private boolean deprecated;
+    private Deprecation deprecation;
+
+    private final Map<Form.State, Appearance<T>> appearances;
     private SuggestHandler suggestHandler;
-    private T defaultValue;
+    private final List<FormItemValidation<T>> validationHandlers;
+    private final List<ResolveExpressionHandler> resolveExpressionHandlers;
 
-    // Form.State#EDITING elements
-    final DivElement editingRoot;
-    final DivElement inputGroupContainer;
-    final DivElement inputContainer;
-    protected final SpanElement errorText;
-    private final LabelElement inputLabelElement;
-    private final SpanElement inputButtonContainer;
-    private final ButtonElement expressionButton;
-    private final ButtonElement showAllButton;
-    private final DivElement editingRestricted;
-    private final InputElement<T> inputElement;
-    private SpanElement inputAddonContainer;
-
-    // Form.State#READONLY elements
-    private final LabelElement readonlyLabelElement;
-    private final DivElement readonlyRoot;
-    private final SpanElement readonlyRestricted;
-    protected final DivElement valueContainer;
-    protected final ParagraphElement valueElement;
-
-
-    // ------------------------------------------------------ initialization
-
-    @SuppressWarnings("unchecked")
-    protected <C> AbstractFormItem(String name, String label, String hint, CreationContext<C> context) {
-        this.inputElement = newInputElement(context);
-
+    AbstractFormItem(final String name, final String label, final String hint) {
+        this.name = name;
         this.label = label;
         this.hint = hint;
+        this.value = null;
+        this.defaultValue = null;
+        this.expressionValue = null;
+
         this.required = false;
         this.modified = false;
         this.undefined = true;
         this.restricted = false;
+        this.enabled = true;
         this.expressionAllowed = true;
-        this.deprecated = false;
+        this.deprecation = null;
 
-        this.eventBus = new SimpleEventBus();
+        this.appearances = new HashMap<>();
+        this.suggestHandler = null;
         this.validationHandlers = new LinkedList<>();
-        resetValidationHandlers();
+        this.validationHandlers.addAll(defaultValidationHandlers());
+        this.resolveExpressionHandlers = new LinkedList<>();
+    }
 
-        // editing elements
-        editingRoot = new Elements.Builder().div().css(formGroup).end().build();
-        inputLabelElement = new Elements.Builder()
-                .label(label)
-                .title(label)
-                .css(controlLabel, halFormLabel)
-                .end()
-                .build();
-        inputContainer = new Elements.Builder()
-                .div()
-                .css(halFormInput)
-                .end()
-                .build();
-        errorText = new Elements.Builder().span().css(helpBlock).end().build();
-        Elements.setVisible(errorText, false);
-
-        inputGroupContainer = new Elements.Builder().div().css(inputGroup).end().build();
-        inputButtonContainer = new Elements.Builder().span().css(inputGroupBtn).end().build();
+    protected void addAppearance(Form.State state, Appearance<T> appearance) {
+        appearances.put(state, appearance);
+        appearance.setLabel(label);
         if (hint != null) {
-            inputAddonContainer = new Elements.Builder()
-                    .span()
-                    .id(Ids.build(name, "addon", "hint"))
-                    .css(inputGroupAddon)
-                    .textContent(hint)
-                    .end().build();
-        }
-
-        // @formatter:off
-        expressionButton = new Elements.Builder()
-            .button().css(btn, btnDefault)
-                .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
-                .title(CONSTANTS.expressionResolver())
-                .start("i").css(fontAwesome("link")).end()
-            .end().build();
-
-        showAllButton = new Elements.Builder()
-            .button().css(btn, btnDefault)
-                .on(click, event -> showAll())
-                .title(CONSTANTS.showAll())
-                .attr(TABINDEX, String.valueOf(-1))
-                .start("i").css(fontAwesome("angle-down")).end()
-            .end().build();
-
-        Elements.Builder restrictedBuilder = new Elements.Builder()
-            .div().css(inputGroup)
-                .input(text).id(Ids.build(name, RESTRICTED))
-                    .css(formControl, CSS.restricted)
-                    .rememberAs(RESTRICTED_ELEMENT)
-                .span().css(inputGroupAddon)
-                    .start("i").css(fontAwesome("lock")).end()
-                .end()
-            .end();
-        // @formatter:on
-
-        elemental.html.InputElement restrictedInput = restrictedBuilder.referenceFor(RESTRICTED_ELEMENT);
-        restrictedInput.setReadOnly(true);
-        restrictedInput.setValue(CONSTANTS.restricted());
-        editingRestricted = restrictedBuilder.build();
-
-        // readonly elements
-        readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
-        readonlyLabelElement = new Elements.Builder()
-                .label(label)
-                .title(label)
-                .css(controlLabel, halFormLabel)
-                .end()
-                .build();
-        valueContainer = new Elements.Builder()
-                .div()
-                .css(halFormInput)
-                .end()
-                .build();
-        valueElement = new Elements.Builder().p().css(formControlStatic).end().build();
-        readonlyRestricted = new Elements.Builder()
-                .span()
-                .css(fontAwesome("lock"), CSS.restricted)
-                .aria(HIDDEN, TRUE)
-                .end()
-                .build();
-
-        assembleUI(context);
-        setId(Ids.build(name));
-        setName(name);
-    }
-
-    /**
-     * Assembles the <strong>initial</strong> widgets / containers at creation time based on the default values of this
-     * form item.
-     */
-    protected <C> void assembleUI(CreationContext<C> context) {
-        if (hint != null) {
-            showInputAddon(hint);
-        } else {
-            inputContainer.appendChild(inputElement.asElement());
-        }
-        inputContainer.appendChild(errorText);
-        editingRoot.appendChild(inputLabelElement);
-        editingRoot.appendChild(inputContainer);
-
-        valueContainer.appendChild(valueElement);
-        readonlyRoot.appendChild(readonlyLabelElement);
-        readonlyRoot.appendChild(valueContainer);
-    }
-
-    private void showInputButton(ButtonElement button) {
-        inputElement.asElement().removeAttribute(ARIA_DESCRIBEDBY);
-
-        if (hasInputButton()) {
-            Elements.removeChildrenFrom(inputButtonContainer);
-            inputButtonContainer.appendChild(button);
-
-        } else if (hasInputAddon()) {
-            inputGroupContainer.removeChild(inputAddonContainer);
-            inputGroupContainer.appendChild(inputButtonContainer);
-            inputButtonContainer.appendChild(button);
-
-        } else {
-            inputContainer.removeChild(inputElement.asElement());
-            Elements.removeChildrenFrom(inputGroupContainer);
-            inputButtonContainer.appendChild(button);
-            inputGroupContainer.appendChild(inputElement.asElement());
-            inputGroupContainer.appendChild(inputButtonContainer);
-            inputContainer.insertBefore(inputGroupContainer, inputContainer.getFirstChild());
+            appearance.apply(HINT, hint);
         }
     }
 
-    private void showInputAddon(String addon) {
-        inputAddonContainer.setTextContent(addon);
-        inputElement.asElement().setAttribute(ARIA_DESCRIBEDBY, inputAddonContainer.getId());
 
-        if (hasInputButton()) {
-            inputGroupContainer.removeChild(inputButtonContainer);
-            inputGroupContainer.appendChild(inputAddonContainer);
-
-        } else //noinspection StatementWithEmptyBody
-            if (hasInputAddon()) {
-                // nothing to do
-
-            } else {
-                if (inputContainer.contains(inputElement().asElement())) {
-                    inputContainer.removeChild(inputElement().asElement());
-                }
-                inputGroupContainer.appendChild(inputElement.asElement());
-                inputGroupContainer.appendChild(inputAddonContainer);
-                inputContainer.appendChild(inputGroupContainer);
-            }
-    }
-
-    private void removeInputGroup() {
-        Elements.removeChildrenFrom(inputGroupContainer);
-        Elements.removeChildrenFrom(inputButtonContainer);
-        inputContainer.removeChild(inputGroupContainer);
-        inputContainer.insertBefore(inputElement.asElement(), errorText);
-
-    }
-
-    private boolean hasInputButton() {
-        return inputContainer.contains(inputGroupContainer) &&
-                inputGroupContainer.contains(inputButtonContainer) &&
-                inputButtonContainer.getChildren().length() > 0;
-    }
-
-    private boolean hasInputButton(ButtonElement button) {
-        return inputContainer.contains(inputGroupContainer) &&
-                inputGroupContainer.contains(inputButtonContainer) &&
-                inputButtonContainer.contains(button);
-    }
-
-    private boolean hasInputAddon() {
-        return inputContainer.contains(inputGroupContainer) &&
-                inputGroupContainer.contains(inputAddonContainer) &&
-                !isNullOrEmpty(inputAddonContainer.getTextContent());
-    }
-
-    /**
-     * Subclasses must create and return an input element with proper styles attached to it.
-     * Subclasses should register a value change handler on the input element to update the modified / undefined flags
-     * and signal changed values using the {@link #signalChange(Object)} method.
-     *
-     * @return a new input element for this form item
-     */
-    protected abstract InputElement<T> newInputElement(CreationContext<?> context);
+    // ------------------------------------------------------ element and appearance
 
     @Override
-    public Element asElement(Form.State state) {
-        if (state == EDITING) {
-            return editingRoot;
-        } else if (state == READONLY) {
-            return readonlyRoot;
+    public Element asElement(final Form.State state) {
+        if (appearances.containsKey(state)) {
+            return appearances.get(state).asElement();
         } else {
             throw new IllegalStateException("Unknown state in FormItem.asElement(" + state + ")");
         }
@@ -323,7 +151,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      */
     @Override
     public void attach() {
-        inputElement().attach();
+        appearances.values().forEach(Appearance::attach);
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
         }
@@ -334,13 +162,44 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).detach();
         }
+        appearances.values().forEach(Appearance::detach);
     }
 
-    // ------------------------------------------------------ state, name & text
+    private void apply(Decoration decoration) {
+        apply(decoration, null);
+    }
+
+    private <C> void apply(Decoration decoration, C context) {
+        appearances.values().forEach(a -> a.apply(decoration, context));
+    }
+
+    private void unapply(Decoration decoration) {
+        appearances.values().forEach(a -> a.unapply(decoration));
+    }
+
+    private Optional<Appearance<T>> appearance(Form.State state) {
+        if (appearances.containsKey(state)) {
+            return Optional.of(appearances.get(state));
+        }
+        return Optional.empty();
+    }
+
+
+    // ------------------------------------------------------ id, value & name
+
+    @Override
+    public String getId(final Form.State state) {
+        return appearance(state).map(Appearance::getId).orElse(null);
+    }
+
+    @Override
+    public void setId(String id) {
+        appearances.values().forEach(a -> a.setId(id));
+    }
 
     @Override
     public T getValue() {
-        return inputElement.getValue();
+        return value;
     }
 
     @Override
@@ -348,143 +207,132 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         setValue(value, false);
     }
 
+    /**
+     * Sets the form item's value and shows the value in the appearances. Sets the expression value to {@code null}.
+     * Does not touch the {@code modified} and {@code undefined} flags. Should be called from business code like form
+     * mapping.
+     */
     @Override
     public void setValue(final T value, final boolean fireEvent) {
-        inputElement.setValue(value);
-        setReadonlyValue(value);
-        markDefaultValue(defaultValue != null && (value == null || isNullOrEmpty(String.valueOf(value))),
-                defaultValue);
+        this.value = value;
+        this.expressionValue = null;
+
+        appearances.values().forEach(a -> {
+            a.showValue(value);
+            if (isEmpty() && defaultValue != null) {
+                a.apply(DEFAULT, a.asString(defaultValue));
+            } else {
+                a.unapply(DEFAULT);
+            }
+            if (supportsExpressions()) {
+                a.unapply(EXPRESSION);
+            }
+        });
+
         if (fireEvent) {
             signalChange(value);
         }
-        if (hasExpressionScheme(asString(value))) {
-            toggleExpressionSupport(true);
-        }
     }
 
-    protected void setReadonlyValue(final T value) {
-        String text = value == null ? "" : asString(value);
-        valueElement.setTextContent(text);
+    /**
+     * Assigns a new value to the internal value and adjusts the {@code modified} and {@code undefined} flags.
+     * Should be called from change handlers. Does not update any appearances nor apply / unapply decorations.
+     */
+    protected void modifyValue(T newValue) {
+        this.value = newValue;
+        this.expressionValue = null;
+
+        setModified(true);
+        setUndefined(isEmpty());
+        signalChange(newValue);
     }
 
+    /**
+     * Sets the value and expression value to {@code null}, {@linkplain #clearError() clears any error marker} and
+     * shows the default value (if any). Does not touch the {@code modified} and {@code undefined} flags. Should be
+     * called from business code like form mapping.
+     */
     @Override
     public void clearValue() {
-        inputElement.clearValue();
-        setReadonlyValue(null);
-        markDefaultValue(defaultValue != null, defaultValue);
+        this.value = null;
+        this.expressionValue = null;
+
+        appearances.values().forEach((a) -> {
+            a.clearValue();
+            a.unapply(INVALID);
+            if (supportsExpressions()) {
+                a.unapply(EXPRESSION);
+            }
+        });
+        markDefaultValue(defaultValue != null);
     }
 
+    /**
+     * Stores the default value for later use. The default value will be used in {@link #setValue(Object)} (if the
+     * value is null or empty) and {@link #clearValue()}. Calling this method will <strong>not</strong> immediately
+     * show the default value.
+     */
     @Override
-    public void setDefaultValue(final T defaultValue) {
+    public void assignDefaultValue(final T defaultValue) {
         this.defaultValue = defaultValue;
-        inputElement.setPlaceholder(asString(defaultValue));
     }
 
-    void markDefaultValue(final boolean on, final T defaultValue) {
+    private void markDefaultValue(final boolean on) {
         if (on) {
-            Elements.removeChildrenFrom(valueElement);
-            valueElement.setTextContent(asString(defaultValue));
-            valueElement.getClassList().add(CSS.defaultValue);
-            valueElement.setTitle(CONSTANTS.defaultValue());
+            appearances.values().forEach(a -> a.apply(DEFAULT, a.asString(defaultValue)));
         } else {
-            valueElement.getClassList().remove(CSS.defaultValue);
-            valueElement.setTitle("");
+            unapply(DEFAULT);
         }
     }
 
-    void signalChange(final T value) {
+    private void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
     }
 
     @Override
     public void fireEvent(final GwtEvent<?> gwtEvent) {
-        eventBus.fireEvent(gwtEvent);
+        EVENT_BUS.fireEvent(gwtEvent);
     }
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> valueChangeHandler) {
-        return eventBus.addHandler(ValueChangeEvent.getType(), valueChangeHandler);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return supportsExpressions()
-                ? getValue() == null || isUndefined() || isNullOrEmpty(getText())
-                : getValue() == null || isUndefined();
-    }
-
-    @Override
-    public String getId(final Form.State state) {
-        if (state == EDITING) {
-            return inputElement.getId();
-        } else if (state == READONLY) {
-            return valueElement.getId();
-        }
-        return null;
-    }
-
-    @Override
-    public void setId(String id) {
-        String editId = Ids.build(id, EDITING.name().toLowerCase());
-        String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
-
-        inputElement.asElement().setId(editId);
-        inputLabelElement.setHtmlFor(editId);
-        valueElement.setId(readonlyId);
-
-        asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
-        asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
-    }
-
-    @Override
-    public void setState(Form.State state) {
-        this.state = state;
-    }
-
-    @Override
-    public Form.State getState() {
-        return state;
+        return EVENT_BUS.addHandler(ValueChangeEvent.getType(), valueChangeHandler);
     }
 
     @Override
     public String getName() {
-        return inputElement.getName();
+        return name;
     }
 
     @Override
     public void setName(final String name) {
-        inputElement.setName(name);
+        this.name = name;
+        appearances.values().forEach(a -> a.setName(name));
     }
 
     @Override
+    @Deprecated
     public String getText() {
-        return inputElement.getText();
+        // TODO Remove 'extends HasText' from FormItem
+        throw new UnsupportedOperationException("Use getExpressionValue() instead");
     }
 
     @Override
+    @Deprecated
     public void setText(final String text) {
-        inputElement.setText(text);
-        valueElement.setTextContent(text);
-    }
-
-    String asString(T value) {
-        return String.valueOf(value);
+        // TODO Remove 'extends HasText' from FormItem
+        throw new UnsupportedOperationException("Use setExpressionValue() instead");
     }
 
 
     // ------------------------------------------------------ validation
-
-    private void resetValidationHandlers() {
-        validationHandlers.clear();
-        validationHandlers.addAll(defaultValidationHandlers());
-    }
 
     List<FormItemValidation<T>> defaultValidationHandlers() {
         return singletonList(new RequiredValidation<>(this));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
-    private boolean requiresValidation() {
+    final boolean requiresValidation() {
         if (isRequired()) {
             return true;
         }
@@ -501,11 +349,17 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
+    void removeValidationHandler(FormItemValidation<T> validationHandler) {
+        if (validationHandler != null) {
+            validationHandlers.remove(validationHandler);
+        }
+    }
+
     @Override
     public boolean validate() {
         if (requiresValidation()) {
             for (FormItemValidation<T> validationHandler : validationHandlers) {
-                ValidationResult result = validationHandler.validate(getValue());
+                ValidationResult result = validationHandler.validate(value);
                 if (!result.isValid()) {
                     showError(result.getMessage());
                     return false;
@@ -516,17 +370,22 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         return true;
     }
 
+    /**
+     * Clears any error markers. This method {@linkplain Appearance#unapply(Decoration) unapplies} the {@linkplain
+     * Decoration#INVALID INVALID} decoration.
+     */
     @Override
     public void clearError() {
-        Elements.setVisible(errorText, false);
-        editingRoot.getClassList().remove(hasError);
+        unapply(INVALID);
     }
 
+    /**
+     * Shows the specified error message. This method {@linkplain Appearance#apply(Decoration, Object) applies} the
+     * {@linkplain Decoration#INVALID INVALID} decoration using the error message as context.
+     */
     @Override
     public void showError(String message) {
-        editingRoot.getClassList().add(hasError);
-        errorText.setInnerText(message);
-        Elements.setVisible(errorText, true);
+        apply(INVALID, message);
     }
 
 
@@ -544,54 +403,72 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public boolean isExpressionValue() {
-        return supportsExpressions() && hasExpressionScheme(getText());
+        return supportsExpressions() && hasExpressionScheme(expressionValue);
     }
 
     @Override
     public String getExpressionValue() {
-        if (supportsExpressions()) {
-            return getText();
-        }
-        return null;
+        return expressionValue;
     }
 
+    /**
+     * Sets the form item's expression value, applies the {@link Decoration#EXPRESSION} decoration and shows the
+     * expression value in the appearances. Sets the value to {@code null}. Does not touch the {@code modified} and
+     * {@code undefined} flags. Should be called from business code like form mapping.
+     */
     @Override
-    public void setExpressionValue(String expressionValue) {
-        if (supportsExpressions()) {
-            toggleExpressionSupport(true);
-            setText(expressionValue);
-        }
+    public void setExpressionValue(final String expressionValue) {
+        this.value = null;
+        this.expressionValue = expressionValue;
+
+        appearances.values().forEach(a -> a.showExpression(expressionValue));
+        toggleExpressionSupport(expressionValue);
+    }
+
+    /**
+     * Assigns a new value to the internal expression value and adjusts the {@code modified} and {@code undefined}
+     * flags. Does not update any appearances nor apply / unapply decorations. Should be called from change handlers.
+     */
+    protected void modifyExpressionValue(String newExpressionValue) {
+        this.value = null;
+        this.expressionValue = newExpressionValue;
+
+        setModified(true);
+        setUndefined(isEmpty());
     }
 
     @Override
     public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
-        eventBus.addHandler(ResolveExpressionEvent.getType(), handler);
+        resolveExpressionHandlers.add(handler);
     }
 
-    private boolean hasExpressionScheme(String value) {
+    void toggleExpressionSupport(String expressionValue) {
+        // TODO Find a way how to use the expression resolver in modals
+        if (!isModal()) {
+            if (supportsExpressions() && hasExpressionScheme(expressionValue)) {
+                applyExpressionValue(expressionValue);
+            } else {
+                unapply(EXPRESSION);
+            }
+        }
+    }
+
+    void applyExpressionValue(String expressionValue) {
+        ExpressionContext expressionContext = new ExpressionContext(expressionValue,
+                expression -> {
+                    ResolveExpressionEvent ree = new ResolveExpressionEvent(expression);
+                    resolveExpressionHandlers.forEach(handler -> handler.onResolveExpression(ree));
+                });
+        apply(EXPRESSION, expressionContext);
+    }
+
+    boolean hasExpressionScheme(String value) {
         return value != null && value.startsWith("${") && value.endsWith("}");
     }
 
-    boolean toggleExpressionSupport(boolean on) {
-        // only change the UI if expressions are supported and switch is necessary
-        if (supportsExpressions() && !isRestricted() && on != hasInputButton(expressionButton)) {
-            if (on) {
-                showInputButton(expressionButton);
-                if (suggestHandler != null) {
-                    suggestHandler.close();
-                }
-            } else {
-                if (suggestHandler != null) {
-                    showInputButton(showAllButton);
-                } else if (hint != null) {
-                    showInputAddon(hint);
-                } else {
-                    removeInputGroup();
-                }
-            }
-            return true;
-        }
-        return false;
+    boolean isModal() {
+        // extra method to support unit tests
+        return Dialog.isOpen() || Wizard.isOpen();
     }
 
 
@@ -601,37 +478,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         this.suggestHandler.setFormItem(this);
-        toggleShowAll(true);
+        apply(SUGGESTIONS, suggestHandler);
     }
 
     public void onSuggest(final String suggestion) {
         // nop
     }
 
-    private void showAll() {
-        if (suggestHandler != null) {
-            suggestHandler.showAll();
-        }
-    }
 
-    private void toggleShowAll(final boolean on) {
-        if (suggestHandler != null && !restricted && on != hasInputButton(showAllButton)) {
-            if (on) {
-                showInputButton(showAllButton);
-            } else {
-                if (supportsExpressions() && hasExpressionScheme(getText())) {
-                    showInputButton(expressionButton);
-                } else if (hint != null) {
-                    showInputAddon(hint);
-                } else {
-                    removeInputGroup();
-                }
-            }
-        }
-    }
-
-
-    // ------------------------------------------------------ restricted
+    // ------------------------------------------------------ flags and properties
 
     @Override
     public boolean isRestricted() {
@@ -640,91 +495,61 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRestricted(final boolean restricted) {
-        if (this.restricted != restricted) {
-            this.restricted = restricted;
-            toggleRestricted(restricted);
-        }
-    }
-
-    void toggleRestricted(final boolean on) {
-        if (on) {
-            editingRoot.getClassList().add(hasFeedback);
-            readonlyRoot.getClassList().add(hasFeedback);
-            Node firstChild = inputContainer.getChildren().item(0);
-            inputContainer.removeChild(firstChild);
-            inputContainer.appendChild(editingRestricted);
-
-            Elements.removeChildrenFrom(valueElement);
-            SpanElement span = Browser.getDocument().createSpanElement();
-            span.setInnerText(CONSTANTS.restricted());
-            valueElement.appendChild(readonlyRestricted);
-            valueElement.appendChild(span);
-
+        this.restricted = restricted;
+        if (restricted) {
+            apply(RESTRICTED);
         } else {
-            editingRoot.getClassList().remove(hasFeedback);
-            readonlyRoot.getClassList().remove(hasFeedback);
-            inputContainer.removeChild(editingRestricted);
-            Node firstChild = inputContainer.getChildren().item(0);
-            if (isExpressionValue()) {
-                inputContainer.insertBefore(firstChild, inputGroupContainer);
-            } else {
-                inputContainer.insertBefore(firstChild, inputElement.asElement());
-            }
-
-            Elements.removeChildrenFrom(valueElement);
-            setReadonlyValue(getValue());
+            unapply(RESTRICTED);
         }
     }
-
-
-    // ------------------------------------------------------ input element delegates
 
     @Override
     public boolean isEnabled() {
-        return inputElement.isEnabled();
+        return enabled;
     }
 
     @Override
     public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
         if (enabled) {
-            inputContainer.getClassList().remove(disabled);
+            apply(ENABLED);
         } else {
-            inputContainer.getClassList().add(disabled);
+            unapply(ENABLED);
         }
-        inputElement.setEnabled(enabled);
     }
 
     @Override
     public int getTabIndex() {
-        return inputElement.getTabIndex();
+        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        return appearance.map(Focusable::getTabIndex).orElse(-1);
     }
 
     @Override
     public void setTabIndex(final int index) {
-        inputElement.setTabIndex(index);
+        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        appearance.ifPresent(a -> a.setTabIndex(index));
     }
 
     @Override
     public void setAccessKey(final char accessKey) {
-        inputElement.setAccessKey(accessKey);
+        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        appearance.ifPresent(a -> a.setAccessKey(accessKey));
     }
 
     @Override
     public void setFocus(final boolean focus) {
-        inputElement.setFocus(focus);
+        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        // appearance.ifPresent(a -> a.setFocus(focus));
     }
-
-
-    // ------------------------------------------------------ properties
 
     @Override
     public String getLabel() {
-        return inputLabelElement.getInnerText();
+        return label;
     }
 
     @Override
     public void setLabel(final String label) {
-        inputLabelElement.setInnerText(label);
+        appearances.values().forEach(a -> a.setLabel(label));
     }
 
     @Override
@@ -734,14 +559,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRequired(boolean required) {
-        if (required != this.required) {
-            if (required) {
-                inputLabelElement.setInnerHTML(label + " " + MESSAGES.requiredMarker().asString());
-            } else {
-                inputLabelElement.setInnerHTML(label);
-            }
-        }
         this.required = required;
+        if (required) {
+            apply(REQUIRED);
+        } else {
+            unapply(REQUIRED);
+        }
     }
 
     @Override
@@ -766,44 +589,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public boolean isDeprecated() {
-        return deprecated;
+        return deprecation != null && deprecation.isDefined();
     }
 
     @Override
-    public void setDeprecated(final boolean deprecated) {
-        if (deprecated != this.deprecated) {
-            if (deprecated) {
-                inputLabelElement.getClassList().add(CSS.deprecated);
-                readonlyLabelElement.getClassList().add(CSS.deprecated);
-                addTitleSuffix(inputLabelElement, DEPRECATED_WARNING);
-                addTitleSuffix(readonlyLabelElement, DEPRECATED_WARNING);
-            } else {
-                inputLabelElement.getClassList().remove(CSS.deprecated);
-                readonlyLabelElement.getClassList().remove(CSS.deprecated);
-                removeTitleSuffix(inputLabelElement, DEPRECATED_WARNING);
-                removeTitleSuffix(readonlyLabelElement, DEPRECATED_WARNING);
-            }
+    public void setDeprecated(final Deprecation deprecation) {
+        this.deprecation = deprecation;
+        if (deprecation != null && deprecation.isDefined()) {
+            apply(DEPRECATED, deprecation);
+        } else {
+            unapply(DEPRECATED);
         }
-        this.deprecated = deprecated;
-    }
-
-    private void addTitleSuffix(Element element, String suffix) {
-        String title = element.getTitle();
-        int index = title.indexOf(suffix);
-        if (index == -1) {
-            element.setTitle(title + suffix);
-        }
-    }
-
-    private void removeTitleSuffix(Element element, String suffix) {
-        String title = element.getTitle();
-        int index = title.indexOf(suffix);
-        if (index != -1) {
-            element.setTitle(title.substring(0, index));
-        }
-    }
-
-    InputElement<T> inputElement() {
-        return inputElement;
     }
 }

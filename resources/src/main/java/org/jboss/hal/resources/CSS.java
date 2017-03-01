@@ -52,9 +52,12 @@ public interface CSS {
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String blue = "blue";
+    String bootstrapError = "bootstrap-error";
+    String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
     String btn = "btn";
+    String btnBlock = "btn-block";
     String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -84,11 +87,20 @@ public interface CSS {
     String copy = "copy";
 
     String dataTable = "datatable";
+    String date = "date";
     String defaultValue = "default-value";
     String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
     String dlHorizontal = "dl-horizontal";
+    String drawerPf = "drawer-pf";
+    String drawerPfAction = "drawer-pf-action";
+    String drawerPfHal = "drawer-pf-hal";
+    String drawerPfNotification = "drawer-pf-notification";
+    String drawerPfNotificationMessage = "drawer-pf-notification-message";
+    String drawerPfNotificationInfo = "drawer-pf-notification-info";
+    String drawerPfTitle = "drawer-pf-title";
+    String drawerPfNotificationsNonClickable = "drawer-pf-notifications-non-clickable";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
     String dropdownMenu = "dropdown-menu";
@@ -106,6 +118,7 @@ public interface CSS {
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
+    String expressionModeSwitcher = "expression-mode-switcher";
     String external = "external";
 
     String fade = "fade";
@@ -137,8 +150,11 @@ public interface CSS {
     String hasClear = "has-clear";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
+    String headerForm = "header-form";
+    String header = "header";
     String helpBlock = "help-block";
     String hidden = "hidden";
+    String hide = "hide";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
@@ -188,7 +204,6 @@ public interface CSS {
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
     String marginTopLarge = "margin-top-large";
-    String marginTopSmall = "margin-top-small";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
     String modal = "modal";
@@ -234,7 +249,7 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
-    String pauseCircle ="pause-circle-o";
+    String pauseCircle = "pause-circle-o";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
@@ -293,6 +308,8 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String textCenter = "text-center";
+    String time = "time";
     String timestamp = "timestamp";
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
@@ -305,6 +322,7 @@ public interface CSS {
     String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
+    String unread = "unread";
     String upload = "upload";
     String uploadAdvanced = "upload-advanced";
     String uploadIcon = "upload-icon";
@@ -357,6 +375,10 @@ public interface CSS {
                     column + "-" + columnMd + "-" + offset + "-" + String.valueOf(columns) + " " +
                     column + "-" + columnLg + "-" + offset + "-" + String.valueOf(columns);
         }
+    }
+
+    static String vh(int offset) {
+        return "calc(100vh - " + offset + "px)"; //NON-NLS
     }
 
     /**

@@ -96,7 +96,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
                 .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
-                        resources.messages()
+                        eeMetadata, resources.messages()
                                 .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
@@ -140,7 +140,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
-                        changedValues, resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
+                        changedValues, defaultBindingsMetadata,
+                        resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
                 .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
@@ -273,7 +274,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
-                    presenter.save(fullyQualified, changedValues, resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
+                    presenter.save(fullyQualified, changedValues, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
                 })
                 .build();
 

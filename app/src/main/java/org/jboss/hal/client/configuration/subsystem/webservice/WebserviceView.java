@@ -121,9 +121,9 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     public void updateHandlers(final Config configType, final HandlerChain handlerChainType,
             final List<NamedNode> handlers) {
         if (configType == CLIENT_CONFIG) {
-            clientConfig.updateHandlers(configType, handlerChainType, handlers);
+            clientConfig.updateHandlers(configType, handlers);
         } else {
-            endpointConfig.updateHandlers(configType, handlerChainType, handlers);
+            endpointConfig.updateHandlers(configType, handlers);
         }
     }
 }
