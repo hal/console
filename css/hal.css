@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for hal-next 0.4.7
- * Build date: 2017-01-13 14:14:45
+ * Generated CSS file for hal-next 0.4.8
+ * Build date: 2017-03-01 10:49:25
  */
 /*
  * Fonts
@@ -10142,8 +10142,8 @@ select.selectpicker {
 .bootstrap-switch .bootstrap-switch-label {
   box-sizing: border-box;
   cursor: pointer;
-  display: inline-block !important;
-  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
   padding: 2px 6px;
   font-size: 12px;
   line-height: 20px;
@@ -10191,6 +10191,9 @@ select.selectpicker {
   color: #4d5258;
   background: #f1f1f1;
 }
+.bootstrap-switch span::before {
+  content: "\200b";
+}
 .bootstrap-switch .bootstrap-switch-handle-on {
   border-bottom-left-radius: 1px - 1;
   border-top-left-radius: 1px - 1;
@@ -10204,13 +10207,11 @@ select.selectpicker {
   position: absolute !important;
   top: 0;
   left: 0;
+  margin: 0;
+  z-index: -1;
   opacity: 0;
   filter: alpha(opacity=0);
-  z-index: -1;
-}
-.bootstrap-switch input[type='radio'].form-control,
-.bootstrap-switch input[type='checkbox'].form-control {
-  height: auto;
+  visibility: hidden;
 }
 .bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-on,
 .bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-off,
@@ -10526,13 +10527,14 @@ select.selectpicker {
 }
 /*!
  * Datetimepicker for Bootstrap 3
- * version : 4.17.42
+ * version : 4.17.45
  * https://github.com/Eonasdan/bootstrap-datetimepicker/
  */
 .bootstrap-datetimepicker-widget {
   list-style: none;
 }
 .bootstrap-datetimepicker-widget.dropdown-menu {
+  display: block;
   margin: 2px 0;
   padding: 4px;
   width: 19em;
@@ -10900,6 +10902,126 @@ select.selectpicker {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+/* Pretty printing styles. Used with prettify.js. */
+/* SPAN elements with the classes below are added by prettyprint. */
+.pln {
+  color: #000;
+}
+/* plain text */
+@media screen {
+  .str {
+    color: #080;
+  }
+  /* string content */
+  .kwd {
+    color: #008;
+  }
+  /* a keyword */
+  .com {
+    color: #800;
+  }
+  /* a comment */
+  .typ {
+    color: #606;
+  }
+  /* a type name */
+  .lit {
+    color: #066;
+  }
+  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  .pun,
+  .opn,
+  .clo {
+    color: #660;
+  }
+  .tag {
+    color: #008;
+  }
+  /* a markup tag name */
+  .atn {
+    color: #606;
+  }
+  /* a markup attribute name */
+  .atv {
+    color: #080;
+  }
+  /* a markup attribute value */
+  .dec,
+  .var {
+    color: #606;
+  }
+  /* a declaration; a variable name */
+  .fun {
+    color: red;
+  }
+  /* a function name */
+}
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .str {
+    color: #060;
+  }
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+  .lit {
+    color: #044;
+  }
+  .pun,
+  .opn,
+  .clo {
+    color: #440;
+  }
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+  .atn {
+    color: #404;
+  }
+  .atv {
+    color: #060;
+  }
+}
+/* Put a border around prettyprinted code snippets. */
+pre.prettyprint {
+  padding: 2px;
+  border: 1px solid #888;
+}
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L5,
+li.L6,
+li.L7,
+li.L8 {
+  list-style-type: none;
+}
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  background: #eee;
 }
 /*
  * PatternFly
@@ -16647,6 +16769,10 @@ h2.underline {
     padding-top: 38px;
   }
 }
+.bootstrap-error.layout-pf.layout-pf-fixed body {
+  padding-top: 28px;
+  padding-bottom: 0;
+}
 .margin-bottom-5 {
   margin-bottom: 5px;
 }
@@ -17100,36 +17226,28 @@ h2.underline {
     margin-left: 25%;
   }
 }
+.form .restricted {
+  cursor: not-allowed;
+}
 .form.readonly .separator {
   margin-top: -15px;
   margin-bottom: 5px;
   border-top: 1px solid #e7e7e7;
 }
-.form.readonly .restricted {
-  margin-right: 0.5em;
+.form.readonly .form-control-static .hint,
+.form.readonly .form-control-static .fa {
+  margin-left: 5px;
 }
-.form.readonly .form-control-static.default-value {
+.form.readonly .form-control-static .empty + .hint {
+  margin-left: 0;
+}
+.form.readonly .form-control-static .default-value,
+.form.readonly .form-control-static .hint {
   color: #c7c7cd;
   font-style: italic;
+}
+.form.readonly .form-control-static .default-value {
   cursor: help;
-}
-.form.readonly .form-control-static.default-value .key,
-.form.readonly .form-control-static.default-value .equals,
-.form.readonly .form-control-static.default-value .value {
-  color: #c7c7cd;
-}
-.form.readonly .form-control-static.properties .equals {
-  color: #8b8d8f;
-  margin: 0 3px;
-}
-.form.readonly .form-control-static.properties .value:after {
-  content: ", ";
-}
-.form.readonly .form-control-static.properties .value:last-child:after {
-  content: "";
-}
-.form.editing input.restricted {
-  cursor: not-allowed;
 }
 .form.readonly,
 .form.editing {
@@ -17188,7 +17306,8 @@ fieldset.form-section legend {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.help-block.hint {
+.help-block.hint,
+.readonly .hal-form-input .hint {
   color: #999;
   font-size: 11px;
   margin-bottom: 0;
@@ -17233,6 +17352,14 @@ abbr.key {
 }
 .input-group-btn > .bootstrap-select.btn-group {
   margin-left: -1px;
+}
+/*
+ * Bootstrap Switch
+ */
+.btn.expression-mode-switcher {
+  box-shadow: none;
+  margin-right: -1px;
+  outline: none;
 }
 /*
  * TagManager classes
@@ -17316,6 +17443,19 @@ abbr.key {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.header-form {
+  float: right;
+  float: right !important;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.header-form label {
+  font-weight: normal;
+  margin-bottom: 0;
+  margin-right: 1em;
 }
 .hal-search {
   display: -ms-flexbox;
@@ -18908,6 +19048,10 @@ table.topology a {
     line-height: 20px;
     padding: 5px 15px 5px 30px;
   }
+}
+.navbar-pf .drawer-pf-hal {
+  height: calc(100vh - 52px);
+  top: 24px;
 }
 .navbar-pf .navbar-utility li.dropdown > .dropdown-toggle .fa {
   left: 10px;
