@@ -25,6 +25,7 @@ import org.jboss.hal.dmr.model.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.hal.ballroom.form.Decoration.HINT;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
@@ -150,7 +151,11 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case DEFAULT:
                 defaultValue.setTextContent(String.valueOf(context));
-                valueContainer.appendChild(defaultValue);
+                if (isApplied(HINT)) {
+                    valueContainer.insertBefore(defaultValue, hintElement);
+                } else {
+                    valueContainer.appendChild(defaultValue);
+                }
                 break;
 
             case DEPRECATED:
@@ -160,7 +165,11 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
             case EXPRESSION:
                 ExpressionContext ec = (ExpressionContext) context;
                 expressionLink.setOnclick(event -> ec.callback.resolveExpression(valueElement.getTextContent()));
-                valueContainer.appendChild(expressionLink);
+                if (isApplied(HINT)) {
+                    valueContainer.insertBefore(expressionLink, hintElement);
+                } else {
+                    valueContainer.appendChild(expressionLink);
+                }
                 break;
 
             case HINT:
@@ -170,6 +179,9 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case RESTRICTED:
                 valueElement.setTextContent("");
+                Elements.failSafeRemove(valueContainer, defaultValue);
+                Elements.failSafeRemove(valueContainer, expressionLink);
+                Elements.failSafeRemove(valueContainer, hintElement);
                 valueContainer.appendChild(restrictedMarker);
                 break;
 
