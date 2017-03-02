@@ -158,6 +158,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml listHint();
     SafeHtml loadContentError();
     SafeHtml logFileError(String name);
+    String logFilePreview(int lines);
     String logFileFullStatus(int lines, String lastUpdate);
     String logFilePartStatus(int lines, String lastUpdate);
 

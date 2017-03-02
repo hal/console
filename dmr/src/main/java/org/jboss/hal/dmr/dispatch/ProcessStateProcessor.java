@@ -53,6 +53,8 @@ public class ProcessStateProcessor implements ResponseHeadersProcessor {
                 }
             }
         }
-        eventBus.fireEvent(new ProcessStateEvent(processState));
+        if (!processState.isEmpty()) {
+            eventBus.fireEvent(new ProcessStateEvent(processState));
+        }
     }
 }

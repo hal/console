@@ -246,6 +246,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String loading();
     String loadingPleaseWait();
     String logFile();
+    String logFilePreviewError();
     String logFiles();
     String logout();
 

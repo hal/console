@@ -206,6 +206,7 @@ public interface ModelDescriptionConstants {
 
     String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
+    String LINES = "lines";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
     String LISTENER = "listener";
@@ -286,6 +287,7 @@ public interface ModelDescriptionConstants {
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
     String READ_CONTENT = "read-content";
+    String READ_LOG_FILE = "read-log-file";
     String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
     String READ_RESOURCE_OPERATION = "read-resource";
@@ -388,6 +390,7 @@ public interface ModelDescriptionConstants {
     String SYSTEM_PROPERTY = "system-property";
 
     String TABLE = "table";
+    String TAIL = "tail";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";

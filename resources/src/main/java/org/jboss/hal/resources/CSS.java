@@ -194,6 +194,7 @@ public interface CSS {
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";
+    String logFilePreview = "log-file-preview";
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
