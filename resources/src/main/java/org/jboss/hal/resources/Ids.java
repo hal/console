@@ -126,7 +126,7 @@ public interface Ids {
     String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
     String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
 
-    String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
+    String DATA_SOURCE_CONFIGURATION = "ds-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
     String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
     String DATA_SOURCE_CHOOSE_TEMPLATE_STEP = build(DATA_SOURCE_CONFIGURATION, "choose-template", WIZARD_STEP_SUFFIX);
@@ -142,7 +142,7 @@ public interface Ids {
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
     String DATA_SOURCE_REVIEW_FORM = build(DATA_SOURCE_CONFIGURATION, "review", FORM_SUFFIX);
     String DATA_SOURCE_REVIEW_STEP = build(DATA_SOURCE_CONFIGURATION, "review", WIZARD_STEP_SUFFIX);
-    String DATA_SOURCE_RUNTIME = "data-source-runtime";
+    String DATA_SOURCE_RUNTIME = "ds-runtime";
     String DATA_SOURCE_RUNTIME_JDBC_FORM = build(DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
@@ -262,23 +262,25 @@ public interface Ids {
     String JGROUPS_REMOTE_SITE = "remote-site";
     String JGROUPS_PROTOCOL = "protocol";
     String JGROUPS_TRANSPORT = "transport";
-    String JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-default", TAB_SUFFIX);
-    String JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-internal", TAB_SUFFIX);
+    String JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-default",
+            TAB_SUFFIX);
+    String JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-internal",
+            TAB_SUFFIX);
     String JGROUPS_TRANSPORT_THREADPOOL_OOB_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-oob", TAB_SUFFIX);
     String JGROUPS_TRANSPORT_THREADPOOL_TIMER_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-timer", TAB_SUFFIX);
-    String JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-default", FORM_SUFFIX);
-    String JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-internal", FORM_SUFFIX);
+    String JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-default",
+            FORM_SUFFIX);
+    String JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-internal",
+            FORM_SUFFIX);
     String JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-oob", FORM_SUFFIX);
-    String JGROUPS_TRANSPORT_THREADPOOL_TIMER_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-timer", FORM_SUFFIX);
+    String JGROUPS_TRANSPORT_THREADPOOL_TIMER_FORM = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-timer",
+            FORM_SUFFIX);
     String JGROUPS_CHANNEL_ENTRY = build(JGROUPS, "channel", ENTRY_SUFFIX);
     String JGROUPS_CHANNEL_CONFIG = build(JGROUPS, "channel");
     String JGROUPS_CHANNEL_FORK = "fork";
     String JGROUPS_CHANNEL_FORK_PROTOCOL = "fork-protocol";
     String JGROUPS_CHANNEL_FORK_ENTRY = build(JGROUPS_CHANNEL_ENTRY, JGROUPS_CHANNEL_FORK, ENTRY_SUFFIX);
-    String JGROUPS_CHANNEL_CONFIG_ENTRY = build(JGROUPS, "channel", ENTRY_SUFFIX);
-    String JGROUPS_CHANNEL_COLUMN = build(JGROUPS, "channel-column");
-
-
+    
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
@@ -303,7 +305,7 @@ public interface Ids {
     String JPA_RUNTIME_COLLECTION_ENTRY = build(JPA_RUNTIME, "collection", ENTRY_SUFFIX);
 
     String LOCAL_CACHE = "local-cache";
-    String LOG_FILE = "log-file";
+    String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
     String LOG_FILE_SEARCH = build(LOG_FILE, "search");

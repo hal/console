@@ -59,11 +59,11 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
     private static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.meta";
     private static final String REGISTRY_MODULE_CLASS = "RequiredResourcesRegistryModule";
 
-    private final Set<RequiredInfo> requiredInfos;
+    private final Map<String, RequiredInfo> requiredInfos;
 
     public RequiredResourcesProcessor() {
         super(RequiredResourcesProcessor.class, TEMPLATES);
-        requiredInfos = new HashSet<>();
+        requiredInfos = new HashMap<>();
     }
 
     @Override
@@ -89,11 +89,21 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
                 }
             }
 
+            //noinspection ConstantConditions
             if (id != null) {
-                RequiredInfo requiredInfo = new RequiredInfo(id);
+                RequiredInfo requiredInfo = new RequiredInfo(id, requiredElement);
                 requiredInfo.addResources(requires.value());
                 requiredInfo.setRecursive(requires.recursive());
-                requiredInfos.add(requiredInfo);
+
+                if (requiredInfos.containsKey(id)) {
+                    RequiredInfo other = requiredInfos.get(id);
+                    if (!requiredInfo.getResources().equals(other.getResources())) {
+                        error(requiredElement,
+                                "Different required resources for the same id \"%s\". This class conflicts with %s",
+                                id, other.source.getQualifiedName());
+                    }
+                }
+                requiredInfos.put(id, requiredInfo);
             }
         }
 
@@ -129,7 +139,7 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
             context.put(GENERATED_WITH, RequiredResourcesProcessor.class.getName());
             context.put(PACKAGE_NAME, packageName);
             context.put(CLASS_NAME, className);
-            context.put("requiredInfos", requiredInfos);
+            context.put("requiredInfos", requiredInfos.values());
             return context;
         };
     }
@@ -138,11 +148,13 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
     public static class RequiredInfo {
 
         private final String id;
+        private final TypeElement source;
         private final Set<String> resources;
         private boolean recursive;
 
-        RequiredInfo(String id) {
+        RequiredInfo(String id, TypeElement source) {
             this.id = id;
+            this.source = source;
             this.resources = new HashSet<>();
             this.recursive = false;
         }

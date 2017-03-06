@@ -189,7 +189,7 @@
                             </options>
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
                             </defaultOutputDirectory>
-                            <failOnError>false</failOnError>
+                            <failOnError>true</failOnError>
                         </configuration>
                     </execution>
                     <execution>
