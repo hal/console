@@ -41,7 +41,6 @@ import javax.inject.Inject;
 
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.OperationMode;
 import org.jboss.hal.config.User;
@@ -55,7 +54,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 
-import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -90,9 +88,6 @@ public class ReadEnvironment implements BootstrapFunction {
                 .param(INCLUDE_RUNTIME, true)
                 .build());
         ops.add(new Operation.Builder(WHOAMI, ResourceAddress.root()).param(VERBOSE, true).build());
-        ResourceAddress address = new ResourceAddress().add("core-service", "management")
-                .add("access", "authorization");
-        ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, PROVIDER).build());
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {
@@ -130,11 +125,6 @@ public class ReadEnvironment implements BootstrapFunction {
                             user.addRole(roleName);
                         }
                     }
-
-                    // access control provider
-                    AccessControlProvider accessControlProvider =
-                            asEnumValue(result.step(2).get(RESULT), AccessControlProvider::valueOf, SIMPLE);
-                    environment.setAccessControlProvider(accessControlProvider);
 
                     logDone();
                     control.proceed();

@@ -28,10 +28,12 @@ public class BootstrapFunctions {
 
     @Inject
     public BootstrapFunctions(final ReadEnvironment readEnvironment,
+            final ReadAuthenticationProvider readAuthenticationProvider,
             final FindDomainController findDomainController,
             final RegisterStaticCapabilities registerStaticCapabilities) {
         this.functions = new BootstrapFunction[]{
                 readEnvironment,
+                readAuthenticationProvider,
                 findDomainController,
                 registerStaticCapabilities
         };
