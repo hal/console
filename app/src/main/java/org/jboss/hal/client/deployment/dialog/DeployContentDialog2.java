@@ -36,7 +36,7 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**

@@ -39,8 +39,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.RefreshMode.HOLD;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;

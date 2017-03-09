@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -111,9 +111,8 @@ public class DataTable<T> implements IsElement, Attachable {
     public void attach() {
         if (api == null) {
             // TODO check security context and adjust options if necessary
+            options.id = id;
             api = Bridge.<T>select("#" + id).dataTable(options);
-            api.id = id;
-            api.columnActions = options.columnActions;
         }
     }
 

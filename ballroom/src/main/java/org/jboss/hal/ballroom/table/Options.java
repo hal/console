@@ -41,5 +41,6 @@ public class Options<T> {
     public boolean searching;
     public Select select;
     // only used to get the columnActions into the Api instance
+    String id;
     ColumnActions<T> columnActions;
 }

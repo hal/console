@@ -43,7 +43,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.CONTEXT_SERVICE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_TEMPLATE;

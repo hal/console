@@ -85,7 +85,7 @@ public class FindDomainController implements BootstrapFunction {
                     } else {
                         // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
                         // there might be no domain controller
-                        logger.warn("{}: No domain controller found! Using first host {} as replacement.", name(),
+                        logger.warn("{}: No domain controller found! Use first host as replacement: '{}'", name(),
                                 firstHost);
                         environment.setDomainController(firstHost);
                     }

@@ -39,8 +39,8 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_LRT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
