@@ -39,7 +39,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     private final Environment environment;
 
     public NamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
-        super(Ids.UPLOAD_NAMES_STEP, resources.constants().specifyNames());
+        super(resources.constants().specifyNames());
         this.environment = environment;
 
         nameItem = new NameItem();

@@ -54,7 +54,7 @@ import static java.util.stream.StreamSupport.stream;
  * gathered in this interface. This is not always possible - for instance if the ID contains dynamic parts like a
  * resource name or selected server. But IDs which only contain static strings should be part of this interface.
  */
-@SuppressWarnings("DuplicateStringLiteralInspection")
+@SuppressWarnings({"DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public interface Ids {
 
     // ------------------------------------------------------ common suffixes used in IDs below
@@ -67,7 +67,6 @@ public interface Ids {
     String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
     String TABLE_SUFFIX = "table";
-    String WIZARD_STEP_SUFFIX = "wizard-step";
 
 
     // ------------------------------------------------------ ids (a-z)
@@ -129,25 +128,18 @@ public interface Ids {
     String DATA_SOURCE_CONFIGURATION = "ds-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
     String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
-    String DATA_SOURCE_CHOOSE_TEMPLATE_STEP = build(DATA_SOURCE_CONFIGURATION, "choose-template", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_CONNECTION_FORM = build(DATA_SOURCE_CONFIGURATION, "connection", FORM_SUFFIX);
-    String DATA_SOURCE_CONNECTION_STEP = build(DATA_SOURCE_CONFIGURATION, "connection", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_DRIVER_FORM = build(DATA_SOURCE_CONFIGURATION, "driver", FORM_SUFFIX);
-    String DATA_SOURCE_DRIVER_STEP = build(DATA_SOURCE_CONFIGURATION, "driver", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_FORM = build(DATA_SOURCE_CONFIGURATION, FORM_SUFFIX);
     String DATA_SOURCE_NAMES_FORM = build(DATA_SOURCE_CONFIGURATION, "names", FORM_SUFFIX);
-    String DATA_SOURCE_NAMES_STEP = build(DATA_SOURCE_CONFIGURATION, "names", WIZARD_STEP_SUFFIX);
-    String DATA_SOURCE_PROPERTIES_STEP = build(DATA_SOURCE_CONFIGURATION, "properties", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
     String DATA_SOURCE_REVIEW_FORM = build(DATA_SOURCE_CONFIGURATION, "review", FORM_SUFFIX);
-    String DATA_SOURCE_REVIEW_STEP = build(DATA_SOURCE_CONFIGURATION, "review", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_RUNTIME = "ds-runtime";
     String DATA_SOURCE_RUNTIME_JDBC_FORM = build(DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
-    String DATA_SOURCE_TEST_STEP = build(DATA_SOURCE_CONFIGURATION, "test", WIZARD_STEP_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
@@ -350,9 +342,7 @@ public interface Ids {
     String MESSAGING_GLOBAL_SETTINGS = build(MESSAGING, "global-settings");
     String MESSAGING_GROUPING_HANDLER = build(MESSAGING, "grouping-handler");
     String MESSAGING_HA = build(MESSAGING, "ha");
-    String MESSAGING_HA_CHOOSE_REPLICATION_STEP = build(MESSAGING_HA, "choose-replication", WIZARD_STEP_SUFFIX);
     String MESSAGING_HA_CHOOSE_STRATEGY = build(MESSAGING_HA, "choose-strategy");
-    String MESSAGING_HA_CHOOSE_STRATEGY_STEP = build(MESSAGING_HA_CHOOSE_STRATEGY, WIZARD_STEP_SUFFIX);
     String MESSAGING_HA_REPLICATION = build(MESSAGING_HA, "replication");
     String MESSAGING_HA_REPLICATION_COLOCATED = build(MESSAGING_HA_REPLICATION, "colocated");
     String MESSAGING_HA_REPLICATION_COLOCATED_MASTER = build(MESSAGING_HA_REPLICATION_COLOCATED, "master");
@@ -389,9 +379,7 @@ public interface Ids {
     String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
-    String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
-    String MODEL_BROWSER_CREATE_SINGLETON_STEP = build(MODEL_BROWSER, "create-singleton", WIZARD_STEP_SUFFIX);
 
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";
@@ -534,10 +522,8 @@ public interface Ids {
     String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
     String UPLOAD = "upload";
-    String UPLOAD_STEP = build(UPLOAD, WIZARD_STEP_SUFFIX);
     String UPLOAD_FILE_INPUT = build(UPLOAD, "file-input");
     String UPLOAD_NAMES_FORM = build(UPLOAD, "names", FORM_SUFFIX);
-    String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
 
     String WEBSERVICES = "webservices";

@@ -39,7 +39,7 @@ class ReviewStep extends WizardStep<Context, State> {
     private final ModelNodeForm<DataSource> form;
 
     ReviewStep(final Metadata metadata, final Resources resources, final boolean xa) {
-        super(Ids.DATA_SOURCE_REVIEW_STEP, resources.constants().review());
+        super(resources.constants().review());
 
         List<String> attributes = new ArrayList<>();
         attributes.add(JNDI_NAME);

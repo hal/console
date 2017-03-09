@@ -40,7 +40,7 @@ class ConnectionStep extends WizardStep<Context, State> {
     private final ModelNodeForm<DataSource> form;
 
     ConnectionStep(final Metadata metadata, final Resources resources, final boolean xa) {
-        super(Ids.DATA_SOURCE_CONNECTION_STEP, resources.constants().connection());
+        super(resources.constants().connection());
 
         List<String> attributes = new ArrayList<>();
         if (!xa) {

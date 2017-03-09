@@ -52,7 +52,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
     CreateSingletonStep(final Node<Context> parent, final MetadataProcessor metadataProcessor,
             final Provider<Progress> progress, final EventBus eventBus, final Resources resources) {
-        super(Ids.MODEL_BROWSER_CREATE_SINGLETON_STEP, resources.messages().addResourceTitle(parent.text));
+        super(resources.messages().addResourceTitle(parent.text));
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.eventBus = eventBus;

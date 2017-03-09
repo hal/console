@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -30,7 +29,7 @@ class PropertiesStep extends WizardStep<Context, State> {
     private final Element root;
 
     PropertiesStep(final Resources resources) {
-        super(Ids.DATA_SOURCE_PROPERTIES_STEP, resources.constants().xaProperties());
+        super(resources.constants().xaProperties());
         root = new Elements.Builder().p().textContent(Names.NYI).end().build();
     }
 

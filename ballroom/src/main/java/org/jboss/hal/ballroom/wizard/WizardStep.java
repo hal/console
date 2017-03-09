@@ -37,7 +37,7 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
     private Wizard<C, S> wizard;
     protected String title;
 
-    protected WizardStep(final String id, final String title) {
+    protected WizardStep(final String title) {
         this.title = title;
         this.attachables = new ArrayList<>();
     }

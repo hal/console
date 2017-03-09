@@ -26,7 +26,6 @@ import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -40,7 +39,7 @@ class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     private final InputElement firstRadio;
 
     ChooseSingletonStep(final Node<Context> parent, final List<String> children, final Resources resources) {
-        super(Ids.MODEL_BROWSER_CHOOSE_SINGLETON_STEP, resources.constants().chooseSingleton());
+        super(resources.constants().chooseSingleton());
 
         Elements.Builder builder = new Elements.Builder().div();
         SortedSet<String> singletons = new TreeSet<>(parent.data.getSingletons());

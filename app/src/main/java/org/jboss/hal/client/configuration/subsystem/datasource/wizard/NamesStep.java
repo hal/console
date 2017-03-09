@@ -41,7 +41,7 @@ class NamesStep extends WizardStep<Context, State> {
 
     NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources,
             final boolean xa) {
-        super(Ids.DATA_SOURCE_NAMES_STEP, resources.constants().attributes());
+        super(resources.constants().attributes());
 
         FormItem<String> nameItem = new NameItem();
         nameItem.addValidationHandler(value -> {

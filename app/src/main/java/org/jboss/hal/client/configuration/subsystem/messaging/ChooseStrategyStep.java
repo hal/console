@@ -41,7 +41,7 @@ class ChooseStrategyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWiza
     private final InputElement sharedStoreRadio;
 
     ChooseStrategyStep(Resources resources) {
-        super(Ids.MESSAGING_HA_CHOOSE_STRATEGY_STEP, resources.constants().chooseStrategy());
+        super(resources.constants().chooseStrategy());
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
