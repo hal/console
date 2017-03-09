@@ -95,6 +95,9 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         setUndefined(allowEmpty);
         if (!allowEmpty) {
             setModified(true);
+            if (!options.isEmpty()) {
+                setValue(options.get(0));
+            }
         }
 
         // read-only appearance
@@ -106,6 +109,13 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         selectElement.setMultiple(false);
 
         addAppearance(Form.State.EDITING, new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty));
+    }
+
+    @Override
+    public void clearValue() {
+        if (allowEmpty) {
+            super.clearValue();
+        }
     }
 
     @Override
