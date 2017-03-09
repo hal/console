@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
+import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.gwt.flow.Control;
@@ -61,26 +62,36 @@ public class FindDomainController implements BootstrapFunction {
             dispatcher.execute(operation, result -> {
                 String firstHost = null;
                 String domainController = null;
-                for (Property property : result.asPropertyList()) {
-                    if (firstHost == null) {
-                        firstHost = property.getName();
-                    }
-                    if (property.getValue().get(MASTER).isDefined() && property.getValue().get(MASTER).asBoolean()) {
-                        domainController = property.getName();
-                        break;
-                    }
-                }
-                if (domainController != null) {
-                    environment.setDomainController(domainController);
+                List<Property> properties = result.asPropertyList();
+                if (properties.isEmpty()) {
+                    // TODO Is this possible?
+                    control.getContext().setErrorMessage("No hosts found!"); //NON-NLS
+                    control.abort();
+
                 } else {
-                    // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
-                    // there might be no domain controller
-                    logger.warn("{}: No domain controller found! Using first host {} as replacement.", name(),
-                            firstHost);
-                    environment.setDomainController(firstHost);
+                    for (Property property : properties) {
+                        if (firstHost == null) {
+                            firstHost = property.getName();
+                        }
+                        if (property.getValue().get(MASTER).isDefined() && property.getValue()
+                                .get(MASTER)
+                                .asBoolean()) {
+                            domainController = property.getName();
+                            break;
+                        }
+                    }
+                    if (domainController != null) {
+                        environment.setDomainController(domainController);
+                    } else {
+                        // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
+                        // there might be no domain controller
+                        logger.warn("{}: No domain controller found! Using first host {} as replacement.", name(),
+                                firstHost);
+                        environment.setDomainController(firstHost);
+                    }
+                    logDone();
+                    control.proceed();
                 }
-                logDone();
-                control.proceed();
             });
         }
     }

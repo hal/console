@@ -21,6 +21,14 @@ public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
     enum Tuple {
+        /**
+         * Please not that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when
+         * the current user is assigned to a host scoped role which is scoped to a slave host), this tuple is resolved
+         * to the first host which was read during bootstrap. In any case it is resolved to an existing host.
+         * <p>
+         * Address templates which use this tuple must be prepared that it does not always resolve to the domain
+         * controller.
+         */
         DOMAIN_CONTROLLER("domain.controller", HOST),
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
