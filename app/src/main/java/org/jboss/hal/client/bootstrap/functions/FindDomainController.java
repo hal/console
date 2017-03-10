@@ -65,7 +65,7 @@ public class FindDomainController implements BootstrapFunction {
                 List<Property> properties = result.asPropertyList();
                 if (properties.isEmpty()) {
                     // TODO Is this possible?
-                    control.getContext().setErrorMessage("No hosts found!"); //NON-NLS
+                    control.getContext().failed("No hosts found!"); //NON-NLS
                     control.abort();
 
                 } else {

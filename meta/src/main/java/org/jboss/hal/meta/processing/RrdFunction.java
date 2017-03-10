@@ -82,7 +82,7 @@ class RrdFunction implements Function<FunctionContext> {
                         }
                         control.proceed();
                     } catch (ParserException e) {
-                        control.getContext().setError(e);
+                        control.getContext().failed(e);
                         control.abort();
                     }
                 },
@@ -91,7 +91,7 @@ class RrdFunction implements Function<FunctionContext> {
                         logger.debug("Ignore errors on optional resource operation {}", operation.asCli());
                         control.proceed(); // ignore errors on optional resources!
                     } else {
-                        control.getContext().setErrorMessage(failure);
+                        control.getContext().failed(failure);
                         control.abort();
                     }
                 });

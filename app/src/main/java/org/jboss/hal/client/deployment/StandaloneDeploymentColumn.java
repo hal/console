@@ -239,8 +239,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                 @Override
                                 public void onFailure(final FunctionContext functionContext) {
                                     wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name),
-                                            functionContext.getErrorMessage());
+                                            resources.messages().deploymentError(name), functionContext.getError());
                                 }
 
                                 @Override

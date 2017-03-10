@@ -75,7 +75,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -215,8 +214,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     public void onFailure(final FunctionContext context) {
                         Browser.getWindow().clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
-                        MessageEvent.fire(eventBus, Message.error(resources.messages().topologyError(),
-                                context.getErrorMessage()));
+                        MessageEvent.fire(eventBus,
+                                Message.error(resources.messages().topologyError(), context.getError()));
                     }
 
                     @Override
@@ -263,8 +262,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     @Override
                     public void onFailure(final FunctionContext context) {
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().updateServerError(server.getName()),
-                                        context.getErrorMessage()));
+                                Message.error(resources.messages().updateServerError(server.getName()), context.getError()));
                     }
 
                     @Override

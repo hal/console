@@ -30,7 +30,7 @@ public class FailedFunctionCallback<C extends FunctionContext> implements Dispat
 
     @Override
     public void onFailed(final Operation operation, final String failure) {
-        control.getContext().setErrorMessage(failure);
+        control.getContext().failed(failure);
         control.abort();
     }
 }

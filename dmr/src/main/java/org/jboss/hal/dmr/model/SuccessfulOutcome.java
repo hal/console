@@ -44,6 +44,6 @@ public abstract class SuccessfulOutcome implements Outcome<FunctionContext> {
     @Override
     public void onFailure(final FunctionContext context) {
         MessageEvent
-                .fire(eventBus, Message.error(resources.messages().lastOperationFailed(), context.getErrorMessage()));
+                .fire(eventBus, Message.error(resources.messages().lastOperationFailed(), context.getError()));
     }
 }

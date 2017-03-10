@@ -73,9 +73,9 @@ public class HalBootstrapper implements Bootstrapper {
             @Override
             public void onFailure(final FunctionContext context) {
                 LoadingPanel.get().off();
-                logger.error("Bootstrap error: {}", context.getErrorMessage());
+                logger.error("Bootstrap error: {}", context.getError());
                 Browser.getDocument().getBody().appendChild(
-                        BootstrapFailed.create(context.getErrorMessage(), endpoints).asElement());
+                        BootstrapFailed.create(context.getError(), endpoints).asElement());
             }
 
             @Override

@@ -230,7 +230,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getError());
+                            callback.onFailure(context.getException());
                         }
 
                         @Override
