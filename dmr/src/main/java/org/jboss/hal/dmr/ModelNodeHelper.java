@@ -78,6 +78,11 @@ public final class ModelNodeHelper {
         return undefined;
     }
 
+    public static boolean failSafeBoolean(final ModelNode modelNode, final String path) {
+        ModelNode attribute = failSafeGet(modelNode, path);
+        return attribute.isDefined() && attribute.asBoolean();
+    }
+
     public static List<ModelNode> failSafeList(final ModelNode modelNode, final String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asList() : Collections.emptyList();

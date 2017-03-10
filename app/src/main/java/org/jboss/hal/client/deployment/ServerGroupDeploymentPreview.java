@@ -22,7 +22,6 @@ import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
-import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -33,12 +32,14 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_DISABLED_AT;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 
 /**
  * @author Harald Pehl
  */
-class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment> {
+class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployment> {
 
     ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,
             final Places places, final Resources resources) {
@@ -73,6 +74,9 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
         // main attributes
         PreviewAttributes<ServerGroupDeployment> attributes = new PreviewAttributes<>(sgd,
                 asList(NAME, RUNTIME_NAME));
+        if (deployment != null) {
+            contextRoot(attributes, deployment);
+        }
         attributes.append(model -> {
             PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
                     .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()))
@@ -81,12 +85,9 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
             return new PreviewAttribute(resources.constants().providedBy(), model.getName(),
                     places.historyToken(placeRequest));
         });
-        attributes.append(MANAGED);
-        attributes.append(EXPLODED);
-        attributes.append(ENABLED);
+        eme(attributes);
         if (deployment != null) {
-            attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(STATUS),
-                    deployment.getStatus().name()));
+            status(attributes, deployment);
             attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
             attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
         }
@@ -95,10 +96,7 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
 
         // sub-deployments
         if (deployment != null && deployment.hasSubdeployments()) {
-            previewBuilder().h(2).textContent(Names.SUBDEPLOYMENTS).end().ul();
-            deployment.getSubdeployments().forEach(
-                    subdeployment -> previewBuilder().li().textContent(subdeployment.getName()).end());
-            previewBuilder().end();
+            subDeployments(deployment);
         }
 
         // reference server

@@ -414,16 +414,6 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public String getText() {
-        return null;
-    }
-
-    @Override
-    public void setText(final String s) {
-
-    }
-
-    @Override
     public String getValue() {
         return null;
     }

@@ -32,9 +32,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-public class Deployment extends Content {
+class Deployment extends Content {
 
-    public enum Status {
+    enum Status {
         OK, FAILED, STOPPED, UNDEFINED
     }
 
@@ -55,7 +55,7 @@ public class Deployment extends Content {
     private final List<Subdeployment> subdeployments;
     private final List<Subsystem> subsystems;
 
-    public Deployment(final Server referenceServer, final ModelNode node) {
+    Deployment(final Server referenceServer, final ModelNode node) {
         super(node);
         this.referenceServer = referenceServer;
         this.subdeployments = new ArrayList<>();
@@ -108,15 +108,15 @@ public class Deployment extends Content {
         return builder.toString();
     }
 
-    public boolean isStandalone() {
+    boolean isStandalone() {
         return referenceServer.isStandalone();
     }
 
-    public Server getReferenceServer() {
+    Server getReferenceServer() {
         return referenceServer;
     }
 
-    public boolean isEnabled() {
+    boolean isEnabled() {
         ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
         return enabled.isDefined() ? enabled.asBoolean() : false;
@@ -130,31 +130,42 @@ public class Deployment extends Content {
         return ModelNodeHelper.asEnumValue(this, STATUS, Status::valueOf, Status.UNDEFINED);
     }
 
-    public String getEnabledTime() {
-        ModelNode node = get("enabled-time");
+    String getEnabledTime() {
+        ModelNode node = get(ENABLED_TIME);
         if (node.isDefined()) {
             return Format.shortDateTime(new Date(node.asLong()));
         }
         return null;
     }
 
-    public String getDisabledTime() {
-        ModelNode node = get("disabled-time");
+    String getDisabledTime() {
+        ModelNode node = get(DISABLED_TIME);
         if (node.isDefined()) {
             return Format.shortDateTime(new Date(node.asLong()));
         }
         return null;
     }
 
-    public boolean hasSubdeployments() {
+    boolean hasSubdeployments() {
         return !subdeployments.isEmpty();
     }
 
-    public List<Subdeployment> getSubdeployments() {
+    List<Subdeployment> getSubdeployments() {
         return subdeployments;
     }
 
-    public List<Subsystem> getSubsystems() {
-        return subsystems;
+    boolean hasSubsystem(String name) {
+        return subsystems.stream().anyMatch(subsystem -> name.equals(subsystem.getName()));
+    }
+
+    boolean hasNestedSubsystem(String name) {
+        for (Subdeployment subdeployment : subdeployments) {
+            for (Subsystem subsystem : subdeployment.getSubsystems()) {
+                if (name.equals(subsystem.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

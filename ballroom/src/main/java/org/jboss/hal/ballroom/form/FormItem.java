@@ -18,7 +18,6 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasName;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
@@ -28,8 +27,7 @@ import org.jboss.hal.dmr.model.Deprecation;
 /**
  * @author Harald Pehl
  */
-public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T>,
-        HasText /* for expression support */ {
+public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T> {
 
     Element asElement(Form.State state);
 

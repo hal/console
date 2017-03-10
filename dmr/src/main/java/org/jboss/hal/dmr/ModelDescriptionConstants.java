@@ -104,6 +104,7 @@ public interface ModelDescriptionConstants {
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
     String CONTENT = "content";
+    String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CUSTOM = "custom";
@@ -123,6 +124,7 @@ public interface ModelDescriptionConstants {
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
+    String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
     String DIVERT = "divert";
     String DRIVER_CLASS = "driver-class";
@@ -139,6 +141,7 @@ public interface ModelDescriptionConstants {
     String EJB3 = "ejb3";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENABLED = "enabled";
+    String ENABLED_TIME = "enabled-time";
     String EVICTION = "eviction";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";

@@ -16,21 +16,20 @@
 package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
-import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
 /**
  * @author Harald Pehl
  */
-class StandaloneDeploymentPreview extends PreviewContent<Deployment> {
+class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
 
     static final String LAST_ENABLED_AT = "Last enabled at";
     static final String LAST_DISABLED_AT = "Last disabled at";
@@ -59,14 +58,17 @@ class StandaloneDeploymentPreview extends PreviewContent<Deployment> {
         }
 
         PreviewAttributes<Deployment> attributes = new PreviewAttributes<>(deployment, asList(NAME, RUNTIME_NAME));
-        attributes.append(MANAGED);
-        attributes.append(EXPLODED);
-        attributes.append(ENABLED);
-        attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(STATUS),
-                deployment.getStatus().name()));
+        contextRoot(attributes, deployment);
+        eme(attributes);
+        status(attributes, deployment);
         attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
         attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
         attributes.end();
         previewBuilder().addAll(attributes);
+
+        // sub-deployments
+        if (deployment.hasSubdeployments()) {
+            subDeployments(deployment);
+        }
     }
 }

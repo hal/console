@@ -18,8 +18,10 @@ package org.jboss.hal.client.deployment;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
@@ -33,8 +35,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.Icons.flag;
 
 /**
  * @author Harald Pehl
@@ -59,8 +64,24 @@ class ContentPreview extends PreviewContent<Content> {
         this.places = places;
         this.resources = resources;
 
-        attributes = new PreviewAttributes<>(content,
-                asList(NAME, RUNTIME_NAME, MANAGED, EXPLODED)).end();
+        LabelBuilder labelBuilder = new LabelBuilder();
+        attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
+        attributes.append(model -> {
+            String label = String.join(", ", labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
+            // @formatter:off
+            Elements.Builder builder = new Elements.Builder()
+                .span()
+                    .title(labelBuilder.label(MANAGED))
+                    .css(flag(failSafeBoolean(model, MANAGED)), marginRight5)
+                .end()
+                .span()
+                    .title(labelBuilder.label(EXPLODED))
+                    .css(flag(failSafeBoolean(model, EXPLODED)))
+                .end();
+            // @formatter:on
+            return new PreviewAttribute(label, builder.elements());
+        });
+        attributes.end();
         previewBuilder().addAll(attributes);
 
         // @formatter:off

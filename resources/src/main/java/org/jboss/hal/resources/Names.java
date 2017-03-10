@@ -59,6 +59,9 @@ public interface Names {
     String CONNECTION_DEFINITION = "Connection Definition";
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
+    String CONTENT = "Content";
+    String CONTEXT_ROOT = "Context Root";
+    String CONTEXT_ROOTS = "Context Roots";
     String COOKIES = "Cookies";
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
@@ -81,7 +84,6 @@ public interface Names {
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
     String EXPIRATION = "Expiration";
-    String EXPRESSION_PLACEHOLDER = "${key:default}";
 
     String FILE = "File";
     String FILTER = "Filter";

@@ -27,18 +27,35 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public interface Icons {
 
-    String OK = pfIcon(ok);
-    String INFO = pfIcon(info);
-    String PAUSE = fontAwesome(pauseCircle) + " " + blue;
-    String WARNING = pfIcon(warningTriangleO);
+    // ------------------------------------------------------ icon css classes
+
+    String CHECK = fontAwesome("check");
     String DISABLED = pfIcon(disabledCircleO);
-    String STOPPED = fontAwesome(stopCircleO) + " " + grey;
     String ERROR = pfIcon(errorCircleO);
+    String INFO = pfIcon(info);
+    String NOT = fontAwesome("times");
+    String OK = pfIcon(ok);
+    String PAUSE = fontAwesome(pauseCircle) + " " + blue;
+    String STOPPED = fontAwesome(stopCircleO) + " " + grey;
+    String WARNING = pfIcon(warningTriangleO);
     String UNKNOWN = fontAwesome(questionsCircleO);
 
-    static Element ok() {
+    static String flag(boolean value) {
+        return value ? CHECK : NOT;
+    }
+
+
+    // ------------------------------------------------------ icon elements
+
+    static Element disabled() {
         Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(OK);
+        icon.setClassName(DISABLED);
+        return icon;
+    }
+
+    static Element error() {
+        Element icon = Browser.getDocument().createSpanElement();
+        icon.setClassName(ERROR);
         return icon;
     }
 
@@ -48,21 +65,15 @@ public interface Icons {
         return icon;
     }
 
+    static Element ok() {
+        Element icon = Browser.getDocument().createSpanElement();
+        icon.setClassName(OK);
+        return icon;
+    }
+
     static Element pause() {
         Element icon = Browser.getDocument().createSpanElement();
         icon.setClassName(PAUSE);
-        return icon;
-    }
-
-    static Element warning() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(WARNING);
-        return icon;
-    }
-
-    static Element disabled() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(DISABLED);
         return icon;
     }
 
@@ -72,9 +83,9 @@ public interface Icons {
         return icon;
     }
 
-    static Element error() {
+    static Element warning() {
         Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(ERROR);
+        icon.setClassName(WARNING);
         return icon;
     }
 

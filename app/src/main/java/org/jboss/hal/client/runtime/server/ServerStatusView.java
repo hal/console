@@ -127,9 +127,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
             "spec-name",
             "spec-vendor",
             "spec-version",
-            "management-spec-version",
-            START_TIME,
-            UPTIME
+            "management-spec-version"
     };
 
     private static final String[] BOOTSTRAP_ATTRIBUTES = {
@@ -152,6 +150,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .viewOnly()
                 .includeRuntime()
                 .include(MAIN_ATTRIBUTES)
+                .unboundFormItem(new TextBoxItem(START_TIME, new LabelBuilder().label(START_TIME)))
+                .unboundFormItem(new TextBoxItem(UPTIME, new LabelBuilder().label(UPTIME)))
                 .unsorted()
                 .build();
 
@@ -236,17 +236,18 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         headerElement.setTextContent(modelNode.get(NAME).asString());
 
         mainAttributes.view(modelNode);
-        mainAttributes.getFormItem(START_TIME)
-                .setText(Format.shortDateTime(new Date(modelNode.get(START_TIME).asLong())));
-        mainAttributes.getFormItem(UPTIME).setText(Format.humanReadableDuration(modelNode.get(UPTIME).asLong()));
+        mainAttributes.<String>getFormItem(START_TIME)
+                .setValue(Format.shortDateTime(new Date(modelNode.get(START_TIME).asLong())));
+        mainAttributes.<String>getFormItem(UPTIME)
+                .setValue(Format.humanReadableDuration(modelNode.get(UPTIME).asLong()));
 
         bootstrapAttributes.view(modelNode);
-        bootstrapAttributes.getFormItem(BOOT_CLASS_PATH)
-                .setText(pathWithNewLines(modelNode.get(BOOT_CLASS_PATH).asString(), pathSeparator));
-        bootstrapAttributes.getFormItem(CLASS_PATH)
-                .setText(pathWithNewLines(modelNode.get(CLASS_PATH).asString(), pathSeparator));
-        bootstrapAttributes.getFormItem(LIBRARY_PATH)
-                .setText(pathWithNewLines(modelNode.get(LIBRARY_PATH).asString(), pathSeparator));
+        bootstrapAttributes.<String>getFormItem(BOOT_CLASS_PATH)
+                .setValue(pathWithNewLines(modelNode.get(BOOT_CLASS_PATH).asString(), pathSeparator));
+        bootstrapAttributes.<String>getFormItem(CLASS_PATH)
+                .setValue(pathWithNewLines(modelNode.get(CLASS_PATH).asString(), pathSeparator));
+        bootstrapAttributes.<String>getFormItem(LIBRARY_PATH)
+                .setValue(pathWithNewLines(modelNode.get(LIBRARY_PATH).asString(), pathSeparator));
 
         systemProperties.update(sp, Property::getName);
     }

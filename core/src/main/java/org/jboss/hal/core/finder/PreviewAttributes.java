@@ -49,28 +49,41 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         final String value;
         final SafeHtml htmlValue;
         final String href;
+        final Element element;
+        final Iterable<Element> elements;
 
         public PreviewAttribute(final String label, final String value) {
-            this(label, value, null, null);
+            this(label, value, null, null, null, null);
         }
 
         public PreviewAttribute(final String label, final String value, final String href) {
-            this(label, value, null, href);
+            this(label, value, null, href, null, null);
         }
 
         public PreviewAttribute(final String label, final SafeHtml value) {
-            this(label, null, value, null);
+            this(label, null, value, null, null, null);
         }
 
         public PreviewAttribute(final String label, final SafeHtml value, final String href) {
-            this(label, null, value, href);
+            this(label, null, value, href, null, null);
         }
 
-        private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href) {
+        public PreviewAttribute(final String label, final Iterable<Element> elements) {
+            this(label, null, null, null, elements, null);
+        }
+
+        public PreviewAttribute(final String label, final Element element) {
+            this(label, null, null, null, null, element);
+        }
+
+        private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href,
+                final Iterable<Element> elements, final Element element) {
             this.label = label;
             this.value = value;
             this.htmlValue = htmlValue;
             this.href = href;
+            this.element = element;
+            this.elements = elements;
         }
 
         private boolean isUndefined() {
@@ -145,24 +158,34 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         // @formatter:off
         builder.li().rememberAs(id).css(listGroupItem)
             .span().rememberAs(labelId).css(key).textContent(previewAttribute.label).end();
-            if (previewAttribute.href != null) {
-                builder.a(previewAttribute.href);
-            }
-            builder.span().rememberAs(valueId).css(CSS.value);
-            if (previewAttribute.isUndefined()) {
-                builder.textContent(Names.NOT_AVAILABLE);
-            }
-            else if (previewAttribute.htmlValue != null) {
-                builder.innerHtml(previewAttribute.htmlValue);
-            } else {
-                builder.textContent(previewAttribute.value);
-                if (previewAttribute.value.length() > 15) {
-                    builder.title(previewAttribute.value);
+            if (previewAttribute.elements != null || previewAttribute.element != null) {
+                builder.span().rememberAs(valueId).css(CSS.value);
+                if (previewAttribute.elements != null) {
+                    builder.addAll(previewAttribute.elements);
+                } else {
+                    builder.add(previewAttribute.element);
                 }
-            }
-            builder.end(); // </span>
-            if (previewAttribute.href != null) {
-                builder.end(); // </a>
+                builder.end();
+            } else {
+                if (previewAttribute.href != null) {
+                    builder.a(previewAttribute.href);
+                }
+                builder.span().rememberAs(valueId).css(CSS.value);
+                if (previewAttribute.isUndefined()) {
+                    builder.textContent(Names.NOT_AVAILABLE);
+                }
+                else if (previewAttribute.htmlValue != null) {
+                    builder.innerHtml(previewAttribute.htmlValue);
+                } else {
+                    builder.textContent(previewAttribute.value);
+                    if (previewAttribute.value.length() > 15) {
+                        builder.title(previewAttribute.value);
+                    }
+                }
+                builder.end(); // </span>
+                if (previewAttribute.href != null) {
+                    builder.end(); // </a>
+                }
             }
         builder.end(); // </li>
         // @formatter:on
@@ -186,7 +209,18 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             PreviewAttribute previewAttribute = function.labelValue(model);
 
             builder.referenceFor(labelId).setTextContent(previewAttribute.label);
-            builder.referenceFor(valueId).setTextContent(previewAttribute.value);
+            Element span = builder.referenceFor(valueId);
+            if (previewAttribute.elements != null) {
+                Elements.removeChildrenFrom(span);
+                previewAttribute.elements.forEach(span::appendChild);
+            } else if (previewAttribute.element != null) {
+                Elements.removeChildrenFrom(span);
+                span.appendChild(previewAttribute.element);
+            } else if (previewAttribute.htmlValue != null) {
+                span.setInnerHTML(previewAttribute.htmlValue.asString());
+            } else if (previewAttribute.value != null) {
+                span.setTextContent(previewAttribute.value);
+            }
         }
     }
 

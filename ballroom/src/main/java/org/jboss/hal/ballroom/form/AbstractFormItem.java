@@ -310,20 +310,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.setName(name));
     }
 
-    @Override
-    @Deprecated
-    public String getText() {
-        // TODO Remove 'extends HasText' from FormItem
-        throw new UnsupportedOperationException("Use getExpressionValue() instead");
-    }
-
-    @Override
-    @Deprecated
-    public void setText(final String text) {
-        // TODO Remove 'extends HasText' from FormItem
-        throw new UnsupportedOperationException("Use setExpressionValue() instead");
-    }
-
 
     // ------------------------------------------------------ validation
 
