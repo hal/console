@@ -66,7 +66,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -275,128 +274,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String getTooltip() {
-                final String[] tooltip = new String[1];
-                ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
-                    @Override
-                    protected void onPending(final Server server) {
-                        tooltip[0] = resources.constants().pending();
-                    }
-
-                    @Override
-                    protected void onBootErrors(final Server server) {
-                        tooltip[0] = Names.BOOT_ERRORS;
-                    }
-
-                    @Override
-                    protected void onFailed(final Server server) {
-                        tooltip[0] = resources.constants().failed();
-                    }
-
-                    @Override
-                    protected void onAdminMode(final Server server) {
-                        tooltip[0] = resources.constants().adminOnly();
-                    }
-
-                    @Override
-                    protected void onStarting(final Server server) {
-                        tooltip[0] = resources.constants().starting();
-                    }
-
-                    @Override
-                    protected void onSuspended(final Server server) {
-                        tooltip[0] = resources.constants().suspended();
-                    }
-
-                    @Override
-                    protected void onNeedsReload(final Server server) {
-                        tooltip[0] = resources.constants().needsReload();
-                    }
-
-                    @Override
-                    protected void onNeedsRestart(final Server server) {
-                        tooltip[0] = resources.constants().needsRestart();
-                    }
-
-                    @Override
-                    protected void onRunning(final Server server) {
-                        tooltip[0] = resources.constants().running();
-                    }
-
-                    @Override
-                    protected void onStopped(final Server server) {
-                        tooltip[0] = resources.constants().running();
-                    }
-
-                    @Override
-                    protected void onUnknown(final Server server) {
-                        tooltip[0] = resources.constants().stopped();
-                    }
-                };
-                sss.accept(item);
-                return tooltip[0];
+                return new ServerTooltip(serverActions, resources).apply(item);
             }
 
             @Override
             public Element getIcon() {
-                final Element[] element = new Element[1];
-                ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
-                    @Override
-                    protected void onPending(final Server server) {
-                        element[0] = Icons.unknown();
-                    }
-
-                    @Override
-                    protected void onBootErrors(final Server server) {
-                        element[0] = Icons.error();
-                    }
-
-                    @Override
-                    protected void onFailed(final Server server) {
-                        element[0] = Icons.error();
-                    }
-
-                    @Override
-                    protected void onAdminMode(final Server server) {
-                        element[0] = Icons.disabled();
-                    }
-
-                    @Override
-                    protected void onStarting(final Server server) {
-                        element[0] = Icons.disabled();
-                    }
-
-                    @Override
-                    protected void onSuspended(final Server server) {
-                        element[0] = Icons.pause();
-                    }
-
-                    @Override
-                    protected void onNeedsReload(final Server server) {
-                        element[0] = Icons.warning();
-                    }
-
-                    @Override
-                    protected void onNeedsRestart(final Server server) {
-                        element[0] = Icons.warning();
-                    }
-
-                    @Override
-                    protected void onRunning(final Server server) {
-                        element[0] = Icons.ok();
-                    }
-
-                    @Override
-                    protected void onStopped(final Server server) {
-                        element[0] = Icons.stopped();
-                    }
-
-                    @Override
-                    protected void onUnknown(final Server server) {
-                        element[0] = Icons.unknown();
-                    }
-                };
-                sss.accept(item);
-                return element[0];
+                return new ServerIcon(serverActions, resources).apply(item);
             }
 
             @Override

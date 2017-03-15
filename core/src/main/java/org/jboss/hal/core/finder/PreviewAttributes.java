@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -182,10 +181,9 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                 builder.end();
             } else {
                 if (previewAttribute.href != null) {
-                    builder.a(previewAttribute.href).css(value);
-                    builder.span().rememberAs(valueId);
+                    builder.span().css(value).a(previewAttribute.href).rememberAs(valueId);
                 } else {
-                    builder.span().rememberAs(valueId).css(value);
+                    builder.span().css(value).rememberAs(valueId);
                 }
                 if (previewAttribute.isUndefined()) {
                     builder.textContent(Names.NOT_AVAILABLE);
@@ -198,9 +196,9 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                         builder.title(previewAttribute.value);
                     }
                 }
-                builder.end(); // </span>
+                builder.end();
                 if (previewAttribute.href != null) {
-                    builder.end(); // </a>
+                    builder.end();
                 }
             }
         builder.end(); // </li>
@@ -226,37 +224,21 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             PreviewAttribute previewAttribute = function.labelValue(model);
 
             builder.referenceFor(labelId).setTextContent(previewAttribute.label);
-            Element span = builder.referenceFor(valueId);
+            Element valueElement = builder.referenceFor(valueId);
             if (previewAttribute.elements != null) {
-                Elements.removeChildrenFrom(span);
-                previewAttribute.elements.forEach(span::appendChild);
+                Elements.removeChildrenFrom(valueElement);
+                previewAttribute.elements.forEach(valueElement::appendChild);
             } else if (previewAttribute.element != null) {
-                Elements.removeChildrenFrom(span);
-                span.appendChild(previewAttribute.element);
+                Elements.removeChildrenFrom(valueElement);
+                valueElement.appendChild(previewAttribute.element);
             } else if (previewAttribute.htmlValue != null || previewAttribute.value != null) {
-                Element parent = span.getParentElement();
-                if (previewAttribute.href != null) {
-                    if ("a".equalsIgnoreCase(parent.getTagName())) { //NON-NLS
-                        parent.setAttribute(UIConstants.HREF, previewAttribute.href);
-                    } else {
-                        Element a = Browser.getDocument().createElement("a");
-                        a.setAttribute(UIConstants.HREF, previewAttribute.href);
-                        parent.removeChild(span);
-                        a.appendChild(span);
-                        parent.appendChild(a);
-                    }
-                } else {
-                    if ("a".equalsIgnoreCase(parent.getTagName())) { //NON-NLS
-                        // no more href - remove a element again
-                        Element grandParent = parent.getParentElement();
-                        grandParent.removeChild(parent);
-                        grandParent.appendChild(span);
-                    }
+                if (previewAttribute.href != null && "a".equalsIgnoreCase(valueElement.getTagName())) { //NON-NLS
+                    valueElement.setAttribute(UIConstants.HREF, previewAttribute.href);
                 }
                 if (previewAttribute.htmlValue != null) {
-                    span.setInnerHTML(previewAttribute.htmlValue.asString());
+                    valueElement.setInnerHTML(previewAttribute.htmlValue.asString());
                 } else {
-                    span.setTextContent(previewAttribute.value);
+                    valueElement.setTextContent(previewAttribute.value);
                 }
             }
         }

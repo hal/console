@@ -64,6 +64,7 @@ public class TopologyFunctions {
     public static final String HOSTS = "topologyFunctions.hosts";
     public static final String SERVERS = "topologyFunctions.servers";
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
+    private static final String NO_SERVER_BOOT_ERRORS = "No second step containing the boot errors for server {}";
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyFunctions.class);
 
@@ -266,8 +267,7 @@ public class TopologyFunctions {
                                         List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
                                         server.setBootErrors(!bootErrors.isEmpty());
                                     } else {
-                                        logger.error("No second step containing the boot errors for server {}",
-                                                server.getName());
+                                        logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
                                     }
                                 }
                             }
@@ -435,8 +435,7 @@ public class TopologyFunctions {
                                         List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
                                         server.setBootErrors(!bootErrors.isEmpty());
                                     } else {
-                                        logger.error("No second step containing the boot errors for server {}",
-                                                server.getName());
+                                        logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
                                     }
                                 }
                             }
@@ -653,6 +652,23 @@ public class TopologyFunctions {
                 .collect(toMap(Server::getName, identity()));
     }
 
+    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
+            List<Server> servers) {
+        if (servers != null) {
+            Composite composite = serverRuntimeComposite(servers);
+            if (!composite.isEmpty()) {
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                    addServerRuntimeAttributes(servers, result);
+                    control.proceed();
+                });
+            } else {
+                control.proceed();
+            }
+        } else {
+            control.proceed();
+        }
+    }
+
     /**
      * @return a composite operation with two operations per started server:
      * <ol>
@@ -675,23 +691,6 @@ public class TopologyFunctions {
         return new Composite(operations);
     }
 
-    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
-            List<Server> servers) {
-        if (servers != null) {
-            Composite composite = serverRuntimeComposite(servers);
-            if (!composite.isEmpty()) {
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                    addServerRuntimeAttributes(servers, result);
-                    control.proceed();
-                });
-            } else {
-                control.proceed();
-            }
-        } else {
-            control.proceed();
-        }
-    }
-
     /**
      * Updates the server runtime attributes with information from the composite result. For each server there has to
      * be two steps in the composite result:
@@ -707,13 +706,14 @@ public class TopologyFunctions {
             ModelNode attributes = iterator.next().get(RESULT);
             String serverName = attributes.get(NAME).asString();
             Server server = serverConfigsByName.get(serverName);
+            //noinspection Duplicates
             if (server != null) {
                 server.addServerAttributes(attributes);
                 if (iterator.hasNext()) {
                     List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
                     server.setBootErrors(!bootErrors.isEmpty());
                 } else {
-                    logger.error("No second step containing the boot errors for server {}", server.getName());
+                    logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
                 }
             }
         }
