@@ -21,19 +21,16 @@ import elemental.dom.Element;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
-public class ServerIcon implements Function<Server, Element> {
+class ServerIcon implements Function<Server, Element> {
 
     private final ServerActions serverActions;
-    private final Resources resources;
 
-    public ServerIcon(final ServerActions serverActions, final Resources resources) {
+    ServerIcon(final ServerActions serverActions) {
         this.serverActions = serverActions;
-        this.resources = resources;
     }
 
     @Override

@@ -25,12 +25,12 @@ import org.jboss.hal.resources.Resources;
 /**
  * @author Harald Pehl
  */
-public class ServerTooltip implements Function<Server, String> {
+class ServerTooltip implements Function<Server, String> {
 
     private final ServerActions serverActions;
     private final Resources resources;
 
-    public ServerTooltip(final ServerActions serverActions, final Resources resources) {
+    ServerTooltip(final ServerActions serverActions, final Resources resources) {
         this.serverActions = serverActions;
         this.resources = resources;
     }

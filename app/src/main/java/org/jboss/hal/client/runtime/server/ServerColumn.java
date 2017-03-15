@@ -279,7 +279,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public Element getIcon() {
-                return new ServerIcon(serverActions, resources).apply(item);
+                return new ServerIcon(serverActions).apply(item);
             }
 
             @Override

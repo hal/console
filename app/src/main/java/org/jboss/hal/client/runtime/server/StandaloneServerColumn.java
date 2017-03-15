@@ -106,7 +106,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                     @Override
                     public Element getIcon() {
-                        return new ServerIcon(serverActions, resources).apply(item);
+                        return new ServerIcon(serverActions).apply(item);
                     }
 
                     @Override
