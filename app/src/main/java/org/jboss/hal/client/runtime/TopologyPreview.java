@@ -25,6 +25,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
@@ -35,11 +36,13 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
@@ -61,6 +64,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -93,6 +97,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final EventBus eventBus;
+    private final Places places;
     private final HostActions hostActions;
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
@@ -110,6 +115,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
             final EventBus eventBus,
+            final Places places,
             final HostActions hostActions,
             final ServerGroupActions serverGroupActions,
             final ServerActions serverActions,
@@ -119,6 +125,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.eventBus = eventBus;
+        this.places = places;
         this.hostActions = hostActions;
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
@@ -254,6 +261,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     }
                 },
                 new TopologyFunctions.Topology(environment, dispatcher),
+                new TopologyFunctions.TopologyServerBootstrapErrors(environment, dispatcher),
                 new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
     }
 
@@ -298,6 +306,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         }
                     }
                 },
+                // TODO Include function to read server boot errors
                 new TopologyFunctions.HostWithServerConfigs(server.getHost(), dispatcher),
                 new TopologyFunctions.HostStartedServers(dispatcher),
                 new TopologyFunctions.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
@@ -683,6 +692,16 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             element.getClassList().add(selected);
         }
 
+        if (server.hasBootErrors()) {
+            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_BOOT_ERRORS)
+                    .with(HOST, server.getHost())
+                    .with(SERVER, server.getName())
+                    .build();
+            String token = places.historyToken(placeRequest);
+            serverAttributes.setDescription(resources.messages().serverBootErrorsAndLink(server.getName(), token));
+        } else {
+            serverAttributes.hideDescription();
+        }
         serverAttributes.refresh(server);
         serverAttributes.setVisible(PROFILE_NAME, server.isStarted());
         serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
@@ -713,20 +732,59 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private String[] statusCss(final Server server) {
         Set<String> status = new HashSet<>();
-        if (serverActions.isPending(server)) {
-            status.add(withProgress);
-        } else if (server.isAdminMode() || server.isStopped()) {
-            status.add(inactive);
-        } else if (server.needsReload() || server.needsRestart()) {
-            status.add(warning);
-        } else if (server.isSuspended()) {
-            status.add(suspended);
-        } else if (server.isStarted() || server.isRunning()) {
-            status.add(ok);
-        } else if (server.isFailed()) {
-            status.add(error);
-        }
-        if (server.isStarting()) {
+        ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
+            @Override
+            protected void onPending(final Server server) {}
+
+            @Override
+            protected void onBootErrors(final Server server) {
+                status.add(error);
+            }
+
+            @Override
+            protected void onFailed(final Server server) {
+                status.add(error);
+            }
+
+            @Override
+            protected void onAdminMode(final Server server) {
+                status.add(inactive);
+            }
+
+            @Override
+            protected void onStarting(final Server server) {}
+
+            @Override
+            protected void onSuspended(final Server server) {
+                status.add(suspended);
+            }
+
+            @Override
+            protected void onNeedsReload(final Server server) {
+                status.add(warning);
+            }
+
+            @Override
+            protected void onNeedsRestart(final Server server) {
+                status.add(warning);
+            }
+
+            @Override
+            protected void onRunning(final Server server) {
+                status.add(ok);
+            }
+
+            @Override
+            protected void onStopped(final Server server) {
+                status.add(inactive);
+            }
+
+            @Override
+            protected void onUnknown(final Server server) {
+            }
+        };
+        sss.accept(server);
+        if (serverActions.isPending(server) || server.isStandalone()) {
             status.add(withProgress);
         }
         return status.toArray(new String[status.size()]);

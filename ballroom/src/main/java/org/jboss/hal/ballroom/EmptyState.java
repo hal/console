@@ -105,12 +105,14 @@ public class EmptyState implements IsElement {
     }
 
 
+    private static final String ICON = "icon";
     private static final String HEADER = "header";
     private static final String PARAGRAPHS_DIV = "paragraphsDiv";
     private static final String PRIMARY_ACTION_DIV = "primaryActionDiv";
     private static final String SECONDARY_ACTIONS_DIV = "secondaryActionsDiv";
 
     private final Element root;
+    private final Element icon;
     private final Element header;
     private final Element paragraphsDiv;
     private final Element primaryActionDiv;
@@ -119,7 +121,7 @@ public class EmptyState implements IsElement {
     private EmptyState(Builder builder) {
         Elements.Builder eb = new Elements.Builder().div().css(blankSlatePf);
         if (builder.icon != null) {
-            eb.div().css(blankSlatePfIcon).start("i").css(builder.icon).end().end();
+            eb.div().css(blankSlatePfIcon).start("i").css(builder.icon).rememberAs(ICON).end().end();
         }
         eb.h(1).rememberAs(HEADER).textContent(builder.title).end();
         eb.div().rememberAs(PARAGRAPHS_DIV);
@@ -144,6 +146,7 @@ public class EmptyState implements IsElement {
         }
         eb.end().end();
 
+        icon = eb.referenceFor(ICON);
         header = eb.referenceFor(HEADER);
         paragraphsDiv = eb.referenceFor(PARAGRAPHS_DIV);
         primaryActionDiv = eb.referenceFor(PRIMARY_ACTION_DIV);
@@ -152,6 +155,10 @@ public class EmptyState implements IsElement {
 
         Elements.setVisible(primaryActionDiv, builder.primaryAction != null);
         Elements.setVisible(secondaryActionsDiv, !builder.secondaryActions.isEmpty());
+    }
+
+    public void setIcon(String icon) {
+        this.icon.setClassName(icon);
     }
 
     public void setHeader(String header) {

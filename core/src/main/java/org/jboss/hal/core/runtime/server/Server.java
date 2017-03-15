@@ -42,6 +42,7 @@ public class Server extends NamedNode {
 
     private final boolean standalone;
     private Version managementVersion;
+    private boolean bootErrors;
 
     public Server(final String host, final ModelNode node) {
         this(host, node.get(NAME).asString(), node, false);
@@ -55,6 +56,7 @@ public class Server extends NamedNode {
         super(server, modelNode);
         this.standalone = standalone;
         this.managementVersion = ManagementModel.parseVersion(modelNode);
+        this.bootErrors = false;
         get(HOST).set(host);
         if (standalone) {
             get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
@@ -68,6 +70,14 @@ public class Server extends NamedNode {
 
     public Version getManagementVersion() {
         return managementVersion;
+    }
+
+    public boolean hasBootErrors() {
+        return bootErrors;
+    }
+
+    public void setBootErrors(final boolean bootErrors) {
+        this.bootErrors = bootErrors;
     }
 
     public String getServerGroup() {
@@ -139,6 +149,10 @@ public class Server extends NamedNode {
         return getServerConfigStatus() == ServerConfigStatus.STOPPED || getServerConfigStatus() == ServerConfigStatus.DISABLED;
     }
 
+    /**
+     * @return {@code true} if the {@link #getServerConfigStatus()} == {@link
+     * ServerConfigStatus#FAILED}, {@code false} otherwise. Does not take {@link #hasBootErrors()} into account!
+     */
     public boolean isFailed() {
         return getServerConfigStatus() == ServerConfigStatus.FAILED;
     }
@@ -165,8 +179,6 @@ public class Server extends NamedNode {
      * host or server is undefined.
      */
     public ResourceAddress getServerAddress() {
-        // Do *not* return ResourceAddress.ROOT for standalone. The reference server is used to dynamically
-        // create deployment addresses like 'server.getServerAddress().add(..., ...)'
         return isStandalone() ? ResourceAddress.root() : new ResourceAddress().add(HOST, getHost())
                 .add(SERVER, getName());
     }

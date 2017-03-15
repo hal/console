@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -31,6 +32,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -99,11 +101,13 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
 
+    private static final String DESCRIPTION = "description";
     private static final String LABEL = "label";
     private static final String VALUE = "value";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final T model;
+    private final Element description;
     private final LabelBuilder labelBuilder;
     private final Elements.Builder builder;
     private final Map<String, PreviewAttributeFunction<T>> functions;
@@ -111,25 +115,37 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     private Element lastAttributeGroupItem;
 
     public PreviewAttributes(final T model) {
-        this(model, CONSTANTS.mainAttributes(), Collections.emptyList());
+        this(model, CONSTANTS.mainAttributes(), null, Collections.emptyList());
     }
 
     public PreviewAttributes(final T model, final String header) {
-        this(model, header, Collections.emptyList());
+        this(model, header, null, Collections.emptyList());
     }
 
     public PreviewAttributes(final T model, final List<String> attributes) {
-        this(model, CONSTANTS.mainAttributes(), attributes);
+        this(model, CONSTANTS.mainAttributes(), null, attributes);
     }
 
     public PreviewAttributes(final T model, final String header, final List<String> attributes) {
+        this(model, header, null, attributes);
+    }
+
+    public PreviewAttributes(final T model, final String header, final String description,
+            final List<String> attributes) {
         this.model = model;
         this.labelBuilder = new LabelBuilder();
-        this.builder = new Elements.Builder().h(2).textContent(header).end();
         this.functions = new HashMap<>();
         this.attributeElements = new HashMap<>();
+        this.builder = new Elements.Builder().h(2).textContent(header).end().p().rememberAs(DESCRIPTION).end();
 
-        builder.ul().css(listGroup);
+        this.description = builder.referenceFor(DESCRIPTION);
+        if (description != null) {
+            this.description.setTextContent(description);
+        } else {
+            Elements.setVisible(this.description, false);
+        }
+
+        this.builder.ul().css(listGroup);
         attributes.forEach(this::append);
     }
 
@@ -216,16 +232,57 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             } else if (previewAttribute.element != null) {
                 Elements.removeChildrenFrom(span);
                 span.appendChild(previewAttribute.element);
-            } else if (previewAttribute.htmlValue != null) {
-                span.setInnerHTML(previewAttribute.htmlValue.asString());
-            } else if (previewAttribute.value != null) {
-                span.setTextContent(previewAttribute.value);
+            } else if (previewAttribute.htmlValue != null || previewAttribute.value != null) {
+                Element parent = span.getParentElement();
+                if (previewAttribute.href != null) {
+                    if ("a".equalsIgnoreCase(parent.getTagName())) { //NON-NLS
+                        parent.setAttribute(UIConstants.HREF, previewAttribute.href);
+                    } else {
+                        Element a = Browser.getDocument().createElement("a");
+                        a.setAttribute(UIConstants.HREF, previewAttribute.href);
+                        parent.removeChild(span);
+                        a.appendChild(span);
+                        parent.appendChild(a);
+                    }
+                } else {
+                    if ("a".equalsIgnoreCase(parent.getTagName())) { //NON-NLS
+                        // no more href - remove a element again
+                        Element grandParent = parent.getParentElement();
+                        grandParent.removeChild(parent);
+                        grandParent.appendChild(span);
+                    }
+                }
+                if (previewAttribute.htmlValue != null) {
+                    span.setInnerHTML(previewAttribute.htmlValue.asString());
+                } else {
+                    span.setTextContent(previewAttribute.value);
+                }
             }
         }
     }
 
     public void setVisible(String attribute, boolean visible) {
         Elements.setVisible(attributeElements.get(attribute), visible);
+    }
+
+    public void setDescription(String description) {
+        this.description.setTextContent(description);
+        Elements.setVisible(this.description, true);
+    }
+
+    public void setDescription(SafeHtml description) {
+        this.description.setInnerHTML(description.asString());
+        Elements.setVisible(this.description, true);
+    }
+
+    public void setDescription(Element description) {
+        Elements.removeChildrenFrom(description);
+        this.description.appendChild(description);
+        Elements.setVisible(this.description, true);
+    }
+
+    public void hideDescription() {
+        Elements.setVisible(this.description, false);
     }
 
     @Override

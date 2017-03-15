@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -46,6 +47,7 @@ class ServerPreview extends RuntimePreview<Server> {
     private static final String START_LINK = "start-link";
     private static final String STOP_LINK = "stop-link";
     private static final String RESUME_LINK = "resume-link";
+    private static final String BOOT_ERRORS_LINK = "boot-errors-link";
 
     private final ServerActions serverActions;
     private final Element startLink;
@@ -53,9 +55,12 @@ class ServerPreview extends RuntimePreview<Server> {
     private final Element reloadLink;
     private final Element restartLink;
     private final Element resumeLink;
+    private final Element bootErrorsLink;
+    private final Element[] links;
     private final PreviewAttributes<Server> attributes;
 
-    ServerPreview(final ServerActions serverActions, final Server server, final Places places,
+    ServerPreview(final ServerActions serverActions, final Server server,
+            final PlaceManager placeManager, final Places places,
             final Resources resources) {
         super(server.getName(), null, resources);
         this.serverActions = serverActions;
@@ -86,6 +91,16 @@ class ServerPreview extends RuntimePreview<Server> {
                     .on(click, event -> serverActions.resume(server))
                     .textContent(resources.constants().resume())
                 .end()
+                .a().rememberAs(BOOT_ERRORS_LINK).css(clickable, alertLink)
+                    .on(click, event-> {
+                        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_BOOT_ERRORS)
+                                .with(HOST, server.getHost())
+                                .with(SERVER, server.getName())
+                                .build();
+                        placeManager.revealPlace(placeRequest);
+                    })
+                    .textContent(resources.constants().view())
+                .end()
             .end();
         // @formatter:on
 
@@ -97,6 +112,8 @@ class ServerPreview extends RuntimePreview<Server> {
         reloadLink = previewBuilder().referenceFor(RELOAD_LINK);
         restartLink = previewBuilder().referenceFor(RESTART_LINK);
         resumeLink = previewBuilder().referenceFor(RESUME_LINK);
+        bootErrorsLink = previewBuilder().referenceFor(BOOT_ERRORS_LINK);
+        links = new Element[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
 
         if (server.isStandalone()) {
             this.attributes = new PreviewAttributes<>(server, asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE))
@@ -127,60 +144,91 @@ class ServerPreview extends RuntimePreview<Server> {
 
     @Override
     public void update(final Server server) {
-        boolean pending = serverActions.isPending(server);
-        if (pending) {
-            pending(resources.messages().serverPending(server.getName()));
-        } else if (server.isAdminMode()) {
-            adminOnly(resources.messages().serverAdminMode(server.getName()));
-        } else if (server.isStarting()) {
-            starting(resources.messages().serverStarting(server.getName()));
-        } else if (server.isSuspended()) {
-            suspended(resources.messages().serverSuspended(server.getName()));
-        } else if (server.needsReload()) {
-            needsReload(resources.messages().serverNeedsReload(server.getName()));
-        } else if (server.needsRestart()) {
-            needsRestart(resources.messages().serverNeedsRestart(server.getName()));
-        } else if (server.isRunning()) {
-            running(resources.messages().serverRunning(server.getName()));
-        } else if (server.isFailed()) {
-            timeout(resources.messages().serverFailed(server.getName()));
-        } else if (server.isStopped()) {
-            alertContainer.setClassName(alert + " " + alertInfo);
-            alertIcon.setClassName(Icons.STOPPED);
-            alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
-        } else {
-            unknown(resources.messages().serverUndefined(server.getName()));
-        }
+        ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
+            @Override
+            protected void onPending(final Server server) {
+                pending(resources.messages().serverPending(server.getName()));
+                disableAllLinks();
+            }
 
-        if (pending) {
-            disableAllLinks();
-        } else if (server.isSuspended()) {
-            Elements.setVisible(startLink, false);
-            Elements.setVisible(stopLink, false);
-            Elements.setVisible(reloadLink, false);
-            Elements.setVisible(restartLink, false);
-            Elements.setVisible(resumeLink, server.isSuspended());
-        } else if (server.needsReload() || server.needsRestart()) {
-            Elements.setVisible(startLink, false);
-            Elements.setVisible(stopLink, false);
-            Elements.setVisible(reloadLink, server.needsReload());
-            Elements.setVisible(restartLink, server.needsRestart());
-            Elements.setVisible(resumeLink, false);
-        } else if (server.isStopped() || server.isFailed()) {
-            Elements.setVisible(startLink, !server.isStandalone());
-            Elements.setVisible(stopLink, false);
-            Elements.setVisible(reloadLink, false);
-            Elements.setVisible(restartLink, false);
-            Elements.setVisible(resumeLink, false);
-        } else if (server.isRunning()) {
-            Elements.setVisible(startLink, false);
-            Elements.setVisible(stopLink, !server.isStandalone());
-            Elements.setVisible(reloadLink, false);
-            Elements.setVisible(restartLink, false);
-            Elements.setVisible(resumeLink, false);
-        } else {
-            disableAllLinks();
-        }
+            @Override
+            protected void onBootErrors(final Server server) {
+                error(resources.messages().serverBootErrors(server.getName()));
+                disableAllLinksBut(bootErrorsLink);
+            }
+
+            @Override
+            protected void onFailed(final Server server) {
+                error(resources.messages().serverFailed(server.getName()));
+                if (server.isStandalone()) {
+                    disableAllLinks();
+                } else {
+                    disableAllLinksBut(startLink);
+                }
+            }
+
+            @Override
+            protected void onAdminMode(final Server server) {
+                adminOnly(resources.messages().serverAdminMode(server.getName()));
+                disableAllLinks();
+            }
+
+            @Override
+            protected void onStarting(final Server server) {
+                adminOnly(resources.messages().serverAdminMode(server.getName()));
+                disableAllLinks();
+            }
+
+            @Override
+            protected void onSuspended(final Server server) {
+                suspended(resources.messages().serverSuspended(server.getName()));
+                disableAllLinksBut(resumeLink);
+            }
+
+            @Override
+            protected void onNeedsReload(final Server server) {
+                needsReload(resources.messages().serverNeedsReload(server.getName()));
+                disableAllLinksBut(reloadLink);
+            }
+
+            @Override
+            protected void onNeedsRestart(final Server server) {
+                needsRestart(resources.messages().serverNeedsRestart(server.getName()));
+                disableAllLinksBut(restartLink);
+            }
+
+            @Override
+            protected void onRunning(final Server server) {
+                running(resources.messages().serverRunning(server.getName()));
+                if (server.isStandalone()) {
+                    disableAllLinks();
+                } else {
+                    disableAllLinksBut(stopLink);
+                }
+            }
+
+            @Override
+            protected void onStopped(final Server server) {
+                alertContainer.setClassName(alert + " " + alertInfo);
+                alertIcon.setClassName(Icons.STOPPED);
+                alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
+                if (server.isStandalone()) {
+                    disableAllLinks();
+                } else {
+                    disableAllLinksBut(startLink);
+                }
+            }
+
+            @Override
+            protected void onUnknown(final Server server) {
+                unknown(resources.messages().serverUndefined(server.getName()));
+                disableAllLinks();
+            }
+        };
+        sss.accept(server);
+
+        attributes.refresh(server);
+        attributes.setVisible(PROFILE_NAME, server.isStarted());
         attributes.setVisible(PROFILE_NAME, server.isStarted());
         attributes.setVisible(RUNNING_MODE, server.isStarted());
         attributes.setVisible(SERVER_STATE, server.isStarted());
@@ -188,10 +236,17 @@ class ServerPreview extends RuntimePreview<Server> {
     }
 
     private void disableAllLinks() {
-        Elements.setVisible(startLink, false);
-        Elements.setVisible(stopLink, false);
-        Elements.setVisible(reloadLink, false);
-        Elements.setVisible(restartLink, false);
-        Elements.setVisible(resumeLink, false);
+        for (Element l : links) {
+            Elements.setVisible(l, false);
+        }
+    }
+
+    private void disableAllLinksBut(Element link) {
+        for (Element l : links) {
+            if (l == link) {
+                continue;
+            }
+            Elements.setVisible(l, false);
+        }
     }
 }

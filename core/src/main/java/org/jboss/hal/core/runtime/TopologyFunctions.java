@@ -18,6 +18,7 @@ package org.jboss.hal.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +145,62 @@ public class TopologyFunctions {
                             addServersToServerGroups(serverGroups, serverConfigsByName.values());
                             control.proceed();
                         });
+            }
+        }
+    }
+
+
+    /**
+     * Reads the bootstrap errors of started servers. Expects a list of servers in the context as provided by {@link
+     * Topology}.
+     */
+    public static class TopologyServerBootstrapErrors implements Function<FunctionContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+
+        public TopologyServerBootstrapErrors(final Environment environment, final Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            if (environment.isStandalone()) {
+                control.proceed();
+            } else {
+                List<Server> servers = control.getContext().get(SERVERS);
+                if (servers != null) {
+                    int operationIndex = 0;
+                    List<Operation> operations = new ArrayList<>();
+                    Map<Integer, Server> serverSteps = new HashMap<>();
+                    for (Server server : servers) {
+                        if (server.isStarted()) {
+                            serverSteps.put(operationIndex, server);
+                            ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+                            operations.add(new Operation.Builder(READ_BOOT_ERRORS, address).build());
+                            operationIndex++;
+                        }
+                    }
+                    if (!operations.isEmpty()) {
+                        Composite composite = new Composite(operations);
+                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                            int stepIndex = 0;
+                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); stepIndex++) {
+                                ModelNode step = iterator.next();
+                                if (!step.isFailure() && serverSteps.containsKey(stepIndex)) {
+                                    serverSteps.get(stepIndex).setBootErrors(!step.get(RESULT).asList().isEmpty());
+                                }
+                            }
+                            control.getContext().push(servers);
+                            control.proceed();
+                        });
+                    } else {
+                        control.proceed();
+                    }
+                } else {
+                    control.proceed();
+                }
             }
         }
     }

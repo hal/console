@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -60,7 +61,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
     @Inject
     public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
-            final ServerActions serverActions, final Places places, final Resources resources) {
+            final ServerActions serverActions, final PlaceManager placeManager, final Places places,
+            final Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -154,7 +156,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     }
                 })
 
-                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, resources))
         );
 
         this.finder = finder;

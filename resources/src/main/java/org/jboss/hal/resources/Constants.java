@@ -42,6 +42,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String active();
     String activeLower();
     String add();
+    String address();
     String adminOnly();
     String and();
     String archived();
@@ -269,6 +270,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String needsRestart();
     String no();
     String noAttributes();
+    String noBootErrors();
     String noConfiguredMailServers();
     String noContentSelected();
     String noDetails();
@@ -300,6 +302,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationFailed();
     String operationMode();
     String operationSuccessful();
+    String operation();
     String operations();
     String or();
     String orDragItHere();

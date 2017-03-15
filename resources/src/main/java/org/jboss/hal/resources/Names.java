@@ -42,6 +42,7 @@ public interface Names {
     String BACKUPS = "Backups";
     String BINARY_JDBC = "Binary JDBC";
     String BINARY_TABLE = "Binary Table";
+    String BOOT_ERRORS = "Boot Errors";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
@@ -147,6 +148,8 @@ public interface Names {
     String MASTER = "Master";
     String MB = "MB";
     String MIME_MAPPING = "Mime Mapping";
+    String MISSING_DEPENDENCIES = "Missing Dependencies";
+    String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
     String MIXED_JDBC = "Mixed JDBC";
     String MODULE = "Module";
 

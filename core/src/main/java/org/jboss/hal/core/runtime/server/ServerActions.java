@@ -82,6 +82,7 @@ public class ServerActions {
 
         @Override
         public void onSuccess() {
+            // TODO Check for server boot errors
             finish(server, Result.SUCCESS, Message.success(successMessage));
         }
 

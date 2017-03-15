@@ -57,6 +57,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String atLeastOneIsRequired(String attribute1, String attribute2);
     String available(double value);
 
+    String bootErrors();
     String blacklist(String blacklist);
 
     String cacheStore();
@@ -173,6 +174,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moreThanOneCacheStore();
     String moreThanOneCacheStoreDetails();
 
+    String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
     SafeHtml noContentSelected();
@@ -263,13 +265,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverGroupTimeout(String name);
 
     SafeHtml serverAdminMode(String name);
+    SafeHtml serverBootErrors(String name);
+    SafeHtml serverBootErrorsAndLink(String name, String link);
     SafeHtml serverConfigurationChanged();
     SafeHtml serverFailed(String name);
     SafeHtml serverNeedsReload(String name);
     SafeHtml serverNeedsRestart(String name);
     SafeHtml serverRunning(String name);
     SafeHtml serverPending(String name);
-    SafeHtml serverStarting(String name);
     SafeHtml serverStopped(String name);
     SafeHtml serverSuspended(String name);
     SafeHtml serverTimeout(String name);

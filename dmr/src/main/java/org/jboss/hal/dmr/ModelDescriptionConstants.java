@@ -106,6 +106,7 @@ public interface ModelDescriptionConstants {
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CUSTOM = "custom";
 
@@ -151,6 +152,8 @@ public interface ModelDescriptionConstants {
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
 
     String FAILED = "failed";
+    String FAILED_OPERATION = "failed-operation";
+    String FAILED_SERVICES = "failed-services";
     String FAILURE_DESCRIPTION = "failure-description";
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
@@ -226,6 +229,7 @@ public interface ModelDescriptionConstants {
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
+    String MANAGEMENT = "management";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
@@ -237,6 +241,7 @@ public interface ModelDescriptionConstants {
     String METRIC = "metric";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
+    String MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS = "missing-transitive-dependency-problems";
     String MIXED_JDBC = "mixed-jdbc";
     String MODE = "mode";
     String MODULE = "module";
@@ -249,6 +254,7 @@ public interface ModelDescriptionConstants {
     String NOT = "not";
 
     String OP = "operation";
+    String OPERATION = "operation";
     String OPERATIONS = "operations";
     String OPERATION_HEADERS = "operation-headers";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
@@ -265,6 +271,7 @@ public interface ModelDescriptionConstants {
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
     String PORT = "port";
+    String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREFIX = "prefix";
@@ -286,6 +293,7 @@ public interface ModelDescriptionConstants {
     String QUEUE_NAME = "queue-name";
 
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
+    String READ_BOOT_ERRORS = "read-boot-errors";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
@@ -354,6 +362,8 @@ public interface ModelDescriptionConstants {
     String SERVER_TYPE = "server-type";
     String SERVLET_CONTAINER = "servlet-container";
     String SERVICE = "service";
+    String SERVICES_MISSING_DEPENDENCIES = "services-missing-dependencies";
+    String SERVICES_MISSING_TRANSITIVE_DEPENDENCIES = "services-missing-transitive-dependencies";
     String SESSION_COOKIE = "session-cookie";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
