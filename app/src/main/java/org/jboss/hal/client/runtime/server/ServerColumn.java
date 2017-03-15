@@ -39,6 +39,7 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -98,6 +99,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
+            final FinderPathFactory finderPathFactory,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
@@ -141,7 +143,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
-                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
+                        resources))
         );
         this.finder = finder;
 
@@ -210,7 +213,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         }
                     },
                     serverConfigsFn,
-                    new TopologyFunctions.TopologyServerBootstrapErrors(environment, dispatcher),
                     new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
         };
         setItemsProvider(itemsProvider);

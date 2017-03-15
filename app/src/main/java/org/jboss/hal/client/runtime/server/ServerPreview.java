@@ -21,7 +21,9 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
@@ -60,7 +62,7 @@ class ServerPreview extends RuntimePreview<Server> {
     private final PreviewAttributes<Server> attributes;
 
     ServerPreview(final ServerActions serverActions, final Server server,
-            final PlaceManager placeManager, final Places places,
+            final PlaceManager placeManager, final Places places, final FinderPathFactory finderPathFactory,
             final Resources resources) {
         super(server.getName(), null, resources);
         this.serverActions = serverActions;
@@ -119,16 +121,30 @@ class ServerPreview extends RuntimePreview<Server> {
             this.attributes = new PreviewAttributes<>(server, asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE))
                     .end();
         } else {
-            PlaceRequest profilePlaceRequest = places
-                    .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
-                            .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
-                            .append(Ids.PROFILE, server.get(PROFILE_NAME).asString()))
-                    .build();
-            String profileHref = places.historyToken(profilePlaceRequest);
             this.attributes = new PreviewAttributes<>(server)
-                    .append(HOST)
-                    .append(GROUP)
-                    .append(PROFILE_NAME, profileHref)
+                    .append(model -> {
+                        String host = model.getHost();
+                        String token = places.historyToken(
+                                places.finderPlace(NameTokens.RUNTIME, finderPathFactory.runtimeHostPath(host))
+                                        .build());
+                        return new PreviewAttribute(Names.HOST, host, token);
+                    })
+                    .append(model -> {
+                        String serverGroup = model.getServerGroup();
+                        String token = places.historyToken(places.finderPlace(NameTokens.RUNTIME,
+                                finderPathFactory.runtimeServerGroupPath(serverGroup)).build());
+                        return new PreviewAttribute(Names.SERVER_GROUP, serverGroup, token);
+                    })
+                    .append(model -> {
+                        String profile = model.get(PROFILE_NAME).asString();
+                        PlaceRequest profilePlaceRequest = places
+                                .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                                        .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                                        .append(Ids.PROFILE, profile))
+                                .build();
+                        String token = places.historyToken(profilePlaceRequest);
+                        return new PreviewAttribute(Names.PROFILE, profile, token);
+                    })
                     .append(AUTO_START)
                     .append(SOCKET_BINDING_PORT_OFFSET)
                     .append(STATUS)
@@ -228,8 +244,7 @@ class ServerPreview extends RuntimePreview<Server> {
         sss.accept(server);
 
         attributes.refresh(server);
-        attributes.setVisible(PROFILE_NAME, server.isStarted());
-        attributes.setVisible(PROFILE_NAME, server.isStarted());
+        attributes.setVisible(PROFILE, server.isStarted());
         attributes.setVisible(RUNNING_MODE, server.isStarted());
         attributes.setVisible(SERVER_STATE, server.isStarted());
         attributes.setVisible(SUSPEND_STATE, server.isStarted());

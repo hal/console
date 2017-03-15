@@ -18,7 +18,6 @@ package org.jboss.hal.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,9 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
@@ -62,6 +64,8 @@ public class TopologyFunctions {
     public static final String HOSTS = "topologyFunctions.hosts";
     public static final String SERVERS = "topologyFunctions.servers";
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyFunctions.class);
 
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
@@ -151,64 +155,8 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the bootstrap errors of started servers. Expects a list of servers in the context as provided by {@link
-     * Topology}.
-     */
-    public static class TopologyServerBootstrapErrors implements Function<FunctionContext> {
-
-        private final Environment environment;
-        private final Dispatcher dispatcher;
-
-        public TopologyServerBootstrapErrors(final Environment environment, final Dispatcher dispatcher) {
-            this.environment = environment;
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            if (environment.isStandalone()) {
-                control.proceed();
-            } else {
-                List<Server> servers = control.getContext().get(SERVERS);
-                if (servers != null) {
-                    int operationIndex = 0;
-                    List<Operation> operations = new ArrayList<>();
-                    Map<Integer, Server> serverSteps = new HashMap<>();
-                    for (Server server : servers) {
-                        if (server.isStarted()) {
-                            serverSteps.put(operationIndex, server);
-                            ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
-                            operations.add(new Operation.Builder(READ_BOOT_ERRORS, address).build());
-                            operationIndex++;
-                        }
-                    }
-                    if (!operations.isEmpty()) {
-                        Composite composite = new Composite(operations);
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            int stepIndex = 0;
-                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); stepIndex++) {
-                                ModelNode step = iterator.next();
-                                if (!step.isFailure() && serverSteps.containsKey(stepIndex)) {
-                                    serverSteps.get(stepIndex).setBootErrors(!step.get(RESULT).asList().isEmpty());
-                                }
-                            }
-                            control.getContext().push(servers);
-                            control.proceed();
-                        });
-                    } else {
-                        control.proceed();
-                    }
-                } else {
-                    control.proceed();
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Adds the {@code server} resource attributes for started servers. Expects a list of servers in the context as
-     * provided by {@link Topology}.
+     * Adds the {@code server} resource attributes and the server bootstrap errors for started servers. Expects a list
+     * of servers in the context as provided by {@link Topology}.
      */
     public static class TopologyStartedServers implements Function<FunctionContext> {
 
@@ -226,28 +174,7 @@ public class TopologyFunctions {
                 control.proceed();
             } else {
                 List<Server> servers = control.getContext().get(SERVERS);
-                if (servers != null) {
-                    Composite composite = new Composite(servers.stream()
-                            .filter(Server::isStarted)
-                            .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                    server.getServerAddress())
-                                    .param(ATTRIBUTES_ONLY, true)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build())
-                            .collect(toList()));
-                    if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByName = servers.stream()
-                                .collect(toMap(Server::getName, identity()));
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            addServerAttributes(serverConfigsByName, result);
-                            control.proceed();
-                        });
-                    } else {
-                        control.proceed();
-                    }
-                } else {
-                    control.proceed();
-                }
+                readAndAddServerRuntimeAttributes(dispatcher, control, servers);
             }
         }
     }
@@ -317,31 +244,33 @@ public class TopologyFunctions {
             } else {
                 List<Host> hosts = control.getContext().get(HOSTS);
                 if (hosts != null) {
-                    Composite composite = new Composite(hosts.stream()
+                    List<Server> servers = hosts.stream()
                             .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
-                            .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                    server.getServerAddress())
-                                    .param(ATTRIBUTES_ONLY, true)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build())
-                            .collect(toList()));
+                            .collect(toList());
+                    Composite composite = serverRuntimeComposite(servers);
                     if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByHostAndServerName = hosts.stream()
-                                .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
+                        Map<String, Server> serverConfigsByHostAndServerName = servers.stream()
                                 .collect(toMap(server -> Ids.hostServer(server.getHost(), server.getName()),
                                         identity()));
-                        //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            result.stream().forEach(step -> {
-                                ModelNode payload = step.get(RESULT);
+                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                                ModelNode payload = iterator.next().get(RESULT);
                                 String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
                                 String serverName = payload.get(NAME).asString();
                                 String id = Ids.hostServer(hostName, serverName);
                                 Server server = serverConfigsByHostAndServerName.get(id);
+                                //noinspection Duplicates
                                 if (server != null) {
                                     server.addServerAttributes(payload);
+                                    if (iterator.hasNext()) {
+                                        List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                                        server.setBootErrors(!bootErrors.isEmpty());
+                                    } else {
+                                        logger.error("No second step containing the boot errors for server {}",
+                                                server.getName());
+                                    }
                                 }
-                            });
+                            }
                             control.proceed();
                         });
                     } else {
@@ -411,7 +340,7 @@ public class TopologyFunctions {
         public void execute(final Control<FunctionContext> control) {
             Host host = control.getContext().get(HOST);
             if (host != null) {
-                readAndAddServerAttributes(dispatcher, control, host);
+                readAndAddServerRuntimeAttributes(dispatcher, control, host.getServers());
             } else {
                 control.proceed();
             }
@@ -484,32 +413,33 @@ public class TopologyFunctions {
             } else {
                 List<ServerGroup> serverGroups = control.getContext().get(SERVER_GROUPS);
                 if (serverGroups != null) {
-                    Composite composite = new Composite(serverGroups.stream()
+                    List<Server> servers = serverGroups.stream()
                             .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
-                            .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                    server.getServerAddress())
-                                    .param(ATTRIBUTES_ONLY, true)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build())
-                            .collect(toList()));
+                            .collect(toList());
+                    Composite composite = serverRuntimeComposite(servers);
                     if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByServerGroupAndServerName = serverGroups.stream()
-                                .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(
-                                        server -> Ids.serverGroupServer(server.getServerGroup(), server.getName()),
-                                        identity()));
-                        //noinspection Duplicates
+                        Map<String, Server> serverConfigsByServerGroupAndServerName = servers.stream()
+                                .collect(toMap(server -> Ids.serverGroupServer(server.getServerGroup(),
+                                        server.getName()), identity()));
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            result.stream().forEach(step -> {
-                                ModelNode payload = step.get(RESULT);
+                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                                ModelNode payload = iterator.next().get(RESULT);
                                 String serverGroupName = payload.get(ModelDescriptionConstants.SERVER_GROUP).asString();
                                 String serverName = payload.get(NAME).asString();
                                 String id = Ids.serverGroupServer(serverGroupName, serverName);
                                 Server server = serverConfigsByServerGroupAndServerName.get(id);
+                                //noinspection Duplicates
                                 if (server != null) {
                                     server.addServerAttributes(payload);
+                                    if (iterator.hasNext()) {
+                                        List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                                        server.setBootErrors(!bootErrors.isEmpty());
+                                    } else {
+                                        logger.error("No second step containing the boot errors for server {}",
+                                                server.getName());
+                                    }
                                 }
-                            });
+                            }
                             control.proceed();
                         });
                     } else {
@@ -585,7 +515,7 @@ public class TopologyFunctions {
         public void execute(final Control<FunctionContext> control) {
             ServerGroup serverGroup = control.getContext().get(SERVER_GROUP);
             if (serverGroup != null) {
-                readAndAddServerAttributes(dispatcher, control, serverGroup);
+                readAndAddServerRuntimeAttributes(dispatcher, control, serverGroup.getServers());
             } else {
                 control.proceed();
             }
@@ -723,35 +653,69 @@ public class TopologyFunctions {
                 .collect(toMap(Server::getName, identity()));
     }
 
-    private static void readAndAddServerAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
-            HasServersNode hasServers) {
-        Composite composite = new Composite(hasServers.getServers().stream()
-                .filter(Server::isStarted)
-                .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerAddress())
+    /**
+     * @return a composite operation with two operations per started server:
+     * <ol>
+     * <li>{@code host=h/server=s:read-resource(attributes-only,include-runtime)}</li>
+     * <li>{@code host=h/server=s/core-service=management:read-boot-errors()}</li>
+     * </ol>
+     */
+    private static Composite serverRuntimeComposite(List<Server> servers) {
+        List<Operation> operations = new ArrayList<>();
+        for (Server server : servers) {
+            if (server.isStarted()) {
+                operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerAddress())
                         .param(ATTRIBUTES_ONLY, true)
                         .param(INCLUDE_RUNTIME, true)
-                        .build())
-                .collect(toList()));
-        if (!composite.isEmpty()) {
-            Map<String, Server> serverConfigsByName = hasServers.getServers().stream()
-                    .collect(toMap(Server::getName, identity()));
-            dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                addServerAttributes(serverConfigsByName, result);
+                        .build());
+                operations.add(new Operation.Builder(READ_BOOT_ERRORS,
+                        server.getServerAddress().add(CORE_SERVICE, MANAGEMENT)).build());
+            }
+        }
+        return new Composite(operations);
+    }
+
+    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
+            List<Server> servers) {
+        if (servers != null) {
+            Composite composite = serverRuntimeComposite(servers);
+            if (!composite.isEmpty()) {
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                    addServerRuntimeAttributes(servers, result);
+                    control.proceed();
+                });
+            } else {
                 control.proceed();
-            });
+            }
         } else {
             control.proceed();
         }
     }
 
-    private static void addServerAttributes(Map<String, Server> serverConfigsByName, CompositeResult result) {
-        result.stream().forEach(step -> {
-            ModelNode payload = step.get(RESULT);
-            String serverName = payload.get(NAME).asString();
+    /**
+     * Updates the server runtime attributes with information from the composite result. For each server there has to
+     * be two steps in the composite result:
+     * <ol>
+     * <li>The server runtime attributes (including the server name)</li>
+     * <li>The server boot errors</li>
+     * </ol>
+     */
+    private static void addServerRuntimeAttributes(List<Server> servers, CompositeResult result) {
+        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getName, identity()));
+
+        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+            ModelNode attributes = iterator.next().get(RESULT);
+            String serverName = attributes.get(NAME).asString();
             Server server = serverConfigsByName.get(serverName);
             if (server != null) {
-                server.addServerAttributes(payload);
+                server.addServerAttributes(attributes);
+                if (iterator.hasNext()) {
+                    List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                    server.setBootErrors(!bootErrors.isEmpty());
+                } else {
+                    logger.error("No second step containing the boot errors for server {}", server.getName());
+                }
             }
-        });
+        }
     }
 }

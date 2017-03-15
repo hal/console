@@ -37,6 +37,7 @@ import org.jboss.hal.resources.UIConstants;
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
 import static org.jboss.hal.resources.CSS.listGroupItem;
+import static org.jboss.hal.resources.CSS.value;
 
 /**
  * Element to show the basic attributes of a resource inside the preview pane.
@@ -111,8 +112,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     private final LabelBuilder labelBuilder;
     private final Elements.Builder builder;
     private final Map<String, PreviewAttributeFunction<T>> functions;
-    private final Map<String, Element> attributeElements;
-    private Element lastAttributeGroupItem;
+    private final Map<String, Element> labelElements;
 
     public PreviewAttributes(final T model) {
         this(model, CONSTANTS.mainAttributes(), null, Collections.emptyList());
@@ -135,7 +135,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         this.model = model;
         this.labelBuilder = new LabelBuilder();
         this.functions = new HashMap<>();
-        this.attributeElements = new HashMap<>();
+        this.labelElements = new HashMap<>();
         this.builder = new Elements.Builder().h(2).textContent(header).end().p().rememberAs(DESCRIPTION).end();
 
         this.description = builder.referenceFor(DESCRIPTION);
@@ -152,7 +152,6 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     public PreviewAttributes<T> append(final String attribute) {
         append(model -> new PreviewAttribute(labelBuilder.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : ""));
-        attributeElements.put(attribute, lastAttributeGroupItem);
         return this;
     }
 
@@ -160,7 +159,6 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         append(model -> new PreviewAttribute(labelBuilder.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : "",
                 href));
-        attributeElements.put(attribute, lastAttributeGroupItem);
         return this;
     }
 
@@ -184,9 +182,11 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                 builder.end();
             } else {
                 if (previewAttribute.href != null) {
-                    builder.a(previewAttribute.href);
+                    builder.a(previewAttribute.href).css(value);
+                    builder.span().rememberAs(valueId);
+                } else {
+                    builder.span().rememberAs(valueId).css(value);
                 }
-                builder.span().rememberAs(valueId).css(CSS.value);
                 if (previewAttribute.isUndefined()) {
                     builder.textContent(Names.NOT_AVAILABLE);
                 }
@@ -206,7 +206,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         builder.end(); // </li>
         // @formatter:on
 
-        lastAttributeGroupItem = builder.referenceFor(id);
+        Element lastAttributeGroupItem = builder.referenceFor(id);
+        labelElements.put(previewAttribute.label, lastAttributeGroupItem);
         return this;
     }
 
@@ -262,7 +263,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
     public void setVisible(String attribute, boolean visible) {
-        Elements.setVisible(attributeElements.get(attribute), visible);
+        Elements.setVisible(labelElements.get(labelBuilder.label(attribute)), visible);
     }
 
     public void setDescription(String description) {

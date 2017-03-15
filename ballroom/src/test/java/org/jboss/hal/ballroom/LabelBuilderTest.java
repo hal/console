@@ -42,4 +42,10 @@ public class LabelBuilderTest {
         assertEquals("'First', 'Second' and / or 'Third'",
                 builder.enumeration(asList("first", "second", "third"), "and / or"));
     }
+
+    @Test
+    public void label() throws Exception {
+        assertEquals("Profile Name", builder.label("Profile Name"));
+
+    }
 }

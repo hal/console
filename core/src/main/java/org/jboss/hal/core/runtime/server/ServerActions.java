@@ -73,17 +73,32 @@ public class ServerActions {
     private class ServerTimeoutCallback implements TimeoutHandler.Callback {
 
         private final Server server;
+        private final Action action;
         private final SafeHtml successMessage;
 
-        ServerTimeoutCallback(final Server server, final SafeHtml successMessage) {
+        ServerTimeoutCallback(final Server server, final Action action, final SafeHtml successMessage) {
             this.server = server;
+            this.action = action;
             this.successMessage = successMessage;
         }
 
         @Override
         public void onSuccess() {
             // TODO Check for server boot errors
-            finish(server, Result.SUCCESS, Message.success(successMessage));
+            if (Action.isStarting(action)) {
+                ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+                Operation operation = new Operation.Builder(READ_BOOT_ERRORS, address).build();
+                dispatcher.execute(operation, result -> {
+                    if (!result.asList().isEmpty()) {
+                        finish(server, Result.ERROR,
+                                Message.error(resources.messages().serverBootErrors(server.getName())));
+                    } else {
+                        finish(server, Result.SUCCESS, Message.success(successMessage));
+                    }
+                });
+            } else {
+                finish(server, Result.SUCCESS, Message.success(successMessage));
+            }
         }
 
         @Override
@@ -240,7 +255,7 @@ public class ServerActions {
                     result -> new TimeoutHandler(dispatcher, timeout).execute(
                             server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
                             server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
-                            new ServerTimeoutCallback(server, successMessage)),
+                            new ServerTimeoutCallback(server, action, successMessage)),
                     new ServerFailedCallback(server, errorMessage),
                     new ServerExceptionCallback(server, errorMessage));
 
@@ -282,7 +297,7 @@ public class ServerActions {
                                     result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
                                             readSuspendState(server),
                                             checkSuspendState(SUSPENDED),
-                                            new ServerTimeoutCallback(server, resources.messages()
+                                            new ServerTimeoutCallback(server, Action.SUSPEND, resources.messages()
                                                     .suspendServerSuccess(server.getName()))),
                                     new ServerFailedCallback(server,
                                             resources.messages().suspendServerError(server.getName())),
@@ -320,7 +335,8 @@ public class ServerActions {
                 result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
                         server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
                         server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
-                        new ServerTimeoutCallback(server, resources.messages().resumeServerSuccess(server.getName()))),
+                        new ServerTimeoutCallback(server, Action.RESUME,
+                                resources.messages().resumeServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().resumeServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
     }
@@ -355,7 +371,7 @@ public class ServerActions {
                                     result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
                                             readServerConfigStatus(server),
                                             checkServerConfigStatus(STOPPED, DISABLED),
-                                            new ServerTimeoutCallback(server,
+                                            new ServerTimeoutCallback(server, Action.STOP,
                                                     resources.messages().stopServerSuccess(server.getName()))),
                                     new ServerFailedCallback(server,
                                             resources.messages().stopServerError(server.getName())),
@@ -389,7 +405,7 @@ public class ServerActions {
                             result -> new TimeoutHandler(dispatcher, SERVER_KILL_TIMEOUT).execute(
                                     readServerConfigStatus(server),
                                     checkServerConfigStatus(STOPPED, DISABLED),
-                                    new ServerTimeoutCallback(server,
+                                    new ServerTimeoutCallback(server, Action.KILL,
                                             resources.messages().killServerSuccess(server.getName()))),
                             new ServerFailedCallback(server,
                                     resources.messages().killServerError(server.getName())),
@@ -407,7 +423,8 @@ public class ServerActions {
                 result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
                         readServerConfigStatus(server),
                         checkServerConfigStatus(STARTED),
-                        new ServerTimeoutCallback(server, resources.messages().startServerSuccess(server.getName()))),
+                        new ServerTimeoutCallback(server, Action.START,
+                                resources.messages().startServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
     }

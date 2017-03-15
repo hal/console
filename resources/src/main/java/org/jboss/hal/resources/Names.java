@@ -210,6 +210,7 @@ public interface Names {
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
     String SOCKET_BINDING = "Socket Binding";
+    String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
