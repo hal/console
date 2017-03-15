@@ -24,10 +24,12 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderContext;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
@@ -63,6 +65,8 @@ public class BrowseByColumn extends StaticItemColumn {
             final @Footer Provider<Progress> progress,
             final EventBus eventBus,
             final Dispatcher dispatcher,
+            final Places places,
+            final FinderPathFactory finderPathFactory,
             final HostActions hostActions,
             final ServerGroupActions serverGroupActions,
             final ServerActions serverActions,
@@ -71,7 +75,8 @@ public class BrowseByColumn extends StaticItemColumn {
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
                                 .onPreview(new TopologyPreview(environment, dispatcher, progress, eventBus,
-                                        hostActions, serverGroupActions, serverActions, resources))
+                                        places, finderPathFactory, hostActions, serverGroupActions, serverActions,
+                                        resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(Ids.HOST)

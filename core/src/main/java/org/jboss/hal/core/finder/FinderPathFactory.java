@@ -132,7 +132,13 @@ public class FinderPathFactory {
      * Creates a finder path for the selected server group.
      */
     public FinderPath runtimeServerGroupPath() {
-        String serverGroup = statementContext.selectedServerGroup();
+        return runtimeServerGroupPath(statementContext.selectedServerGroup());
+    }
+
+    /**
+     * Creates a finder path for the specified server group.
+     */
+    public FinderPath runtimeServerGroupPath(String serverGroup) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
                         resources.constants().browseBy(), Names.SERVER_GROUPS)

@@ -80,6 +80,12 @@ public interface Ids {
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
+    String BOOT_ERRORS = "boot-errors";
+    String BOOT_ERRORS_ADDRESS_COLUMN = build(BOOT_ERRORS, "address", "column");
+    String BOOT_ERRORS_FORM = build(BOOT_ERRORS, FORM_SUFFIX);
+    String BOOT_ERRORS_OPERATION_COLUMN = build(BOOT_ERRORS, "operation", "column");
+    String BOOT_ERRORS_TABLE = build(BOOT_ERRORS, TABLE_SUFFIX);
+
     String CACHE_COMPONENT_BACKUP_FOR = "cache-component-backup-for";
     String CACHE_COMPONENT_EVICTION = "cache-component-eviction";
     String CACHE_COMPONENT_EXPIRATION = "cache-component-expiration";

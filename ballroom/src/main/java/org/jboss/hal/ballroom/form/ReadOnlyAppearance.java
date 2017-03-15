@@ -56,10 +56,10 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
 public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
     private static final String VALUE_CONTAINER = "valueContainer";
-    protected static final String VALUE_ELEMENT = "valueElement";
+    private static final String VALUE_ELEMENT = "valueElement";
 
     final Element valueContainer;
-    protected Element valueElement;
+    Element valueElement;
     private final Element root;
     private final Element hintElement;
     private final Element defaultValue;

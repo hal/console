@@ -20,11 +20,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
@@ -35,9 +39,11 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.Icons;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -45,9 +51,7 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -60,16 +64,21 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
     @Inject
     public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
-            final ServerActions serverActions, final Places places, final Resources resources) {
+            final ItemActionFactory itemActionFactory, final ServerActions serverActions,
+            final PlaceManager placeManager, final Places places, final FinderPathFactory finderPathFactory,
+            final Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+                    Operation attributes = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
                             .param(INCLUDE_RUNTIME, true)
                             .param(ATTRIBUTES_ONLY, true)
                             .build();
-                    dispatcher.execute(operation, result -> {
-                        Server.STANDALONE.addServerAttributes(result);
+                    Operation bootErrors = new Operation.Builder(READ_BOOT_ERRORS,
+                            ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT)).build();
+                    dispatcher.execute(new Composite(attributes, bootErrors), (CompositeResult result) -> {
+                        Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
+                        Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());
                         callback.onSuccess(singletonList(Server.STANDALONE));
 
                         // Restore pending servers visualization
@@ -92,57 +101,30 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                     @Override
                     public String getTooltip() {
-                        if (serverActions.isPending(item)) {
-                            return resources.constants().pending();
-                        } else if (item.isAdminMode()) {
-                            return resources.constants().adminOnly();
-                        } else if (item.isStarting()) {
-                            return resources.constants().starting();
-                        } else if (item.isSuspended()) {
-                            return resources.constants().suspended();
-                        } else if (item.needsReload()) {
-                            return resources.constants().needsReload();
-                        } else if (item.needsRestart()) {
-                            return resources.constants().needsRestart();
-                        } else if (item.isRunning()) {
-                            return resources.constants().running();
-                        } else if (item.isFailed()) {
-                            return resources.constants().failed();
-                        } else {
-                            return resources.constants().unknownState();
-                        }
+                        return new ServerTooltip(serverActions, resources).apply(item);
                     }
 
                     @Override
                     public Element getIcon() {
-                        if (serverActions.isPending(item)) {
-                            return Icons.unknown();
-                        } else if (item.isAdminMode() || item.isStarting()) {
-                            return Icons.disabled();
-                        } else if (item.isSuspended()) {
-                            return Icons.pause();
-                        } else if (item.needsReload() || item.needsRestart()) {
-                            return Icons.warning();
-                        } else if (item.isRunning()) {
-                            return Icons.ok();
-                        } else if (item.isFailed()) {
-                            return Icons.error();
-                        } else {
-                            return Icons.unknown();
-                        }
+                        return new ServerIcon(serverActions, resources).apply(item);
                     }
 
                     @Override
                     public List<ItemAction<Server>> actions() {
                         List<ItemAction<Server>> actions = new ArrayList<>();
                         if (!serverActions.isPending(item)) {
-                            // Order is: reload, restart, (resume | suspend)
+                            // Order is: reload, restart, (resume | suspend), boot errors
                             actions.add(new ItemAction<>(resources.constants().reload(), serverActions::reload));
                             actions.add(new ItemAction<>(resources.constants().restart(), serverActions::restart));
                             if (item.isSuspended()) {
                                 actions.add(new ItemAction<>(resources.constants().resume(), serverActions::resume));
                             } else {
                                 actions.add(new ItemAction<>(resources.constants().suspend(), serverActions::suspend));
+                            }
+                            if (item.hasBootErrors()) {
+                                PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(
+                                        NameTokens.SERVER_BOOT_ERRORS).build();
+                                actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest));
                             }
                         }
                         return actions;
@@ -154,7 +136,8 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     }
                 })
 
-                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
+                        resources))
         );
 
         this.finder = finder;

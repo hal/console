@@ -16,8 +16,8 @@
 package org.jboss.hal.client.runtime.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -34,10 +34,12 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.runtime.BrowseByColumn;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -45,6 +47,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
@@ -57,15 +60,12 @@ import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -73,11 +73,8 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
@@ -95,11 +92,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     @Inject
     public ServerColumn(final Finder finder,
             final Dispatcher dispatcher,
+            final Environment environment,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
+            final FinderPathFactory finderPathFactory,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
@@ -143,13 +142,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
-                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, placeManager, places, finderPathFactory,
+                        resources))
         );
         this.finder = finder;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
-            Function<FunctionContext> startedServersFn;
             boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
@@ -163,7 +162,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
-                        control.getContext().push(servers);
+                        control.getContext().set(TopologyFunctions.SERVERS, servers);
                         control.proceed();
                     });
                 };
@@ -184,47 +183,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     return new Server(host, modelNode.get(RESULT));
                                 })
                                 .collect(toList());
-                        control.getContext().push(servers);
+                        control.getContext().set(TopologyFunctions.SERVERS, servers);
                         control.proceed();
                     });
                 };
             }
-
-            startedServersFn = control -> {
-                List<Server> servers = control.getContext().pop();
-                if (servers != null) {
-                    Composite composite = new Composite(servers.stream()
-                            .filter(Server::isStarted)
-                            .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                    server.getServerAddress())
-                                    .param(ATTRIBUTES_ONLY, true)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build())
-                            .collect(toList()));
-                    if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByName = servers.stream()
-                                .collect(toMap(Server::getName, identity()));
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            result.stream().forEach(step -> {
-                                ModelNode payload = step.get(RESULT);
-                                String name = payload.get(NAME).asString();
-                                Server server = serverConfigsByName.get(name);
-                                if (server != null) {
-                                    server.addServerAttributes(payload);
-                                }
-                            });
-                            control.getContext().push(servers);
-                            control.proceed();
-                        });
-                    } else {
-                        control.getContext().push(servers);
-                        control.proceed();
-                    }
-                } else {
-                    control.getContext().push(emptyList());
-                    control.proceed();
-                }
-            };
 
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
                     new Outcome<FunctionContext>() {
@@ -235,7 +198,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
                         @Override
                         public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.emptyStack() ? emptyList() : context.pop();
+                            List<Server> servers = context.get(TopologyFunctions.SERVERS);
+                            if (servers == null) {
+                                servers = Collections.emptyList();
+                            }
                             callback.onSuccess(servers.stream().sorted(comparing(Server::getName))
                                     .collect(toList()));
 
@@ -245,7 +211,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
                         }
                     },
-                    serverConfigsFn, startedServersFn);
+                    serverConfigsFn,
+                    new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
         };
         setItemsProvider(itemsProvider);
 
@@ -307,48 +274,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String getTooltip() {
-                if (serverActions.isPending(item)) {
-                    return resources.constants().pending();
-                } else if (item.isAdminMode()) {
-                    return resources.constants().adminOnly();
-                } else if (item.isStarting()) {
-                    return resources.constants().starting();
-                } else if (item.isSuspended()) {
-                    return resources.constants().suspended();
-                } else if (item.needsReload()) {
-                    return resources.constants().needsReload();
-                } else if (item.needsRestart()) {
-                    return resources.constants().needsRestart();
-                } else if (item.isRunning()) {
-                    return resources.constants().running();
-                } else if (item.isFailed()) {
-                    return resources.constants().failed();
-                } else if (item.isStopped()) {
-                    return resources.constants().stopped();
-                } else {
-                    return resources.constants().unknownState();
-                }
+                return new ServerTooltip(serverActions, resources).apply(item);
             }
 
             @Override
             public Element getIcon() {
-                if (serverActions.isPending(item)) {
-                    return Icons.unknown();
-                } else if (item.isAdminMode() || item.isStarting()) {
-                    return Icons.disabled();
-                } else if (item.isSuspended()) {
-                    return Icons.pause();
-                } else if (item.needsReload() || item.needsRestart()) {
-                    return Icons.warning();
-                } else if (item.isRunning()) {
-                    return Icons.ok();
-                } else if (item.isFailed()) {
-                    return Icons.error();
-                } else if (item.isStopped()) {
-                    return Icons.stopped();
-                } else {
-                    return Icons.unknown();
-                }
+                return new ServerIcon(serverActions, resources).apply(item);
             }
 
             @Override
@@ -359,6 +290,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Ids.server(item.getName()), placeRequest));
+                if (item.hasBootErrors()) {
+                    PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_BOOT_ERRORS)
+                            .with(HOST, item.getHost())
+                            .with(SERVER, item.getName())
+                            .build();
+                    actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest));
+                }
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
                         actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));

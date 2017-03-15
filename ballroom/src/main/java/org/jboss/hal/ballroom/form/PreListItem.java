@@ -13,18 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.runtime;
+package org.jboss.hal.ballroom.form;
+
+import java.util.List;
+
+import org.jboss.hal.ballroom.LabelBuilder;
 
 /**
- * Enum constants for operations on runtime resources such as server groups, hosts or servers. Not used in DMR
- * operations, but for the various GWT events.
- *
  * @author Harald Pehl
  */
-public enum Action {
-    RELOAD, RESTART, SUSPEND, RESUME, START, STOP, KILL;
+public class PreListItem extends ListItem {
 
-    public static boolean isStarting(Action action) {
-        return action == RELOAD || action == RESTART || action == RESUME || action == START;
+    public PreListItem(String name) {
+        this(name, new LabelBuilder().label(name));
+    }
+
+    public PreListItem(String name, String label) {
+        super(name, label);
+
+        // replace read-only appearance
+        addAppearance(Form.State.READONLY, new PreReadOnlyAppearance<List<String>>() {
+            @Override
+            public String asString(final List<String> value) {
+                return String.join("\n", value);
+            }
+        });
     }
 }
