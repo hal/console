@@ -27,7 +27,6 @@ import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.MultiSelectBoxItem;
 import org.jboss.hal.ballroom.form.NumberItem;
-import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -52,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 /**
  * @author Harald Pehl
@@ -169,8 +169,12 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case STRING: {
                     List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                     if (allowedValues.isEmpty()) {
-                        FormItem<String> textBoxItem = PASSWORD.equals(name) ? new PasswordItem(name,
-                                label) : new TextBoxItem(name, label, null);
+                        FormItem<String> textBoxItem = new TextBoxItem(name, label, null);
+                        boolean sensitive = failSafeGet(attributeDescription,
+                                ACCESS_CONSTRAINTS + "/" + SENSITIVE).isDefined();
+                        if (PASSWORD.equals(name) || sensitive) {
+                            textBoxItem.mask();
+                        }
                         if (attributeDescription.hasDefined(DEFAULT)) {
                             textBoxItem.assignDefaultValue(attributeDescription.get(DEFAULT).asString());
                         }
@@ -250,4 +254,5 @@ class DefaultFormItemProvider implements FormItemProvider {
         }
         return emptyList();
     }
+
 }

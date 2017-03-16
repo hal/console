@@ -49,14 +49,16 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
 
     static {
         ATTRIBUTES.put("string-attributes", new String[]{
+                "password",
                 "string-required",
                 "string-optional",
                 "string-default",
                 "string-expression",
+                "string-sensitive",
+                "string-sensitive-expression",
                 "string-restart",
                 "string-suggestion",
-                "string-suggestion-expression",
-                "password"});
+                "string-suggestion-expression"});
         ATTRIBUTES.put("int-attributes", new String[]{
                 "int-required",
                 "int-optional",

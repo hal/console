@@ -44,6 +44,8 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     void assignDefaultValue(T defaultValue);
 
+    void mask();
+
     void registerSuggestHandler(SuggestHandler suggestHandler);
 
     void addValidationHandler(FormItemValidation<T> validationHandler);

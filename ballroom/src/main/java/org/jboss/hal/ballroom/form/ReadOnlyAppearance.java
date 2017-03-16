@@ -25,7 +25,10 @@ import org.jboss.hal.dmr.model.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
+import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
@@ -65,6 +68,9 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     private final Element defaultValue;
     private final Element expressionLink;
     private final Element restrictedMarker;
+    private Element peekLink;
+    private boolean masked;
+    private String backupValue;
 
     protected ReadOnlyAppearance(Set<Decoration> supportedDecorations) {
         super(supportedDecorations);
@@ -85,6 +91,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         valueContainer = builder.referenceFor(VALUE_CONTAINER);
         valueElement = builder.referenceFor(VALUE_ELEMENT);
         root = builder.build();
+        masked = false;
 
         hintElement = new Elements.Builder().span().css(hint).end().build();
         defaultValue = new Elements.Builder().span()
@@ -99,6 +106,17 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 .css(fontAwesome("lock"))
                 .aria(HIDDEN, TRUE)
                 .textContent(CONSTANTS.restricted())
+                .end().build();
+        peekLink = new Elements.Builder().span()
+                .css(fontAwesome("eye"), clickable)
+                .title(CONSTANTS.showSensitive())
+                .on(click, event -> {
+                    if (masked) {
+                        unmask();
+                    } else {
+                        mask();
+                    }
+                })
                 .end().build();
     }
 
@@ -124,6 +142,24 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.getClassList().remove(empty);
         }
+
+        if (isApplied(SENSITIVE)) {
+            if (masked) {
+                mask();
+            } else {
+                unmask();
+            }
+        }
+        Elements.setVisible(peekLink, isApplied(SENSITIVE) && !Strings.isNullOrEmpty(stringValue));
+    }
+
+    @Override
+    public void clearValue() {
+        valueElement.setTextContent("");
+        valueElement.getClassList().add(empty);
+        if (isApplied(SENSITIVE)) {
+            Elements.setVisible(peekLink, false);
+        }
     }
 
     @Override
@@ -134,12 +170,34 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.getClassList().remove(empty);
         }
+
+        if (isApplied(SENSITIVE)) {
+            if (masked) {
+                mask();
+            } else {
+                unmask();
+            }
+        }
+        Elements.setVisible(peekLink, isApplied(SENSITIVE) && !Strings.isNullOrEmpty(expression));
     }
 
-    @Override
-    public void clearValue() {
-        valueElement.setTextContent("");
-        valueElement.getClassList().add(empty);
+    @SuppressWarnings("HardCodedStringLiteral")
+    private void mask() {
+        backupValue = valueElement.getTextContent();
+        valueElement.setTextContent(backupValue.replaceAll(".", "\u25CF"));
+        peekLink.setTitle(CONSTANTS.showSensitive());
+        peekLink.getClassList().add("fa-eye");
+        peekLink.getClassList().remove("fa-eye-slash");
+        masked = true;
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    private void unmask() {
+        valueElement.setTextContent(Strings.nullToEmpty(backupValue));
+        peekLink.setTitle(CONSTANTS.hideSensitive());
+        peekLink.getClassList().add("fa-eye-slash");
+        peekLink.getClassList().remove("fa-eye");
+        masked = false;
     }
 
 
@@ -164,7 +222,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case EXPRESSION:
                 ExpressionContext ec = (ExpressionContext) context;
-                expressionLink.setOnclick(event -> ec.callback.resolveExpression(valueElement.getTextContent()));
+                expressionLink.setOnclick(
+                        event -> ec.callback.resolveExpression(masked ? backupValue : valueElement.getTextContent()));
                 if (isApplied(HINT)) {
                     valueContainer.insertBefore(expressionLink, hintElement);
                 } else {
@@ -183,6 +242,15 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 Elements.failSafeRemove(valueContainer, expressionLink);
                 Elements.failSafeRemove(valueContainer, hintElement);
                 valueContainer.appendChild(restrictedMarker);
+                break;
+
+            case SENSITIVE:
+                if (isApplied(EXPRESSION)) {
+                    valueContainer.insertBefore(peekLink, expressionLink);
+                } else {
+                    valueContainer.appendChild(peekLink);
+                }
+                mask();
                 break;
 
             // not supported
@@ -216,6 +284,11 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case RESTRICTED:
                 Elements.failSafeRemove(valueContainer, restrictedMarker);
+                break;
+
+            case SENSITIVE:
+                Elements.failSafeRemove(valueContainer, peekLink);
+                unmask();
                 break;
 
             // not supported

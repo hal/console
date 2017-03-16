@@ -434,6 +434,11 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public void mask() {
+
+    }
+
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler) {
         return null;
     }
