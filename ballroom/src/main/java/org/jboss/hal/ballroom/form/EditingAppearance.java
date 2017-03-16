@@ -26,9 +26,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
+import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -51,10 +54,13 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     private static final String INPUT_CONTAINER = "inputContainer";
     private static final String EXPRESSION_BUTTON = "expressionButton";
     private static final String SUGGEST_BUTTON = "suggestButton";
+    private static final String PEEK_BUTTON = "peekButton";
+    private static final String PEEK_ICON = "peekIcon";
 
     final Element root;
     final Element inputContainer;
     final InputElement inputElement;
+    final String inputType;
     final Element inputGroup;
     final Element helpBlock;
     Element expressionContainer;
@@ -63,11 +69,17 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     Element suggestButton;
     Element restrictedMarker;
     Element hintMarker;
+    Element peekButton;
+    Element peekIcon;
+    Element peekContainer;
+    boolean masked;
     boolean attached;
 
     protected EditingAppearance(Set<Decoration> supportedDecorations, elemental.html.InputElement inputElement) {
         super(supportedDecorations);
         this.inputElement = inputElement;
+        this.inputType = inputElement.getType();
+        this.masked = false;
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
@@ -117,6 +129,26 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
+    private void mask() {
+        inputElement.setType("password");
+        inputElement.focus();
+        peekButton.setTitle(CONSTANTS.showSensitive());
+        peekIcon.getClassList().add("fa-eye");
+        peekIcon.getClassList().remove("fa-eye-slash");
+        masked = true;
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    private void unmask() {
+        inputElement.setType(inputType);
+        inputElement.focus();
+        peekButton.setTitle(CONSTANTS.hideSensitive());
+        peekIcon.getClassList().add("fa-eye-slash");
+        peekIcon.getClassList().remove("fa-eye");
+        masked = false;
+    }
+
 
     // ------------------------------------------------------ apply decoration
 
@@ -146,6 +178,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                 break;
             case RESTRICTED:
                 applyRestricted();
+                break;
+            case SENSITIVE:
+                applySensitive();
                 break;
             case SUGGESTIONS:
                 applySuggestions((SuggestHandler) context);
@@ -196,7 +231,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     void applyHint(final String hint) {
         if (hintMarker == null) {
-            hintMarker = new Elements.Builder().span().id(Ids.uniqueId()).css(inputGroupAddon).end().build();
+            hintMarker = Appearance.hintMarker();
         }
 
         if (!hasInputGroup()) {
@@ -232,6 +267,37 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         Elements.removeChildrenFrom(inputGroup);
         wrapInputElement();
         inputGroup.appendChild(restrictedMarker);
+    }
+
+    void applySensitive() {
+        if (peekIcon == null || peekButton == null) {
+            // @formatter:off
+            Elements.Builder builder = new Elements.Builder()
+                .span().css(inputGroupBtn)
+                    .button().css(btn, btnDefault)
+                             .rememberAs(PEEK_BUTTON)
+                             .title(CONSTANTS.showSensitive())
+                             .on(click, event -> {
+                                 if (masked) {
+                                     unmask();
+                                 } else {
+                                     mask();
+                                 }
+                             })
+                        .start("i").css(fontAwesome("eye")).rememberAs(PEEK_ICON).end()
+                    .end()
+                .end();
+            // @formatter:on
+            peekButton = builder.referenceFor(PEEK_BUTTON);
+            peekIcon = builder.referenceFor(PEEK_ICON);
+            peekContainer = builder.build();
+        }
+
+        if (!hasInputGroup()) {
+            wrapInputElement();
+        }
+        inputGroup.appendChild(peekContainer);
+        mask();
     }
 
     void applySuggestions(final SuggestHandler suggestHandler) {
@@ -285,6 +351,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             case RESTRICTED:
                 unapplyRestricted();
                 break;
+            case SENSITIVE:
+                unapplySensitive();
+                break;
             case SUGGESTIONS:
                 unapplySuggestions();
                 break;
@@ -305,7 +374,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     void unapplyExpression() {
         Elements.failSafeRemove(inputGroup, expressionContainer);
-        if (!isApplied(HINT) && !isApplied(RESTRICTED)) {
+        if (!isApplied(HINT) && !isApplied(RESTRICTED) && !isApplied(SENSITIVE)) {
             unwrapInputElement();
         }
     }
@@ -313,7 +382,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     void unapplyHint() {
         inputElement.removeAttribute(UIConstants.ARIA_DESCRIBEDBY);
         Elements.failSafeRemove(inputGroup, hintMarker);
-        if (!isApplied(EXPRESSION) && !isApplied(RESTRICTED)) {
+        if (!isApplied(EXPRESSION) && !isApplied(RESTRICTED) && !isApplied(SENSITIVE)) {
             unwrapInputElement();
         }
     }
@@ -338,9 +407,17 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
     }
 
+    void unapplySensitive() {
+        Elements.failSafeRemove(inputGroup, peekContainer);
+        if (!isApplied(EXPRESSION) && !isApplied(HINT) && !isApplied(SUGGESTIONS)) {
+            unwrapInputElement();
+        }
+        unmask();
+    }
+
     void unapplySuggestions() {
         Elements.failSafeRemove(inputGroup, suggestContainer);
-        if (!isApplied(EXPRESSION) && !isApplied(HINT)) {
+        if (!isApplied(EXPRESSION) && !isApplied(HINT) && !isApplied(SENSITIVE)) {
             unwrapInputElement();
         }
     }

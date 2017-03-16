@@ -42,6 +42,9 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
      */
     String FORM_ITEM_GROUP = "formItemGroup";
 
+
+    // ------------------------------------------------------ static builder methods
+
     static Element inputGroup() {
         return new Elements.Builder().div().css(inputGroup).end().build();
     }
@@ -55,6 +58,13 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
                 .span().css(inputGroupAddon).start("i").css(fontAwesome("lock")).end().end()
                 .build();
     }
+
+    static Element hintMarker() {
+        return new Elements.Builder().span().css(inputGroupAddon).end().build();
+    }
+
+
+    // ------------------------------------------------------ API
 
     void showValue(T value);
 

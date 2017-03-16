@@ -36,9 +36,9 @@ import static org.jboss.hal.resources.CSS.deprecated;
  */
 abstract class AbstractAppearance<T> implements Appearance<T> {
 
-    protected static final String LABEL_ELEMENT = "labelElement";
-    protected static final Constants CONSTANTS = GWT.create(Constants.class);
+    static final String LABEL_ELEMENT = "labelElement";
     static final Messages MESSAGES = GWT.create(Messages.class);
+    protected static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final Set<Decoration> supportedDecorations;
     private final Set<Decoration> appliedDecorations;

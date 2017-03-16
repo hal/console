@@ -34,5 +34,6 @@ public enum Decoration {
     INVALID, // String errorMessage
     REQUIRED, // null
     RESTRICTED, // null
+    SENSITIVE, // null
     SUGGESTIONS, // SuggestHandler
 }
