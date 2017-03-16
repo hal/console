@@ -51,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 /**
  * @author Harald Pehl
@@ -169,7 +170,9 @@ class DefaultFormItemProvider implements FormItemProvider {
                     List<String> allowedValues = stringValues(attributeDescription, ALLOWED);
                     if (allowedValues.isEmpty()) {
                         FormItem<String> textBoxItem = new TextBoxItem(name, label, null);
-                        if (PASSWORD.equals(name)) {
+                        boolean sensitive = failSafeGet(attributeDescription,
+                                ACCESS_CONSTRAINTS + "/" + SENSITIVE).isDefined();
+                        if (PASSWORD.equals(name) || sensitive) {
                             textBoxItem.mask();
                         }
                         if (attributeDescription.hasDefined(DEFAULT)) {
@@ -251,4 +254,5 @@ class DefaultFormItemProvider implements FormItemProvider {
         }
         return emptyList();
     }
+
 }

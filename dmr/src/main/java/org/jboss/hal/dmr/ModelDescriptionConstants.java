@@ -45,6 +45,7 @@ package org.jboss.hal.dmr;
 public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
+    String ACCESS_CONSTRAINTS = "access-constraints";
     String ACCESS_CONTROL = "access-control";
     String ACCESS_LOG = "access-log";
     String ACCESS_TYPE = "access-type";
@@ -353,6 +354,7 @@ public interface ModelDescriptionConstants {
     String SECURITY_SETTING = "security-setting";
     String SELECT = "select";
     String SELECTOR = "selector";
+    String SENSITIVE = "sensitive";
     String SERVER = "server";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";

@@ -142,6 +142,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.getClassList().remove(empty);
         }
+
         if (isApplied(SENSITIVE)) {
             if (masked) {
                 mask();
@@ -169,6 +170,15 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         } else {
             valueElement.getClassList().remove(empty);
         }
+
+        if (isApplied(SENSITIVE)) {
+            if (masked) {
+                mask();
+            } else {
+                unmask();
+            }
+        }
+        Elements.setVisible(peekLink, isApplied(SENSITIVE) && !Strings.isNullOrEmpty(expression));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -212,7 +222,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case EXPRESSION:
                 ExpressionContext ec = (ExpressionContext) context;
-                expressionLink.setOnclick(event -> ec.callback.resolveExpression(valueElement.getTextContent()));
+                expressionLink.setOnclick(
+                        event -> ec.callback.resolveExpression(masked ? backupValue : valueElement.getTextContent()));
                 if (isApplied(HINT)) {
                     valueContainer.insertBefore(expressionLink, hintElement);
                 } else {

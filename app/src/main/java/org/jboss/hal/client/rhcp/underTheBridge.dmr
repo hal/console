@@ -7,71 +7,92 @@
         "string-required" => {
             "description" => "A required string attribute",
             "nillable" => false,
-            "type" => STRING,
+            "type" => STRING
         },
         "string-optional" => {
             "description" => "An optional string attribute",
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "string-default" => {
             "default" => "Default value",
             "description" => "A string attribute w/ a default value",
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "string-expression" => {
             "description" => "A string attribute w/ expression support",
             "expressions-allowed" => true,
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "string-restart" => {
             "description" => "A string attribute w/ restart policy 'all-services''",
             "nillable" => true,
             "restart-required" => "all-services",
+            "type" => STRING
+        },
+        "string-sensitive" => {
+            "description" => "A string attribute w/ a suggestion handler for subsystems",
+            "nillable" => true,
             "type" => STRING,
+            "access-constraints" => {
+                "sensitive" => {
+                    "credential" => {"foo" => "bar"}
+                }
+            }
+        },
+        "string-sensitive-expression" => {
+            "description" => "A string attribute w/ a suggestion handler for subsystems",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "type" => STRING,
+            "access-constraints" => {
+                "sensitive" => {
+                    "credential" => {"foo" => "bar"}
+                }
+            }
         },
         "string-suggestion" => {
             "description" => "A string attribute w/ a suggestion handler for subsystems",
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "string-suggestion-expression" => {
             "description" => "A string attribute w/ a suggestion handler and expression support",
             "expressions-allowed" => true,
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "password" => {
             "description" => "A password attribute",
             "expressions-allowed" => false,
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
 
 
         "int-required" => {
             "description" => "A required int attribute",
             "nillable" => false,
-            "type" => INT,
+            "type" => INT
         },
         "int-optional" => {
             "description" => "An optional int attribute",
             "nillable" => true,
-            "type" => INT,
+            "type" => INT
         },
         "int-default" => {
             "default" => 42,
             "description" => "An int attribute w/ a default value",
             "nillable" => true,
-            "type" => INT,
+            "type" => INT
         },
         "int-expression" => {
             "description" => "An int attribute w/ expression support",
             "expressions-allowed" => true,
             "nillable" => true,
-            "type" => INT,
+            "type" => INT
         },
         "int-unit" => {
             "description" => "An int attribute w/ an unit",
@@ -91,24 +112,24 @@
         "long-required" => {
             "description" => "A required long attribute",
             "nillable" => false,
-            "type" => LONG,
+            "type" => LONG
         },
         "long-optional" => {
             "description" => "An optional long attribute",
             "nillable" => true,
-            "type" => LONG,
+            "type" => LONG
         },
         "long-default" => {
             "default" => 31415926,
             "description" => "A long attribute w/ a default value",
             "nillable" => true,
-            "type" => LONG,
+            "type" => LONG
         },
         "long-expression" => {
             "description" => "A long attribute w/ expression support",
             "expressions-allowed" => true,
             "nillable" => true,
-            "type" => LONG,
+            "type" => LONG
         },
         "long-unit" => {
             "description" => "A long attribute w/ an unit",
@@ -128,24 +149,24 @@
         "boolean-required" => {
             "description" => "A required boolean attribute",
             "nillable" => false,
-            "type" => BOOLEAN,
+            "type" => BOOLEAN
         },
         "boolean-optional" => {
             "description" => "An optional boolean attribute",
             "nillable" => true,
-            "type" => BOOLEAN,
+            "type" => BOOLEAN
         },
         "boolean-default" => {
             "description" => "A boolean attribute w/ a default value",
             "default" => true,
             "nillable" => true,
-            "type" => BOOLEAN,
+            "type" => BOOLEAN
         },
         "boolean-expression" => {
             "description" => "A boolean attribute w/ expression support",
             "expressions-allowed" => true,
             "nillable" => true,
-            "type" => BOOLEAN,
+            "type" => BOOLEAN
         },
 
 
@@ -162,7 +183,7 @@
             ],
             "description" => "A required string attribute from a predefined set of options",
             "nillable" => false,
-            "type" => STRING,
+            "type" => STRING
         },
         "single-select-optional" => {
             "allowed" => [
@@ -177,7 +198,7 @@
             ],
             "description" => "An optional string attribute from a predefined set of options",
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
         "single-select-default" => {
             "allowed" => [
@@ -193,7 +214,7 @@
             "default" => "sadipscing",
             "description" => "A string attribute w/ a default value from a predefined set of options",
             "nillable" => true,
-            "type" => STRING,
+            "type" => STRING
         },
 
 
