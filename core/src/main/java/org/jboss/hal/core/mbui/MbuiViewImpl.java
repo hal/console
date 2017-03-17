@@ -17,6 +17,7 @@ package org.jboss.hal.core.mbui;
 
 import java.util.Map;
 
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -57,5 +58,15 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
     protected void saveSingletonForm(final String type, final ResourceAddress address,
             final Map<String, Object> changedValues, final Metadata metadata) {
         mbuiContext.crud().saveSingleton(type, address, changedValues, metadata, () -> presenter.reload());
+    }
+
+    protected <T> void resetForm(final String type, final String name, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata) {
+        mbuiContext.crud().reset(type, name, address, form, metadata, () -> presenter.reload());
+    }
+
+    protected <T> void resetSingletonForm(final String type, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata) {
+        mbuiContext.crud().resetSingleton(type, address, form, metadata, () -> presenter.reload());
     }
 }

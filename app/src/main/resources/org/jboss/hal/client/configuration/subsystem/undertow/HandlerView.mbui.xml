@@ -33,7 +33,7 @@
                         <column name="path"/>
                     </columns>
                 </table>
-                <form id="undertow-file-handler-form" title="File Handler" auto-save="true"
+                <form id="undertow-file-handler-form" title="File Handler" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="cache-buffer-size"/>
@@ -64,7 +64,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-reverse-proxy-form" title="Reverse Proxy" auto-save="true"
+                <form id="undertow-reverse-proxy-form" title="Reverse Proxy" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="cached-connections-per-thread"/>

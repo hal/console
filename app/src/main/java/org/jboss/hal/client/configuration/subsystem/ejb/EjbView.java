@@ -121,6 +121,11 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                         saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
                                 template.resolve(mbuiContext.statementContext(), name), changedValues, metadata);
                     })
+                    .onReset(form -> {
+                        String name = form.getModel().getName();
+                        resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                template.resolve(mbuiContext.statementContext(), name), form, metadata);
+                    })
                     .build();
 
             Element section = new Elements.Builder()

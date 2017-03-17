@@ -185,6 +185,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noMacrosDescription(String startMacro);
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
+    SafeHtml noReset();
     SafeHtml noResource();
     SafeHtml noSecuritySettingSelected();
     SafeHtml noServerGroupSelected();
@@ -231,6 +232,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     String requires(String requires);
+    String resetConfirmationTitle(String type);
+    SafeHtml resetConfirmationQuestion(String name);
+    SafeHtml resetResourceSuccess(String type, String name);
+    SafeHtml resetSingletonConfirmationQuestion();
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     SafeHtml resourceAdapterProvidedBy(String type, String name);

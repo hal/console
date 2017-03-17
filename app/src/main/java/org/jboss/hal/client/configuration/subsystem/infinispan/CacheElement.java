@@ -119,6 +119,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         Tabs tabs = new Tabs();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveCache(cache, form.getModel().getName(), changedValues))
+                .onReset(form -> presenter.resetCache(cache, form.getModel().getName(), form))
                 .build();
         tabs.add(Ids.build(cache.baseId, Ids.TAB_SUFFIX), resources.constants().attributes(), form.asElement());
 
@@ -129,6 +130,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             Metadata cm = metadataRegistry.lookup(cache.template.append(COMPONENT + "=" + component.resource));
             Form<ModelNode> cf = new ModelNodeForm.Builder<>(formId, cm)
                     .onSave((form, changedValues) -> presenter.saveCacheComponent(component, changedValues))
+                    .onReset(form -> presenter.resetCacheComponent(component, form))
                     .build();
             FailSafeForm<ModelNode> fsf = new FailSafeForm<>(dispatcher,
                     () -> presenter.readCacheComponent(component), cf,
@@ -172,6 +174,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                     backupMeta)
                     .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
                             changedValues))
+                    .onReset(form -> presenter.resetCacheBackup(form.getModel().getName(), form))
                     .build();
 
             // @formatter:off

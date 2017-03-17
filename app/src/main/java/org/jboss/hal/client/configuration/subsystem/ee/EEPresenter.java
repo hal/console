@@ -38,6 +38,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -145,6 +146,15 @@ public class EEPresenter
     void save(AddressTemplate addressTemplate, Map<String, Object> changedValues, Metadata metadata,
             SafeHtml successMessage) {
         crud.save(addressTemplate.resolve(statementContext), changedValues, metadata, successMessage, this::reload);
+    }
+
+    void reset(String type, String name, AddressTemplate template, Form<NamedNode> form,
+            final Metadata metadata, SafeHtml successMessage) {
+        crud.reset(type, name, template.resolve(statementContext), form, metadata, successMessage, this::reload);
+    }
+
+    void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, final Metadata metadata) {
+        crud.resetSingleton(type, template.resolve(statementContext), form, metadata, this::reload);
     }
 
     void launchAddDialogGlobalModule() {

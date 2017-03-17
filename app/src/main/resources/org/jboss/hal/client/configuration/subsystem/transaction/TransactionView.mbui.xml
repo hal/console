@@ -17,12 +17,12 @@
   -->
 <view>
     <vertical-navigation id="tx-vertical-navigation">
-        
+
         <item id="tx-attributes-config-item" title="Configuration" icon="fa fa-list-ul">
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Transaction Manager</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="tx-attributes-form" title="Transaction Manager" auto-save="true">
+                <form id="tx-attributes-form" title="Transaction Manager" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="default-timeout"/>
                         <attribute name="enable-tsm-status"/>
@@ -40,7 +40,8 @@
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Process ID</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="tx-process-form" title="Process ID" on-save="{{presenter.saveProcessForm(form, changedValues)}}">
+                <form id="tx-process-form" title="Process ID"
+                      on-save="{{presenter.saveProcessForm(form, changedValues)}}" reset="true">
                     <attributes>
                         <attribute name="process-id-uuid"/>
                         <attribute name="process-id-socket-binding">
@@ -62,7 +63,7 @@
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Recovery</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="tx-recovery-form" title="Recovery" auto-save="true">
+                <form id="tx-recovery-form" title="Recovery" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="socket-binding">
                             <suggest-handler>
@@ -92,7 +93,7 @@
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Path</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="tx-path-form" title="Path" auto-save="true">
+                <form id="tx-path-form" title="Path" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="object-store-path"/>
                         <attribute name="object-store-relative-to"
@@ -106,7 +107,7 @@
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>JDBC</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="tx-jdbc-form" title="JDBC" auto-save="true">
+                <form id="tx-jdbc-form" title="JDBC" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="use-jdbc-store"/>
                         <attribute name="jdbc-action-store-drop-table"/>

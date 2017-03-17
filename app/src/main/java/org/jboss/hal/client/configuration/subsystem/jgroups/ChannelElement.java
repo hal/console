@@ -83,6 +83,8 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))
+                .onReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, Names.CHANNEL,
+                        table.api().selectedRow().getName(), form, metadata))
                 .build();
 
         // @formatter:off

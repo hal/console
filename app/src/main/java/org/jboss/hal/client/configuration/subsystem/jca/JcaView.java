@@ -106,6 +106,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(CCM_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(ccmType)))
+                .onReset(f -> presenter.resetSingleton(ccmType, CCM_TEMPLATE, f, ccmMetadata))
                 .build();
 
         String avType = labelBuilder.label(ARCHIVE_VALIDATION_TEMPLATE.lastValue());
@@ -114,6 +115,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(ARCHIVE_VALIDATION_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(avType)))
+                .onReset(f -> presenter.resetSingleton(avType, ARCHIVE_VALIDATION_TEMPLATE, f, avMetadata))
                 .build();
 
         String bvType = labelBuilder.label(BEAN_VALIDATION_TEMPLATE.lastValue());
@@ -122,6 +124,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(BEAN_VALIDATION_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(bvType)))
+                .onReset(f -> presenter.resetSingleton(bvType, BEAN_VALIDATION_TEMPLATE, f, bvMetadata))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -150,6 +153,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Form<ModelNode> tracerForm = new ModelNodeForm.Builder<>(Ids.JCA_TRACER_FORM, tracerMetadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(TRACER_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(tracerType)))
+                .onReset(f -> presenter.resetSingleton(tracerType, TRACER_TEMPLATE, f, tracerMetadata))
                 .build();
         failSafeTracerForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
@@ -192,12 +196,15 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .build();
         bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcTableOptions);
 
-        bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM,
-                bcMetadata)
+        bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM, bcMetadata)
                 .onSave((form, changedValues) -> {
                     String bcName = form.getModel().getName();
                     presenter.saveResource(BOOTSTRAP_CONTEXT_TEMPLATE, bcName, changedValues,
                             resources.messages().modifyResourceSuccess(bcType, bcName));
+                })
+                .onReset(form -> {
+                    String bcName = form.getModel().getName();
+                    presenter.resetResource(BOOTSTRAP_CONTEXT_TEMPLATE, bcType, bcName, form, bcMetadata);
                 })
                 .build();
         bcForm.getFormItem(WORKMANAGER)
@@ -284,12 +291,15 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .build();
         dwmTable = new NamedNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmOptions);
 
-        dwmForm = new ModelNodeForm.Builder<NamedNode>(
-                Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
+        dwmForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
                 .onSave((form, changedValues) -> {
                     String dwmName = form.getModel().getName();
                     presenter.saveResource(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmName, changedValues,
                             resources.messages().modifyResourceSuccess(dwmType, dwmName));
+                })
+                .onReset(form -> {
+                    String dwmName = form.getModel().getName();
+                    presenter.resetResource(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmType, dwmName, form, dwmMetadata);
                 })
                 .build();
 

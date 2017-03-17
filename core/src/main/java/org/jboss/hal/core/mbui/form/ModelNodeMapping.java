@@ -247,8 +247,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             case PROPERTY:
                             case TYPE:
                             case UNDEFINED:
-                                logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form), name,
-                                        type);
+                                logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form),
+                                        name, type);
                                 break;
                         }
 

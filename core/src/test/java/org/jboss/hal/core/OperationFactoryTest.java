@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
@@ -172,6 +173,22 @@ public class OperationFactoryTest {
         assertUndefine(composite, "authentication-context");
         assertUndefine(composite, "authentication-context-and-application");
         assertWrite(composite, "security-domain", "foo");
+    }
+
+    @Test
+    public void reset() throws Exception {
+        Composite composite = operationFactory.resetResource(address,
+                Sets.newHashSet("capacity-decrementer-class", // string
+                        "capacity-incrementer-properties", // object
+                        "class-name", // string(required)
+                        "connectable", // boolean(false)
+                        "initial-pool-size", // int
+                        "max-pool-size"), // int(20)
+                metadata);
+        assertUndefine(composite, "capacity-decrementer-class");
+        assertUndefine(composite, "capacity-incrementer-properties");
+        assertWrite(composite, "connectable", false);
+        assertWrite(composite, "max-pool-size", 20);
     }
 
     private void assertUndefine(Composite composite, String name) {

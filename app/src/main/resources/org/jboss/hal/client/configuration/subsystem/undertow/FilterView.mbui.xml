@@ -32,7 +32,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-custom-filter-form" title="Custom Filter" auto-save="true"
+                <form id="undertow-custom-filter-form" title="Custom Filter" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="class-name"/>
@@ -60,7 +60,7 @@
                         <column name="code"/>
                     </columns>
                 </table>
-                <form id="undertow-error-page-form" title="Error Page" auto-save="true"
+                <form id="undertow-error-page-form" title="Error Page" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="code"/>
@@ -88,7 +88,7 @@
                         <column name="expression"/>
                     </columns>
                 </table>
-                <form id="undertow-expression-filter-form" title="Expression Filter" auto-save="true"
+                <form id="undertow-expression-filter-form" title="Expression Filter" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="expression"/>
@@ -114,7 +114,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-gzip-form" title="GZip" on-save="{{noop()}}">
+                <form id="undertow-gzip-form" title="GZip" on-save="{{noop()}}" reset="true">
                     <attributes>
                         <attribute
                                 form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
@@ -138,7 +138,7 @@
                         <column name="management-socket-binding"/>
                     </columns>
                 </table>
-                <form id="undertow-mod-cluster-form" title="Mod Cluster" auto-save="true"
+                <form id="undertow-mod-cluster-form" title="Mod Cluster" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <!-- TODO Add attributes groups. Add suggest handler for socket bindings and worker -->
@@ -191,7 +191,7 @@
                         <column name="max-concurrent-requests"/>
                     </columns>
                 </table>
-                <form id="undertow-request-limit-form" title="Request Limit" auto-save="true"
+                <form id="undertow-request-limit-form" title="Request Limit" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="max-concurrent-requests"/>
@@ -221,7 +221,7 @@
                     </columns>
                 </table>
                 <form id="undertow-response-header-form" title="Response Header"
-                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}">
+                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}" reset="true">
                     <attributes>
                         <attribute name="header-name"/>
                         <attribute name="header-value"/>
@@ -247,7 +247,7 @@
                         <column name="target"/>
                     </columns>
                 </table>
-                <form id="undertow-rewrite-form" title="Rewrite" auto-save="true"
+                <form id="undertow-rewrite-form" title="Rewrite" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="redirect"/>

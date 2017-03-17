@@ -259,6 +259,10 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     }
                 }
             }
+
+            if (!viewOnly && saveCallback == null) {
+                logger.warn("No save callback specified in form {}", formId());
+            }
         }
 
         StateMachine stateMachine() {
