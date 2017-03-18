@@ -148,7 +148,7 @@ final class ${context.subclass} extends ${context.base} {
                 resetForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), form, ${form.metadata.name});
             })
                 <#else>
-            .onResetSave(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form, ${form.metadata.name}))
+            .onReset(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form, ${form.metadata.name}))
                 </#if>
             <#elseif form.onReset??>
             .onReset(form -> ${form.onReset})

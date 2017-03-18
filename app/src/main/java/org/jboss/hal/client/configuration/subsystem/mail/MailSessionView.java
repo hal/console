@@ -76,7 +76,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         Metadata mailSessionMetadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
         mailSessionForm = new ModelNodeForm.Builder<MailSession>(
                 Ids.MAIL_SESSION_FORM, mailSessionMetadata)
-                .onSave((form, changedValues) -> presenter.save(changedValues))
+                .onSave((form, changedValues) -> presenter.saveMailSession(changedValues))
+                .onReset(form -> presenter.resetMailSession(form))
                 .build();
         registerAttachable(mailSessionForm);
 
@@ -110,7 +111,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         serverForm = new ModelNodeForm.Builder<NamedNode>(Ids.MAIL_SERVER_FORM, serverMetadata)
                 .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
                 .unsorted()
-                .onSave((f, changedValues) -> presenter.save(changedValues))
+                .onSave((f, changedValues) -> presenter.saveServer(f.getModel().getName(), changedValues))
+                .onReset(f -> presenter.resetServer(f.getModel().getName(), f))
                 .build();
         serverForm.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));

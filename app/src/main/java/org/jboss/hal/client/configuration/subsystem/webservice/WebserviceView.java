@@ -58,6 +58,7 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
         Metadata metadata = metadataRegistry.lookup(WEBSERVICES_TEMPLATE);
         webservicesForm = new ModelNodeForm.Builder<>(Ids.WEBSERVICES_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveWebservicesConfiguration(changedValues))
+                .onReset(form -> presenter.resetWebservicesConfiguration(form, metadata))
                 .build();
         // @formatter:off
         Element webservicesSection = new Elements.Builder()

@@ -90,6 +90,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServer(changedValues))
+                .onReset(form -> presenter.resetServer(form))
                 .build();
 
         // @formatter:off
@@ -129,6 +130,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)
                 .onSave((form, changedValues) -> presenter.saveHost(form.getModel().getName(), changedValues))
+                .onReset(form -> presenter.resetHost(form.getModel().getName(), form))
                 .build();
 
         accessLogForm = hostSetting(HostSetting.ACCESS_LOG);
@@ -166,6 +168,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         filterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_FILTER_REF_FORM, filterRefMetadata)
                 .onSave((form, changedValues) -> presenter.saveFilterRef(form, changedValues))
+                .onReset(form -> presenter.resetFilterRef(form))
                 .build();
 
         // @formatter:off
@@ -194,6 +197,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         locationForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FORM, locationMetadata)
                 .onSave((form, changedValues) -> presenter.saveLocation(form, changedValues))
+                .onReset(form -> presenter.resetLocation(form))
                 .build();
 
         // @formatter:off
@@ -223,6 +227,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         locationFilterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_FORM,
                 locationFilterRefMetadata)
                 .onSave((form, changedValues) -> presenter.saveLocationFilterRef(form, changedValues))
+                .onReset(form -> presenter.resetLocationFilterRef(form))
                 .build();
 
         // @formatter:off
@@ -286,6 +291,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
+                .onReset(f -> presenter.resetHostSetting(hostSetting, f))
                 .build();
         return new FailSafeForm<>(dispatcher, () -> presenter.hostSettingOperation(hostSetting), form,
                 () -> presenter.addHostSetting(hostSetting));

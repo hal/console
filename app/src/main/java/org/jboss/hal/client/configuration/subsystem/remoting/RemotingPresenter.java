@@ -171,6 +171,10 @@ public class RemotingPresenter
                 changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
+    void resetConnector(Form<NamedNode> form, Metadata metadata) {
+        crud.reset(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE, form, metadata, this::reload);
+    }
+
     void createConnectorSecurity() {
         Operation operation = new Operation.Builder(ADD,
                 SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext)).build();
@@ -184,6 +188,12 @@ public class RemotingPresenter
                 metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
+    void resetConnectorSecurity(Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
+        crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY, address, form, metadata, this::reload);
+    }
+
     void createConnectorSecurityPolicy() {
         failSafeCreatePolicy(Names.REMOTE_CONNECTOR_SECURITY_POLICY, SELECTED_CONNECTOR_SECURITY_TEMPLATE,
                 SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE, selectedConnectorContext);
@@ -193,6 +203,13 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
         crud.saveSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
                 SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
+                this::reload);
+    }
+
+    void resetConnectorSecurityPolicy(Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
+        crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
+                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
                 this::reload);
     }
 
@@ -212,6 +229,11 @@ public class RemotingPresenter
                 form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
+    void resetHttpConnector(Form<NamedNode> form, Metadata metadata) {
+        crud.reset(Names.HTTP_CONNECTOR, form.getModel().getName(), HTTP_CONNECTOR_TEMPLATE, form, metadata,
+                this::reload);
+    }
+
     void createHttpConnectorSecurity() {
         Operation operation = new Operation.Builder(ADD,
                 SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext)).build();
@@ -225,6 +247,12 @@ public class RemotingPresenter
                 metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
+    void resetHttpConnectorSecurity(Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
+        crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY, address, form, metadata, this::reload);
+    }
+
     void createHttpConnectorSecurityPolicy() {
         failSafeCreatePolicy(Names.HTTP_CONNECTOR_SECURITY_POLICY, SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE,
                 SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE, selectedHttpConnectorContext);
@@ -234,6 +262,13 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         crud.saveSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
                 SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), changedValues, metadata,
+                this::reload);
+    }
+
+    void resetHttpConnectorSecurityPolicy(final Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
+        crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
+                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
                 this::reload);
     }
 

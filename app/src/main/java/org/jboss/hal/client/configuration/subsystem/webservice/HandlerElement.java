@@ -66,6 +66,7 @@ class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePr
         String formId = Ids.build(configType.baseId, "handler", Ids.FORM_SUFFIX);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)
                 .onSave((form, changedValues) -> presenter.saveHandler(form.getModel().getName(), changedValues))
+                .onReset(form -> presenter.resetHandler(form.getModel().getName(), form))
                 .build();
 
         // @formatter:off

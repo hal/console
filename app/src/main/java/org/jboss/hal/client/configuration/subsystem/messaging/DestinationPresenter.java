@@ -221,6 +221,21 @@ public class DestinationPresenter
         }
     }
 
+    void resetSecuritySettingRole(Form<NamedNode> form) {
+        if (securitySetting != null) {
+            String name = form.getModel().getName();
+            ResourceAddress address = SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + securitySetting)
+                    .append(ROLE + "=" + name)
+                    .resolve(statementContext);
+            Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
+            crud.reset(Names.SECURITY_SETTING, securitySetting + "/" + name, address, form, metadata,
+                    this::reload);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
+        }
+    }
+
     void removeSecuritySettingRole(NamedNode role) {
         if (securitySetting != null) {
             String roleName = role.getName();

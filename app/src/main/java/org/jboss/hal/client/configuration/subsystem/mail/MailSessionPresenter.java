@@ -141,10 +141,16 @@ public class MailSessionPresenter
         crud.readRecursive(address, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
-    void save(final Map<String, Object> changedValues) {
+    void saveMailSession(final Map<String, Object> changedValues) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
         crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, metadata, this::reload);
+    }
+
+    void resetMailSession(final Form<MailSession> form) {
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
+        crud.reset(Names.MAIL_SESSION, mailSessionName, address, form, metadata, this::reload);
     }
 
     void launchAddServer() {
@@ -210,6 +216,22 @@ public class MailSessionPresenter
                 dialog.show();
             }
         });
+    }
+
+    void saveServer(final String mailServer, final Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
+                .append(SERVER + "=" + mailServer)
+                .resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+        crud.save(Names.SERVER, mailServer, address, changedValues, metadata, this::reload);
+    }
+
+    void resetServer(final String mailServer, final Form<NamedNode> form) {
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
+                .append(SERVER + "=" + mailServer)
+                .resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+        crud.reset(Names.SERVER, mailSessionName, address, form, metadata, this::reload);
     }
 
     void removeServer(final NamedNode mailServer) {
