@@ -76,6 +76,10 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                     String name = form.getModel().getName();
                     saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues);
                 })
+                .onReset(form -> {
+                    String name = form.getModel().getName();
+                    resetForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0)
+                })
                 .build();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)

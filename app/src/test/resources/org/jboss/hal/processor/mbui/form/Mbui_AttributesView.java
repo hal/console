@@ -54,6 +54,7 @@ final class Mbui_AttributesView extends AttributesView {
                 .include("foo", "bar")
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

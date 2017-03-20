@@ -18,6 +18,6 @@
 <view>
     <metadata address="/subsystem=foo">
         <h1>Form</h1>
-        <fail-safe-form id="form" title="Form" auto-save="true"/>
+        <fail-safe-form id="form" title="Form" auto-save="true" reset="true"/>
     </metadata>
 </view>

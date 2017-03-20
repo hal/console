@@ -55,6 +55,7 @@ final class Mbui_FormItemProviderView extends FormItemProviderView {
                 .customFormItem("bar", (attributeDescription) -> new org.jboss.hal.ballroom.form.TextBoxItem("bar", "Bar"))
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

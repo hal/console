@@ -18,7 +18,7 @@
 <view>
     <metadata address="/subsystem=foo">
         <h1>Form</h1>
-        <form id="form" title="Form" auto-save="true">
+        <form id="form" title="Form" auto-save="true" reset="true">
             <attributes>
                 <attribute name="foo"/>
                 <attribute name="bar"/>

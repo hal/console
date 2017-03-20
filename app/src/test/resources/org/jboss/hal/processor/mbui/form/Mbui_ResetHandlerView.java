@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.processor.mbui.masterdetail;
+package org.jboss.hal.processor.mbui.form;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,49 +52,36 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_SimpleView extends SimpleView {
+final class Mbui_ResetHandlerView extends ResetHandlerView {
 
     private final Metadata metadata0;
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    Mbui_SimpleView(MbuiContext mbuiContext) {
+    Mbui_ResetHandlerView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
-        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=*");
+        AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.model.NamedNode>("form", metadata0)
-                .onSave((form, changedValues) -> {
-                    String name = form.getModel().getName();
-                    saveForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext(), name), changedValues);
-                })
-                .onReset(form -> {
-                    String name = form.getModel().getName();
-                    resetForm("Form", name, metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0)
-                })
+        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
+                .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onReset(form -> presenter.resetForm(form))
                 .build();
-
-        Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .columns("name")
-                .build();
-        table = new NamedNodeTable<>("table", tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()
                 .column()
                 .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Master-Detail</h1>"))
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
                 .rememberAs("html0")
                 .end()
-                .add(table)
                 .add(form)
                 .end()
                 .end();
         handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
 
-        registerAttachable(table);
         registerAttachable(form);
 
         Element root = layoutBuilder.build();
@@ -104,6 +91,5 @@ final class Mbui_SimpleView extends SimpleView {
     @Override
     public void attach() {
         super.attach();
-        table.bindForm(form);
     }
 }
