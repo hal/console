@@ -85,6 +85,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_FORM,
                 configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
+                .onReset(form -> presenter.resetServletContainer(form))
                 .build();
 
         Metadata emptyMetadata = new Metadata(configurationMetadata.getTemplate(),
@@ -99,6 +100,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
                 .exclude(VALUE)
                 .onSave((form, changedValues) -> presenter.saveMimeMapping(mimeMappingItem.getValue()))
+                .onReset(form -> presenter.resetMimeMapping(form))
                 .build();
 
         ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
@@ -108,6 +110,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))
                 .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()
                         .collect(toMap(Function.identity(), value -> null))))
+                .onReset(form -> presenter.resetWelcomeFile(form))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -165,6 +168,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
     private FailSafeForm<ModelNode> failSafeFrom(ServletContainerSetting settingType, Metadata metadata) {
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(settingType.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((f, changedValues) -> presenter.saveSettings(settingType, changedValues))
+                .onReset(f -> presenter.resetSettings(settingType, f))
                 .build();
         return new FailSafeForm<>(dispatcher, () -> presenter.pingSettings(settingType), form,
                 () -> presenter.addSettingsSingleton(settingType));

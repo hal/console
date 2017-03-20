@@ -68,6 +68,7 @@ public class CacheContainerView extends HalViewImpl
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
+                .onReset(form -> presenter.resetCacheContainer(form))
                 .build();
 
         caches = new HashMap<>();

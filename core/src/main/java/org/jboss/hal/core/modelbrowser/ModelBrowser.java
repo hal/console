@@ -82,7 +82,6 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
-import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * Model browser element which can be embedded in other elements.
@@ -501,12 +500,13 @@ public class ModelBrowser implements HasElements {
         crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.api().getSelected()));
     }
 
-    void reset(Form<ModelNode> form) {
-        Browser.getWindow().alert(NYI);
-    }
-
     void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata) {
         crud.save(address.lastName(), address.lastValue(), address, changedValues, metadata,
+                () -> refresh(tree.api().getSelected()));
+    }
+
+    void reset(ResourceAddress address, Form<ModelNode> form, Metadata metadata) {
+        crud.reset(address.lastName(), address.lastValue(), address, form, metadata,
                 () -> refresh(tree.api().getSelected()));
     }
 

@@ -21,7 +21,7 @@
             <metadata address="/{selected.host}/{selected.server-config}">
                 <h1>Server Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="server-configuration-form" title="Server Configuration" auto-save="true"
+                <form id="server-configuration-form" title="Server Configuration" auto-save="true" reset="true"
                       include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
@@ -51,7 +51,8 @@
                         <column name="name"/>
                     </columns>
                 </table>
-                <form id="server-interface-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-interface-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -69,7 +70,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="server-jvm-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-jvm-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -88,7 +89,8 @@
                         <column name="path"/>
                     </columns>
                 </table>
-                <form id="server-path-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-path-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -111,7 +113,8 @@
                         <column name="value"/>
                     </columns>
                 </table>
-                <form id="server-system-property-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-system-property-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
     </vertical-navigation>

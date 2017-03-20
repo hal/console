@@ -43,9 +43,11 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             final MbuiViewContext context) {
         String title = element.getAttributeValue(XmlTags.TITLE);
         boolean autoSave = Boolean.parseBoolean(element.getAttributeValue(XmlTags.AUTO_SAVE));
+        boolean reset = Boolean.parseBoolean(element.getAttributeValue(XmlTags.RESET));
         boolean includeRuntime = Boolean.parseBoolean(element.getAttributeValue(XmlTags.INCLUDE_RUNTIME));
         boolean failSafe = XmlTags.FAIL_SAFE_FORM.equalsIgnoreCase(element.getName());
         String onSave = element.getAttributeValue(XmlTags.ON_SAVE);
+        String onReset = element.getAttributeValue(XmlTags.ON_RESET);
         String nameResolver = element.getAttributeValue(XmlTags.NAME_RESOLVER);
         MetadataInfo metadata = findMetadata(field, element, context);
         AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
@@ -72,7 +74,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
         }
 
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
-                metadata, title, autoSave, onSave, nameResolver, includeRuntime, failSafe);
+                metadata, title, autoSave, onSave, reset, onReset, nameResolver, includeRuntime, failSafe);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild(XmlTags.ATTRIBUTES);

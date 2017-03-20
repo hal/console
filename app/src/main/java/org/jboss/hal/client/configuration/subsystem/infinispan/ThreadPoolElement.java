@@ -45,6 +45,7 @@ class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheCont
         Metadata metadata = metadataRegistry.lookup(threadPool.template());
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(threadPool.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((f, changedValues) -> presenter.saveThreadPool(threadPool, changedValues))
+                .onReset(f -> presenter.resetThreadPool(threadPool, f))
                 .build();
         fsf = new FailSafeForm<>(dispatcher, () -> presenter.readThreadPool(threadPool), form,
                 () -> presenter.addThreadPool(threadPool));

@@ -36,7 +36,7 @@
                 <column name="path"/>
             </columns>
         </table>
-        <form id="path-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
+        <form id="path-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}">
             <attributes>
                 <attribute name="name"/>
                 <attribute name="path"/>

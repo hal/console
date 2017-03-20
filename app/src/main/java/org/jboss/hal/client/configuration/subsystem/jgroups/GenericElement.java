@@ -64,6 +64,8 @@ public class GenericElement implements IsElement, Attachable, HasPresenter<JGrou
                 .onSave((form, changedValues) -> presenter
                         .saveResource(template, table.api().selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(name)))
+                .onReset(form -> presenter.resetResource(template, table.api().selectedRow().getName(), name, form,
+                        metadata))
                 .build();
 
         // @formatter:off

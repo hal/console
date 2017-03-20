@@ -175,12 +175,15 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         this.resources = resources;
 
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
+        Form.ResetCallback<DataSource> resetCallback = (f) -> presenter.resetDataSource(f);
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
         nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
                 .build();
         GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
-                nonXaMeta).onSave(saveCallback);
+                nonXaMeta)
+                .onSave(saveCallback)
+                .onReset(resetCallback);
 
         Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
         xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();

@@ -29,7 +29,7 @@
                 <column name="name" value="{{row.getName()}}"/>
             </columns>
         </table>
-        <form id="buffer-cache-form" title="Buffer Cache" auto-save="true"
+        <form id="buffer-cache-form" title="Buffer Cache" auto-save="true" reset="true"
               name-resolver="{{form.getModel().getName()}}"/>
     </metadata>
 </view>

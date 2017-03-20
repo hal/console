@@ -22,7 +22,7 @@
                 <h1 id="host-configuration-title"/>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="host-configuration-form" title="Host Configuration"
-                      on-save="{{presenter.saveHost(form, changedValues)}}" include-runtime="true">
+                      on-save="{{presenter.saveHost(form, changedValues)}}" reset="true" include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
                         <attribute name="organization"/>
@@ -57,7 +57,8 @@
                         <column name="name"/>
                     </columns>
                 </table>
-                <form id="host-interface-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-interface-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -75,7 +76,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="host-jvm-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-jvm-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -94,7 +95,7 @@
                         <column name="path"/>
                     </columns>
                 </table>
-                <form id="host-path-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-path-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -112,7 +113,7 @@
                         <column name="name"/>
                     </columns>
                 </table>
-                <form id="host-socket-binding-group-form" auto-save="true"
+                <form id="host-socket-binding-group-form" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
@@ -132,7 +133,8 @@
                         <column name="value"/>
                     </columns>
                 </table>
-                <form id="host-system-property-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="host-system-property-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
     </vertical-navigation>

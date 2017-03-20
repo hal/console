@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -185,6 +187,16 @@ public enum HaPolicy {
         ResourceAddress address = singleton().resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(template);
         crud.saveSingleton(type, address, changedValues, metadata, callback);
+    }
+
+    /**
+     * Resets a HA policy. The statement context must be able to resolve the selected server!
+     */
+    void reset(Form<ModelNode> form, MetadataRegistry metadataRegistry, StatementContext statementContext,
+            CrudOperations crud, Callback callback) {
+        ResourceAddress address = singleton().resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(template);
+        crud.resetSingleton(type, address, form, metadata, callback);
     }
 
     /**

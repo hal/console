@@ -45,6 +45,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -147,6 +148,16 @@ public class JcaPresenter
     void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
             final SafeHtml successMessage) {
         crud.saveSingleton(template, changedValues, successMessage, this::reload);
+    }
+
+    void resetResource(final AddressTemplate template, final String type, final String name,
+            final Form<NamedNode> form, final Metadata metadata) {
+        crud.reset(type, name, template, form, metadata, this::reload);
+    }
+
+    void resetSingleton(final String type, final AddressTemplate template, final Form<ModelNode> form,
+            final Metadata metadata) {
+        crud.resetSingleton(type, template, form, metadata, this::reload);
     }
 
 

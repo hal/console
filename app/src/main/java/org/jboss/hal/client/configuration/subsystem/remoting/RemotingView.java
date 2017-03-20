@@ -94,6 +94,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         connectorForm = new ModelNodeForm.Builder<NamedNode>(Ids.REMOTING_CONNECTOR_FORM, connectorMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 1)
                 .onSave((form, changedValues) -> presenter.saveConnector(form, changedValues))
+                .onReset(form -> presenter.resetConnector(form, connectorMetadata))
                 .build();
         registerAttachable(connectorForm);
 
@@ -103,6 +104,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 connectorSecurityMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveConnectorSecurity(form, changedValues))
+                .onReset(form -> presenter.resetConnectorSecurity(form))
                 .build();
         connectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION,
@@ -117,6 +119,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         Form<ModelNode> cspf = new ModelNodeForm.Builder<>(Ids.REMOTING_CONNECTOR_SECURITY_POLICY_FORM,
                 connectorSecurityPolicyMetadata)
                 .onSave((form, changedValues) -> presenter.saveConnectorSecurityPolicy(changedValues))
+                .onReset(form -> presenter.resetConnectorSecurityPolicy(form))
                 .build();
         connectorSecurityPolicyForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE
@@ -141,6 +144,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 httpConnectorMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveHttpConnector(form, changedValues))
+                .onReset(form -> presenter.resetHttpConnector(form, httpConnectorMetadata))
                 .build();
         registerAttachable(httpConnectorForm);
 
@@ -151,6 +155,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 httpConnectorSecurityMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .onSave((form, changedValues) -> presenter.saveHttpConnectorSecurity(form, changedValues))
+                .onReset(form -> presenter.resetHttpConnectorSecurity(form))
                 .build();
         httpConnectorSecurityForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE
@@ -165,6 +170,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         Form<ModelNode> hcspf = new ModelNodeForm.Builder<>(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM,
                 httpConnectorSecurityPolicyMetadata)
                 .onSave((form, changedValues) -> presenter.saveHttpConnectorSecurityPolicy(changedValues))
+                .onReset(form -> presenter.resetHttpConnectorSecurityPolicy(form))
                 .build();
         httpConnectorSecurityPolicyForm = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE

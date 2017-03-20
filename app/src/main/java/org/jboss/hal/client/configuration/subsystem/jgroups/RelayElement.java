@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -52,8 +51,7 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
     private Element section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    RelayElement(final MetadataRegistry metadataRegistry, final Resources resources,
-            final EventBus eventBus) {
+    RelayElement(final MetadataRegistry metadataRegistry, final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
@@ -71,6 +69,7 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(Names.RELAY)))
+                .onReset(form -> presenter.resetSingleton(SELECTED_RELAY_TEMPLATE, Names.RELAY, form, metadata))
                 .build();
 
         // @formatter:off

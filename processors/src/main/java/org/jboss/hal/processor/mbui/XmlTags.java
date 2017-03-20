@@ -44,7 +44,9 @@ public interface XmlTags {
     String NAME = "name";
     String NAME_RESOLVER = "name-resolver";
     String ON_SAVE = "on-save";
+    String ON_RESET = "on-reset";
     String PROVIDER = "provider";
+    String RESET = "reset";
     String SCOPE = "scope";
     String SELECTED = "selected";
     String SUB_ITEM = "sub-item";

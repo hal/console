@@ -52,6 +52,7 @@ final class Mbui_SaveHandlerView extends SaveHandlerView {
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .onSave((form, changedValues) -> presenter.saveForm(form, changedValues))
+                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

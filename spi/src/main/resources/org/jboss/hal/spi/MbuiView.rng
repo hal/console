@@ -199,6 +199,14 @@
             </choice>
         </optional>
         <optional>
+            <choice>
+                <attribute name="reset">
+                    <data type="boolean"/>
+                </attribute>
+                <attribute name="on-reset"/>
+            </choice>
+        </optional>
+        <optional>
             <attribute name="include-runtime">
                 <data type="boolean"/>
             </attribute>

@@ -16,14 +16,8 @@
   ~ limitations under the License.
   -->
 <view>
-    <vertical-navigation id="navigation">
-        <item id="item" title="Main Item" icon="fa fa-list-ul">
-            <sub-item id="sub-item" title="Sub Item">
-                <metadata address="/subsystem=foo">
-                    <h1>Form</h1>
-                    <form id="form" title="Form" auto-save="true" reset="true"/>
-                </metadata>
-            </sub-item>
-        </item>
-    </vertical-navigation>
+    <metadata address="/subsystem=foo">
+        <h1>Form</h1>
+        <form id="form" title="Form" auto-save="true" on-reset="{{presenter.resetForm(form)}}"/>
+    </metadata>
 </view>

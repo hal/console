@@ -58,6 +58,7 @@ final class Mbui_AttributeGroupsView extends AttributeGroupsView {
                 .include("baz", "qux")
                 .end()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

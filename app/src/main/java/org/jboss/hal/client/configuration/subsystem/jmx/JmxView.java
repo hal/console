@@ -86,6 +86,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         configForm = new ModelNodeForm.Builder<>(Ids.JMX_CONFIGURATION_FORM, configMetadata)
                 .onSave((form, changedValues) -> crud
                         .saveSingleton(Names.CONFIGURATION, JMX_TEMPLATE, changedValues, () -> presenter.reload()))
+                .onReset(form -> crud.resetSingleton(Names.CONFIGURATION, JMX_TEMPLATE, form, configMetadata,
+                        () -> presenter.reload()))
                 .build();
 
         // @formatter:off
@@ -120,6 +122,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .unboundFormItem(handlerItem, Integer.MAX_VALUE, handlerDescription)
                 .onSave((form, changedValues) -> presenter
                         .saveAuditLog(changedValues, handlerItem.isModified(), handlerItem.getValue()))
+                .onReset(form -> crud.resetSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, form, alMetadata,
+                        () -> presenter.reload()))
                 .build();
         failSafeAlForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext))
@@ -147,6 +151,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         Form<ModelNode> rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.reload()))
+                .onReset(form -> crud.resetSingleton(type, REMOTING_CONNECTOR_TEMPLATE, form, rcMetadata,
+                        () -> presenter.reload()))
                 .build();
         failSafeRcForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION,

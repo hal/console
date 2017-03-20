@@ -141,6 +141,18 @@ final class ${context.subclass} extends ${context.base} {
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
             </#if>
+            <#if form.reset>
+                <#if form.nameResolver??>
+            .onReset(form -> {
+                String name = ${form.nameResolver};
+                resetForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), form, ${form.metadata.name});
+            })
+                <#else>
+            .onReset(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form, ${form.metadata.name}))
+                </#if>
+            <#elseif form.onReset??>
+            .onReset(form -> ${form.onReset})
+            </#if>
             .build();
             <#list form.validationHandlerAttributes as attribute>
         ${form.name}.getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});

@@ -59,6 +59,7 @@ class TransportElement implements IsElement, Attachable, HasPresenter<CacheConta
         form = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_TRANSPORT_FORM,
                 metadata)
                 .onSave((f, changedValues) -> presenter.saveJgroups(changedValues))
+                .onReset(f -> presenter.resetJgroups(f))
                 .build();
 
         // @formatter:off

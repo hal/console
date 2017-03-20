@@ -52,6 +52,7 @@ final class Mbui_FailSafeView extends FailSafeView {
 
         Form<org.jboss.hal.dmr.ModelNode> failSafe_form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>(Ids.build("form", Ids.FORM_SUFFIX), metadata0)
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
+                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
         form = new FailSafeForm<>(mbuiContext.dispatcher(),
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, metadata0Template.resolve(mbuiContext.statementContext())).build(),

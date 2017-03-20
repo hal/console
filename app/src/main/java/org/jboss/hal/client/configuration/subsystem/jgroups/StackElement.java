@@ -122,7 +122,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
         .build();
         // @formatter:on
 
-        relayElement = new RelayElement(metadataRegistry, resources, eventBus);
+        relayElement = new RelayElement(metadataRegistry, resources);
         remotesiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE),
                 resources,
                 SELECTED_REMOTE_SITE_TEMPLATE,

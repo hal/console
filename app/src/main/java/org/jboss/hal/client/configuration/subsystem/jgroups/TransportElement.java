@@ -45,6 +45,7 @@ public class TransportElement extends GenericElement {
     private Form<ModelNode> threadPoolInternalForm;
     private Form<ModelNode> threadPooloobForm;
 
+    @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions", "DuplicateStringLiteralInspection"})
     TransportElement(final MetadataRegistry metadataRegistry, final Metadata formMetadata,
             final Resources resources, final AddressTemplate template,
             final String name, final String resourceId) {
@@ -60,6 +61,11 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
                 })
+                .onReset(form -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.api().selectedRow().getName(), DEFAULT);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form, threadPoolMetadata);
+                })
                 .build();
         threadPoolTimerForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_TIMER_FORM,
                 threadPoolMetadata)
@@ -68,6 +74,11 @@ public class TransportElement extends GenericElement {
                             .replaceWildcards(table.api().selectedRow().getName(), "timer");
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Timer"));
+                })
+                .onReset(form -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.api().selectedRow().getName(), "timer");
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Timer", form, threadPoolMetadata);
                 })
                 .build();
         threadPoolInternalForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_INTERNAL_FORM,
@@ -78,6 +89,11 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Internal"));
                 })
+                .onReset(form -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.api().selectedRow().getName(), "internal");
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolMetadata);
+                })
                 .build();
         threadPooloobForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM,
                 threadPoolMetadata)
@@ -86,6 +102,11 @@ public class TransportElement extends GenericElement {
                             .replaceWildcards(table.api().selectedRow().getName(), "oob");
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " OOB"));
+                })
+                .onReset(form -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.api().selectedRow().getName(), "oob");
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " OOB", form, threadPoolMetadata);
                 })
                 .build();
 
