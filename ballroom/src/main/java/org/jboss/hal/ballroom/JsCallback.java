@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.ballroom;
+
+import jsinterop.annotations.JsFunction;
 
 /**
- * Takes care of the mapping between form fields and the model.
+ * A general purpose callback for JS code only.
  *
  * @author Harald Pehl
  */
-public interface DataMapping<T> {
+@JsFunction
+@FunctionalInterface
+public interface JsCallback {
 
-    void newModel(T model, Form<T> form);
-
-    void populateFormItems(T model, Form<T> form);
-
-    void clearFormItems(Form<T> form);
-
-    void persistModel(T model, Form<T> form);
+    void execute();
 }

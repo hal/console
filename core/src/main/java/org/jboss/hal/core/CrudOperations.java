@@ -995,7 +995,7 @@ public class CrudOperations {
                 .map(FormItem::getName)
                 .collect(toSet());
         reset(type, null, template.resolve(statementContext), attributes, metadata,
-                resources.messages().resetSingletonConfirmationQuestion(), callback);
+                resources.messages().resetSingletonSuccess(type), callback);
     }
 
     /**
@@ -1036,7 +1036,7 @@ public class CrudOperations {
     public void resetSingleton(final String type, final AddressTemplate template,
             final Set<String> attributes, final Metadata metadata, final Callback callback) {
         reset(type, null, template.resolve(statementContext), attributes, metadata,
-                resources.messages().resetSingletonConfirmationQuestion(), callback);
+                resources.messages().resetSingletonSuccess(type), callback);
     }
 
     /**
@@ -1118,7 +1118,7 @@ public class CrudOperations {
      */
     public void resetSingleton(final String type, final ResourceAddress address,
             final Set<String> attributes, final Metadata metadata, final Callback callback) {
-        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonConfirmationQuestion(),
+        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonSuccess(type),
                 callback);
     }
 
@@ -1158,6 +1158,19 @@ public class CrudOperations {
         remove(type, name, template.resolve(statementContext, name), callback);
     }
 
+    /**
+     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
+     * been removed a success message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param template the address template which is resolved against the current statement context to get the resource
+     *                 address for the {@code remove} operation
+     * @param callback the callback executed after removing the resource
+     */
+    public void removeSingleton(final String type, final AddressTemplate template, final Callback callback) {
+        remove(type, null, template.resolve(statementContext), callback);
+    }
+
 
     // ------------------------------------------------------ (d)elete using address
 
@@ -1171,16 +1184,32 @@ public class CrudOperations {
      * @param callback the callback executed after removing the resource
      */
     public void remove(final String type, final String name, final ResourceAddress address, final Callback callback) {
-        DialogFactory.showConfirmation(
-                resources.messages().removeConfirmationTitle(type),
-                resources.messages().removeConfirmationQuestion(name),
-                () -> {
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(eventBus, Message.success(
-                                resources.messages().removeResourceSuccess(type, name)));
-                        callback.execute();
-                    });
-                });
+        String title = resources.messages().removeConfirmationTitle(type);
+        SafeHtml question = name == null
+                ? resources.messages().removeSingletonConfirmationQuestion()
+                : resources.messages().removeConfirmationQuestion(name);
+        SafeHtml success = name == null
+                ? resources.messages().removeSingletonResourceSuccess(type)
+                : resources.messages().removeResourceSuccess(type, name);
+
+        DialogFactory.showConfirmation(title, question, () -> {
+            Operation operation = new Operation.Builder(REMOVE, address).build();
+            dispatcher.execute(operation, result -> {
+                MessageEvent.fire(eventBus, Message.success(success));
+                callback.execute();
+            });
+        });
+    }
+
+    /**
+     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
+     * been removed a success message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param address  the fq address for the {@code remove} operation
+     * @param callback the callback executed after removing the resource
+     */
+    public void removeSingleton(final String type, final ResourceAddress address, final Callback callback) {
+        remove(type, null, address, callback);
     }
 }

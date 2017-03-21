@@ -91,7 +91,7 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
 
         roleForm = new ModelNodeForm.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_FORM, roleMetadata)
                 .onSave((form, changedValues) -> presenter.saveSecuritySettingRole(form, changedValues))
-                .onReset(form -> presenter.resetSecuritySettingRole(form))
+                .prepareReset(form -> presenter.resetSecuritySettingRole(form))
                 .build();
 
         registerAttachable(roleTable, roleForm);

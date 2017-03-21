@@ -15,7 +15,6 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -55,7 +54,7 @@ final class Mbui_FormItemProviderView extends FormItemProviderView {
                 .customFormItem("bar", (attributeDescription) -> new org.jboss.hal.ballroom.form.TextBoxItem("bar", "Bar"))
                 .unsorted()
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
-                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
+                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

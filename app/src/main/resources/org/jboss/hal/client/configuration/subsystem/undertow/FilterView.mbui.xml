@@ -114,7 +114,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="undertow-gzip-form" title="GZip" on-save="{{noop()}}" reset="true">
+                <form id="undertow-gzip-form" title="GZip" on-save="{{noop()}}" reset="{{noop()}}">
                     <attributes>
                         <attribute
                                 form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisFilter())}}'/>
@@ -221,7 +221,8 @@
                     </columns>
                 </table>
                 <form id="undertow-response-header-form" title="Response Header"
-                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}" reset="true">
+                      on-save="{{presenter.saveResponseHeader(form, changedValues)}}"
+                      prepare-reset="{{presenter.resetResponseHeader(form)}}">
                     <attributes>
                         <attribute name="header-name"/>
                         <attribute name="header-value"/>

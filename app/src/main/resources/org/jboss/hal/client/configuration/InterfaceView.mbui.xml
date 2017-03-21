@@ -20,6 +20,6 @@
         <h1>Interface</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
         <form id="interface-form" title="Interface" on-save="{{presenter.saveInterface(form, changedValues)}}"
-              reset="true"/>
+              prepare-reset="{{presenter.resetInterface(form)}}"/>
     </metadata>
 </view>

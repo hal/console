@@ -69,7 +69,7 @@ public class AddResourceDialog {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
 
@@ -114,6 +114,6 @@ public class AddResourceDialog {
     public void show() {
         // First call dialog.show() (which attaches everything), then call form.add()
         dialog.show();
-        form.add(new ModelNode());
+        form.edit(new ModelNode());
     }
 }

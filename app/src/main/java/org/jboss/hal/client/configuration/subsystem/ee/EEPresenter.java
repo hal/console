@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -150,11 +151,22 @@ public class EEPresenter
 
     void reset(String type, String name, AddressTemplate template, Form<NamedNode> form,
             final Metadata metadata, SafeHtml successMessage) {
-        crud.reset(type, name, template.resolve(statementContext), form, metadata, successMessage, this::reload);
+        crud.reset(type, name, template.resolve(statementContext), form, metadata, successMessage,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, final Metadata metadata) {
-        crud.resetSingleton(type, template.resolve(statementContext), form, metadata, this::reload);
+        crud.resetSingleton(type, template.resolve(statementContext), form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void launchAddDialogGlobalModule() {

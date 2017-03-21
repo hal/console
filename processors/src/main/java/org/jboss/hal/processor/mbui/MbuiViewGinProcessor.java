@@ -41,7 +41,7 @@ public class MbuiViewGinProcessor extends MbuiViewProcessor {
 
     @Override
     protected void processType(final TypeElement type, final MbuiView mbuiView) {
-        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Mbui_", "_Provider"));
+        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "_Provider"));
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);

@@ -128,7 +128,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cache.baseId, store.baseId, Ids.FORM_SUFFIX),
                     metadata)
                     .onSave((f, changedValues) -> presenter.saveCacheStore(store, changedValues))
-                    .onReset(f -> presenter.resetCacheStore(store, f))
+                    .prepareReset(f -> presenter.resetCacheStore(store, f))
                     .build();
             storeForms.put(store, form);
             storeTabs.add(Ids.build(cache.baseId, store.baseId, ATTRIBUTES, Ids.TAB_SUFFIX),
@@ -204,7 +204,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 .include(BATCH_SIZE, FETCH_SIZE)
                 .unsorted()
                 .onSave((f, changedValues) -> presenter.saveStoreTable(table, changedValues))
-                .onReset(f -> presenter.resetStoreTable(table, f))
+                .prepareReset(f -> presenter.resetStoreTable(table, f))
                 .build();
     }
 

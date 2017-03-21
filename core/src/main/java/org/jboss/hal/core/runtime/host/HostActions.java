@@ -187,7 +187,7 @@ public class HostActions {
 
                 ModelNode model = new ModelNode();
                 model.get(RESTART_SERVERS).set(true);
-                form.add(model);
+                form.edit(model);
             }
 
             @Override

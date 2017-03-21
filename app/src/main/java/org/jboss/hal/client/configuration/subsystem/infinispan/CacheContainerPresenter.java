@@ -26,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -176,7 +178,12 @@ public class CacheContainerPresenter
     void resetCacheContainer(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
-        crud.reset(Names.CACHE_CONTAINER, cacheContainer, address, form, metadata, this::reload);
+        crud.reset(Names.CACHE_CONTAINER, cacheContainer, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
 
@@ -197,7 +204,12 @@ public class CacheContainerPresenter
 
     void resetCache(final Cache cache, final String name, final Form<NamedNode> form) {
         Metadata metadata = metadataRegistry.lookup(cache.template);
-        crud.reset(cache.type, name, cacheAddress(cache, name), form, metadata, this::reload);
+        crud.reset(cache.type, name, cacheAddress(cache, name), form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void removeCache(final Cache cache, final String name) {
@@ -244,7 +256,22 @@ public class CacheContainerPresenter
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
                 .append(cacheType.resource() + "=*")
                 .append(COMPONENT + "=" + component.resource));
-        crud.resetSingleton(component.type, cacheComponentAddress(component), form, metadata, this::reload);
+        crud.resetSingleton(component.type, cacheComponentAddress(component), form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
+    void removeCacheComponent(final Component component, final Form<ModelNode> form) {
+        crud.removeSingleton(component.type, cacheComponentAddress(component), new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     private ResourceAddress cacheComponentAddress(final Component component) {
@@ -292,7 +319,12 @@ public class CacheContainerPresenter
                 .append(cacheType.resource() + "=*")
                 .append(COMPONENT + "=" + BACKUPS)
                 .append(BACKUP + "=*"));
-        crud.reset(Names.BACKUP, name, cacheBackupAddress(name), form, metadata, this::showCacheBackup);
+        crud.reset(Names.BACKUP, name, cacheBackupAddress(name), form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                showCacheBackup();
+            }
+        });
     }
 
     void removeCacheBackup(final String name) {
@@ -315,7 +347,7 @@ public class CacheContainerPresenter
             Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
             String id = Ids.build(cacheType.baseId, store.baseId, Ids.ADD_SUFFIX);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
-                    .addFromRequestProperties()
+                    .fromRequestProperties()
                     .requiredOnly()
                     .build();
             AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(store.type), form,
@@ -361,7 +393,12 @@ public class CacheContainerPresenter
 
     void resetCacheStore(final Store store, final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
-        crud.resetSingleton(store.type, cacheStoreAddress(store), form, metadata, this::showCacheStore);
+        crud.resetSingleton(store.type, cacheStoreAddress(store), form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                showCacheStore();
+            }
+        });
     }
 
     void switchStore(final Store newStore) {
@@ -375,7 +412,7 @@ public class CacheContainerPresenter
                 Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + newStore.resource));
                 String id = Ids.build(cacheType.baseId, newStore.baseId, Ids.ADD_SUFFIX);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata) // custom form w/o unbound name item
-                        .addFromRequestProperties()
+                        .fromRequestProperties()
                         .requiredOnly()
                         .build();
                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
@@ -441,7 +478,12 @@ public class CacheContainerPresenter
                 .append(cacheType.resource() + "=*")
                 .append(STORE + "=" + store.resource)
                 .append(WRITE + "=" + write.resource));
-        crud.resetSingleton(Names.WRITE_BEHIND, writeAddress(write), form, metadata, this::showCacheStore);
+        crud.resetSingleton(Names.WRITE_BEHIND, writeAddress(write), form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                showCacheStore();
+            }
+        });
     }
 
     void switchWrite(final Write currentWrite, final Write newWrite) {
@@ -479,7 +521,13 @@ public class CacheContainerPresenter
                 .append(cacheType.resource() + "=*")
                 .append(STORE + "=" + store.resource)
                 .append(TABLE + "=" + table.resource));
-        crud.resetSingleton(table.type, storeTableAddress(store, table), form, metadata, this::showCacheStore);
+        crud.resetSingleton(table.type, storeTableAddress(store, table), form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        showCacheStore();
+                    }
+                });
     }
 
     private ResourceAddress storeTableAddress(final Store store, final Table table) {
@@ -510,7 +558,22 @@ public class CacheContainerPresenter
     void resetThreadPool(final ThreadPool threadPool, final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE
                 .append(THREAD_POOL + "=" + threadPool.resource));
-        crud.resetSingleton(threadPool.type, threadPoolAddress(threadPool), form, metadata, this::reload);
+        crud.resetSingleton(threadPool.type, threadPoolAddress(threadPool), form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
+    void removeThreadPool(final ThreadPool threadPool, final Form<ModelNode> form) {
+        crud.removeSingleton(threadPool.type, threadPoolAddress(threadPool), new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     private ResourceAddress threadPoolAddress(final ThreadPool threadPool) {
@@ -533,7 +596,12 @@ public class CacheContainerPresenter
 
     void resetJgroups(final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE.append(TRANSPORT + "=" + JGROUPS));
-        crud.resetSingleton(Names.JGROUPS, jgroupsAddress(), form, metadata, this::reload);
+        crud.resetSingleton(Names.JGROUPS, jgroupsAddress(), form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     private ResourceAddress jgroupsAddress() {

@@ -15,14 +15,11 @@
  */
 package org.jboss.hal.spi;
 
-import jsinterop.annotations.JsFunction;
-
 /**
  * A general purpose callback.
  *
  * @author Harald Pehl
  */
-@JsFunction
 @FunctionalInterface
 public interface Callback {
 

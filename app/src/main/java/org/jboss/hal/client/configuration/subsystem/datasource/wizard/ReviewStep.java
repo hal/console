@@ -52,7 +52,7 @@ class ReviewStep extends WizardStep<Context, State> {
                 .unboundFormItem(new NameItem(), 0)
                 .include(attributes)
                 .unsorted()
-                .viewOnly()
+                .readOnly()
                 .build();
     }
 

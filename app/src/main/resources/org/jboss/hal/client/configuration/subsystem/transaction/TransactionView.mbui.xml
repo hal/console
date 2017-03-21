@@ -41,7 +41,8 @@
                 <h1>Process ID</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="tx-process-form" title="Process ID"
-                      on-save="{{presenter.saveProcessForm(form, changedValues)}}" reset="true">
+                      on-save="{{presenter.saveProcessForm(form, changedValues)}}"
+                      prepare-reset="{{presenter.resetProcessForm(form)}}">
                     <attributes>
                         <attribute name="process-id-uuid"/>
                         <attribute name="process-id-socket-binding">

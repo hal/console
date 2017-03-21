@@ -19,7 +19,7 @@
     <metadata address="/{selected.profile}/subsystem=jpa">
         <h1>JPA</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="jpa-form" title="JPA" auto-save="true">
+        <form id="jpa-form" title="JPA" auto-save="true" reset="true">
             <attributes>
                 <attribute name="default-datasource">
                     <suggest-handler>

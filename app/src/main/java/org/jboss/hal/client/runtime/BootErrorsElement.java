@@ -95,7 +95,7 @@ public class BootErrorsElement implements IsElement, Attachable {
         table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, options);
 
         form = new ModelNodeForm.Builder<>(Ids.BOOT_ERRORS_FORM, metadata)
-                .viewOnly()
+                .readOnly()
                 .customFormItem(FAILURE_DESCRIPTION, attributeDescription -> new PreTextItem(FAILURE_DESCRIPTION))
                 .customFormItem(FAILED_SERVICES, attributeDescription -> new PreListItem(FAILED_SERVICES))
                 .customFormItem(SERVICES_MISSING_DEPENDENCIES, attributeDescription ->

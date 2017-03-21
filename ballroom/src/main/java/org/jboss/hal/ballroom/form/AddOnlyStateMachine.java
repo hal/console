@@ -17,31 +17,38 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import static org.jboss.hal.ballroom.form.Form.Operation.ADD;
+import org.jboss.hal.ballroom.form.Form.Operation;
+
+import static org.jboss.hal.ballroom.form.Form.Operation.CANCEL;
+import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.Operation.SAVE;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 
 /**
- * A state machine for transient models. Supports only the {@link Form.Operation#ADD}, {@link Form.Operation#CANCEL}
- * and {@link Form.Operation#SAVE} operations.
+ * A state machine for transient models. Supports only the {@link Form.State#EDITING} state and the {@link Operation#CANCEL} and {@link Operation#SAVE} operations.
+ * <p>
+ * Most often used in add dialogs.
  *
  * @author Harald Pehl
  */
 public class AddOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 
     public AddOnlyStateMachine() {
-        super(EnumSet.of(ADD));
-        this.current = null;
+        super(EnumSet.of(EDITING), EnumSet.of(EDIT, SAVE, CANCEL));
+        this.current = initial();
     }
 
     @Override
-    public void execute(final Form.Operation operation) {
+    protected Form.State initial() {
+        return EDITING;
+    }
+
+    @Override
+    protected <C> void safeExecute(final Operation operation, final C context) {
         switch (operation) {
 
-            case ADD:
-                if (current != null) {
-                    assertState(EDITING);
-                }
-                transitionTo(EDITING);
+            case EDIT:
+                assertState(EDITING);
                 break;
 
             case SAVE:
@@ -51,9 +58,11 @@ public class AddOnlyStateMachine extends AbstractStateMachine implements StateMa
             case CANCEL:
                 assertState(EDITING);
                 break;
-
-            default:
-                unsupported(operation);
         }
+    }
+
+    @Override
+    protected String name() {
+        return "AddOnlyStateMachine";
     }
 }

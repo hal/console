@@ -144,6 +144,12 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext), changedValues, metadata);
     }
 
+    void resetRootLogger(Form<ModelNode> form) {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT"));
+        resetSingletonForm("Root Logger", SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                .resolve(selectionAwareStatementContext), form, metadata);
+    }
+
     @Override
     public void updateRootLogger(final ModelNode modelNode) {
         rootLoggerVisibility(true);
@@ -166,7 +172,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT"));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-profile-root-logger-add", metadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .include(LEVEL, HANDLERS)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(
@@ -200,6 +206,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetLogger(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("logger=*"));
+        resetForm("Category", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("logger=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updateLogger(final List<NamedNode> items) {
         loggerForm.clear();
@@ -223,6 +236,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("console-handler=*"));
         saveForm("Console Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetConsoleHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("console-handler=*"));
+        resetForm("Console Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override
@@ -251,6 +271,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetFileHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("file-handler=*"));
+        resetForm("File Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updateFileHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-profile-handler-file-item", items.size());
@@ -277,6 +304,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
         saveForm("Periodic Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetPeriodicHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
+        resetForm("Periodic Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override
@@ -308,6 +343,15 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                         .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetPeriodicSizeHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"));
+        resetForm("Periodic Size Handler", name,
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*")
+                        .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updatePeriodicSizeHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-profile-handler-periodic-size-rotating-file-item", items.size());
@@ -334,6 +378,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"));
         saveForm("Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetSizeHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"));
+        resetForm("Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override
@@ -382,6 +434,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetAsyncHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("async-handler=*"));
+        resetForm("Async Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updateAsyncHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-profile-handler-async-item", items.size());
@@ -406,6 +465,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("custom-handler=*"));
         saveForm("Custom Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetCustomHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("custom-handler=*"));
+        resetForm("Custom Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override
@@ -435,6 +501,13 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetSyslogHandler(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
+        resetForm("Syslog Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updateSyslogHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-profile-handler-syslog-item", items.size());
@@ -462,6 +535,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
+    void resetCustomFormatter(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append("custom-formatter=*"));
+        resetForm("Custom Formatter", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-formatter=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
+    }
+
     @Override
     public void updateCustomFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-profile-formatter-custom-item", items.size());
@@ -487,6 +568,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*"));
         saveForm("Pattern Formatter", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+    }
+
+    void resetPatternFormatter(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        Metadata metadata = mbuiContext.metadataRegistry()
+                .lookup(LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*"));
+        resetForm("Pattern Formatter", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*")
+                .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override
@@ -524,7 +613,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
 
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .unboundFormItem(new NameItem(), 0)
                 .customFormItem("file", (attributeDescription) -> new FileFormItem())
                 .unsorted();

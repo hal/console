@@ -140,7 +140,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         Metadata metadata = mbuiContext.metadataRegistry().lookup(ROOT_LOGGER_TEMPLATE);
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .include(LEVEL, HANDLERS)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(

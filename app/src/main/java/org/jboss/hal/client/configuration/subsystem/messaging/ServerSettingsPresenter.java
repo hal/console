@@ -21,6 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -84,6 +85,15 @@ abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyP
 
     void save(ServerSubResource ssr, Form<NamedNode> form, Map<String, Object> changedValues) {
         ssr.save(form, changedValues, metadataRegistry, statementContext, crud, this::reload);
+    }
+
+    void reset(ServerSubResource ssr, Form<NamedNode> form) {
+        ssr.reset(form, metadataRegistry, statementContext, crud, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void remove(ServerSubResource ssr, NamedNode item) {

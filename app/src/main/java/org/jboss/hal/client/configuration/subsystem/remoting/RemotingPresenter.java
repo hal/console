@@ -29,6 +29,8 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -167,12 +169,23 @@ public class RemotingPresenter
     }
 
     void saveConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
-        propertiesOperations.saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE,
-                changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_TEMPLATE);
+        ResourceAddress address = SELECTED_CONNECTOR_TEMPLATE.resolve(selectedConnectorContext);
+        propertiesOperations.saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), address,
+                changedValues, metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),
+                this::reload);
     }
 
-    void resetConnector(Form<NamedNode> form, Metadata metadata) {
-        crud.reset(Names.REMOTE_CONNECTOR, form.getModel().getName(), CONNECTOR_TEMPLATE, form, metadata, this::reload);
+    void resetConnector(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(CONNECTOR_TEMPLATE);
+        ResourceAddress address = SELECTED_CONNECTOR_TEMPLATE.resolve(selectedConnectorContext);
+        crud.reset(Names.REMOTE_CONNECTOR, form.getModel().getName(), address, form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void createConnectorSecurity() {
@@ -191,7 +204,22 @@ public class RemotingPresenter
     void resetConnectorSecurity(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
         Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
-        crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY, address, form, metadata, this::reload);
+        crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
+    }
+
+    void removeConnectorSecurity(Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        crud.removeSingleton(Names.REMOTE_CONNECTOR_SECURITY, address, new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void createConnectorSecurityPolicy() {
@@ -210,7 +238,23 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
         crud.resetSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
                 SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
-                this::reload);
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
+    void removeConnectorSecurityPolicy(Form<ModelNode> form) {
+        crud.removeSingleton(Names.REMOTE_CONNECTOR_SECURITY_POLICY,
+                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext),
+                new FinishRemove<ModelNode>(form) {
+                    @Override
+                    public void afterRemove(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
     }
 
 
@@ -224,14 +268,23 @@ public class RemotingPresenter
     }
 
     void saveHttpConnector(Form<NamedNode> form, Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_TEMPLATE);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_TEMPLATE.resolve(selectedHttpConnectorContext);
         propertiesOperations.saveWithProperties(Names.HTTP_CONNECTOR, form.getModel().getName(),
-                HTTP_CONNECTOR_TEMPLATE, changedValues, PROPERTY,
-                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                address, changedValues, metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),
+                this::reload);
     }
 
-    void resetHttpConnector(Form<NamedNode> form, Metadata metadata) {
-        crud.reset(Names.HTTP_CONNECTOR, form.getModel().getName(), HTTP_CONNECTOR_TEMPLATE, form, metadata,
-                this::reload);
+    void resetHttpConnector(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_TEMPLATE);
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_TEMPLATE.resolve(selectedHttpConnectorContext);
+        crud.reset(Names.HTTP_CONNECTOR, form.getModel().getName(), address, form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void createHttpConnectorSecurity() {
@@ -250,7 +303,22 @@ public class RemotingPresenter
     void resetHttpConnectorSecurity(Form<ModelNode> form) {
         ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
-        crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY, address, form, metadata, this::reload);
+        crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
+    }
+
+    void removeHttpConnectorSecurity(Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
+        crud.removeSingleton(Names.HTTP_CONNECTOR_SECURITY, address, new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void createHttpConnectorSecurityPolicy() {
@@ -269,7 +337,23 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         crud.resetSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
                 SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), form, metadata,
-                this::reload);
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
+    void removeHttpConnectorSecurityPolicy(final Form<ModelNode> form) {
+        crud.removeSingleton(Names.HTTP_CONNECTOR_SECURITY_POLICY,
+                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext),
+                new FinishRemove<ModelNode>(form) {
+                    @Override
+                    public void afterRemove(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
     }
 
 
@@ -287,6 +371,17 @@ public class RemotingPresenter
                 form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
     }
 
+    void resetLocalOutbound(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(LOCAL_OUTBOUND_TEMPLATE);
+        crud.reset(Names.LOCAL_OUTBOUND_CONNECTION, form.getModel().getName(), LOCAL_OUTBOUND_TEMPLATE, form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
+    }
+
 
     // ------------------------------------------------------ outbound connection
 
@@ -299,6 +394,17 @@ public class RemotingPresenter
     void saveOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.OUTBOUND_CONNECTION, form.getModel().getName(), OUTBOUND_TEMPLATE,
                 changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+    }
+
+    void resetOutbound(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(OUTBOUND_TEMPLATE);
+        crud.reset(Names.OUTBOUND_CONNECTION, form.getModel().getName(), OUTBOUND_TEMPLATE, form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
 
@@ -314,6 +420,17 @@ public class RemotingPresenter
         propertiesOperations.saveWithProperties(Names.REMOTE_OUTBOUND_CONNECTION, form.getModel().getName(),
                 REMOTE_OUTBOUND_TEMPLATE, changedValues, PROPERTY,
                 form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+    }
+
+    void resetRemoteOutbound(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(REMOTE_OUTBOUND_TEMPLATE);
+        crud.reset(Names.REMOTE_OUTBOUND_CONNECTION, form.getModel().getName(), REMOTE_OUTBOUND_TEMPLATE, form,
+                metadata, new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
 

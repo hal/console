@@ -18,6 +18,8 @@ package org.jboss.hal.core.mbui;
 import java.util.Map;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -62,11 +64,30 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
 
     protected <T> void resetForm(final String type, final String name, final ResourceAddress address,
             final Form<T> form, final Metadata metadata) {
-        mbuiContext.crud().reset(type, name, address, form, metadata, () -> presenter.reload());
+        mbuiContext.crud().reset(type, name, address, form, metadata, new FinishReset<T>(form) {
+            @Override
+            public void afterReset(final Form<T> form) {
+                presenter.reload();
+            }
+        });
     }
 
     protected <T> void resetSingletonForm(final String type, final ResourceAddress address,
             final Form<T> form, final Metadata metadata) {
-        mbuiContext.crud().resetSingleton(type, address, form, metadata, () -> presenter.reload());
+        mbuiContext.crud().resetSingleton(type, address, form, metadata, new FinishReset<T>(form) {
+            @Override
+            public void afterReset(final Form<T> form) {
+                presenter.reload();
+            }
+        });
+    }
+
+    protected <T> void removeSingletonForm(final String type, final ResourceAddress address, final Form<T> form) {
+        mbuiContext.crud().removeSingleton(type, address, new FinishRemove<T>(form) {
+            @Override
+            public void afterRemove(final Form<T> form) {
+                presenter.reload();
+            }
+        });
     }
 }

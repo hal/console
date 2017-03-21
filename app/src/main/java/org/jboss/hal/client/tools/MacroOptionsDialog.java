@@ -72,7 +72,7 @@ public class MacroOptionsDialog {
     }
 
     public void show() {
-        form.add(new MacroOptions());
+        form.edit(new MacroOptions());
         dialog.show();
     }
 }

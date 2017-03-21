@@ -117,12 +117,12 @@ public class ExpressionDialog {
 
     public void show() {
         dialog.show();
-        form.add(new ModelNode());
+        form.edit(new ModelNode());
     }
 
     void showAndResolve(String expression) {
         dialog.show();
-        form.add(new ModelNode());
+        form.edit(new ModelNode());
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
         expressionItem.setValue(expression);
         expressionItem.setModified(true);

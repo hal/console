@@ -61,10 +61,10 @@ class MessagePanelElement implements IsElement {
                 .a().css(clickable).data(DISMISS, ALERT);
                     if (message.hasAction()) {
                         builder.on(click, event -> message.getCallback().execute())
-                                .textContent(message.getActionTitle());
+                               .textContent(message.getActionTitle());
                     } else {
                         builder.on(click, event -> showMessage(message))
-                                .textContent(resources.constants().details());
+                               .textContent(resources.constants().details());
                     }
                 builder.end()
             .end();

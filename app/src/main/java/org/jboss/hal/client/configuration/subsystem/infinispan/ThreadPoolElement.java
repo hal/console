@@ -20,11 +20,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
@@ -37,25 +35,25 @@ import org.jboss.hal.resources.Ids;
  */
 class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
 
-    private final FailSafeForm<ModelNode> fsf;
+    private final Form<ModelNode> form;
     private final Element root;
     private CacheContainerPresenter presenter;
 
-    ThreadPoolElement(ThreadPool threadPool, Dispatcher dispatcher, MetadataRegistry metadataRegistry) {
+    ThreadPoolElement(ThreadPool threadPool, MetadataRegistry metadataRegistry) {
         Metadata metadata = metadataRegistry.lookup(threadPool.template());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(threadPool.baseId, Ids.FORM_SUFFIX), metadata)
+        form = new ModelNodeForm.Builder<>(Ids.build(threadPool.baseId, Ids.FORM_SUFFIX), metadata)
+                .singleton(() -> presenter.readThreadPool(threadPool), () -> presenter.addThreadPool(threadPool))
                 .onSave((f, changedValues) -> presenter.saveThreadPool(threadPool, changedValues))
-                .onReset(f -> presenter.resetThreadPool(threadPool, f))
+                .prepareReset(f -> presenter.resetThreadPool(threadPool, f))
+                .prepareRemove(f -> presenter.removeThreadPool(threadPool, f))
                 .build();
-        fsf = new FailSafeForm<>(dispatcher, () -> presenter.readThreadPool(threadPool), form,
-                () -> presenter.addThreadPool(threadPool));
 
         // @formatter:off
         root = new Elements.Builder()
             .section()
                 .h(1).textContent(threadPool.type).end()
                 .p().textContent(metadata.getDescription().getDescription()).end()
-                .add(fsf)
+                .add(form)
             .end()
         .build();
         // @formatter:on
@@ -68,12 +66,12 @@ class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheCont
 
     @Override
     public void attach() {
-        fsf.attach();
+        form.attach();
     }
 
     @Override
     public void detach() {
-        fsf.detach();
+        form.detach();
     }
 
     @Override
@@ -82,6 +80,6 @@ class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheCont
     }
 
     void update(ModelNode modelNode) {
-        fsf.view(modelNode);
+        form.view(modelNode);
     }
 }

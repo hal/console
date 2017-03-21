@@ -193,7 +193,7 @@ class EndpointDialog {
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
             Elements.setVisible(alert.asElement(), false);
-            form.add(new Endpoint());
+            form.edit(new Endpoint());
             primaryButton.setInnerText(CONSTANTS.add());
             primaryButton.setDisabled(false);
             Elements.setVisible(selectPage, false);

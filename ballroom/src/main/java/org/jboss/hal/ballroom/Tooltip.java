@@ -19,7 +19,6 @@ import elemental.dom.Element;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.spi.Callback;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -42,7 +41,7 @@ public class Tooltip {
 
     native void attr(String name, String value);
 
-    native void on(String event, Callback callback);
+    native void on(String event, JsCallback callback);
 
     @JsOverlay
     public final Tooltip show() {
@@ -63,7 +62,7 @@ public class Tooltip {
     }
 
     @JsOverlay
-    public final void onHide(Callback callback) {
+    public final void onHide(JsCallback callback) {
         on("hidden.bs.tooltip", callback); //NON-NLS
     }
 }

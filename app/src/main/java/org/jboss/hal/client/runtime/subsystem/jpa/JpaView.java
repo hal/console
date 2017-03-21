@@ -139,7 +139,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             List<String> sectionAttributes = mainAttributes.get(section);
             Form<JpaStatistic> form = new ModelNodeForm.Builder<JpaStatistic>(
                     Ids.build(baseId, Ids.FORM_SUFFIX, sectionId), metadata)
-                    .viewOnly()
+                    .readOnly()
                     .includeRuntime()
                     .include(sectionAttributes)
                     .unsorted()
@@ -206,7 +206,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
                 metadata)
-                .viewOnly()
+                .readOnly()
                 .includeRuntime()
                 .build();
 

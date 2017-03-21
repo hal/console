@@ -30,7 +30,6 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -66,8 +65,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
-    private final FailSafeForm<ModelNode> accessLogForm;
-    private final FailSafeForm<ModelNode> singleSignOnForm;
+    private final Form<ModelNode> accessLogForm;
+    private final Form<ModelNode> singleSignOnForm;
     private final NamedNodeTable<NamedNode> filterRefTable;
     private final Form<NamedNode> filterRefForm;
     private final NamedNodeTable<NamedNode> locationTable;
@@ -90,7 +89,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Metadata configurationMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVER_CONFIGURATION_FORM, configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServer(changedValues))
-                .onReset(form -> presenter.resetServer(form))
+                .prepareReset(form -> presenter.resetServer(form))
                 .build();
 
         // @formatter:off
@@ -130,7 +129,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)
                 .onSave((form, changedValues) -> presenter.saveHost(form.getModel().getName(), changedValues))
-                .onReset(form -> presenter.resetHost(form.getModel().getName(), form))
+                .prepareReset(form -> presenter.resetHost(form.getModel().getName(), form))
                 .build();
 
         accessLogForm = hostSetting(HostSetting.ACCESS_LOG);
@@ -168,7 +167,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         filterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_FILTER_REF_FORM, filterRefMetadata)
                 .onSave((form, changedValues) -> presenter.saveFilterRef(form, changedValues))
-                .onReset(form -> presenter.resetFilterRef(form))
+                .prepareReset(form -> presenter.resetFilterRef(form))
                 .build();
 
         // @formatter:off
@@ -197,7 +196,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         locationForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FORM, locationMetadata)
                 .onSave((form, changedValues) -> presenter.saveLocation(form, changedValues))
-                .onReset(form -> presenter.resetLocation(form))
+                .prepareReset(form -> presenter.resetLocation(form))
                 .build();
 
         // @formatter:off
@@ -227,7 +226,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         locationFilterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_FORM,
                 locationFilterRefMetadata)
                 .onSave((form, changedValues) -> presenter.saveLocationFilterRef(form, changedValues))
-                .onReset(form -> presenter.resetLocationFilterRef(form))
+                .prepareReset(form -> presenter.resetLocationFilterRef(form))
                 .build();
 
         // @formatter:off
@@ -287,14 +286,14 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         initElement(root);
     }
 
-    private FailSafeForm<ModelNode> hostSetting(final HostSetting hostSetting) {
+    private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+        return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
+                .singleton(() -> presenter.hostSettingOperation(hostSetting), () -> presenter.addHostSetting(hostSetting))
                 .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
-                .onReset(f -> presenter.resetHostSetting(hostSetting, f))
+                .prepareReset(f -> presenter.resetHostSetting(hostSetting, f))
+                .prepareRemove(f -> presenter.removeHostSetting(hostSetting, f))
                 .build();
-        return new FailSafeForm<>(dispatcher, () -> presenter.hostSettingOperation(hostSetting), form,
-                () -> presenter.addHostSetting(hostSetting));
     }
 
     @Override

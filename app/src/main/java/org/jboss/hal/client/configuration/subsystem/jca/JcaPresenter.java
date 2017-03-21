@@ -26,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -152,12 +154,31 @@ public class JcaPresenter
 
     void resetResource(final AddressTemplate template, final String type, final String name,
             final Form<NamedNode> form, final Metadata metadata) {
-        crud.reset(type, name, template, form, metadata, this::reload);
+        crud.reset(type, name, template, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void resetSingleton(final String type, final AddressTemplate template, final Form<ModelNode> form,
             final Metadata metadata) {
-        crud.resetSingleton(type, template, form, metadata, this::reload);
+        crud.resetSingleton(type, template, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
+    }
+
+    void removeSingleton(final String type, final AddressTemplate template, final Form<ModelNode> form) {
+        crud.removeSingleton(type, template, new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
 
@@ -202,7 +223,7 @@ public class JcaPresenter
                 // whether we use the normal or distributed workmanager version
                 Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JCA_THREAD_POOL_ADD, metadata)
-                        .addFromRequestProperties()
+                        .fromRequestProperties()
                         .unboundFormItem(typeItem, 0)
                         .unboundFormItem(new NameItem(), 1)
                         .include(MAX_THREADS, QUEUE_LENGTH, THREAD_FACTORY)

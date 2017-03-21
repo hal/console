@@ -147,7 +147,7 @@ public class ConnectionPresenter
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
         form.getFormItem(HTTP_LISTENER).registerSuggestHandler(
@@ -165,7 +165,7 @@ public class ConnectionPresenter
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
         form.getFormItem(SOCKET_BINDING).registerSuggestHandler(

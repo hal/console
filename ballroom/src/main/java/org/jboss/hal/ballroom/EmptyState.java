@@ -146,7 +146,7 @@ public class EmptyState implements IsElement {
         }
         eb.end().end();
 
-        icon = eb.referenceFor(ICON);
+        icon = builder.icon != null ? eb.referenceFor(ICON) : null;
         header = eb.referenceFor(HEADER);
         paragraphsDiv = eb.referenceFor(PARAGRAPHS_DIV);
         primaryActionDiv = eb.referenceFor(PRIMARY_ACTION_DIV);
@@ -158,7 +158,9 @@ public class EmptyState implements IsElement {
     }
 
     public void setIcon(String icon) {
-        this.icon.setClassName(icon);
+        if (this.icon != null) {
+            this.icon.setClassName(icon);
+        }
     }
 
     public void setHeader(String header) {

@@ -53,7 +53,7 @@ public class Content {
         }
         StringBuilder htmlBuilder = new StringBuilder();
         for (org.jdom2.Element childElement : contentElement.getChildren()) {
-            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FAIL_SAFE_FORM.equals(childElement.getName())
+            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.SINGLETON_FORM.equals(childElement.getName())
                     || XmlTags.FORM.equals(childElement.getName())) {
                 if (htmlBuilder.length() != 0) {
                     String html = htmlBuilder.toString();

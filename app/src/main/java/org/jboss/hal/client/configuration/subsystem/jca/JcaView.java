@@ -32,7 +32,6 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
@@ -73,7 +72,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final Form<ModelNode> ccmForm;
     private final Form<ModelNode> avForm;
     private final Form<ModelNode> bvForm;
-    private final FailSafeForm<ModelNode> failSafeTracerForm;
+    private final Form<ModelNode> tracerForm;
     private final NamedNodeTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final NamedNodeTable<NamedNode> wmTable;
@@ -106,7 +105,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(CCM_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(ccmType)))
-                .onReset(f -> presenter.resetSingleton(ccmType, CCM_TEMPLATE, f, ccmMetadata))
+                .prepareReset(f -> presenter.resetSingleton(ccmType, CCM_TEMPLATE, f, ccmMetadata))
                 .build();
 
         String avType = labelBuilder.label(ARCHIVE_VALIDATION_TEMPLATE.lastValue());
@@ -115,7 +114,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(ARCHIVE_VALIDATION_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(avType)))
-                .onReset(f -> presenter.resetSingleton(avType, ARCHIVE_VALIDATION_TEMPLATE, f, avMetadata))
+                .prepareReset(f -> presenter.resetSingleton(avType, ARCHIVE_VALIDATION_TEMPLATE, f, avMetadata))
                 .build();
 
         String bvType = labelBuilder.label(BEAN_VALIDATION_TEMPLATE.lastValue());
@@ -124,7 +123,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveSingleton(BEAN_VALIDATION_TEMPLATE, changedValues,
                                 resources.messages().modifySingleResourceSuccess(bvType)))
-                .onReset(f -> presenter.resetSingleton(bvType, BEAN_VALIDATION_TEMPLATE, f, bvMetadata))
+                .prepareReset(f -> presenter.resetSingleton(bvType, BEAN_VALIDATION_TEMPLATE, f, bvMetadata))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -150,27 +149,28 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         String tracerType = labelBuilder.label(TRACER_TEMPLATE.lastKey());
         Metadata tracerMetadata = metadataRegistry.lookup(TRACER_TEMPLATE);
-        Form<ModelNode> tracerForm = new ModelNodeForm.Builder<>(Ids.JCA_TRACER_FORM, tracerMetadata)
+        tracerForm = new ModelNodeForm.Builder<>(Ids.JCA_TRACER_FORM, tracerMetadata)
+                .singleton(() -> new Operation.Builder(READ_RESOURCE_OPERATION,
+                                TRACER_TEMPLATE.resolve(statementContext)).build(),
+                        () -> presenter.addTracer())
                 .onSave((form, changedValues) -> presenter.saveSingleton(TRACER_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(tracerType)))
-                .onReset(f -> presenter.resetSingleton(tracerType, TRACER_TEMPLATE, f, tracerMetadata))
+                .prepareReset(f -> presenter.resetSingleton(tracerType, TRACER_TEMPLATE, f, tracerMetadata))
+                .prepareRemove(f -> presenter.removeSingleton(tracerType, TRACER_TEMPLATE, f))
                 .build();
-        failSafeTracerForm = new FailSafeForm<>(dispatcher,
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
-                tracerForm, () -> presenter.addTracer());
 
         // @formatter:off
         Element tracerLayout = new Elements.Builder()
             .div()
                 .h(1).textContent(tracerType).end()
                 .p().textContent(tracerMetadata.getDescription().getDescription()).end()
-                .add(failSafeTracerForm)
+                .add(tracerForm)
             .end()
         .build();
         // @formatter:on
 
         navigation.addPrimary(Ids.JCA_TRACER_ENTRY, tracerType, fontAwesome("bug"), tracerLayout);
-        registerAttachable(failSafeTracerForm);
+        registerAttachable(tracerForm);
 
 
         // ------------------------------------------------------ bootstrap context (bc)
@@ -179,7 +179,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Metadata bcMetadata = metadataRegistry.lookup(BOOTSTRAP_CONTEXT_TEMPLATE);
 
         Form<ModelNode> bcAddForm = new ModelNodeForm.Builder<>(Ids.JCA_BOOTSTRAP_CONTEXT_ADD, bcMetadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
         bcAddForm.getFormItem(WORKMANAGER).registerSuggestHandler(
@@ -202,7 +202,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                     presenter.saveResource(BOOTSTRAP_CONTEXT_TEMPLATE, bcName, changedValues,
                             resources.messages().modifyResourceSuccess(bcType, bcName));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     String bcName = form.getModel().getName();
                     presenter.resetResource(BOOTSTRAP_CONTEXT_TEMPLATE, bcType, bcName, form, bcMetadata);
                 })
@@ -231,7 +231,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Metadata wmMetadata = metadataRegistry.lookup(WORKMANAGER_TEMPLATE);
 
         Form<ModelNode> wmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_WORKMANAGER_ADD, wmMetadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
         AddResourceDialog wmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(wmType), wmAddForm,
@@ -274,7 +274,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
 
         Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, wmMetadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
         AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
@@ -297,7 +297,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                     presenter.saveResource(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmName, changedValues,
                             resources.messages().modifyResourceSuccess(dwmType, dwmName));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     String dwmName = form.getModel().getName();
                     presenter.resetResource(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmType, dwmName, form, dwmMetadata);
                 })
@@ -362,7 +362,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         avForm.view(failSafeGet(payload, "archive-validation/archive-validation"));
         bvForm.view(failSafeGet(payload, "bean-validation/bean-validation"));
 
-        failSafeTracerForm.view(failSafeGet(payload, "tracer/tracer"));
+        tracerForm.view(failSafeGet(payload, "tracer/tracer"));
 
         bcForm.clear();
         dwmForm.clear();

@@ -84,7 +84,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
     public ServerStatusView(final MetadataRegistry metadataRegistry, final Resources resources) {
         Metadata metadata = metadataRegistry.lookup(ServerStatusPresenter.SERVER_STATUS_TEMPLATE);
         mainAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_FORM, metadata)
-                .viewOnly()
+                .readOnly()
                 .includeRuntime()
                 .include(MAIN_ATTRIBUTES)
                 .unboundFormItem(new TextBoxItem(START_TIME, new LabelBuilder().label(START_TIME)))
@@ -93,7 +93,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .build();
 
         bootstrapAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_STATUS_BOOTSTRAP_FORM, metadata)
-                .viewOnly()
+                .readOnly()
                 .includeRuntime()
                 .include(BOOTSTRAP_ATTRIBUTES)
                 .customFormItem(BOOT_CLASS_PATH, attributeDescription -> new PreTextItem(BOOT_CLASS_PATH))

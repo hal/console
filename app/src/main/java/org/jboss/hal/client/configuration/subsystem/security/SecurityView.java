@@ -19,7 +19,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -53,7 +52,7 @@ public abstract class SecurityView extends MbuiViewImpl<SecurityPresenter> imple
     @MbuiElement("security-elytron-trust-manager-form") Form<NamedNode> trustManagerForm;
     @MbuiElement("security-elytron-trust-store-table") NamedNodeTable<NamedNode> trustStoreTable;
     @MbuiElement("security-elytron-trust-store-form") Form<NamedNode> trustStoreForm;
-    @MbuiElement("security-vault-form") FailSafeForm<ModelNode> vaultForm;
+    @MbuiElement("security-vault-form") Form<ModelNode> vaultForm;
 
     SecurityView(final MbuiContext mbuiContext) {
         super(mbuiContext);

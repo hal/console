@@ -61,7 +61,7 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPrese
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveListener(listenerType, form.getModel().getName(),
                         changedValues))
-                .onReset(form -> presenter.resetListener(listenerType, form.getModel().getName(), form))
+                .prepareReset(form -> presenter.resetListener(listenerType, form.getModel().getName(), form))
                 .build();
 
         // @formatter:off

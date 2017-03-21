@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import javax.annotation.Nullable;
+
 import com.google.gwt.user.client.ui.Focusable;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -90,7 +92,7 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
         apply(decoration, null);
     }
 
-    <C> void apply(Decoration decoration, C context);
+    <C> void apply(Decoration decoration, @Nullable C context);
 
     void unapply(Decoration decoration);
 }

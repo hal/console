@@ -39,6 +39,7 @@ import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
@@ -50,23 +51,31 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
+import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
  * before this form is added {@linkplain #asElement() as an element} to the DOM.
+ * <p>
+ * The form consists of {@linkplain FormLinks links} and three sections:
+ * <ul>
+ * <li>empty</li>
+ * <li>read-only</li>
+ * <li>editing</li>
+ * </ul>
  *
  * @author Harald Pehl
  */
-public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String ERROR_MESSAGES = "errorMessages";
-    private static final String MODEL_MUST_NOT_BE_NULL = "Model must not be null in ";
+    private static final String MODEL_MUST_NOT_BE_UNDEFINED = "Model must not be undefined in ";
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
@@ -79,6 +88,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private final List<FormValidation> formValidations;
 
     private T model;
+    private final EmptyState emptyState;
     private SecurityContext securityContext;
 
     private FormLinks<T> formLinks;
@@ -89,16 +99,18 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     // accessible in subclasses
     protected SaveCallback<T> saveCallback;
-    protected ResetCallback<T> resetCallback;
     protected CancelCallback<T> cancelCallback;
+    protected PrepareReset<T> prepareReset;
+    protected PrepareRemove<T> prepareRemove;
 
 
     // ------------------------------------------------------ initialization
 
-    public DefaultForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
-            final SecurityContext securityContext) {
+    public AbstractForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
+            final EmptyState emptyState, final SecurityContext securityContext) {
         this.stateMachine = stateMachine;
         this.dataMapping = dataMapping;
+        this.emptyState = emptyState;
         this.securityContext = securityContext;
 
         this.id = id;
@@ -142,7 +154,20 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
         formLinks = new FormLinks<>(id, stateMachine, helpTexts,
                 event -> edit(getModel()),
-                event -> reset());
+                event -> {
+                    if (prepareReset != null) {
+                        prepareReset.beforeReset(this);
+                    } else {
+                        reset();
+                    }
+                },
+                event -> {
+                    if (prepareRemove != null) {
+                        prepareRemove.beforeRemove(this);
+                    } else {
+                        remove();
+                    }
+                });
         section.appendChild(formLinks.asElement());
 
         // @formatter:off
@@ -158,13 +183,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         errorPanel = errorPanelBuilder.build();
         clearErrors();
 
-        if (stateMachine.supports(VIEW)) {
+        if (stateMachine.supports(EMPTY)) {
+            panels.put(EMPTY, emptyState.asElement());
+        }
+        if (stateMachine.supports(READONLY)) {
             panels.put(READONLY, viewPanel());
         }
-        if (stateMachine.supports(ADD)) {
-            panels.put(EDITING, editPanel());
-        }
-        if (stateMachine.supports(EDIT)) {
+        if (stateMachine.supports(EDITING)) {
             panels.put(EDITING, editPanel());
         }
         for (Element element : panels.values()) {
@@ -186,7 +211,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             };
         }
 
-        flip(panels.keySet().iterator().next());
+        State current = stateMachine.current();
+        if (current != null) {
+            flip(current);
+        } else {
+            flip(panels.keySet().iterator().next());
+        }
         return section;
     }
 
@@ -265,42 +295,22 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ form operations
 
     /**
-     * Executes the {@link Operation#ADD} operation and calls {@link
-     * DataMapping#newModel(Object, Form)}.
-     *
-     * @param model the transient model
-     */
-    @Override
-    public final void add(final T model) {
-        if (model == null) {
-            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".add(T)");
-        }
-        if (!initialized()) {
-            throw new IllegalStateException(NOT_INITIALIZED);
-        }
-        this.model = model;
-        stateExec(ADD); // switch state before data mapping!
-        clearErrors();
-        dataMapping.newModel(model, this);
-    }
-
-    /**
      * Executes the {@link Operation#VIEW} operation and calls {@link
-     * DataMapping#populateFormItems(Object, Form)}.
+     * DataMapping#populateFormItems(Object, Form)} if the form is not {@linkplain #isUndefined() undefined}.
      *
      * @param model the model to view.
      */
     @Override
     public final void view(final T model) {
-        if (model == null) {
-            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".view(T)");
-        }
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
+
         this.model = model;
-        stateExec(VIEW); // switch state before data mapping!
-        dataMapping.populateFormItems(model, this);
+        stateExec(VIEW, isUndefined() ? EMPTY : READONLY);
+        if (!isUndefined()) {
+            dataMapping.populateFormItems(model, this);
+        }
     }
 
     /**
@@ -309,6 +319,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
      */
     @Override
     public void clear() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         this.model = null;
         stateExec(CLEAR);
         clearErrors();
@@ -316,47 +329,25 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link Operation#RESET} operation, calls {@link
-     * DataMapping#resetModel(Object, Form)} and finally calls the registered {@linkplain
-     * ResetCallback reset callback} (if any).
-     */
-    @Override
-    public final void reset() {
-        if (!initialized()) {
-            throw new IllegalStateException(NOT_INITIALIZED);
-        }
-        stateExec(RESET); // switch state before data mapping!
-        clearErrors();
-        dataMapping.resetModel(model, this);
-        if (resetCallback != null) {
-            resetCallback.onReset(this);
-        }
-    }
-
-    @Override
-    public void setResetCallback(final ResetCallback<T> resetCallback) {
-        this.resetCallback = resetCallback;
-    }
-
-    /**
-     * Executes the {@link Operation#EDIT} operation and calls {@link
-     * DataMapping#populateFormItems(Object, Form)}.
+     * Executes the {@link Operation#EDIT} operation and calls {@link DataMapping#newModel(Object, Form)} if the model
+     * is {@linkplain #isTransient() transitive} otherwise {@link DataMapping#populateFormItems(Object, Form)}.
      *
      * @param model the model to edit.
      */
     @Override
     public final void edit(final T model) {
-        if (model == null) {
-            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".edit(T)");
-        }
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        stateExec(EDIT); // switch state before data mapping!
+        stateExec(EDIT);
         clearErrors();
-        dataMapping.populateFormItems(model, this);
-        getFormItems().forEach(formItem -> formItem.setModified(false));
+        if (isTransient()) {
+            dataMapping.newModel(model, this);
+        } else {
+            dataMapping.populateFormItems(model, this);
+            getBoundFormItems().forEach(formItem -> formItem.setModified(false));
+        }
     }
 
     /**
@@ -409,6 +400,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
+        if (isUndefined()) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_UNDEFINED + formId() + ".cancel()");
+        }
         stateExec(CANCEL);
         dataMapping.populateFormItems(model, this); // restore persisted model
         if (cancelCallback != null) {
@@ -421,6 +415,44 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.cancelCallback = cancelCallback;
     }
 
+    public void setPrepareReset(final PrepareReset<T> prepareReset) {
+        this.prepareReset = prepareReset;
+    }
+
+    /**
+     * Executes the {@link Operation#RESET} operation.
+     */
+    @Override
+    public final void reset() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
+        if (isUndefined()) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_UNDEFINED + formId() + ".reset()");
+        }
+        stateExec(RESET);
+    }
+
+    @Override
+    public void setPrepareRemove(final PrepareRemove<T> removeCallback) {
+        this.prepareRemove = removeCallback;
+    }
+
+    /**
+     * Removes the model reference and executes the {@link Operation#REMOVE} operation.
+     */
+    @Override
+    public void remove() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
+        if (isUndefined()) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_UNDEFINED + formId() + ".remove()");
+        }
+        this.model = null;
+        stateExec(REMOVE);
+    }
+
     private String formId() {
         return "form(" + id + ")"; //NON-NLS
     }
@@ -429,13 +461,20 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ state transition
 
     private void stateExec(final Operation operation) {
-        stateMachine.execute(operation);
+        stateExec(operation, null);
+    }
+
+    private <C> void stateExec(final Operation operation, final C context) {
+        stateMachine.execute(operation, context);
         prepare(stateMachine.current());
         flip(stateMachine.current());
     }
 
     private void prepare(State state) {
         switch (state) {
+            case EMPTY:
+                prepareEmptyState();
+                break;
             case READONLY:
                 prepareViewState();
                 break;
@@ -446,17 +485,28 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Gives subclasses a way to prepare the view state.
+     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips to
+     * the new state.
      */
+    @SuppressWarnings("WeakerAccess")
+    protected void prepareEmptyState() {}
+
+    /**
+     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips to
+     * the new state.
+     */
+    @SuppressWarnings("WeakerAccess")
     protected void prepareViewState() {}
 
     /**
-     * Gives subclasses a way to prepare the edit state.
+     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips to
+     * the new state.
      */
     protected void prepareEditState() {}
 
-    private void flip(State state) {
+    protected void flip(State state) {
         switch (state) {
+            case EMPTY:
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     panels.get(EDITING).removeEventListener("keyup", exitEditWithEsc); //NON-NLS
@@ -466,7 +516,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             case EDITING:
                 if (!formItems.isEmpty()) {
                     Browser.getWindow()
-                            .setTimeout(() -> getFormItems().iterator().next().setFocus(true), SHORT_TIMEOUT);
+                            .setTimeout(() -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
                 }
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC
@@ -545,6 +595,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         return false;
     }
+
 
     // ------------------------------------------------------ validation
 

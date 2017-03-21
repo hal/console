@@ -15,7 +15,6 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -50,14 +49,14 @@ final class Mbui_FailSafeView extends FailSafeView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        Form<org.jboss.hal.dmr.ModelNode> failSafe_form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>(Ids.build("form", Ids.FORM_SUFFIX), metadata0)
+        form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
+                .singleton(
+                        () -> new Operation.Builder(READ_RESOURCE_OPERATION, metadata0Template.resolve(mbuiContext.statementContext())).build(),
+                        () -> addSingleton("form", "Form", metadata0Template))
+                .prepareRemove(form -> removeSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form))
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))
-                .onReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
+                .prepareReset(form -> resetSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form, metadata0))
                 .build();
-        form = new FailSafeForm<>(mbuiContext.dispatcher(),
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, metadata0Template.resolve(mbuiContext.statementContext())).build(),
-                failSafe_form,
-                () -> addSingleton("form", "Form", metadata0Template))
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

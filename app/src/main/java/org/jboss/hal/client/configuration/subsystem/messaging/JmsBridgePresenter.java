@@ -23,6 +23,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -127,5 +129,16 @@ public class JmsBridgePresenter
         Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
         crud.save(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
                 changedValues, metadata, this::reload);
+    }
+
+    void resetJmsBridge(final Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
+        crud.reset(Names.JMS_BRIDGE, jmsBridgeName, SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext), form,
+                metadata, new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 }

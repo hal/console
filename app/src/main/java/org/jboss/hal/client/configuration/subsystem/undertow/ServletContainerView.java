@@ -31,7 +31,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -71,7 +70,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
     private final PropertiesItem mimeMappingItem;
     private final Form<ModelNode> welcomeFileForm;
     private final ListItem welcomeFileItem;
-    private final Map<ServletContainerSetting, FailSafeForm<ModelNode>> settings;
+    private final Map<ServletContainerSetting, Form<ModelNode>> settings;
     private ServletContainerPresenter presenter;
 
     @Inject
@@ -85,7 +84,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_FORM,
                 configurationMetadata)
                 .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
-                .onReset(form -> presenter.resetServletContainer(form))
+                .prepareReset(form -> presenter.resetServletContainer(form))
                 .build();
 
         Metadata emptyMetadata = new Metadata(configurationMetadata.getTemplate(),
@@ -100,7 +99,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
                 .exclude(VALUE)
                 .onSave((form, changedValues) -> presenter.saveMimeMapping(mimeMappingItem.getValue()))
-                .onReset(form -> presenter.resetMimeMapping(form))
+                .prepareReset(form -> presenter.resetMimeMapping(form))
                 .build();
 
         ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
@@ -110,7 +109,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))
                 .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()
                         .collect(toMap(Function.identity(), value -> null))))
-                .onReset(form -> presenter.resetWelcomeFile(form))
+                .prepareReset(form -> presenter.resetWelcomeFile(form))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -133,7 +132,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         Map<ServletContainerSetting, Element> settingsSections = new EnumMap<>(ServletContainerSetting.class);
         for (ServletContainerSetting setting : ServletContainerSetting.values()) {
             Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(setting.templateSuffix()));
-            FailSafeForm<ModelNode> form = failSafeFrom(setting, metadata);
+            Form<ModelNode> form = failSafeFrom(setting, metadata);
             settings.put(setting, form);
             settingsSections.put(setting, new Elements.Builder()
                     .section()
@@ -165,13 +164,13 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         initElement(root);
     }
 
-    private FailSafeForm<ModelNode> failSafeFrom(ServletContainerSetting settingType, Metadata metadata) {
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(settingType.baseId, Ids.FORM_SUFFIX), metadata)
+    private Form<ModelNode> failSafeFrom(ServletContainerSetting settingType, Metadata metadata) {
+        return new ModelNodeForm.Builder<>(Ids.build(settingType.baseId, Ids.FORM_SUFFIX), metadata)
+                .singleton(() -> presenter.pingSettings(settingType), () -> presenter.addSettingsSingleton(settingType))
                 .onSave((f, changedValues) -> presenter.saveSettings(settingType, changedValues))
-                .onReset(f -> presenter.resetSettings(settingType, f))
+                .prepareReset(f -> presenter.resetSettings(settingType, f))
+                .prepareRemove(f -> presenter.removeSettings(settingType, f))
                 .build();
-        return new FailSafeForm<>(dispatcher, () -> presenter.pingSettings(settingType), form,
-                () -> presenter.addSettingsSingleton(settingType));
     }
 
     @Override

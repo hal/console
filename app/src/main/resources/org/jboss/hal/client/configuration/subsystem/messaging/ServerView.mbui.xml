@@ -22,7 +22,8 @@
                 <h1>Messaging Server</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="messaging-server-form" title="Messaging Server"
-                      on-save="{{presenter.saveServer(changedValues)}}">
+                      on-save="{{presenter.saveServer(changedValues)}}"
+                      prepare-reset="{{presenter.resetServer(form)}}">
                     <attributes>
                         <!-- Use the attribute groups from the singleton description -->
                         <group name="management"/>
@@ -43,7 +44,7 @@
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=paging-directory">
                     <h1>Paging Directory</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <fail-safe-form id="messaging-server-paging-directory-form" title="Paging Directory"
+                    <singleton-form id="messaging-server-paging-directory-form" title="Paging Directory"
                                     auto-save="true"/>
                 </metadata>
             </sub-item>
@@ -51,7 +52,7 @@
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=bindings-directory">
                     <h1>Bindings Directory</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <fail-safe-form id="messaging-server-bindings-directory-form" title="Bindings Directory"
+                    <singleton-form id="messaging-server-bindings-directory-form" title="Bindings Directory"
                                     auto-save="true"/>
                 </metadata>
             </sub-item>
@@ -60,7 +61,7 @@
                         address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=large-messages-directory">
                     <h1>Large Messages Directory</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <fail-safe-form id="messaging-server-large-messages-directory-form" title="Large Messages Directory"
+                    <singleton-form id="messaging-server-large-messages-directory-form" title="Large Messages Directory"
                                     auto-save="true"/>
                 </metadata>
             </sub-item>
@@ -68,7 +69,7 @@
                 <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/path=journal-directory">
                     <h1>Journal Directory</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <fail-safe-form id="messaging-server-journal-directory-form" title="Journal Directory"
+                    <singleton-form id="messaging-server-journal-directory-form" title="Journal Directory"
                                     auto-save="true"/>
                 </metadata>
             </sub-item>

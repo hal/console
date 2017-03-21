@@ -115,7 +115,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JDBC_DRIVER_ADD_FORM, metadata)
-                            .addFromRequestProperties()
+                            .fromRequestProperties()
                             .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
                                     DRIVER_MINOR_VERSION)
                             .unsorted()

@@ -29,6 +29,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -150,7 +151,12 @@ public class MailSessionPresenter
     void resetMailSession(final Form<MailSession> form) {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
-        crud.reset(Names.MAIL_SESSION, mailSessionName, address, form, metadata, this::reload);
+        crud.reset(Names.MAIL_SESSION, mailSessionName, address, form, metadata, new FinishReset<MailSession>(form) {
+            @Override
+            public void afterReset(final Form<MailSession> form) {
+                reload();
+            }
+        });
     }
 
     void launchAddServer() {
@@ -185,7 +191,7 @@ public class MailSessionPresenter
                 }
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
                 Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MAIL_SERVER_DIALOG, metadata)
-                        .addFromRequestProperties()
+                        .fromRequestProperties()
                         .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
                         .requiredOnly()
                         .unboundFormItem(serverTypeItem, 0)
@@ -231,7 +237,12 @@ public class MailSessionPresenter
                 .append(SERVER + "=" + mailServer)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
-        crud.reset(Names.SERVER, mailSessionName, address, form, metadata, this::reload);
+        crud.reset(Names.SERVER, mailSessionName, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void removeServer(final NamedNode mailServer) {

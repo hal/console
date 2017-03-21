@@ -93,7 +93,7 @@
                     <ref name="table-definition"/>
                 </optional>
                 <optional>
-                    <element name="fail-safe-form">
+                    <element name="singleton-form">
                         <ref name="form-definition"/>
                     </element>
                 </optional>

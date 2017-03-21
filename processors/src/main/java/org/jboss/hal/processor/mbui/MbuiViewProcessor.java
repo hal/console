@@ -50,7 +50,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
 import org.jboss.hal.spi.MbuiElement;
@@ -63,7 +62,6 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import static org.jboss.hal.processor.mbui.ElementType.DataTable;
-import static org.jboss.hal.processor.mbui.ElementType.FailSafeForm;
 import static org.jboss.hal.processor.mbui.ElementType.Form;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
@@ -74,6 +72,8 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
 public class MbuiViewProcessor extends AbstractProcessor {
+
+    private static final String MBUI_PREFIX = "Mbui_";
 
     /**
      * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not
@@ -166,7 +166,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     // ------------------------------------------------------ processing
 
     protected void processType(final TypeElement type, final MbuiView mbuiView) {
-        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Mbui_", "")); //NON-NLS
+        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "")); //NON-NLS
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
@@ -199,7 +199,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase()); //NON-NLS
     }
 
-    String generatedClassName(TypeElement type, String prefix, String suffix) {
+    String generatedClassName(TypeElement type, String suffix) {
         String name = type.getSimpleName().toString();
         while (type.getEnclosingElement() instanceof TypeElement) {
             type = (TypeElement) type.getEnclosingElement();
@@ -207,7 +207,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
         String pkg = TypeSimplifier.packageNameOf(type);
         String dot = pkg.isEmpty() ? "" : ".";
-        return pkg + dot + prefix + name + suffix;
+        return pkg + dot + MBUI_PREFIX + name + suffix;
     }
 
     String verifyCreateMethod(TypeElement type) {
@@ -323,7 +323,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
                             case DataTable:
                                 elementProcessor = new DataTableProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
-                            case FailSafeForm:
                             case Form:
                                 elementProcessor = new FormProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
@@ -369,8 +368,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
             return VerticalNavigation;
         } else if (isAssignable(dataElementType, DataTable.class)) {
             return DataTable;
-        } else if (isAssignable(dataElementType, FailSafeForm.class)) {
-            return FailSafeForm;
         } else if (isAssignable(dataElementType, Form.class)) {
             return Form;
         } else {
@@ -415,7 +412,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         } else {
             resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.TABLE, document, context);
             resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FORM, document, context);
-            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.FAIL_SAFE_FORM, document, context);
+            resolveItemReferences(navigation, "//" + XmlTags.ITEM + "//" + XmlTags.SINGLETON_FORM, document, context);
         }
     }
 

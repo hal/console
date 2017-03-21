@@ -111,7 +111,7 @@ class WriteElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 .append(WRITE + "=" + BEHIND.resource));
         behindForm = new ModelNodeForm.Builder<>(id, metadata)
                 .onSave((f, changedValues) -> presenter.saveWrite(BEHIND, changedValues))
-                .onReset(f -> presenter.resetWrite(BEHIND, f))
+                .prepareReset(f -> presenter.resetWrite(BEHIND, f))
                 .build();
 
         // @formatter:off

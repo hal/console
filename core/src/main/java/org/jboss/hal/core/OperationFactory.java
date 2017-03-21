@@ -161,7 +161,7 @@ public class OperationFactory {
 
     /**
      * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are
-     * nillable and not read-only will be reset. The composite contains {@linkplain
+     * nillable, w/o alternatives and not read-only will be reset. The composite contains {@linkplain
      * org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for each
      * attribute of type {@code EXPRESSION, LIST, OBJECT, PROPERTY} or {@code STRING} and {@linkplain
      * org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute} operations for attributes
@@ -188,8 +188,10 @@ public class OperationFactory {
                             attributeDescription.get(NILLABLE).asBoolean();
                     boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
                             READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
+                    boolean alternatives = attributeDescription.hasDefined(ALTERNATIVES) &&
+                            !attributeDescription.get(ALTERNATIVES).asList().isEmpty();
 
-                    if (nillable && !readOnly) {
+                    if (nillable && !readOnly && !alternatives) {
                         boolean hasDefault = attributeDescription.hasDefined(DEFAULT);
                         ModelType type = attributeDescription.get(TYPE).asType();
                         switch (type) {
@@ -270,25 +272,25 @@ public class OperationFactory {
                 try {
                     switch (type) {
                         case BIG_DECIMAL:
-                            valueNode.set(BigDecimal.valueOf((double) value));
+                            valueNode.set(BigDecimal.valueOf((Double) value).doubleValue());
                             break;
                         case BIG_INTEGER:
-                            valueNode.set(BigInteger.valueOf((long) value));
+                            valueNode.set(BigInteger.valueOf((Long) value).longValue());
                             break;
                         case BOOLEAN:
-                            valueNode.set((boolean) value);
+                            valueNode.set((Boolean) value);
                             break;
                         case BYTES:
                             valueNode.set((byte[]) value);
                             break;
                         case DOUBLE:
-                            valueNode.set((double) value);
+                            valueNode.set((Double) value);
                             break;
                         case EXPRESSION:
                             valueNode.setExpression((String) value);
                             break;
                         case INT:
-                            valueNode.set((int) value);
+                            valueNode.set(((Long) value).intValue());
                             break;
                         case LIST: {
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
@@ -306,7 +308,7 @@ public class OperationFactory {
                             break;
                         }
                         case LONG:
-                            valueNode.set((long) value);
+                            valueNode.set((Long) value);
                             break;
                         case OBJECT:
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)

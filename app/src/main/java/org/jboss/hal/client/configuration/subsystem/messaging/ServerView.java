@@ -23,7 +23,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -46,10 +45,10 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
 
     @MbuiElement("messaging-server-vertical-navigation") VerticalNavigation verticalNavigation;
     @MbuiElement("messaging-server-form") Form<NamedNode> form;
-    @MbuiElement("messaging-server-paging-directory-form") FailSafeForm<ModelNode> pagingDirectoryForm;
-    @MbuiElement("messaging-server-bindings-directory-form") FailSafeForm<ModelNode> bindingsDirectoryForm;
-    @MbuiElement("messaging-server-large-messages-directory-form") FailSafeForm<ModelNode> largeMessagesDirectoryForm;
-    @MbuiElement("messaging-server-journal-directory-form") FailSafeForm<ModelNode> journalDirectoryForm;
+    @MbuiElement("messaging-server-paging-directory-form") Form<ModelNode> pagingDirectoryForm;
+    @MbuiElement("messaging-server-bindings-directory-form") Form<ModelNode> bindingsDirectoryForm;
+    @MbuiElement("messaging-server-large-messages-directory-form") Form<ModelNode> largeMessagesDirectoryForm;
+    @MbuiElement("messaging-server-journal-directory-form") Form<ModelNode> journalDirectoryForm;
 
     ServerView(final MbuiContext mbuiContext) {
         super(mbuiContext);

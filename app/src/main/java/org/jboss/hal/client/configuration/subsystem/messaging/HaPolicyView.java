@@ -148,7 +148,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         Metadata metadata = metadataRegistry.lookup(haPolicy.template);
         return new ModelNodeForm.Builder<>(Ids.build(haPolicy.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((f, changedValues) -> presenter.saveHaPolicy(haPolicy, changedValues))
-                .onReset(f -> presenter.resetHaPolicy(haPolicy, f))
+                .prepareReset(f -> presenter.resetHaPolicy(haPolicy, f))
                 .build();
     }
 

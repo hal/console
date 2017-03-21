@@ -27,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -172,7 +174,12 @@ public class ServerPresenter
     void resetServer(final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.reset(Names.SERVER, serverName, SELECTED_SERVER_TEMPLATE.resolve(statementContext), form, metadata,
-                this::reload);
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
     }
 
 
@@ -200,7 +207,12 @@ public class ServerPresenter
     void resetHost(final String name, final Form<NamedNode> form) {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(HOST + "=" + name).resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE);
-        crud.reset(Names.HOST, name, address, form, metadata, this::reload);
+        crud.reset(Names.HOST, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void removeHost(final String name) {
@@ -235,7 +247,22 @@ public class ServerPresenter
     void resetHostSetting(final HostSetting hostSetting, final Form<ModelNode> form) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
-        crud.resetSingleton(hostSetting.type, address, form, metadata, this::reload);
+        crud.resetSingleton(hostSetting.type, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
+    }
+
+    void removeHostSetting(final HostSetting hostSetting, final Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
+        crud.removeSingleton(hostSetting.type, address, new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
 
@@ -250,7 +277,7 @@ public class ServerPresenter
         Metadata metadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_HOST_FILTER_REF_ADD, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
@@ -275,7 +302,12 @@ public class ServerPresenter
         String name = form.getModel().getName();
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name).resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
-        crud.reset(Names.FILTER, name, address, form, metadata, this::reloadFilterRef);
+        crud.reset(Names.FILTER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reloadFilterRef();
+            }
+        });
     }
 
     void removeFilterRef(final String name) {
@@ -302,7 +334,7 @@ public class ServerPresenter
         Metadata metadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_HOST_LOCATION_ADD, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .build();
         form.getFormItem(HANDLER)
                 .registerSuggestHandler(
@@ -333,7 +365,12 @@ public class ServerPresenter
                 .append(LOCATION + "=" + encodeValue(name))
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
-        crud.reset(Names.LOCATION, name, address, form, metadata, this::reloadLocation);
+        crud.reset(Names.LOCATION, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reloadLocation();
+            }
+        });
     }
 
     void removeLocation(final String name) {
@@ -371,7 +408,7 @@ public class ServerPresenter
         Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_ADD, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
@@ -405,7 +442,12 @@ public class ServerPresenter
                 .append(FILTER_REF + "=" + name)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
-        crud.reset(Names.FILTER, name, address, form, metadata, this::reloadLocationFilterRef);
+        crud.reset(Names.FILTER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reloadLocationFilterRef();
+            }
+        });
 
     }
 
@@ -450,7 +492,12 @@ public class ServerPresenter
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(listenerType.resource + "=" + name)
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
-        crud.reset(listenerType.type, name, address, form, metadata, this::reload);
+        crud.reset(listenerType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void removeListener(final Listener listenerType, final String name) {

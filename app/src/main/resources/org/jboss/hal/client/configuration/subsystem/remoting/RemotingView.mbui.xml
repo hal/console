@@ -118,7 +118,8 @@
                         </columns>
                     </table>
                     <form id="remoting-local-outbound-form" title="Local Outbound"
-                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}" reset="true">
+                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetLocalOutbound(form)}}">
                         <attributes>
                             <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="outbound-socket-binding-ref">
@@ -149,7 +150,8 @@
                         </columns>
                     </table>
                     <form id="remoting-outbound-form" title="Outbound"
-                          on-save="{{presenter.saveOutbound(form, changedValues)}}" reset="true">
+                          on-save="{{presenter.saveOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetOutbound(form)}}">
                         <attributes>
                             <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="uri"/>
@@ -185,7 +187,8 @@
                         </columns>
                     </table>
                     <form id="remoting-remote-outbound-form" title="Remote Outbound"
-                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}" reset="true">
+                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetRemoteOutbound(form)}}">
                         <attributes>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>

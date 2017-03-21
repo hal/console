@@ -19,7 +19,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -38,7 +37,7 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
 
     @MbuiElement("modcluster-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("modcluster-configuration") Form<ModelNode> configurationForm;
-    @MbuiElement("modcluster-ssl-form") FailSafeForm<ModelNode> sslForm;
+    @MbuiElement("modcluster-ssl-form") Form<ModelNode> sslForm;
 
     ModclusterView(final MbuiContext mbuiContext) {
         super(mbuiContext);

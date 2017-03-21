@@ -316,6 +316,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             if (!hasInputGroup()) {
                 wrapInputElement();
             }
+            if (isApplied(SENSITIVE)) {
+                peekButton.getStyle().setMarginLeft(-1, PX);
+            }
             inputGroup.appendChild(suggestContainer);
             suggestButton.setOnclick(event -> suggestHandler.showAll());
         }

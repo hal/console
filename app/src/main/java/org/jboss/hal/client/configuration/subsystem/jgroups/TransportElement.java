@@ -61,7 +61,7 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.api().selectedRow().getName(), DEFAULT);
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form, threadPoolMetadata);
@@ -75,7 +75,7 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Timer"));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.api().selectedRow().getName(), "timer");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Timer", form, threadPoolMetadata);
@@ -89,7 +89,7 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Internal"));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.api().selectedRow().getName(), "internal");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolMetadata);
@@ -103,7 +103,7 @@ public class TransportElement extends GenericElement {
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " OOB"));
                 })
-                .onReset(form -> {
+                .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
                             .replaceWildcards(table.api().selectedRow().getName(), "oob");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " OOB", form, threadPoolMetadata);

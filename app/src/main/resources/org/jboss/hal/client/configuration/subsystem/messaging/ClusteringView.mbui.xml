@@ -35,7 +35,8 @@
                     </columns>
                 </table>
                 <form id="messaging-broadcast-group-form" title="Broadcast Group"
-                      on-save="{{presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.BROADCAST_GROUP, form)}}">
                     <attributes>
                         <attribute name="broadcast-period"/>
                         <attribute name="connectors"/>
@@ -71,7 +72,8 @@
                     </columns>
                 </table>
                 <form id="messaging-discovery-group-form" title="Discovery Group"
-                      on-save="{{presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.DISCOVERY_GROUP, form)}}">
                     <attributes>
                         <attribute name="initial-wait-timeout"/>
                         <attribute name="refresh-timeout"/>
@@ -107,7 +109,8 @@
                     </columns>
                 </table>
                 <form id="messaging-cluster-connection-form" title="Cluster Connection"
-                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.CLUSTER_CONNECTION, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.CLUSTER_CONNECTION, form)}}"/>
             </metadata>
         </item>
 
@@ -129,7 +132,8 @@
                     </columns>
                 </table>
                 <form id="messaging-grouping-handler-form" title="Grouping Handler"
-                      on-save="{{presenter.save(ServerSubResource.GROUPING_HANDLER, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.GROUPING_HANDLER, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.GROUPING_HANDLER, form)}}"/>
             </metadata>
         </item>
 
@@ -150,7 +154,8 @@
                     </columns>
                 </table>
                 <form id="messaging-bridge-form" title="Bridge"
-                      on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.BRIDGE, form)}}"/>
             </metadata>
         </item>
     </vertical-navigation>

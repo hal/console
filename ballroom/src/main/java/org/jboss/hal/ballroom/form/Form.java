@@ -19,9 +19,13 @@ import java.util.Map;
 
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.spi.Callback;
 
 /**
- * A form using well defined states and operations.
+ * A form bound to a model using well defined states and operations. The form contains a list of form items which are
+ * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the
+ * attributes of the models (text input, check boxes or select boxes), whereas unbound form items have no relation to
+ * the model (static text or buttons).
  *
  * @param <T> The model for this form
  *
@@ -29,21 +33,68 @@ import org.jboss.hal.ballroom.Attachable;
  */
 public interface Form<T> extends IsElement, Attachable {
 
+    // ------------------------------------------------------ states and operations
+
+
     enum State {
-        READONLY, EDITING
+        /**
+         * No model is bound to the form
+         */
+        EMPTY,
+
+        /**
+         * The model is shown in read-only mode
+         */
+        READONLY,
+
+        /**
+         * The model is shown in edit mode
+         */
+        EDITING
     }
 
 
     enum Operation {
-        ADD, VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL
+        /**
+         * Takes the specified model and updates the read-only state with the values from the model.
+         */
+        VIEW,
+
+        /**
+         * Clears this form by removing the model reference and by clearing all bound form fields. Does not modify the
+         * model!
+         */
+        CLEAR,
+
+        /**
+         * Resets the model and updates the bound form field.
+         */
+        RESET,
+
+        /**
+         * Takes the specified model and populates the bound form fields with the values from the model.
+         */
+        EDIT,
+
+        /**
+         * Validates the form and its fields and upon successful validation persists the changes to the model and
+         * calls the save callback.
+         */
+        SAVE,
+
+        /**
+         * Cancels any modifications to the model and calls the cancel callback.
+         */
+        CANCEL,
+
+        /**
+         * Removes the model and calls the remove callback.
+         */
+        REMOVE
     }
 
 
-    @FunctionalInterface
-    interface ResetCallback<T> {
-
-        void onReset(Form<T> form);
-    }
+    // ------------------------------------------------------ callbacks
 
 
     @FunctionalInterface
@@ -61,11 +112,74 @@ public interface Form<T> extends IsElement, Attachable {
 
 
     /**
-     * Takes a new transient model and enters the editing state.
-     *
-     * @param model the transient model
+     * Callback to prepare the reset operation. Use this callback if the reset operation is behind some kind of
+     * confirmation dialog. If the user confirms to reset, it's expected that you use an implementation of {@link
+     * FinishReset} to conclude the reset operation.
      */
-    void add(T model);
+    @FunctionalInterface
+    interface PrepareReset<T> {
+
+        void beforeReset(Form<T> form);
+    }
+
+
+    /**
+     * Callback to be used after the reset operation has been successfully executed. This callback takes care of calling
+     * {@link Form#reset()}. You just need to place your business logic into {@link #afterReset(Form)}.
+     */
+    abstract class FinishReset<T> implements Callback {
+
+        private final Form<T> form;
+
+        protected FinishReset(final Form<T> form) {this.form = form;}
+
+        @Override
+        public void execute() {
+            form.reset();
+            afterReset(form);
+        }
+
+        public abstract void afterReset(Form<T> form);
+    }
+
+
+    /**
+     * Callback to prepare the remove operation. Use this callback if the remove operation is behind some kind of
+     * confirmation dialog. If the user confirms to remove, it's expected that you use an implementation of {@link
+     * FinishRemove} to conclude the remove operation.
+     */
+    @FunctionalInterface
+    interface PrepareRemove<T> {
+
+        void beforeRemove(Form<T> form);
+    }
+
+
+    /**
+     * Callback to be used after the remove operation has been successfully executed. This callback takes care of
+     * calling {@link Form#remove()}. You just need to place your business logic into {@link #afterRemove(Form)}.
+     */
+    abstract class FinishRemove<T> implements Callback {
+
+        private final Form<T> form;
+
+        protected FinishRemove(final Form<T> form) {this.form = form;}
+
+        @Override
+        public void execute() {
+            form.remove();
+            afterRemove(form);
+        }
+
+        public abstract void afterRemove(Form<T> form);
+    }
+
+
+    // ------------------------------------------------------ form API
+
+    boolean isUndefined();
+
+    boolean isTransient();
 
     /**
      * Takes the specified model and updates the read-only state with the values from the model.
@@ -78,13 +192,6 @@ public interface Form<T> extends IsElement, Attachable {
      * Clears this form by removing the model reference and by clearing all form fields.
      */
     void clear();
-
-    /**
-     * Resets the model.
-     */
-    void reset();
-
-    void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
      * Takes the specified model and populates the editing state with the values from the model.
@@ -108,6 +215,20 @@ public interface Form<T> extends IsElement, Attachable {
 
     void setCancelCallback(CancelCallback<T> cancelCallback);
 
+    void setPrepareReset(PrepareReset<T> prepareReset);
+
+    /**
+     * Resets the model.
+     */
+    void reset();
+
+    void setPrepareRemove(PrepareRemove<T> removeCallback);
+
+    /**
+     * Removes the model.
+     */
+    void remove();
+
     /**
      * @return an unique identifier for this form.
      */
@@ -126,15 +247,18 @@ public interface Form<T> extends IsElement, Attachable {
     @SuppressWarnings("unchecked")
     <F> FormItem<F> getFormItem(String name);
 
+    /**
+     * @return return all form items.
+     */
     Iterable<FormItem> getFormItems();
 
+    /**
+     * @return only those form items which are bound to the model.
+     */
     Iterable<FormItem> getBoundFormItems();
 
     /**
      * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
-     * You can use each FormItem field to set its status as failed and the error message.
-     * 
-     * @param formValidation
      */
     void addFormValidation(FormValidation<T> formValidation);
 }

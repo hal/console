@@ -79,11 +79,11 @@ public class OperationFactoryTest {
 
     @Test
     public void write() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23),
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23L),
                 metadata);
 
         assertEquals(1, composite.size());
-        assertWrite(composite, "allocation-retry", 23);
+        assertWrite(composite, "allocation-retry", 23L);
     }
 
     @Test
@@ -178,7 +178,8 @@ public class OperationFactoryTest {
     @Test
     public void reset() throws Exception {
         Composite composite = operationFactory.resetResource(address,
-                Sets.newHashSet("capacity-decrementer-class", // string
+                Sets.newHashSet("authentication-context", // string w/ alternative
+                        "capacity-decrementer-class", // string
                         "capacity-incrementer-properties", // object
                         "class-name", // string(required)
                         "connectable", // boolean(false)
@@ -204,10 +205,10 @@ public class OperationFactoryTest {
         assertEquals(value, operation.get().get(VALUE).asBoolean());
     }
 
-    private void assertWrite(Composite composite, String name, int value) {
+    private void assertWrite(Composite composite, String name, long value) {
         Optional<Operation> operation = writeOperation(composite, name);
         assertTrue(operation.isPresent());
-        assertEquals(value, operation.get().get(VALUE).asInt());
+        assertEquals(value, operation.get().get(VALUE).asLong());
     }
 
     private void assertWrite(Composite composite, String name, String value) {

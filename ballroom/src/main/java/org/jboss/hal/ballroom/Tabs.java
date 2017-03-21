@@ -26,7 +26,6 @@ import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
-import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -46,7 +45,7 @@ public class Tabs implements IsElement {
 
         public native void tab(String command);
 
-        public native void on(String event, Callback callback);
+        public native void on(String event, JsCallback callback);
     }
 
 
@@ -170,7 +169,7 @@ public class Tabs implements IsElement {
         }
     }
 
-    public void onShow(final String id, final Callback callback) {
+    public void onShow(final String id, final JsCallback callback) {
         if (id != null) {
             Bridge.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
         }

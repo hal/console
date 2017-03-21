@@ -39,6 +39,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
@@ -74,10 +75,7 @@ import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -414,15 +412,21 @@ public class ModelBrowser implements HasElements {
                 metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
-                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                                .addFromRequestProperties()
-                                .build();
-                        AddResourceDialog dialog = new AddResourceDialog(
-                                resources.messages().addResourceTitle(singleton), form,
-                                (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton), modelNode,
-                                        (n2, address) -> refresh(parent)));
-                        dialog.show();
+                        boolean hasRequiredAttributes = !metadata.getDescription()
+                                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+                        if (hasRequiredAttributes) {
+                            String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
+                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                    .fromRequestProperties()
+                                    .build();
+                            AddResourceDialog dialog = new AddResourceDialog(
+                                    resources.messages().addResourceTitle(singleton), form,
+                                    (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton),
+                                            modelNode, (n2, address) -> refresh(parent)));
+                            dialog.show();
+                        } else {
+                            crud.addSingleton(singleton, fqAddress(parent, singleton), null, (n, a) -> refresh(parent));
+                        }
                     }
                 });
 
@@ -507,7 +511,12 @@ public class ModelBrowser implements HasElements {
 
     void reset(ResourceAddress address, Form<ModelNode> form, Metadata metadata) {
         crud.reset(address.lastName(), address.lastValue(), address, form, metadata,
-                () -> refresh(tree.api().getSelected()));
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        refresh(tree.api().getSelected());
+                    }
+                });
     }
 
 

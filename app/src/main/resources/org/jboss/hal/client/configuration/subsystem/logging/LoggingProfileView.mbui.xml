@@ -24,7 +24,8 @@
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/root-logger=ROOT">
                 <h1 id="logging-profile-root-logger-header">Root Logger</h1>
                 <p id="logging-profile-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(form, changedValues)}}">
+                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(form, changedValues)}}"
+                      prepare-reset="{{resetRootLogger(form)}}">
                     <attributes>
                         <attribute name="level"/>
                         <attribute name="handlers"/>
@@ -54,7 +55,8 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-profile-categories-form" on-save="{{saveLogger(form, changedValues)}}">
+                <form id="logging-profile-categories-form" on-save="{{saveLogger(form, changedValues)}}"
+                      prepare-reset="{{resetLogger(form)}}">
                     <attributes>
                         <attribute name="category"/>
                         <attribute name="level"/>
@@ -89,7 +91,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-console-form"
-                          on-save="{{saveConsoleHandler(form, changedValues)}}">
+                          on-save="{{saveConsoleHandler(form, changedValues)}}"
+                          prepare-reset="{{resetConsoleHandler(form)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="target"/>
@@ -134,7 +137,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-file-form" on-save="{{saveFileHandler(form, changedValues)}}">
+                    <form id="logging-profile-handler-file-form" on-save="{{saveFileHandler(form, changedValues)}}"
+                          prepare-reset="{{resetFileHandler(form)}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="level"/>
@@ -183,7 +187,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-periodic-rotating-file-form"
-                          on-save="{{savePeriodicHandler(form, changedValues)}}">
+                          on-save="{{savePeriodicHandler(form, changedValues)}}"
+                          prepare-reset="{{resetPeriodicHandler(form)}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -233,7 +238,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-periodic-size-rotating-file-form"
-                          on-save="{{savePeriodicSizeHandler(form, changedValues)}}">
+                          on-save="{{savePeriodicSizeHandler(form, changedValues)}}"
+                          prepare-reset="{{resetPeriodicSizeHandler(form)}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -286,7 +292,7 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-size-rotating-file-form"
-                          on-save="{{saveSizeHandler(form, changedValues)}}">
+                          on-save="{{saveSizeHandler(form, changedValues)}}" prepare-reset="{{resetSizeHandler(form)}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -335,7 +341,8 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-async-form" on-save="{{saveAsyncHandler(form, changedValues)}}">
+                    <form id="logging-profile-handler-async-form" on-save="{{saveAsyncHandler(form, changedValues)}}"
+                          prepare-reset="{{resetAsyncHandler(form)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="subhandlers">
@@ -381,7 +388,8 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-custom-form" on-save="{{saveCustomHandler(form, changedValues)}}">
+                    <form id="logging-profile-handler-custom-form" on-save="{{saveCustomHandler(form, changedValues)}}"
+                          prepare-reset="{{resetCustomHandler(form)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="module"/>
@@ -428,8 +436,8 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-syslog-form"
-                          on-save="{{saveSyslogHandler(form, changedValues)}}">
+                    <form id="logging-profile-handler-syslog-form" on-save="{{saveSyslogHandler(form, changedValues)}}"
+                          prepare-reset="{{resetSyslogHandler(form)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="syslog-format"/>
@@ -470,7 +478,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-formatter-pattern-form"
-                          on-save="{{savePatternFormatter(form, changedValues)}}">
+                          on-save="{{savePatternFormatter(form, changedValues)}}"
+                          prepare-reset="{{resetPatternFormatter(form)}}">
                         <attributes>
                             <attribute name="color-map"/>
                             <attribute name="pattern"/>
@@ -501,7 +510,8 @@
                         </columns>
                     </table>
                     <form id="logging-profile-formatter-custom-form"
-                          on-save="{{saveCustomFormatter(form, changedValues)}}">
+                          on-save="{{saveCustomFormatter(form, changedValues)}}"
+                          prepare-reset="{{resetCustomFormatter(form)}}">
                         <attributes>
                             <attribute name="class"/>
                             <attribute name="module"/>

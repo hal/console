@@ -22,8 +22,7 @@
                 <h1>Server Group Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="server-group-configuration-form" title="Server Group Configuration" auto-save="true"
-                      reset="true"
-                      include-runtime="true">
+                      reset="true" include-runtime="true">
                     <attributes>
                         <attribute name="profile"/>
                         <attribute name="socket-binding-group"/>

@@ -104,8 +104,7 @@
                     </columns>
                 </table>
                 <form id="security-elytron-trust-manager-form" title="Elytron Trust Manager" auto-save="true"
-                      reset="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
+                      reset="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -134,7 +133,7 @@
             <metadata address="/{selected.profile}/subsystem=security/vault=classic">
                 <h1>Vault</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <fail-safe-form id="security-vault-form" title="Vault" auto-save="true" reset="true"/>
+                <singleton-form id="security-vault-form" title="Vault" auto-save="true" reset="true"/>
             </metadata>
         </item>
     </vertical-navigation>

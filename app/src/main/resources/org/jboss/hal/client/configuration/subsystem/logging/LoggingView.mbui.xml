@@ -24,7 +24,7 @@
             <metadata address="/{selected.profile}/subsystem=logging">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-config-form" title="Logging Configuration" auto-save="true"/>
+                <form id="logging-config-form" title="Logging Configuration" auto-save="true" reset="true"/>
             </metadata>
         </item>
 
@@ -36,7 +36,7 @@
             <metadata address="/{selected.profile}/subsystem=logging/root-logger=ROOT">
                 <h1 id="logging-root-logger-header">Root Logger</h1>
                 <p id="logging-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-root-logger-form" title="Root Logger" auto-save="true">
+                <form id="logging-root-logger-form" title="Root Logger" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="level"/>
                         <attribute name="handlers">
@@ -101,7 +101,7 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-categories-form" title="Category" auto-save="true"
+                <form id="logging-categories-form" title="Category" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="category"/>
@@ -156,7 +156,7 @@
                             <column name="target"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-console-form" auto-save="true"
+                    <form id="logging-handler-console-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -205,7 +205,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-handler-file-form" auto-save="true" reset="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
                             <attribute name="level"/>
@@ -256,7 +257,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true"
+                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
@@ -311,7 +312,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true"
+                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
@@ -369,7 +370,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-size-rotating-file-form" auto-save="true"
+                    <form id="logging-handler-size-rotating-file-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{new FileFormItem()}}"/>
@@ -437,7 +438,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-async-form" auto-save="true"
+                    <form id="logging-handler-async-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -490,7 +491,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-custom-form" auto-save="true"
+                    <form id="logging-handler-custom-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -545,7 +546,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-syslog-form" auto-save="true"
+                    <form id="logging-handler-syslog-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -584,7 +585,7 @@
                             <column name="pattern"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-pattern-form" auto-save="true"
+                    <form id="logging-formatter-pattern-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="color-map"/>
@@ -614,7 +615,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-custom-form" auto-save="true"
+                    <form id="logging-formatter-custom-form" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="class"/>

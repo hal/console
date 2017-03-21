@@ -45,6 +45,7 @@ import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SOCKET_BINDING_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -77,7 +78,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         mailSessionForm = new ModelNodeForm.Builder<MailSession>(
                 Ids.MAIL_SESSION_FORM, mailSessionMetadata)
                 .onSave((form, changedValues) -> presenter.saveMailSession(changedValues))
-                .onReset(form -> presenter.resetMailSession(form))
+                .prepareReset(form -> presenter.resetMailSession(form))
                 .build();
         registerAttachable(mailSessionForm);
 
@@ -112,7 +113,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .include(OUTBOUND_SOCKET_BINDING_REF, USERNAME, PASSWORD, "ssl", "tls")
                 .unsorted()
                 .onSave((f, changedValues) -> presenter.saveServer(f.getModel().getName(), changedValues))
-                .onReset(f -> presenter.resetServer(f.getModel().getName(), f))
+                .prepareReset(f -> presenter.resetServer(f.getModel().getName(), f))
                 .build();
         serverForm.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
@@ -160,7 +161,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     public void update(final MailSession mailSession) {
         mailSessionForm.view(mailSession);
 
-        List<NamedNode> servers = asNamedNodes(mailSession.get(SERVER).asPropertyList());
+        List<NamedNode> servers = asNamedNodes(failSafePropertyList(mailSession, SERVER));
         serverForm.clear();
         serverTable.update(servers);
         serverTable.api().button(0).enable(servers.size() != 3);

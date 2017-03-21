@@ -310,7 +310,7 @@ public class ServerActions {
 
                 ModelNode model = new ModelNode();
                 model.get(TIMEOUT).set(0);
-                form.add(model);
+                form.edit(model);
             }
 
             @Override
@@ -384,7 +384,7 @@ public class ServerActions {
 
                 ModelNode model = new ModelNode();
                 model.get(TIMEOUT).set(0);
-                form.add(model);
+                form.edit(model);
             }
 
             @Override

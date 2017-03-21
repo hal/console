@@ -221,6 +221,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeGroupSuccess(String name);
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
+    SafeHtml removeSingletonConfirmationQuestion();
+    SafeHtml removeSingletonResourceSuccess(String type);
     SafeHtml removeSingletonSuccess(String type);
     SafeHtml removeUserQuestion(String name);
     SafeHtml removeUserSuccess(String name);
@@ -236,6 +238,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resetConfirmationQuestion(String name);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();
+    SafeHtml resetSingletonSuccess(String type);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     SafeHtml resourceAdapterProvidedBy(String type, String name);

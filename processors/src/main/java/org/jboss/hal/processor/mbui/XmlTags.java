@@ -29,7 +29,7 @@ public interface XmlTags {
     String COLUMN = "column";
     String COLUMNS = "columns";
     String EXCLUDE = "exclude";
-    String FAIL_SAFE_FORM = "fail-safe-form";
+    String SINGLETON_FORM = "singleton-form";
     String FORM = "form";
     String FORM_ITEM = "form-item";
     String FORM_REF = "form-ref";
@@ -44,7 +44,7 @@ public interface XmlTags {
     String NAME = "name";
     String NAME_RESOLVER = "name-resolver";
     String ON_SAVE = "on-save";
-    String ON_RESET = "on-reset";
+    String PREPARE_RESET = "prepare-reset";
     String PROVIDER = "provider";
     String RESET = "reset";
     String SCOPE = "scope";

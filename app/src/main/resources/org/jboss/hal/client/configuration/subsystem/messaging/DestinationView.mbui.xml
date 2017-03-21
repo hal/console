@@ -36,7 +36,8 @@
                     </columns>
                 </table>
                 <form id="messaging-core-queue-form" title="Core Queue"
-                      on-save="{{presenter.save(ServerSubResource.CORE_QUEUE, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.CORE_QUEUE, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.CORE_QUEUE, form)}}">
                     <attributes>
                         <attribute name="queue-address"/>
                         <attribute name="filter"/>
@@ -64,7 +65,8 @@
                     </columns>
                 </table>
                 <form id="messaging-jms-queue-form" title="JMS Queue"
-                      on-save="{{presenter.save(ServerSubResource.JMS_QUEUE, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.JMS_QUEUE, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.JMS_QUEUE, form)}}">
                     <attributes>
                         <attribute name="selector"/>
                         <attribute name="entries"/>
@@ -91,7 +93,8 @@
                     </columns>
                 </table>
                 <form id="messaging-jms-topic-form" title="JMS Topic"
-                      on-save="{{presenter.save(ServerSubResource.JMS_TOPIC, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.JMS_TOPIC, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.JMS_TOPIC, form)}}">
                     <attributes>
                         <attribute name="entries"/>
                     </attributes>
@@ -117,7 +120,8 @@
                     </columns>
                 </table>
                 <form id="messaging-address-setting-form" title="Address Setting"
-                      on-save="{{presenter.save(ServerSubResource.ADDRESS_SETTING, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.ADDRESS_SETTING, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.ADDRESS_SETTING, form)}}"/>
             </metadata>
         </item>
 
@@ -138,7 +142,8 @@
                     </columns>
                 </table>
                 <form id="messaging-divert-form" title="Divert"
-                      on-save="{{presenter.save(ServerSubResource.DIVERT, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.DIVERT, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.DIVERT, form)}}"/>
             </metadata>
         </item>
     </vertical-navigation>

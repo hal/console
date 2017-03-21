@@ -79,7 +79,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
         Metadata metadata = Metadata.staticDescription(jndiResources.jndi());
         details = new ModelNodeForm.Builder<>(Ids.JNDI_DETAILS, metadata)
                 .include("uri", CLASS_NAME, VALUE)
-                .viewOnly()
+                .readOnly()
                 .unsorted()
                 .build();
         registerAttachable(details);

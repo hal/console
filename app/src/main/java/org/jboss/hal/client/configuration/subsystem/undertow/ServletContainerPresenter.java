@@ -24,6 +24,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -141,7 +143,13 @@ public class ServletContainerPresenter
     void resetServletContainer(final Form<ModelNode> form) {
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         crud.reset(Names.SERVLET_CONTAINER, servletContainerName,
-                SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), form, metadata, this::reload);
+                SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext), form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void saveMimeMapping(final Map<String, String> properties) {
@@ -154,7 +162,12 @@ public class ServletContainerPresenter
     void resetMimeMapping(final Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
-        crud.resetSingleton(Names.MIME_MAPPING, address, form, metadata, this::reload);
+        crud.resetSingleton(Names.MIME_MAPPING, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void saveWelcomeFile(final Map<String, String> properties) {
@@ -167,7 +180,12 @@ public class ServletContainerPresenter
     void resetWelcomeFile(final Form<ModelNode> form) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
-        crud.resetSingleton(Names.WELCOME_FILE, address, form, metadata, this::reload);
+        crud.resetSingleton(Names.WELCOME_FILE, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void saveSettings(final ServletContainerSetting settingType, final Map<String, Object> changedValues) {
@@ -181,7 +199,23 @@ public class ServletContainerPresenter
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix()));
-        crud.resetSingleton(settingType.type, address, form, metadata, this::reload);
+        crud.resetSingleton(settingType.type, address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
+    }
+
+    void removeSettings(final ServletContainerSetting settingType, final Form<ModelNode> form) {
+        ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
+                .resolve(statementContext);
+        crud.removeSingleton(settingType.type, address, new FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     Operation pingSettings(final ServletContainerSetting settingType) {
