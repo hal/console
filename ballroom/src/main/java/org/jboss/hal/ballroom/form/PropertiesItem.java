@@ -169,7 +169,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         void unapplyInvalid() {
             root.getClassList().remove(hasError);
             helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setTextContent(MESSAGES.propertiesHint().asString());
+            helpBlock.setInnerHTML(MESSAGES.propertiesHint().asString());
         }
     }
 

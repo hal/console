@@ -49,6 +49,7 @@ import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -473,8 +474,23 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             uniqueAlternatives.add(name);
             uniqueAlternatives.removeAll(processedAlternatives);
             if (uniqueAlternatives.size() > 1) {
-                addFormValidation(form ->
-                        new AlternativesValidation<>(uniqueAlternatives, this, CONSTANTS, MESSAGES).validate(form));
+
+                Set<String> requiredAlternatives = new HashSet<>();
+                uniqueAlternatives.forEach(alternative -> {
+                    ModelNode attribute = attributeMetadata.getOrDefault(alternative, new ModelNode());
+                    if (ModelNodeHelper.failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
+                        requiredAlternatives.add(alternative);
+                    }
+                });
+
+                if (requiredAlternatives.size() > 1) {
+                    // validate that exactly one of the required alternatives is defined
+                    addFormValidation(new ExactlyOneAlternativeValidation<>(requiredAlternatives, CONSTANTS, MESSAGES));
+                }
+                // validate that not more than one of the alternatives is defined
+                addFormValidation(new NotMoreThanOneAlternativeValidation<>(uniqueAlternatives, this, CONSTANTS,
+                        MESSAGES));
+
                 processedAlternatives.addAll(uniqueAlternatives);
             }
         });

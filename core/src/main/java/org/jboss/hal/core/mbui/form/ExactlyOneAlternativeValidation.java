@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -29,23 +29,21 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Harald Pehl
  */
-class AlternativesValidation<T extends ModelNode> implements FormValidation<T> {
+class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
-    private final SortedSet<String> alternatives;
+    private final SortedSet<String> requiredAlternatives;
     private final Constants constants;
     private final Messages messages;
-    private final ModelNodeForm<T> modelNodeForm;
 
-    AlternativesValidation(final Iterable<String> alternatives, final ModelNodeForm<T> modelNodeForm,
-            final Constants constants, final Messages messages) {
-        this.alternatives = new TreeSet<>();
-        Iterables.addAll(this.alternatives, alternatives);
-        this.modelNodeForm = modelNodeForm;
+    ExactlyOneAlternativeValidation(final Iterable<String> requiredAlternatives, final Constants constants,
+            final Messages messages) {
+        this.requiredAlternatives = new TreeSet<>();
+        Iterables.addAll(this.requiredAlternatives, requiredAlternatives);
         this.constants = constants;
         this.messages = messages;
     }
@@ -53,27 +51,26 @@ class AlternativesValidation<T extends ModelNode> implements FormValidation<T> {
     @Override
     public ValidationResult validate(final Form<T> form) {
         LabelBuilder labelBuilder = new LabelBuilder();
-        List<String> nonEmptyItems = alternatives.stream()
+        Set<String> emptyItems = requiredAlternatives.stream()
                 .map(form::getFormItem)
-                .filter(formItem -> formItem != null && !modelNodeForm.isEmptyOrDefault(formItem))
+                .filter(formItem -> formItem != null && formItem.isEmpty())
                 .map(FormItem::getName)
-                .collect(toList());
+                .collect(toSet());
 
-        if (nonEmptyItems.size() > 1) {
+        if (requiredAlternatives.size() == emptyItems.size()) {
             // show an error on each related form item
-            alternatives.forEach(alternative -> {
-                TreeSet<String> otherAlternatives = new TreeSet<>(nonEmptyItems);
-                otherAlternatives.remove(alternative);
-
+            requiredAlternatives.forEach(alternative -> {
                 FormItem<Object> formItem = form.getFormItem(alternative);
-                if (!modelNodeForm.isEmptyOrDefault(formItem)) {
-                    formItem.showError(
-                            messages.alternativeError(labelBuilder.enumeration(otherAlternatives, constants.and())));
+                if (formItem.isEmpty()) {
+                    formItem.showError(messages.exactlyOneAlternativeError(
+                            labelBuilder.enumeration(requiredAlternatives, constants.or())));
                 }
             });
             // return overall result
             return ValidationResult.invalid(
-                    messages.alternativesError(labelBuilder.enumeration(alternatives, constants.or())));
+                    messages.exactlyOneAlternativesError(
+                            labelBuilder.enumeration(requiredAlternatives, constants.or())));
+
         } else {
             return ValidationResult.OK;
         }

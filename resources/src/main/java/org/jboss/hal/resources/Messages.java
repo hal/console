@@ -50,8 +50,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allSingletonsExist();
     SafeHtml allThreadPoolsExist();
     String alternativesHelp(String alternatives);
-    String alternativeError(String alternatives);
-    String alternativesError(String alternatives);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String atLeastOneIsRequired(String attribute1, String attribute2);
@@ -117,6 +115,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String interfce, String url);
     SafeHtml endpointOk(String url);
+    String exactlyOneAlternativeError(String alternatives);
+    String exactlyOneAlternativesError(String alternatives);
     SafeHtml expressionError(String expression);
 
     SafeHtml flushConnectionSuccess();
@@ -191,6 +191,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noServerGroupSelected();
     SafeHtml noStore();
     SafeHtml noTransport();
+    String notMoreThanOneAlternativeError(String alternatives);
+    String notMoreThanOneAlternativesError(String alternatives);
     SafeHtml noWrite();
     SafeHtml normalLogFile(String size);
 
