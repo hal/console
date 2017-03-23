@@ -42,6 +42,11 @@ public class SubsystemMetadata {
             return this;
         }
 
+        /**
+         * Register a named token to this finder item, displaing a "View" clickable link to open a View.
+         * @param token A string based token from NameTokens class.
+         * @return This builder instance.
+         */
         public Builder token(String token) {
             this.token = token;
             return this;

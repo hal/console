@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+
+    <vertical-navigation id="realms-vertical-navigation">
+
+        <!-- ============ -->
+        <!-- Security Realms -->
+        <!-- ============ -->
+
+        <item id="security-realm-item" title="Security Realm" icon="fa fa-file-o">
+
+            <sub-item id="realms-aggregate-realm-item" title="Aggregate Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/aggregate-realm=*">
+                    <h1>Aggregate Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-aggregate-realm-table" title="Aggregate Realm"
+                           form-ref="realms-aggregate-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-aggregate-realm-form" title="Aggregate Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-caching-realm-item" title="Caching Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/caching-realm=*">
+                    <h1>Caching Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-caching-realm-table" title="Caching Realm"
+                           form-ref="realms-caching-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-caching-realm-form" title="Caching Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-custom-modifiable-realm-item" title="Custom Modifiable Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/custom-modifiable-realm=*">
+                    <h1>Custom Modifiable Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-custom-modifiable-realm-table" title="Custom Modifiable Realm"
+                           form-ref="realms-custom-modifiable-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-custom-modifiable-realm-form" title="Custom Modifiable Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-custom-realm-item" title="Custom Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/custom-realm=*">
+                    <h1>Custom Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-custom-realm-table" title="Custom Realm"
+                           form-ref="realms-custom-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-custom-realm-form" title="Custom Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-filesystem-realm-item" title="Filesystem Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/filesystem-realm=*">
+                    <h1>Filesystem Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-filesystem-realm-table" title="Filesystem Realm"
+                           form-ref="realms-filesystem-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-filesystem-realm-form" title="Filesystem Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-identity-realm-item" title="Identity Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/identity-realm=*">
+                    <h1>Identity Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-identity-realm-table" title="Identity Realm"
+                           form-ref="realms-identity-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-identity-realm-form" title="Identity Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-jdbc-realm-item" title="JDBC Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/jdbc-realm=*">
+                    <h1>JDBC Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-jdbc-realm-table" title="JDBC Realm"
+                           form-ref="realms-jdbc-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-jdbc-realm-form" title="JDBC Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-key-store-realm-item" title="Key Store Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/key-store-realm=*">
+                    <h1>Key Store Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-key-store-realm-table" title="Key Store Realm"
+                           form-ref="realms-key-store-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-key-store-realm-form" title="Key Store Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-ldap-realm-item" title="LDAP Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/ldap-realm=*">
+                    <h1>LDAP Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-ldap-realm-table" title="LDAP Realm"
+                           form-ref="realms-ldap-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-ldap-realm-form" title="LDAP Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-properties-realm-item" title="Properties Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/properties-realm=*">
+                    <h1>Properties Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-properties-realm-table" title="Properties Realm"
+                           form-ref="realms-properties-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-properties-realm-form" title="Properties Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-token-realm-item" title="Token Realm">
+                <metadata address="/{selected.profile}/subsystem=elytron/token-realm=*">
+                    <h1>Token Realm</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-token-realm-table" title="Token Realm"
+                           form-ref="realms-token-realm-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-token-realm-form" title="Token Realm"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+        </item>
+
+        <!-- ================== -->
+        <!-- Realm Mappers -->
+        <!-- ================== -->
+
+        <item id="realm-mappers-item" title="Realm Mappers" icon="fa fa-desktop">
+
+            <sub-item id="realms-constant-realm-mapper-item" title="Constant Realm Mapper">
+                <metadata address="/{selected.profile}/subsystem=elytron/constant-realm-mapper=*">
+                    <h1>Constant Realm Mapper</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-constant-realm-mapper-table" title="Constant Realm Mapper"
+                           form-ref="realms-constant-realm-mapper-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-constant-realm-mapper-form" title="Constant Realm Mapper"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-custom-realm-mapper-item" title="Custom Realm Mapper">
+                <metadata address="/{selected.profile}/subsystem=elytron/custom-realm-mapper=*">
+                    <h1>Custom Realm Mapper</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-custom-realm-mapper-table" title="Custom Realm Mapper"
+                           form-ref="realms-custom-realm-mapper-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-custom-realm-mapper-form" title="Custom Realm Mapper"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-mapped-regex-realm-mapper-item" title="Mapped Regex Realm Mapper">
+                <metadata address="/{selected.profile}/subsystem=elytron/mapped-regex-realm-mapper=*">
+                    <h1>Mapped Regex Realm Mapper</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-mapped-regex-realm-mapper-table" title="Mapped Regex Realm Mapper"
+                           form-ref="realms-mapped-regex-realm-mapper-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-mapped-regex-realm-mapper-form" title="Mapped Regex Realm Mapper"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+            <sub-item id="realms-simple-regex-realm-mapper-item" title="Simple Regex Realm Mapper">
+                <metadata address="/{selected.profile}/subsystem=elytron/simple-regex-realm-mapper=*">
+                    <h1>Simple Regex Realm Mapper</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="realms-simple-regex-realm-mapper-table" title="Simple Regex Realm Mapper"
+                           form-ref="realms-simple-regex-realm-mapper-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="realms-simple-regex-realm-mapper-form" title="Simple Regex Realm Mapper"
+                          auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+        </item>
+
+
+    </vertical-navigation>
+</view>

@@ -90,6 +90,7 @@ public interface Names {
     String EVICTION = "Eviction";
     String EXPIRATION = "Expiration";
 
+    String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
     String FILTER = "Filter";
     String FILTERS = "Filters";
@@ -154,6 +155,7 @@ public interface Names {
     String MANAGEMENT = "Management";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
     String MB = "MB";
@@ -168,6 +170,7 @@ public interface Names {
     String NYI = "not yet implemented";
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
+    String OTHER_SETTINGS = "Other Settings";
     String OUTBOUND_LOCAL = "Outbound Local";
     String OUTBOUND_REMOTE = "Outbound Remote";
 
@@ -210,6 +213,7 @@ public interface Names {
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY_DOMAIN = "Security Domain";
+    String SECURITY_REALMS = "Security Realms";
     String SECURITY_SETTING = "Security Setting";
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
@@ -229,6 +233,8 @@ public interface Names {
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
+    String STORES_TRANSFORMERS = "Stores / Transformers";
+    String STRING_JDBC = "String JDBC";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
     String SUBDEPLOYMENTS = "Subdeployments";
