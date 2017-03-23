@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for hal-next 0.4.8
- * Build date: 2017-03-01 10:49:25
+ * Generated CSS file for hal-next 0.5.0
+ * Build date: 2017-03-23 12:10:34
  */
 /*
  * Fonts
@@ -10,35 +10,90 @@
   font-style: normal;
   font-weight: 300;
   src: url("../fonts/OpenSans-Light-webfont.eot");
-  src: url("../fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-Light-webfont.woff") format("woff"), url("../fonts/OpenSans-Light-webfont.ttf") format("truetype"), url("../fonts/OpenSans-Light-webfont.svg#OpenSansLight") format("svg");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Light"), local("OpenSans-Light"), url("../fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-Light-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-Light-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-Light-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-Light-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
 }
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   src: url("../fonts/OpenSans-Regular-webfont.eot");
-  src: url("../fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-Regular-webfont.woff") format("woff"), url("../fonts/OpenSans-Regular-webfont.ttf") format("truetype"), url("../fonts/OpenSans-Regular-webfont.svg#OpenSansRegular") format("svg");
+  /* IE9 Compat Modes */
+  src: local("Open Sans"), local("OpenSans"), url("../fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-Regular-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-Regular-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-Regular-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-Regular-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 300;
+  src: url("../fonts/OpenSans-LightItalic-webfont.eot");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Light Italic"), local("OpenSansLight-Italic"), url("../fonts/OpenSans-LightItalic-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-LightItalic-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-LightItalic-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-LightItalic-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-LightItalic-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 400;
+  src: url("../fonts/OpenSans-Italic-webfont.eot");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Italic"), local("OpenSans-Italic"), url("../fonts/OpenSans-Italic-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-Italic-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-Italic-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-Italic-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-Italic-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
 }
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 600;
   src: url("../fonts/OpenSans-Semibold-webfont.eot");
-  src: url("../fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-Semibold-webfont.woff") format("woff"), url("../fonts/OpenSans-Semibold-webfont.ttf") format("truetype"), url("../fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold") format("svg");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Semibold"), local("OpenSans-Semibold-webfont"), url("../fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-Semibold-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-Semibold-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-Semibold-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-Semibold-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 600;
+  src: url("../fonts/OpenSans-SemiboldItalic-webfont.eot");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Semibold Italic"), local("OpenSans-SemiboldItalic-webfont"), url("../fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-SemiboldItalic-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
 }
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 700;
   src: url("../fonts/OpenSans-Bold-webfont.eot");
-  src: url("../fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-Bold-webfont.woff") format("woff"), url("../fonts/OpenSans-Bold-webfont.ttf") format("truetype"), url("../fonts/OpenSans-Bold-webfont.svg#OpenSansBold") format("svg");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Bold"), local("OpenSans-Bold"), url("../fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-Bold-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-Bold-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-Bold-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-Bold-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 700;
+  src: url("../fonts/OpenSans-BoldItalic-webfont.eot");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Bold Italic"), local("OpenSans-BoldItalic"), url("../fonts/OpenSans-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-BoldItalic-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-BoldItalic-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-BoldItalic-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-BoldItalic-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 800;
+  src: url("../fonts/OpenSans-ExtraBoldItalic-webfont.eot");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Extrabold Italic"), local("OpenSans-ExtraboldItalic"), url("../fonts/OpenSans-ExtraBoldItalic-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-ExtraBoldItalic-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-ExtraBoldItalic-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-ExtraBoldItalic-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-ExtraBoldItalic-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
 }
 @font-face {
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 800;
   src: url("../fonts/OpenSans-ExtraBold-webfont.eot");
-  src: url("../fonts/OpenSans-ExtraBold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/OpenSans-ExtraBold-webfont.woff") format("woff"), url("../fonts/OpenSans-ExtraBold-webfont.ttf") format("truetype"), url("../fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold") format("svg");
+  /* IE9 Compat Modes */
+  src: local("Open Sans Extrabold"), local("OpenSans-Extrabold"), url("../fonts/OpenSans-ExtraBold-webfont.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */ url("../fonts/OpenSans-ExtraBold-webfont.woff2") format("woff2"), /* Super Modern Browsers */ url("../fonts/OpenSans-ExtraBold-webfont.woff") format("woff"), /* Modern Browsers */ url("../fonts/OpenSans-ExtraBold-webfont.ttf") format("truetype"), /* Safari, Android, iOS */ url("../fonts/OpenSans-ExtraBold-webfont.svg#OpenSans") format("svg");
+  /* Legacy iOS */
 }
 /*!
  *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
@@ -4921,7 +4976,20 @@ output {
 .form-control::-webkit-input-placeholder {
   color: #999;
 }
-.form-control::placeholder {
+.form-control:-moz-placeholder {
+  color: #999;
+  font-style: italic;
+}
+.form-control::-moz-placeholder {
+  color: #999;
+  font-style: italic;
+  opacity: 1;
+}
+.form-control:-ms-input-placeholder {
+  color: #999;
+  font-style: italic;
+}
+.form-control::-webkit-input-placeholder {
   color: #999;
   font-style: italic;
 }
@@ -10527,7 +10595,7 @@ select.selectpicker {
 }
 /*!
  * Datetimepicker for Bootstrap 3
- * version : 4.17.45
+ * version : 4.17.47
  * https://github.com/Eonasdan/bootstrap-datetimepicker/
  */
 .bootstrap-datetimepicker-widget {
@@ -11031,6 +11099,7 @@ li.L9 {
   padding-left: 47px;
   padding-right: 14px;
   position: relative;
+  word-wrap: break-word;
 }
 .alert .alert-link {
   color: #0088ce;
@@ -11409,7 +11478,9 @@ fieldset[disabled] .btn-primary.active {
   color: #252525;
   font-size: 16px;
   line-height: 1;
-  padding: 4px 0;
+  padding: 4px 10px;
+  margin-left: -10px;
+  margin-right: -10px;
 }
 .dropdown-kebab-pf .btn-link:active,
 .dropdown-kebab-pf .btn-link:focus,
@@ -11893,6 +11964,70 @@ fieldset[disabled] .pagination > li > span.active {
   font-size: 12px;
   margin-top: 2px;
 }
+.content-view-pf-pagination {
+  background-color: #f5f5f5;
+  border: 1px solid #d1d1d1;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+}
+.content-view-pf-pagination.table-view-pf-pagination {
+  border-top: none;
+}
+.content-view-pf-pagination .form-group {
+  -ms-flex-align: baseline;
+      align-items: baseline;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-positive: 1;
+      flex-grow: 1;
+  float: left;
+  margin: 5px;
+}
+@supports (display: flex) {
+  .content-view-pf-pagination .form-group {
+    float: none;
+  }
+}
+.content-view-pf-pagination .form-group:last-child {
+  -ms-flex-pack: end;
+      justify-content: flex-end;
+  float: right;
+}
+@supports (display: flex) {
+  .content-view-pf-pagination .form-group:last-child {
+    float: none;
+  }
+}
+.content-view-pf-pagination .form-group .pagination-pf-pagesize.bootstrap-select.btn-group {
+  display: -ms-flexbox;
+  display: flex;
+  margin-right: 5px;
+  width: auto;
+}
+.content-view-pf-pagination .pagination-pf-page {
+  margin-left: 10px;
+  margin-right: 5px;
+  padding: 0 2px 2px;
+  text-align: right;
+  width: 2.5em;
+}
+.content-view-pf-pagination .pagination {
+  display: -ms-flexbox;
+  display: flex;
+  margin: 0 0 0 10px;
+}
+.content-view-pf-pagination .pagination a {
+  float: none;
+}
+@supports (display: flex) {
+  .content-view-pf-pagination .pagination a {
+    display: block;
+  }
+}
 .panel-title {
   font-weight: 700;
 }
@@ -11906,13 +12041,67 @@ fieldset[disabled] .pagination > li > span.active {
   border-color: #bbb;
   border-top-color: #bbb;
 }
-.panel-group .panel-heading {
+.panel-group .panel-default .panel-heading {
   background-image: linear-gradient(to bottom, #fafafa 0%, #ededed 100%);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffafafa', endColorstr='#ffededed', GradientType=0);
 }
-.panel-group .panel-heading + .panel-collapse .panel-body {
+.panel-group .panel-default .panel-heading + .panel-collapse .panel-body {
   border-top: 1px solid #d1d1d1;
+}
+.panel-group .panel-primary {
+  border-color: #39a5dc;
+}
+.panel-group .panel-primary .panel-heading {
+  background-color: #def0f9;
+}
+.panel-group .panel-primary + .panel-default {
+  border-top-color: #39a5dc;
+}
+.panel-group .panel-success {
+  border-color: #3f9c35;
+}
+.panel-group .panel-success .panel-heading {
+  background-color: #e9f4e9;
+}
+.panel-group .panel-success + .panel-default {
+  border-top-color: #3f9c35;
+}
+.panel-group .panel-success + .panel-primary {
+  border-top-color: #3f9c35;
+}
+.panel-group .panel-warning {
+  border-color: #ec7a08;
+}
+.panel-group .panel-warning .panel-heading {
+  background-color: #fdf2e5;
+}
+.panel-group .panel-warning + .panel-default {
+  border-top-color: #ec7a08;
+}
+.panel-group .panel-warning + .panel-primary {
+  border-top-color: #ec7a08;
+}
+.panel-group .panel-warning + .panel-success {
+  border-top-color: #ec7a08;
+}
+.panel-group .panel-danger {
+  border-color: #cc0000;
+}
+.panel-group .panel-danger .panel-heading {
+  background-color: #ffe6e6;
+}
+.panel-group .panel-danger + .panel-default {
+  border-top-color: #cc0000;
+}
+.panel-group .panel-danger + .panel-primary {
+  border-top-color: #cc0000;
+}
+.panel-group .panel-danger + .panel-success {
+  border-top-color: #cc0000;
+}
+.panel-group .panel-danger + .panel-warning {
+  border-top-color: #cc0000;
 }
 .panel-group .panel-title {
   font-weight: 500;
@@ -12600,7 +12789,6 @@ h2,
   border: 2px solid transparent;
 }
 .card-pf-view .card-pf-heading-kebab .dropdown-kebab-pf {
-  margin-left: 10px;
   margin-top: -3px;
 }
 .card-pf-view .card-pf-heading-kebab + .progress-pf-legend p {
@@ -12794,6 +12982,8 @@ h2,
 }
 .close {
   text-shadow: none;
+  z-index: 1;
+  position: relative;
   opacity: 0.6;
   filter: alpha(opacity=60);
 }
@@ -13002,11 +13192,11 @@ h2,
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 }
-.pficon-middleware:before {
-  content: "\e917";
-}
 .pficon-add-circle-o:before {
   content: "\e61b";
+}
+.pficon-arrow:before {
+  content: "\e929";
 }
 .pficon-build:before {
   content: "\e902";
@@ -13019,6 +13209,9 @@ h2,
 }
 .pficon-blueprint:before {
   content: "\e915";
+}
+.pficon-chat:before {
+  content: "\e928";
 }
 .pficon-close:before {
   content: "\e60b";
@@ -13036,7 +13229,10 @@ h2,
   content: "\e621";
 }
 .pficon-cpu:before {
-  content: "\e905";
+  content: "\e927";
+}
+.pficon-degraded:before {
+  content: "\e91b";
 }
 .pficon-delete:before {
   content: "\e611";
@@ -13050,9 +13246,12 @@ h2,
 .pficon-enterprise:before {
   content: "\e906";
 }
+.pficon-equalizer:before {
+  content: "\e906";
+}
 .pficon-error-circle-o:before {
   color: #cc0000;
-  content: "\e61d";
+  content: "\e926";
 }
 .pficon-export:before {
   content: "\e616";
@@ -13086,10 +13285,22 @@ h2,
   content: "\e615";
 }
 .pficon-info:before {
-  content: "\e604";
+  content: "\e925";
+}
+.pficon-key:before {
+  content: "\e924";
+}
+.pficon-locked:before {
+  content: "\e923";
+}
+.pficon-unlocked:before {
+  content: "\e922";
 }
 .pficon-memory:before {
   content: "\e908";
+}
+.pficon-middleware:before {
+  content: "\e917";
 }
 .pficon-network:before {
   content: "\e909";
@@ -13105,17 +13316,23 @@ h2,
   content: "\e914";
 }
 .pficon-project:before {
-  content: "\e622";
+  content: "\e905";
+}
+.pficon-rebalance:before {
+  content: "\e91c";
 }
 .pficon-refresh:before,
 .pficon-restart:before {
-  content: "\e613";
+  content: "\e617";
 }
 .pficon-regions:before {
   content: "\e90a";
 }
 .pficon-registry:before {
   content: "\e623";
+}
+.pficon-remove:before {
+  content: "\e611";
 }
 .pficon-replicator:before {
   content: "\e624";
@@ -13126,11 +13343,14 @@ h2,
 .pficon-resource-pool:before {
   content: "\e90c";
 }
+.pficon-resources-almost-empty:before {
+  content: "\e91d";
+}
 .pficon-resources-almost-full:before {
   content: "\e912";
 }
 .pficon-resources-full:before {
-  content: "\e913";
+  content: "\e92a";
 }
 .pficon-route:before {
   content: "\e625";
@@ -13144,6 +13364,9 @@ h2,
 .pficon-screen:before {
   content: "\e600";
 }
+.pficon-search:before {
+  content: "\e921";
+}
 .pficon-server:before {
   content: "\e90d";
 }
@@ -13156,6 +13379,12 @@ h2,
 .pficon-settings:before {
   content: "\e610";
 }
+.pficon-spinner:before {
+  content: "\e614";
+}
+.pficon-spinner2:before {
+  content: "\e613";
+}
 .pficon-storage-domain:before {
   content: "\e90e";
 }
@@ -13163,7 +13392,7 @@ h2,
   content: "\e916";
 }
 .pficon-thumb-tack-o:before {
-  content: "\e609";
+  content: "\e920";
 }
 .pficon-topology:before {
   content: "\e608";
@@ -13175,10 +13404,10 @@ h2,
   content: "\e901";
 }
 .pficon-user:before {
-  content: "\e60e";
+  content: "\e91e";
 }
 .pficon-users:before {
-  content: "\e60f";
+  content: "\e91f";
 }
 .pficon-virtual-machine:before {
   content: "\e90f";
@@ -13188,7 +13417,7 @@ h2,
 }
 .pficon-warning-triangle-o:before {
   color: #ec7a08;
-  content: "\e61c";
+  content: "\e913";
 }
 .pficon-zone:before {
   content: "\e911";
@@ -13553,7 +13782,8 @@ a.disabled {
       order: 2;
 }
 .list-view-pf-actions button,
-.list-view-pf-actions > a {
+.list-view-pf-actions > a,
+.list-view-pf-actions .dropdown-kebab-pf {
   margin-left: 10px;
 }
 .list-view-pf-top-align .list-view-pf-actions {
@@ -13653,6 +13883,8 @@ a.disabled {
 }
 .list-view-pf-stacked .list-view-pf-description {
   display: block;
+  -ms-flex: none;
+      flex: none;
 }
 @media (min-width: 992px) {
   .list-view-pf-description {
@@ -14491,6 +14723,7 @@ a.disabled {
   margin-top: 0;
 }
 .navbar-pf-vertical .nav .nav-item-iconic {
+  color: #d1d1d1;
   cursor: pointer;
   line-height: 1;
   max-height: 58px;
@@ -14499,6 +14732,7 @@ a.disabled {
 }
 .navbar-pf-vertical .nav .nav-item-iconic:hover,
 .navbar-pf-vertical .nav .nav-item-iconic:focus {
+  color: #fff;
   background-color: transparent;
 }
 .navbar-pf-vertical .nav .nav-item-iconic:hover .caret,
@@ -15195,12 +15429,17 @@ a.disabled {
 .bootstrap-datetimepicker-widget.dropdown-menu {
   left: 0!important;
   padding: 0;
-  top: 23px!important;
   width: calc(100% - 25px);
 }
 .bootstrap-datetimepicker-widget.dropdown-menu:before,
 .bootstrap-datetimepicker-widget.dropdown-menu:after {
   content: none;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu.top {
+  margin-bottom: -1px;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu.bottom {
+  margin-top: -1px;
 }
 .bootstrap-datetimepicker-widget .timepicker-hour {
   width: 100%;
@@ -15295,6 +15534,11 @@ a.disabled {
 .toast-pf .toast-pf-action {
   margin-left: 15px;
 }
+.toast-pf .dropdown-kebab-pf .btn-link {
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: text-bottom;
+}
 @media (min-width: 992px) {
   .toast-pf {
     display: inline-block;
@@ -15384,6 +15628,11 @@ a.disabled {
 .toolbar-pf .form-group .btn-link:focus,
 .toolbar-pf .form-group .btn-link:hover {
   color: #0088ce;
+}
+.toolbar-pf .form-group .dropdown-kebab-pf .btn-link {
+  padding: 4px 10px;
+  margin-left: -10px;
+  margin-right: -10px;
 }
 .toolbar-pf-actions {
   display: table;
@@ -16573,6 +16822,9 @@ a.disabled {
   left: 0;
   right: 0;
 }
+.wizard-pf-contents textarea {
+  resize: vertical;
+}
 /* styles the content of a review page */
 .wizard-pf-review-steps {
   list-style: none;
@@ -16804,6 +17056,9 @@ h2.underline {
   animation: progress-animation 1s linear infinite;
   background-size: 40px 40px;
   background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
+}
+.wrap {
+  white-space: pre-wrap;
 }
 @keyframes progress-animation {
   from {
@@ -17083,6 +17338,10 @@ h2.underline {
   white-space: nowrap;
   width: 70%;
 }
+.finder .finder-preview .list-group > .list-group-item .value ul {
+  list-style: none;
+  padding-left: 0;
+}
 .autocomplete-suggestions {
   background-clip: padding-box;
   background-color: #fff;
@@ -17248,6 +17507,9 @@ h2.underline {
 }
 .form.readonly .form-control-static .default-value {
   cursor: help;
+}
+.form.readonly .hal-form-input pre {
+  margin: 5px 0 10px;
 }
 .form.readonly,
 .form.editing {
@@ -17551,6 +17813,9 @@ abbr.key {
 }
 .editor-buttons .btn {
   box-shadow: none;
+}
+.editor-buttons .btn:last-child {
+  margin-left: -1px;
 }
 pre.editor {
   margin: 0;
@@ -18663,6 +18928,10 @@ pre.editor {
 #log-file-editor {
   font-size: 11px;
 }
+.log-file-preview {
+  min-height: 100px;
+  min-height: 10rem;
+}
 .macro-list,
 .macro-editor,
 .no-macros {
@@ -18752,8 +19021,10 @@ pre.editor {
   background-color: rgba(204, 0, 0, 0.4);
 }
 .topology .error:hover {
-  color: #fff;
   background-color: #cc0000;
+}
+.topology .error:hover .name {
+  color: #fff;
 }
 .topology .inactive {
   background-color: rgba(187, 187, 187, 0.4);
