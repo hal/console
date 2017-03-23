@@ -133,7 +133,7 @@ public class FilterPresenter
     void addResponseHeader() {
         Metadata metadata = metadataRegistry.lookup(RESPONSE_HEADER_TEMPLATE);
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_RESPONSE_HEADER_ADD, metadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .build();
 
         List<String> responseHeader = Arrays.stream(ResponseHeader.values())
@@ -156,6 +156,19 @@ public class FilterPresenter
         SafeHtml successMessage = resources.messages()
                 .modifyResourceSuccess(Names.RESPONSE_HEADER, form.getModel().get(HEADER_NAME).asString());
         crud.save(form.getModel().getName(), RESPONSE_HEADER_TEMPLATE, changedValues, successMessage, this::reload);
+    }
+
+    void resetResponseHeader(Form<NamedNode> form) {
+        Metadata metadata = metadataRegistry.lookup(RESPONSE_HEADER_TEMPLATE);
+        SafeHtml successMessage = resources.messages()
+                .resetResourceSuccess(Names.RESPONSE_HEADER, form.getModel().get(HEADER_NAME).asString());
+        crud.reset(Names.RESPONSE_HEADER, form.getModel().getName(), RESPONSE_HEADER_TEMPLATE, form, metadata,
+                successMessage, new Form.FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void removeResponseHeader(NamedNode responseHeader) {

@@ -43,7 +43,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.CONTEXT_SERVICE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_TEMPLATE;
@@ -98,6 +98,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
                         eeMetadata, resources.messages()
                                 .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())))
+                .prepareReset(f -> presenter.resetSingleton(resources.constants().deploymentAttributes(),
+                        AddressTemplates.EE_SUBSYSTEM_TEMPLATE, f, eeMetadata))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);
@@ -142,6 +144,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
                         changedValues, defaultBindingsMetadata,
                         resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
+                .prepareReset(f -> presenter.resetSingleton(DEFAULT_BINDINGS_NAME,
+                        AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, f, defaultBindingsMetadata))
                 .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
@@ -275,6 +279,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
                     presenter.save(fullyQualified, changedValues, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
+                })
+                .prepareReset(f -> {
+                    String name = table.api().selectedRow().getName();
+                    AddressTemplate fullyQualified = template.replaceWildcards(name);
+                    presenter.reset(type, name, fullyQualified, f, metadata,
                             resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
                 })
                 .build();

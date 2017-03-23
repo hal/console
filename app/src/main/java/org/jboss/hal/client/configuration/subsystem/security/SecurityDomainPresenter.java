@@ -29,6 +29,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -38,6 +39,7 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
@@ -150,6 +152,17 @@ public class SecurityDomainPresenter
                 this::reload);
     }
 
+    void resetSecurityDomain(Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
+        crud.reset(Names.SECURITY_DOMAIN, securityDomain, SELECTED_SECURITY_DOMAIN_TEMPLATE, form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
     void addClassicAuthenticationModule() {
         // Check if there's already a 'authentication=jaspi' singleton node.
         // Either 'authentication=classic' or 'authentication=jaspi' is allowed not both!
@@ -220,6 +233,24 @@ public class SecurityDomainPresenter
                         .append(module.resource + "=*")
                         .resolve(statementContext, name),
                 changedValues, metadata, this::reload);
+    }
+
+    void resetModule(Form<NamedNode> form, Module module) {
+        Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE
+                .append(module.singleton)
+                .append(module.resource + "=*"));
+        String name = form.getModel().getName();
+        crud.reset(module.type, name,
+                SELECTED_SECURITY_DOMAIN_TEMPLATE
+                        .append(module.singleton)
+                        .append(module.resource + "=*")
+                        .resolve(statementContext, name),
+                form, metadata, new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void removeModule(Api<NamedNode> api, Module module) {

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -34,16 +35,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.DataMapping;
-import org.jboss.hal.ballroom.form.DefaultForm;
-import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
+import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
+import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
-import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -52,20 +56,21 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
+import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * TODO Add form based validations based on "alternatives" => ["foo"] information from the resource description
- *
  * @author Harald Pehl
  */
-public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
+public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     /**
      * Builder useful to automatically inspect the read-resource-description and associate the
@@ -82,16 +87,20 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         FormItemProvider defaultFormItemProvider;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
-        boolean viewOnly;
+        boolean readOnly;
         boolean addOnly;
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
         boolean hideDeprecated;
+        boolean singleton;
+        Supplier<org.jboss.hal.dmr.model.Operation> ping;
+        EmptyState emptyState;
         String attributePath;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
-        ResetCallback<T> resetCallback;
+        PrepareReset<T> prepareReset;
+        PrepareRemove<T> prepareRemove;
         DataMapping<T> dataMapping;
 
 
@@ -105,7 +114,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.defaultFormItemProvider = new DefaultFormItemProvider(metadata);
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
-            this.viewOnly = false;
+            this.readOnly = false;
             this.addOnly = false;
             this.unsorted = false;
             this.requiredOnly = false;
@@ -162,14 +171,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
          * <p>
          * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.
          */
-        public Builder<T> addFromRequestProperties() {
+        public Builder<T> fromRequestProperties() {
             this.addOnly = true;
             this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
             return this;
         }
 
-        public Builder<T> viewOnly() {
-            this.viewOnly = true;
+        public Builder<T> readOnly() {
+            this.readOnly = true;
             return this;
         }
 
@@ -190,6 +199,40 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> showDeprecated() {
             this.hideDeprecated = false;
+            return this;
+        }
+
+        /**
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * <p>
+         * The specified operation is used to check whether the resource exists.
+         * <p>
+         * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
+         * which will trigger the specified add action.
+         */
+        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.model.Operation> ping, final Callback addAction) {
+            EmptyState emptyState = new EmptyState.Builder(CONSTANTS.noResource())
+                    .description(MESSAGES.noResource())
+                    .primaryAction(CONSTANTS.add(), addAction)
+                    .build();
+            return singleton(ping, emptyState);
+        }
+
+        /**
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * <p>
+         * The specified operation is used to check whether the resource exists.
+         * <p>
+         * If the resource does not exist, the specified empty state is displayed. The empty state must have a
+         * button which triggers the creation of the singleton resource.
+         */
+        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.model.Operation> ping,
+                final EmptyState emptyState) {
+            this.singleton = true;
+            this.ping = ping;
+            this.emptyState = emptyState;
             return this;
         }
 
@@ -232,8 +275,13 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> onReset(final ResetCallback<T> resetCallback) {
-            this.resetCallback = resetCallback;
+        public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
+            this.prepareReset = prepareReset;
+            return this;
+        }
+
+        public Builder<T> prepareRemove(final PrepareRemove<T> removeCallback) {
+            this.prepareRemove = removeCallback;
             return this;
         }
 
@@ -246,11 +294,24 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         void validate() {
-            if (viewOnly && addOnly) {
-                throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": viewOnly && addOnly");
+            if (singleton) {
+                if (readOnly || addOnly) {
+                    throw new IllegalStateException(
+                            ILLEGAL_COMBINATION + formId() + ": singleton && (readOnly || addOnly)");
+                }
+                if (ping == null) {
+                    throw new IllegalStateException("No ping operation specified for singleton " + formId());
+                }
+                if (emptyState == null) {
+                    throw new IllegalStateException("No empty state specified for singleton " + formId());
+                }
             }
 
-            if (!excludes.isEmpty() && !viewOnly) {
+            if (readOnly && addOnly) {
+                throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": readOnly && addOnly");
+            }
+
+            if (!excludes.isEmpty() && !readOnly) {
                 List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
                 for (Property attribute : requiredAttributes) {
                     if (excludes.contains(attribute.getName())) {
@@ -259,12 +320,22 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     }
                 }
             }
+
+            if (!addOnly && !readOnly && saveCallback == null) {
+                logger.warn("No save callback specified in {}", formId());
+            }
         }
 
         StateMachine stateMachine() {
-            return addOnly
-                    ? new AddOnlyStateMachine()
-                    : (viewOnly ? new ViewOnlyStateMachine() : new ExistingModelStateMachine());
+            if (addOnly) {
+                return new AddOnlyStateMachine();
+            } else if (readOnly) {
+                return new ReadOnlyStateMachine();
+            } else if (singleton) {
+                return new SingletonStateMachine();
+            } else {
+                return new ExistingStateMachine();
+            }
         }
 
         private String formId() {
@@ -277,6 +348,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
+    private final boolean addOnly;
+    private final boolean singleton;
+    private final Supplier<org.jboss.hal.dmr.model.Operation> ping;
     private final Map<String, ModelNode> attributeMetadata;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
@@ -287,11 +361,16 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 builder.stateMachine(),
                 builder.dataMapping != null ? builder.dataMapping : new ModelNodeMapping<>(
                         builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                builder.emptyState,
                 builder.metadata.getSecurityContext());
 
+        this.addOnly = builder.addOnly;
+        this.singleton = builder.singleton;
+        this.ping = builder.ping;
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
-        this.resetCallback = builder.resetCallback;
+        this.prepareReset = builder.prepareReset;
+        this.prepareRemove = builder.prepareRemove;
         this.resourceDescription = builder.metadata.getDescription();
         this.attributePath = builder.attributePath;
 
@@ -409,6 +488,19 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(alert.asElement());
         }
+        if (singleton && ping != null) {
+            Core.INSTANCE.dispatcher().execute(ping.get(), result -> flip(READONLY), (op, failure) -> flip(EMPTY));
+        }
+    }
+
+    @Override
+    public boolean isUndefined() {
+        return getModel() == null || !getModel().isDefined();
+    }
+
+    @Override
+    public boolean isTransient() {
+        return addOnly || (getModel() != null && !getModel().isDefined());
     }
 
     @Override

@@ -93,7 +93,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                     Metadata metadata = metadataRegistry.lookup(RESOURCE_ADAPTER_TEMPLATE);
                     ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                             Ids.RESOURCE_ADAPTER_FORM, metadata)
-                            .addFromRequestProperties()
+                            .fromRequestProperties()
                             .unboundFormItem(new NameItem())
                             .include(ARCHIVE, MODULE)
                             .build();

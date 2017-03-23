@@ -29,14 +29,12 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -62,7 +60,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     private final Cache cache;
     private final NamedNodeTable<NamedNode> table;
     private final Form<NamedNode> form;
-    private final Map<Component, FailSafeForm<ModelNode>> components;
+    private final Map<Component, Form<ModelNode>> components;
     private final StoreElement storeElement;
     private final Pages pages;
     private NamedNodeTable<NamedNode> backupTable;
@@ -70,7 +68,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     private CacheContainerPresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
-    CacheElement(Cache cache, Dispatcher dispatcher, MetadataRegistry metadataRegistry, Resources resources) {
+    CacheElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
         this.cache = cache;
 
         Metadata metadata = metadataRegistry.lookup(cache.template);
@@ -99,6 +97,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                                         presenter.selectCache(cache, row.getName());
                                         presenter.showCacheBackup();
                                     });
+                                    //noinspection HardCodedStringLiteral
                                     return "<a id=\"" + id1 + "\" class=\"" + columnAction + "\">" + Names.STORE + "</a> / " +
                                             "<a id=\"" + id2 + "\" class=\"" + columnAction + "\">" + Names.BACKUPS + "</a>";
                                 })
@@ -119,6 +118,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         Tabs tabs = new Tabs();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveCache(cache, form.getModel().getName(), changedValues))
+                .prepareReset(form -> presenter.resetCache(cache, form.getModel().getName(), form))
                 .build();
         tabs.add(Ids.build(cache.baseId, Ids.TAB_SUFFIX), resources.constants().attributes(), form.asElement());
 
@@ -128,13 +128,14 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             String formId = Ids.build(cache.baseId, component.baseId, Ids.FORM_SUFFIX);
             Metadata cm = metadataRegistry.lookup(cache.template.append(COMPONENT + "=" + component.resource));
             Form<ModelNode> cf = new ModelNodeForm.Builder<>(formId, cm)
+                    .singleton(() -> presenter.readCacheComponent(component),
+                            () -> presenter.addCacheComponent(component))
                     .onSave((form, changedValues) -> presenter.saveCacheComponent(component, changedValues))
+                    .prepareReset(form -> presenter.resetCacheComponent(component, form))
+                    .prepareRemove(form -> presenter.removeCacheComponent(component, form))
                     .build();
-            FailSafeForm<ModelNode> fsf = new FailSafeForm<>(dispatcher,
-                    () -> presenter.readCacheComponent(component), cf,
-                    () -> presenter.addCacheComponent(component));
-            tabs.add(tabId, component.type, fsf.asElement());
-            components.put(component, fsf);
+            tabs.add(tabId, component.type, cf.asElement());
+            components.put(component, cf);
         }
 
         storeElement = new StoreElement(cache, metadataRegistry, resources);
@@ -172,6 +173,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                     backupMeta)
                     .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
                             changedValues))
+                    .prepareReset(form -> presenter.resetCacheBackup(form.getModel().getName(), form))
                     .build();
 
             // @formatter:off

@@ -19,7 +19,8 @@
     <metadata address="/{selected.profile}/subsystem=messaging-activemq/jms-bridge=*">
         <h1>JMS Bridge</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="jms-bridge-form" title="JMS Bridge" on-save="{{presenter.saveJmsBridge(changedValues)}}">
+        <form id="jms-bridge-form" title="JMS Bridge" on-save="{{presenter.saveJmsBridge(changedValues)}}"
+              prepare-reset="{{presenter.resetJmsBridge(form)}}">
             <attributes>
                 <!-- Use the attribute groups from the singleton description -->
                 <group name="source"/>

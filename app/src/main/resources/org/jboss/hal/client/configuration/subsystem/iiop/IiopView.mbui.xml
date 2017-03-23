@@ -19,7 +19,7 @@
     <metadata address="/{selected.profile}/subsystem=iiop-openjdk">
         <h1>IIOP OpenJDK</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="iiop-openjdk-form" title="IIOP OpenJDK" auto-save="true">
+        <form id="iiop-openjdk-form" title="IIOP OpenJDK" auto-save="true" reset="true">
             <attributes>
                 <!-- Use the attribute groups from the resource description -->
                 <group name="orb"/>

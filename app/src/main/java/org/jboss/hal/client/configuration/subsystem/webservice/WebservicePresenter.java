@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -162,6 +163,16 @@ public class WebservicePresenter
         crud.saveSingleton(Names.WEBSERVICES_CONFIGURATION, WEBSERVICES_TEMPLATE, changedValues, this::reload);
     }
 
+    void resetWebservicesConfiguration(final Form<ModelNode> form, final Metadata metadata) {
+        crud.resetSingleton(Names.WEBSERVICES_CONFIGURATION, WEBSERVICES_TEMPLATE, form, metadata,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reload();
+                    }
+                });
+    }
+
 
     // ------------------------------------------------------ client and endpoint config
 
@@ -192,6 +203,18 @@ public class WebservicePresenter
         Metadata metadata = metadataRegistry.lookup(configType.template);
         po.saveWithProperties(configType.type, name, address, changedValues, metadata, property,
                 form.<Map<String, String>>getFormItem(property).getValue(), this::reload);
+    }
+
+    void resetConfig(Form<NamedNode> form) {
+        String name = form.getModel().getName();
+        ResourceAddress address = SELECTED_CONFIG_TEMPLATE.resolve(statementContext, name);
+        Metadata metadata = metadataRegistry.lookup(configType.template);
+        crud.reset(configType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reload();
+            }
+        });
     }
 
     void removeConfig(String name) {
@@ -243,6 +266,17 @@ public class WebservicePresenter
         crud.save(handlerChainType.type, name, address, changedValues, metadata, this::reloadHandlerChains);
     }
 
+    void resetHandlerChain(String name, Form<NamedNode> form) {
+        ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
+        Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
+        crud.reset(handlerChainType.type, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reloadHandlerChains();
+            }
+        });
+    }
+
     void removeHandlerChain(String name) {
         ResourceAddress address = SELECTED_HANDLER_CHAIN_TEMPLATE.resolve(statementContext, name);
         crud.remove(handlerChainType.type, name, address, this::reloadHandlerChains);
@@ -287,6 +321,17 @@ public class WebservicePresenter
         ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
         crud.save(Names.HANDLER, name, address, changedValues, metadata, this::reloadHandlers);
+    }
+
+    void resetHandler(String name, Form<NamedNode> form) {
+        ResourceAddress address = SELECTED_HANDLER_TEMPLATE.resolve(statementContext, name);
+        Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
+        crud.reset(Names.HANDLER, name, address, form, metadata, new FinishReset<NamedNode>(form) {
+            @Override
+            public void afterReset(final Form<NamedNode> form) {
+                reloadHandlers();
+            }
+        });
     }
 
     void removeHandler(String name) {

@@ -42,6 +42,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String active();
     String activeLower();
     String add();
+    String address();
     String adminOnly();
     String and();
     String archived();
@@ -144,7 +145,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String help();
     String hiddenColumns();
-    String hidePassword();
+    String hideSensitive();
     String hitCount();
     String homepageNewToEap();
     String homepageTakeATour();
@@ -246,6 +247,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String loading();
     String loadingPleaseWait();
     String logFile();
+    String logFilePreviewError();
     String logFiles();
     String logout();
 
@@ -268,6 +270,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String needsRestart();
     String no();
     String noAttributes();
+    String noBootErrors();
     String noConfiguredMailServers();
     String noContentSelected();
     String noDetails();
@@ -299,6 +302,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationFailed();
     String operationMode();
     String operationSuccessful();
+    String operation();
     String operations();
     String or();
     String orDragItHere();
@@ -362,7 +366,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sessions();
     String settings();
     String showAll();
-    String showPassword();
+    String showSensitive();
     String size();
     String sizing();
     String specifyNames();

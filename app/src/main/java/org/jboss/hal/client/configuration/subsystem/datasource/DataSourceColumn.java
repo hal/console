@@ -287,7 +287,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 dispatcher.executeInFunction(control, operation, result -> control.proceed());
 
             } else {
-                control.getContext().setErrorMessage(resources.constants().noRunningServers());
+                control.getContext().failed(resources.constants().noRunningServers());
                 control.abort();
             }
         };
@@ -297,7 +297,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             public void onFailure(final FunctionContext context) {
                 MessageEvent.fire(eventBus,
                         Message.error(resources.messages().testConnectionError(dataSource.getName()),
-                                context.getErrorMessage()));
+                                context.getError()));
             }
 
             @Override

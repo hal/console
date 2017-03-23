@@ -95,10 +95,9 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
         addColumnAction(columnActionFactory.add(Ids.JMS_BRIDGE_ADD, Names.JMS_BRIDGE,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
-                    Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JMS_BRIDGE_ADD,
-                            metadata)
+                    Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JMS_BRIDGE_ADD, metadata)
                             .unboundFormItem(new NameItem(), 0)
-                            .addFromRequestProperties()
+                            .fromRequestProperties()
                             .requiredOnly()
                             .build();
                     registerSuggestionHandler(dispatcher, statementContext, form);

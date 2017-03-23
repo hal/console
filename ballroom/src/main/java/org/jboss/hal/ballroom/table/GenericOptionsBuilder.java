@@ -190,6 +190,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         options.pageLength = pageLength;
         options.searching = searching;
         options.select = select;
+
+        // custom options
         options.columnActions = columnActions;
         return options;
     }

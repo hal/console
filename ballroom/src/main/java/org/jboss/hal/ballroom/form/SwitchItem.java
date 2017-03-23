@@ -69,7 +69,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
                     Browser.getDocument().createInputElement());
             inputElement.setType("checkbox"); //NON-NLS
-            inputElement.getClassList().add(bootstrapSwitch);
 
             // put the <input type="checkbox"/> into an extra div
             // this makes switching between normal and expression mode easier
@@ -143,7 +142,17 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void attach() {
             super.attach();
+            inputElement.getClassList().add(bootstrapSwitch);
             SwitchBridge.Bridge.element(inputElement).onChange((event, state) -> modifyValue(state));
+        }
+
+        @Override
+        public void detach() {
+            super.detach();
+            if (attached) {
+                inputElement.getClassList().remove(bootstrapSwitch);
+                SwitchBridge.Bridge.element(inputElement).destroy();
+            }
         }
 
         @Override

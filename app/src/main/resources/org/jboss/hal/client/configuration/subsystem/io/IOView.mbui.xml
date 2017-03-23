@@ -44,7 +44,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="io-worker-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
+                <form id="io-worker-form" auto-save="true" reset="true" name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="io-threads"/>
                         <attribute name="stack-size"/>
@@ -80,7 +80,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="io-buffer-pool-form" title="Buffer Pool" auto-save="true"
+                <form id="io-buffer-pool-form" title="Buffer Pool" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="buffer-size"/>

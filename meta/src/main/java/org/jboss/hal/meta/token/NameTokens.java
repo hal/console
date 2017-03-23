@@ -19,6 +19,9 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 
+/**
+ * HAL name tokens.
+ */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
@@ -40,6 +43,7 @@ public interface NameTokens {
     String EXPERT_MODE = "expert-mode";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
+    String HOST_BOOT_ERRORS = "host-boot-errors";
     String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
@@ -72,6 +76,7 @@ public interface NameTokens {
     String RUNTIME = "runtime";
     String SECURITY_CONFIGURATION = "security";
     String SECURITY_DOMAIN = ModelDescriptionConstants.SECURITY_DOMAIN;
+    String SERVER_BOOT_ERRORS = "server-boot-errors";
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";

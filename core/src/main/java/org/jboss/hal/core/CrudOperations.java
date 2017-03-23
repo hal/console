@@ -18,6 +18,7 @@ package org.jboss.hal.core;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,6 +27,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -46,6 +49,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -633,7 +637,7 @@ public class CrudOperations {
      * @param name          the resource name
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param metadata      the metadata for the of the attributes in the change set
+     * @param metadata      the metadata of the attributes in the change set
      * @param callback      the callback executed after saving the resource
      */
     public void save(final String type, final String name, final ResourceAddress address,
@@ -650,7 +654,7 @@ public class CrudOperations {
      *
      * @param address        the fq address for the operation
      * @param changedValues  the changed values / payload for the operation
-     * @param metadata       the metadata for the of the attributes in the change set
+     * @param metadata       the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
      * @param callback       the callback executed after saving the resource
      */
@@ -755,7 +759,7 @@ public class CrudOperations {
      * @param type          the human readable resource type used in the success message
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param metadata      the metadata for the of the attributes in the change set
+     * @param metadata      the metadata of the attributes in the change set
      * @param callback      the callback executed after saving the singleton resource
      */
     public void saveSingleton(final String type, final ResourceAddress address, final Map<String, Object> changedValues,
@@ -770,13 +774,371 @@ public class CrudOperations {
      *
      * @param address        the fq address for the operation
      * @param changedValues  the changed values / payload for the operation
-     * @param metadata       the metadata for the of the attributes in the change set
+     * @param metadata       the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
      * @param callback       the callback executed after saving the singleton resource
      */
     public void saveSingleton(final ResourceAddress address, final Map<String, Object> changedValues,
             final Metadata metadata, final SafeHtml successMessage, final Callback callback) {
         save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, callback);
+    }
+
+
+    // ------------------------------------------------------ (u) reset using template
+
+    /**
+     * Undefines all non required attributes in the specified form. After the resource has been undefined a standard
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param name     the resource name
+     * @param template the address template which is resolved against the current statement context and the
+     *                 resource name to get the resource address for the operation
+     * @param form     the form which should be reset
+     * @param metadata the metadata of the attributes
+     * @param callback the callback executed after the resource has been undefined
+     */
+    public <T> void reset(final String type, final String name, final AddressTemplate template,
+            final Form<T> form, final Metadata metadata, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, name, template.resolve(statementContext), attributes, metadata,
+                resources.messages().resetResourceSuccess(type, name), callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the resource has been undefined the specified
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param name           the resource name
+     * @param template       the address template which is resolved against the current statement context and the
+     *                       resource name to get the resource address for the operation
+     * @param form           the form which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public <T> void reset(final String type, final String name, final AddressTemplate template,
+            final Form<T> form, final Metadata metadata, final SafeHtml successMessage, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, name, template.resolve(statementContext), attributes, metadata, successMessage, callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the resource has been undefined a standard
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param name       the resource name
+     * @param template   the address template which is resolved against the current statement context and the
+     *                   resource name to get the resource address for the operation
+     * @param attributes the attributes which should be reset
+     * @param metadata   the metadata of the attributes
+     * @param callback   the callback executed after the resource has been undefined
+     */
+    public void reset(final String type, final String name, final AddressTemplate template,
+            final Set<String> attributes, final Metadata metadata, final Callback callback) {
+        reset(type, name, template.resolve(statementContext), attributes, metadata,
+                resources.messages().resetResourceSuccess(type, name), callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the resource has been undefined the specified
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param name           the resource name
+     * @param template       the address template which is resolved against the current statement context and the
+     *                       resource name to get the resource address for the operation
+     * @param attributes     the attributes which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public void reset(final String type, final String name, final AddressTemplate template,
+            final Set<String> attributes, final Metadata metadata, final SafeHtml successMessage,
+            final Callback callback) {
+        reset(type, name, template.resolve(statementContext), attributes, metadata, successMessage, callback);
+    }
+
+
+    // ------------------------------------------------------ (u) reset using address
+
+    /**
+     * Undefines all non required attributes in the specified form. After the resource has been undefined a standard
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param name     the resource name
+     * @param address  the fq address for the operation
+     * @param form     the form which should be reset
+     * @param metadata the metadata of the attributes
+     * @param callback the callback executed after the resource has been undefined
+     */
+    public <T> void reset(final String type, final String name, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, name, address, attributes, metadata, resources.messages().resetResourceSuccess(type, name),
+                callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the resource has been undefined the specified
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param name           the resource name
+     * @param address        the fq address for the operation
+     * @param form           the from which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public <T> void reset(final String type, final String name, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata, final SafeHtml successMessage, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, name, address, attributes, metadata, successMessage, callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the resource has been undefined a standard
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param name       the resource name
+     * @param address    the fq address for the operation
+     * @param attributes the attributes which should be reset
+     * @param metadata   the metadata of the attributes
+     * @param callback   the callback executed after the resource has been undefined
+     */
+    public void reset(final String type, final String name, final ResourceAddress address,
+            final Set<String> attributes, final Metadata metadata, final Callback callback) {
+        reset(type, name, address, attributes, metadata, resources.messages().resetResourceSuccess(type, name),
+                callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the resource has been undefined the specified
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param name           the resource name
+     * @param address        the fq address for the operation
+     * @param attributes     the attributes which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public void reset(final String type, final String name, final ResourceAddress address,
+            final Set<String> attributes, final Metadata metadata, final SafeHtml successMessage,
+            final Callback callback) {
+        Composite composite = operationFactory.resetResource(address, attributes, metadata);
+        if (composite.isEmpty()) {
+            MessageEvent.fire(eventBus, Message.warning(resources.messages().noReset()));
+            callback.execute();
+        } else {
+            SafeHtml question = name == null
+                    ? resources.messages().resetSingletonConfirmationQuestion()
+                    : resources.messages().resetConfirmationQuestion(name);
+            DialogFactory.showConfirmation(
+                    resources.messages().resetConfirmationTitle(type), question,
+                    () -> dispatcher.execute(composite, (CompositeResult result) -> {
+                        MessageEvent.fire(eventBus, Message.success(successMessage));
+                        callback.execute();
+                    }));
+        }
+    }
+
+
+    // ------------------------------------------------------ (u) reset singleton using template
+
+    /**
+     * Undefines all non required attributes in the specified form. After the singleton resource has been undefined a
+     * standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param template the address template which is resolved against the current statement context and the
+     *                 resource name to get the resource address for the operation
+     * @param form     the form which should be reset
+     * @param metadata the metadata of the attributes
+     * @param callback the callback executed after the resource has been undefined
+     */
+    public <T> void resetSingleton(final String type, final AddressTemplate template,
+            final Form<T> form, final Metadata metadata, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, null, template.resolve(statementContext), attributes, metadata,
+                resources.messages().resetSingletonSuccess(type), callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the singleton resource has been undefined the
+     * specified success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param template       the address template which is resolved against the current statement context and the
+     *                       resource name to get the resource address for the operation
+     * @param form           the form which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public <T> void resetSingleton(final String type, final AddressTemplate template,
+            final Form<T> form, final Metadata metadata, final SafeHtml successMessage, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, null, template.resolve(statementContext), attributes, metadata, successMessage, callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the singleton resource has been undefined a
+     * standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param template   the address template which is resolved against the current statement context and the
+     *                   resource name to get the resource address for the operation
+     * @param attributes the attributes which should be reset
+     * @param metadata   the metadata of the attributes
+     * @param callback   the callback executed after the resource has been undefined
+     */
+    public void resetSingleton(final String type, final AddressTemplate template,
+            final Set<String> attributes, final Metadata metadata, final Callback callback) {
+        reset(type, null, template.resolve(statementContext), attributes, metadata,
+                resources.messages().resetSingletonSuccess(type), callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the singleton resource has been undefined the
+     * specified success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param template       the address template which is resolved against the current statement context and the
+     *                       resource name to get the resource address for the operation
+     * @param attributes     the attributes which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public void resetSingleton(final String type, final AddressTemplate template,
+            final Set<String> attributes, final Metadata metadata, final SafeHtml successMessage,
+            final Callback callback) {
+        reset(type, null, template.resolve(statementContext), attributes, metadata, successMessage, callback);
+    }
+
+
+    // ------------------------------------------------------ (u) reset singleton using address
+
+    /**
+     * Undefines all non required attributes in the specified form. After the singleton resource has been undefined a
+     * standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param address  the fq address for the operation
+     * @param form     the form which should be reset
+     * @param metadata the metadata of the attributes
+     * @param callback the callback executed after the resource has been undefined
+     */
+    public <T> void resetSingleton(final String type, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonConfirmationQuestion(),
+                callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the singleton resource has been undefined the
+     * specified success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param address        the fq address for the operation
+     * @param form           the form which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public <T> void resetSingleton(final String type, final ResourceAddress address,
+            final Form<T> form, final Metadata metadata, final SafeHtml successMessage, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+        reset(type, null, address, attributes, metadata, successMessage, callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the singleton  resource has been undefined a
+     * standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type       the human readable resource type used in the success message
+     * @param address    the fq address for the operation
+     * @param attributes the attributes which should be reset
+     * @param metadata   the metadata of the attributes
+     * @param callback   the callback executed after the resource has been undefined
+     */
+    public void resetSingleton(final String type, final ResourceAddress address,
+            final Set<String> attributes, final Metadata metadata, final Callback callback) {
+        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonSuccess(type),
+                callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified set. After the singleton  resource has been undefined the
+     * specified success message is fired and the specified callback is executed.
+     * <p>
+     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param type           the human readable resource type used in the success message
+     * @param address        the fq address for the operation
+     * @param attributes     the attributes which should be reset
+     * @param metadata       the metadata of the attributes
+     * @param successMessage the success message fired after resetting the resource
+     * @param callback       the callback executed after the resource has been undefined
+     */
+    public void resetSingleton(final String type, final ResourceAddress address,
+            final Set<String> attributes, final Metadata metadata, final SafeHtml successMessage,
+            final Callback callback) {
+        reset(type, null, address, attributes, metadata, successMessage, callback);
     }
 
 
@@ -796,6 +1158,19 @@ public class CrudOperations {
         remove(type, name, template.resolve(statementContext, name), callback);
     }
 
+    /**
+     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
+     * been removed a success message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param template the address template which is resolved against the current statement context to get the resource
+     *                 address for the {@code remove} operation
+     * @param callback the callback executed after removing the resource
+     */
+    public void removeSingleton(final String type, final AddressTemplate template, final Callback callback) {
+        remove(type, null, template.resolve(statementContext), callback);
+    }
+
 
     // ------------------------------------------------------ (d)elete using address
 
@@ -809,16 +1184,32 @@ public class CrudOperations {
      * @param callback the callback executed after removing the resource
      */
     public void remove(final String type, final String name, final ResourceAddress address, final Callback callback) {
-        DialogFactory.showConfirmation(
-                resources.messages().removeConfirmationTitle(type),
-                resources.messages().removeConfirmationQuestion(name),
-                () -> {
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(eventBus, Message.success(
-                                resources.messages().removeResourceSuccess(type, name)));
-                        callback.execute();
-                    });
-                });
+        String title = resources.messages().removeConfirmationTitle(type);
+        SafeHtml question = name == null
+                ? resources.messages().removeSingletonConfirmationQuestion()
+                : resources.messages().removeConfirmationQuestion(name);
+        SafeHtml success = name == null
+                ? resources.messages().removeSingletonResourceSuccess(type)
+                : resources.messages().removeResourceSuccess(type, name);
+
+        DialogFactory.showConfirmation(title, question, () -> {
+            Operation operation = new Operation.Builder(REMOVE, address).build();
+            dispatcher.execute(operation, result -> {
+                MessageEvent.fire(eventBus, Message.success(success));
+                callback.execute();
+            });
+        });
+    }
+
+    /**
+     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
+     * been removed a success message is fired and the specified callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param address  the fq address for the {@code remove} operation
+     * @param callback the callback executed after removing the resource
+     */
+    public void removeSingleton(final String type, final ResourceAddress address, final Callback callback) {
+        remove(type, null, address, callback);
     }
 }

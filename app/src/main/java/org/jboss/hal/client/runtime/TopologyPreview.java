@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +24,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
@@ -35,11 +35,15 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
@@ -61,6 +65,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -75,7 +80,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -94,6 +98,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final EventBus eventBus;
+    private final Places places;
+    private final FinderPathFactory finderPathFactory;
     private final HostActions hostActions;
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
@@ -111,6 +117,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
             final EventBus eventBus,
+            final Places places,
+            final FinderPathFactory finderPathFactory,
             final HostActions hostActions,
             final ServerGroupActions serverGroupActions,
             final ServerActions serverActions,
@@ -120,6 +128,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.eventBus = eventBus;
+        this.places = places;
+        this.finderPathFactory = finderPathFactory;
         this.hostActions = hostActions;
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
@@ -162,13 +172,63 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
                 ))
                 .end();
-        serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP,
-                Arrays.asList(NAME, PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
-                        SOCKET_BINDING_DEFAULT_INTERFACE))
+
+        serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP)
+                .append(NAME)
+                .append(model -> {
+                    String profile = model.getProfile();
+                    PlaceRequest profilePlaceRequest = places
+                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                                    .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                                    .append(Ids.PROFILE, profile))
+                            .build();
+                    String token = places.historyToken(profilePlaceRequest);
+                    return new PreviewAttribute(Names.PROFILE, profile, token);
+                })
+                .append(model -> {
+                    String sbg = model.get(SOCKET_BINDING_GROUP).asString();
+                    PlaceRequest sbgPlaceRequest = places
+                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                                    .append(Ids.CONFIGURATION, Ids.asId(Names.SOCKET_BINDINGS))
+                                    .append(Ids.SOCKET_BINDING, sbg))
+                            .build();
+                    String token = places.historyToken(sbgPlaceRequest);
+                    return new PreviewAttribute(Names.SOCKET_BINDING_GROUP, sbg, token);
+                })
+                .append(SOCKET_BINDING_PORT_OFFSET)
+                .append(SOCKET_BINDING_DEFAULT_INTERFACE)
                 .end();
-        serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER,
-                asList(NAME, HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
-                        SERVER_STATE, SUSPEND_STATE))
+
+        serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
+                .append(NAME)
+                .append(model -> {
+                    String host = model.getHost();
+                    String token = places.historyToken(
+                            places.finderPlace(NameTokens.RUNTIME, finderPathFactory.runtimeHostPath(host)).build());
+                    return new PreviewAttribute(Names.HOST, host, token);
+                })
+                .append(model -> {
+                    String serverGroup = model.getServerGroup();
+                    String token = places.historyToken(places.finderPlace(NameTokens.RUNTIME,
+                            finderPathFactory.runtimeServerGroupPath(serverGroup)).build());
+                    return new PreviewAttribute(Names.SERVER_GROUP, serverGroup, token);
+                })
+                .append(model -> {
+                    String profile = model.get(PROFILE_NAME).asString();
+                    PlaceRequest profilePlaceRequest = places
+                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                                    .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                                    .append(Ids.PROFILE, profile))
+                            .build();
+                    String token = places.historyToken(profilePlaceRequest);
+                    return new PreviewAttribute(Names.PROFILE, profile, token);
+                })
+                .append(AUTO_START)
+                .append(SOCKET_BINDING_PORT_OFFSET)
+                .append(STATUS)
+                .append(RUNNING_MODE)
+                .append(SERVER_STATE)
+                .append(SUSPEND_STATE)
                 .end();
 
         // @formatter:off
@@ -215,8 +275,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     public void onFailure(final FunctionContext context) {
                         Browser.getWindow().clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
-                        MessageEvent.fire(eventBus, Message.error(resources.messages().topologyError(),
-                                context.getErrorMessage()));
+                        MessageEvent.fire(eventBus,
+                                Message.error(resources.messages().topologyError(), context.getError()));
                     }
 
                     @Override
@@ -263,8 +323,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     @Override
                     public void onFailure(final FunctionContext context) {
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().updateServerError(server.getName()),
-                                        context.getErrorMessage()));
+                                Message.error(resources.messages().updateServerError(server.getName()), context.getError()));
                     }
 
                     @Override
@@ -300,6 +359,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         }
                     }
                 },
+                // TODO Include function to read server boot errors
                 new TopologyFunctions.HostWithServerConfigs(server.getHost(), dispatcher),
                 new TopologyFunctions.HostStartedServers(dispatcher),
                 new TopologyFunctions.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
@@ -685,8 +745,18 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             element.getClassList().add(selected);
         }
 
+        if (server.hasBootErrors()) {
+            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_BOOT_ERRORS)
+                    .with(HOST, server.getHost())
+                    .with(SERVER, server.getName())
+                    .build();
+            String token = places.historyToken(placeRequest);
+            serverAttributes.setDescription(resources.messages().serverBootErrorsAndLink(server.getName(), token));
+        } else {
+            serverAttributes.hideDescription();
+        }
         serverAttributes.refresh(server);
-        serverAttributes.setVisible(PROFILE_NAME, server.isStarted());
+        serverAttributes.setVisible(PROFILE, server.isStarted());
         serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
         serverAttributes.setVisible(SERVER_STATE, server.isStarted());
         serverAttributes.setVisible(SUSPEND_STATE, server.isStarted());
@@ -715,20 +785,59 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private String[] statusCss(final Server server) {
         Set<String> status = new HashSet<>();
-        if (serverActions.isPending(server)) {
-            status.add(withProgress);
-        } else if (server.isAdminMode() || server.isStopped()) {
-            status.add(inactive);
-        } else if (server.needsReload() || server.needsRestart()) {
-            status.add(warning);
-        } else if (server.isSuspended()) {
-            status.add(suspended);
-        } else if (server.isStarted() || server.isRunning()) {
-            status.add(ok);
-        } else if (server.isFailed()) {
-            status.add(error);
-        }
-        if (server.isStarting()) {
+        ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
+            @Override
+            protected void onPending(final Server server) {}
+
+            @Override
+            protected void onBootErrors(final Server server) {
+                status.add(error);
+            }
+
+            @Override
+            protected void onFailed(final Server server) {
+                status.add(error);
+            }
+
+            @Override
+            protected void onAdminMode(final Server server) {
+                status.add(inactive);
+            }
+
+            @Override
+            protected void onStarting(final Server server) {}
+
+            @Override
+            protected void onSuspended(final Server server) {
+                status.add(suspended);
+            }
+
+            @Override
+            protected void onNeedsReload(final Server server) {
+                status.add(warning);
+            }
+
+            @Override
+            protected void onNeedsRestart(final Server server) {
+                status.add(warning);
+            }
+
+            @Override
+            protected void onRunning(final Server server) {
+                status.add(ok);
+            }
+
+            @Override
+            protected void onStopped(final Server server) {
+                status.add(inactive);
+            }
+
+            @Override
+            protected void onUnknown(final Server server) {
+            }
+        };
+        sss.accept(server);
+        if (serverActions.isPending(server) || server.isStandalone()) {
             status.add(withProgress);
         }
         return status.toArray(new String[status.size()]);

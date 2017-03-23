@@ -25,7 +25,6 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
@@ -41,7 +40,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
 
     ChooseTemplateStep(final DataSourceTemplates templates,
             final Resources resources, final boolean xa) {
-        super(Ids.DATA_SOURCE_CHOOSE_TEMPLATE_STEP, resources.constants().chooseTemplate());
+        super(resources.constants().chooseTemplate());
 
         Elements.Builder builder = new Elements.Builder().div()
                 .p().textContent(resources.messages().chooseTemplate(resources.constants().custom())).end();

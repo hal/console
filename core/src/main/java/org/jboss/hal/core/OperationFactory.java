@@ -159,6 +159,74 @@ public class OperationFactory {
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
     }
 
+    /**
+     * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are
+     * nillable, w/o alternatives and not read-only will be reset. The composite contains {@linkplain
+     * org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for each
+     * attribute of type {@code EXPRESSION, LIST, OBJECT, PROPERTY} or {@code STRING} and {@linkplain
+     * org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute} operations for attributes
+     * of type {@code BIG_DECIMAL, BIG_INTEGER, BOOLEAN, BYTES, DOUBLE, INT} or {@code LONG} if they have a default
+     * value.
+     *
+     * @param address    the fq address used for the operations
+     * @param attributes the attributes to reset
+     * @param metadata   the metadata which should contain the attribute definitions of the change-set
+     *
+     * @return a composite to reset the attributes or an empty composite if no attributes could be reset.
+     */
+    Composite resetResource(final ResourceAddress address, final Set<String> attributes,
+            final Metadata metadata) {
+        List<Operation> operations = new ArrayList<>();
+        ResourceDescription description = metadata.getDescription();
+
+        attributes.stream()
+                .map(attribute -> description.findAttribute(ATTRIBUTES, attribute))
+                .filter(Objects::nonNull)
+                .forEach(property -> {
+                    ModelNode attributeDescription = property.getValue();
+                    boolean nillable = attributeDescription.hasDefined(NILLABLE) &&
+                            attributeDescription.get(NILLABLE).asBoolean();
+                    boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
+                            READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
+                    boolean alternatives = attributeDescription.hasDefined(ALTERNATIVES) &&
+                            !attributeDescription.get(ALTERNATIVES).asList().isEmpty();
+
+                    if (nillable && !readOnly && !alternatives) {
+                        boolean hasDefault = attributeDescription.hasDefined(DEFAULT);
+                        ModelType type = attributeDescription.get(TYPE).asType();
+                        switch (type) {
+                            case BIG_DECIMAL:
+                            case BIG_INTEGER:
+                            case BOOLEAN:
+                            case BYTES:
+                            case DOUBLE:
+                            case INT:
+                            case LONG:
+                                if (hasDefault) {
+                                    operations.add(new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                                            .param(NAME, property.getName())
+                                            .param(VALUE, attributeDescription.get(DEFAULT))
+                                            .build());
+                                }
+                                break;
+                            case EXPRESSION:
+                            case LIST:
+                            case OBJECT:
+                            case PROPERTY:
+                            case STRING:
+                                operations.add(new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+                                        .param(NAME, property.getName())
+                                        .build());
+                                break;
+                            case TYPE:
+                            case UNDEFINED:
+                                break;
+                        }
+                    }
+                });
+        return new Composite(operations);
+    }
+
     private boolean isNullOrEmpty(Object value) {
         return (value == null
                 || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
@@ -204,25 +272,25 @@ public class OperationFactory {
                 try {
                     switch (type) {
                         case BIG_DECIMAL:
-                            valueNode.set(BigDecimal.valueOf((double) value));
+                            valueNode.set(BigDecimal.valueOf((Double) value).doubleValue());
                             break;
                         case BIG_INTEGER:
-                            valueNode.set(BigInteger.valueOf((long) value));
+                            valueNode.set(BigInteger.valueOf((Long) value).longValue());
                             break;
                         case BOOLEAN:
-                            valueNode.set((boolean) value);
+                            valueNode.set((Boolean) value);
                             break;
                         case BYTES:
                             valueNode.set((byte[]) value);
                             break;
                         case DOUBLE:
-                            valueNode.set((double) value);
+                            valueNode.set((Double) value);
                             break;
                         case EXPRESSION:
                             valueNode.setExpression((String) value);
                             break;
                         case INT:
-                            valueNode.set((int) value);
+                            valueNode.set(((Long) value).intValue());
                             break;
                         case LIST: {
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
@@ -240,7 +308,7 @@ public class OperationFactory {
                             break;
                         }
                         case LONG:
-                            valueNode.set((long) value);
+                            valueNode.set((Long) value);
                             break;
                         case OBJECT:
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)

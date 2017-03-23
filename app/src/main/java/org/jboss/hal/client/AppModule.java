@@ -120,6 +120,8 @@ import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView_Provider;
 import org.jboss.hal.client.runtime.server.Mbui_ServerView_Provider;
+import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
+import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
 import org.jboss.hal.client.runtime.server.ServerStatusView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
@@ -188,6 +190,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 AccessControlPresenter.MyView.class,
                 AccessControlView.class,
                 AccessControlPresenter.MyProxy.class);
+
+        bindPresenter(ServerBootErrorsPresenter.class,
+                ServerBootErrorsPresenter.MyView.class,
+                ServerBootErrorsView.class,
+                ServerBootErrorsPresenter.MyProxy.class);
 
         bindTemplatedPresenter(BatchPresenter.class,
                 BatchPresenter.MyView.class,

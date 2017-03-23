@@ -91,7 +91,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         private Mode mode;
         private SaveCallback<T> saveCallback;
         private CancelCallback<T> cancelCallback;
-        private ResetCallback<T> resetCallback;
+        private PrepareReset<T> prepareReset;
 
         public Builder(final String id, final Metadata metadata) {
             this.id = id;
@@ -174,18 +174,6 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
-        public Builder<T> addFromRequestProperties() {
-            assertNoCurrentGroup();
-            this.mode = Mode.FROM_REQUEST_PROPERTIES;
-            return this;
-        }
-
-        public Builder<T> viewOnly() {
-            assertNoCurrentGroup();
-            this.mode = Mode.VIEW_ONLY;
-            return this;
-        }
-
         public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
             assertCurrentGroup();
             currentGroup.includes.add(attribute);
@@ -219,9 +207,9 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             return this;
         }
 
-        public Builder<T> onReset(final ResetCallback<T> resetCallback) {
+        public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
             assertNoCurrentGroup();
-            this.resetCallback = resetCallback;
+            this.prepareReset = prepareReset;
             return this;
         }
 
@@ -282,10 +270,10 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
                         fb.addOnly();
                         break;
                     case FROM_REQUEST_PROPERTIES:
-                        fb.addFromRequestProperties();
+                        fb.fromRequestProperties();
                         break;
                     case VIEW_ONLY:
-                        fb.viewOnly();
+                        fb.readOnly();
                         break;
                 }
             }
@@ -296,8 +284,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
             if (builder.cancelCallback != null) {
                 fb.onCancel(builder.cancelCallback);
             }
-            if (builder.resetCallback != null) {
-                fb.onReset(builder.resetCallback);
+            if (builder.prepareReset != null) {
+                fb.prepareReset(builder.prepareReset);
             }
 
             Form<T> form = fb.build();
@@ -333,11 +321,19 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     // ------------------------------------------------------ form contract
 
     /**
-     * Calls {@link Form#add(Object)} on all forms.
+     * Returns {@link Form#isUndefined()} on the currently active form.
      */
     @Override
-    public void add(final T model) {
-        forms.forEach(form -> form.add(model));
+    public boolean isUndefined() {
+        return currentForm.isUndefined();
+    }
+
+    /**
+     * Returns {@link Form#isTransient()} on the currently active form.
+     */
+    @Override
+    public boolean isTransient() {
+        return currentForm.isTransient();
     }
 
     /**
@@ -354,19 +350,6 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     @Override
     public void clear() {
         forms.forEach(Form::clear);
-    }
-
-    /**
-     * Calls {@link Form#reset()} on all forms.
-     */
-    @Override
-    public void reset() {
-        forms.forEach(Form::reset);
-    }
-
-    @Override
-    public void setResetCallback(final ResetCallback<T> resetCallback) {
-        forms.forEach(form -> form.setResetCallback(resetCallback));
     }
 
     /**
@@ -402,6 +385,31 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     public void setCancelCallback(final CancelCallback<T> cancelCallback) {
         forms.forEach(form -> form.setCancelCallback(cancelCallback));
 
+    }
+
+    public void setPrepareReset(final PrepareReset<T> prepareReset) {
+        forms.forEach(form -> form.setPrepareReset(prepareReset));
+    }
+
+    /**
+     * Calls {@link Form#reset()} on the currently active form.
+     */
+    @Override
+    public void reset() {
+        currentForm.reset();
+    }
+
+    @Override
+    public void setPrepareRemove(final PrepareRemove<T> prepareRemove) {
+        forms.forEach(form -> form.setPrepareRemove(prepareRemove));
+    }
+
+    /**
+     * Calll {@link Form#remove()} on the currently active form.
+     */
+    @Override
+    public void remove() {
+        currentForm.remove();
     }
 
     @Override

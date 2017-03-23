@@ -22,7 +22,7 @@
                 <h1>Server Group Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="server-group-configuration-form" title="Server Group Configuration" auto-save="true"
-                      include-runtime="true">
+                      reset="true" include-runtime="true">
                     <attributes>
                         <attribute name="profile"/>
                         <attribute name="socket-binding-group"/>
@@ -48,7 +48,8 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="server-group-jvm-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-group-jvm-form" auto-save="true" reset="true"
+                      name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
@@ -67,7 +68,7 @@
                         <column name="value"/>
                     </columns>
                 </table>
-                <form id="server-group-system-property-form" auto-save="true"
+                <form id="server-group-system-property-form" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>

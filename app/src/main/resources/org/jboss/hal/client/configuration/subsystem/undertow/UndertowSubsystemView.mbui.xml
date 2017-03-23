@@ -19,7 +19,7 @@
     <metadata address="/{selected.profile}/subsystem=undertow">
         <h1>Undertow Configuration</h1>
         <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="undertow-global-settings-form" title="Undertow Configuration" auto-save="true">
+        <form id="undertow-global-settings-form" title="Undertow Configuration" auto-save="true" reset="true">
             <attributes>
                 <attribute name="default-security-domain">
                     <suggest-handler>

@@ -129,7 +129,7 @@ public class ContentColumn extends FinderColumn<Content> {
                     Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getError());
+                            callback.onFailure(context.getException());
                         }
 
                         @Override
@@ -263,8 +263,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                 @Override
                                 public void onFailure(final FunctionContext functionContext) {
                                     wzd.showError(resources.constants().uploadError(),
-                                            resources.messages().uploadError(name),
-                                            functionContext.getErrorMessage());
+                                            resources.messages().uploadError(name), functionContext.getError());
                                 }
 
                                 @Override
@@ -272,7 +271,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                     refresh(Ids.content(name));
                                     wzd.showSuccess(resources.constants().uploadSuccessful(),
                                             resources.messages().uploadSuccessful(name),
-                                            resources.messages().view(Names.DEPLOYMENT),
+                                            resources.messages().view(Names.CONTENT),
                                             cxt -> { /* nothing to do, content is already selected */ });
                                 }
                             }, functions);
@@ -319,7 +318,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                     public void onFailure(final FunctionContext context) {
                                         MessageEvent.fire(eventBus, Message.error(
                                                 resources.messages().contentReplaceError(content.getName()),
-                                                context.getErrorMessage()));
+                                                context.getError()));
                                     }
 
                                     @Override

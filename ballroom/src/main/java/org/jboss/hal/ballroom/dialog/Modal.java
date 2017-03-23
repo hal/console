@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.dialog;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.spi.Callback;
+import org.jboss.hal.ballroom.JsCallback;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -50,5 +50,5 @@ public abstract class Modal {
 
     public native void modal(@NonNls String action);
 
-    public native void on(@NonNls String event, Callback callback);
+    public native void on(@NonNls String event, JsCallback callback);
 }

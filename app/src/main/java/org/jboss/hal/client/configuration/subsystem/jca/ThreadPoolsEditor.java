@@ -24,12 +24,11 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
-import org.jboss.hal.ballroom.table.Column;
-import org.jboss.hal.ballroom.table.Column.RenderCallback;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -38,9 +37,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_LRT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -50,6 +50,8 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
 /**
  * Element to view and manage short and long running thread pools of a (distributed) workmanager. This class assumes
  * that the {@code short-running-threads} and {@code long-running-threads} resources have the same attributes.
+ *
+ * TODO Implement save and reset callbacks
  *
  * @author Harald Pehl
  */
@@ -67,7 +69,6 @@ class ThreadPoolsEditor implements IsElement, Attachable {
 
     @SuppressWarnings("ConstantConditions")
     ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry, final Resources resources) {
-
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
@@ -78,13 +79,7 @@ class ThreadPoolsEditor implements IsElement, Attachable {
                         presenter.removeThreadPool(workmanagerTemplate, workmanager, api.selectedRow().getName(),
                                 api.selectedRow().isLongRunning()))
                 .column(NAME)
-                .column(resources.constants().type(), new RenderCallback<ThreadPool, String>() {
-                    @Override
-                    public String render(final String cell, final String type, final ThreadPool row,
-                            final Column.Meta meta) {
-                        return row.getRunningMode();
-                    }
-                })
+                .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();
         table = new ModelNodeTable<>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), options);
@@ -95,12 +90,14 @@ class ThreadPoolsEditor implements IsElement, Attachable {
                 .include(NAME, "allow-core-timeout", THREAD_FACTORY)
                 .unsorted()
                 .onSave((form, changedValues) -> Browser.getWindow().alert(Names.NYI))
+                .prepareReset(form -> Browser.getWindow().alert(Names.NYI))
                 .build();
         attachables.add(attributesForm);
         sizingForm = new ModelNodeForm.Builder<ThreadPool>(
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_FORM), metadata)
                 .include(MAX_THREADS, "core-threads", "queue-length")
                 .onSave((form, changedValues) -> Browser.getWindow().alert(Names.NYI))
+                .prepareReset(form -> Browser.getWindow().alert(Names.NYI))
                 .build();
         attachables.add(sizingForm);
 
@@ -157,7 +154,7 @@ class ThreadPoolsEditor implements IsElement, Attachable {
 
         List<ThreadPool> threadPools = new ArrayList<>(lrt);
         threadPools.addAll(srt);
-        threadPools.sort((tp1, tp2) -> tp1.getName().compareTo(tp2.getName()));
+        threadPools.sort(comparing(NamedNode::getName));
 
         table.api().clear().add(threadPools).refresh(RESET);
         table.api().button(0).enable(threadPools.size() < 2);

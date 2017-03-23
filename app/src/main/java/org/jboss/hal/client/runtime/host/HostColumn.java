@@ -86,7 +86,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 new Outcome<FunctionContext>() {
                                     @Override
                                     public void onFailure(final FunctionContext context) {
-                                        callback.onFailure(context.getError());
+                                        callback.onFailure(context.getException());
                                     }
 
                                     @Override

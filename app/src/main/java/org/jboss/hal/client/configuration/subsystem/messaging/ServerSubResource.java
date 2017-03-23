@@ -137,6 +137,14 @@ enum ServerSubResource {
         crud.save(type, name, address, changedValues, metadata, callback);
     }
 
+    void reset(Form<NamedNode> form, MetadataRegistry metadataRegistry, StatementContext statementContext,
+            CrudOperations crud, Callback callback) {
+        String name = form.getModel().getName();
+        ResourceAddress address = namedTemplate(name).resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(template);
+        crud.reset(type, name, address, form, metadata, callback);
+    }
+
     void remove(NamedNode item, StatementContext statementContext, CrudOperations crud, Callback callback) {
         String name = item.getName();
         ResourceAddress address = namedTemplate(name).resolve(statementContext);

@@ -22,7 +22,8 @@
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="security-domain-configuration-form" title="Configuration"
-                      on-save="{{presenter.saveSecurityDomain(changedValues)}}"/>
+                      on-save="{{presenter.saveSecurityDomain(changedValues)}}"
+                      prepare-reset="{{presenter.resetSecurityDomain(form)}}"/>
             </metadata>
         </item>
 
@@ -44,7 +45,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-authentication-form" title="Authentication Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHENTICATION)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.AUTHENTICATION)}}"/>
             </metadata>
         </item>
 
@@ -66,7 +68,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-authorization-form" title="Authorization Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUTHORIZATION)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.AUTHORIZATION)}}"/>
             </metadata>
         </item>
 
@@ -88,7 +91,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-audit-form" title="Audit Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.AUDIT)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.AUDIT)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.AUDIT)}}"/>
             </metadata>
         </item>
 
@@ -109,7 +113,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-acl-form" title="ACL Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.ACL)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.ACL)}}"/>
             </metadata>
         </item>
 
@@ -131,7 +136,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-mapping-form" title="Mapping Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.MAPPING)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.MAPPING)}}"/>
             </metadata>
         </item>
 
@@ -153,7 +159,8 @@
                     </columns>
                 </table>
                 <form id="security-domain-trust-form" title="Trust Module"
-                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"/>
+                      on-save="{{presenter.saveModule(form, changedValues, Module.TRUST)}}"
+                      prepare-reset="{{presenter.resetModule(form, Module.TRUST)}}"/>
             </metadata>
         </item>
     </vertical-navigation>

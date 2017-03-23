@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import javax.annotation.Nullable;
+
 import com.google.gwt.user.client.ui.Focusable;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -42,6 +44,9 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
      */
     String FORM_ITEM_GROUP = "formItemGroup";
 
+
+    // ------------------------------------------------------ static builder methods
+
     static Element inputGroup() {
         return new Elements.Builder().div().css(inputGroup).end().build();
     }
@@ -55,6 +60,13 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
                 .span().css(inputGroupAddon).start("i").css(fontAwesome("lock")).end().end()
                 .build();
     }
+
+    static Element hintMarker() {
+        return new Elements.Builder().span().css(inputGroupAddon).end().build();
+    }
+
+
+    // ------------------------------------------------------ API
 
     void showValue(T value);
 
@@ -80,7 +92,7 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
         apply(decoration, null);
     }
 
-    <C> void apply(Decoration decoration, C context);
+    <C> void apply(Decoration decoration, @Nullable C context);
 
     void unapply(Decoration decoration);
 }

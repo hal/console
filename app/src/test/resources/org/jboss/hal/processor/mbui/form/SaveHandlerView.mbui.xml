@@ -18,6 +18,6 @@
 <view>
     <metadata address="/subsystem=foo">
         <h1>Form</h1>
-        <form id="form" title="Form" on-save="{{presenter.saveForm(form, changedValues)}}"/>
+        <form id="form" title="Form" on-save="{{presenter.saveForm(form, changedValues)}}" reset="true"/>
     </metadata>
 </view>

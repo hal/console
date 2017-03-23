@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
@@ -78,11 +79,11 @@ public class OperationFactoryTest {
 
     @Test
     public void write() throws Exception {
-        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23),
+        Composite composite = operationFactory.fromChangeSet(address, ImmutableMap.of("allocation-retry", 23L),
                 metadata);
 
         assertEquals(1, composite.size());
-        assertWrite(composite, "allocation-retry", 23);
+        assertWrite(composite, "allocation-retry", 23L);
     }
 
     @Test
@@ -174,6 +175,23 @@ public class OperationFactoryTest {
         assertWrite(composite, "security-domain", "foo");
     }
 
+    @Test
+    public void reset() throws Exception {
+        Composite composite = operationFactory.resetResource(address,
+                Sets.newHashSet("authentication-context", // string w/ alternative
+                        "capacity-decrementer-class", // string
+                        "capacity-incrementer-properties", // object
+                        "class-name", // string(required)
+                        "connectable", // boolean(false)
+                        "initial-pool-size", // int
+                        "max-pool-size"), // int(20)
+                metadata);
+        assertUndefine(composite, "capacity-decrementer-class");
+        assertUndefine(composite, "capacity-incrementer-properties");
+        assertWrite(composite, "connectable", false);
+        assertWrite(composite, "max-pool-size", 20);
+    }
+
     private void assertUndefine(Composite composite, String name) {
         assertTrue(stream(composite.spliterator(), false)
                 .anyMatch(operation -> UNDEFINE_ATTRIBUTE_OPERATION.equals(operation.getName()) &&
@@ -187,10 +205,10 @@ public class OperationFactoryTest {
         assertEquals(value, operation.get().get(VALUE).asBoolean());
     }
 
-    private void assertWrite(Composite composite, String name, int value) {
+    private void assertWrite(Composite composite, String name, long value) {
         Optional<Operation> operation = writeOperation(composite, name);
         assertTrue(operation.isPresent());
-        assertEquals(value, operation.get().get(VALUE).asInt());
+        assertEquals(value, operation.get().get(VALUE).asLong());
     }
 
     private void assertWrite(Composite composite, String name, String value) {

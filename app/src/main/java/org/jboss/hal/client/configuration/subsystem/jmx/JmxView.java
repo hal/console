@@ -27,9 +27,10 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishRemove;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -65,8 +66,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
     private final ModelNodeForm<ModelNode> configForm;
     private final ListItem handlerItem;
-    private final FailSafeForm<ModelNode> failSafeAlForm;
-    private final FailSafeForm<ModelNode> failSafeRcForm;
+    private final Form<ModelNode> alForm;
+    private final Form<ModelNode> rcForm;
 
     private JmxPresenter presenter;
 
@@ -86,6 +87,13 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         configForm = new ModelNodeForm.Builder<>(Ids.JMX_CONFIGURATION_FORM, configMetadata)
                 .onSave((form, changedValues) -> crud
                         .saveSingleton(Names.CONFIGURATION, JMX_TEMPLATE, changedValues, () -> presenter.reload()))
+                .prepareReset(form -> crud.resetSingleton(Names.CONFIGURATION, JMX_TEMPLATE, form, configMetadata,
+                        new FinishReset<ModelNode>(form) {
+                            @Override
+                            public void afterReset(final Form<ModelNode> form) {
+                                presenter.reload();
+                            }
+                        }))
                 .build();
 
         // @formatter:off
@@ -116,57 +124,82 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 templates));
 
         Metadata alMetadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
-        Form<ModelNode> alForm = new ModelNodeForm.Builder<>(Ids.JMX_AUDIT_LOG_FORM, alMetadata)
+        this.alForm = new ModelNodeForm.Builder<>(Ids.JMX_AUDIT_LOG_FORM, alMetadata)
+                .singleton(
+                        () -> new Operation.Builder(READ_RESOURCE_OPERATION,
+                                AUDIT_LOG_TEMPLATE.resolve(statementContext)).build(),
+                        () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (n, a) -> presenter.reload()))
                 .unboundFormItem(handlerItem, Integer.MAX_VALUE, handlerDescription)
                 .onSave((form, changedValues) -> presenter
                         .saveAuditLog(changedValues, handlerItem.isModified(), handlerItem.getValue()))
+                .prepareReset(form -> crud.resetSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, form, alMetadata,
+                        new FinishReset<ModelNode>(form) {
+                            @Override
+                            public void afterReset(final Form<ModelNode> form) {
+                                presenter.reload();
+                            }
+                        }))
+                .prepareRemove(form -> crud.removeSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE,
+                        new FinishRemove<ModelNode>(form) {
+                            @Override
+                            public void afterRemove(final Form<ModelNode> form) {
+                                presenter.reload();
+                            }
+                        }))
                 .build();
-        failSafeAlForm = new FailSafeForm<>(dispatcher,
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext))
-                        .build(),
-                alForm,
-                () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (name, address) -> presenter.reload()));
 
         // @formatter:off
         Element alLayout = new Elements.Builder()
             .div()
                 .h(1).textContent(Names.AUDIT_LOG).end()
                 .p().textContent(alMetadata.getDescription().getDescription()).end()
-                .add(failSafeAlForm)
+                .add(this.alForm)
             .end()
         .build();
         // @formatter:on
 
         navigation.addPrimary(Ids.JMX_AUDIT_LOG_ENTRY, Names.AUDIT_LOG, fontAwesome("file-text-o"), alLayout);
-        registerAttachable(failSafeAlForm);
+        registerAttachable(this.alForm);
 
         // ------------------------------------------------------ remoting connector
 
         String type = labelBuilder.label(REMOTING_CONNECTOR_TEMPLATE.lastKey());
         Metadata rcMetadata = metadataRegistry.lookup(REMOTING_CONNECTOR_TEMPLATE);
-        Form<ModelNode> rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
+        this.rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
+                .singleton(
+                        () -> new Operation.Builder(READ_RESOURCE_OPERATION,
+                                REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext)).build(),
+                        () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (n, a) -> presenter.reload()))
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.reload()))
+                .prepareReset(form -> crud.resetSingleton(type, REMOTING_CONNECTOR_TEMPLATE, form, rcMetadata,
+                        new FinishReset<ModelNode>(form) {
+                            @Override
+                            public void afterReset(final Form<ModelNode> form) {
+                                presenter.reload();
+                            }
+                        }))
+                .prepareRemove(form -> crud.removeSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
+                        new FinishRemove<ModelNode>(form) {
+                            @Override
+                            public void afterRemove(final Form<ModelNode> form) {
+                                presenter.reload();
+                            }
+                        }))
                 .build();
-        failSafeRcForm = new FailSafeForm<>(dispatcher,
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                        REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
-                        .build(),
-                rcForm,
-                () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (name, address) -> presenter.reload()));
 
         // @formatter:off
         Element rcLayout = new Elements.Builder()
             .div()
                 .h(1).textContent(type).end()
                 .p().textContent(rcMetadata.getDescription().getDescription()).end()
-                .add(failSafeRcForm)
+                .add(this.rcForm)
             .end()
         .build();
         // @formatter:on
 
         navigation.addPrimary(Ids.JMX_REMOTING_CONNECTOR_ENTRY, type, pfIcon("topology"), rcLayout);
-        registerAttachable(failSafeRcForm);
+        registerAttachable(this.rcForm);
 
         // ------------------------------------------------------ main layout
 
@@ -192,13 +225,13 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final ModelNode payload) {
         configForm.view(payload);
-        failSafeAlForm.view(failSafeGet(payload, "configuration/audit-log"));
+        alForm.view(failSafeGet(payload, "configuration/audit-log"));
         List<Property> handler = failSafePropertyList(payload, "configuration/audit-log/handler");
         if (handler.isEmpty()) {
             handlerItem.clearValue();
         } else {
             handlerItem.setValue(handler.stream().map(Property::getName).collect(toList()));
         }
-        failSafeRcForm.view(failSafeGet(payload, "remoting-connector/jmx"));
+        rcForm.view(failSafeGet(payload, "remoting-connector/jmx"));
     }
 }

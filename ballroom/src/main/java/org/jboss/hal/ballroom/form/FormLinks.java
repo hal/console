@@ -26,16 +26,35 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * Links for commons form {@linkplain Form.Operation operations} placed above the actual form. Depending on the
+ * {@linkplain Form.State state} links are displayed or hidden.
+ * <p>
+ * The following links are part of this element:
+ * <ol>
+ * <li>Edit: Visible in the {@linkplain Form.State#READONLY read-only} state. Switches to the {@linkplain
+ * Form.State#EDITING editing} state</li>
+ * <li>Reset: Visible in the {@linkplain Form.State#READONLY read-only} state. Resets the form's model. If a {@link
+ * org.jboss.hal.ballroom.form.Form.PrepareReset} callback is defined, the callback is called. Otherwise {@link
+ * Form#reset()} is called.</li>
+ * <li>Remove: Visible in the {@linkplain Form.State#READONLY read-only} state. Removes the form's model. If a {@link
+ * org.jboss.hal.ballroom.form.Form.PrepareRemove} callback is defined, the callback is called, otherwise {@link
+ * Form#remove()} is called.</li>
+ * <li>Help: Visible in the {@linkplain Form.State#READONLY read-only} and the {@linkplain Form.State#EDITING editing}
+ * states. Provides access to the help texts.</li>
+ * </ol>
+ *
  * @author Harald Pehl
  */
 class FormLinks<T> implements IsElement {
@@ -50,13 +69,15 @@ class FormLinks<T> implements IsElement {
     private final Element root;
     private Element editLink;
     private Element resetLink;
+    private Element removeLink;
     private Element helpLink;
 
     FormLinks(final String formId,
             final StateMachine stateMachine,
             final LinkedHashMap<String, SafeHtml> helpTexts,
             final EventListener onEdit,
-            final EventListener onReset) {
+            final EventListener onReset,
+            final EventListener onRemove) {
 
         this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
@@ -82,12 +103,15 @@ class FormLinks<T> implements IsElement {
             links.appendChild(editLink);
         }
         if (stateMachine.supports(RESET)) {
-            resetLink = link(CONSTANTS.reset(), pfIcon("restart"), onReset);
+            resetLink = link(CONSTANTS.reset(), fontAwesome("undo"), onReset);
             resetLink.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
             resetLink.getDataset().setAt(UIConstants.PLACEMENT, "right"); //NON-NLS
             resetLink.setTitle(CONSTANTS.formResetDesc());
-
             links.appendChild(resetLink);
+        }
+        if (stateMachine.supports(REMOVE)) {
+            removeLink = link(CONSTANTS.remove(), CSS.pfIcon("remove"), onRemove);
+            links.appendChild(removeLink);
         }
         if (!helpTexts.isEmpty()) {
             // @formatter:off
@@ -141,7 +165,7 @@ class FormLinks<T> implements IsElement {
 
     @Override
     public Element asElement() {
-        if (editLink == null && resetLink == null && helpTexts.isEmpty()) {
+        if (editLink == null && resetLink == null && removeLink == null && helpTexts.isEmpty()) {
             Elements.setVisible(root, false);
         }
         return root;
@@ -149,21 +173,33 @@ class FormLinks<T> implements IsElement {
 
     void switchTo(State state, T model, SecurityContext securityContext) {
         switch (state) {
+            case EMPTY:
+                Elements.setVisible(editLink, false);
+                Elements.setVisible(resetLink, false);
+                Elements.setVisible(removeLink, false);
+                Elements.setVisible(helpLink, false);
+                break;
+
             case READONLY:
                 Elements.setVisible(editLink,
                         model != null && stateMachine.supports(EDIT) && securityContext.isWritable());
                 Elements.setVisible(resetLink,
                         model != null && stateMachine.supports(RESET) && securityContext.isWritable());
+                Elements.setVisible(removeLink,
+                        model != null && stateMachine.supports(REMOVE) && securityContext.isWritable());
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
 
             case EDITING:
                 Elements.setVisible(editLink, false);
                 Elements.setVisible(resetLink, false);
+                Elements.setVisible(removeLink, false);
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
         }
-        Elements.setVisible(root,
-                Elements.isVisible(editLink) || Elements.isVisible(resetLink) || Elements.isVisible(helpLink));
+        Elements.setVisible(root, Elements.isVisible(editLink) ||
+                Elements.isVisible(resetLink) ||
+                Elements.isVisible(removeLink) ||
+                Elements.isVisible(helpLink));
     }
 }

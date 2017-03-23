@@ -115,6 +115,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             ResourceAddress.root())
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE_DEPTH, 2)
                             .build();
                     dispatcher.execute(operation, result -> {
                         List<Deployment> deployments = result.asPropertyList().stream()
@@ -238,8 +239,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                 @Override
                                 public void onFailure(final FunctionContext functionContext) {
                                     wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name),
-                                            functionContext.getErrorMessage());
+                                            resources.messages().deploymentError(name), functionContext.getError());
                                 }
 
                                 @Override

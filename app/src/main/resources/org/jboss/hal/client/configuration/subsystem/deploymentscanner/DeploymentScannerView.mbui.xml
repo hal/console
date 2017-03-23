@@ -31,7 +31,7 @@
                 <column name="name" value="{{row.getName()}}"/>
             </columns>
         </table>
-        <form id="deployment-scanner-form" title="Deployment Scanner" auto-save="true"
+        <form id="deployment-scanner-form" title="Deployment Scanner" auto-save="true" reset="true"
               name-resolver="{{form.getModel().getName()}}"/>
     </metadata>
 </view>

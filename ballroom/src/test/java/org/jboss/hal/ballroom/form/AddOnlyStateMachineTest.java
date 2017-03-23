@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.junit.Assert.*;
 
 /**
@@ -21,17 +23,22 @@ public class AddOnlyStateMachineTest {
 
     @Test
     public void initialState() {
-        assertNull(stateMachine.current());
+        assertEquals(EDITING, stateMachine.current());
     }
 
     @Test
     public void supports() {
+        assertFalse(stateMachine.supports(EMPTY));
+        assertFalse(stateMachine.supports(READONLY));
+        assertTrue(stateMachine.supports(EDITING));
+
         assertFalse(stateMachine.supports(VIEW));
-        assertTrue(stateMachine.supports(ADD));
-        assertFalse(stateMachine.supports(EDIT));
-        assertFalse(stateMachine.supports(CANCEL));
-        assertFalse(stateMachine.supports(SAVE));
+        assertFalse(stateMachine.supports(CLEAR));
         assertFalse(stateMachine.supports(RESET));
+        assertTrue(stateMachine.supports(EDIT));
+        assertTrue(stateMachine.supports(SAVE));
+        assertTrue(stateMachine.supports(CANCEL));
+        assertFalse(stateMachine.supports(REMOVE));
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -40,49 +47,35 @@ public class AddOnlyStateMachineTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void edit() {
-        stateMachine.execute(EDIT);
-    }
-
-    @Test
-    public void initialAdd() {
-        stateMachine.execute(ADD);
-        assertEquals(EDITING, stateMachine.current());
-    }
-
-    @Test
-    public void repeatedAdd() {
-        stateMachine.execute(ADD);
-        stateMachine.execute(ADD);
-        assertEquals(EDITING, stateMachine.current());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void initialCancel() {
-        stateMachine.execute(CANCEL);
-    }
-
-    @Test
-    public void cancel() {
-        stateMachine.execute(ADD);
-        stateMachine.execute(CANCEL);
-        assertEquals(EDITING, stateMachine.current());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void initialSave() {
-        stateMachine.execute(SAVE);
-    }
-
-    @Test
-    public void save() {
-        stateMachine.execute(ADD);
-        stateMachine.execute(SAVE);
-        assertEquals(EDITING, stateMachine.current());
+    public void clear() {
+        stateMachine.execute(CLEAR);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void reset() {
         stateMachine.execute(RESET);
+    }
+
+    @Test
+    public void edit() {
+        stateMachine.execute(EDIT);
+        assertEquals(EDITING, stateMachine.current());
+    }
+
+    @Test
+    public void save() {
+        stateMachine.execute(SAVE);
+        assertEquals(EDITING, stateMachine.current());
+    }
+
+    @Test
+    public void cancel() {
+        stateMachine.execute(CANCEL);
+        assertEquals(EDITING, stateMachine.current());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void remove() {
+        stateMachine.execute(REMOVE);
     }
 }

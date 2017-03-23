@@ -17,38 +17,46 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
+import static org.jboss.hal.ballroom.form.Form.Operation.CLEAR;
 import static org.jboss.hal.ballroom.form.Form.Operation.VIEW;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
- * A read-only state machine. Supports only the {@link Form.Operation#VIEW} operation.
+ * A read-only state machine. Supports only the {@link Form.State#READONLY} state and the {@link Form.Operation#VIEW}
+ * operation.
  *
  * @author Harald Pehl
  */
-public class ViewOnlyStateMachine extends AbstractStateMachine implements StateMachine {
+public class ReadOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public ViewOnlyStateMachine() {
-        super(EnumSet.of(VIEW));
-        this.current = null;
+    public ReadOnlyStateMachine() {
+        super(EnumSet.of(READONLY), EnumSet.of(VIEW, CLEAR));
+        this.current = initial();
     }
 
     @Override
-    public void execute(final Form.Operation operation) {
+    protected Form.State initial() {
+        return READONLY;
+    }
+
+    @Override
+    protected <C> void safeExecute(final Form.Operation operation, final C context) {
         switch (operation) {
 
-            case CLEAR:
-                transitionTo(READONLY);
-                break;
-
             case VIEW:
-                if (current != null) {
-                    assertState(READONLY);
-                }
+                assertState(READONLY);
                 transitionTo(READONLY);
                 break;
 
-            default:
-                unsupported(operation);
+            case CLEAR:
+                assertState(READONLY);
+                transitionTo(READONLY);
+                break;
         }
+    }
+
+    @Override
+    protected String name() {
+        return "ReadOnlyStateMachine";
     }
 }

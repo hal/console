@@ -184,7 +184,12 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         Object value = formItem.getValue();
                         switch (type) {
                             case BOOLEAN:
-                                model.get(name).set((Boolean) value);
+                                Boolean booleanValue = (Boolean) value;
+                                if (booleanValue == null) {
+                                    failSafeRemove(model, name);
+                                } else {
+                                    model.get(name).set(booleanValue);
+                                }
                                 break;
 
                             case BIG_INTEGER:
@@ -247,11 +252,10 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             case PROPERTY:
                             case TYPE:
                             case UNDEFINED:
-                                logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form), name,
-                                        type);
+                                logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form),
+                                        name, type);
                                 break;
                         }
-
                     }
                 }
             }

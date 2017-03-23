@@ -21,7 +21,6 @@ import java.util.List;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -44,102 +43,9 @@ import static org.jboss.hal.resources.CSS.columnAction;
 @JsType(isNative = true)
 public class Api<T> {
 
-    /**
-     * Typesafe enum for the paging parameter of {@link #draw(String)}.
-     *
-     * @see <a href="https://datatables.net/reference/api/draw()">https://datatables.net/reference/api/draw()</a>
-     */
-    @SuppressWarnings("HardCodedStringLiteral")
-    public enum RefreshMode {
-
-        /**
-         * The ordering and search will be recalculated and the rows redrawn in their new positions. The paging will be
-         * reset back to the first page.
-         */
-        RESET("full-reset"),
-
-        /**
-         * The ordering and search will be recalculated and the rows redrawn in their new positions. The paging will
-         * not be reset - i.e. the current page will still be shown.
-         */
-        HOLD("full-hold"),
-
-        /**
-         * Ordering and search will not be updated and the paging position held where is was. This is useful for paging
-         * when data has not been changed between draws.
-         */
-        PAGE("page");
-
-        private final String mode;
-
-        RefreshMode(final String mode) {
-            this.mode = mode;
-        }
-
-        public String mode() {
-            return mode;
-        }
-    }
-
-
-    /**
-     * Callback used for all kind of "select" and "deselect" events.
-     *
-     * @param <T> the row type
-     *
-     * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
-     * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
-     */
-    @JsFunction
-    @FunctionalInterface
-    interface SelectCallback<T> {
-
-        void onSelect(Object event, Api<T> api, String type);
-    }
-
-
-    /**
-     * Convenience handler when a <em>row</em> is selected.
-     *
-     * @param <T> the row type
-     */
-    @FunctionalInterface
-    interface SelectionHandler<T> {
-
-        /**
-         * Called when a <em>row</em> is selected.
-         *
-         * @param api the api instance
-         * @param row the selected row.
-         */
-        void onSelect(Api<T> api, T row);
-    }
-
-
-    /**
-     * Convenience handler when a <em>row</em> selection <em>or</em> deselection takes place.
-     *
-     * @param <T> the row type
-     */
-    @FunctionalInterface
-    public interface SelectionChangeHandler<T> {
-
-        /**
-         * Called when a selection changed. That is when a row is selected <em>or</em> deselected.
-         *
-         * @param api the api instance
-         */
-        void onSelectionChanged(Api<T> api);
-    }
-
-
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
-
-    // Does not map to something in DataTables, but necessary in refresh()
-    String id;
-    ColumnActions<T> columnActions;
 
 
     // ------------------------------------------------------ API a-z
@@ -156,6 +62,8 @@ public class Api<T> {
      * Disables or enables the button selected with {@link #button(int)}
      */
     public native Api<T> enable(boolean enable);
+
+    public native Options<T> init();
 
     /**
      * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
@@ -253,26 +161,30 @@ public class Api<T> {
     @JsOverlay
     public final Api<T> refresh(RefreshMode mode) {
         Api<T> api = draw(mode.mode());
-        if (!columnActions.isEmpty()) {
-            Element table = Browser.getDocument().getElementById(id);
-            Elements.stream(table.querySelectorAll("." + columnAction)).forEach(link -> {
-                ColumnAction<T> columnAction = columnActions.get(link.getId());
-                if (columnAction != null) {
-                    link.setOnclick(event -> {
-                        event.stopPropagation();
-                        Element e = link; // find enclosing tr
-                        while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
-                            e = e.getParentElement();
-                        }
-                        if (e != null) {
-                            JsArrayOf<T> array = rows(e).data().toArray();
-                            if (!array.isEmpty()) {
-                                columnAction.action(array.get(0));
+        Options<T> options = api.init();
+        ColumnActions<T> columnActions = options.columnActions;
+        if (columnActions != null && !columnActions.isEmpty()) {
+            Element table = Browser.getDocument().getElementById(options.id);
+            if (table != null) {
+                Elements.stream(table.querySelectorAll("." + columnAction)).forEach(link -> {
+                    ColumnAction<T> columnAction = columnActions.get(link.getId());
+                    if (columnAction != null) {
+                        link.setOnclick(event -> {
+                            event.stopPropagation();
+                            Element e = link; // find enclosing tr
+                            while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
+                                e = e.getParentElement();
                             }
-                        }
-                    });
-                }
-            });
+                            if (e != null) {
+                                JsArrayOf<T> array = rows(e).data().toArray();
+                                if (!array.isEmpty()) {
+                                    columnAction.action(array.get(0));
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         }
         return api;
     }

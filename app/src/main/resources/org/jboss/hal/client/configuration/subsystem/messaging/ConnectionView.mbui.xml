@@ -36,7 +36,8 @@
                         </columns>
                     </table>
                     <form id="messaging-acceptor-form" title="Generic Acceptor"
-                          on-save="{{presenter.save(ServerSubResource.ACCEPTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.ACCEPTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.ACCEPTOR, form)}}">
                         <attributes>
                             <attribute name="factory-class"/>
                             <attribute name="socket-binding">
@@ -70,7 +71,8 @@
                         </columns>
                     </table>
                     <form id="messaging-in-vm-acceptor-form" title="In VM Acceptor"
-                          on-save="{{presenter.save(ServerSubResource.IN_VM_ACCEPTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.IN_VM_ACCEPTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.IN_VM_ACCEPTOR, form)}}">
                         <attributes>
                             <attribute name="server-id"/>
                             <attribute name="params"/>
@@ -96,7 +98,8 @@
                         </columns>
                     </table>
                     <form id="messaging-http-acceptor-form" title="HTTP Acceptor"
-                          on-save="{{presenter.save(ServerSubResource.HTTP_ACCEPTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.HTTP_ACCEPTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.HTTP_ACCEPTOR, form)}}">
                         <attributes>
                             <attribute name="http-listener">
                                 <suggest-handler>
@@ -130,7 +133,8 @@
                         </columns>
                     </table>
                     <form id="messaging-remote-acceptor-form" title="Remote Acceptor"
-                          on-save="{{presenter.save(ServerSubResource.REMOTE_ACCEPTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.REMOTE_ACCEPTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.REMOTE_ACCEPTOR, form)}}">
                         <attributes>
                             <attribute name="socket-binding">
                                 <suggest-handler>
@@ -164,7 +168,8 @@
                         </columns>
                     </table>
                     <form id="messaging-connector-form" title="Generic Connector"
-                          on-save="{{presenter.save(ServerSubResource.CONNECTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.CONNECTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.CONNECTOR, form)}}">
                         <attributes>
                             <attribute name="factory-class"/>
                             <attribute name="socket-binding">
@@ -198,7 +203,8 @@
                         </columns>
                     </table>
                     <form id="messaging-in-vm-connector-form" title="In VM Connector"
-                          on-save="{{presenter.save(ServerSubResource.IN_VM_CONNECTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.IN_VM_CONNECTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.IN_VM_CONNECTOR, form)}}">
                         <attributes>
                             <attribute name="server-id"/>
                             <attribute name="params"/>
@@ -224,7 +230,8 @@
                         </columns>
                     </table>
                     <form id="messaging-http-connector-form" title="HTTP Connector"
-                          on-save="{{presenter.save(ServerSubResource.HTTP_CONNECTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.HTTP_CONNECTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.HTTP_CONNECTOR, form)}}">
                         <attributes>
                             <attribute name="endpoint">
                                 <suggest-handler>
@@ -264,7 +271,8 @@
                         </columns>
                     </table>
                     <form id="messaging-remote-connector-form" title="Remote Connector"
-                          on-save="{{presenter.save(ServerSubResource.REMOTE_CONNECTOR, form, changedValues)}}">
+                          on-save="{{presenter.save(ServerSubResource.REMOTE_CONNECTOR, form, changedValues)}}"
+                          prepare-reset="{{presenter.reset(ServerSubResource.REMOTE_CONNECTOR, form)}}">
                         <attributes>
                             <attribute name="socket-binding">
                                 <suggest-handler>
@@ -298,7 +306,8 @@
                     </columns>
                 </table>
                 <form id="messaging-connector-service-form" title="Connector Service"
-                      on-save="{{presenter.save(ServerSubResource.CONNECTOR_SERVICE, form, changedValues)}}">
+                      on-save="{{presenter.save(ServerSubResource.CONNECTOR_SERVICE, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.CONNECTOR_SERVICE, form)}}">
                     <attributes>
                         <attribute name="factory-class"/>
                         <attribute name="params"/>
@@ -325,7 +334,8 @@
                     </columns>
                 </table>
                 <form id="messaging-connection-factory-form" title="Connection Factory"
-                      on-save="{{presenter.save(ServerSubResource.CONNECTION_FACTORY, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.CONNECTION_FACTORY, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.CONNECTION_FACTORY, form)}}"/>
             </metadata>
         </item>
 
@@ -348,7 +358,8 @@
                     </columns>
                 </table>
                 <form id="messaging-pooled-connection-factory-form" title="Pooled Connection Factory"
-                      on-save="{{presenter.save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues)}}"/>
+                      on-save="{{presenter.save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues)}}"
+                      prepare-reset="{{presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form)}}"/>
             </metadata>
         </item>
     </vertical-navigation>

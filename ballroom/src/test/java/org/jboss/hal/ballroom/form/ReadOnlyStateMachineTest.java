@@ -10,40 +10,50 @@ import static org.junit.Assert.*;
 /**
  * @author Harald Pehl
  */
-public class ViewOnlyStateMachineTest {
+public class ReadOnlyStateMachineTest {
 
     private StateMachine stateMachine;
 
     @Before
     public void setUp() {
-        stateMachine = new ViewOnlyStateMachine();
+        stateMachine = new ReadOnlyStateMachine();
     }
 
     @Test
     public void initialState() {
-        assertNull(stateMachine.current());
+        assertEquals(READONLY, stateMachine.current());
     }
 
     @Test
     public void supports() {
+        assertFalse(stateMachine.supports(EMPTY));
+        assertTrue(stateMachine.supports(READONLY));
+        assertFalse(stateMachine.supports(EDITING));
+
         assertTrue(stateMachine.supports(VIEW));
-        assertFalse(stateMachine.supports(EDIT));
-        assertFalse(stateMachine.supports(CANCEL));
-        assertFalse(stateMachine.supports(SAVE));
+        assertTrue(stateMachine.supports(CLEAR));
         assertFalse(stateMachine.supports(RESET));
+        assertFalse(stateMachine.supports(EDIT));
+        assertFalse(stateMachine.supports(SAVE));
+        assertFalse(stateMachine.supports(CANCEL));
+        assertFalse(stateMachine.supports(REMOVE));
     }
 
     @Test
-    public void initialView() {
+    public void view() {
         stateMachine.execute(VIEW);
         assertEquals(READONLY, stateMachine.current());
     }
 
     @Test
-    public void repeatedView() {
-        stateMachine.execute(VIEW);
-        stateMachine.execute(VIEW);
+    public void clear() {
+        stateMachine.execute(CLEAR);
         assertEquals(READONLY, stateMachine.current());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void reset() {
+        stateMachine.execute(RESET);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -52,17 +62,17 @@ public class ViewOnlyStateMachineTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void cancel() {
-        stateMachine.execute(CANCEL);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
     public void save() {
         stateMachine.execute(SAVE);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void reset() {
-        stateMachine.execute(RESET);
+    public void cancel() {
+        stateMachine.execute(CANCEL);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void remove() {
+        stateMachine.execute(REMOVE);
     }
 }

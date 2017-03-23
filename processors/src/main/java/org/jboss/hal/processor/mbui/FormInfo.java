@@ -100,24 +100,29 @@ public class FormInfo extends MbuiElementInfo {
     private final String title;
     private final boolean autoSave;
     private final String onSave;
+    private final boolean reset;
+    private String prepareReset;
     private final String nameResolver;
     private final boolean includeRuntime;
-    private final boolean failSafe;
+    private final boolean singleton;
     private final List<Attribute> attributes;
     private final List<Group> groups;
 
     FormInfo(final String name, final String selector, final TypeParameter typeParameter,
             final MetadataInfo metadata, final String title, final boolean autoSave, final String onSave,
-            final String nameResolver, final boolean includeRuntime, final boolean failSafe) {
+            final boolean reset, final String prepareReset,  final String nameResolver, final boolean includeRuntime,
+            final boolean singleton) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
         this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
         this.autoSave = autoSave;
         this.onSave = Handlebars.stripHandlebar(onSave); // save handler has to be an expression
+        this.reset = reset;
+        this.prepareReset = Handlebars.stripHandlebar(prepareReset); // reset handler has to be an expression
         this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
         this.includeRuntime = includeRuntime;
-        this.failSafe = failSafe;
+        this.singleton = singleton;
         this.attributes = new ArrayList<>();
         this.groups = new ArrayList<>();
     }
@@ -142,6 +147,14 @@ public class FormInfo extends MbuiElementInfo {
         return onSave;
     }
 
+    public boolean isReset() {
+        return reset;
+    }
+
+    public String getPrepareReset() {
+        return prepareReset;
+    }
+
     public String getNameResolver() {
         return nameResolver;
     }
@@ -150,8 +163,8 @@ public class FormInfo extends MbuiElementInfo {
         return includeRuntime;
     }
 
-    public boolean isFailSafe() {
-        return failSafe;
+    public boolean isSingleton() {
+        return singleton;
     }
 
     void addAttribute(Attribute attribute) {

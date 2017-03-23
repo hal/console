@@ -21,7 +21,7 @@
             <metadata address="/{selected.profile}/subsystem=remoting/configuration=endpoint">
                 <h1>Endpoint Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="remoting-endpoint-configuration" title="Endpoint Configuration" auto-save="true">
+                <form id="remoting-endpoint-configuration" title="Endpoint Configuration" auto-save="true" reset="true">
                     <attributes>
                         <group id="remoting-endpoint-configuration-attributes"
                                title="{{mbuiContext.resources().constants().attributes()}}">
@@ -118,7 +118,8 @@
                         </columns>
                     </table>
                     <form id="remoting-local-outbound-form" title="Local Outbound"
-                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}">
+                          on-save="{{presenter.saveLocalOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetLocalOutbound(form)}}">
                         <attributes>
                             <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="outbound-socket-binding-ref">
@@ -149,7 +150,8 @@
                         </columns>
                     </table>
                     <form id="remoting-outbound-form" title="Outbound"
-                          on-save="{{presenter.saveOutbound(form, changedValues)}}">
+                          on-save="{{presenter.saveOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetOutbound(form)}}">
                         <attributes>
                             <attribute form-item='{{new org.jboss.hal.ballroom.form.PropertiesItem("property")}}'/>
                             <attribute name="uri"/>
@@ -185,7 +187,8 @@
                         </columns>
                     </table>
                     <form id="remoting-remote-outbound-form" title="Remote Outbound"
-                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}">
+                          on-save="{{presenter.saveRemoteOutbound(form, changedValues)}}"
+                          prepare-reset="{{presenter.resetRemoteOutbound(form)}}">
                         <attributes>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>

@@ -24,51 +24,52 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
- * A state machine for existing models. Supports all {@linkplain Operation operations} except {@link Operation#ADD}.
+ * A state machine for existing models. Supports the {@link Form.State#READONLY} and {@link Form.State#EDITING} state
+ * and all {@linkplain Operation operations} except {@link Operation#REMOVE}.
+ * <p>
  * <pre>
- *            +--------+      (0)
- *            |        |       |
- *         clear()     |     view()
- *         reset()     |       |
- *            |     +--v-------v--+
- *            |     |             |
- *            +-----+  READONLY   <-----+-------+
- *                  |             |     |       |
- *                  +--+-------^--+     |       |
- *                     |       |        |       |
- *                  edit()  cancel()  save()    |
- *                     |       |        |       |
- *                  +--v-------+--+     |       |
- *                  |             |     |       |
- *   (0)---edit()--->   EDITING   +-----+     clear()
- *                  |             |             |
- *                  +------+------+             |
- *                         |                    |
- *                         +--------------------+
+ *           +--------+      (0)
+ *           |        |       |
+ *        clear()     |     view()
+ *        reset()     |       |
+ *           |     +--v-------v--+
+ *           |     |             |
+ *           +-----+  READONLY   <-----+------+
+ *                 |             |     |      |
+ *                 +--+-------^--+     |      |
+ *                    |       |        |      |
+ *                 edit()  cancel()  save()   |
+ *                    |       |        |      |
+ *                 +--v-------+--+     |      |
+ *                 |             |     |      |
+ *  (0)---edit()--->   EDITING   +-----+    clear()
+ *                 |             |            |
+ *                 +------+------+            |
+ *                        |                   |
+ *                        +-------------------+
  * </pre>
  * (0) Initial states
  *
  * @author Harald Pehl
  */
-public class ExistingModelStateMachine extends AbstractStateMachine implements StateMachine {
+public class ExistingStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public ExistingModelStateMachine() {
-        super(EnumSet.of(VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL));
-        this.current = null;
+    public ExistingStateMachine() {
+        super(EnumSet.of(READONLY, EDITING), EnumSet.of(VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL));
+        this.current = initial();
     }
 
     @Override
-    public void execute(final Operation operation) {
+    protected Form.State initial() {
+        return READONLY;
+    }
+
+    @Override
+    protected <C> void safeExecute(final Operation operation, final C context) {
         switch (operation) {
 
-            case ADD:
-                unsupported(ADD);
-                break;
-
             case VIEW:
-                if (current != null) {
-                    assertState(READONLY);
-                }
+                assertState(READONLY);
                 transitionTo(READONLY);
                 break;
 
@@ -82,9 +83,7 @@ public class ExistingModelStateMachine extends AbstractStateMachine implements S
                 break;
 
             case EDIT:
-                if (current != null) {
-                    assertState(READONLY, EDITING);
-                }
+                assertState(READONLY);
                 transitionTo(EDITING);
                 break;
 
@@ -97,10 +96,11 @@ public class ExistingModelStateMachine extends AbstractStateMachine implements S
                 assertState(EDITING);
                 transitionTo(READONLY);
                 break;
-
-            default:
-                unsupported(operation);
-                break;
         }
+    }
+
+    @Override
+    protected String name() {
+        return "ExistingStateMachine";
     }
 }

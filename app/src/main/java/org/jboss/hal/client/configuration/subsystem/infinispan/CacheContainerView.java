@@ -29,7 +29,6 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -63,21 +62,21 @@ public class CacheContainerView extends HalViewImpl
     private CacheContainerPresenter presenter;
 
     @Inject
-    public CacheContainerView(final Dispatcher dispatcher, final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    public CacheContainerView(final MetadataRegistry metadataRegistry, final Resources resources) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
+                .prepareReset(form -> presenter.resetCacheContainer(form))
                 .build();
 
         caches = new HashMap<>();
         for (Cache cache : Cache.values()) {
-            caches.put(cache, new CacheElement(cache, dispatcher, metadataRegistry, resources));
+            caches.put(cache, new CacheElement(cache, metadataRegistry, resources));
         }
 
         threadPools = new HashMap<>();
         for (ThreadPool threadPool : ThreadPool.values()) {
-            threadPools.put(threadPool, new ThreadPoolElement(threadPool, dispatcher, metadataRegistry));
+            threadPools.put(threadPool, new ThreadPoolElement(threadPool, metadataRegistry));
         }
 
         transport = new TransportElement(metadataRegistry, resources);

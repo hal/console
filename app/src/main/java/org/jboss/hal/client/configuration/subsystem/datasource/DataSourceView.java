@@ -66,7 +66,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // connection
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.connection(), asList(
                 new Attribute(CONNECTION_URL, XA),
                 new Attribute("url-delimiter"),
@@ -84,7 +84,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // pool
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.pool(), asList(
                 new Attribute("min-pool-size"),
                 new Attribute("initial-pool-size"),
@@ -103,7 +103,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // security
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.security(), asList(
                 new Attribute("user-name"),
                 new Attribute("password"),
@@ -119,7 +119,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // validation
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.validation(), asList(
                 new Attribute("valid-connection-checker-class-name"),
                 new Attribute("valid-connection-checker-properties"),
@@ -134,7 +134,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // timeouts
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.timeouts(), asList(
                 new Attribute("use-try-lock"),
                 new Attribute("blocking-timeout-wait-millis"),
@@ -147,7 +147,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         ));
 
         // statements / tracking
-        //noinspection HardCodedStringLiteral
+        //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
         attributes.putAll(CONSTANTS.statements() + " / " + CONSTANTS.tracking(), asList(
                 new Attribute("spy"),
                 new Attribute("tracking"),
@@ -175,12 +175,15 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         this.resources = resources;
 
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
+        Form.PrepareReset<DataSource> prepareReset = (f) -> presenter.resetDataSource(f);
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
         nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
                 .build();
         GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
-                nonXaMeta).onSave(saveCallback);
+                nonXaMeta)
+                .onSave(saveCallback)
+                .prepareReset(prepareReset);
 
         Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
         xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();

@@ -70,6 +70,7 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
         String formId = Ids.build(configType.baseId, "handler-chain", Ids.FORM_SUFFIX);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)
                 .onSave((form, changedValues) -> presenter.saveHandlerChain(form.getModel().getName(), changedValues))
+                .prepareReset(form -> presenter.resetHandlerChain(form.getModel().getName(), form))
                 .build();
 
         // @formatter:off

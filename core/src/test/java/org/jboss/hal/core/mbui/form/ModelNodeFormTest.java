@@ -7,11 +7,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
-import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.StateMachine;
-import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
@@ -51,15 +51,15 @@ public class ModelNodeFormTest {
     public void addOnlyAndView() {
         new ModelNodeForm.Builder("addOnlyAndView", metadata())
                 .addOnly()
-                .viewOnly()
+                .readOnly()
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void addFromRequestPropertiesAndView() {
         new ModelNodeForm.Builder("addFromRequestPropertiesAndView", metadata())
-                .addFromRequestProperties()
-                .viewOnly()
+                .fromRequestProperties()
+                .readOnly()
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class ModelNodeFormTest {
     public void excludeRequiredAttributes() {
         new ModelNodeForm.Builder("viewAndCreateResource",
                 metadata(new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true))))
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .exclude("foo")
                 .build();
     }
@@ -79,7 +79,7 @@ public class ModelNodeFormTest {
     public void createResourceStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine",
                 metadata(new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap())))
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
@@ -88,7 +88,7 @@ public class ModelNodeFormTest {
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
@@ -97,8 +97,8 @@ public class ModelNodeFormTest {
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                .viewOnly().stateMachine();
-        Assert.assertTrue(stateMachine instanceof ViewOnlyStateMachine);
+                .readOnly().stateMachine();
+        Assert.assertTrue(stateMachine instanceof ReadOnlyStateMachine);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ModelNodeFormTest {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
                 .stateMachine();
-        Assert.assertTrue(stateMachine instanceof ExistingModelStateMachine);
+        Assert.assertTrue(stateMachine instanceof ExistingStateMachine);
     }
 
 
@@ -115,7 +115,7 @@ public class ModelNodeFormTest {
     @Test
     public void requestProperties() {
         ModelNodeForm<ModelNode> form = builder("requestProperties", requestProperties)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .build();
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
@@ -130,7 +130,7 @@ public class ModelNodeFormTest {
     @Test
     public void requestPropertiesUnsorted() {
         ModelNodeForm<ModelNode> form = builder("requestPropertiesUnsorted", requestProperties)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .unsorted()
                 .build();
         Iterable<FormItem> formItems = form.getFormItems();
@@ -146,7 +146,7 @@ public class ModelNodeFormTest {
     @Test
     public void includeRequestProperties() {
         ModelNodeForm<ModelNode> form = builder("includeRequestProperties", requestProperties)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .include("foo", "bar")
                 .build();
         Iterable<FormItem> formItems = form.getFormItems();

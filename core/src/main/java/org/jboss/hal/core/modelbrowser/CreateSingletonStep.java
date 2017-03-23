@@ -52,7 +52,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
     CreateSingletonStep(final Node<Context> parent, final MetadataProcessor metadataProcessor,
             final Provider<Progress> progress, final EventBus eventBus, final Resources resources) {
-        super(Ids.MODEL_BROWSER_CREATE_SINGLETON_STEP, resources.messages().addResourceTitle(parent.text));
+        super(resources.messages().addResourceTitle(parent.text));
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.eventBus = eventBus;
@@ -75,21 +75,20 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onError(final Throwable error) {
-                MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().metadataError(), error.getMessage()));
+                MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
             }
 
             @Override
             public void onMetadata(final Metadata metadata) {
                 String id = Ids.build(Ids.MODEL_BROWSER_CREATE_SINGLETON_FORM, Ids.FORM_SUFFIX);
                 form = new ModelNodeForm.Builder<>(id, metadata)
-                        .addFromRequestProperties()
+                        .fromRequestProperties()
                         .onSave((f, changedValues) -> wizard().getContext().modelNode = f.getModel())
                         .build();
                 root.appendChild(form.asElement());
                 PatternFly.initComponents();
                 form.attach();
-                form.add(new ModelNode());
+                form.edit(new ModelNode());
             }
         });
     }

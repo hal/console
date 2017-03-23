@@ -21,16 +21,15 @@ import javax.inject.Inject;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /**
  * Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}.
@@ -57,20 +56,42 @@ public class FindDomainController implements BootstrapFunction {
             control.proceed();
 
         } else {
-            Operation operation = new Operation.Builder(QUERY, new ResourceAddress().add(HOST, "*"))
-                    .param(SELECT, new ModelNode().add(NAME))
-                    .param(QUERY, new ModelNode().set("master", true))
+            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
+                    .param(CHILD_TYPE, HOST)
                     .build();
             dispatcher.execute(operation, result -> {
-                List<ModelNode> nodes = result.asList();
-                if (!nodes.isEmpty()) {
-                    if (!nodes.get(0).get(RESULT).isFailure()) {
-                        String dc = nodes.get(0).get(RESULT).get(NAME).asString();
-                        environment.setDomainController(dc);
+                String firstHost = null;
+                String domainController = null;
+                List<Property> properties = result.asPropertyList();
+                if (properties.isEmpty()) {
+                    // TODO Is this possible?
+                    control.getContext().failed("No hosts found!"); //NON-NLS
+                    control.abort();
+
+                } else {
+                    for (Property property : properties) {
+                        if (firstHost == null) {
+                            firstHost = property.getName();
+                        }
+                        if (property.getValue().get(MASTER).isDefined() && property.getValue()
+                                .get(MASTER)
+                                .asBoolean()) {
+                            domainController = property.getName();
+                            break;
+                        }
                     }
+                    if (domainController != null) {
+                        environment.setDomainController(domainController);
+                    } else {
+                        // HAL-1309: If the user belongs to a host scoped role which is scoped to a slave,
+                        // there might be no domain controller
+                        logger.warn("{}: No domain controller found! Use first host as replacement: '{}'", name(),
+                                firstHost);
+                        environment.setDomainController(firstHost);
+                    }
+                    logDone();
+                    control.proceed();
                 }
-                logDone();
-                control.proceed();
             });
         }
     }

@@ -20,53 +20,47 @@ import java.util.EnumSet;
 import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Harald Pehl
  */
 public abstract class AbstractStateMachine implements StateMachine {
 
+    private final EnumSet<State> supportedStates;
     private final EnumSet<Operation> supportedOperations;
     State current;
 
-    AbstractStateMachine(EnumSet<Operation> supportedOperations) {
+    AbstractStateMachine(EnumSet<State> supportedStates, EnumSet<Operation> supportedOperations) {
+        this.supportedStates = supportedStates;
         this.supportedOperations = supportedOperations;
     }
 
     @Override
     public void reset() {
-        current = null;
+        current = initial();
     }
+
+    protected abstract State initial();
 
     public State current() {
         return current;
+    }
+
+    @Override
+    public boolean supports(final State state) {
+        return supportedStates.contains(state);
     }
 
     public boolean supports(final Operation operation) {
         return supportedOperations.contains(operation);
     }
 
-    public boolean supportsAny(final Operation first, final Operation... rest) {
-        boolean support = supports(first);
-        if (!support && rest != null) {
-            for (Operation op : rest) {
-                support = supports(op);
-                if (support) {
-                    break;
-                }
-            }
-        }
-        return support;
-    }
-
     void transitionTo(State next) {
-        current = next;
-    }
-
-    protected void assertNoState() {
-        if (current != null) {
-            throw new IllegalStateException("Illegal state: Expected no state, but got " + current);
+        if (!supportedStates.contains(next)) {
+            throw new IllegalStateException(name() + ": Unsupported state " + next);
         }
+        current = next;
     }
 
     void assertState(State... state) {
@@ -76,14 +70,23 @@ public abstract class AbstractStateMachine implements StateMachine {
             }
         }
         if (state.length == 1) {
-            throw new IllegalStateException("Illegal state: Expected " + state[0] + ", but got " + current);
+            throw new IllegalStateException(name() + ": Illegal state: Expected " + state[0] + ", but got " + current);
         } else {
-            throw new IllegalStateException(
-                    "Illegal state: Expected one of [" + Joiner.on(", ").join(state) + "], but got " + current);
+            throw new IllegalStateException(name() + ": Illegal state: Expected one of [" + Joiner.on(", ")
+                    .join(state) + "], but got " + current);
         }
     }
 
-    void unsupported(Operation operation) {
-        throw new UnsupportedOperationException(getClass().getName() + ": Unknown operation " + operation);
+    @Override
+    public <C> void execute(final Operation operation, C context) {
+        if (!supportedOperations.contains(operation)) {
+            throw new UnsupportedOperationException(name() + ": Unsupported operation " + operation);
+        } else {
+            safeExecute(operation, context);
+        }
     }
+
+    protected abstract <C> void safeExecute(final Operation operation, C context);
+
+    @NonNls protected abstract String name();
 }

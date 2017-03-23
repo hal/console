@@ -44,7 +44,7 @@ class DriverStep extends WizardStep<Context, State> {
             final Metadata metadata,
             final Resources resources) {
 
-        super(Ids.DATA_SOURCE_DRIVER_STEP, resources.constants().jdbcDriver());
+        super(resources.constants().jdbcDriver());
         Map<String, JdbcDriver> driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
         this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
                 .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME)

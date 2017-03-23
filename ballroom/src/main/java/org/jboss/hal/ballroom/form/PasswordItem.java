@@ -45,16 +45,16 @@ public class PasswordItem extends AbstractFormItem<String> {
 
             peekLink = new Elements.Builder().span()
                     .css(fontAwesome("eye"), clickable)
-                    .title(CONSTANTS.showPassword())
+                    .title(CONSTANTS.showSensitive())
                     .on(click, event -> {
                         if (hidden) {
                             valueElement.setTextContent(getValue());
-                            peekLink.setTitle(CONSTANTS.hidePassword());
+                            peekLink.setTitle(CONSTANTS.hideSensitive());
                             peekLink.getClassList().add("fa-eye-slash");
                             peekLink.getClassList().remove("fa-eye");
                         } else {
                             valueElement.setTextContent(getValue().replaceAll(".", "\u25CF"));
-                            peekLink.setTitle(CONSTANTS.showPassword());
+                            peekLink.setTitle(CONSTANTS.showSensitive());
                             peekLink.getClassList().add("fa-eye");
                             peekLink.getClassList().remove("fa-eye-slash");
                         }
@@ -105,19 +105,19 @@ public class PasswordItem extends AbstractFormItem<String> {
                 .span().css(inputGroupBtn)
                     .button().css(btn, btnDefault)
                              .rememberAs(PEEK_BUTTON)
-                             .title(CONSTANTS.showPassword())
+                             .title(CONSTANTS.showSensitive())
                              .on(click, event -> {
                                  if ("password".equals(inputElement.getType())) {
                                      inputElement.setType("text");
                                      inputElement.focus();
-                                     peekButton.setTitle(CONSTANTS.hidePassword());
+                                     peekButton.setTitle(CONSTANTS.hideSensitive());
                                      peekIcon.getClassList().add("fa-eye-slash");
                                      peekIcon.getClassList().remove("fa-eye");
 
                                  } else if ("text".equals(inputElement.getType())) {
                                      inputElement.setType("password");
                                      inputElement.focus();
-                                     peekButton.setTitle(CONSTANTS.showPassword());
+                                     peekButton.setTitle(CONSTANTS.showSensitive());
                                      peekIcon.getClassList().add("fa-eye");
                                      peekIcon.getClassList().remove("fa-eye-slash");
                                  }

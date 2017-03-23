@@ -24,7 +24,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3">
                     <h1>Container</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <form id="ejb-configuration-form" title="Container" auto-save="true"/>
+                    <form id="ejb-configuration-form" title="Container" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
 
@@ -42,7 +42,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="ejb-thread-pool-form" title="Thread Pool" auto-save="true"
+                    <form id="ejb-thread-pool-form" title="Thread Pool" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
@@ -62,7 +62,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="ejb-remoting-profile-form" title="Remoting Profile" auto-save="true"
+                    <form id="ejb-remoting-profile-form" title="Remoting Profile" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
@@ -82,7 +82,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="ejb-bean-pool-form" title="Bean Pool" auto-save="true"
+                <form id="ejb-bean-pool-form" title="Bean Pool" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
@@ -103,7 +103,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="ejb-cache-form" title="Cache" auto-save="true"
+                    <form id="ejb-cache-form" title="Cache" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
@@ -135,7 +135,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="ejb-passivation-form" title="Passivation" auto-save="true"
+                    <form id="ejb-passivation-form" title="Passivation" auto-save="true" reset="true"
                           name-resolver="{{form.getModel().getName()}}"/>
                 </metadata>
             </sub-item>
@@ -147,7 +147,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=async">
                     <h1>Async</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <form id="ejb-service-async-form" title="Async" auto-save="true">
+                    <form id="ejb-service-async-form" title="Async" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="thread-pool-name">
                                 <suggest-handler>
@@ -167,7 +167,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
                     <h1>IIOP</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <form id="ejb-service-iiop-form" title="IIOP" auto-save="true"/>
+                    <form id="ejb-service-iiop-form" title="IIOP" auto-save="true" reset="true"/>
                 </metadata>
             </sub-item>
 
@@ -175,7 +175,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=remote">
                     <h1>Remote</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <form id="ejb-service-remote-form" title="Remote" auto-save="true">
+                    <form id="ejb-service-remote-form" title="Remote" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="cluster">
                                 <suggest-handler>
@@ -208,7 +208,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=timer-service">
                     <h1>Timer</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <form id="ejb-service-timer-form" title="Timer" auto-save="true">
+                    <form id="ejb-service-timer-form" title="Timer" auto-save="true" reset="true">
                         <attributes>
                             <attribute name="default-data-store">
                                 <suggest-handler>
@@ -248,7 +248,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="ejb-mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true"
+                <form id="ejb-mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true" reset="true"
                       name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>

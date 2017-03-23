@@ -24,6 +24,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
@@ -41,6 +42,8 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
@@ -85,6 +88,7 @@ public class TransactionPresenter
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
 
     @Inject
@@ -96,12 +100,14 @@ public class TransactionPresenter
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
 
@@ -167,6 +173,17 @@ public class TransactionPresenter
                         Message.error(resources.messages().transactionSetUuidOrSocket()));
             }
         }
+    }
+
+    void resetProcessForm(Form<ModelNode> form) {
+        Metadata metadata = metadataRegistry.lookup(TRANSACTIONS_SUBSYSTEM_TEMPLATE);
+        ResourceAddress address = TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+        crud.resetSingleton("Process", address, form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     private void switchToUuid() {

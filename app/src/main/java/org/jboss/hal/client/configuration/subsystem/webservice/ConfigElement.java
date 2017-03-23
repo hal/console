@@ -98,6 +98,7 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(configType.baseId, Ids.FORM_SUFFIX), metadata)
                 .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertyDescription.asString()))
                 .onSave((form, changedValues) -> presenter.saveConfig(form, changedValues, PROPERTY))
+                .prepareReset(form -> presenter.resetConfig(form))
                 .build();
 
         // @formatter:off

@@ -28,7 +28,5 @@ public interface DataMapping<T> {
 
     void clearFormItems(Form<T> form);
 
-    void resetModel(T model, Form<T> form);
-
     void persistModel(T model, Form<T> form);
 }

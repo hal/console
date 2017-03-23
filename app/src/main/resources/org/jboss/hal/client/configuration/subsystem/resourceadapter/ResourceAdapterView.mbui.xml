@@ -22,7 +22,8 @@
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="resource-adapter-configuration-form" title="Configuration"
-                      on-save="{{saveConfiguration(form, changedValues)}}">
+                      on-save="{{saveConfiguration(form, changedValues)}}"
+                      prepare-reset="{{resetConfiguration(form)}}">
                     <attributes>
                         <group id="resource-adapter-configuration-attributes"
                                title="{{mbuiContext.resources().constants().attributes()}}">
@@ -41,9 +42,11 @@
                             <attribute name="wm-security-default-groups"/>
                             <attribute name="wm-security-default-principal"/>
                             <attribute name="wm-security-domain"/>
-                            <attribute form-item='{{new MappingsItem("wm-security-mapping-groups", mbuiContext.resources().messages())}}'/>
+                            <attribute
+                                    form-item='{{new MappingsItem("wm-security-mapping-groups", mbuiContext.resources().messages())}}'/>
                             <attribute name="wm-security-mapping-required"/>
-                            <attribute form-item='{{new MappingsItem("wm-security-mapping-users", mbuiContext.resources().messages())}}'/>
+                            <attribute
+                                    form-item='{{new MappingsItem("wm-security-mapping-users", mbuiContext.resources().messages())}}'/>
                         </group>
                     </attributes>
                 </form>
@@ -69,7 +72,8 @@
                     </columns>
                 </table>
                 <form id="resource-adapter-connection-definition-form" title="Connection Definition"
-                      on-save="{{saveConnectionDefinition(form, changedValues)}}">
+                      on-save="{{saveConnectionDefinition(form, changedValues)}}"
+                      prepare-reset="{{resetConnectionDefinition(form)}}">
                     <attributes>
                         <group id="resource-adapter-connection-definition-attributes"
                                title="{{mbuiContext.resources().constants().attributes()}}">
@@ -143,7 +147,8 @@
                     </columns>
                 </table>
                 <form id="resource-adapter-admin-object-form" title="Admin Object"
-                      on-save="{{saveAdminObject(form, changedValues)}}">
+                      on-save="{{saveAdminObject(form, changedValues)}}"
+                      prepare-reset="{{resetAdminObject(form)}}">
                     <attributes>
                         <attribute name="class-name"/>
                         <attribute

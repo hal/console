@@ -17,10 +17,13 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -28,11 +31,9 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Common code used by the finder column and the presenter.
@@ -67,7 +68,7 @@ public class LogFiles {
         this.places = places;
     }
 
-    public void download(final String logFile) {
+    public void download(String logFile) {
         Browser.getWindow().open(downloadUrl(logFile), "", "");
     }
 
@@ -90,5 +91,17 @@ public class LogFiles {
     public String target(String name) {
         return environment.isStandalone() ? Ids.asId(name) : Ids
                 .build(statementContext.selectedHost(), statementContext.selectedServer(), Ids.asId(name));
+    }
+
+    public void tail(String name, int lines, AsyncCallback<String> callback) {
+        ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
+        Operation operation = new Operation.Builder(READ_LOG_FILE, address)
+                .param(ModelDescriptionConstants.LINES, lines)
+                .param(TAIL, true)
+                .build();
+        dispatcher.execute(operation, result -> callback.onSuccess(result.asList()
+                .stream()
+                .map(ModelNode::asString)
+                .collect(joining("\n"))));
     }
 }

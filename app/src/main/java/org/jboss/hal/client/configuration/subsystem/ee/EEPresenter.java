@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -38,6 +39,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -145,6 +147,26 @@ public class EEPresenter
     void save(AddressTemplate addressTemplate, Map<String, Object> changedValues, Metadata metadata,
             SafeHtml successMessage) {
         crud.save(addressTemplate.resolve(statementContext), changedValues, metadata, successMessage, this::reload);
+    }
+
+    void reset(String type, String name, AddressTemplate template, Form<NamedNode> form,
+            final Metadata metadata, SafeHtml successMessage) {
+        crud.reset(type, name, template.resolve(statementContext), form, metadata, successMessage,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
+    }
+
+    void resetSingleton(String type, AddressTemplate template, Form<ModelNode> form, final Metadata metadata) {
+        crud.resetSingleton(type, template.resolve(statementContext), form, metadata, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void launchAddDialogGlobalModule() {

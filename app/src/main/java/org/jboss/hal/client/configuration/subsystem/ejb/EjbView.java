@@ -21,9 +21,9 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
@@ -120,6 +120,11 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                         String name = form.getModel().getName();
                         saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
                                 template.resolve(mbuiContext.statementContext(), name), changedValues, metadata);
+                    })
+                    .prepareReset(form -> {
+                        String name = form.getModel().getName();
+                        resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                template.resolve(mbuiContext.statementContext(), name), form, metadata);
                     })
                     .build();
 

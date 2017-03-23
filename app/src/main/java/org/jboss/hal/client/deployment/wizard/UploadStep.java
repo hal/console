@@ -18,7 +18,6 @@ package org.jboss.hal.client.deployment.wizard;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.resources.Ids;
 
 /**
  * @author Harald Pehl
@@ -28,7 +27,7 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
     private final UploadElement uploadElement;
 
     UploadStep(final String title, final SafeHtml onError) {
-        super(Ids.UPLOAD_STEP, title);
+        super(title);
         this.uploadElement = new UploadElement(onError);
     }
 

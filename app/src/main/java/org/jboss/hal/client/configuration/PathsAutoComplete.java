@@ -76,7 +76,7 @@ public class PathsAutoComplete extends AutoComplete {
                         @Override
                         public void onFailure(final FunctionContext context) {
                             logger.error("Unable to update operation for paths type-ahead: " +
-                                    "Error reading running servers: {}", context.getErrorMessage());
+                                    "Error reading running servers: {}", context.getError());
                             operation = defaultOperation();
                         }
 

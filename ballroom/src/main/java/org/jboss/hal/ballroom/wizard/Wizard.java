@@ -30,6 +30,7 @@ import elemental.html.ButtonElement;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -346,6 +347,7 @@ public class Wizard<C, S extends Enum<S>> {
         }
         $(SELECTOR_ID).modal(ModalOptions.create(true));
         $(SELECTOR_ID).modal("show");
+        PatternFly.initComponents(SELECTOR_ID);
         pushState(state);
     }
 
@@ -544,7 +546,6 @@ public class Wizard<C, S extends Enum<S>> {
         Elements.setVisible(blankSlate, false);
         stepElements.forEach((s, element) -> Elements.setVisible(element, s == state));
         currentStep().onShow(context);
-        currentStep().attachables.forEach(Attachable::attach);
 
         cancelButton.setDisabled(false);
         backButton.setDisabled(state == initialState);
@@ -583,6 +584,7 @@ public class Wizard<C, S extends Enum<S>> {
             DivElement wrapper = Browser.getDocument().createDivElement();
             wrapper.getClassList().add(wizardPfContents);
             wrapper.appendChild(step.asElement());
+            step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);
             stepElements.put(status, wrapper);

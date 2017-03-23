@@ -25,7 +25,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.table.Api.RefreshMode;
+import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -140,7 +140,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         Metadata metadata = mbuiContext.metadataRegistry().lookup(ROOT_LOGGER_TEMPLATE);
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .include(LEVEL, HANDLERS)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(

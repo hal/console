@@ -58,7 +58,7 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
     private final InputElement sharedStoreColocatedRadio;
 
     ChoosePolicyStep(Resources resources) {
-        super(Ids.MESSAGING_HA_CHOOSE_REPLICATION_STEP, resources.constants().choosePolicy());
+        super(resources.constants().choosePolicy());
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()

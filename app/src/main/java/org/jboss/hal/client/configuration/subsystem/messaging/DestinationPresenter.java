@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -164,7 +165,7 @@ public class DestinationPresenter
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_ADD, metadata)
                 .unboundFormItem(patternItem, 0)
                 .unboundFormItem(nameItem, 1)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
 
@@ -216,6 +217,26 @@ public class DestinationPresenter
             Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
             crud.save(Names.SECURITY_SETTING, securitySetting + "/" + name, address, changedValues, metadata,
                     this::reload);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
+        }
+    }
+
+    void resetSecuritySettingRole(Form<NamedNode> form) {
+        if (securitySetting != null) {
+            String name = form.getModel().getName();
+            ResourceAddress address = SERVER_TEMPLATE
+                    .append(SECURITY_SETTING + "=" + securitySetting)
+                    .append(ROLE + "=" + name)
+                    .resolve(statementContext);
+            Metadata metadata = metadataRegistry.lookup(ROLE_TEMPLATE);
+            crud.reset(Names.SECURITY_SETTING, securitySetting + "/" + name, address, form, metadata,
+                    new FinishReset<NamedNode>(form) {
+                        @Override
+                        public void afterReset(final Form<NamedNode> form) {
+                            reload();
+                        }
+                    });
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noSecuritySettingSelected()));
         }

@@ -43,11 +43,6 @@ public class DefaultMapping<T> implements DataMapping<T> {
     }
 
     @Override
-    public void resetModel(final T model, Form<T> form) {
-        // empty
-    }
-
-    @Override
     public void persistModel(final T model, final Form<T> form) {
         // empty
     }

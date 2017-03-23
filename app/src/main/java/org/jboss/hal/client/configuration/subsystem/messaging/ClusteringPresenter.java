@@ -134,7 +134,7 @@ public class ClusteringPresenter
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .requiredOnly()
                 .build();
 

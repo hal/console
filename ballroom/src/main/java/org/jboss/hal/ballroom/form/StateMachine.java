@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import javax.annotation.Nullable;
+
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
 
@@ -29,9 +31,13 @@ public interface StateMachine {
 
     State current();
 
-    void execute(Operation operation);
+    boolean supports(State state);
 
     boolean supports(Operation operation);
 
-    boolean supportsAny(Operation first, Operation... rest);
+    default void execute(Operation operation) {
+        execute(operation, null);
+    }
+
+    <C> void execute(Operation operation, @Nullable C context);
 }

@@ -84,11 +84,6 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
         alertText.setInnerHTML(message.asString());
     }
 
-    protected void timeout(SafeHtml message) {
-        error();
-        alertText.setInnerHTML(message.asString());
-    }
-
     protected void unknown(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertWarning);
         alertIcon.setClassName(Icons.UNKNOWN);
@@ -103,5 +98,10 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     private void error() {
         alertContainer.setClassName(alert + " " + alertDanger);
         alertIcon.setClassName(Icons.ERROR);
+    }
+
+    protected void error(SafeHtml message) {
+        error();
+        alertText.setInnerHTML(message.asString());
     }
 }

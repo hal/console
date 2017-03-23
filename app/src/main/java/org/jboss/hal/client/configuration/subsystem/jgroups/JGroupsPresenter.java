@@ -25,6 +25,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -206,6 +208,27 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
             final Map<String, Object> changedValues, final Metadata metadata, final SafeHtml successMessage) {
         crud.save(template.resolve(filterStatementContext, resourceName), changedValues, metadata, successMessage,
                 this::reload);
+    }
+
+    <T> void resetSingleton(final AddressTemplate template, final String type, final Form<T> form,
+            final Metadata metadata) {
+        crud.resetSingleton(type, template.resolve(filterStatementContext), form, metadata, new FinishReset<T>(form) {
+            @Override
+            public void afterReset(final Form<T> form) {
+                reload();
+            }
+        });
+    }
+
+    void resetResource(final AddressTemplate template, final String resourceName, final String type,
+            final Form<NamedNode> form, final Metadata metadata) {
+        crud.reset(type, resourceName, template.resolve(filterStatementContext, resourceName), form, metadata,
+                new FinishReset<NamedNode>(form) {
+                    @Override
+                    public void afterReset(final Form<NamedNode> form) {
+                        reload();
+                    }
+                });
     }
 
     void removeResource(final AddressTemplate template, String name, String displayName) {

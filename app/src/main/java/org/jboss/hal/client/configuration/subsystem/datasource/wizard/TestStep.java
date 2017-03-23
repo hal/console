@@ -38,7 +38,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -72,7 +71,7 @@ class TestStep extends WizardStep<Context, State> {
             final Provider<Progress> progress,
             final Resources resources) {
 
-        super(Ids.DATA_SOURCE_TEST_STEP, resources.constants().testConnection());
+        super(resources.constants().testConnection());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.environment = environment;

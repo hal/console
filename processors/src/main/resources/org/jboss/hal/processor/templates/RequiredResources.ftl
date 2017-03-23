@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="requiredInfos" type="java.util.Set<org.jboss.hal.processor.RequiredResourcesProcessor.RequiredInfo>" -->
+<#-- @ftlvariable name="requiredInfos" type="java.util.Collection<org.jboss.hal.processor.RequiredResourcesProcessor.RequiredInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.runtime.subsystem.logging;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import elemental.html.PreElement;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -22,19 +24,29 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
-import static org.jboss.hal.resources.CSS.alert;
-import static org.jboss.hal.resources.CSS.alertInfo;
-import static org.jboss.hal.resources.CSS.alertLink;
-import static org.jboss.hal.resources.CSS.alertWarning;
+import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.CSS.pullRight;
 
 /**
  * @author Harald Pehl
  */
 class LogFilePreview extends PreviewContent<LogFile> {
 
-    LogFilePreview(LogFiles logFiles, LogFile logFile, final Resources resources) {
+    private static final int PREVIEW_LINES = 20;
+    private static final String PREVIEW_ELEMENT = "previewElement";
+
+    private final LogFiles logFiles;
+    private final Resources resources;
+    private final PreElement preview;
+
+    LogFilePreview(LogFiles logFiles, LogFile logFile, Resources resources) {
         super(logFile.getFilename());
+        this.logFiles = logFiles;
+        this.resources = resources;
 
         previewBuilder().div();
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
@@ -67,5 +79,35 @@ class LogFilePreview extends PreviewContent<LogFile> {
                         new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()))
                 .end();
         previewBuilder().addAll(previewAttributes);
+
+        // @formatter:off
+        previewBuilder()
+                .h(2).textContent(resources.constants().preview()).end()
+                .div().css(clearfix)
+                    .a().css(clickable, pullRight).on(click, event -> update(logFile))
+                        .span().css(fontAwesome("refresh"), marginRight5).end()
+                        .span().textContent(resources.constants().refresh()).end()
+                    .end()
+                    .p().textContent(resources.messages().logFilePreview(PREVIEW_LINES)).end()
+                .end()
+                .start("pre").css(logFilePreview).rememberAs(PREVIEW_ELEMENT).end();
+        // @formatter:off
+
+        preview = previewBuilder().referenceFor(PREVIEW_ELEMENT);
+    }
+
+    @Override
+    public void update(final LogFile item) {
+        logFiles.tail(item.getFilename(), PREVIEW_LINES, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(final Throwable caught) {
+                preview.setTextContent(resources.constants().logFilePreviewError());
+            }
+
+            @Override
+            public void onSuccess(final String result) {
+                preview.setTextContent(result);
+            }
+        });
     }
 }

@@ -19,7 +19,6 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -98,10 +97,12 @@ final class ${context.subclass} extends ${context.base} {
                     </#if>
                 </#list>
             <#else>
-                <#if form.failSafe>
-        Form<${form.typeParameter.type}> failSafe_${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>(Ids.build("${form.selector}", Ids.FORM_SUFFIX), ${form.metadata.name})
-                <#else>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
+                <#if form.singleton>
+            .singleton(
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template))
+            .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form))
                 </#if>
                 <#if form.includeRuntime>
             .includeRuntime()
@@ -141,6 +142,18 @@ final class ${context.subclass} extends ${context.base} {
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
             </#if>
+            <#if form.reset>
+                <#if form.nameResolver??>
+            .prepareReset(form -> {
+                String name = ${form.nameResolver};
+                resetForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), form, ${form.metadata.name});
+            })
+                <#else>
+            .prepareReset(form -> resetSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form, ${form.metadata.name}))
+                </#if>
+            <#elseif form.prepareReset??>
+            .prepareReset(form -> ${form.prepareReset})
+            </#if>
             .build();
             <#list form.validationHandlerAttributes as attribute>
         ${form.name}.getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});
@@ -158,12 +171,6 @@ final class ${context.subclass} extends ${context.base} {
                     mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
-            <#if form.failSafe>
-        ${form.name} = new FailSafeForm<>(mbuiContext.dispatcher(),
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
-                failSafe_${form.name},
-                () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template));
-            </#if>
         </#list>
 
         <#list context.dataTables as table>
@@ -181,7 +188,7 @@ final class ${context.subclass} extends ${context.base} {
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
-                    .addFromRequestProperties()
+                    .fromRequestProperties()
                     .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
                                     <#list action.attributes as attribute>
                                         <#if attribute.provider??>

@@ -30,7 +30,7 @@ public class ExceptionalFunctionCallback<C extends FunctionContext> implements D
 
     @Override
     public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().setError(exception);
+        control.getContext().failed(exception);
         control.abort();
     }
 }

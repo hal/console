@@ -141,7 +141,7 @@ public class MacroEditorPresenter
                 getView().enableMacro(macro);
                 MessageEvent
                         .fire(getEventBus(),
-                                Message.error(resources.messages().macroPlaybackError(), context.getErrorMessage()));
+                                Message.error(resources.messages().macroPlaybackError(), context.getError()));
             }
 
             @Override

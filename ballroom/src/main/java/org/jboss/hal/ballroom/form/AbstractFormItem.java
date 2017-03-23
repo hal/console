@@ -285,6 +285,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
+    @Override
+    public void mask() {
+        apply(SENSITIVE);
+    }
+
     private void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
     }
@@ -308,20 +313,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void setName(final String name) {
         this.name = name;
         appearances.values().forEach(a -> a.setName(name));
-    }
-
-    @Override
-    @Deprecated
-    public String getText() {
-        // TODO Remove 'extends HasText' from FormItem
-        throw new UnsupportedOperationException("Use getExpressionValue() instead");
-    }
-
-    @Override
-    @Deprecated
-    public void setText(final String text) {
-        // TODO Remove 'extends HasText' from FormItem
-        throw new UnsupportedOperationException("Use setExpressionValue() instead");
     }
 
 

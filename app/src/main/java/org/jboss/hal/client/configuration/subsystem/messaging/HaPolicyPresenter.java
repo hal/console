@@ -23,6 +23,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -169,6 +171,15 @@ public class HaPolicyPresenter
 
     void saveHaPolicy(HaPolicy haPolicy, Map<String, Object> changedValues) {
         haPolicy.save(changedValues, metadataRegistry, statementContext, crud, this::reload);
+    }
+
+    void resetHaPolicy(HaPolicy haPolicy, Form<ModelNode> form) {
+        haPolicy.reset(form, metadataRegistry, statementContext, crud, new FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(final Form<ModelNode> form) {
+                reload();
+            }
+        });
     }
 
     void resetHaPolicy() {

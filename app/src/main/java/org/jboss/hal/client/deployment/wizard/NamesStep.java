@@ -39,13 +39,13 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     private final Environment environment;
 
     public NamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
-        super(Ids.UPLOAD_NAMES_STEP, resources.constants().specifyNames());
+        super(resources.constants().specifyNames());
         this.environment = environment;
 
         nameItem = new NameItem();
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.UPLOAD_NAMES_FORM, metadata)
                 .unboundFormItem(nameItem, 0)
-                .addFromRequestProperties()
+                .fromRequestProperties()
                 .unsorted()
                 .include(RUNTIME_NAME);
         if (environment.isStandalone()) {
@@ -71,7 +71,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     protected void onShow(final UploadContext context) {
         String filename = context.file.getName();
 
-        form.add(new ModelNode());
+        form.edit(new ModelNode());
         nameItem.setValue(filename);
         nameItem.setUndefined(false);
         form.getFormItem(RUNTIME_NAME).setValue(filename);

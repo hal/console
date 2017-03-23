@@ -15,23 +15,23 @@
  */
 package org.jboss.hal.client.deployment;
 
-import org.jboss.hal.dmr.ModelNode;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
 /**
  * @author Harald Pehl
  */
-public class Subdeployment extends ModelNode {
+class Subdeployment extends ModelNode {
 
     private final Deployment parent;
     private final String name;
     private final List<Subsystem> subsystems;
 
-    public Subdeployment(final Deployment parent, final String name, final ModelNode node) {
+    Subdeployment(final Deployment parent, final String name, final ModelNode node) {
         this.parent = parent;
         this.name = name;
         this.subsystems = new ArrayList<>();
@@ -55,7 +55,11 @@ public class Subdeployment extends ModelNode {
         return parent;
     }
 
-    public List<Subsystem> getSubsystems() {
+    List<Subsystem> getSubsystems() {
         return subsystems;
+    }
+
+    boolean hasSubsystem(String name) {
+        return subsystems.stream().anyMatch(subsystem -> name.equals(subsystem.getName()));
     }
 }

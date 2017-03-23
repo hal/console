@@ -164,7 +164,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getError());
+                            callback.onFailure(context.getException());
                         }
 
                         @Override
@@ -307,8 +307,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                 @Override
                                 public void onFailure(final FunctionContext functionContext) {
                                     wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name),
-                                            functionContext.getErrorMessage());
+                                            resources.messages().deploymentError(name), functionContext.getError());
                                 }
 
                                 @Override
@@ -329,8 +328,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
-                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(),
-                        context.getErrorMessage()));
+                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(), context.getError()));
             }
 
             @Override

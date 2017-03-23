@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.Property;
 public class ResourceAddress extends ModelNode {
 
     public static ResourceAddress root() {
+        // Do not replace this with a static constant! In most cases the returned address is modified somehow.
         return new ResourceAddress();
     }
 
