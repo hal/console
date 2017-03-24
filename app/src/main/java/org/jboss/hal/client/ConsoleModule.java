@@ -29,7 +29,9 @@ import org.jboss.hal.client.configuration.ConfigurationView;
 import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
+import org.jboss.hal.client.configuration.Mbui_SocketBindingGroupView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
+import org.jboss.hal.client.configuration.SocketBindingGroupPresenter;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView_Provider;
@@ -142,7 +144,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
-public class AppModule extends AbstractTemplatedPresenterModule {
+public class ConsoleModule extends AbstractTemplatedPresenterModule {
 
     @Override
     protected void configure() {
@@ -470,6 +472,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ServletContainerPresenter.MyView.class,
                 ServletContainerView.class,
                 ServletContainerPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(SocketBindingGroupPresenter.class,
+                SocketBindingGroupPresenter.MyView.class,
+                Mbui_SocketBindingGroupView_Provider.class,
+                SocketBindingGroupPresenter.MyProxy.class);
 
         bindPresenter(StandaloneDeploymentPresenter.class,
                 StandaloneDeploymentPresenter.MyView.class,

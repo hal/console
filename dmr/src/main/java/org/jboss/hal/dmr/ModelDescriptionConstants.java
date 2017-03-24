@@ -118,6 +118,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_BINDINGS = "default-bindings";
     String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
+    String DEFAULT_INTERFACE = "default-interface";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
@@ -176,9 +177,11 @@ public interface ModelDescriptionConstants {
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
+    String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_CONNECTOR = "http-connector";
     String HTTP_LISTENER = "http-listener";
+    String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";
 
     String ID_COLUMN = "id-column";
@@ -231,6 +234,8 @@ public interface ModelDescriptionConstants {
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
     String MANAGEMENT = "management";
+    String MANAGEMENT_HTTP = "management-http";
+    String MANAGEMENT_HTTPS = "management-https";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
@@ -272,6 +277,7 @@ public interface ModelDescriptionConstants {
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
     String PORT = "port";
+    String PORT_OFFSET = "port-offset";
     String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";

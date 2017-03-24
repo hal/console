@@ -190,7 +190,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     PlaceRequest sbgPlaceRequest = places
                             .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
                                     .append(Ids.CONFIGURATION, Ids.asId(Names.SOCKET_BINDINGS))
-                                    .append(Ids.SOCKET_BINDING, sbg))
+                                    .append(Ids.SOCKET_BINDING_GROUP, sbg))
                             .build();
                     String token = places.historyToken(sbgPlaceRequest);
                     return new PreviewAttribute(Names.SOCKET_BINDING_GROUP, sbg, token);

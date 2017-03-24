@@ -81,7 +81,7 @@ public interface NameTokens {
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
     String SERVER_STATUS = "server-status";
-    String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
+    String SOCKET_BINDING_GROUP = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
     String UNDERTOW = "undertow";

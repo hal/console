@@ -48,7 +48,7 @@ class ServerGroupPreview extends PreviewContent<ServerGroup> {
         PlaceRequest sbgPlaceRequest = places
                 .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
                         .append(Ids.CONFIGURATION, Ids.asId(Names.SOCKET_BINDINGS))
-                        .append(Ids.SOCKET_BINDING, serverGroup.get(SOCKET_BINDING_GROUP).asString()))
+                        .append(Ids.SOCKET_BINDING_GROUP, serverGroup.get(SOCKET_BINDING_GROUP).asString()))
                 .build();
         String sbgHref = places.historyToken(sbgPlaceRequest);
 

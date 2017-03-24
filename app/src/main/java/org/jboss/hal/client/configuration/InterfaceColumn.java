@@ -25,7 +25,9 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -38,39 +40,44 @@ import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INET_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @Column(Ids.INTERFACE)
 @Requires(InterfacePresenter.ROOT_ADDRESS)
-public class InterfaceColumn extends FinderColumn<Property> {
+public class InterfaceColumn extends FinderColumn<NamedNode> {
 
     @Inject
     public InterfaceColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final Places places,
+            final Dispatcher dispatcher,
             final CrudOperations crud) {
 
-        super(new Builder<Property>(finder, Ids.INTERFACE, Names.INTERFACE)
+        super(new Builder<NamedNode>(finder, Ids.INTERFACE, Names.INTERFACE)
                 .columnAction(columnActionFactory.add(
                         Ids.INTERFACE_ADD,
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
                         singletonList(INET_ADDRESS)))
                 .columnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH))
-                .itemsProvider((context, callback) -> crud
-                        .readChildren(ResourceAddress.root(), INTERFACE, callback::onSuccess))
-                .useFirstActionAsBreadcrumbHandler());
+                .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), INTERFACE,
+                        result -> callback.onSuccess(asNamedNodes(result))))
+                .useFirstActionAsBreadcrumbHandler()
+                .onPreview(item -> new InterfacePreview(item, dispatcher, places))
+        );
 
-        setItemRenderer(property -> new ItemDisplay<Property>() {
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getTitle() {
-                return property.getName();
+                return item.getName();
             }
 
             @Override
-            public List<ItemAction<Property>> actions() {
+            public List<ItemAction<NamedNode>> actions() {
                 return asList(
-                        itemActionFactory.view(NameTokens.INTERFACE, NAME, property.getName()),
-                        itemActionFactory.remove(Names.INTERFACE, property.getName(), InterfacePresenter.ROOT_TEMPLATE,
+                        itemActionFactory.view(NameTokens.INTERFACE, NAME, item.getName()),
+                        itemActionFactory.remove(Names.INTERFACE, item.getName(), InterfacePresenter.ROOT_TEMPLATE,
                                 InterfaceColumn.this));
             }
         });

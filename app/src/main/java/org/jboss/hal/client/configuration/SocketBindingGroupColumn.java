@@ -25,7 +25,9 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -40,37 +42,40 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.SOCKET_BINDING)
-@Requires(SocketBindingPresenter.ROOT_ADDRESS)
-public class SocketBindingColumn extends FinderColumn<Property> {
+@AsyncColumn(Ids.SOCKET_BINDING_GROUP)
+@Requires(SocketBindingGroupPresenter.ROOT_ADDRESS)
+public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public SocketBindingColumn(final Finder finder,
+    public SocketBindingGroupColumn(final Finder finder,
+            final Places places,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final CrudOperations crud) {
 
-        super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING, Names.SOCKET_BINDING)
+        super(new FinderColumn.Builder<NamedNode>(finder, Ids.SOCKET_BINDING_GROUP, Names.SOCKET_BINDING_GROUP)
                 .columnAction(columnActionFactory.add(
-                        Ids.SOCKET_BINDING_ADD,
-                        Names.SOCKET_BINDING,
-                        SocketBindingPresenter.ROOT_TEMPLATE))
-                .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_REFRESH))
-                .itemsProvider((context, callback) -> crud
-                        .readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, callback::onSuccess)));
+                        Ids.SOCKET_BINDING_GROUP_ADD,
+                        Names.SOCKET_BINDING_GROUP,
+                        SocketBindingGroupPresenter.ROOT_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH))
+                .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, 1,
+                        result -> callback.onSuccess(ModelNodeHelper.asNamedNodes(result))))
+                .onPreview((socketBinding) -> new SocketBindingGroupPreview(socketBinding, places))
+        );
 
-        setItemRenderer(property -> new ItemDisplay<Property>() {
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getTitle() {
-                return property.getName();
+                return item.getName();
             }
 
             @Override
-            public List<ItemAction<Property>> actions() {
+            public List<ItemAction<NamedNode>> actions() {
                 return asList(
-                        itemActionFactory.view(NameTokens.SOCKET_BINDING, NAME, property.getName()),
-                        itemActionFactory.remove(Names.SOCKET_BINDING, property.getName(),
-                                SocketBindingPresenter.ROOT_TEMPLATE, SocketBindingColumn.this));
+                        itemActionFactory.view(NameTokens.SOCKET_BINDING_GROUP, NAME, item.getName()),
+                        itemActionFactory.remove(Names.SOCKET_BINDING_GROUP, item.getName(),
+                                SocketBindingGroupPresenter.ROOT_TEMPLATE, SocketBindingGroupColumn.this));
             }
         });
     }

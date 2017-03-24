@@ -71,6 +71,7 @@ public interface Names {
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
+    String DEFAULT_INTERFACE = "Default Interface";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
     String DESTINATIONS = "Destinations";
@@ -105,11 +106,13 @@ public interface Names {
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
+    String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
     String HTTP_CONNECTOR = "HTTP Connector";
     String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
     String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
     String HTTP_LISTENER = "HTTP Listener";
+    String HTTPS = "HTTPS";
     String HTTPS_LISTENER = "HTTPS Listener";
 
     String IN_VM_ACCEPTOR = "In VM Acceptor";
@@ -142,6 +145,7 @@ public interface Names {
     String LONG_RUNNING = "long running";
 
     String MAIL_SESSION = "Mail Session";
+    String MANAGEMENT = "Management";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPING_MODULE = "Mapping Module";
@@ -155,7 +159,6 @@ public interface Names {
 
     String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
-    String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
@@ -166,6 +169,7 @@ public interface Names {
     String PATTERN = "Pattern";
     String PERSISTENCE = "Persistence";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
+    String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
     String PROFILE = "Profile";
@@ -196,6 +200,7 @@ public interface Names {
     String RUNTIME = "Runtime";
 
     String SECOND_LEVEL_CACHE = "Second Level Cache";
+    String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY_DOMAIN = "Security Domain";
     String SECURITY_SETTING = "Security Setting";
     String SERVER = "Server";
@@ -211,6 +216,7 @@ public interface Names {
     String SLAVE = "Slave";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
+    String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";

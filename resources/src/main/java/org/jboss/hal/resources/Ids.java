@@ -455,9 +455,9 @@ public interface Ids {
     String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
-    String SOCKET_BINDING = "socket-binding";
-    String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
-    String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
+    String SOCKET_BINDING_GROUP = "socket-binding-group";
+    String SOCKET_BINDING_GROUP_ADD = build(SOCKET_BINDING_GROUP, ADD_SUFFIX);
+    String SOCKET_BINDING_GROUP_REFRESH = build(SOCKET_BINDING_GROUP, REFRESH_SUFFIX);
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
