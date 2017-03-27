@@ -412,7 +412,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.value = null;
         this.expressionValue = expressionValue;
 
-        appearances.values().forEach(a -> a.showExpression(expressionValue));
+        appearances.values().forEach(a -> {
+            a.unapply(DEFAULT);
+            a.showExpression(expressionValue);
+        });
         toggleExpressionSupport(expressionValue);
     }
 

@@ -458,6 +458,9 @@ public interface Ids {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = build(SOCKET_BINDING_GROUP, ADD_SUFFIX);
     String SOCKET_BINDING_GROUP_REFRESH = build(SOCKET_BINDING_GROUP, REFRESH_SUFFIX);
+    String SOCKET_BINDING_GROUP_INBOUND = build(SOCKET_BINDING_GROUP, "inbound");
+    String SOCKET_BINDING_GROUP_OUTBOUND_LOCAL = build(SOCKET_BINDING_GROUP, "outbound-local");
+    String SOCKET_BINDING_GROUP_OUTBOUND_REMOTE = build(SOCKET_BINDING_GROUP, "outbound-remote");
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";

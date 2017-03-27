@@ -190,6 +190,7 @@ public interface ModelDescriptionConstants {
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
+    String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
     String INCLUDE_ALL = "include-all";
     String INCLUDE_DEFAULTS = "include-defaults";
@@ -221,6 +222,7 @@ public interface ModelDescriptionConstants {
     String LIST_REMOVE = "list-remove";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
+    String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
     String LOGGING = "logging";
@@ -314,6 +316,7 @@ public interface ModelDescriptionConstants {
     String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";
+    String REMOTE_DESTINATION_OUTBOUND_SOCKET_BINDING = "remote-destination-outbound-socket-binding";
     String RELAY = "relay";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_COMMAND = "remote-command";
@@ -378,6 +381,7 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_SLAVE = "shared-store-slave";
     String SINCE = "since";
     String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_REF = "socket-binding-ref";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";

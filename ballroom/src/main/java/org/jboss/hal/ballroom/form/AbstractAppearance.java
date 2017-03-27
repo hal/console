@@ -49,6 +49,12 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     AbstractAppearance(final Set<Decoration> supportedDecorations) {
         this.supportedDecorations = new HashSet<>(supportedDecorations);
         this.appliedDecorations = new HashSet<>();
+        applyDefaults(appliedDecorations);
+    }
+
+    protected void applyDefaults(final Set<Decoration> appliedDecorations) {
+        // all appearances are enabled by default
+        appliedDecorations.add(Decoration.ENABLED);
     }
 
     /**

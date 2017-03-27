@@ -27,11 +27,7 @@ import org.jboss.hal.resources.UIConstants;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
-import static org.jboss.hal.ballroom.form.Decoration.HINT;
-import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
-import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
-import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
+import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 

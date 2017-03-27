@@ -61,6 +61,7 @@ public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
                 .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH))
                 .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, 1,
                         result -> callback.onSuccess(ModelNodeHelper.asNamedNodes(result))))
+                .useFirstActionAsBreadcrumbHandler()
                 .onPreview((socketBinding) -> new SocketBindingGroupPreview(socketBinding, places))
         );
 

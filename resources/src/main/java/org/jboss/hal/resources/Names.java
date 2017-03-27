@@ -117,6 +117,8 @@ public interface Names {
 
     String IN_VM_ACCEPTOR = "In VM Acceptor";
     String IN_VM_CONNECTOR = "In VM Connector";
+    String INBOUND = "Inbound";
+    String INCLUDES = "Includes";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String INVALIDATION_CACHE = "Invalidation Cache";
@@ -162,6 +164,8 @@ public interface Names {
     String NYI = "not yet implemented";
 
     String OUTBOUND_CONNECTION = "Outbound Connection";
+    String OUTBOUND_LOCAL = "Outbound Local";
+    String OUTBOUND_REMOTE = "Outbound Remote";
 
     String PARTITION_HANDLING = "Partition Handling";
     String PATCHING = "Patching";

@@ -16,10 +16,122 @@
   ~ limitations under the License.
   -->
 <view>
-    <metadata address="/socket-binding-group=*">
-        <h1>Socket Binding Group</h1>
-        <p>{{metadata.getDescription().getDescription()}}</p>
-        <form id="socket-binding-group-form" title="SocketBinding Group" auto-save="true" reset="true"
-              name-resolver="{{form.getModel().getName()}}"/>
-    </metadata>
+    <vertical-navigation id="socket-binding-group-vertical-navigation">
+
+        <item id="socket-binding-group-configuration-item" title="Configuration" icon="pficon pficon-settings">
+            <metadata address="/socket-binding-group=*">
+                <h1>Socket Binding Group</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="socket-binding-group-configuration-form" title="SocketBinding Group"
+                      on-save="{{presenter.saveSocketBindingGroup(changedValues)}}"
+                      prepare-reset="{{presenter.resetSocketBindingGroup(form)}}">
+                    <attributes>
+                        <attribute name="default-interface"/>
+                        <attribute name="includes"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="socket-binding-group-inbound-item" title="Inbound" icon="fa fa-arrow-circle-o-left">
+            <metadata address="/socket-binding-group=*/socket-binding=*">
+                <h1>Inbound</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="socket-binding-group-inbound-table" title="Inbound"
+                       form-ref="socket-binding-group-inbound-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addSocketBinding(SocketBinding.INBOUND)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeSocketBinding(SocketBinding.INBOUND, api.selectedRow().getName())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="port" value='{{row.get("port").asString()}}'/>
+                    </columns>
+                </table>
+                <form id="socket-binding-group-inbound-form" title="Inbound"
+                      on-save="{{presenter.saveSocketBinding(SocketBinding.INBOUND, form, changedValues)}}"
+                      prepare-reset="{{presenter.resetSocketBinding(SocketBinding.INBOUND, form)}}">
+                    <attributes>
+                        <attribute name="interface"/>
+                        <attribute name="port"/>
+                        <attribute name="fixed-port"/>
+                        <attribute name="multicast-address"/>
+                        <attribute name="multicast-port"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="socket-binding-group-outbound-local-item" title="Outbound Local" icon="fa fa-arrow-circle-o-right">
+            <metadata address="/socket-binding-group=*/local-destination-outbound-socket-binding=*">
+                <h1>Outbound Local</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="socket-binding-group-outbound-local-table" title="Outbound Local"
+                       form-ref="socket-binding-group-outbound-local-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addSocketBinding(SocketBinding.OUTBOUND_LOCAL)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_LOCAL, api.selectedRow().getName())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="socket-binding-group-outbound-local-form" title="Outbound Local"
+                      on-save="{{presenter.saveSocketBinding(SocketBinding.OUTBOUND_LOCAL, form, changedValues)}}"
+                      prepare-reset="{{presenter.resetSocketBinding(SocketBinding.OUTBOUND_LOCAL, form)}}">
+                    <attributes>
+                        <attribute name="socket-binding-ref">
+                            <suggest-handler>
+                                <templates>
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="source-interface"/>
+                        <attribute name="source-port"/>
+                        <attribute name="fixed-source-port"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="socket-binding-group-outbound-remote-item" title="Outbound Remote" icon="fa fa-arrow-circle-right">
+            <metadata address="/socket-binding-group=*/remote-destination-outbound-socket-binding=*">
+                <h1>Outbound Remote</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="socket-binding-group-outbound-remote-table" title="Outbound Remote"
+                       form-ref="socket-binding-group-outbound-remote-form">
+                    <actions>
+                        <action title="{{mbuiContext.resources().constants().add()}}"
+                                handler="{{presenter.addSocketBinding(SocketBinding.OUTBOUND_REMOTE)}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}"
+                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_REMOTE, api.selectedRow().getName())}}"
+                                scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                        <column name="host" value='{{row.get("host").asString()}}'/>
+                        <column name="port" value='{{row.get("port").asString()}}'/>
+                    </columns>
+                </table>
+                <form id="socket-binding-group-outbound-remote-form" title="Outbound Remote"
+                      on-save="{{presenter.saveSocketBinding(SocketBinding.OUTBOUND_REMOTE, form, changedValues)}}"
+                      prepare-reset="{{presenter.resetSocketBinding(SocketBinding.OUTBOUND_REMOTE, form)}}">
+                    <attributes>
+                        <attribute name="host"/>
+                        <attribute name="port"/>
+                        <attribute name="source-interface"/>
+                        <attribute name="source-port"/>
+                        <attribute name="fixed-source-port"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+    </vertical-navigation>
 </view>

@@ -32,8 +32,7 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="batch-in-memory-job-repo-table" title="In Memory Job">
                     <actions>
-                        <action handler-ref="add-resource">
-                        </action>
+                        <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
@@ -50,8 +49,7 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="batch-jdbc-job-repo-table" title="JDBC Job Repository" form-ref="batch-jdbc-job-repo-form">
                     <actions>
-                        <action handler-ref="add-resource">
-                        </action>
+                        <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
@@ -80,8 +78,7 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="batch-thread-factory-table" title="Thread Factory" form-ref="batch-thread-factory-form">
                     <actions>
-                        <action handler-ref="add-resource">
-                        </action>
+                        <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
@@ -101,8 +98,7 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="batch-thread-pool-table" title="Thread Pool" form-ref="batch-thread-pool-form">
                     <actions>
-                        <action handler-ref="add-resource">
-                        </action>
+                        <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>

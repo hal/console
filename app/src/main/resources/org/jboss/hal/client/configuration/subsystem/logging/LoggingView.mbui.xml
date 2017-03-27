@@ -20,7 +20,7 @@
         <!--
             Logging Configuration
         -->
-        <item id="logging-config-item" title="Configuration" icon="fa fa-list-ul">
+        <item id="logging-config-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=logging">
                 <h1>Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
