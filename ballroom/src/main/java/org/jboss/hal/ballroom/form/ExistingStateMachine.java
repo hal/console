@@ -71,7 +71,6 @@ public class ExistingStateMachine extends AbstractStateMachine implements StateM
         switch (operation) {
 
             case VIEW:
-                assertState(READONLY);
                 transitionTo(READONLY);
                 break;
 

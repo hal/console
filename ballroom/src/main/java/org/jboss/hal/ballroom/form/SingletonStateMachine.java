@@ -77,7 +77,6 @@ public class SingletonStateMachine extends AbstractStateMachine implements State
         switch (operation) {
 
             case VIEW:
-                assertState(EMPTY, READONLY);
                 if (context instanceof State) {
                     transitionTo((State) context);
                 } else {
