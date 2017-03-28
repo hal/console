@@ -51,6 +51,8 @@ public interface Names {
     String CACHE_CONTAINER = "Cache Container";
     String CHANNEL = "Channel";
     String CLIENT_CONFIGURATION = "Client Configuration";
+    String CLIENT_MAPPING = "Client Mapping";
+    String CLIENT_MAPPINGS = "Client Mappings";
     String CLUSTER_CONNECTION = "Cluster Connection";
     String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
@@ -74,6 +76,7 @@ public interface Names {
     String DEFAULT_INTERFACE = "Default Interface";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
+    String DESTINATION = "Destination";
     String DESTINATIONS = "Destinations";
     String DISCOVERY_GROUP = "Discovery Group";
     String DISTRIBUTED_CACHE = "Distributed Cache";

@@ -91,6 +91,7 @@ public interface ModelDescriptionConstants {
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
     String CLIENT_CONFIG = "client-config";
+    String CLIENT_MAPPINGS = "client-mappings";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPONENT = "component";
@@ -126,6 +127,8 @@ public interface ModelDescriptionConstants {
     String DEPLOYMENT_SCANNER = "deployment-scanner";
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
+    String DESTINATION_ADDRESS = "destination-address";
+    String DESTINATION_PORT = "destination-port";
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
@@ -160,6 +163,7 @@ public interface ModelDescriptionConstants {
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILTER_REF = "filter-ref";
+    String FIXED_PORT = "fixed-port";
     String FORK = "fork";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
@@ -196,6 +200,7 @@ public interface ModelDescriptionConstants {
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
+    String INDEX = "index";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
     String INTERFACE = "interface";
@@ -255,6 +260,8 @@ public interface ModelDescriptionConstants {
     String MODULE = "module";
     String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
+    String MULTICAST_ADDRESS = "multicast-address";
+    String MULTICAST_PORT = "multicast-port";
 
     String NAME = "name";
     String NILLABLE = "nillable";
@@ -385,6 +392,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
+    String SOURCE_NETWORK = "source-network";
     String SHUTDOWN = "shutdown";
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";

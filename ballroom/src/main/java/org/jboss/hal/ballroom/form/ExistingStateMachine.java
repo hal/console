@@ -54,8 +54,10 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  */
 public class ExistingStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public ExistingStateMachine() {
-        super(EnumSet.of(READONLY, EDITING), EnumSet.of(VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL));
+    public ExistingStateMachine(final boolean supportsReset) {
+        super(EnumSet.of(READONLY, EDITING), supportsReset
+                ? EnumSet.of(VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL)
+                : EnumSet.of(VIEW, CLEAR, EDIT, SAVE, CANCEL));
         this.current = initial();
     }
 

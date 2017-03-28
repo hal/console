@@ -90,6 +90,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         final List<UnboundFormItem> unboundFormItems;
         boolean readOnly;
         boolean addOnly;
+        boolean noReset;
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
@@ -117,6 +118,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.unboundFormItems = new ArrayList<>();
             this.readOnly = false;
             this.addOnly = false;
+            this.noReset = false;
             this.unsorted = false;
             this.requiredOnly = false;
             this.includeRuntime = false;
@@ -180,6 +182,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         public Builder<T> readOnly() {
             this.readOnly = true;
+            return this;
+        }
+
+        public Builder<T> noReset() {
+            this.noReset = true;
             return this;
         }
 
@@ -335,7 +342,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             } else if (singleton) {
                 return new SingletonStateMachine();
             } else {
-                return new ExistingStateMachine();
+                return new ExistingStateMachine(!noReset);
             }
         }
 

@@ -15,7 +15,10 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -24,10 +27,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -38,7 +43,10 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -49,11 +57,13 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_REF;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -69,15 +79,17 @@ public class SocketBindingGroupPresenter
     public interface MyProxy extends ProxyPlace<SocketBindingGroupPresenter> {}
 
     public interface MyView extends MbuiView<SocketBindingGroupPresenter> {
+        void reveal();
         void update(NamedNode socketBindingGroup);
+        void showClientMappings(List<NamedNode> clientMappings);
     }
     // @formatter:on
 
 
     static final String ROOT_ADDRESS = "/socket-binding-group=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final String SELECTED_ADDRESS = "/socket-binding-group=" + SelectionAwareStatementContext.SELECTION_EXPRESSION;
-    static final AddressTemplate SELECTED_TEMPLATE = AddressTemplate.of(SELECTED_ADDRESS);
+    private static final String SELECTED_ADDRESS = "/socket-binding-group=" + SelectionAwareStatementContext.SELECTION_EXPRESSION;
+    private static final AddressTemplate SELECTED_TEMPLATE = AddressTemplate.of(SELECTED_ADDRESS);
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
@@ -85,6 +97,7 @@ public class SocketBindingGroupPresenter
     private final StatementContext statementContext;
     private final Resources resources;
     private String socketBindingGroup;
+    String inbound;
 
     @Inject
     public SocketBindingGroupPresenter(final EventBus eventBus,
@@ -111,6 +124,12 @@ public class SocketBindingGroupPresenter
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().reveal();
+    }
+
+    @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         socketBindingGroup = request.getParameter(NAME, null);
@@ -130,8 +149,11 @@ public class SocketBindingGroupPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(ROOT_TEMPLATE.resolve(statementContext, socketBindingGroup),
-                result -> getView().update(new NamedNode(result)));
+        reload(result -> getView().update(new NamedNode(result)));
+    }
+
+    private void reload(Consumer<ModelNode> consumer) {
+        crud.readRecursive(SELECTED_TEMPLATE.resolve(statementContext), consumer::accept);
     }
 
 
@@ -204,5 +226,77 @@ public class SocketBindingGroupPresenter
         ResourceAddress address = SELECTED_TEMPLATE.append(socketBinding.templateSuffix())
                 .resolve(statementContext, name);
         crud.remove(socketBinding.type, name, address, this::reload);
+    }
+
+
+    // ------------------------------------------------------ client mappings
+
+    void addClientMapping(Metadata metadata) {
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_ADD,
+                metadata)
+                .addOnly()
+                .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
+                .unsorted()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.CLIENT_MAPPINGS),
+                form, (name, modelNode) -> {
+            ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
+                    .resolve(statementContext, inbound);
+            Operation operation = new Operation.Builder(LIST_ADD, address)
+                    .param(NAME, CLIENT_MAPPINGS)
+                    .param(VALUE, modelNode)
+                    .build();
+            dispatcher.execute(operation, result -> reloadClientMappings());
+        });
+        dialog.show();
+    }
+
+    private void reloadClientMappings() {
+        ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix()).resolve(statementContext, inbound);
+        crud.readRecursive(address, result -> showClientMappings(new NamedNode(result)));
+    }
+
+    void showClientMappings(NamedNode inbound) {
+        this.inbound = inbound.getName();
+        List<ModelNode> clientMappings = inbound.hasDefined(CLIENT_MAPPINGS)
+                ? inbound.get(CLIENT_MAPPINGS).asList()
+                : emptyList();
+        int index = 0;
+        List<NamedNode> indexAsName = new ArrayList<>();
+        for (ModelNode clientMapping : clientMappings) {
+            clientMapping.get(INDEX).set(index);
+            indexAsName.add(new NamedNode(String.valueOf(index), clientMapping));
+            index++;
+        }
+        getView().showClientMappings(indexAsName);
+    }
+
+    void saveClientMapping(Metadata metadata, ModelNode clientMapping, Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix()).resolve(statementContext, inbound);
+        OperationFactory operationFactory = new OperationFactory(
+                name -> CLIENT_MAPPINGS + "[" + clientMapping.get(INDEX).asInt() + "]." + name);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        dispatcher.execute(operations, (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifySingleResourceSuccess(Names.CLIENT_MAPPING)));
+            reloadClientMappings();
+        });
+    }
+
+    void removeClientMapping(final int index) {
+        DialogFactory.showConfirmation(resources.messages().removeConfirmationTitle(Names.CLIENT_MAPPING),
+                resources.messages().removeSingletonConfirmationQuestion(), () -> {
+                    ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
+                            .resolve(statementContext, inbound);
+                    Operation operation = new Operation.Builder(LIST_REMOVE, address)
+                            .param(NAME, CLIENT_MAPPINGS)
+                            .param(INDEX, index)
+                            .build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(getEventBus(), Message.success(
+                                resources.messages().removeSingletonResourceSuccess(Names.CLIENT_MAPPING)));
+                        reloadClientMappings();
+                    });
+                });
     }
 }

@@ -33,38 +33,6 @@
             </metadata>
         </item>
 
-        <item id="socket-binding-group-inbound-item" title="Inbound" icon="fa fa-arrow-circle-o-left">
-            <metadata address="/socket-binding-group=*/socket-binding=*">
-                <h1>Inbound</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="socket-binding-group-inbound-table" title="Inbound"
-                       form-ref="socket-binding-group-inbound-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addSocketBinding(SocketBinding.INBOUND)}}"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeSocketBinding(SocketBinding.INBOUND, api.selectedRow().getName())}}"
-                                scope="selected"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                        <column name="port" value='{{row.get("port").asString()}}'/>
-                    </columns>
-                </table>
-                <form id="socket-binding-group-inbound-form" title="Inbound"
-                      on-save="{{presenter.saveSocketBinding(SocketBinding.INBOUND, form, changedValues)}}"
-                      prepare-reset="{{presenter.resetSocketBinding(SocketBinding.INBOUND, form)}}">
-                    <attributes>
-                        <attribute name="interface"/>
-                        <attribute name="port"/>
-                        <attribute name="fixed-port"/>
-                        <attribute name="multicast-address"/>
-                        <attribute name="multicast-port"/>
-                    </attributes>
-                </form>
-            </metadata>
-        </item>
-
         <item id="socket-binding-group-outbound-local-item" title="Outbound Local" icon="fa fa-arrow-circle-o-right">
             <metadata address="/socket-binding-group=*/local-destination-outbound-socket-binding=*">
                 <h1>Outbound Local</h1>
