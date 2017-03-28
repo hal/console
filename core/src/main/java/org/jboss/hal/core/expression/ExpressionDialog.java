@@ -17,6 +17,7 @@ package org.jboss.hal.core.expression;
 
 import java.util.Map;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -56,7 +57,7 @@ public class ExpressionDialog {
     private final Resources resources;
     private final Alert alert;
     private final Form<ModelNode> form;
-    private final StaticItem standaloneValue;
+    private final StaticItem resolvedValue;
     private final Dialog dialog;
 
     public ExpressionDialog(final ExpressionResolver expressionResolver, final Environment environment,
@@ -73,12 +74,8 @@ public class ExpressionDialog {
                 .addOnly()
                 .customFormItem("expression", attributeDescription -> new ExpressionItem(resources))
                 .onSave((f, changedValues) -> resolve(f.getModel()));
-        if (standalone) {
-            standaloneValue = new StaticItem(VALUE, resources.constants().resolvedValue());
-            builder.unboundFormItem(standaloneValue);
-        } else {
-            standaloneValue = null;
-        }
+        resolvedValue = new StaticItem(VALUE, resources.constants().resolvedValue());
+        builder.unboundFormItem(resolvedValue);
         form = builder.build();
 
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
@@ -137,8 +134,10 @@ public class ExpressionDialog {
             expressionResolver.resolve(expression, new AsyncCallback<Map<String, String>>() {
                 @Override
                 public void onSuccess(final Map<String, String> result) {
-                    String v = result.getOrDefault(Server.STANDALONE.getName(), Names.NOT_AVAILABLE);
-                    standaloneValue.setValue(v);
+                    String v = standalone
+                            ? result.getOrDefault(Server.STANDALONE.getName(), Names.NOT_AVAILABLE)
+                            : Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(result);
+                    resolvedValue.setValue(v);
                     Elements.setVisible(alert.asElement(), false);
                 }
 
@@ -156,8 +155,6 @@ public class ExpressionDialog {
     }
 
     private void clearValue() {
-        if (standalone) {
-            standaloneValue.clearValue();
-        }
+        resolvedValue.clearValue();
     }
 }
