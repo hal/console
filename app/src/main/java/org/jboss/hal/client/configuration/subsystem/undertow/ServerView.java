@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental.dom.Element;
@@ -65,8 +66,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
-    private final Form<ModelNode> accessLogForm;
-    private final Form<ModelNode> singleSignOnForm;
+    private final Map<HostSetting,Form<ModelNode>> hostSettingForms;
     private final NamedNodeTable<NamedNode> filterRefTable;
     private final Form<NamedNode> filterRefForm;
     private final NamedNodeTable<NamedNode> locationTable;
@@ -132,15 +132,16 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetHost(form.getModel().getName(), form))
                 .build();
 
-        accessLogForm = hostSetting(HostSetting.ACCESS_LOG);
-        singleSignOnForm = hostSetting(HostSetting.SINGLE_SIGN_ON);
+        hostSettingForms = new EnumMap<>(HostSetting.class);
+        for (HostSetting setting : HostSetting.values()) {
+            hostSettingForms.put(setting, hostSetting(setting));
+        }
 
         Tabs tabs = new Tabs();
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
-        tabs.add(Ids.build(HostSetting.ACCESS_LOG.baseId, Ids.TAB_SUFFIX), HostSetting.ACCESS_LOG.type,
-                accessLogForm.asElement());
-        tabs.add(Ids.build(HostSetting.SINGLE_SIGN_ON.baseId, Ids.TAB_SUFFIX), HostSetting.SINGLE_SIGN_ON.type,
-                singleSignOnForm.asElement());
+        for (HostSetting setting : HostSetting.values()) {
+            tabs.add(Ids.build(setting.baseId, Ids.TAB_SUFFIX), setting.type, hostSettingForms.get(setting).asElement());
+        }
 
         // @formatter:off
         Element hostSection = new Elements.Builder()
@@ -272,8 +273,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 hostTable, hostForm,
                 filterRefTable, filterRefForm,
                 locationTable, locationForm,
-                locationFilterRefTable, locationFilterRefForm,
-                accessLogForm, singleSignOnForm);
+                locationFilterRefTable, locationFilterRefForm);
+        registerAttachables(hostSettingForms.values());
         listener.values().forEach(element -> registerAttachable(element));
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
@@ -304,12 +305,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         hostTable.api().onSelectionChange(api -> {
             if (api.hasSelection()) {
                 presenter.selectHost(api.selectedRow().getName());
-                accessLogForm.view(failSafeGet(api.selectedRow(), HostSetting.ACCESS_LOG.path()));
-                singleSignOnForm.view(failSafeGet(api.selectedRow(), HostSetting.SINGLE_SIGN_ON.path()));
+                for (HostSetting setting : HostSetting.values()) {
+                    hostSettingForms.get(setting).view(failSafeGet(api.selectedRow(), setting.path()));
+                }
             } else {
                 presenter.selectHost(null);
-                accessLogForm.clear();
-                singleSignOnForm.clear();
+                hostSettingForms.values().forEach(Form::clear);
             }
         });
 

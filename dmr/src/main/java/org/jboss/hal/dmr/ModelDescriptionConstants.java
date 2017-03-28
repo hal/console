@@ -184,6 +184,7 @@ public interface ModelDescriptionConstants {
     String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_CONNECTOR = "http-connector";
+    String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
     String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";

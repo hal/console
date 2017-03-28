@@ -114,6 +114,7 @@ public interface Names {
     String HTTP_CONNECTOR = "HTTP Connector";
     String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
     String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
+    String HTTP_INVOKER = "HTTP Invoker";
     String HTTP_LISTENER = "HTTP Listener";
     String HTTPS = "HTTPS";
     String HTTPS_LISTENER = "HTTPS Listener";
