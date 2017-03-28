@@ -30,8 +30,10 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.Mbui_SocketBindingGroupView_Provider;
+import org.jboss.hal.client.configuration.Mbui_SystemPropertiesView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.SocketBindingGroupPresenter;
+import org.jboss.hal.client.configuration.SystemPropertiesPresenter;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView_Provider;
@@ -482,6 +484,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 StandaloneDeploymentPresenter.MyView.class,
                 StandaloneDeploymentView.class,
                 StandaloneDeploymentPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(SystemPropertiesPresenter.class,
+                SystemPropertiesPresenter.MyView.class,
+                Mbui_SystemPropertiesView_Provider.class,
+                SystemPropertiesPresenter.MyProxy.class);
 
         bindTemplatedPresenter(TransactionPresenter.class,
                 TransactionPresenter.MyView.class,

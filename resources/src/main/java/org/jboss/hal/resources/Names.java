@@ -235,6 +235,7 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
+    String SYSTEM_PROPERTY = "System Property";
 
     String THREAD_POOL = "Thread Pool";
     String THREAD_POOLS = "Thread Pools";

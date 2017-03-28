@@ -77,6 +77,7 @@ public interface ModelDescriptionConstants {
     String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
+    String BOOT_TIME = "boot-time";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
     String BROWSE_CONTENT = "browse-content";

@@ -473,6 +473,7 @@ public interface Ids {
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
+    String SYSTEM_PROPERTY_ADD = "system-property-add";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
