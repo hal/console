@@ -114,7 +114,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
         add(new SubsystemMetadata.Builder(SECURITY, "Security")
-                .subtitle("deprecated")
+                .subtitle("legacy")
                 .nextColumn(Ids.SECURITY_DOMAIN)
                 .token(NameTokens.SECURITY_CONFIGURATION)
                 .preview(resources.previews().configurationSecurityDomains())
