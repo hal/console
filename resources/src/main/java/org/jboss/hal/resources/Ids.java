@@ -495,6 +495,7 @@ public interface Ids {
     String UNDERTOW_HOST_FILTER_REF_FORM = build(UNDERTOW_HOST, "filter-ref", FORM_SUFFIX);
     String UNDERTOW_HOST_FILTER_REF_PAGE = build(UNDERTOW_HOST, "filter-ref", PAGE_SUFFIX);
     String UNDERTOW_HOST_FILTER_REF_TABLE = build(UNDERTOW_HOST, "filter-ref", TABLE_SUFFIX);
+    String UNDERTOW_HOST_HTTP_INVOKER = build(UNDERTOW_HOST, "http-invoker");
     String UNDERTOW_HOST_LOCATION_ADD = build(UNDERTOW_HOST, "location", ADD_SUFFIX);
     String UNDERTOW_HOST_LOCATION_FORM = build(UNDERTOW_HOST, "location", FORM_SUFFIX);
     String UNDERTOW_HOST_LOCATION_PAGE = build(UNDERTOW_HOST, "location", PAGE_SUFFIX);

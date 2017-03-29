@@ -25,6 +25,7 @@ import org.jboss.hal.resources.Names;
 enum HostSetting {
 
     ACCESS_LOG(Ids.UNDERTOW_HOST_ACCESS_LOG, Names.ACCESS_LOG, ModelDescriptionConstants.ACCESS_LOG),
+    HTTP_INVOKER(Ids.UNDERTOW_HOST_HTTP_INVOKER, Names.HTTP_INVOKER, ModelDescriptionConstants.HTTP_INVOKER),
     SINGLE_SIGN_ON(Ids.UNDERTOW_HOST_SINGLE_SIGN_ON, Names.SINGLE_SIGN_ON, ModelDescriptionConstants.SINGLE_SIGN_ON);
 
     final String baseId;
