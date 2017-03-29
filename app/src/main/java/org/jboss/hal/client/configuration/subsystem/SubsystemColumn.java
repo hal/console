@@ -45,6 +45,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 
 import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -151,6 +152,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         combined.add(new SubsystemMetadata.Builder(name, title).generic().build());
                     }
                 }
+                combined.sort(comparing(SubsystemMetadata::getTitle));
                 callback.onSuccess(combined);
             });
         };

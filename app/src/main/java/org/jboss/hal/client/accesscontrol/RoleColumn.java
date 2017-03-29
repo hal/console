@@ -43,6 +43,7 @@ import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveAssignmen
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveScopedRole;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;

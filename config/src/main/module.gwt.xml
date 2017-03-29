@@ -19,6 +19,8 @@
         <exclude name="rebind/**"/>
     </source>
 
+    <define-configuration-property name="hal.build" is-multi-valued="false"/>
+
     <generate-with class="org.jboss.hal.config.rebind.EnvironmentGenerator">
         <when-type-assignable class="org.jboss.hal.config.Environment"/>
     </generate-with>

@@ -38,23 +38,43 @@ public class OperationTest {
         modelNode.get(ADDRESS).set(address);
         modelNode.get(JNDI_NAME).set("java:/bar");
         modelNode.get(OPERATION_HEADERS).get("header1").set("value1");
-        modelNode.get(OPERATION_HEADERS).get(ROLES).set("Administrator");
 
         assertOperation(new Operation(modelNode));
     }
 
     @Test
     public void fromBuilder() throws Exception {
-        Operation operation = new Operation.Builder(ADD,
-                new ResourceAddress().add("subsystem", "datasources").add("data-source", "foo"))
+        ResourceAddress address = new ResourceAddress()
+                .add("subsystem", "datasources")
+                .add("data-source", "foo");
+
+        Operation operation = new Operation.Builder(ADD, address)
                 .param(JNDI_NAME, "java:/bar")
                 .header("header1", "value1")
-                .runAs("Administrator")
                 .build();
+
         assertOperation(operation);
     }
 
+    @Test
+    public void runAs() throws Exception {
+        ResourceAddress address = new ResourceAddress()
+                .add("subsystem", "datasources")
+                .add("data-source", "foo");
+
+        Operation operation = new Operation.Builder(ADD, address)
+                .param(JNDI_NAME, "java:/bar")
+                .header("header1", "value1")
+                .build();
+
+        assertOperation(operation.runAs("Administrator"), "Administrator");
+    }
+
     private void assertOperation(Operation operation) {
+        assertOperation(operation, null);
+    }
+
+    private void assertOperation(Operation operation, String runAs) {
         assertEquals(ADD, operation.getName());
         assertEquals("/subsystem=datasources/data-source=foo", operation.getAddress().toString());
 
@@ -64,13 +84,17 @@ public class OperationTest {
 
         ModelNode header = new ModelNode();
         header.get("header1").set("value1");
-        header.get(ROLES).set("Administrator");
-        assertEquals(header, operation.getHeader());
+        if (runAs != null) {
+            header.get(ROLES).set(runAs);
+            assertEquals(header, operation.getHeader());
+        }
 
-        assertEquals("Administrator", operation.getRoles().get(0));
-
-        assertEquals(
-                "/subsystem=datasources/data-source=foo:add(jndi-name=java:/bar){header1=value1,roles=Administrator}",
-                operation.asCli());
+        StringBuilder expected = new StringBuilder();
+        expected.append("/subsystem=datasources/data-source=foo:add(jndi-name=java:/bar){header1=value1");
+        if (runAs != null) {
+            expected.append(",roles=").append(runAs);
+        }
+        expected.append("}");
+        assertEquals(expected.toString(), operation.asCli());
     }
 }

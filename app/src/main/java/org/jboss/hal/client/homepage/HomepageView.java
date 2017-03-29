@@ -23,6 +23,7 @@ import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -32,7 +33,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.eapHomeRow;
 import static org.jboss.hal.resources.CSS.eapHomeTitle;
@@ -45,12 +45,12 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
     private HomepagePresenter presenter;
 
     @Inject
-    public HomepageView(Environment env, User user, Resources resources, Places places) {
+    public HomepageView(Environment environment, User user, Resources resources, Places places) {
 
-        boolean standalone = env.isStandalone();
-        boolean community = env.getInstanceInfo() == WILDFLY;
+        boolean standalone = environment.isStandalone();
+        boolean community = environment.getHalBuild() == Build.COMMUNITY;
         boolean su = user.isSuperuser() || user.isAdministrator();
-        String name = env.getInstanceInfo().productName();
+        String name = environment.getInstanceInfo().productName();
 
         Document document = Browser.getDocument();
         Iterable<HomepageSection> sections;
@@ -229,7 +229,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                     sections).asElement();
         }
 
-        help = HomepageHelp.create(env, resources).asElement();
+        help = HomepageHelp.create(environment, resources).asElement();
         Elements.Builder rootBuilder = new Elements.Builder().div()
                 .div().css(eapHomeRow)
                 .add(header)

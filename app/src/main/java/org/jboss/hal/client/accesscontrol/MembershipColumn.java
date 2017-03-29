@@ -34,6 +34,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionHandler;
 import org.jboss.hal.core.finder.Finder;

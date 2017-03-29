@@ -16,4 +16,5 @@
   -->
 <module>
     <source path="hal"/>
+    <set-configuration-property name="hal.build" value="community"/>
 </module>

@@ -18,25 +18,24 @@ package org.jboss.hal.config;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.jboss.hal.config.Role.ADMINISTRATOR;
+import static org.jboss.hal.config.Role.SUPER_USER;
+
 /**
  * @author Harald Pehl
  */
 public class User {
 
-    public static final String SUPER_USER = "SuperUser";
-    public static final String ADMINISTRATOR = "Administrator";
-    public static final User UNKNOWN = new User("Unknown", new HashSet<>()); //NON-NLS
-    private static final User current = UNKNOWN;
+    private static final User current = new User("Unknown", new HashSet<>()); //NON-NLS
 
     public static User current() {
         return current;
     }
 
-    private final Set<String> roles;
+    private final Set<Role> roles;
     private String name;
-    private String runAs;
 
-    public User(final String name, final Set<String> roles) {
+    private User(final String name, final Set<Role> roles) {
         this.name = name;
         this.roles = roles;
     }
@@ -49,17 +48,17 @@ public class User {
         this.name = name;
     }
 
-    public Set<String> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void addRole(String role) {
+    public void addRole(Role role) {
         roles.add(role);
     }
 
     public boolean isSuperuser() {
-        for (String role : roles) {
-            if (SUPER_USER.equalsIgnoreCase(role)) {
+        for (Role role : roles) {
+            if (SUPER_USER.equals(role)) {
                 return true;
             }
         }
@@ -67,19 +66,11 @@ public class User {
     }
 
     public boolean isAdministrator() {
-        for (String role : roles) {
-            if (ADMINISTRATOR.equalsIgnoreCase(role)) {
+        for (Role role : roles) {
+            if (ADMINISTRATOR.equals(role)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public String getRunAs() {
-        return runAs;
-    }
-
-    public void setRunAs(final String runAs) {
-        this.runAs = runAs;
     }
 }

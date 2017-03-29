@@ -18,10 +18,11 @@ package org.jboss.hal.dmr.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
@@ -35,7 +36,7 @@ public class Composite extends Operation implements Iterable<Operation> {
     private List<Operation> operations;
 
     public Composite(Operation first, Operation... rest) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptyList());
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
 
         add(first);
@@ -47,7 +48,7 @@ public class Composite extends Operation implements Iterable<Operation> {
     }
 
     public Composite(List<Operation> operations) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptyList());
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
 
         operations.forEach(this::add);
@@ -77,6 +78,13 @@ public class Composite extends Operation implements Iterable<Operation> {
     public boolean isEmpty() {return operations.isEmpty();}
 
     public int size() {return operations.size();}
+
+    public Composite runAs(final String runAs) {
+        List<Operation> runAsOperations = operations.stream()
+                .map(operation -> operation.runAs(runAs))
+                .collect(Collectors.toList());
+        return new Composite(runAsOperations);
+    }
 
     @Override
     public String toString() {

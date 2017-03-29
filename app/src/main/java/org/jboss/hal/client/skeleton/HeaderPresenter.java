@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
@@ -103,7 +104,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
-        void init(Environment environment, Endpoints endpoints, User user);
+        void init(Environment environment, Endpoints endpoints, Settings settings, User user);
 
         void topLevelCategoryMode();
         void applicationMode();
@@ -137,6 +138,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private final Places places;
     private final Environment environment;
     private final Endpoints endpoints;
+    private final Settings settings;
     private final User user;
     private final ServerActions serverActions;
     private final Resources resources;
@@ -153,6 +155,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             final Places places,
             final Environment environment,
             final Endpoints endpoints,
+            final Settings settings,
             final User user,
             final ServerActions serverActions,
             final Resources resources) {
@@ -161,6 +164,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         this.places = places;
         this.environment = environment;
         this.endpoints = endpoints;
+        this.settings = settings;
         this.user = user;
         this.serverActions = serverActions;
         this.resources = resources;
@@ -175,7 +179,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getView().init(environment, endpoints, user);
+        getView().init(environment, endpoints, settings, user);
 
         registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
         registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
@@ -348,6 +352,17 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     FinderContext lastFinderContext() {
         return lastFinderContext;
+    }
+
+
+    // ------------------------------------------------------ user & roles
+
+    void runAs(final String role) {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
+    void clearRunAs() {
+        Browser.getWindow().alert(Names.NYI);
     }
 
 

@@ -92,6 +92,7 @@ public interface CSS {
     String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
+    String divider = "divider";
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";
     String drawerPfAction = "drawer-pf-action";
@@ -297,6 +298,7 @@ public interface CSS {
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
+    String static_ = "static";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
     String suspended = "suspended";

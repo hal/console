@@ -15,29 +15,21 @@
  */
 package org.jboss.hal.config;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
-
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class ConfigModule extends AbstractGinModule {
+public enum Build {
+    COMMUNITY, PRODUCT;
 
-    @Override
-    protected void configure() {
-        bind(Endpoints.class).in(Singleton.class);
-        bind(Environment.class).in(Singleton.class);
-        bind(Settings.class).in(Singleton.class);
-
-        requestStaticInjection(Endpoints.class);
-        requestStaticInjection(Settings.class);
-    }
-
-    @Provides
-    public User providesCurrentUser() {
-        return User.current();
+    public static Build parse(final String value) {
+        Build build = COMMUNITY;
+        if (value != null) {
+            try {
+                build = Build.valueOf(value);
+            } catch (IllegalArgumentException ignore) {
+                // ignore
+            }
+        }
+        return build;
     }
 }

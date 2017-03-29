@@ -15,12 +15,13 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import org.jboss.hal.config.Role;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import static org.jboss.hal.client.accesscontrol.Role.Type.HOST;
-import static org.jboss.hal.client.accesscontrol.Role.Type.SERVER_GROUP;
+import static org.jboss.hal.config.Role.Type.HOST;
+import static org.jboss.hal.config.Role.Type.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXCLUDE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_SCOPED_ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;

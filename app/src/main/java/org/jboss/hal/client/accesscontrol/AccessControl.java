@@ -24,6 +24,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.Roles;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -47,6 +49,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Kind of presenter which holds code to read and parse the RBAC related management model.
+ *
+ * TODO Sync roles with environment and header
  *
  * @author Harald Pehl
  */

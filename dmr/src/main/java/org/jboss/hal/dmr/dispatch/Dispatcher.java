@@ -30,7 +30,7 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.User;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
@@ -129,7 +130,7 @@ public class Dispatcher implements RecordingHandler {
 
     private final Environment environment;
     private final Endpoints endpoints;
-    private final User user;
+    private final Settings settings;
     private final EventBus eventBus;
     private final ResponseHeadersProcessors responseHeadersProcessors;
     private final Macros macros;
@@ -137,12 +138,12 @@ public class Dispatcher implements RecordingHandler {
     private final ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Environment environment, final Endpoints endpoints, final User user,
+    public Dispatcher(final Environment environment, final Endpoints endpoints, final Settings settings,
             final EventBus eventBus, final ResponseHeadersProcessors responseHeadersProcessors,
             final Macros macros, final Resources resources) {
         this.environment = environment;
         this.endpoints = endpoints;
-        this.user = user;
+        this.settings = settings;
         this.eventBus = eventBus;
         this.responseHeadersProcessors = responseHeadersProcessors;
         this.macros = macros;
@@ -246,24 +247,24 @@ public class Dispatcher implements RecordingHandler {
             final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
+        Operation dmrOperation = runAs(operation);
 
-        // operation = injectRunAs(operation);
-        if (GetOperation.isSupported(operation.getName())) {
-            url = operationUrl(operation);
+        if (GetOperation.isSupported(dmrOperation.getName())) {
+            url = operationUrl(dmrOperation);
             method = GET;
         } else {
             url = endpoints.dmr();
             method = POST;
         }
 
-        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), getResult, callback,
+        XMLHttpRequest xhr = newDmrXhr(url, method, dmrOperation, new DmrPayloadProcessor(), getResult, callback,
                 failedCallback, exceptionCallback);
         xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
         xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         if (method == GET) {
             xhr.send();
         } else {
-            xhr.send(operation.toBase64String());
+            xhr.send(dmrOperation.toBase64String());
         }
         recordOperation(operation);
     }
@@ -282,8 +283,9 @@ public class Dispatcher implements RecordingHandler {
 
     public void upload(final File file, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
-        FormData formData = createFormData(file, operation.toBase64String());
-        uploadFormData(formData, operation, callback, failedCallback, exceptionCallback);
+        Operation uploadOperation = runAs(operation);
+        FormData formData = createFormData(file, uploadOperation.toBase64String());
+        uploadFormData(formData, uploadOperation, callback, failedCallback, exceptionCallback);
     }
 
     private native FormData createFormData(File file, String operation) /*-{
@@ -304,8 +306,9 @@ public class Dispatcher implements RecordingHandler {
 
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
-        FormData formData = createFormData(fileInput, operation.toBase64String());
-        uploadFormData(formData, operation, callback, failedCallback, exceptionCallback);
+        Operation uploadOperation = runAs(operation);
+        FormData formData = createFormData(fileInput, uploadOperation.toBase64String());
+        uploadFormData(formData, uploadOperation, callback, failedCallback, exceptionCallback);
     }
 
     private native FormData createFormData(InputElement fileInput, String operation) /*-{
@@ -327,8 +330,9 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ download
 
     public void download(final Operation operation, final SuccessCallback<String> successCallback) {
-        String url = downloadUrl(operation);
-        XMLHttpRequest request = newXhr(url, GET, operation, exceptionCallback, xhr -> {
+        Operation downloadOperation = runAs(operation);
+        String url = downloadUrl(downloadOperation);
+        XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
             int readyState = xhr.getReadyState();
             if (readyState == 4) {
                 int status = xhr.getStatus();
@@ -337,7 +341,7 @@ public class Dispatcher implements RecordingHandler {
                 if (status == 200) {
                     successCallback.onSuccess(responseText);
                 } else {
-                    handleErrorCodes(url, status, operation, exceptionCallback);
+                    handleErrorCodes(url, status, downloadOperation, exceptionCallback);
                 }
             }
         });
@@ -352,7 +356,15 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
-    // ------------------------------------------------------ urls
+    // ------------------------------------------------------ run-as and urls
+
+    private Operation runAs(Operation operation) {
+        String runAs = settings.get(RUN_AS).value();
+        if (runAs != null && !operation.getRoles().contains(runAs)) {
+            return operation.runAs(runAs);
+        }
+        return operation;
+    }
 
     private String operationUrl(Operation operation) {
         StringBuilder builder = new StringBuilder();
@@ -377,7 +389,7 @@ public class Dispatcher implements RecordingHandler {
         builder.append("?").append(OP).append("=").append(name);
 
         // 3. parameter
-        if (operation.hasParamter()) {
+        if (operation.hasParameter()) {
             operation.getParameter().asPropertyList().forEach(property -> {
                 builder.append("&").append(Browser.encodeURIComponent(property.getName()));
                 if (property.getValue().isDefined()) {

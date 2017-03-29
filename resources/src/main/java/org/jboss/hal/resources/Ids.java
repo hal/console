@@ -197,7 +197,6 @@ public interface Ids {
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
-    String HEADER_ROLES = build(HEADER, "roles");
     String HEADER_USERNAME = build(HEADER, "username");
     String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = build(HOMEPAGE, "access-control-section");

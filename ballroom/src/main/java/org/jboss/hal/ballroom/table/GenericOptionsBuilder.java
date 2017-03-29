@@ -23,10 +23,12 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Button.ActionHandler;
 import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.hal.config.Settings.Key.PAGE_LENGTH;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -54,7 +56,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.columnActions = new ColumnActions<>();
-        this.pageLength = 10;
+        this.pageLength = Settings.INSTANCE.get(PAGE_LENGTH).asInt(Settings.DEFAULT_PAGE_LENGTH);
         this.keys = true;
         this.paging = true;
         this.searching = true;

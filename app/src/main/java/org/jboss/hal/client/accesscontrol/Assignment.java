@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import org.jboss.hal.config.Role;
+
 /**
  * An assignment between a principal and a role.
  *

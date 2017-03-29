@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jboss.hal.config.Role;
+
 /**
  * @author Harald Pehl
  */

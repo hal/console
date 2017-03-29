@@ -15,6 +15,13 @@
  */
 package org.jboss.hal.config.rebind;
 
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Strings;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
@@ -24,13 +31,6 @@ import com.google.gwt.i18n.rebind.LocaleUtils;
 import com.google.gwt.i18n.shared.GwtLocale;
 import org.jboss.auto.CodeGenerator;
 import org.jboss.hal.config.Environment;
-
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.jboss.hal.config.rebind.GeneratorUtils.failSafeGetProperty;
 
@@ -68,6 +68,7 @@ public class EnvironmentGenerator extends Generator {
         if (printWriter == null) { return; }
 
         String halVersion = failSafeGetProperty(generatorContext.getPropertyOracle(), "hal.version", "n/a");
+        String halBuild = failSafeGetProperty(generatorContext.getPropertyOracle(), "hal.build", null);
         LocaleUtils localeUtils = LocaleUtils.getInstance(logger, generatorContext.getPropertyOracle(), generatorContext);
         Set<GwtLocale> locales = localeUtils.getAllCompileLocales();
         List<String> localeValues = locales.stream()
@@ -80,6 +81,7 @@ public class EnvironmentGenerator extends Generator {
             context.put("packageName", PRODUCT_INFO_PACKAGE);
             context.put("className", PRODUCT_INFO_CLASS);
             context.put("halVersion", halVersion);
+            context.put("halBuild", halBuild);
             context.put("locales", localeValues);
             return context;
         });

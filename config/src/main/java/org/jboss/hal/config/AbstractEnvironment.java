@@ -20,7 +20,6 @@ import java.util.List;
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
 import org.jboss.hal.config.semver.Version;
 
-import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
 
@@ -34,17 +33,21 @@ import static org.jboss.hal.config.OperationMode.STANDALONE;
 public abstract class AbstractEnvironment implements Environment {
 
     private final Version halVersion;
+    private final Build halBuild;
     private final List<String> locales;
     private final InstanceInfo instanceInfo;
+    private final Roles roles;
     private OperationMode operationMode;
     private String domainController;
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
 
-    protected AbstractEnvironment(final String halVersion, final List<String> locales) {
+    protected AbstractEnvironment(final String halVersion, final String halBuild, final List<String> locales) {
         this.halVersion = Version.valueOf(halVersion);
+        this.halBuild = Build.parse(halBuild);
         this.locales = locales;
-        this.instanceInfo = WILDFLY;
+        this.instanceInfo = new InstanceInfo();
+        this.roles = new Roles();
         this.operationMode = STANDALONE;
         this.domainController = null;
         this.managementVersion = Version.forIntegers(0, 0, 0);
@@ -54,6 +57,11 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public Version getHalVersion() {
         return halVersion;
+    }
+
+    @Override
+    public Build getHalBuild() {
+        return halBuild;
     }
 
     @Override
@@ -116,6 +124,11 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public void setAccessControlProvider(final AccessControlProvider accessControlProvider) {
         this.accessControlProvider = accessControlProvider;
+    }
+
+    @Override
+    public Roles getRoles() {
+        return roles;
     }
 
     @Override

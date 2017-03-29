@@ -36,7 +36,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Holds the top level items to configure the undertow subsystem.
+ * Holds the top level items to configure the elytron subsystem.
  *
  * @author Harald Pehl
  */
@@ -64,18 +64,22 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.FACTORIES_TRANSFORMERS)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
-                        .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,resources.previews().configurationElytronFactories()))
+                        .action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
+                        .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,
+                                resources.previews().configurationElytronFactories()))
                         .build(),
 
                 new StaticItem.Builder(Names.MAPPERS_DECODERS)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
+                        .action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
                         .onPreview(new PreviewContent(Names.MAPPERS_DECODERS,
                                 resources.previews().configurationElytronMappersDecoders()))
                         .build(),
 
                 new StaticItem.Builder(Names.SECURITY_REALMS)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
+                        .action(itemActionFactory.view(
+                                places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
                         .onPreview(new PreviewContent(Names.SECURITY_REALMS,
                                 resources.previews().configurationElytronSecurityRealms()))
                         .build(),

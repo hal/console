@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.config;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,29 +22,40 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import static java.util.Comparator.comparing;
+import static org.jboss.hal.config.Role.*;
 
 /**
  * Contains the list of standard roles plus the custom defined scoped roles.
  *
  * @author Harald Pehl
  */
-class Roles implements Iterable<Role> {
+public class Roles implements Iterable<Role> {
 
-    static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
-    static final Comparator<Role> BY_NAME = comparing(Role::getName);
+    public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
+    public static final Comparator<Role> BY_NAME = comparing(Role::getName);
+    public static final Set<Role> DEFAULT_ROLES = Sets.newHashSet(
+            ADMINISTRATOR,
+            AUDITOR,
+            DEPLOYER,
+            MAINTAINER,
+            MONITOR,
+            OPERATOR,
+            SUPER_USER);
 
     private final Map<String, Role> lookup;
     private final Set<Role> standardRoles;
     private final Set<Role> scopedRoles;
 
-    Roles() {
+    public Roles() {
         this.lookup = new HashMap<>();
         this.standardRoles = new HashSet<>();
         this.scopedRoles = new HashSet<>();
     }
 
-    void add(Role role) {
+    public void add(Role role) {
         if (role != null) {
             lookup.put(role.getId(), role);
             if (role.isStandard()) {
@@ -55,24 +66,28 @@ class Roles implements Iterable<Role> {
         }
     }
 
-    void clear() {
+    public void addAll(Iterable<Role> roles) {
+        roles.forEach(this::add);
+    }
+
+    public void clear() {
         lookup.clear();
         standardRoles.clear();
         scopedRoles.clear();
     }
 
-    Role get(String id) {
+    public Role get(String id) {
         if (id != null) {
             return lookup.get(id);
         }
         return null;
     }
 
-    Set<Role> standardRoles() {
+    public Set<Role> standardRoles() {
         return standardRoles;
     }
 
-    Set<Role> scopedRoles() {
+    public Set<Role> scopedRoles() {
         return scopedRoles;
     }
 

@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.config;
 
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Harald Pehl
  */
-class Role {
+public class Role {
 
-    enum Type {
+    public static final Role ADMINISTRATOR = new Role("Administrator");
+    public static final Role AUDITOR = new Role("Auditor");
+    public static final Role DEPLOYER = new Role("Deployer");
+    public static final Role MAINTAINER = new Role("Maintainer");
+    public static final Role MONITOR = new Role("Monitor");
+    public static final Role OPERATOR = new Role("Operator");
+    public static final Role SUPER_USER = new Role("SuperUser");
+
+
+    public enum Type {
         STANDARD, HOST, SERVER_GROUP
     }
 
@@ -37,11 +47,11 @@ class Role {
     private final SortedSet<String> scope;
     private boolean includeAll;
 
-    Role(String name) {
+    public Role(@NonNls final String name) {
         this(name, null, Type.STANDARD, Collections.emptySet());
     }
 
-    Role(final String name, final Role baseRole, final Type type,
+    public Role(@NonNls final String name, final Role baseRole, final Type type,
             final Iterable<String> scope) {
         this.name = name;
         this.baseRole = baseRole;
@@ -84,39 +94,39 @@ class Role {
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
 
-    String getId() {
+    public String getId() {
         return Ids.role(name);
     }
 
-    boolean isStandard() {
+    public boolean isStandard() {
         return type == Type.STANDARD;
     }
 
-    boolean isScoped() {
+    public boolean isScoped() {
         return type != Type.STANDARD;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    Role getBaseRole() {
+    public Role getBaseRole() {
         return baseRole;
     }
 
-    Type getType() {
+    public Type getType() {
         return type;
     }
 
-    SortedSet<String> getScope() {
+    public SortedSet<String> getScope() {
         return scope;
     }
 
-    boolean isIncludeAll() {
+    public boolean isIncludeAll() {
         return includeAll;
     }
 
-    void setIncludeAll(final boolean includeAll) {
+    public void setIncludeAll(final boolean includeAll) {
         this.includeAll = includeAll;
     }
 }
