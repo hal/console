@@ -390,6 +390,7 @@ public interface Ids {
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
+    String PROFILE_CLONE = build(PROFILE, "clone");
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String REMOTING = "remoting";

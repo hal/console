@@ -16,6 +16,7 @@
 package org.jboss.hal.meta;
 
 import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
@@ -30,6 +31,10 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
  * @author Harald Pehl
  */
 public class Metadata {
+
+    public static Metadata empty() {
+        return new Metadata(ROOT, RWX, new ResourceDescription(new ModelNode()), new Capabilities(null));
+    }
 
     public static Metadata staticDescription(TextResource description) {
         return Metadata.staticDescription(StaticResourceDescription.from(description));

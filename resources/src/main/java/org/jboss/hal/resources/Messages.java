@@ -66,6 +66,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseSharedStore();
     SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
+    SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
@@ -198,6 +199,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
+    String profileIncludes(String includes);
+    SafeHtml profileNotUsedInServerGroups();
+    SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
     SafeHtml propertiesHint();
 
     String recordedOperations(@PluralCount int count);

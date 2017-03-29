@@ -66,6 +66,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseTemplate();
     String clear();
     String clearMessages();
+    String clone();
+    String cloneProfile();
     String close();
     String closed();
     String committed();

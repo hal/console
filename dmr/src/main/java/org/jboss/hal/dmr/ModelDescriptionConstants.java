@@ -93,6 +93,7 @@ public interface ModelDescriptionConstants {
     String CLASS_NAME = "class-name";
     String CLIENT_CONFIG = "client-config";
     String CLIENT_MAPPINGS = "client-mappings";
+    String CLONE = "clone";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPONENT = "component";
@@ -432,6 +433,7 @@ public interface ModelDescriptionConstants {
     String TIMEOUT = "timeout";
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
+    String TO_PROFILE = "to-profile";
     String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTION = "transaction";
     String TRANSACTIONS = "transactions";
