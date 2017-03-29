@@ -312,16 +312,22 @@ public class CrudOperations {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
-                // no unbound name item!
-                ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
-                        .fromRequestProperties()
-                        .requiredOnly();
-                if (!Iterables.isEmpty(attributes)) {
-                    builder.include(attributes).unsorted();
+                boolean hasRequiredAttributes = !metadata.getDescription()
+                        .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+                if (hasRequiredAttributes || !Iterables.isEmpty(attributes)) {
+                    // no unbound name item!
+                    ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
+                            .fromRequestProperties()
+                            .requiredOnly();
+                    if (!Iterables.isEmpty(attributes)) {
+                        builder.include(attributes).unsorted();
+                    }
+                    AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
+                            builder.build(), (name, model) -> addSingleton(type, template, model, callback));
+                    dialog.show();
+                } else {
+                    addSingleton(type, template, null, callback);
                 }
-                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
-                        builder.build(), (name, model) -> addSingleton(type, template, model, callback));
-                dialog.show();
             }
         });
     }
@@ -1103,7 +1109,7 @@ public class CrudOperations {
         Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
                 .map(FormItem::getName)
                 .collect(toSet());
-        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonConfirmationQuestion(),
+        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonSuccess(type),
                 callback);
     }
 

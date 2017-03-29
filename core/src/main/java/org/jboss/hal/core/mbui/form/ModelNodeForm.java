@@ -333,7 +333,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             } else if (readOnly) {
                 return new ReadOnlyStateMachine();
             } else if (singleton) {
-                return new SingletonStateMachine();
+                return new SingletonStateMachine(prepareReset != null);
             } else {
                 return new ExistingStateMachine(prepareReset != null);
             }

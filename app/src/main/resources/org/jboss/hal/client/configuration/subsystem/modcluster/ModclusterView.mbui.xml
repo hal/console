@@ -65,7 +65,7 @@
                     address="/{selected.profile}/subsystem=modcluster/mod-cluster-config=configuration/ssl=configuration">
                 <h1>SSL</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <singleton-form id="modcluster-ssl-form" title="SSL" auto-save="true">
+                <singleton-form id="modcluster-ssl-form" title="SSL" auto-save="true" reset="true">
                     <attributes>
                         <attribute name="key-alias"/>
                         <attribute name="password"/>

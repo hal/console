@@ -46,7 +46,6 @@ import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -75,7 +74,10 @@ import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -409,27 +411,8 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
-                    @Override
-                    public void onMetadata(Metadata metadata) {
-                        boolean hasRequiredAttributes = !metadata.getDescription()
-                                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
-                        if (hasRequiredAttributes) {
-                            String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
-                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                                    .fromRequestProperties()
-                                    .build();
-                            AddResourceDialog dialog = new AddResourceDialog(
-                                    resources.messages().addResourceTitle(singleton), form,
-                                    (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton),
-                                            modelNode, address -> refresh(parent)));
-                            dialog.show();
-                        } else {
-                            crud.addSingleton(singleton, fqAddress(parent, singleton), null,
-                                    address -> refresh(parent));
-                        }
-                    }
-                });
+                String id = Ids.build(parent.id, "singleton", Ids.ADD_SUFFIX);
+                crud.addSingleton(id, singleton, template, address -> refresh(parent));
 
             } else {
                 // open wizard to choose the singleton
