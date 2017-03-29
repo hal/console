@@ -99,7 +99,7 @@ public interface Ids {
     String CACHE_STORE_FILE = "cache-store-file";
     String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
     String CACHE_STORE_REMOTE = "cache-store-remote";
-    String CACHE_STORE_STRING_JDBC = "cache-store-string-jdbc";
+    String CACHE_STORE_JDBC = "cache-store-jdbc";
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";

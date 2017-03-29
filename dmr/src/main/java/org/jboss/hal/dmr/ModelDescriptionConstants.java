@@ -210,6 +210,7 @@ public interface ModelDescriptionConstants {
     String IO = "io";
 
     String JCA = "jca";
+    String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
     String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
@@ -415,7 +416,6 @@ public interface ModelDescriptionConstants {
     String STOP_SERVERS = "stop-servers";
     String STORE = "store";
     String STRING = "string";
-    String STRING_JDBC = "string-jdbc";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";

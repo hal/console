@@ -229,7 +229,6 @@ public interface Names {
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
-    String STRING_JDBC = "String JDBC";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
     String SUBDEPLOYMENTS = "Subdeployments";
