@@ -91,6 +91,18 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/ee.html")
     ExternalTextResource configurationEe();
 
+    @Source("previews/configuration/elytron-factories.html")
+    ExternalTextResource configurationElytronFactories();
+
+    @Source("previews/configuration/elytron-mappers-decoders.html")
+    ExternalTextResource configurationElytronMappersDecoders();
+
+    @Source("previews/configuration/elytron-security-realms.html")
+    ExternalTextResource configurationElytronSecurityRealms();
+
+    @Source("previews/configuration/elytron-other-settings.html")
+    ExternalTextResource configurationElytronOtherSettings();
+
     @Source("previews/configuration/ejb3.html")
     ExternalTextResource configurationEjb3();
 
@@ -159,6 +171,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/security-domains.html")
     ExternalTextResource configurationSecurityDomains();
+
+    @Source("previews/configuration/security-elytron.html")
+    ExternalTextResource configurationSecurityElytron();
 
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource configurationSocketBindings();

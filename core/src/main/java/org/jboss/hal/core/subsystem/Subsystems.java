@@ -113,7 +113,12 @@ public class Subsystems {
                 .nextColumn(Ids.RESOURCE_ADAPTER)
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
-        add(new SubsystemMetadata.Builder(SECURITY, "Security")
+        add(new SubsystemMetadata.Builder(ELYTRON, "Security - Elytron")
+                .subtitle("Elytron")
+                .nextColumn(Ids.ELYTRON)
+                .preview(resources.previews().configurationSecurityElytron())
+                .build());
+        add(new SubsystemMetadata.Builder(SECURITY, "Security - Legacy")
                 .subtitle("legacy")
                 .nextColumn(Ids.SECURITY_DOMAIN)
                 .token(NameTokens.SECURITY_CONFIGURATION)

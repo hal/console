@@ -147,6 +147,7 @@ public interface ModelDescriptionConstants {
 
     String EE = "ee";
     String EJB3 = "ejb3";
+    String ELYTRON = "elytron";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
@@ -369,6 +370,7 @@ public interface ModelDescriptionConstants {
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
+    //String SECURITY = "security-elytron";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
     String SECURITY_SETTING = "security-setting";

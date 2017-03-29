@@ -44,6 +44,16 @@ import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter;
 import org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.ElytronSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.elytron.FactoriesPresenter;
+import org.jboss.hal.client.configuration.subsystem.elytron.MapperDecoderPresenter;
+import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_ElytronSubsystemView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_FactoriesView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_MapperDecoderView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_OtherSettingsView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_RealmsView_Provider;
+import org.jboss.hal.client.configuration.subsystem.elytron.OtherSettingsPresenter;
+import org.jboss.hal.client.configuration.subsystem.elytron.RealmsPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
 import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
@@ -265,6 +275,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 Mbui_EjbView_Provider.class,
                 EjbPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(ElytronSubsystemPresenter.class,
+                ElytronSubsystemPresenter.MyView.class,
+                Mbui_ElytronSubsystemView_Provider.class,
+                ElytronSubsystemPresenter.MyProxy.class);
+
         bindPresenter(EEPresenter.class,
                 EEPresenter.MyView.class,
                 EEView.class,
@@ -274,6 +289,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 ExpertModePresenter.MyView.class,
                 ExpertModeView.class,
                 ExpertModePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(FactoriesPresenter.class,
+                FactoriesPresenter.MyView.class,
+                Mbui_FactoriesView_Provider.class,
+                FactoriesPresenter.MyProxy.class);
 
         bindTemplatedPresenter(FilterPresenter.class,
                 FilterPresenter.MyView.class,
@@ -375,6 +395,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(MapperDecoderPresenter.class,
+                MapperDecoderPresenter.MyView.class,
+                Mbui_MapperDecoderView_Provider.class,
+                MapperDecoderPresenter.MyProxy.class);
+
         bindTemplatedPresenter(ModclusterPresenter.class,
                 ModclusterPresenter.MyView.class,
                 Mbui_ModclusterView_Provider.class,
@@ -394,6 +419,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 MessagingSubsystemPresenter.MyView.class,
                 Mbui_MessagingSubsystemView_Provider.class,
                 MessagingSubsystemPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(OtherSettingsPresenter.class,
+                OtherSettingsPresenter.MyView.class,
+                Mbui_OtherSettingsView_Provider.class,
+                OtherSettingsPresenter.MyProxy.class);
 
         bindPresenter(PatchingPresenter.class,
                 PatchingPresenter.MyView.class,
@@ -419,6 +449,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 ResourceAdapterPresenter.MyView.class,
                 Mbui_ResourceAdapterView_Provider.class,
                 ResourceAdapterPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(RealmsPresenter.class,
+                RealmsPresenter.MyView.class,
+                Mbui_RealmsView_Provider.class,
+                RealmsPresenter.MyProxy.class);
 
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,

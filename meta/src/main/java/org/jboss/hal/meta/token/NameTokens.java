@@ -39,6 +39,11 @@ public interface NameTokens {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENTS = "deployments";
     String EE = ModelDescriptionConstants.EE;
+    String ELYTRON = ModelDescriptionConstants.ELYTRON;
+    String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
+    String ELYTRON_MAPPERS_DECODERS = "elytron-mappers";
+    String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
+    String ELYTRON_OTHER = "elytron-other";
     String EJB3 = ModelDescriptionConstants.EJB3;
     String EXPERT_MODE = "expert-mode";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
