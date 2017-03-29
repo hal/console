@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
 
 import elemental.dom.Element;
@@ -66,7 +65,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final Form<ModelNode> configurationForm;
     private final NamedNodeTable<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
-    private final Map<HostSetting,Form<ModelNode>> hostSettingForms;
+    private final Map<HostSetting, Form<ModelNode>> hostSettingForms;
     private final NamedNodeTable<NamedNode> filterRefTable;
     private final Form<NamedNode> filterRefForm;
     private final NamedNodeTable<NamedNode> locationTable;
@@ -140,7 +139,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Tabs tabs = new Tabs();
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.asElement());
         for (HostSetting setting : HostSetting.values()) {
-            tabs.add(Ids.build(setting.baseId, Ids.TAB_SUFFIX), setting.type, hostSettingForms.get(setting).asElement());
+            tabs.add(Ids.build(setting.baseId, Ids.TAB_SUFFIX), setting.type,
+                    hostSettingForms.get(setting).asElement());
         }
 
         // @formatter:off
@@ -290,7 +290,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private Form<ModelNode> hostSetting(final HostSetting hostSetting) {
         Metadata metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(hostSetting.templateSuffix()));
         return new ModelNodeForm.Builder<>(Ids.build(hostSetting.baseId, Ids.FORM_SUFFIX), metadata)
-                .singleton(() -> presenter.hostSettingOperation(hostSetting), () -> presenter.addHostSetting(hostSetting))
+                .singleton(() -> presenter.hostSettingOperation(hostSetting),
+                        () -> presenter.addHostSetting(hostSetting))
                 .onSave((f, changedValues) -> presenter.saveHostSetting(hostSetting, changedValues))
                 .prepareReset(f -> presenter.resetHostSetting(hostSetting, f))
                 .prepareRemove(f -> presenter.removeHostSetting(hostSetting, f))
