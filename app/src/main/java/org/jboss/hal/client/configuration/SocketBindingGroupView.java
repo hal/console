@@ -133,7 +133,6 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .unsorted()
                 .onSave((form, changedValues) -> presenter.saveClientMapping(clientMappingsMetadata, form.getModel(),
                         changedValues))
-                .noReset()
                 .build();
 
         Element clientMappingSection = new Elements.Builder()

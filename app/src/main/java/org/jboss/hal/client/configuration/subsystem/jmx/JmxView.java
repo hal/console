@@ -128,7 +128,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .singleton(
                         () -> new Operation.Builder(READ_RESOURCE_OPERATION,
                                 AUDIT_LOG_TEMPLATE.resolve(statementContext)).build(),
-                        () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (n, a) -> presenter.reload()))
+                        () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, address -> presenter.reload()))
                 .unboundFormItem(handlerItem, Integer.MAX_VALUE, handlerDescription)
                 .onSave((form, changedValues) -> presenter
                         .saveAuditLog(changedValues, handlerItem.isModified(), handlerItem.getValue()))
@@ -169,7 +169,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .singleton(
                         () -> new Operation.Builder(READ_RESOURCE_OPERATION,
                                 REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext)).build(),
-                        () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (n, a) -> presenter.reload()))
+                        () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, address -> presenter.reload()))
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.reload()))
                 .prepareReset(form -> crud.resetSingleton(type, REMOTING_CONNECTOR_TEMPLATE, form, rcMetadata,

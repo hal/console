@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.User;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
@@ -128,6 +129,7 @@ public class Dispatcher implements RecordingHandler {
 
     private final Environment environment;
     private final Endpoints endpoints;
+    private final User user;
     private final EventBus eventBus;
     private final ResponseHeadersProcessors responseHeadersProcessors;
     private final Macros macros;
@@ -135,10 +137,12 @@ public class Dispatcher implements RecordingHandler {
     private final ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Environment environment, final Endpoints endpoints, final EventBus eventBus,
-            final Resources resources, final ResponseHeadersProcessors responseHeadersProcessors, final Macros macros) {
+    public Dispatcher(final Environment environment, final Endpoints endpoints, final User user,
+            final EventBus eventBus, final ResponseHeadersProcessors responseHeadersProcessors,
+            final Macros macros, final Resources resources) {
         this.environment = environment;
         this.endpoints = endpoints;
+        this.user = user;
         this.eventBus = eventBus;
         this.responseHeadersProcessors = responseHeadersProcessors;
         this.macros = macros;
@@ -242,6 +246,8 @@ public class Dispatcher implements RecordingHandler {
             final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
+
+        // operation = injectRunAs(operation);
         if (GetOperation.isSupported(operation.getName())) {
             url = operationUrl(operation);
             method = GET;
@@ -379,6 +385,8 @@ public class Dispatcher implements RecordingHandler {
                 }
             });
         }
+
+        // TODO operation headers
 
         return builder.toString();
     }

@@ -143,6 +143,7 @@ public class Operation extends ModelNode {
         } else {
             this.roles = new ArrayList<>();
         }
+        addRolesAsHeaders();
         set(modelNode.clone());
     }
 
@@ -160,6 +161,10 @@ public class Operation extends ModelNode {
         if (header.isDefined()) {
             get(OPERATION_HEADERS).set(header);
         }
+        addRolesAsHeaders();
+    }
+
+    private void addRolesAsHeaders() {
         if (roles != null && !roles.isEmpty() && !name.equals(WHOAMI)) {
             // roles are headers!
             if (roles.size() == 1) {

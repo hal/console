@@ -227,7 +227,7 @@ public class ServletContainerPresenter
     void addSettingsSingleton(final ServletContainerSetting settingType) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
-        crud.addSingleton(settingType.type, address, null, (n, a) -> reload());
+        crud.addSingleton(settingType.type, address, null, a -> reload());
     }
 
     // ------------------------------------------------------ getter

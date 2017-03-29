@@ -185,7 +185,7 @@ public class JcaPresenter
     // ------------------------------------------------------ tracer
 
     void addTracer() {
-        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, (n, a) -> reload());
+        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, address -> reload());
     }
 
 

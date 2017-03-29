@@ -34,6 +34,7 @@ public class User {
 
     private final Set<String> roles;
     private String name;
+    private String runAs;
 
     public User(final String name, final Set<String> roles) {
         this.name = name;
@@ -72,5 +73,13 @@ public class User {
             }
         }
         return false;
+    }
+
+    public String getRunAs() {
+        return runAs;
+    }
+
+    public void setRunAs(final String runAs) {
+        this.runAs = runAs;
     }
 }

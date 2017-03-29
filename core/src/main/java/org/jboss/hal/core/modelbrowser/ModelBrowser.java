@@ -100,7 +100,7 @@ public class ModelBrowser implements HasElements {
 
         private FilterInfo(Node<Context> parent, Node<Context> child) {
             this.address = child == null ? ResourceAddress.root() : child.data.getAddress();
-            this.node = child == null ? null : child;
+            this.node = child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
             this.parents = child == null ? Collections.emptyList() : asList(child.parents);
@@ -422,10 +422,11 @@ public class ModelBrowser implements HasElements {
                             AddResourceDialog dialog = new AddResourceDialog(
                                     resources.messages().addResourceTitle(singleton), form,
                                     (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton),
-                                            modelNode, (n2, address) -> refresh(parent)));
+                                            modelNode, address -> refresh(parent)));
                             dialog.show();
                         } else {
-                            crud.addSingleton(singleton, fqAddress(parent, singleton), null, (n, a) -> refresh(parent));
+                            crud.addSingleton(singleton, fqAddress(parent, singleton), null,
+                                    address -> refresh(parent));
                         }
                     }
                 });

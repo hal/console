@@ -95,7 +95,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
     private String currentStack;
     private String currentChannel;
     private String currentFork;
-    StatementContext filterStatementContext;
+    private StatementContext filterStatementContext;
 
     @Inject
     public JGroupsPresenter(final EventBus eventBus,
@@ -114,6 +114,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         this.filterStatementContext = new FilteringStatementContext(statementContext,
                 new FilteringStatementContext.Filter() {
                     @Override
+                    @SuppressWarnings("HardCodedStringLiteral")
                     public String filter(final String filterKey) {
                         switch (filterKey) {
                             case "selected.channel":
@@ -166,6 +167,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
             getView().updateRelays(relayNode);
 
             // stack / relay / remote-site
+            //noinspection HardCodedStringLiteral
             List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode,
                     String.join("/", STACK, currentStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
             getView().updateRemoteSite(remoteSite);
@@ -243,6 +245,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     // stack resources
 
+    @SuppressWarnings("ConstantConditions")
     void addStack() {
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
@@ -269,15 +272,15 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         getView().updateRelays(relayNode);
     }
 
-    public void addRelay() {
+    void addRelay() {
         AddressTemplate addressTemplate = AddressTemplate.of(SELECTED_RELAY_TEMPLATE.resolve(filterStatementContext));
         crud.addSingleton(Ids.build(RELAY, Ids.ADD_SUFFIX, Ids.FORM_SUFFIX), Names.RELAY,
-                addressTemplate, (n, a) -> reload());
+                addressTemplate, address -> reload());
     }
 
     // remote sites
 
-    public void showRemoteSites(final NamedNode row) {
+    void showRemoteSites(final NamedNode row) {
         List<NamedNode> model = asNamedNodes(failSafePropertyList(row.asModelNode(), JGROUPS_REMOTE_SITE));
         getView().updateRemoteSite(model);
     }
@@ -313,8 +316,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         getView().updateChannelProtocols(model);
     }
 
-    public String getCurrentFork() {
+    String getCurrentFork() {
         return currentFork;
     }
-
 }

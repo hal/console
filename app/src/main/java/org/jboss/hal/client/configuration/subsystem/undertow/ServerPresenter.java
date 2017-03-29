@@ -235,7 +235,7 @@ public class ServerPresenter
 
     void addHostSetting(final HostSetting hostSetting) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
-        crud.addSingleton(hostSetting.type, address, null, (n, a) -> reload());
+        crud.addSingleton(hostSetting.type, address, null, a -> reload());
     }
 
     void saveHostSetting(final HostSetting hostSetting, final Map<String, Object> changedValues) {

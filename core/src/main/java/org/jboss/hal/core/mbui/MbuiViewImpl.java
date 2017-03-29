@@ -49,7 +49,7 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
     }
 
     protected void addSingleton(final String id, final String type, final AddressTemplate template) {
-        mbuiContext.crud().addSingleton(id, type, template, (name, address) -> presenter.reload());
+        mbuiContext.crud().addSingleton(id, type, template, address -> presenter.reload());
     }
 
     protected void saveForm(final String type, final String name, final ResourceAddress address,
