@@ -31,6 +31,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
@@ -87,12 +88,10 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
     private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
-    private static final String RUN_AS_CHECK = "runAsCheck";
 
     private PlaceRequest backPlaceRequest;
     private Map<String, PlaceRequest> tlcPlaceRequests;
     private Map<String, Element> tlc;
-    private Map<String, Element> runAsChecks;
     private HeaderPresenter presenter;
     private MessagePanel messagePanel;
     private MessageSink messageSink;
@@ -108,8 +107,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element logoutItem;
     @DataElement Element connectedToContainer;
     @DataElement Element connectedTo;
-    @DataElement Element accessControl;
     @DataElement Element patching;
+    @DataElement Element accessControl;
     @DataElement Element topLevelCategories;
     @DataElement Element breadcrumb;
     @DataElement Element backItem;
@@ -158,7 +157,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             });
         }
 
-        boolean su = user().isSuperuser() || user().isAdministrator();
+        boolean su = AccessControl.isSuperUserOrAdministrator();
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
@@ -182,7 +181,6 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             connectedTo.setInnerText(resources().messages().connectedTo(endpoints.dmr()));
         }
 
-        runAsChecks = new HashMap<>();
         userName.setInnerHTML(user.getName());
         updateRoles(environment, settings, user);
     }
@@ -202,8 +200,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                     .sorted(Roles.STANDARD_FIRST.thenComparing(Roles.BY_NAME))
                     .map(Role::getName)
                     .collect(joining(", "));
-            Element activeRoles = new Elements.Builder().li().css(static_)
+            Element activeRoles = new Elements.Builder().li().css(static_, CSS.activeRoles)
                     .textContent(resources().messages().activeRoles(csr))
+                    .title(resources().messages().activeRoles(csr))
                     .end().build();
             userDropdown.insertBefore(activeRoles, logoutItem);
             userDropdown.insertBefore(divider(), logoutItem);
@@ -222,7 +221,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             Elements.Builder builder = new Elements.Builder()
                                 .li()
                                     .a().css(clickable).on(click, event -> presenter.runAs(role.getName()))
-                                        .span().rememberAs(RUN_AS_CHECK)
+                                        .span()
                                             .css(fontAwesome("check"), marginRight5);
                                             if (!role.getName().equals(runAsRoleSetting)) {
                                                 builder.style("visibility: hidden");
@@ -239,9 +238,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                                     .end()
                                 .end();
                             // @formatter:on
-                            Element runAsCheck = builder.referenceFor(RUN_AS_CHECK);
                             Element runAsRole = builder.build();
-                            runAsChecks.put(role.getName(), runAsCheck);
                             userDropdown.insertBefore(runAsRole, logoutItem);
                         });
 

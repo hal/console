@@ -32,6 +32,7 @@ public interface CSS {
     String aboutModalPf = "about-modal-pf";
     String address = "address";
     String active = "active";
+    String activeRoles = "active-roles";
     String alert = "alert";
     String alertDanger = "alert-danger";
     String alertDismissable = "alert-dismissable";

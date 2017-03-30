@@ -337,6 +337,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();
 
+    SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
