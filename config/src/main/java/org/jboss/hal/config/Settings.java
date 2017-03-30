@@ -19,6 +19,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import javax.inject.Inject;
 
+import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -39,14 +40,6 @@ public class Settings {
 
             this.key = key;
             this.persistent = persistent;
-        }
-
-        private String key() {
-            return key;
-        }
-
-        private boolean persistent() {
-            return persistent;
         }
     }
 
@@ -84,6 +77,7 @@ public class Settings {
     public static Settings INSTANCE;
     public static final String DEFAULT_LOCALE = "en";
     public static final int DEFAULT_PAGE_LENGTH = 10;
+    private static final int EXPIRES = 365; // days
 
     private final Map<Key, Value> values;
 
@@ -92,7 +86,7 @@ public class Settings {
     }
 
     public <T> void load(Key key, T defaultValue) {
-        String value = null; // TODO Read from cookie
+        String value = Cookies.get(key(key));
         if (value == null) {
             if (defaultValue != null) {
                 value = String.valueOf(defaultValue);
@@ -106,7 +100,19 @@ public class Settings {
     }
 
     public <T> void set(Key key, T value) {
-        values.put(key, new Value(String.valueOf(value)));
-        // TODO Write (persistent) cookie
+        values.put(key, new Value(value != null ? String.valueOf(value) : null));
+        if (value == null) {
+            Cookies.remove(key(key));
+        } else {
+            if (key.persistent) {
+                Cookies.set(key(key), String.valueOf(value), EXPIRES);
+            } else {
+                Cookies.set(key(key), String.valueOf(value));
+            }
+        }
+    }
+
+    private String key(Key key) {
+        return Ids.build(Ids.COOKIE_PREFIX, key.key);
     }
 }

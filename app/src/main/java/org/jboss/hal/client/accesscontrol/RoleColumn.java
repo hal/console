@@ -44,6 +44,8 @@ import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveRoleMappi
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveScopedRole;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
+import org.jboss.hal.config.RolesChangedEvent;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -72,6 +74,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.*;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -117,6 +120,7 @@ public class RoleColumn extends FinderColumn<Role> {
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final Environment environment,
+            final Settings settings,
             final Resources resources) {
 
         super(new Builder<Role>(finder, Ids.ROLE, resources.constants().role())
@@ -232,13 +236,17 @@ public class RoleColumn extends FinderColumn<Role> {
                     String type = item.getType() == Role.Type.HOST
                             ? resources.constants().hostScopedRole()
                             : resources.constants().serverGroupScopedRole();
-                    actions.add(new ItemAction<>(resources.constants().remove(), itm ->
+                    actions.add(new ItemAction<>(resources.constants().remove(), itm -> {
+                        if (itm.getName().equals(settings.get(RUN_AS).value())) {
+                            MessageEvent.fire(eventBus,
+                                    Message.error(resources.messages().removeRunAsRoleError(item.getName())));
+                        } else {
                             DialogFactory.showConfirmation(
                                     resources.messages().removeConfirmationTitle(type),
                                     resources.messages().removeRoleQuestion(itm.getName()),
-                                    () -> removeScopedRole(itm, type))
-
-                    ));
+                                    () -> removeScopedRole(itm, type));
+                        }
+                    }));
                 }
                 return actions;
             }
@@ -291,7 +299,10 @@ public class RoleColumn extends FinderColumn<Role> {
                         public void onSuccess(final FunctionContext context) {
                             MessageEvent.fire(eventBus,
                                     Message.success(resources.messages().addResourceSuccess(typeName, name)));
-                            accessControl.reload(() -> refresh(Ids.role(name)));
+                            accessControl.reload(() -> {
+                                refresh(Ids.role(name));
+                                eventBus.fireEvent(new RolesChangedEvent());
+                            });
                         }
                     },
                     functions.toArray(new Function[functions.size()]));
@@ -320,7 +331,10 @@ public class RoleColumn extends FinderColumn<Role> {
                             public void onSuccess(final FunctionContext context) {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .modifyResourceSuccess(resources.constants().role(), role.getName())));
-                                accessControl.reload(() -> refresh(role.getId()));
+                                accessControl.reload(() -> {
+                                    refresh(role.getId());
+                                    eventBus.fireEvent(new RolesChangedEvent());
+                                });
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),
@@ -370,7 +384,10 @@ public class RoleColumn extends FinderColumn<Role> {
                         public void onSuccess(final FunctionContext context) {
                             MessageEvent.fire(eventBus,
                                     Message.success(resources.messages().modifyResourceSuccess(type, role.getName())));
-                            accessControl.reload(() -> refresh(role.getId()));
+                            accessControl.reload(() -> {
+                                refresh(role.getId());
+                                eventBus.fireEvent(new RolesChangedEvent());
+                            });
                         }
                     },
                     functions.toArray(new Function[functions.size()]));
@@ -396,7 +413,10 @@ public class RoleColumn extends FinderColumn<Role> {
                     public void onSuccess(final FunctionContext context) {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().removeResourceSuccess(type, role.getName())));
-                        accessControl.reload(() -> refresh(RefreshMode.CLEAR_SELECTION));
+                        accessControl.reload(() -> {
+                            refresh(RefreshMode.CLEAR_SELECTION);
+                            eventBus.fireEvent(new RolesChangedEvent());
+                        });
                     }
                 },
                 functions.toArray(new Function[functions.size()]));

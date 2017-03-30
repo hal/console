@@ -60,6 +60,7 @@ public interface Ids {
     // ------------------------------------------------------ common suffixes used in IDs below
 
     String ADD_SUFFIX = "add";
+    String COOKIE_PREFIX = "hal-cookie";
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
     String PAGE_SUFFIX = "page";

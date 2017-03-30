@@ -26,6 +26,7 @@ import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
+import org.jboss.hal.config.User;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -49,7 +50,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Kind of presenter which holds code to read and parse the RBAC related management model.
- *
+ * <p>
  * TODO Sync roles with environment and header
  *
  * @author Harald Pehl
@@ -63,6 +64,7 @@ public class AccessControl {
     private final Environment environment;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
+    private final User currentUser;
     private final Resources resources;
 
     private final Roles roles;
@@ -73,13 +75,15 @@ public class AccessControl {
     public AccessControl(final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
+            final User currentUser,
             final Resources resources) {
         this.environment = environment;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
+        this.currentUser = currentUser;
         this.resources = resources;
 
-        this.roles = new Roles();
+        this.roles = environment.getRoles();
         this.principals = new Principals();
         this.assignments = new Assignments();
     }
@@ -174,6 +178,16 @@ public class AccessControl {
                     logger.error("Cannot add assignment for role {}: No matching role found!", p1.getName());
                 }
             });
+
+            // sync with current user
+            String currentUserId = Ids.principal(Principal.Type.USER.name().toLowerCase(), currentUser.getName());
+            Principal currentPrincipal = principals.get(currentUserId);
+            if (currentPrincipal != null) {
+                Set<Role> currentRoles = assignments.byPrincipal(currentPrincipal)
+                        .map(Assignment::getRole)
+                        .collect(toSet());
+                currentUser.refreshRoles(currentRoles);
+            }
 
             callback.execute();
         });

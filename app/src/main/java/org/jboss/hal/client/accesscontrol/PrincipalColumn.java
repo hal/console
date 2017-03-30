@@ -36,6 +36,7 @@ import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
 import org.jboss.hal.config.Role;
+import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -90,6 +91,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final Provider<Progress> progress,
+            final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final AccessControlResources accessControlResources,
@@ -176,7 +178,10 @@ class PrincipalColumn extends FinderColumn<Principal> {
                         .removeUserQuestion(item.getName()) : resources.messages().removeGroupQuestion(item.getName());
                 SafeHtml success = item.getType() == Principal.Type.USER ? resources.messages()
                         .removeUserSuccess(item.getName()) : resources.messages().removeGroupSuccess(item.getName());
-                return singletonList(new ItemAction<Principal>(resources.constants().remove(), itm ->
+                return singletonList(new ItemAction<Principal>(resources.constants().remove(), itm -> {
+                    if (type == Principal.Type.USER && itm.getName().equals(currentUser.getName())) {
+                        MessageEvent.fire(eventBus, Message.error(resources.messages().removeCurrentUserError()));
+                    } else {
                         DialogFactory.showConfirmation(
                                 resources.messages().removeConfirmationTitle(title), question,
                                 () -> {
@@ -188,7 +193,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
                                         MessageEvent.fire(eventBus, Message.success(success));
                                         accessControl.reload(() -> refresh(CLEAR_SELECTION));
                                     });
-                                })));
+                                });
+                    }
+                }));
             }
 
             @Override

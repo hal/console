@@ -52,6 +52,11 @@ public class User {
         return roles;
     }
 
+    public void refreshRoles(Set<Role> roles) {
+        this.roles.clear();
+        this.roles.addAll(roles);
+    }
+
     public void addRole(Role role) {
         roles.add(role);
     }

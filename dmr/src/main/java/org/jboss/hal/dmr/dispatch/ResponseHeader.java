@@ -53,7 +53,7 @@ public enum ResponseHeader {
     REFRESH("Refresh"),
     RETRY_AFTER("Retry-After"),
     SERVER("Server"),
-    SET_COOKIE("Set-Cookie"),
+    SET_COOKIE("Set-Cookies"),
     STATUS("Status"),
     STRICT_TRANSPORT_SECURITY("Strict-Transport-Security"),
     TRAILER("Trailer"),

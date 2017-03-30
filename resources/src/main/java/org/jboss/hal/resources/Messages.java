@@ -220,13 +220,16 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerError(String name);
     SafeHtml reloadServerQuestion(String name);
     SafeHtml reloadServerSuccess(String name);
+    SafeHtml reloadSettings();
 
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
+    SafeHtml removeCurrentUserError();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
+    SafeHtml removeRunAsRoleError(String role);
     SafeHtml removeSingletonConfirmationQuestion();
     SafeHtml removeSingletonResourceSuccess(String type);
     SafeHtml removeSingletonSuccess(String type);

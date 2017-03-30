@@ -187,7 +187,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         updateRoles(environment, settings, user);
     }
 
-    private void updateRoles(Environment environment, Settings settings, User user) {
+    @Override
+    public void updateRoles(Environment environment, Settings settings, User user) {
         for (Iterator<Element> iterator = Elements.iterator(userDropdown); iterator.hasNext(); ) {
             Element element = iterator.next();
             if (element == logoutItem) {

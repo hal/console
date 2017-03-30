@@ -49,7 +49,7 @@ public class Roles implements Iterable<Role> {
     private final Set<Role> standardRoles;
     private final Set<Role> scopedRoles;
 
-    public Roles() {
+    Roles() {
         this.lookup = new HashMap<>();
         this.standardRoles = new HashSet<>();
         this.scopedRoles = new HashSet<>();

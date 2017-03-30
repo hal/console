@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -35,6 +34,8 @@ import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
 import org.jboss.hal.config.Role;
+import org.jboss.hal.config.User;
+import org.jboss.hal.config.UserChangedEvent;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionHandler;
 import org.jboss.hal.core.finder.Finder;
@@ -58,6 +59,7 @@ import org.jboss.hal.spi.MessageEvent;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -72,6 +74,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
+    private final User currentUser;
     private final AccessControl accessControl;
     private final Resources resources;
 
@@ -81,6 +84,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
+            final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final Resources resources) {
@@ -88,9 +92,11 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         super(new Builder<Assignment>(finder, Ids.ASSIGNMENT, resources.constants().assignment())
                 .withFilter()
                 .onPreview(item -> new AssignmentPreview(tokens, item.getRole(), resources)));
+
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
+        this.currentUser = currentUser;
         this.accessControl = accessControl;
         this.resources = resources;
 
@@ -184,7 +190,12 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .removeResourceSuccess(resources.constants().assignment(),
                                                 itm.getRole().getName())));
-                                accessControl.reload(() -> refresh(RefreshMode.CLEAR_SELECTION));
+                                accessControl.reload(() -> {
+                                    refresh(RefreshMode.CLEAR_SELECTION);
+                                    if (isCurrentUser()) {
+                                        eventBus.fireEvent(new UserChangedEvent());
+                                    }
+                                });
                             });
                         }));
             }
@@ -192,11 +203,21 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     }
 
     private Principal findPrincipal(FinderPath path) {
-        Optional<String> optional = StreamSupport.stream(path.spliterator(), false)
+        Optional<String> optional = stream(path.spliterator(), false)
                 .filter(segment -> Ids.USER.equals(segment.getColumnId()) || Ids.GROUP.equals(segment.getColumnId()))
                 .findAny()
                 .map(FinderSegment::getItemId);
-        return optional.isPresent() ? accessControl.principals().get(optional.get()) : null;
+        return optional.map(id -> accessControl.principals().get(id)).orElse(null);
+    }
+
+    private boolean isCurrentUser() {
+        return isCurrentUser(findPrincipal(getFinder().getContext().getPath()));
+    }
+
+    private boolean isCurrentUser(Principal principal) {
+        return principal != null &&
+                principal.getType() == Principal.Type.USER &&
+                principal.getName().equals(currentUser.getName());
     }
 
     private String includeId(Role role) {
@@ -220,7 +241,12 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                                         ? resources.messages().assignmentIncludeSuccess(type, role.getName())
                                         : resources.messages().assignmentExcludeSuccess(type, role.getName());
                                 MessageEvent.fire(eventBus, Message.success(message));
-                                accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION));
+                                accessControl.reload(() -> {
+                                    refresh(RefreshMode.RESTORE_SELECTION);
+                                    if (isCurrentUser(principal)) {
+                                        eventBus.fireEvent(new UserChangedEvent());
+                                    }
+                                });
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),
