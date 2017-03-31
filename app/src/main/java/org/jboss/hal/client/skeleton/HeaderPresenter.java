@@ -378,7 +378,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void runAs(final String role) {
-        DialogFactory.showConfirmation(resources.constants().runAs(),
+        DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, role);
                     Browser.getWindow().getLocation().reload();
@@ -386,7 +386,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void clearRunAs() {
-        DialogFactory.showConfirmation(resources.constants().runAs(),
+        DialogFactory.showConfirmation(resources.constants().clearRunAsTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, null);
                     Browser.getWindow().getLocation().reload();

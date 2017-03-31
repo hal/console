@@ -47,7 +47,6 @@ import static org.jboss.hal.resources.CSS.*;
 @SuppressWarnings("WeakerAccess")
 public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
-    private static final String INPUT_CONTAINER = "inputContainer";
     private static final String EXPRESSION_BUTTON = "expressionButton";
     private static final String SUGGEST_BUTTON = "suggestButton";
     private static final String PEEK_BUTTON = "peekButton";

@@ -39,7 +39,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         protected String name() {
-            return "NumberReadOnlyAppearance";
+            return "NumberSelectReadOnlyAppearance";
         }
     }
 
@@ -52,7 +52,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         protected String name() {
-            return "NumberEditingAppearance";
+            return "NumberSelectEditingAppearance";
         }
 
         @Override

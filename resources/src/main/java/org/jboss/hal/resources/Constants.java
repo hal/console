@@ -67,6 +67,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clear();
     String clearMessages();
     String clearRunAs();
+    String clearRunAsTitle();
     String clone();
     String cloneProfile();
     String close();
@@ -357,6 +358,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String role();
     String roles();
     String runAs();
+    String runAsRoleTitle();
     String running();
 
     String sameOrigin();

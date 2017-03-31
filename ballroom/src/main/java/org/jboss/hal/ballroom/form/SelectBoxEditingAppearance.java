@@ -40,8 +40,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
-    private static final String INPUT_CONTAINER = "inputContainer";
-
     final SelectElement selectElement;
     private final Element root;
     private final Element inputContainer;

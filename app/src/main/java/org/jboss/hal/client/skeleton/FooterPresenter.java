@@ -17,7 +17,6 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -29,6 +28,7 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.expression.ExpressionDialog;
 import org.jboss.hal.core.expression.ExpressionResolver;
@@ -44,8 +44,6 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-
-import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * @author Harald Pehl
@@ -66,6 +64,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
     private final Environment environment;
     private final PlaceManager placeManager;
+    private final Settings settings;
     private final Macros macros;
     private final ExpressionResolver expressionResolver;
     private final Resources resources;
@@ -80,12 +79,14 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             final Environment environment,
             final Endpoints endpoints,
             final PlaceManager placeManager,
+            final Settings settings,
             final Macros macros,
             final ExpressionResolver expressionResolver,
             final Resources resources) {
         super(eventBus, view);
         this.environment = environment;
         this.placeManager = placeManager;
+        this.settings = settings;
         this.macros = macros;
         this.expressionResolver = expressionResolver;
         this.resources = resources;
@@ -167,6 +168,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     }
 
     void onSettings() {
-        Window.alert(NYI);
+        new SettingsDialog(environment, settings, resources).show();
     }
 }

@@ -45,17 +45,23 @@ public class ModifyResourceDialog {
      * Callback#onModify(Form, Map)}.
      */
     public ModifyResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
-        form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
-        init(title, form);
+        this(title, form, callback, null);
     }
 
-    private void init(final String title, final Form<ModelNode> form) {
+    public ModifyResourceDialog(final String title, final Form<ModelNode> form, final Callback callback,
+            org.jboss.hal.spi.Callback closed) {
+        form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
+        init(title, form, closed);
+    }
+
+    private void init(final String title, final Form<ModelNode> form, final org.jboss.hal.spi.Callback closed) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
                 .saveCancel(form::save)
                 .size(Size.MEDIUM)
                 .closeOnEsc(true)
+                .closed(closed)
                 .build();
         this.dialog.registerAttachable(form);
     }

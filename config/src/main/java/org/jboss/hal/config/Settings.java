@@ -27,19 +27,38 @@ import org.jetbrains.annotations.NonNls;
  */
 public class Settings {
 
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     public enum Key {
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
         PAGE_LENGTH("page-length", true),
         RUN_AS("run-as", false);
 
+        public static Key from(@NonNls String key) {
+            switch (key) {
+                case "collect-user-data":
+                    return COLLECT_USER_DATA;
+                case "locale":
+                    return LOCALE;
+                case "page-length":
+                    return PAGE_LENGTH;
+                case "run-as":
+                    return RUN_AS;
+                default:
+                    return null;
+            }
+        }
+
         private final String key;
         private final boolean persistent;
 
         Key(@NonNls final String key, final boolean persistent) {
-
             this.key = key;
             this.persistent = persistent;
+        }
+
+        public String key() {
+            return key;
         }
     }
 
@@ -74,7 +93,7 @@ public class Settings {
 
 
     @Inject
-    public static Settings INSTANCE;
+    public static Settings INSTANCE; // use only if no DI is available!
     public static final String DEFAULT_LOCALE = "en";
     public static final int DEFAULT_PAGE_LENGTH = 10;
     private static final int EXPIRES = 365; // days
@@ -86,7 +105,7 @@ public class Settings {
     }
 
     public <T> void load(Key key, T defaultValue) {
-        String value = Cookies.get(key(key));
+        String value = Cookies.get(cookieName(key));
         if (value == null) {
             if (defaultValue != null) {
                 value = String.valueOf(defaultValue);
@@ -102,17 +121,17 @@ public class Settings {
     public <T> void set(Key key, T value) {
         values.put(key, new Value(value != null ? String.valueOf(value) : null));
         if (value == null) {
-            Cookies.remove(key(key));
+            Cookies.remove(cookieName(key));
         } else {
             if (key.persistent) {
-                Cookies.set(key(key), String.valueOf(value), EXPIRES);
+                Cookies.set(cookieName(key), String.valueOf(value), EXPIRES);
             } else {
-                Cookies.set(key(key), String.valueOf(value));
+                Cookies.set(cookieName(key), String.valueOf(value));
             }
         }
     }
 
-    private String key(Key key) {
+    private String cookieName(Key key) {
         return Ids.build(Ids.COOKIE_PREFIX, key.key);
     }
 }
