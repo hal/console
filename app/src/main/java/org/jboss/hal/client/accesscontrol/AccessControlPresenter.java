@@ -47,7 +47,7 @@ public class AccessControlPresenter extends
     @ProxyStandard
     @NameToken(NameTokens.ACCESS_CONTROL)
     @UseGatekeeper(SensitiveGatekeeper.class)
-    @Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+    @Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
 
     public interface MyView extends FinderView {}

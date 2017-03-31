@@ -26,7 +26,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -72,9 +71,8 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addConfig())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeConfig(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addConfig())
+                .remove((event, api) -> presenter.removeConfig(api.selectedRow().getName()))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.WEBSERVICES_HANDLER_CHAIN_COLUMN,
                         Names.HANDLER_CHAIN,

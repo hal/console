@@ -18,7 +18,26 @@ package org.jboss.hal.meta.security;
 /**
  * @author Harald Pehl
  */
-public interface HasOperation {
+public enum Target {
+    OPERATION(":"), ATTRIBUTE("@");
 
-    String operation();
+    static Target parse(String input) {
+        if (OPERATION.symbol.equals(input)) {
+            return OPERATION;
+        } else if (ATTRIBUTE.symbol.equals(input)) {
+            return ATTRIBUTE;
+        } else {
+            throw new IllegalArgumentException("Illegal symbol: '" + input + "'");
+        }
+    }
+
+    private String symbol;
+
+    Target(final String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String symbol() {
+        return symbol;
+    }
 }

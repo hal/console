@@ -18,6 +18,9 @@ package org.jboss.hal.core.mbui.table;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
+import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
@@ -25,11 +28,16 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Constants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
  * @author Harald Pehl
@@ -38,12 +46,68 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
+        private static final Constants CONSTANTS = GWT.create(Constants.class);
+
         private final Metadata metadata;
         private final ColumnFactory columnFactory;
 
         public Builder(final Metadata metadata) {
             this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
+        }
+
+        /**
+         * Adds a button to add a new resource. The button is only added if the constraint {@code
+         * executable(&lt;metadata template&gt;:add)} is valid.
+         */
+        public Builder<T> add(Button.ActionHandler<T> action) {
+            return button(CONSTANTS.add(), Constraint.executable(metadata.getTemplate(), ADD), action);
+        }
+
+        /**
+         * Adds a button to add a new resource. The button is only added if the constraint {@code
+         * executable(&lt;metadata template&gt;:add)} is valid.
+         */
+        public Builder<T> add(Button<T> button) {
+            return button(button, Constraint.executable(metadata.getTemplate(), ADD));
+        }
+
+        /**
+         * Adds a button to remove the selected resource. The button is only added if the constraint {@code
+         * executable(&lt;metadata template&gt;:remove)} is valid.
+         */
+        public Builder<T> remove(Button.ActionHandler<T> action) {
+            return button(CONSTANTS.remove(), Scope.SELECTED, Constraint.executable(metadata.getTemplate(), REMOVE),
+                    action);
+        }
+
+        /**
+         * Adds a button to remove the selected resource. The button is only added if the constraint {@code
+         * executable(&lt;metadata template&gt;:remove)} is valid.
+         */
+        public Builder<T> remove(Button<T> button) {
+            return button(button, Constraint.executable(metadata.getTemplate(), REMOVE));
+        }
+
+        public Builder<T> button(String text, Constraint constraint, Button.ActionHandler<T> action) {
+            if (AuthorisationDecision.strict(metadata).isAllowed(constraint)) {
+                return button(text, (Scope) null, action);
+            }
+            return this;
+        }
+
+        public Builder<T> button(String text, Scope scope, Constraint constraint, Button.ActionHandler<T> action) {
+            if (AuthorisationDecision.strict(metadata).isAllowed(constraint)) {
+                return button(text, scope, action);
+            }
+            return this;
+        }
+
+        public Builder<T> button(Button<T> button, Constraint constraint) {
+            if (AuthorisationDecision.strict(metadata).isAllowed(constraint)) {
+                return button(button);
+            }
+            return this;
         }
 
         public Builder<T> columns(@NonNls String first, @NonNls String... rest) {

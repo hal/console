@@ -60,6 +60,8 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -118,7 +120,10 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             missingRoles.removeAll(assignedRoles);
 
             List<ColumnAction<Assignment>> includeActions = missingRoles.stream()
-                    .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
+                    .map(role -> new ColumnAction.Builder<Assignment>(includeId(role))
+                            .title(role.getName())
+                            .handler(columnActionHandler(role, true))
+                            .build())
                     .collect(toList());
             if (!includeActions.isEmpty()) {
                 addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
@@ -126,7 +131,10 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             }
 
             List<ColumnAction<Assignment>> excludeActions = missingRoles.stream()
-                    .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
+                    .map(role -> new ColumnAction.Builder<Assignment>(excludeId(role))
+                            .title(role.getName())
+                            .handler(columnActionHandler(role, false))
+                            .build())
                     .collect(toList());
             if (!excludeActions.isEmpty()) {
                 addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
@@ -183,7 +191,8 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             @Override
             public List<ItemAction<Assignment>> actions() {
                 return singletonList(itemActionFactory.remove(resources.constants().assignment(),
-                        item.getRole().getName(), itm -> {
+                        item.getRole().getName(), item.isInclude() ? INCLUDE_TEMPLATE : EXCLUDE_TEMPLATE,
+                        itm -> {
                             ResourceAddress address = AddressTemplates.assignment(itm);
                             Operation operation = new Operation.Builder(REMOVE, address).build();
                             dispatcher.execute(operation, result -> {

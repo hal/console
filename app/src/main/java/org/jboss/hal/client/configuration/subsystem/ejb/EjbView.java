@@ -104,12 +104,11 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
             Metadata metadata = mbuiContext.metadataRegistry().lookup(template);
 
             Options<NamedNode> options = new NamedNodeTable.Builder<>(metadata)
-                    .button(mbuiContext.tableButtonFactory()
+                    .add(mbuiContext.tableButtonFactory()
                             .add(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
                                     (name, address) -> presenter.reload()))
-                    .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
-                            (api) -> api.selectedRow().getName(),
-                            () -> presenter.reload()))
+                    .remove(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
+                            (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                     .column(NAME, (cell, type, row, meta) -> row.getName())
                     .build();
             appSecurityDomainTable = new NamedNodeTable<>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE, options);

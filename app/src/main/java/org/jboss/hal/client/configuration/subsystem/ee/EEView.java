@@ -25,7 +25,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -119,9 +118,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Options<ModelNode> options = new ModelNodeTable.Builder<>(globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
-                .button(resources.constants().add(), (event, api) -> presenter.launchAddDialogGlobalModule())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeGlobalModule(api.selectedRow()))
+                .add((event, api) -> presenter.launchAddDialogGlobalModule())
+                .remove((event, api) -> presenter.removeGlobalModule(api.selectedRow()))
                 .build();
         globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, options);
         registerAttachable(globalModulesTable);
@@ -260,12 +258,10 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
-                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type,
-                        template, (name, address) -> presenter.reload()))
+                .add(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
+                        (name, address) -> presenter.reload()))
 
-                .button(tableButtonFactory.remove(
-                        type,
-                        template, (api) -> api.selectedRow().getName(),
+                .remove(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
                         () -> presenter.reload()))
 
                 .build();

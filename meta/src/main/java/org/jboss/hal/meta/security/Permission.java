@@ -18,9 +18,9 @@ package org.jboss.hal.meta.security;
 /**
  * @author Harald Pehl
  */
-public interface SecurityFilter {
+public enum Permission {
 
-    enum Result {HIDE, DISABLE}
-
-    Result filter(HasOperation operation);
+    READABLE,
+    WRITABLE,
+    EXECUTABLE
 }

@@ -89,7 +89,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     private T model;
     private final EmptyState emptyState;
-    private SecurityContext securityContext;
 
     private FormLinks<T> formLinks;
     private DivElement errorPanel;
@@ -107,14 +106,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
     // ------------------------------------------------------ initialization
 
     public AbstractForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
-            final EmptyState emptyState, final SecurityContext securityContext) {
+            final EmptyState emptyState) {
+        this.id = id;
         this.stateMachine = stateMachine;
         this.dataMapping = dataMapping;
         this.emptyState = emptyState;
-        this.securityContext = securityContext;
 
-        this.id = id;
-        this.securityContext = securityContext;
         this.panels = new LinkedHashMap<>();
         this.formItems = new LinkedHashMap<>();
         this.unboundItems = new HashSet<>();
@@ -525,7 +522,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
                 break;
         }
 
-        formLinks.switchTo(state, model, securityContext);
+        formLinks.switchTo(state, model);
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
                 .forEach(panel -> Elements.setVisible(panel, false));
@@ -537,22 +534,15 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
-        this.securityContext = securityContext;
-        applySecurity();
-    }
-
-    private void applySecurity() {
-        if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
-            stateExec(CANCEL);
-        }
-        formLinks.switchTo(stateMachine.current(), model, securityContext);
-        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
-            entry.getValue().setRestricted(!securityContext.isWritable(entry.getKey()));
-        }
     }
 
 
     // ------------------------------------------------------ properties
+
+
+    protected FormLinks<T> formLinks() {
+        return formLinks;
+    }
 
     @Override
     public String getId() {

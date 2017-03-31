@@ -63,11 +63,11 @@ public class ClusteringPresenter
     // @formatter:off
     @ProxyCodeSplit
     // TODO Replace with
-    // TODO value = {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
-    // TODO         CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS,
-    // TODO         BRIDGE_ADDRESS}
+    // TODO {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
+    // TODO  CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS,
+    // TODO  BRIDGE_ADDRESS}
     // TODO once WFCORE-2022 is resolved
-    @Requires(value = SERVER_ADDRESS)
+    @Requires(SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
     public interface MyProxy extends ProxyPlace<ClusteringPresenter> {}
 

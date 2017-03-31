@@ -84,7 +84,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.ROLE)
-@Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+@Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
 public class RoleColumn extends FinderColumn<Role> {
 
     static List<String> filterData(Role role) {
@@ -155,16 +155,19 @@ public class RoleColumn extends FinderColumn<Role> {
 
         if (!environment.isStandalone()) {
             List<ColumnAction<Role>> actions = new ArrayList<>();
-            actions.add(new ColumnAction<>(Ids.ROLE_HOST_SCOPED_ADD,
-                    resources.constants().hostScopedRole(),
-                    column -> addScopedRole(Role.Type.HOST, resources.constants().hostScopedRole(),
+            actions.add(new ColumnAction.Builder<Role>(Ids.ROLE_HOST_SCOPED_ADD)
+                    .title(resources.constants().hostScopedRole())
+                    .handler(column -> addScopedRole(Role.Type.HOST, resources.constants().hostScopedRole(),
                             HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
-                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS)));
-            actions.add(new ColumnAction<>(Ids.ROLE_SERVER_GROUP_SCOPED_ADD,
-                    resources.constants().serverGroupScopedRole(),
-                    column -> addScopedRole(Role.Type.SERVER_GROUP, resources.constants().serverGroupScopedRole(),
+                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS))
+                    .build());
+            actions.add(new ColumnAction.Builder<Role>(Ids.ROLE_SERVER_GROUP_SCOPED_ADD)
+                    .title(resources.constants().serverGroupScopedRole())
+                    .handler(column -> addScopedRole(Role.Type.SERVER_GROUP,
+                            resources.constants().serverGroupScopedRole(),
                             SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
-                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS)));
+                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS))
+                    .build());
             addColumnActions(Ids.ROLE_ADD, pfIcon("add-circle-o"), resources.constants().add(), actions);
         }
         addColumnAction(columnActionFactory.refresh(Ids.ROLE_REFRESH,
@@ -215,38 +218,44 @@ public class RoleColumn extends FinderColumn<Role> {
             @Override
             public List<ItemAction<Role>> actions() {
                 List<ItemAction<Role>> actions = new ArrayList<>();
-                actions.add(new ItemAction<>(resources.constants().edit(), itm -> {
-                    switch (itm.getType()) {
-                        case STANDARD:
-                            editStandardRole(itm);
-                            break;
-                        case HOST:
-                            editScopedRole(itm, resources.constants().hostScopedRole(),
-                                    HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
-                                    Ids.ROLE_HOST_SCOPED_FORM, HOSTS);
-                            break;
-                        case SERVER_GROUP:
-                            editScopedRole(itm, resources.constants().serverGroupScopedRole(),
-                                    SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
-                                    Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS);
-                            break;
-                    }
-                }));
+                actions.add(new ItemAction.Builder<Role>()
+                        .title(resources.constants().edit())
+                        .handler(itm -> {
+                            switch (itm.getType()) {
+                                case STANDARD:
+                                    editStandardRole(itm);
+                                    break;
+                                case HOST:
+                                    editScopedRole(itm, resources.constants().hostScopedRole(),
+                                            HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
+                                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS);
+                                    break;
+                                case SERVER_GROUP:
+                                    editScopedRole(itm, resources.constants().serverGroupScopedRole(),
+                                            SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
+                                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS);
+                                    break;
+                            }
+                        })
+                        .build());
                 if (item.isScoped()) {
                     String type = item.getType() == Role.Type.HOST
                             ? resources.constants().hostScopedRole()
                             : resources.constants().serverGroupScopedRole();
-                    actions.add(new ItemAction<>(resources.constants().remove(), itm -> {
-                        if (itm.getName().equals(settings.get(RUN_AS).value())) {
-                            MessageEvent.fire(eventBus,
-                                    Message.error(resources.messages().removeRunAsRoleError(item.getName())));
-                        } else {
-                            DialogFactory.showConfirmation(
-                                    resources.messages().removeConfirmationTitle(type),
-                                    resources.messages().removeRoleQuestion(itm.getName()),
-                                    () -> removeScopedRole(itm, type));
-                        }
-                    }));
+                    actions.add(new ItemAction.Builder<Role>()
+                            .title(resources.constants().remove())
+                            .handler(itm -> {
+                                if (itm.getName().equals(settings.get(RUN_AS).value())) {
+                                    MessageEvent.fire(eventBus,
+                                            Message.error(resources.messages().removeRunAsRoleError(item.getName())));
+                                } else {
+                                    DialogFactory.showConfirmation(
+                                            resources.messages().removeConfirmationTitle(type),
+                                            resources.messages().removeRoleQuestion(itm.getName()),
+                                            () -> removeScopedRole(itm, type));
+                                }
+                            })
+                            .build());
                 }
                 return actions;
             }

@@ -91,14 +91,15 @@ class CompositeRrdParser {
         return new ResourceAddress(operation.get(ADDRESS));
     }
 
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
-        // For wildcard rrd operations against running servers like /host=master/server=server-one/interfaces=*
-        // the result does *not* contain fully qualified addresses. But since we need fq addresses in the
-        // registries this method fixes this corner case.
-
         ResourceAddress resolved = resultAddress;
         List<Property> operationSegments = operationAddress.asPropertyList();
         List<Property> resultSegments = resultAddress.asPropertyList();
+
+        // For wildcard rrd operations against running servers like /host=master/server=server-one/interface=*
+        // the result does *not* contain absolute addresses. But since we need them in the registries,
+        // this method fixes this corner case.
         if (operationSegments.size() > 2 &&
                 operationSegments.size() == resultSegments.size() + 2 &&
                 HOST.equals(operationSegments.get(0).getName()) &&

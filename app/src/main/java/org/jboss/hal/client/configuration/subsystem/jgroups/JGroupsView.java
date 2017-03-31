@@ -75,7 +75,7 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
         .build();
         // @formatter:on
 
-        stackConfig = new StackElement(metadataRegistry, resources, dispatcher, eventBus);
+        stackConfig = new StackElement(metadataRegistry, resources);
         channelConfig = new ChannelElement(metadataRegistry, resources);
 
         VerticalNavigation navigation = new VerticalNavigation();

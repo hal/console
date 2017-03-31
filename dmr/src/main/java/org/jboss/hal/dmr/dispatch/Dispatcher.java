@@ -28,6 +28,7 @@ import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
@@ -359,9 +360,11 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ run-as and urls
 
     private Operation runAs(Operation operation) {
-        String runAs = settings.get(RUN_AS).value();
-        if (runAs != null && !operation.getRoles().contains(runAs)) {
-            return operation.runAs(runAs);
+        if (environment.getAccessControlProvider() == AccessControlProvider.RBAC) {
+            String runAs = settings.get(RUN_AS).value();
+            if (runAs != null && !operation.getRoles().contains(runAs)) {
+                return operation.runAs(runAs);
+            }
         }
         return operation;
     }

@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.core.accesscontrol;
 
+import javax.inject.Inject;
+
+import org.jboss.hal.config.AccessControlProvider;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
 
@@ -27,16 +31,28 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  *
  * @author Harald Pehl
  */
-public final class AccessControl {
+public class AccessControl {
 
-    public static boolean isSuperUserOrAdministrator() {
-        String runAs = Settings.INSTANCE.get(RUN_AS).value();
-        if (runAs != null) {
-            return runAs.equals(SUPER_USER.getName()) || runAs.equals(ADMINISTRATOR.getName());
-        } else {
-            return User.current().isSuperuser() || User.current().isAdministrator();
-        }
+    private final Environment environment;
+    private final Settings settings;
+    private final User user;
+
+    @Inject
+    public AccessControl(final Environment environment, final Settings settings, final User user) {
+        this.environment = environment;
+        this.settings = settings;
+        this.user = user;
     }
 
-    private AccessControl() {}
+    public boolean isSuperUserOrAdministrator() {
+        if (environment.getAccessControlProvider() == AccessControlProvider.RBAC) {
+            String runAs = settings.get(RUN_AS).value();
+            if (runAs != null) {
+                return runAs.equals(SUPER_USER.getName()) || runAs.equals(ADMINISTRATOR.getName());
+            } else {
+                return user.isSuperuser() || user.isAdministrator();
+            }
+        }
+        return true;
+    }
 }

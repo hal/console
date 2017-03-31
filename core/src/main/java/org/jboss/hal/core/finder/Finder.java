@@ -42,6 +42,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Ids;
@@ -57,9 +58,9 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
- * The one and only finder which is shared across all different top level categories in HAL. The same finder instance
- * gets injected into the different top level presenters. Only the columns will change when navigating between the
- * different places
+ * The one and only finder which is shared across all different top level categories in HAL. The very same finder
+ * instance gets injected into the different top level presenters. Only the columns will change when navigating between
+ * the different places
  *
  * @author Harald Pehl
  */
@@ -166,6 +167,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
+    private final MetadataRegistry metadataRegistry;
     private final Provider<Progress> progress;
     private final FinderContext context;
     private final LinkedHashMap<String, FinderColumn> columns;
@@ -181,10 +183,12 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     public Finder(final EventBus eventBus,
             final PlaceManager placeManager,
             final ColumnRegistry columnRegistry,
+            final MetadataRegistry metadataRegistry,
             @Footer final Provider<Progress> progress) {
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.columnRegistry = columnRegistry;
+        this.metadataRegistry = metadataRegistry;
         this.progress = progress;
 
         this.context = new FinderContext();
@@ -420,6 +424,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         if (previewContent != null) {
             showPreview(previewContent);
         }
+    }
+
+    MetadataRegistry metadataRegistry() {
+        return metadataRegistry;
     }
 
 

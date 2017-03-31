@@ -22,7 +22,8 @@
         <table id="system-property-table" title="System Property"
                form-ref="system-property-form">
             <actions>
-                <action title="{{mbuiContext.resources().constants().add()}}" handler="{{presenter.add()}}"/>
+                <action title="{{mbuiContext.resources().constants().add()}}" handler="{{presenter.add()}}"
+                        constraint="add"/>
                 <action handler-ref="remove-resource" scope="selected"
                         name-resolver="{{api.selectedRow().getName()}}"/>
             </actions>

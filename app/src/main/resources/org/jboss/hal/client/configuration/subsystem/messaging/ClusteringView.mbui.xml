@@ -25,10 +25,10 @@
                        form-ref="messaging-broadcast-group-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.BROADCAST_GROUP)}}"/>
+                                handler="{{presenter.add(ServerSubResource.BROADCAST_GROUP)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.BROADCAST_GROUP, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -62,10 +62,10 @@
                        form-ref="messaging-discovery-group-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.DISCOVERY_GROUP)}}"/>
+                                handler="{{presenter.add(ServerSubResource.DISCOVERY_GROUP)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.DISCOVERY_GROUP, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -99,10 +99,11 @@
                        form-ref="messaging-cluster-connection-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"/>
+                                handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"
+                                constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -122,10 +123,10 @@
                        form-ref="messaging-grouping-handler-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.GROUPING_HANDLER)}}"/>
+                                handler="{{presenter.add(ServerSubResource.GROUPING_HANDLER)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.GROUPING_HANDLER, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -144,10 +145,10 @@
                 <table id="messaging-bridge-table" title="Bridge" form-ref="messaging-bridge-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}"/>
+                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.BRIDGE, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

@@ -189,8 +189,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(bcType, name, BOOTSTRAP_CONTEXT_TEMPLATE, model));
 
         Options<NamedNode> bcTableOptions = new ModelNodeTable.Builder<NamedNode>(bcMetadata)
-                .button(resources.constants().add(), (event, api) -> bcAddDialog.show())
-                .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
+                .add((event, api) -> bcAddDialog.show())
+                .remove(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .build();
@@ -238,8 +238,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
 
         Options<NamedNode> wmOptions = new ModelNodeTable.Builder<NamedNode>(wmMetadata)
-                .button(resources.constants().add(), (event, api) -> wmAddDialog.show())
-                .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
+                .add((event, api) -> wmAddDialog.show())
+                .remove(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.reload()))
                 .column(NAME)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
@@ -281,8 +281,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
 
         Options<NamedNode> dwmOptions = new ModelNodeTable.Builder<NamedNode>(dwmMetadata)
-                .button(resources.constants().add(), (event, api) -> dwmAddDialog.show())
-                .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
+                .add((event, api) -> dwmAddDialog.show())
+                .remove(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .column(POLICY)

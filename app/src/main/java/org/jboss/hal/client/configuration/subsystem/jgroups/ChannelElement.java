@@ -23,7 +23,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -66,11 +65,10 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
+                .add((event, api) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
                         Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL))
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter
-                                .removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(), Names.CHANNEL))
+                .remove((event, api) -> presenter.removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(),
+                        Names.CHANNEL))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Forks", row -> {
                     selectedChannel = row.getName();

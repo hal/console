@@ -49,7 +49,7 @@ import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Kind of presenter which holds code to read and parse the RBAC related management model.
+ * Kind of presenter which holds code to read and parseSingle the RBAC related management model.
  * <p>
  * TODO Sync roles with environment and header
  *

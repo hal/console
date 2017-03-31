@@ -63,9 +63,9 @@
                        form-ref="resource-adapter-connection-definition-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{addConnectionDefinition()}}"/>
+                                handler="{{addConnectionDefinition()}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeConnectionDefinition(api)}}" scope="selected"/>
+                                handler="{{removeConnectionDefinition(api)}}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -138,9 +138,10 @@
                 <table id="resource-adapter-admin-object-table" title="Admin Object"
                        form-ref="resource-adapter-admin-object-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addAdminObject()}}"/>
+                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addAdminObject()}}"
+                                constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeAdminObject(api)}}" scope="selected"/>
+                                handler="{{removeAdminObject(api)}}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

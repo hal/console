@@ -22,7 +22,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -55,9 +54,8 @@ class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePr
 
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addHandler())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeHandler(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addHandler())
+                .remove((event, api) -> presenter.removeHandler(api.selectedRow().getName()))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
         String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE_SUFFIX);

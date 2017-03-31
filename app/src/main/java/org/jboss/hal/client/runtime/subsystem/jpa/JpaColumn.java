@@ -52,7 +52,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.JPA_RUNTIME)
-@Requires(value = JPA_ADDRESS)
+@Requires(JPA_ADDRESS)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
 
     @Inject

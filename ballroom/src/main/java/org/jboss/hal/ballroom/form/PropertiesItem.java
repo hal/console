@@ -175,7 +175,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d\\-\\._/]+)=([\\w\\d\\-\\._/]+)$"); //NON-NLS
+    private static final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/]+)$"); //NON-NLS
 
     public PropertiesItem(final String name) {
         this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());

@@ -22,7 +22,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -58,9 +57,8 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
 
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addHandlerChain())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeHandlerChain(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addHandlerChain())
+                .remove((event, api) -> presenter.removeHandlerChain(api.selectedRow().getName()))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(Names.HANDLER, row -> presenter.showHandlers(row))
                 .build();

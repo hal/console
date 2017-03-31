@@ -34,17 +34,29 @@ import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Requires;
+
+import static org.jboss.hal.client.runtime.BrowseByColumn.HOST_ADDRESS;
+import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_CONFIG_ADDRESS;
+import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_GROUP_ADDRESS;
 
 /**
  * @author Harald Pehl
  */
 @Column(Ids.DOMAIN_BROWSE_BY)
+@Requires(value = {HOST_ADDRESS, SERVER_GROUP_ADDRESS, SERVER_CONFIG_ADDRESS}, recursive = false)
 public class BrowseByColumn extends StaticItemColumn {
+
+    // necessary for the constraints in topology preview
+    static final String HOST_ADDRESS = "/host=*";
+    static final String SERVER_GROUP_ADDRESS = "/server-group=*";
+    static final String SERVER_CONFIG_ADDRESS = "/host=*/server-config=*";
 
     public static boolean browseByHosts(FinderContext context) {
         FinderSegment firstSegment = context.getPath().iterator().next();
@@ -62,6 +74,7 @@ public class BrowseByColumn extends StaticItemColumn {
     @Inject
     public BrowseByColumn(final Finder finder,
             final Environment environment,
+            final MetadataRegistry metadataRegistry,
             final @Footer Provider<Progress> progress,
             final EventBus eventBus,
             final Dispatcher dispatcher,
@@ -74,9 +87,9 @@ public class BrowseByColumn extends StaticItemColumn {
         super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(new TopologyPreview(environment, dispatcher, progress, eventBus,
-                                        places, finderPathFactory, hostActions, serverGroupActions, serverActions,
-                                        resources))
+                                .onPreview(new TopologyPreview(metadataRegistry, environment, dispatcher, progress,
+                                        eventBus, places, finderPathFactory, hostActions, serverGroupActions,
+                                        serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(Ids.HOST)

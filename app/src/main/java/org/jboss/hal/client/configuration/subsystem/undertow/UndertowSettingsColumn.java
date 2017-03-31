@@ -37,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Holds the top level items to configure the undertow subsystem.
+ * TODO Add support for /subsystem=undertow/application-security-domain=*
  *
  * @author Harald Pehl
  */

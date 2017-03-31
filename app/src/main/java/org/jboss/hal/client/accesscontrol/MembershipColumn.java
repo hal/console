@@ -61,6 +61,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -120,8 +122,10 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             List<ColumnAction<Assignment>> includeActions = missingPrincipals.stream()
                     .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
-                    .map(principal -> new ColumnAction<>(includeId(principal), typeAndName(principal),
-                            columnActionHandler(principal, true)))
+                    .map(principal -> new ColumnAction.Builder<Assignment>(includeId(principal))
+                            .title(typeAndName(principal))
+                            .handler(columnActionHandler(principal, true))
+                            .build())
                     .collect(toList());
             if (!includeActions.isEmpty()) {
                 addColumnActions(Ids.MEMBERSHIP_INCLUDE, fontAwesome("plus"), resources.constants().includeUserGroup(),
@@ -130,8 +134,10 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             List<ColumnAction<Assignment>> excludeActions = missingPrincipals.stream()
                     .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
-                    .map(principal -> new ColumnAction<>(excludeId(principal), typeAndName(principal),
-                            columnActionHandler(principal, false)))
+                    .map(principal -> new ColumnAction.Builder<Assignment>(excludeId(principal))
+                            .title(typeAndName(principal))
+                            .handler(columnActionHandler(principal, false))
+                            .build())
                     .collect(toList());
             if (!excludeActions.isEmpty()) {
                 addColumnActions(Ids.MEMBERSHIP_EXCLUDE, fontAwesome("minus"), resources.constants().excludeUserGroup(),
@@ -187,7 +193,8 @@ public class MembershipColumn extends FinderColumn<Assignment> {
             @Override
             public List<ItemAction<Assignment>> actions() {
                 return singletonList(itemActionFactory.remove(resources.constants().membership(),
-                        item.getPrincipal().getName(), itm -> {
+                        item.getPrincipal().getName(), item.isInclude() ? INCLUDE_TEMPLATE : EXCLUDE_TEMPLATE,
+                        itm -> {
                             ResourceAddress address = AddressTemplates.assignment(itm);
                             Operation operation = new Operation.Builder(REMOVE, address).build();
                             dispatcher.execute(operation, result -> {

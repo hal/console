@@ -44,6 +44,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.CACHE_CONTAINER)
+// TODO Add @Requires to make the column add action work with RBAC
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
     @Inject
@@ -53,11 +54,13 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             final CrudOperations crud,
             final Places places) {
 
-        //noinspection Convert2MethodRef
         super(new Builder<CacheContainer>(finder, Ids.CACHE_CONTAINER, Names.CACHE_CONTAINER)
 
                 .columnAction(columnActionFactory.add(Ids.CACHE_CONTAINER_ADD, Names.CACHE_CONTAINER,
-                        CACHE_CONTAINER_TEMPLATE, name -> Ids.cacheContainer(name)))
+                        CACHE_CONTAINER_TEMPLATE, name -> {
+                            //noinspection Convert2MethodRef
+                            return Ids.cacheContainer(name);
+                        }))
                 .columnAction(columnActionFactory.refresh(Ids.CACHE_CONTAINER_REFRESH))
 
                 .itemsProvider((context, callback) ->

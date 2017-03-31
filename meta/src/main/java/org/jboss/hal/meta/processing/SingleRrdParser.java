@@ -29,7 +29,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * This class does the bulk of work when it comes to parse the r-r-d response. Therefore it processes three parts:
+ * This class does the bulk of work when it comes to parseSingle the r-r-d response. Therefore it processes three parts:
  * <ol>
  * <li>The actual description of the resource and its attributes</li>
  * <li>The security relevant information</li>

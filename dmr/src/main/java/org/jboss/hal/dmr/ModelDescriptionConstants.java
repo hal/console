@@ -110,6 +110,7 @@ public interface ModelDescriptionConstants {
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String COPY = "copy";
     String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CUSTOM = "custom";
@@ -152,9 +153,11 @@ public interface ModelDescriptionConstants {
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
     String EVICTION = "eviction";
+    String EXECUTE = "execute";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
     String EXPIRATION = "expiration";
+    String EXPLODE = "explode";
     String EXPLODED = "exploded";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
@@ -167,6 +170,10 @@ public interface ModelDescriptionConstants {
     String FILE = "file";
     String FILTER_REF = "filter-ref";
     String FIXED_PORT = "fixed-port";
+    String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
+    String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
+    String FLUSH_INVALID_CONNECTION_IN_POOL = "flush-invalid-connection-in-pool";
+    String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FORK = "fork";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
@@ -313,6 +320,7 @@ public interface ModelDescriptionConstants {
     String QUEUE_LENGTH = "queue-length";
     String QUEUE_NAME = "queue-name";
 
+    String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_BOOT_ERRORS = "read-boot-errors";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -417,6 +425,7 @@ public interface ModelDescriptionConstants {
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
     String STORE = "store";
+    String STREAM = "stream";
     String STRING = "string";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";

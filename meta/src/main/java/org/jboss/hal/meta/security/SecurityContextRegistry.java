@@ -24,14 +24,14 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
 
-public class SecurityFramework extends AbstractRegistry<SecurityContext> {
+public class SecurityContextRegistry extends AbstractRegistry<SecurityContext> {
 
     private static final String SECURITY_CONTEXT_TYPE = "security context";
 
     private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
-    public SecurityFramework(final StatementContext statementContext, final Environment environment) {
+    public SecurityContextRegistry(final StatementContext statementContext, final Environment environment) {
         super(statementContext, SECURITY_CONTEXT_TYPE, environment);
         this.registry = new HashMap<>();
     }

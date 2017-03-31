@@ -21,7 +21,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
@@ -58,17 +57,15 @@ public class ForkElement implements IsElement, Attachable, HasPresenter<JGroupsP
         Metadata metadata = metadataRegistry.lookup(CHANNEL_FORK_TEMPLATE);
 
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter
-                        .addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE, Ids.JGROUPS_CHANNEL_FORK_ENTRY, Names.FORK))
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter
-                                .removeResource(SELECTED_CHANNEL_FORK_TEMPLATE, api.selectedRow().getName(),
-                                        Names.FORK))
+                .add((event, api) -> presenter.addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE,
+                        Ids.JGROUPS_CHANNEL_FORK_ENTRY, Names.FORK))
+                .remove((event, api) -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
+                        api.selectedRow().getName(), Names.FORK))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Protocols", row -> {
-                        presenter.showChannelProtocol(row);
-                        presenter.showChannelInnerPage(PROTOCOL_ID);
-                        })
+                    presenter.showChannelProtocol(row);
+                    presenter.showChannelInnerPage(PROTOCOL_ID);
+                })
                 .build();
         table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_FORK_ENTRY, Ids.TABLE_SUFFIX), options);
 

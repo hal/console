@@ -42,7 +42,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -73,9 +72,8 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
         Metadata metadata = metadataRegistry.lookup(cache.template);
         ModelNodeTable.Builder<NamedNode> builder = new NamedNodeTable.Builder<>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addCache(cache))
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeCache(cache, api.selectedRow().getName()))
+                .add((event, api) -> presenter.addCache(cache))
+                .remove((event, api) -> presenter.removeCache(cache, api.selectedRow().getName()))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName());
         if (cache != LOCAL) {
             builder.column(MODE);
@@ -161,9 +159,8 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                     cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*"));
 
             Options<NamedNode> backupOptions = new NamedNodeTable.Builder<>(backupMeta)
-                    .button(resources.constants().add(), (event, api) -> presenter.addCacheBackup())
-                    .button(resources.constants().remove(), SELECTED,
-                            (event, api) -> presenter.removeCacheBackup(api.selectedRow().getName()))
+                    .add((event, api) -> presenter.addCacheBackup())
+                    .remove((event, api) -> presenter.removeCacheBackup(api.selectedRow().getName()))
                     .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                     .build();
             backupTable = new NamedNodeTable<>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),

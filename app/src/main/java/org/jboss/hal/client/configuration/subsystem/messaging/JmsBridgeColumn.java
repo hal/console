@@ -92,7 +92,7 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter());
 
-        addColumnAction(columnActionFactory.add(Ids.JMS_BRIDGE_ADD, Names.JMS_BRIDGE,
+        addColumnAction(columnActionFactory.add(Ids.JMS_BRIDGE_ADD, Names.JMS_BRIDGE, JMS_BRIDGE_TEMPLATE,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(JMS_BRIDGE_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JMS_BRIDGE_ADD, metadata)

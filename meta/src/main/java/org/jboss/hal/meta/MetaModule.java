@@ -20,7 +20,7 @@ import com.google.inject.Singleton;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.GinModule;
 
 /**
@@ -35,6 +35,6 @@ public class MetaModule extends AbstractGinModule {
         bind(MetadataProcessor.class).in(Singleton.class);
         bind(MetadataRegistry.class).in(Singleton.class);
         bind(ResourceDescriptions.class).in(Singleton.class);
-        bind(SecurityFramework.class).in(Singleton.class);
+        bind(SecurityContextRegistry.class).in(Singleton.class);
     }
 }

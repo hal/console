@@ -44,7 +44,6 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
-import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -54,6 +53,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -121,12 +121,16 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.templates = templates;
 
         List<ColumnAction<DataSource>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.DATA_SOURCE_ADD,
-                resources.messages().addResourceTitle(Names.DATASOURCE),
-                column -> prepareWizard(false)));
-        addActions.add(new ColumnAction<>(Ids.XA_DATA_SOURCE_ADD,
-                resources.messages().addResourceTitle(Names.XA_DATASOURCE),
-                column -> prepareWizard(true)));
+        addActions.add(new ColumnAction.Builder<DataSource>(Ids.DATA_SOURCE_ADD)
+                .title(resources.messages().addResourceTitle(Names.DATASOURCE))
+                .handler(column -> prepareWizard(false))
+                .constraint(Constraint.executable(DATA_SOURCE_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<DataSource>(Ids.XA_DATA_SOURCE_ADD)
+                .title(resources.messages().addResourceTitle(Names.XA_DATASOURCE))
+                .handler(column -> prepareWizard(true))
+                .constraint(Constraint.executable(XA_DATA_SOURCE_TEMPLATE, ADD))
+                .build());
         addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
@@ -193,10 +197,29 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(builder.build()));
                 if (dataSource.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().disable(), ds -> disable(ds)));
-                    actions.add(new ItemAction<>(resources.constants().testConnection(), ds -> testConnection(ds)));
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().disable())
+                            .handler(ds -> disable(ds))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, ADD))
+                            .build());
+                    // test connection w/ constraints makes only sense in standalone mode
+                    if (environment.isStandalone()) {
+                        actions.add(new ItemAction.Builder<DataSource>()
+                                .title(resources.constants().testConnection())
+                                .handler(ds -> testConnection(ds))
+                                .constraint(Constraint.executable(
+                                        dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                        TEST_CONNECTION_IN_POOL))
+                                .build());
+                    }
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().enable(), ds -> enable(ds)));
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().enable())
+                            .handler(ds -> enable(ds))
+                            .constraint(Constraint.writable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, ENABLED))
+                            .build());
                 }
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
                         dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
@@ -274,40 +297,16 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void testConnection(final DataSource dataSource) {
-        TopologyFunctions.RunningServersQuery runningServers = new TopologyFunctions.RunningServersQuery(
-                environment, dispatcher, environment.isStandalone() ? null : new ModelNode().set(PROFILE_NAME,
-                statementContext.selectedProfile()));
-        Function<FunctionContext> testConnection = control -> {
-            List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
-            if (!servers.isEmpty()) {
-                Server server = servers.get(0);
-                ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
-                        .add(DATA_SOURCE, dataSource.getName());
-                Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, address).build();
-                dispatcher.executeInFunction(control, operation, result -> control.proceed());
-
-            } else {
-                control.getContext().failed(resources.constants().noRunningServers());
-                control.abort();
-            }
-        };
-
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().testConnectionError(dataSource.getName()),
-                                context.getError()));
-            }
-
-            @Override
-            public void onSuccess(final FunctionContext context) {
-                MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().testConnectionSuccess(dataSource.getName())));
-            }
-        };
-
-        new Async<FunctionContext>(progress.get())
-                .waterfall(new FunctionContext(), outcome, runningServers, testConnection);
+        if (environment.isStandalone()) {
+            ResourceAddress address = new ResourceAddress()
+                    .add(SUBSYSTEM, DATASOURCES)
+                    .add(DATA_SOURCE, dataSource.getName());
+            Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, address).build();
+            dispatcher.execute(operation,
+                    result -> MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().testConnectionSuccess(dataSource.getName()))),
+                    (op, failure) -> MessageEvent.fire(eventBus,
+                            Message.error(resources.messages().testConnectionError(dataSource.getName()), failure)));
+        }
     }
 }

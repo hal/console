@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;

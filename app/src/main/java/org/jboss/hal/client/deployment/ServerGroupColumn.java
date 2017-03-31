@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.DEPLOYMENT_SERVER_GROUP)
-@Requires(value = "/server-group=*")
+@Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
     @Inject

@@ -33,7 +33,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 
 /**
@@ -51,9 +50,8 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPrese
 
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
         Options<NamedNode> options = new NamedNodeTable.Builder<>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addListener(listenerType))
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeListener(listenerType, api.selectedRow().getName()))
+                .add((event, api) -> presenter.addListener(listenerType))
+                .remove((event, api) -> presenter.removeListener(listenerType, api.selectedRow().getName()))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .build();
         table = new NamedNodeTable<>(Ids.build(listenerType.baseId, Ids.TABLE_SUFFIX), options);

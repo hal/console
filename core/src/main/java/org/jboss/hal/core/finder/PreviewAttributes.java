@@ -41,6 +41,7 @@ import static org.jboss.hal.resources.CSS.*;
 
 /**
  * Element to show the basic attributes of a resource inside the preview pane.
+ * TODO Apply constraints to attributes?
  *
  * @author Harald Pehl
  */

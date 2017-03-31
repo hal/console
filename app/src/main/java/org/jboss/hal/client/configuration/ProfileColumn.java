@@ -45,6 +45,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -148,7 +149,11 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             @Override
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
-                actions.add(new ItemAction<>(resources.constants().clone(), itm -> cloneProfile(itm.getName())));
+                actions.add(new ItemAction.Builder<NamedNode>()
+                        .title(resources.constants().clone())
+                        .handler(itm -> cloneProfile(itm.getName()))
+                        .constraint(Constraint.executable(PROFILE_TEMPLATE, CLONE))
+                        .build());
                 actions.add(itemActionFactory.remove(
                         Names.PROFILE, item.getName(), PROFILE_TEMPLATE, ProfileColumn.this));
                 return actions;

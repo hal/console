@@ -25,7 +25,6 @@ import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.form.Form.State;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -57,7 +56,7 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @author Harald Pehl
  */
-class FormLinks<T> implements IsElement {
+public class FormLinks<T> implements IsElement {
 
     private static final String LINKS = "links";
     private static final String HELP_CONTENT = "helpContent";
@@ -171,35 +170,51 @@ class FormLinks<T> implements IsElement {
         return root;
     }
 
-    void switchTo(State state, T model, SecurityContext securityContext) {
+    void switchTo(State state, T model) {
+        // Use Elements.toggle() and 'hidden' CSS class instead of Elements.setVisible()
+        // to make this work with security related code.
         switch (state) {
             case EMPTY:
-                Elements.setVisible(editLink, false);
-                Elements.setVisible(resetLink, false);
-                Elements.setVisible(removeLink, false);
-                Elements.setVisible(helpLink, false);
+                Elements.toggle(editLink, hidden, true);
+                Elements.toggle(editLink, hidden, true);
+                Elements.toggle(resetLink, hidden, true);
+                Elements.toggle(removeLink, hidden, true);
+                Elements.toggle(helpLink, hidden, true);
                 break;
 
             case READONLY:
-                Elements.setVisible(editLink,
-                        model != null && stateMachine.supports(EDIT) && securityContext.isWritable());
-                Elements.setVisible(resetLink,
-                        model != null && stateMachine.supports(RESET) && securityContext.isWritable());
-                Elements.setVisible(removeLink,
-                        model != null && stateMachine.supports(REMOVE) && securityContext.isWritable());
-                Elements.setVisible(helpLink, !helpTexts.isEmpty());
+                Elements.toggle(editLink, hidden, model == null || !stateMachine.supports(EDIT));
+                Elements.toggle(resetLink, hidden, model == null || !stateMachine.supports(RESET));
+                Elements.toggle(removeLink, hidden, model == null || !stateMachine.supports(REMOVE));
+                Elements.toggle(helpLink, hidden, helpTexts.isEmpty());
                 break;
 
             case EDITING:
-                Elements.setVisible(editLink, false);
-                Elements.setVisible(resetLink, false);
-                Elements.setVisible(removeLink, false);
+                Elements.toggle(editLink, hidden, true);
+                Elements.toggle(resetLink, hidden, true);
+                Elements.toggle(removeLink, hidden, true);
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
         }
-        Elements.setVisible(root, Elements.isVisible(editLink) ||
-                Elements.isVisible(resetLink) ||
-                Elements.isVisible(removeLink) ||
-                Elements.isVisible(helpLink));
+        Elements.setVisible(root, isVisible(editLink) ||
+                isVisible(resetLink) ||
+                isVisible(removeLink) ||
+                isVisible(helpLink));
+    }
+
+    private boolean isVisible(Element element) {
+        return element != null && Elements.isVisible(element) && !element.getClassList().contains(hidden);
+    }
+
+    public Element getEditLink() {
+        return editLink;
+    }
+
+    public Element getResetLink() {
+        return resetLink;
+    }
+
+    public Element getRemoveLink() {
+        return removeLink;
     }
 }

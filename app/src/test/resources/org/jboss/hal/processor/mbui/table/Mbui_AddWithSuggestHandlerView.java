@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -50,7 +51,7 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
         this.handlebarElements = new HashMap<>();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .button(mbuiContext.resources().constants().add(), (event, api) -> {
+                .add((event, api) -> {
                     AddResourceDialog dialog = new AddResourceDialog(
                             Ids.build("table", Ids.ADD_SUFFIX),
                             mbuiContext.resources().messages().addResourceTitle("Foo"),

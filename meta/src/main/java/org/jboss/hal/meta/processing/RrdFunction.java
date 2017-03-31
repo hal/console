@@ -27,7 +27,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,18 +40,18 @@ class RrdFunction implements Function<FunctionContext> {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
     private final MetadataRegistry metadataRegistry;
-    private final SecurityFramework securityFramework;
+    private final SecurityContextRegistry securityContextRegistry;
     private final ResourceDescriptions resourceDescriptions;
     private final Capabilities capabilities;
     private final Dispatcher dispatcher;
     private final Composite composite;
     private final boolean optional;
 
-    RrdFunction(final MetadataRegistry metadataRegistry, final SecurityFramework securityFramework,
+    RrdFunction(final MetadataRegistry metadataRegistry, final SecurityContextRegistry securityContextRegistry,
             final ResourceDescriptions resourceDescriptions, final Capabilities capabilities,
             final Dispatcher dispatcher, final Composite composite, final boolean optional) {
         this.metadataRegistry = metadataRegistry;
-        this.securityFramework = securityFramework;
+        this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptions = resourceDescriptions;
         this.capabilities = capabilities;
         this.dispatcher = dispatcher;
@@ -68,7 +68,7 @@ class RrdFunction implements Function<FunctionContext> {
                         for (RrdResult rr : results) {
                             if (rr.securityContext != null) {
                                 logger.debug("Add security context for {}", rr.template);
-                                securityFramework.add(rr.address, rr.securityContext);
+                                securityContextRegistry.add(rr.address, rr.securityContext);
                             }
                             if (rr.resourceDescription != null) {
                                 logger.debug("Add resource description for {}", rr.template);

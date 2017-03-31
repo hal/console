@@ -43,6 +43,8 @@ interface AddressTemplates {
 
     AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     AddressTemplate ROLE_MAPPING_TEMPLATE = AddressTemplate.of(ROLE_MAPPING_ADDRESS);
+    AddressTemplate INCLUDE_TEMPLATE = AddressTemplate.of(INCLUDE_ADDRESS);
+    AddressTemplate EXCLUDE_TEMPLATE = AddressTemplate.of(EXCLUDE_ADDRESS);
     AddressTemplate SERVER_GROUP_SCOPED_ROLE_TEMPLATE = AddressTemplate.of(SERVER_GROUP_SCOPED_ROLE_ADDRESS);
     AddressTemplate HOST_SCOPED_ROLE_TEMPLATE = AddressTemplate.of(HOST_SCOPED_ROLE_ADDRESS);
 

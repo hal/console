@@ -151,7 +151,6 @@ public interface CSS {
     String hasButton = "has-button";
     String hasClear = "has-clear";
     String hasError = "has-error";
-    String hasFeedback = "has-feedback";
     String headerForm = "header-form";
     String header = "header";
     String helpBlock = "help-block";
@@ -279,6 +278,7 @@ public interface CSS {
     String questionsCircleO = "question-circle-o";
 
     String radio = "radio";
+    String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
     String refresh = "refresh";
     String restricted = "restricted";

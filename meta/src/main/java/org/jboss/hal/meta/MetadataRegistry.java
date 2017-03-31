@@ -21,10 +21,11 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 /**
  * Registry for {@link Metadata} which combines the information from {@link org.jboss.hal.meta.description.ResourceDescriptions},
- * {@link org.jboss.hal.meta.security.SecurityFramework} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
+ * {@link SecurityContextRegistry} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
  *
  * @author Harald Pehl
  */

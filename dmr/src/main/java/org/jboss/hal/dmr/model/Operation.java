@@ -163,7 +163,7 @@ public class Operation extends ModelNode {
             } else {
                 roles.forEach(role -> header.get(ROLES).add(role));
             }
-            roles.forEach(role -> get(OPERATION_HEADERS).get(ROLES).add(role));
+            get(OPERATION_HEADERS).set(header);
         }
     }
 

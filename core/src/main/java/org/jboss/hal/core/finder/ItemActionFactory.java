@@ -24,9 +24,11 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
  * Convenience methods for common item actions.
@@ -72,23 +74,45 @@ public class ItemActionFactory {
     }
 
     public <T> ItemAction<T> placeRequest(String title, PlaceRequest placeRequest) {
-        return new ItemAction<>(title, item -> placeManager.revealPlace(placeRequest));
+        return placeRequest(title, placeRequest, null);
+    }
+
+    public <T> ItemAction<T> placeRequest(String title, PlaceRequest placeRequest, Constraint constraint) {
+        ItemAction.Builder<T> builder = new ItemAction.Builder<T>()
+                .title(title)
+                .handler(item -> placeManager.revealPlace(placeRequest));
+        if (constraint != null) {
+            builder.constraint(constraint);
+        }
+        return builder.build();
     }
 
     public <T> ItemAction<T> viewAndMonitor(String itemId, PlaceRequest placeRequest) {
-        return new ItemAction<>(resources.constants().view(),
-                itemMonitor.monitorPlaceRequest(itemId, placeRequest.getNameToken(),
-                        () -> placeManager.revealPlace(placeRequest)));
+        return new ItemAction.Builder<T>().title(resources.constants().view())
+                .handler(itemMonitor.monitorPlaceRequest(itemId, placeRequest.getNameToken(),
+                        () -> placeManager.revealPlace(placeRequest)))
+                .build();
     }
 
     /**
      * Wraps the specified handler inside a confirmation dialog. The action is executed upon confirmation.
      */
-    public <T> ItemAction<T> remove(String type, String name, ItemActionHandler<T> handler) {
-        return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
-                resources.messages().removeConfirmationTitle(type),
-                resources.messages().removeConfirmationQuestion(name),
-                () -> handler.execute(item)));
+    public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, ItemActionHandler<T> handler) {
+        return remove(type, name, template, template, handler);
+    }
+
+    public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, AddressTemplate constraint,
+            ItemActionHandler<T> handler) {
+        ItemAction.Builder<T> builder = new ItemAction.Builder<T>()
+                .title(resources.constants().remove())
+                .handler(item -> DialogFactory.showConfirmation(
+                        resources.messages().removeConfirmationTitle(type),
+                        resources.messages().removeConfirmationQuestion(name),
+                        () -> handler.execute(item)));
+        if (template != null) {
+            builder.constraint(Constraint.executable(constraint, REMOVE));
+        }
+        return builder.build();
     }
 
     /**
@@ -97,7 +121,16 @@ public class ItemActionFactory {
      * the resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, FinderColumn<T> column) {
-        return new ItemAction<>(resources.constants().remove(), item -> crud.remove(type, name, template,
-                () -> column.refresh(CLEAR_SELECTION)));
+        return remove(type, name, template, template, column);
+
+    }
+
+    public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, AddressTemplate constraint,
+            FinderColumn<T> column) {
+        return new ItemAction.Builder<T>()
+                .title(resources.constants().remove())
+                .handler(item -> crud.remove(type, name, template, () -> column.refresh(CLEAR_SELECTION)))
+                .constraint(Constraint.executable(constraint, REMOVE))
+                .build();
     }
 }

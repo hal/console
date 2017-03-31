@@ -28,6 +28,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -185,7 +186,7 @@ final class ${context.subclass} extends ${context.base} {
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
-            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+            .add((event, api) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
                     .fromRequestProperties()
@@ -227,7 +228,7 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             })
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
-            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+            .add((event, api) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
@@ -256,23 +257,23 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             })
                                 <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .add(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template, <#if action.attributes?has_content>asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>), </#if>(name, address) -> presenter.reload()))
                                 </#if>
                             <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .add(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
                 (name, address) -> presenter.reload()))
                             </#if>
                             <#break>
                         <#case "REMOVE_RESOURCE">
-            .button(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
+            .remove(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
                 (api) -> ${action.nameResolver},
                 () -> presenter.reload()))
                             <#break>
                     </#switch>
                 <#else>
-            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if>(event, api) -> ${action.handler})
+            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parseSingle("${action.constraint}"), </#if>(event, api) -> ${action.handler})
                 </#if>
             </#list>
             <#if table.onlySimpleColumns>

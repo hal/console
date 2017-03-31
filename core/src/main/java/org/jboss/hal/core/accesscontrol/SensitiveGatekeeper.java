@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.accesscontrol;
 
+import javax.inject.Inject;
+
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 
 /**
@@ -24,8 +26,13 @@ import com.gwtplatform.mvp.client.proxy.Gatekeeper;
  */
 public class SensitiveGatekeeper implements Gatekeeper {
 
+    private final AccessControl accessControl;
+
+    @Inject
+    public SensitiveGatekeeper(final AccessControl accessControl) {this.accessControl = accessControl;}
+
     @Override
     public boolean canReveal() {
-        return AccessControl.isSuperUserOrAdministrator();
+        return accessControl.isSuperUserOrAdministrator();
     }
 }

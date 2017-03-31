@@ -65,6 +65,10 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -94,12 +98,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
+    private final MetadataRegistry metadataRegistry;
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final EventBus eventBus;
     private final Places places;
-    private final FinderPathFactory finderPathFactory;
     private final HostActions hostActions;
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
@@ -113,7 +117,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
 
-    TopologyPreview(final Environment environment,
+    TopologyPreview(final MetadataRegistry metadataRegistry,
+            final Environment environment,
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
             final EventBus eventBus,
@@ -124,12 +129,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final ServerActions serverActions,
             final Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
+        this.metadataRegistry = metadataRegistry;
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.eventBus = eventBus;
         this.places = places;
-        this.finderPathFactory = finderPathFactory;
         this.hostActions = hostActions;
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
@@ -440,7 +445,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 // The dropdown is also added if there are no servers. Otherwise the heights of
                 // the cells w/ and w/o servers would be different.
                 .div().css(dropdown);
-                    if (host.hasServers() && !hostActions.isPending(host)) {
+                    if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
                         builder.a()
                             .id(hostDropDownId)
                             .css(clickable, dropdownToggle, name)
@@ -482,7 +487,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 // The dropdown is also added if there are no servers. Otherwise the heights of
                 // the cells w/ and w/o servers would be different.
                 .div().css(dropdown);
-                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup)) {
+                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
                         builder.a().id(serverGroupDropDownId)
                             .css(clickable, dropdownToggle, name)
                             .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -521,7 +526,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .id(Ids.hostServer(srv.getHost(), srv.getName()))
                 .data(SERVER, srv.getName())
             .div().css(dropdown);
-                if (!serverActions.isPending(srv)) {
+                if (!serverActions.isPending(srv) && isAllowed(srv)) {
                     builder.a()
                         .id(serverDropDownId)
                         .css(clickable, dropdownToggle, name)
@@ -635,6 +640,13 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverAttributesSection, false);
     }
 
+    private boolean isAllowed(Host host) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(metadataRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
+    }
+
     private void hostActions(final Elements.Builder builder, final Host host) {
         actionLink(builder, event -> hostActions.reload(host), resources.constants().reload());
         actionLink(builder, event -> hostActions.restart(host), resources.constants().restart());
@@ -688,6 +700,13 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverGroupAttributesSection, true);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, false);
+    }
+
+    private boolean isAllowed(ServerGroup serverGroup) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(metadataRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=*"), RELOAD_SERVERS));
     }
 
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
@@ -763,6 +782,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, true);
+    }
+
+    private boolean isAllowed(Server server) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(metadataRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + server.getHost() + "/server-config=*"),
+                        RELOAD));
     }
 
     private void serverActions(final Elements.Builder builder, final Server server) {

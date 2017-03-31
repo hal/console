@@ -103,9 +103,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 .title(CONSTANTS.resolveExpression())
                 .end().build();
         restrictedMarker = new Elements.Builder().span()
-                .css(fontAwesome("lock"))
-                .aria(HIDDEN, TRUE)
-                .textContent(CONSTANTS.restricted())
+                .span().css(fontAwesome("lock"), marginRight5).aria(HIDDEN, TRUE).end()
+                .span().textContent(CONSTANTS.restricted()).end()
                 .end().build();
         peekLink = new Elements.Builder().span()
                 .css(fontAwesome("eye"), clickable)
@@ -238,9 +237,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case RESTRICTED:
                 valueElement.setTextContent("");
-                Elements.failSafeRemove(valueContainer, defaultValue);
-                Elements.failSafeRemove(valueContainer, expressionLink);
-                Elements.failSafeRemove(valueContainer, hintElement);
+                Elements.removeChildrenFrom(valueContainer);
                 valueContainer.appendChild(restrictedMarker);
                 break;
 

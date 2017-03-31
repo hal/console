@@ -39,7 +39,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_LRT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -72,10 +71,8 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
         Options<ThreadPool> options = new ModelNodeTable.Builder<ThreadPool>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.launchAddThreadPool(workmanagerTemplate,
-                        workmanager))
-                .button(resources.constants().remove(), SELECTED, (event, api) ->
-                        presenter.removeThreadPool(workmanagerTemplate, workmanager, api.selectedRow()))
+                .add((event, api) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager))
+                .remove((event, api) -> presenter.removeThreadPool(workmanagerTemplate, workmanager, api.selectedRow()))
                 .column(NAME)
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
@@ -97,7 +94,7 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_FORM), metadata)
                 .include(MAX_THREADS, "core-threads", "queue-length")
                 .onSave((form, changedValues) -> presenter.saveThreadPool(workmanagerTemplate, workmanager,
-                        form.getModel(), changedValues ))
+                        form.getModel(), changedValues))
                 .prepareReset(form -> presenter.resetThreadPool(workmanagerTemplate, workmanager,
                         form.getModel(), form))
                 .build();

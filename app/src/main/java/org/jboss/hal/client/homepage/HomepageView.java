@@ -23,10 +23,9 @@ import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.User;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.resources.Ids;
@@ -46,11 +45,11 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
     private HomepagePresenter presenter;
 
     @Inject
-    public HomepageView(Environment environment, User user, Resources resources, Places places) {
+    public HomepageView(Environment environment, AccessControl ac, Resources resources, Places places) {
 
         boolean standalone = environment.isStandalone();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
-        boolean su = AccessControl.isSuperUserOrAdministrator();
+        boolean su = ac.isSuperUserOrAdministrator();
         String name = environment.getInstanceInfo().productName();
 
         Document document = Browser.getDocument();

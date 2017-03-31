@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import javax.tools.JavaFileObject;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.jetbrains.annotations.NonNls;
@@ -38,12 +40,17 @@ public abstract class MbuiViewProcessorTest {
         return javac()
                 .withOptions("-proc:only")
                 .withProcessors(new MbuiViewProcessor())
-                .compile(JavaFileObjects.forResource(getClass().getResource(source + ".java")));
+                .compile(javaSource((source)));
     }
 
     protected void assertSourceEquals(final Compilation compilation, @NonNls final String source) {
+        String generated = getClass().getPackage().getName() + "." + source;
         assertThat(compilation)
-                .generatedSourceFile(getClass().getPackage().getName() + "." + source)
-                .hasSourceEquivalentTo(JavaFileObjects.forResource(getClass().getResource(source + ".java")));
+                .generatedSourceFile(generated)
+                .hasSourceEquivalentTo(javaSource(source));
+    }
+
+    private JavaFileObject javaSource(String classname) {
+        return JavaFileObjects.forResource(getClass().getResource(classname + ".java"));
     }
 }

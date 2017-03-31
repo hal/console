@@ -39,7 +39,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.client.configuration.SocketBindingGroupPresenter.ROOT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -83,9 +82,8 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .lookup(ROOT_TEMPLATE.append(INBOUND.templateSuffix()));
 
         Options<NamedNode> inboundOptions = new NamedNodeTable.Builder<>(inboundMetadata)
-                .button(mbuiContext.resources().constants().add(), (event, api) -> presenter.addSocketBinding(INBOUND))
-                .button(mbuiContext.resources().constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeSocketBinding(INBOUND, api.selectedRow().getName()))
+                .add((event, api) -> presenter.addSocketBinding(INBOUND))
+                .remove((event, api) -> presenter.removeSocketBinding(INBOUND, api.selectedRow().getName()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
                 .column(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row))
@@ -111,10 +109,8 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
         Metadata clientMappingsMetadata = clientMappingsMetadata(inboundMetadata);
 
         Options<NamedNode> clientMappingsOptions = new ModelNodeTable.Builder<NamedNode>(clientMappingsMetadata)
-                .button(mbuiContext.resources().constants().add(),
-                        (event, api) -> presenter.addClientMapping(clientMappingsMetadata))
-                .button(mbuiContext.resources().constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeClientMapping(api.selectedRow().get(INDEX).asInt(-1)))
+                .add((event, api) -> presenter.addClientMapping(clientMappingsMetadata))
+                .remove((event, api) -> presenter.removeClientMapping(api.selectedRow().get(INDEX).asInt(-1)))
                 .column(SOURCE_NETWORK)
                 .column(Names.DESTINATION, (cell, type, row, meta) -> {
                     String address = row.get(DESTINATION_ADDRESS).asString();

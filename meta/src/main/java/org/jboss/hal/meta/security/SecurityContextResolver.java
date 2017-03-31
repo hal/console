@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.meta.security;
 
-import java.util.List;
-
-import elemental.dom.Element;
+import java.util.Optional;
 
 /**
+ * Function to resolve a {@link SecurityContext} from a {@link Constraint}.
+ *
  * @author Harald Pehl
  */
-class DropdownColumnAction<T> extends ColumnAction<T> {
+@FunctionalInterface
+public interface SecurityContextResolver {
 
-    final List<ColumnAction<T>> actions;
-
-    DropdownColumnAction(final String id, final Element element, final List<ColumnAction<T>> actions) {
-        super(id, element);
-        this.actions = actions;
-    }
+    Optional<SecurityContext> resolve(Constraint constraint);
 }

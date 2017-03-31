@@ -45,6 +45,8 @@ import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -56,7 +58,9 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 
 /**
  * @author Harald Pehl
@@ -64,6 +68,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 @Column(Ids.HOST)
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
+
+    static final AddressTemplate HOST_TEMPLATE = AddressTemplate.of("/{selected.host}");
 
     @Inject
     public HostColumn(final Finder finder,
@@ -186,8 +192,16 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                 if (!hostActions.isPending(item)) {
-                    actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
-                    actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
+                    actions.add(new ItemAction.Builder<Host>()
+                            .title(resources.constants().reload())
+                            .handler(hostActions::reload)
+                            .constraint(Constraint.executable(hostTemplate(item), RELOAD_SERVERS))
+                            .build());
+                    actions.add(new ItemAction.Builder<Host>()
+                            .title(resources.constants().restart())
+                            .handler(hostActions::restart)
+                            .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
+                            .build());
                     // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                 }
                 return actions;
@@ -196,6 +210,10 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
         eventBus.addHandler(HostActionEvent.getType(), this);
         eventBus.addHandler(HostResultEvent.getType(), this);
+    }
+
+    private AddressTemplate hostTemplate(Host host) {
+        return AddressTemplate.of("/host=" + host.getAddressName());
     }
 
     @Override

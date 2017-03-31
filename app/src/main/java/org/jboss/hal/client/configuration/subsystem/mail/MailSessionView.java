@@ -24,7 +24,6 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -97,9 +96,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         //noinspection ConstantConditions
         Options<NamedNode> tableOptions = new ModelNodeTable.Builder<NamedNode>(serverMetadata)
-                .button(resources.constants().add(), (event, api) -> presenter.launchAddServer())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeServer(api.selectedRow()))
+                .add((event, api) -> presenter.launchAddServer())
+                .remove((event, api) -> presenter.removeServer(api.selectedRow()))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
                         (cell, type, row, meta) -> row.getName().toUpperCase()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS

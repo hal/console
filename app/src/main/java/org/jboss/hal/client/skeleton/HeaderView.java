@@ -76,11 +76,13 @@ import static org.jboss.hal.resources.FontAwesomeSize.large;
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     // @formatter:off
-    public static HeaderView create(final Places places, final User user, final Resources resources) {
-        return new Templated_HeaderView(places, user, resources);
+    public static HeaderView create(final Places places, final AccessControl ac, final User user,
+            final Resources resources) {
+        return new Templated_HeaderView(places, ac, user, resources);
     }
 
     public abstract Places places();
+    public abstract AccessControl ac();
     public abstract User user();
     public abstract Resources resources();
     // @formatter:on
@@ -157,7 +159,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             });
         }
 
-        boolean su = AccessControl.isSuperUserOrAdministrator();
+        boolean su = ac().isSuperUserOrAdministrator();
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);

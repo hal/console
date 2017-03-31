@@ -160,6 +160,9 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="constraint"/>
+            </optional>
+            <optional>
                 <ref name="attributes-definition"/>
             </optional>
         </element>

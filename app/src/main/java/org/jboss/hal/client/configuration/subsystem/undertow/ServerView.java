@@ -42,7 +42,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.AJP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTP;
@@ -105,9 +104,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         Metadata hostMetadata = metadataRegistry.lookup(HOST_TEMPLATE);
         Options<NamedNode> hostOptions = new NamedNodeTable.Builder<>(hostMetadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addHost())
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeHost(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addHost())
+                .remove((event, api) -> presenter.removeHost(api.selectedRow().getName()))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.UNDERTOW_HOST_ACTION_COLUMN,
                         resources.constants().references(),
@@ -158,9 +156,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         Metadata filterRefMetadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
         Options<NamedNode> filterRefOptions = new NamedNodeTable.Builder<>(filterRefMetadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addFilterRef())
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeFilterRef(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addFilterRef())
+                .remove((event, api) -> presenter.removeFilterRef(api.selectedRow().getName()))
                 .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
@@ -186,9 +183,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         Metadata locationMetadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
         Options<NamedNode> locationOptions = new NamedNodeTable.Builder<>(locationMetadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addLocation())
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeLocation(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addLocation())
+                .remove((event, api) -> presenter.removeLocation(api.selectedRow().getName()))
                 .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
                 .column(HANDLER)
                 .column(Names.FILTERS, row -> presenter.showLocationFilterRef(row))
@@ -215,9 +211,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         Metadata locationFilterRefMetadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
         Options<NamedNode> locationFilterRefOptions = new NamedNodeTable.Builder<>(locationFilterRefMetadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addLocationFilterRef())
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeLocationFilterRef(api.selectedRow().getName()))
+                .add((event, api) -> presenter.addLocationFilterRef())
+                .remove((event, api) -> presenter.removeLocationFilterRef(api.selectedRow().getName()))
                 .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();

@@ -42,6 +42,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -210,15 +211,40 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     actions.add(itemActionFactory.view(placeRequest));
                 }
                 if (dataSource.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().test(), item -> testConnection(item)));
-                    actions.add(new ItemAction<>(resources.constants().flushGracefully(),
-                            item -> flush(item, "flush-gracefully-connection-in-pool")));
-                    actions.add(new ItemAction<>(resources.constants().flushIdle(),
-                            item -> flush(item, "flush-idle-connection-in-pool")));
-                    actions.add(new ItemAction<>(resources.constants().flushInvalid(),
-                            item -> flush(item, "flush-invalid-connection-in-pool")));
-                    actions.add(new ItemAction<>(resources.constants().flushAll(),
-                            item -> flush(item, "flush-all-connection-in-pool")));
+                    actions.add(new ItemAction.Builder<DataSource>().title(resources.constants().test())
+                            .handler(item -> testConnection(item))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                    TEST_CONNECTION_IN_POOL))
+                            .build());
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().flushGracefully())
+                            .handler(item -> flush(item, FLUSH_GRACEFULLY_CONNECTION_IN_POOL))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                    FLUSH_GRACEFULLY_CONNECTION_IN_POOL))
+                            .build());
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().flushIdle())
+                            .handler(item -> flush(item, FLUSH_IDLE_CONNECTION_IN_POOL))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                    FLUSH_IDLE_CONNECTION_IN_POOL))
+                            .build());
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().flushInvalid())
+                            .handler(item -> flush(item, FLUSH_INVALID_CONNECTION_IN_POOL))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                    FLUSH_INVALID_CONNECTION_IN_POOL))
+                            .build());
+                    actions.add(new ItemAction.Builder<DataSource>()
+                            .title(resources.constants().flushAll())
+                            .handler(item -> flush(item, FLUSH_ALL_CONNECTION_IN_POOL))
+                            .constraint(Constraint.executable(
+                                    dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE,
+                                    FLUSH_ALL_CONNECTION_IN_POOL))
+                            .build());
                 }
                 return actions;
             }
@@ -254,6 +280,15 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         return dataSource.isXa()
                 ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
                 : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+    }
+
+    AddressTemplate dataSourceConfigurationTemplate(DataSource dataSource) {
+        String resourceName = dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE;
+        if (environment.isStandalone()) {
+            return AddressTemplate.of("/subsystem=datasources/" + resourceName + "=*");
+        } else {
+            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + "=*");
+        }
     }
 
     private ResourceAddress dataSourceConfigurationAddress(DataSource dataSource) {
