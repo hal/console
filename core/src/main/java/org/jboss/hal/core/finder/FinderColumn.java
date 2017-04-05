@@ -697,7 +697,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    callback.onFailure(throwable);
+                    if (callback != null) {
+                        callback.onFailure(throwable);
+                    }
                 }
 
                 @Override

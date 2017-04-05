@@ -36,7 +36,7 @@ import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.runtime.server.ServerColumn.SERVER_CONFIG_TEMPLATE;
+import static org.jboss.hal.client.runtime.server.ServerColumn.serverConfigTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -74,27 +74,27 @@ class ServerPreview extends RuntimePreview<Server> {
                 .span().textContent(" ").end()
                 .a().rememberAs(START_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.start(server))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(SERVER_CONFIG_TEMPLATE, START).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), START).data())
                     .textContent(resources.constants().start())
                 .end()
                 .a().rememberAs(STOP_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.stop(server))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(SERVER_CONFIG_TEMPLATE, STOP).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), STOP).data())
                     .textContent(resources.constants().stop())
                 .end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.reload(server))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(SERVER_CONFIG_TEMPLATE, RELOAD).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RELOAD).data())
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.restart(server))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(SERVER_CONFIG_TEMPLATE, RESTART).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RESTART).data())
                     .textContent(resources.constants().restart())
                 .end()
                 .a().rememberAs(RESUME_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.resume(server))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(SERVER_CONFIG_TEMPLATE, RESUME).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RESUME).data())
                     .textContent(resources.constants().resume())
                 .end()
                 .a().rememberAs(BOOT_ERRORS_LINK).css(clickable, alertLink)

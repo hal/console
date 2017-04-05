@@ -87,7 +87,9 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
-    static final AddressTemplate SERVER_CONFIG_TEMPLATE = AddressTemplate.of("/{selected.host}/server-config=*");
+    static AddressTemplate serverConfigTemplate(Server server) {
+        return AddressTemplate.of("/host=" + server.getHost() + "/server-config=*");
+    }
 
     private final Finder finder;
     private FinderPath refreshPath;
@@ -172,7 +174,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             } else {
                 serverConfigsFn = control -> {
-                    ResourceAddress serverConfigAddress = AddressTemplate.of("/{selected.host}/server-config=*")
+                    ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
                     Operation operation = new Operation.Builder(QUERY, serverConfigAddress)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
@@ -306,49 +308,49 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().start())
                                 .handler(serverActions::start)
-                                .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, START))
+                                .constraint(Constraint.executable(serverConfigTemplate(item), START))
                                 .build());
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/server-config=" + item.getName());
                         actions.add(itemActionFactory.remove(Names.SERVER, item.getName(),
-                                template, SERVER_CONFIG_TEMPLATE, ServerColumn.this));
+                                template, serverConfigTemplate(item), ServerColumn.this));
                     }
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().copy())
                             .handler(itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext())))
-                            .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, COPY))
+                            .constraint(Constraint.executable(serverConfigTemplate(item), COPY))
                             .build());
                     if (item.isStarted()) {
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().reload())
                                 .handler(serverActions::reload)
-                                .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, RELOAD))
+                                .constraint(Constraint.executable(serverConfigTemplate(item), RELOAD))
                                 .build());
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().restart())
                                 .handler(serverActions::restart)
-                                .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, RESTART))
+                                .constraint(Constraint.executable(serverConfigTemplate(item), RESTART))
                                 .build());
                         if (ManagementModel.supportsSuspend(item.getManagementVersion())) {
                             if (item.isSuspended()) {
                                 actions.add(new ItemAction.Builder<Server>()
                                         .title(resources.constants().resume())
                                         .handler(serverActions::resume)
-                                        .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, RESUME))
+                                        .constraint(Constraint.executable(serverConfigTemplate(item), RESUME))
                                         .build());
                             } else {
                                 actions.add(new ItemAction.Builder<Server>()
                                         .title(resources.constants().suspend())
                                         .handler(serverActions::suspend)
-                                        .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, SUSPEND))
+                                        .constraint(Constraint.executable(serverConfigTemplate(item), SUSPEND))
                                         .build());
                             }
                         }
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().stop())
                                 .handler(serverActions::stop)
-                                .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, STOP))
+                                .constraint(Constraint.executable(serverConfigTemplate(item), STOP))
                                 .build());
                     }
                 }
@@ -356,7 +358,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 actions.add(new ItemAction.Builder<Server>()
                         .title(resources.constants().kill())
                         .handler(serverActions::kill)
-                        .constraint(Constraint.executable(SERVER_CONFIG_TEMPLATE, KILL))
+                        .constraint(Constraint.executable(serverConfigTemplate(item), KILL))
                         .build());
                 return actions;
             }
@@ -367,7 +369,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
-        addColumnAction(columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER, SERVER_CONFIG_TEMPLATE,
+        addColumnAction(columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER, AddressTemplate.of("/host=*/server-config=*"),
                 column -> {
                     addServer(BrowseByColumn.browseByHosts(finder.getContext()));
                 }));
