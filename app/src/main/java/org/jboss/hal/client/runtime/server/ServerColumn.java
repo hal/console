@@ -76,8 +76,6 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.server.ServerColumn.SERVER_ADDRESS;
-import static org.jboss.hal.client.runtime.server.ServerColumn.SERVER_CONFIG_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
@@ -86,12 +84,10 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
  * @author Harald Pehl
  */
 @Column(Ids.SERVER)
-@Requires(value = {SERVER_CONFIG_ADDRESS, SERVER_ADDRESS}, recursive = false)
+@Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
-    static final String SERVER_CONFIG_ADDRESS = "/{selected.host}/server-config=*";
-    static final String SERVER_ADDRESS = "/{selected.host}/server=*";
-    static final AddressTemplate SERVER_CONFIG_TEMPLATE = AddressTemplate.of(SERVER_CONFIG_ADDRESS);
+    static final AddressTemplate SERVER_CONFIG_TEMPLATE = AddressTemplate.of("/{selected.host}/server-config=*");
 
     private final Finder finder;
     private FinderPath refreshPath;
