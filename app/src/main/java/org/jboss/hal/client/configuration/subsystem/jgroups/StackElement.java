@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -62,15 +63,17 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     private final TransportElement transportElement;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    StackElement(final MetadataRegistry metadataRegistry, final Resources resources) {
+    StackElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .add((event, api) -> presenter.addStack())
+                .button(tableButtonFactory.add(STACK_TEMPLATE, (event, api) -> presenter.addStack()))
                 //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
                 //        Names.STACK))
-                .remove((event, api) -> presenter.removeResource(STACK_TEMPLATE, api.selectedRow().getName(),
-                        Names.STACK))
+                .button(tableButtonFactory.remove(STACK_TEMPLATE,
+                        (event, api) -> presenter.removeResource(STACK_TEMPLATE, api.selectedRow().getName(),
+                                Names.STACK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_STACK_COLUMN,
                         "Action",
@@ -103,7 +106,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
                         .width("18em")
                         .build())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata, options);
 
         // @formatter:off
         Element section = new Elements.Builder()
@@ -115,17 +118,14 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
         .build();
         // @formatter:on
 
-        relayElement = new RelayElement(metadataRegistry, resources);
-        remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE),
-                resources,
-                SELECTED_REMOTE_SITE_TEMPLATE,
-                Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
-        protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), resources,
-                SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL,
-                Ids.JGROUPS_PROTOCOL);
-        transportElement = new TransportElement(metadataRegistry, metadataRegistry.lookup(TRANSPORT_TEMPLATE),
-                resources, SELECTED_TRANSPORT_TEMPLATE,
-                Names.TRANSPORT, Ids.JGROUPS_TRANSPORT);
+        relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
+        remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE), tableButtonFactory,
+                resources, SELECTED_REMOTE_SITE_TEMPLATE, Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
+        protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), tableButtonFactory,
+                resources, SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL, Ids.JGROUPS_PROTOCOL);
+        transportElement = new TransportElement(metadataRegistry, tableButtonFactory,
+                metadataRegistry.lookup(TRANSPORT_TEMPLATE), resources, SELECTED_TRANSPORT_TEMPLATE, Names.TRANSPORT,
+                Ids.JGROUPS_TRANSPORT);
 
         innerPages = new Pages(STACK_ID, section);
         // Relay page

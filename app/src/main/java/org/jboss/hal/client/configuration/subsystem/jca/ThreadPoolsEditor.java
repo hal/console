@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -66,18 +67,22 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
     private String workmanager;
 
     @SuppressWarnings("ConstantConditions")
-    ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry, final Resources resources) {
+    ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory, final Resources resources) {
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
         Options<ThreadPool> options = new ModelNodeTable.Builder<ThreadPool>(metadata)
-                .add((event, api) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager))
-                .remove((event, api) -> presenter.removeThreadPool(workmanagerTemplate, workmanager, api.selectedRow()))
+                .button(tableButtonFactory.add(WORKMANAGER_LRT_TEMPLATE,
+                        (event, api) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager)))
+                .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
+                        (event, api) -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
+                                api.selectedRow())))
                 .column(NAME)
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();
-        table = new NamedNodeTable<>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), options);
+        table = new NamedNodeTable<>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), metadata, options);
         attachables.add(table);
 
         attributesForm = new ModelNodeForm.Builder<ThreadPool>(

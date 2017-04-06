@@ -18,17 +18,16 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -56,8 +55,8 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
     private JGroupsPresenter presenter;
 
     @Inject
-    public JGroupsView(final EventBus eventBus, final MetadataRegistry metadataRegistry, final Resources resources,
-            final Dispatcher dispatcher) {
+    public JGroupsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(JGROUPS_TEMPLATE);
         jgroupsForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_FORM, metadata)
@@ -75,8 +74,8 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
         .build();
         // @formatter:on
 
-        stackConfig = new StackElement(metadataRegistry, resources);
-        channelConfig = new ChannelElement(metadataRegistry, resources);
+        stackConfig = new StackElement(metadataRegistry, tableButtonFactory, resources);
+        channelConfig = new ChannelElement(metadataRegistry, tableButtonFactory, resources);
 
         VerticalNavigation navigation = new VerticalNavigation();
         // main settings

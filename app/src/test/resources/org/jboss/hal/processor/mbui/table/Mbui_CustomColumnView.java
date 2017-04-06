@@ -54,7 +54,7 @@ final class Mbui_CustomColumnView extends CustomColumnView {
                 .column("name")
                 .column("foo", (cell, type, row, meta) -> "foo")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

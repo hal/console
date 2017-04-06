@@ -25,7 +25,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
  * A statement context which resolves
  * <ul>
  * <li>{@code selected.profile}</li>
- * <li>{@code selected.group} and</li>
+ * <li>{@code selected.group} and</li> // TODO Does this work with server-group scoped roles?
  * <li>{@code selection}</li>
  * </ul>
  * to "*".

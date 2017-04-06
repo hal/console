@@ -50,7 +50,7 @@ public class ElementGuard {
 
         @Override
         public boolean test(final Element element) {
-            return !element.getClassList().contains(hidden);
+            return element != null && !element.getClassList().contains(hidden);
         }
     }
 
@@ -78,6 +78,12 @@ public class ElementGuard {
         }
     }
 
+
+    public static void toggle(Element element, boolean condition) {
+        if (new Visible().test(element)) {
+            Elements.toggle(element, rbacHidden, condition);
+        }
+    }
 
     public static void processElements(AuthorisationDecision authorisationDecision, String selector) {
         processElements(authorisationDecision, Browser.getDocument().querySelectorAll(selector));

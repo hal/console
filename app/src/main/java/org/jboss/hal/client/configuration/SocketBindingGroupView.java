@@ -32,6 +32,7 @@ import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Ids;
@@ -78,17 +79,20 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
     @PostConstruct
     @SuppressWarnings("ConstantConditions")
     void init() {
-        Metadata inboundMetadata = mbuiContext.metadataRegistry()
-                .lookup(ROOT_TEMPLATE.append(INBOUND.templateSuffix()));
+        AddressTemplate inboundTemplate = ROOT_TEMPLATE.append(INBOUND.templateSuffix());
+        Metadata inboundMetadata = mbuiContext.metadataRegistry().lookup(inboundTemplate);
 
         Options<NamedNode> inboundOptions = new NamedNodeTable.Builder<>(inboundMetadata)
-                .add((event, api) -> presenter.addSocketBinding(INBOUND))
-                .remove((event, api) -> presenter.removeSocketBinding(INBOUND, api.selectedRow().getName()))
+                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                        (event, api) -> presenter.addSocketBinding(INBOUND)))
+                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                        (event, api) -> presenter.removeSocketBinding(INBOUND, api.selectedRow().getName())))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
                 .column(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row))
                 .build();
-        inboundTable = new NamedNodeTable<>(Ids.build(INBOUND.baseId, Ids.TABLE_SUFFIX), inboundOptions);
+        inboundTable = new NamedNodeTable<>(Ids.build(INBOUND.baseId, Ids.TABLE_SUFFIX), inboundMetadata,
+                inboundOptions);
 
         inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM_SUFFIX), inboundMetadata)
                 .include(INTERFACE, PORT, FIXED_PORT, MULTICAST_ADDRESS, MULTICAST_PORT)
@@ -109,8 +113,10 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
         Metadata clientMappingsMetadata = clientMappingsMetadata(inboundMetadata);
 
         Options<NamedNode> clientMappingsOptions = new ModelNodeTable.Builder<NamedNode>(clientMappingsMetadata)
-                .add((event, api) -> presenter.addClientMapping(clientMappingsMetadata))
-                .remove((event, api) -> presenter.removeClientMapping(api.selectedRow().get(INDEX).asInt(-1)))
+                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                        (event, api) -> presenter.addClientMapping(clientMappingsMetadata)))
+                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                        (event, api) -> presenter.removeClientMapping(api.selectedRow().get(INDEX).asInt(-1))))
                 .column(SOURCE_NETWORK)
                 .column(Names.DESTINATION, (cell, type, row, meta) -> {
                     String address = row.get(DESTINATION_ADDRESS).asString();
@@ -121,7 +127,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 })
                 .build();
         clientMappingTable = new NamedNodeTable<>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE,
-                clientMappingsOptions);
+                clientMappingsMetadata, clientMappingsOptions);
 
         clientMappingForm = new ModelNodeForm.Builder<NamedNode>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_FORM,
                 clientMappingsMetadata)

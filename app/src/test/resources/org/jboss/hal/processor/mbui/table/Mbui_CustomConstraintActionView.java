@@ -54,7 +54,7 @@ final class Mbui_CustomConstraintActionView extends CustomConstraintActionView {
                 .button("Foo", Constraint.parseSingle("writable(/subsystem=foo@enabled)"), (event, api) -> presenter.reload())
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

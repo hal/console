@@ -21,11 +21,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.Names;
@@ -46,17 +45,17 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     }
 
     @MbuiElement("host-navigation") VerticalNavigation navigation;
-    @MbuiElement("host-configuration-form") Form<Host> hostConfigurationForm;
-    @MbuiElement("host-interface-table") DataTable<NamedNode> hostInterfaceTable;
-    @MbuiElement("host-interface-form") Form<NamedNode> hostInterfaceForm;
-    @MbuiElement("host-jvm-table") DataTable<NamedNode> hostJvmTable;
-    @MbuiElement("host-jvm-form") Form<NamedNode> hostJvmForm;
-    @MbuiElement("host-path-table") DataTable<NamedNode> hostPathTable;
-    @MbuiElement("host-path-form") Form<NamedNode> hostPathForm;
-    @MbuiElement("host-socket-binding-group-table") DataTable<NamedNode> hostSocketBindingGroupTable;
-    @MbuiElement("host-socket-binding-group-form") Form<NamedNode> hostSocketBindingGroupForm;
-    @MbuiElement("host-system-property-table") DataTable<NamedNode> hostSystemPropertyTable;
-    @MbuiElement("host-system-property-form") Form<NamedNode> hostSystemPropertyForm;
+    @MbuiElement("host-configuration-form") ModelNodeForm<Host> hostConfigurationForm;
+    @MbuiElement("host-interface-table") NamedNodeTable<NamedNode> hostInterfaceTable;
+    @MbuiElement("host-interface-form") ModelNodeForm<NamedNode> hostInterfaceForm;
+    @MbuiElement("host-jvm-table") NamedNodeTable<NamedNode> hostJvmTable;
+    @MbuiElement("host-jvm-form") ModelNodeForm<NamedNode> hostJvmForm;
+    @MbuiElement("host-path-table") NamedNodeTable<NamedNode> hostPathTable;
+    @MbuiElement("host-path-form") ModelNodeForm<NamedNode> hostPathForm;
+    @MbuiElement("host-socket-binding-group-table") NamedNodeTable<NamedNode> hostSocketBindingGroupTable;
+    @MbuiElement("host-socket-binding-group-form") ModelNodeForm<NamedNode> hostSocketBindingGroupForm;
+    @MbuiElement("host-system-property-table") NamedNodeTable<NamedNode> hostSystemPropertyTable;
+    @MbuiElement("host-system-property-form") ModelNodeForm<NamedNode> hostSystemPropertyForm;
 
     HostView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -80,31 +79,31 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
 
     @Override
     public void updateInterfaces(final List<NamedNode> interfaces) {
-        hostInterfaceTable.api().clear().add(interfaces).refresh(RefreshMode.RESET);
         hostInterfaceForm.clear();
+        hostInterfaceTable.update(interfaces);
     }
 
     @Override
     public void updateJvms(final List<NamedNode> interfaces) {
-        hostJvmTable.api().clear().add(interfaces).refresh(RefreshMode.RESET);
         hostJvmForm.clear();
+        hostJvmTable.update(interfaces);
     }
 
     @Override
-    public void updatePaths(final List<NamedNode> interfaces) {
-        hostPathTable.api().clear().add(interfaces).refresh(RefreshMode.RESET);
+    public void updatePaths(final List<NamedNode> paths) {
         hostPathForm.clear();
+        hostPathTable.update(paths);
     }
 
     @Override
-    public void updateSocketBindingGroups(final List<NamedNode> interfaces) {
-        hostSocketBindingGroupTable.api().clear().add(interfaces).refresh(RefreshMode.RESET);
+    public void updateSocketBindingGroups(final List<NamedNode> groups) {
         hostSocketBindingGroupForm.clear();
+        hostSocketBindingGroupTable.update(groups);
     }
 
     @Override
-    public void updateSystemProperties(final List<NamedNode> interfaces) {
-        hostSystemPropertyTable.api().clear().add(interfaces).refresh(RefreshMode.RESET);
+    public void updateSystemProperties(final List<NamedNode> properties) {
         hostSystemPropertyForm.clear();
+        hostSystemPropertyTable.update(properties);
     }
 }

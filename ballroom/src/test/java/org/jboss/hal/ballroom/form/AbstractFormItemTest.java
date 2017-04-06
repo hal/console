@@ -470,15 +470,15 @@ public class AbstractFormItemTest {
     @Test
     public void setEnabled() throws Exception {
         AbstractFormItem<String> formItem = formItem(false);
-        formItem.setEnabled(true);
-        verify(readOnlyAppearance).apply(ENABLED, null);
-        verify(editingAppearance).apply(ENABLED, null);
-
-        reset(readOnlyAppearance, editingAppearance);
-
         formItem.setEnabled(false);
         verify(readOnlyAppearance).unapply(ENABLED);
         verify(editingAppearance).unapply(ENABLED);
+
+        reset(readOnlyAppearance, editingAppearance);
+
+        formItem.setEnabled(true);
+        verify(readOnlyAppearance).apply(ENABLED, null);
+        verify(editingAppearance).apply(ENABLED, null);
     }
 
     @Test

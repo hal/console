@@ -25,13 +25,14 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 
@@ -46,15 +47,17 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPrese
     private ServerPresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
-    ListenerElement(Listener listenerType, MetadataRegistry metadataRegistry, Resources resources) {
+    ListenerElement(Listener listenerType, MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory) {
 
-        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE.append(listenerType.resource + "=*"));
+        AddressTemplate template = SERVER_TEMPLATE.append(listenerType.resource + "=*");
+        Metadata metadata = metadataRegistry.lookup(template);
         Options<NamedNode> options = new NamedNodeTable.Builder<>(metadata)
-                .add((event, api) -> presenter.addListener(listenerType))
-                .remove((event, api) -> presenter.removeListener(listenerType, api.selectedRow().getName()))
+                .button(tableButtonFactory.add(template, (event, api) -> presenter.addListener(listenerType)))
+                .button(tableButtonFactory.remove(template,
+                        (event, api) -> presenter.removeListener(listenerType, api.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(listenerType.baseId, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(listenerType.baseId, Ids.TABLE_SUFFIX), metadata, options);
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveListener(listenerType, form.getModel().getName(),

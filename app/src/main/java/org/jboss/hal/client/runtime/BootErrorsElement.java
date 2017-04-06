@@ -92,7 +92,7 @@ public class BootErrorsElement implements IsElement, Attachable {
                             return operation.isDefined() ? operation.asString() : Names.NOT_AVAILABLE;
                         })
                 .build();
-        table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, options);
+        table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, metadata, options);
 
         form = new ModelNodeForm.Builder<>(Ids.BOOT_ERRORS_FORM, metadata)
                 .readOnly()

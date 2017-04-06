@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Button.ActionHandler;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -80,15 +81,26 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B button(String text, ActionHandler<T> action) {
-        return button(text, null, action);
+        return button(text, null, null, action);
+    }
+
+    public B button(String text, Constraint constraint, ActionHandler<T> action) {
+        return button(text, null, constraint, action);
     }
 
     public B button(String text, Scope scope, ActionHandler<T> action) {
+        return button(text, scope, null, action);
+    }
+
+    public B button(String text, Scope scope, Constraint constraint, ActionHandler<T> action) {
         Button<T> button = new Button<>();
         button.text = text;
         button.action = action;
         if (scope != null) {
             button.extend = scope.selector();
+        }
+        if (constraint != null) {
+            button.constraint = constraint.data();
         }
         return button(button);
     }

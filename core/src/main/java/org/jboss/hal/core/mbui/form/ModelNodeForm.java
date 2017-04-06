@@ -33,7 +33,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
@@ -363,10 +362,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final Map<String, ModelNode> attributeMetadata;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
-    private final SecurityContext securityContext;
+    private Metadata metadata;
 
     @SuppressWarnings("unchecked")
-    private ModelNodeForm(final Builder<T> builder) {
+    protected ModelNodeForm(final Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
                 builder.dataMapping != null
                         ? builder.dataMapping
@@ -383,7 +382,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         this.prepareRemove = builder.prepareRemove;
         this.resourceDescription = builder.metadata.getDescription();
         this.attributePath = builder.attributePath;
-        this.securityContext = builder.metadata.getSecurityContext();
+        this.metadata = builder.metadata;
 
         List<Property> properties = new ArrayList<>();
         List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
@@ -444,12 +443,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
             if (formItem != null) {
                 addFormItem(formItem);
-                if (!securityContext.isReadable(name)) {
-                    formItem.setRestricted(true);
-                }
-                if (!securityContext.isWritable(name)) {
-                    formItem.setEnabled(false);
-                }
                 if (attribute.hasDefined(DESCRIPTION)) {
                     SafeHtml helpText = helpTextBuilder.helpText(property);
                     addHelp(labelBuilder.label(property), helpText);
@@ -513,25 +506,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected Element createElement() {
-        Element element = super.createElement();
-
-        // apply security
-        if (!securityContext.isWritable()) {
-            // TODO Removing elements won't work if the security context changes after this form has been created
-            Elements.failSafeRemoveFromParent(formLinks().getEditLink());
-            Elements.failSafeRemoveFromParent(formLinks().getResetLink());
-        }
-        if (!securityContext.isExecutable(REMOVE)) {
-            Elements.failSafeRemoveFromParent(formLinks().getRemoveLink());
-        }
-        // process actions in the empty state element
-        ElementGuard.processElements(AuthorisationDecision.strict(securityContext), element);
-
-        return element;
-    }
-
-    @Override
     public void attach() {
         super.attach();
         if (Iterables.isEmpty(getFormItems())) {
@@ -545,6 +519,58 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
+    protected void prepareViewState() {
+        super.prepareViewState();
+
+        Metadata update = metadata.refresh();
+        if (update != metadata) {
+            metadata = update;
+            SecurityContext securityContext = metadata.getSecurityContext();
+
+            // process actions in the empty state element
+            ElementGuard.processElements(AuthorisationDecision.strict(securityContext), asElement());
+
+            // change restricted and enabled state
+            getBoundFormItems().forEach(formItem -> {
+                formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
+                formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+            });
+        }
+    }
+
+    @Override
+    protected void prepareEditState() {
+        super.prepareEditState();
+        getFormItems().forEach(this::evalRequires);
+    }
+
+    private void evalRequires(FormItem formItem) {
+        String name = formItem.getName();
+        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+                .map(this::getFormItem)
+                .filter(Objects::nonNull)
+                .collect(toList());
+        if (!requires.isEmpty()) {
+            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
+        }
+    }
+
+    @Override
+    protected boolean showEditLink(final State state) {
+        return super.showEditLink(state) && metadata.getSecurityContext().isWritable();
+    }
+
+    @Override
+    protected boolean showResetLink(final State state) {
+        return super.showResetLink(state) && metadata.getSecurityContext().isWritable();
+    }
+
+    @Override
+    protected boolean showRemoveLink(final State state) {
+        return super.showRemoveLink(state) && metadata.getSecurityContext().isWritable();
+    }
+
+    @Override
     public boolean isUndefined() {
         return getModel() == null || !getModel().isDefined();
     }
@@ -552,12 +578,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @Override
     public boolean isTransient() {
         return addOnly || (getModel() != null && !getModel().isDefined());
-    }
-
-    @Override
-    protected void prepareEditState() {
-        super.prepareEditState();
-        getFormItems().forEach(this::evalRequires);
     }
 
     /**
@@ -572,17 +592,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
         return writableChanges;
-    }
-
-    private void evalRequires(FormItem formItem) {
-        String name = formItem.getName();
-        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                .map(this::getFormItem)
-                .filter(Objects::nonNull)
-                .collect(toList());
-        if (!requires.isEmpty()) {
-            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
-        }
     }
 
     boolean isEmptyOrDefault(FormItem formItem) {

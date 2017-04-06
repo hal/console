@@ -54,7 +54,7 @@ final class Mbui_RemoveConstraintActionView extends RemoveConstraintActionView {
                 .button("Foo", Constraint.parseSingle("executable(subsystem=foo:remove)"), (event, api) -> presenter.reload())
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

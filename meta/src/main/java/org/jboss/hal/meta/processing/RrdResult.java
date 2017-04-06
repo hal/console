@@ -20,10 +20,12 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
@@ -38,9 +40,15 @@ class RrdResult {
 
     RrdResult(final ResourceAddress address) {
         this.address = address;
+
+        // turn the address back into a template, which will become part of the metadata
         if (address.size() == 1) {
-            // do not replace "/profile=*" with "{selected.profile}"
-            this.template = AddressTemplate.of(address.lastName() + "=*");
+            if (HOST.equals(address.lastName())) {
+                this.template = AddressTemplate.of(SELECTED_HOST.variable());
+            } else {
+                // do not replace "/profile=*" with "{selected.profile}"
+                this.template = AddressTemplate.of(address.lastName() + "=*");
+            }
         } else {
             // but replace "/profile=*/foo=bar" with "{selected.profile}/foo=*"
             this.template = AddressTemplate.of(address, (name, value, first, last, index) -> {
@@ -50,6 +58,9 @@ class RrdResult {
                     segment = name + "=*";
                 } else {
                     switch (name) {
+                        case HOST:
+                            segment = SELECTED_HOST.variable();
+                            break;
                         case PROFILE:
                             segment = SELECTED_PROFILE.variable();
                             break;

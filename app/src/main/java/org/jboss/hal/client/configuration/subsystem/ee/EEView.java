@@ -43,10 +43,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
-import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.CONTEXT_SERVICE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -118,10 +115,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Options<ModelNode> options = new ModelNodeTable.Builder<>(globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
-                .add((event, api) -> presenter.launchAddDialogGlobalModule())
-                .remove((event, api) -> presenter.removeGlobalModule(api.selectedRow()))
+                .button(tableButtonFactory.add(EE_SUBSYSTEM_TEMPLATE,
+                        (event, api) -> presenter.launchAddDialogGlobalModule()))
+                .button(tableButtonFactory.remove(EE_SUBSYSTEM_TEMPLATE,
+                        (event, api) -> presenter.removeGlobalModule(api.selectedRow())))
                 .build();
-        globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, options);
+        globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata, options);
         registerAttachable(globalModulesTable);
 
         navigationElement = new Elements.Builder()
@@ -258,15 +257,14 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
-                .add(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
+                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
                         (name, address) -> presenter.reload()))
-
-                .remove(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
+                .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
                         () -> presenter.reload()))
 
                 .build();
 
-        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), metadata, options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 

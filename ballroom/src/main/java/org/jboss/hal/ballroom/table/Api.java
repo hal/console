@@ -25,6 +25,7 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.JQuery;
 
 import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
@@ -64,6 +65,11 @@ public class Api<T> {
     public native Api<T> enable(boolean enable);
 
     public native Options<T> init();
+
+    /**
+     * Returns the jQuery object for the button selected with {@link #button(int)}
+     */
+    public native JQuery node();
 
     /**
      * Adds a selection callback. Currently restricted to the "select" and "deselect" event.

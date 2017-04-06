@@ -149,7 +149,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         section.setId(id);
         section.getClassList().add(formSection);
 
-        formLinks = new FormLinks<>(id, stateMachine, helpTexts,
+        formLinks = new FormLinks<>(this, stateMachine, helpTexts,
                 event -> edit(getModel()),
                 event -> {
                     if (prepareReset != null) {
@@ -502,6 +502,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
     protected void prepareEditState() {}
 
     protected void flip(State state) {
+        // exit with ESC handler
         switch (state) {
             case EMPTY:
             case READONLY:
@@ -522,11 +523,23 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
                 break;
         }
 
-        formLinks.switchTo(state, model);
+        formLinks.switchTo(state);
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
                 .forEach(panel -> Elements.setVisible(panel, false));
         Elements.setVisible(panels.get(state), true);
+    }
+
+    protected boolean showEditLink(State state) {
+        return state == READONLY && model != null && stateMachine.supports(EDIT);
+    }
+
+    protected boolean showResetLink(State state) {
+        return state == READONLY && model != null && stateMachine.supports(RESET);
+    }
+
+    protected boolean showRemoveLink(State state) {
+        return state == READONLY && model != null && stateMachine.supports(REMOVE);
     }
 
 
@@ -538,11 +551,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
 
     // ------------------------------------------------------ properties
-
-
-    protected FormLinks<T> formLinks() {
-        return formLinks;
-    }
 
     @Override
     public String getId() {

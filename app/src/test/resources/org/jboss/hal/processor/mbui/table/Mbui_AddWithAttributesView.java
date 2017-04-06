@@ -51,11 +51,11 @@ final class Mbui_AddWithAttributesView extends AddWithAttributesView {
         this.handlebarElements = new HashMap<>();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .add(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
+                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
                         metadata0Template, asList("foo"), (name, address) -> presenter.reload()))
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

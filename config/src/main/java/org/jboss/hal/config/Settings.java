@@ -72,6 +72,7 @@ public class Settings {
     public static class Value {
 
         private static final Value EMPTY = new Value(null);
+        private static final String SEPARATOR = "|";
 
         private final String value;
 
@@ -93,7 +94,7 @@ public class Settings {
         }
 
         public Set<String> asSet() {
-            return asSet(",");
+            return asSet(SEPARATOR);
         }
 
         public Set<String> asSet(String separator) {

@@ -35,8 +35,8 @@ public class NamedNodeTable<T extends NamedNode> extends ModelNodeTable<T> {
         }
     }
 
-    public NamedNodeTable(@NonNls final String id, final Options<T> options) {
-        super(id, options);
+    public NamedNodeTable(@NonNls final String id, final Metadata metadata, final Options<T> options) {
+        super(id, metadata, options);
     }
 
     /**

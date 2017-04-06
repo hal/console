@@ -89,7 +89,7 @@ class EndpointDialog {
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-        table = new NamedNodeTable<>(Ids.ENDPOINT_SELECT, endpointOptions);
+        table = new NamedNodeTable<>(Ids.ENDPOINT_SELECT, metadata, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()

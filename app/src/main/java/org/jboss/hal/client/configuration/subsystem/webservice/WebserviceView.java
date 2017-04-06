@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -53,7 +54,8 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     private WebservicePresenter presenter;
 
     @Inject
-    public WebserviceView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public WebserviceView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(WEBSERVICES_TEMPLATE);
         webservicesForm = new ModelNodeForm.Builder<>(Ids.WEBSERVICES_FORM, metadata)
@@ -70,8 +72,8 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
         .build();
         // @formatter:on
 
-        clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, resources);
-        endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, resources);
+        clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, tableButtonFactory, resources);
+        endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory, resources);
 
         VerticalNavigation navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.WEBSERVICES_ENTRY, Names.CONFIGURATION, pfIcon("settings"), webservicesSection);

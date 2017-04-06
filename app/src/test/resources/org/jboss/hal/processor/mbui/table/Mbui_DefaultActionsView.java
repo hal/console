@@ -51,15 +51,13 @@ final class Mbui_DefaultActionsView extends DefaultActionsView {
         this.handlebarElements = new HashMap<>();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .add(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
-                        metadata0Template,
-                        (name, address) -> presenter.reload()))
-                .remove(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,
-                        (api) -> api.selectedRow().getName(),
-                        () -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
+                        metadata0Template, (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,
+                        (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

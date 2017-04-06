@@ -86,7 +86,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
                 .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_ADD, Names.SERVER_GROUP,
-                        AddressTemplate.of("/server-group=*"), Ids::serverGroup))
+                        SERVER_GROUP_TEMPLATE, Ids::serverGroup))
                 .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
                 .itemsProvider((context, callback) ->
@@ -107,9 +107,9 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                                 new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
-                .onPreview(item -> new ServerGroupPreview(item, places))
                 // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
+                .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()
                 .showCount()
                 // Unlike other columns the server group column does not have a custom breadcrumb item handler.

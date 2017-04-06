@@ -13,40 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.table;
+package org.jboss.hal.ballroom;
 
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * Buttons options.
- *
- * @param <T> the row type
+ * Contains selected JQuery methods.
  *
  * @author Harald Pehl
- * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
  */
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Buttons<T> {
+@JsType(namespace = GLOBAL, name = "jQuery", isNative = true)
+public class JQuery {
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Dom {
-
-        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-        static class Factory {
-
-            public String tag;
-            public String className;
-        }
-
-
-        public Factory container;
-        public Factory button;
-    }
-
-
-    public Button<T>[] buttons;
-    public Dom dom;
+    public native JQuery attr(String key, String value);
 }

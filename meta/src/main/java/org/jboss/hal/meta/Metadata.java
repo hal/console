@@ -48,6 +48,7 @@ public class Metadata {
     private final SecurityContext securityContext;
     private final ResourceDescription description;
     private final Capabilities capabilities;
+    private MetadataRegistry registry;
 
     public Metadata(final AddressTemplate template, final SecurityContext securityContext,
             final ResourceDescription description, final Capabilities capabilities) {
@@ -55,6 +56,17 @@ public class Metadata {
         this.securityContext = securityContext;
         this.description = description;
         this.capabilities = capabilities;
+    }
+
+    void injectRegistry(MetadataRegistry registry) {
+        this.registry = registry;
+    }
+
+    public Metadata refresh() {
+        if (registry != null && registry.contains(template)) {
+            return registry.lookup(template);
+        }
+        return this;
     }
 
     public AddressTemplate getTemplate() {

@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -66,6 +67,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     public MailSessionView(final MetadataRegistry metadataRegistry,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final TableButtonFactory tableButtonFactory,
             final Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
@@ -96,15 +98,16 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         //noinspection ConstantConditions
         Options<NamedNode> tableOptions = new ModelNodeTable.Builder<NamedNode>(serverMetadata)
-                .add((event, api) -> presenter.launchAddServer())
-                .remove((event, api) -> presenter.removeServer(api.selectedRow()))
+                .button(tableButtonFactory.add(SERVER_TEMPLATE, (event, api) -> presenter.launchAddServer()))
+                .button(tableButtonFactory.remove(SERVER_TEMPLATE,
+                        (event, api) -> presenter.removeServer(api.selectedRow())))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
                         (cell, type, row, meta) -> row.getName().toUpperCase()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS
                         (cell, type, row, meta) -> row.get(OUTBOUND_SOCKET_BINDING_REF)
                                 .asString()).build())
                 .build();
-        serverTable = new NamedNodeTable<>(Ids.MAIL_SERVER_TABLE, tableOptions);
+        serverTable = new NamedNodeTable<>(Ids.MAIL_SERVER_TABLE, serverMetadata, tableOptions);
         registerAttachable(serverTable);
 
         serverForm = new ModelNodeForm.Builder<NamedNode>(Ids.MAIL_SERVER_FORM, serverMetadata)

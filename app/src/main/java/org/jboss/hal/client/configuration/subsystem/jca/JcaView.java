@@ -189,12 +189,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(bcType, name, BOOTSTRAP_CONTEXT_TEMPLATE, model));
 
         Options<NamedNode> bcTableOptions = new ModelNodeTable.Builder<NamedNode>(bcMetadata)
-                .add((event, api) -> bcAddDialog.show())
-                .remove(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
+                .button(tableButtonFactory.add(BOOTSTRAP_CONTEXT_TEMPLATE, (event, api) -> bcAddDialog.show()))
+                .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .build();
-        bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcTableOptions);
+        bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcMetadata, bcTableOptions);
 
         bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM, bcMetadata)
                 .onSave((form, changedValues) -> {
@@ -238,13 +238,13 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
 
         Options<NamedNode> wmOptions = new ModelNodeTable.Builder<NamedNode>(wmMetadata)
-                .add((event, api) -> wmAddDialog.show())
-                .remove(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
+                .button(tableButtonFactory.add(WORKMANAGER_TEMPLATE, (event, api) -> wmAddDialog.show()))
+                .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.reload()))
                 .column(NAME)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        wmTable = new NamedNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
+        wmTable = new NamedNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmMetadata, wmOptions);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -256,7 +256,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         .build();
         // @formatter:on
 
-        wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, resources);
+        wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
 
         Pages wmPages = new Pages(Ids.JCA_WORKMANAGER_PAGE, wmLayout);
@@ -281,15 +281,15 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
 
         Options<NamedNode> dwmOptions = new ModelNodeTable.Builder<NamedNode>(dwmMetadata)
-                .add((event, api) -> dwmAddDialog.show())
-                .remove(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
+                .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, (event, api) -> dwmAddDialog.show()))
+                .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .column(POLICY)
                 .column(SELECTOR)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        dwmTable = new NamedNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmOptions);
+        dwmTable = new NamedNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmMetadata, dwmOptions);
 
         dwmForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
                 .onSave((form, changedValues) -> {
@@ -314,7 +314,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         .build();
         // @formatter:on
 
-        dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, resources);
+        dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, tableButtonFactory,
+                resources);
         registerAttachable(dwmTpEditor);
 
         Pages dwmPages = new Pages(Ids.JCA_DISTRIBUTED_WORKMANAGER_PAGE, dwmLayout);

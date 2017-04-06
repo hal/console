@@ -494,11 +494,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRestricted(final boolean restricted) {
-        this.restricted = restricted;
-        if (restricted) {
-            apply(RESTRICTED);
-        } else {
-            unapply(RESTRICTED);
+        if (this.restricted != restricted) {
+            this.restricted = restricted;
+            if (restricted) {
+                apply(RESTRICTED);
+            } else {
+                unapply(RESTRICTED);
+            }
         }
     }
 
@@ -509,11 +511,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-        if (enabled) {
-            apply(ENABLED);
-        } else {
-            unapply(ENABLED);
+        if (this.enabled != enabled) {
+            this.enabled = enabled;
+            if (enabled) {
+                apply(ENABLED);
+            } else {
+                unapply(ENABLED);
+            }
         }
     }
 
@@ -558,11 +562,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRequired(boolean required) {
-        this.required = required;
-        if (required) {
-            apply(REQUIRED);
-        } else {
-            unapply(REQUIRED);
+        if (this.required != required) {
+            this.required = required;
+            if (required) {
+                apply(REQUIRED);
+            } else {
+                unapply(REQUIRED);
+            }
         }
     }
 

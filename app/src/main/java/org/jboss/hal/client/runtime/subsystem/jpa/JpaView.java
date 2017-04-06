@@ -202,7 +202,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), options);
+        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), metadata,
+                options);
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
                 metadata)

@@ -51,7 +51,7 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
         this.handlebarElements = new HashMap<>();
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
-                .add((event, api) -> {
+                .button(mbuiContext.tableButtonFactory().add(metadata0Template, (event, api) -> {
                     AddResourceDialog dialog = new AddResourceDialog(
                             Ids.build("table", Ids.ADD_SUFFIX),
                             mbuiContext.resources().messages().addResourceTitle("Foo"),
@@ -64,10 +64,10 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
                     dialog.getForm().getFormItem("foo").registerSuggestHandler(new ReadChildrenAutoComplete(
                             mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("/foo=*")));
                     dialog.show();
-                })
+                }))
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

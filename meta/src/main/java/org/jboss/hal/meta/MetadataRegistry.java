@@ -49,5 +49,6 @@ public class MetadataRegistry extends AbstractRegistry<Metadata> {
     @Override
     public void add(final ResourceAddress address, final Metadata metadata) {
         registry.put(address, metadata);
+        metadata.injectRegistry(this);
     }
 }
