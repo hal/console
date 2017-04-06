@@ -18,6 +18,7 @@ package org.jboss.hal.client.skeleton;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
@@ -31,13 +32,13 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Tooltip;
-import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
@@ -210,7 +211,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             userDropdown.insertBefore(divider(), logoutItem);
 
             if (user.isSuperuser() && environment.getAccessControlProvider() == RBAC) {
-                String runAsRoleSetting = settings.get(RUN_AS).value();
+                Set<String> runAsRoleSetting = settings.get(RUN_AS).asSet();
                 Element runAs = new Elements.Builder().li().css(static_)
                         .textContent(resources().constants().runAs())
                         .end().build();
@@ -223,14 +224,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             Elements.Builder builder = new Elements.Builder()
                                 .li()
                                     .a().css(clickable).on(click, event -> presenter.runAs(role.getName()))
-                                        .span()
-                                            .css(fontAwesome("check"), marginRight5);
-                                            if (!role.getName().equals(runAsRoleSetting)) {
+                                        .span().css(fontAwesome("check"), marginRight5);
+                                            if (!runAsRoleSetting.contains(role.getName())) {
                                                 builder.style("visibility: hidden");
                                             }
                                         builder.end()
-                                        .span()
-                                            .textContent(role.getName());
+                                        .span().textContent(role.getName());
                                             if (role.isScoped()) {
                                                 String scopedInfo = role.getBaseRole().getName()  +
                                                         " / " + String.join(", ", role.getScope());

@@ -17,6 +17,7 @@ package org.jboss.hal.dmr.dispatch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import javax.inject.Inject;
 
@@ -54,6 +55,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.collect.Sets.difference;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -361,8 +363,8 @@ public class Dispatcher implements RecordingHandler {
 
     private Operation runAs(Operation operation) {
         if (environment.getAccessControlProvider() == AccessControlProvider.RBAC) {
-            String runAs = settings.get(RUN_AS).value();
-            if (runAs != null && !operation.getRoles().contains(runAs)) {
+            Set<String> runAs = settings.get(RUN_AS).asSet();
+            if (!runAs.isEmpty() && !difference(runAs, operation.getRoles()).isEmpty()) {
                 return operation.runAs(runAs);
             }
         }

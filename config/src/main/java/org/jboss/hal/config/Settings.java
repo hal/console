@@ -15,12 +15,18 @@
  */
 package org.jboss.hal.config;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 
+import com.google.common.base.Splitter;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * @author Harald Pehl
@@ -32,7 +38,7 @@ public class Settings {
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
         PAGE_LENGTH("page-length", true),
-        RUN_AS("run-as", false);
+        RUN_AS("run-as", false); // can contain multiple roles separated by ","
 
         public static Key from(@NonNls String key) {
             switch (key) {
@@ -84,6 +90,18 @@ public class Settings {
                 }
             }
             return defaultValue;
+        }
+
+        public Set<String> asSet() {
+            return asSet(",");
+        }
+
+        public Set<String> asSet(String separator) {
+            if (value != null) {
+                return stream(Splitter.on(separator).omitEmptyStrings().trimResults().split(value).spliterator(), false)
+                        .collect(toSet());
+            }
+            return Collections.emptySet();
         }
 
         public String value() {

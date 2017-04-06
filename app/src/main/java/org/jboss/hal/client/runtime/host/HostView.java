@@ -32,6 +32,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+
 /**
  * @author Harald Pehl
  */
@@ -63,6 +65,7 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     @Override
     public void updateHost(final Host host) {
         hostConfigurationForm.view(host);
+        hostConfigurationForm.getFormItem(NAME).unmask(); // makes no sense that this is sensitive
         Element element = Browser.getDocument().getElementById("host-configuration-title");
         if (element != null) {
             element.setInnerHTML(new SafeHtmlBuilder()

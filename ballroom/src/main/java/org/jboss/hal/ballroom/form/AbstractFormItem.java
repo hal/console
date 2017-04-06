@@ -290,6 +290,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         apply(SENSITIVE);
     }
 
+    @Override
+    public void unmask() {
+        unapply(SENSITIVE);
+    }
+
     private void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
     }

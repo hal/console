@@ -25,6 +25,7 @@ import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -191,10 +192,8 @@ public class Operation extends ModelNode {
         return roles;
     }
 
-    public Operation runAs(final String runAs) {
-        Set<String> runAsRoles = new HashSet<>();
-        runAsRoles.add(runAs);
-        return new Operation(name, address, parameter, header, runAsRoles);
+    public Operation runAs(final Set<String> runAs) {
+        return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
     @Override

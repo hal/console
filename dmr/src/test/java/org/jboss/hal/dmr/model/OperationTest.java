@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.dmr.model;
 
+import java.util.Collections;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.junit.Test;
 
@@ -67,7 +69,7 @@ public class OperationTest {
                 .header("header1", "value1")
                 .build();
 
-        assertOperation(operation.runAs("Administrator"), "Administrator");
+        assertOperation(operation.runAs(Collections.singleton("Administrator")), "Administrator");
     }
 
     private void assertOperation(Operation operation) {

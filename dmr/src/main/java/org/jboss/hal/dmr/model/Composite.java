@@ -18,6 +18,7 @@ package org.jboss.hal.dmr.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jboss.hal.dmr.ModelNode;
@@ -79,7 +80,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     public int size() {return operations.size();}
 
-    public Composite runAs(final String runAs) {
+    public Composite runAs(final Set<String> runAs) {
         List<Operation> runAsOperations = operations.stream()
                 .map(operation -> operation.runAs(runAs))
                 .collect(Collectors.toList());

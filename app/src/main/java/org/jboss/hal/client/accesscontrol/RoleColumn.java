@@ -245,7 +245,7 @@ public class RoleColumn extends FinderColumn<Role> {
                     actions.add(new ItemAction.Builder<Role>()
                             .title(resources.constants().remove())
                             .handler(itm -> {
-                                if (itm.getName().equals(settings.get(RUN_AS).value())) {
+                                if (settings.get(RUN_AS).asSet().contains(itm.getName())) {
                                     MessageEvent.fire(eventBus,
                                             Message.error(resources.messages().removeRunAsRoleError(item.getName())));
                                 } else {
