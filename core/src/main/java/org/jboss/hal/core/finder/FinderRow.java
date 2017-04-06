@@ -25,8 +25,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -48,7 +46,7 @@ import static org.jboss.hal.resources.UIConstants.data;
  *
  * @author Harald Pehl
  */
-class FinderRow<T> implements IsElement, SecurityContextAware {
+class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
@@ -274,11 +272,6 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     @Override
     public Element asElement() {
         return root;
-    }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-
     }
 
 

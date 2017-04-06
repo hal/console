@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.form.PreListItem;
 import org.jboss.hal.ballroom.form.PreTextItem;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
@@ -167,7 +166,7 @@ public class BootErrorsElement implements IsElement, Attachable {
         Elements.setVisible(bootErrorsSection, !bootErrors.isEmpty());
         Elements.setVisible(noBootErrors.asElement(), bootErrors.isEmpty());
         if (!bootErrors.isEmpty()) {
-            table.api().clear().add(bootErrors).refresh(RefreshMode.RESET);
+            table.update(bootErrors);
             form.clear();
         }
     }

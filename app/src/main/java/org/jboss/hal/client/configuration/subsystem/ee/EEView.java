@@ -211,10 +211,10 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         formDeployments.view(eeData);
 
         // update the global modules tab
-        globalModulesTable.api().clear();
+        globalModulesTable.clear();
         if (eeData.hasDefined(GLOBAL_MODULES)) {
             List<ModelNode> globalModulesList = eeData.get(GLOBAL_MODULES).asList();
-            globalModulesTable.api().add(globalModulesList).refresh(RESET);
+            globalModulesTable.update(globalModulesList);
         }
 
         // update the default-bindings tab

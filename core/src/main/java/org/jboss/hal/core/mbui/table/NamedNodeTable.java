@@ -20,6 +20,8 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
+
 /**
  * Special data table for named nodes, which uses the name as a unique identifier and provides a simplified {@link
  * #update(Iterable)} method.
@@ -43,7 +45,7 @@ public class NamedNodeTable<T extends NamedNode> extends ModelNodeTable<T> {
      * Shortcut for {@code super.update(data, NamedNode::getName)}
      */
     public void update(final Iterable<T> data) {
-        super.update(data, NamedNode::getName);
+        super.update(data, RESET, NamedNode::getName);
     }
 
     /**

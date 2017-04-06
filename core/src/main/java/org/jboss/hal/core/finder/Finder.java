@@ -43,8 +43,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
 import org.jetbrains.annotations.NonNls;
@@ -64,7 +62,7 @@ import static org.jboss.hal.resources.Ids.FINDER;
  *
  * @author Harald Pehl
  */
-public class Finder implements IsElement, SecurityContextAware, Attachable {
+public class Finder implements IsElement, Attachable {
 
     /**
      * Function used in {@link #select(String, FinderPath, Runnable)} to select one segment in a finder path.
@@ -573,13 +571,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);
-        }
-    }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        for (FinderColumn column : columns.values()) {
-            column.onSecurityContextChange(securityContext);
         }
     }
 

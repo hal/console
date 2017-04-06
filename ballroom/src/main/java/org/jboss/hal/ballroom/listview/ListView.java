@@ -15,18 +15,16 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-import elemental.dom.Element;
-import elemental.dom.NodeList;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.CSS;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import elemental.dom.Element;
+import elemental.dom.NodeList;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.CSS;
 
 import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -35,7 +33,7 @@ import static org.jboss.hal.resources.CSS.listViewPf;
 /**
  * @author Harald Pehl
  */
-public class ListView<T> implements IsElement, SecurityContextAware {
+public class ListView<T> implements IsElement {
 
     private final String id;
     private final boolean multiselect;
@@ -143,11 +141,6 @@ public class ListView<T> implements IsElement, SecurityContextAware {
         if (listItem != null) {
             listItem.disableAction(actionId);
         }
-    }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-
     }
 
     private ListItem<T> getItem(T item) {

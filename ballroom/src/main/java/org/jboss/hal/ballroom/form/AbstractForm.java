@@ -40,8 +40,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -69,7 +67,7 @@ import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
  *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -540,13 +538,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     protected boolean showRemoveLink(State state) {
         return state == READONLY && model != null && stateMachine.supports(REMOVE);
-    }
-
-
-    // ------------------------------------------------------ security
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
     }
 
 

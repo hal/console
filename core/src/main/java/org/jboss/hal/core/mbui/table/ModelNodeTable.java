@@ -23,6 +23,7 @@ import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -111,8 +112,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
     @Override
-    public void update(final Iterable<T> data, final Function<T, String> identifier) {
-        super.update(data, identifier);
+    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
+        super.update(data, mode, identifier);
 
         Metadata update = metadata.refresh();
         if (update != metadata) {

@@ -127,7 +127,7 @@ public class DeployContentDialog2 {
     public void show() {
         dialog.show();
         Elements.setVisible(noContentSelected.asElement(), false);
-        table.api().clear().add(content).refresh(RESET);
+        table.update(content);
         SwitchBridge.Bridge.element(enable).setValue(false);
     }
 }

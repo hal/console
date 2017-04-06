@@ -39,8 +39,6 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -79,7 +77,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  *
  * @author Harald Pehl
  */
-public class FinderColumn<T> implements IsElement, SecurityContextAware {
+public class FinderColumn<T> implements IsElement {
 
     public static class Builder<T> {
 
@@ -985,13 +983,5 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         constraints.addAll(action.constraints);
         action.actions.forEach(a -> constraints.addAll(a.constraints));
         return AuthorisationDecision.strict(finder.metadataRegistry()).isAllowed(constraints);
-    }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        // TODO Check column actions
-        for (FinderRow<T> row : rows.values()) {
-            row.onSecurityContextChange(securityContext);
-        }
     }
 }

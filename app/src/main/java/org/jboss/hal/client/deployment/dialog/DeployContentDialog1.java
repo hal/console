@@ -170,7 +170,7 @@ public class DeployContentDialog1 {
         dialog.show();
         Elements.setVisible(noServerGroupSelected.asElement(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
-        table.api().clear().add(serverGroups).refresh(RESET);
+        table.update(serverGroups);
         SwitchBridge.Bridge.element(enable).setValue(false);
     }
 }

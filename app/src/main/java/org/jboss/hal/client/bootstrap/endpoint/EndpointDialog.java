@@ -40,7 +40,6 @@ import org.jboss.hal.resources.Messages;
 
 import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
 import static org.jboss.hal.ballroom.table.RefreshMode.HOLD;
-import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
@@ -83,7 +82,7 @@ class EndpointDialog {
                 .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
                 .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
                     storage.remove(api.selectedRow());
-                    api.clear().add(storage.list()).refresh(HOLD);
+                    table.update(storage.list(), HOLD);
                     dialog.getButton(PRIMARY_POSITION).setDisabled(!table.api().hasSelection());
                 })
                 .column(NAME)
@@ -184,7 +183,7 @@ class EndpointDialog {
         ButtonElement primaryButton = dialog.getButton(PRIMARY_POSITION);
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
-            table.api().clear().add(storage.list()).refresh(HOLD);
+            table.update(storage.list(), HOLD);
             primaryButton.setInnerText(CONSTANTS.endpointConnect());
             primaryButton.setDisabled(!table.api().hasSelection());
             Elements.setVisible(addPage, false);
@@ -227,12 +226,12 @@ class EndpointDialog {
         dialog.show();
 
         table.api().onSelectionChange(api -> dialog.getButton(PRIMARY_POSITION).setDisabled(!api.hasSelection()));
-        table.api().add(storage.list()).refresh(RESET);
+        table.update(storage.list());
 
         switchTo(SELECT);
         storage.list().stream()
                 .filter(Endpoint::isSelected)
                 .findAny()
-                .ifPresent(endpoint -> select(endpoint));
+                .ifPresent(this::select);
     }
 }

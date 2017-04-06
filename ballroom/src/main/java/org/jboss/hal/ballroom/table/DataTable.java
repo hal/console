@@ -174,13 +174,25 @@ public class DataTable<T> implements IsElement, Attachable {
         });
     }
 
+    public void clear() {
+        api().clear();
+    }
+
     /**
      * Replaces the existing data with the new one.
      *
      * @param data       the new data
      */
     public void update(final Iterable<T> data) {
-        update(data, null);
+        update(data, RESET, null);
+    }
+
+    public void update(final Iterable<T> data, final RefreshMode mode) {
+        update(data, mode, null);
+    }
+
+    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+        update(data, RESET, identifier);
     }
 
     /**
@@ -191,9 +203,9 @@ public class DataTable<T> implements IsElement, Attachable {
      * @param identifier a function which must return an unique identifier for a given row. Used to restore the
      *                   selection after replacing the data.
      */
-    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
-        api().clear().add(data).refresh(RESET);
+        api().clear().add(data).refresh(mode);
         if (identifier != null) {
             if (!selection.isEmpty()) {
                 RowSelection<T> rows = (index, d1, tr) -> {
