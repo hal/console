@@ -221,7 +221,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.startProgress(Ids.host(host.getAddressName()));
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(server.getId()));
         }
     }
 
@@ -230,7 +230,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         if (isVisible()) {
             Host host = event.getHost();
             ItemMonitor.stopProgress(Ids.host(host.getAddressName()));
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);
         }
     }

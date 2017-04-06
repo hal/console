@@ -205,14 +205,14 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(server.getId()));
         }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);
         }
     }

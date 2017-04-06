@@ -92,7 +92,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                         // Restore pending servers visualization
                         if (serverActions.isPending(Server.STANDALONE)) {
-                            ItemMonitor.startProgress(Ids.server(Server.STANDALONE.getName()));
+                            ItemMonitor.startProgress(Server.STANDALONE.getId());
                         }
                     });
                 })
@@ -100,7 +100,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                 .itemRenderer(item -> new ItemDisplay<Server>() {
                     @Override
                     public String getId() {
-                        return Ids.server(item.getName());
+                        return item.getId();
                     }
 
                     @Override
@@ -175,7 +175,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             refreshPath = finder.getContext().getPath().copy();
-            ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
+            ItemMonitor.startProgress(event.getServer().getId());
             refresh(RESTORE_SELECTION);
         }
     }
@@ -184,9 +184,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public void onServerResult(final ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
-            Server server = event.getServer();
-            String itemId = Ids.server(server.getName());
-            ItemMonitor.stopProgress(itemId);
+            ItemMonitor.stopProgress(event.getServer().getId());
 
             FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
             refreshPath = null;

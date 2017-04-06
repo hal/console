@@ -159,18 +159,6 @@ public class FinderPathFactory {
         }
     }
 
-    /**
-     * Creates a finder path for the specified host and server.
-     */
-    public FinderPath runtimeServerPath(String host, String server) {
-        if (environment.isStandalone()) {
-            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
-                    Names.SERVER, Names.STANDALONE_SERVER);
-        } else {
-            return runtimeHostPath(host).append(Ids.SERVER, Ids.server(server), Names.SERVER, server);
-        }
-    }
-
 
     // ------------------------------------------------------ helpers
 

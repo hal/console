@@ -519,12 +519,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServer(Elements.Builder builder, Server srv) {
         // @formatter:off
-        String serverDropDownId = Ids.server(srv.getName());
+        String serverDropDownId = srv.getId();
         builder.div()
                 .css(server, statusCss(srv))
                 .on(click, event -> serverDetails(srv))
                 .id(Ids.hostServer(srv.getHost(), srv.getName()))
-                .data(SERVER, srv.getName())
+                .data(SERVER, srv.getId())
             .div().css(dropdown);
                 if (!serverActions.isPending(srv) && isAllowed(srv)) {
                     builder.a()
@@ -665,7 +665,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             startProgress(hostSelector(host));
 
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.server(server.getName()), server.getName());
+                disableDropdown(server.getId(), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -683,7 +683,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String hostSelector(final Host host) {
-        return "[data-host=" + host.getName() + "]"; //NON-NLS
+        return "[data-host='" + host.getName() + "']"; //NON-NLS
     }
 
 
@@ -702,6 +702,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverAttributesSection, false);
     }
 
+    @SuppressWarnings("unused")
     private boolean isAllowed(ServerGroup serverGroup) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
@@ -736,7 +737,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             ServerGroup serverGroup = event.getServerGroup();
             disableDropdown(Ids.serverGroup(serverGroup.getName()), serverGroup.getName());
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.server(server.getName()), server.getName());
+                disableDropdown(server.getId(), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -751,7 +752,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverGroupSelector(final ServerGroup serverGroup) {
-        return "[data-server-group=" + serverGroup.getName() + "]"; //NON-NLS
+        return "[data-server-group='" + serverGroup.getName() + "']"; //NON-NLS
     }
 
 
@@ -874,7 +875,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            disableDropdown(Ids.server(server.getName()), server.getName());
+            disableDropdown(server.getId(), server.getName());
             startProgress(serverSelector(server));
         }
     }
@@ -888,6 +889,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverSelector(final Server server) {
-        return "[data-server=" + server.getName() + "]"; //NON-NLS
+        return "[data-server='" + server.getId() + "']"; //NON-NLS
     }
 }

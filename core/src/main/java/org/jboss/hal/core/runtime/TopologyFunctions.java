@@ -649,7 +649,7 @@ public class TopologyFunctions {
                     String host = address.getParent().lastValue();
                     return new Server(host, modelNode.get(RESULT));
                 })
-                .collect(toMap(Server::getName, identity()));
+                .collect(toMap(Server::getId, identity()));
     }
 
     private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,

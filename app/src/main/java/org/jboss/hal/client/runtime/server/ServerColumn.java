@@ -213,7 +213,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
+                                    .forEach(server -> ItemMonitor.startProgress(server.getId()));
                         }
                     },
                     serverConfigsFn, new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
@@ -244,7 +244,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
             public String getId() {
-                return Ids.server(item.getName());
+                return item.getId();
             }
 
             @Override
@@ -294,7 +294,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
 
-                actions.add(itemActionFactory.viewAndMonitor(Ids.server(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(item.getId(), placeRequest));
                 if (item.hasBootErrors()) {
                     PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_BOOT_ERRORS)
                             .with(HOST, item.getHost())
@@ -398,7 +398,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             refreshPath = finder.getContext().getPath().copy();
-            ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
+            ItemMonitor.startProgress(event.getServer().getId());
             refresh(RESTORE_SELECTION);
         }
     }
@@ -407,9 +407,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     public void onServerResult(final ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
-            Server server = event.getServer();
-            String itemId = Ids.server(server.getName());
-            ItemMonitor.stopProgress(itemId);
+            ItemMonitor.stopProgress(event.getServer().getId());
 
             FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
             refreshPath = null;
