@@ -150,12 +150,27 @@ public class FinderPathFactory {
      */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
-            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
+            String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
+            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
                     Names.SERVER, Names.STANDALONE_SERVER);
         } else {
+            String host = statementContext.selectedHost();
             String server = statementContext.selectedServer();
             FinderPath path = browseByServerGroups() ? runtimeServerGroupPath() : runtimeHostPath();
-            return path.append(Ids.SERVER, Ids.server(server), Names.SERVER, server);
+            return path.append(Ids.SERVER, Ids.hostServer(host, server), Names.SERVER, server);
+        }
+    }
+
+    /**
+     * Creates a finder path for the specified host and server.
+     */
+    public FinderPath runtimeServerPath(String host, String server) {
+        if (environment.isStandalone()) {
+            String serverId = Ids.hostServer(Server.STANDALONE.getHost(), Server.STANDALONE.getName());
+            return new FinderPath().append(Ids.STANDALONE_SERVER, serverId,
+                    Names.SERVER, Names.STANDALONE_SERVER);
+        } else {
+            return runtimeHostPath(host).append(Ids.SERVER, Ids.hostServer(host, server), Names.SERVER, server);
         }
     }
 

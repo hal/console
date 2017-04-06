@@ -634,10 +634,6 @@ public interface Ids {
         return asId(name);
     }
 
-    static String server(final String name) {
-        return build(SERVER, name);
-    }
-
     static String securityDomain(final String name) {
         return build(SECURITY_DOMAIN, name);
     }
