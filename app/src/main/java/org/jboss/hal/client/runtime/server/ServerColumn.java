@@ -216,8 +216,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
                         }
                     },
-                    serverConfigsFn,
-                    new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+                    serverConfigsFn, new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
         };
         setItemsProvider(itemsProvider);
 
@@ -369,10 +368,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
-        addColumnAction(columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER, AddressTemplate.of("/host=*/server-config=*"),
-                column -> {
-                    addServer(BrowseByColumn.browseByHosts(finder.getContext()));
-                }));
+        // TODO Move the addColumnAction() calls into the item provider and use a drop-down for add with the host
+        // TODO name in each add constraint
+        addColumnAction(
+                columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER, AddressTemplate.of("/host=*/server-config=*"),
+                        column -> {
+                            addServer(BrowseByColumn.browseByHosts(finder.getContext()));
+                        }));
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_REFRESH));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
