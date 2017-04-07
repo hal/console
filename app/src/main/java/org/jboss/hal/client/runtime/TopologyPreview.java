@@ -95,6 +95,7 @@ import static org.jboss.hal.resources.CSS.*;
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 
+    private static final String CONTAINER = "container";
     private static final String LOADING_SECTION = "loading-section";
     private static final String TOPOLOGY_SECTION = "topology-section";
     private static final String HOST_ATTRIBUTES_SECTION = "host-attributes-section";
@@ -361,13 +362,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             // Does not matter where we take the updated server from (must be included in both
                             // host and server group)
                             host.getServers().stream()
-                                    .filter(srv -> srv.getHost().equals(server.getHost()) &&
-                                            srv.getName().equals(server.getName()))
+                                    .filter(srv -> srv.getId().equals(server.getId()))
                                     .findAny()
                                     .ifPresent(updatedServer -> {
-                                        String serverId = Ids
-                                                .hostServer(updatedServer.getHost(), updatedServer.getName());
-                                        replaceElement(document.getElementById(serverId),
+                                        String updatedContainerId = Ids.build(updatedServer.getId(), CONTAINER);
+                                        replaceElement(document.getElementById(updatedContainerId),
                                                 () -> serverElement(updatedServer),
                                                 whatever -> serverDetails(updatedServer));
                                     });
@@ -539,16 +538,15 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServer(Elements.Builder builder, Server srv) {
         // @formatter:off
-        String serverDropDownId = srv.getId();
         builder.div()
+                .id(Ids.build(srv.getId(), CONTAINER))
                 .css(server, statusCss(srv))
-                .on(click, event -> serverDetails(srv))
-                .id(Ids.hostServer(srv.getHost(), srv.getName()))
                 .data(SERVER, srv.getId())
+                .on(click, event -> serverDetails(srv))
             .div().css(dropdown);
                 if (!serverActions.isPending(srv) && isAllowed(srv)) {
                     builder.a()
-                        .id(serverDropDownId)
+                        .id(srv.getId())
                         .css(clickable, dropdownToggle, name)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
@@ -557,7 +555,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .end()
                     .ul().css(dropdownMenu)
                             .attr(UIConstants.ROLE, UIConstants.MENU)
-                            .aria(UIConstants.LABELLED_BY, serverDropDownId);
+                            .aria(UIConstants.LABELLED_BY, srv.getId());
                         serverActions(builder, srv);
                     builder.end();
                 } else {
