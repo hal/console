@@ -79,6 +79,10 @@ public class ElementGuard {
     }
 
 
+    /**
+     * Adds the {@link org.jboss.hal.resources.CSS#rbacHidden} CSS class if {@code condition == true}, removes it
+     * otherwise.
+     */
     public static void toggle(Element element, boolean condition) {
         if (new Visible().test(element)) {
             Elements.toggle(element, rbacHidden, condition);

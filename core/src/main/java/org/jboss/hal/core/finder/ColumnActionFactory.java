@@ -98,20 +98,26 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, String iconCss,
             ColumnActionHandler<T> handler) {
-        Element element = new Elements.Builder().span()
-                .css(iconCss)
-                .title(resources.messages().addResourceTitle(type))
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-
         ColumnAction.Builder<T> builder = new ColumnAction.Builder<T>(id)
-                .element(element)
+                .element(addButton(type, iconCss))
                 .handler(handler);
         if (template != null) {
             builder.constraint(Constraint.executable(template, ADD));
         }
         return builder.build();
+    }
+
+    public Element addButton(String type) {
+        return addButton(type, pfIcon("add-circle-o"));
+    }
+
+    public Element addButton(String type, String iconCss) {
+        return new Elements.Builder().span()
+                .css(iconCss)
+                .title(resources.messages().addResourceTitle(type))
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
     }
 
     public <T> ColumnAction<T> refresh(String id) {

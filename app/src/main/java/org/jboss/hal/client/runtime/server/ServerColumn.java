@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -35,6 +36,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -64,8 +66,11 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -92,6 +97,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private final Finder finder;
+    private final MetadataRegistry metadataRegistry;
     private FinderPath refreshPath;
 
     @Inject
@@ -100,6 +106,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Environment environment,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
@@ -108,6 +115,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
             final Resources resources) {
+
         super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
                 .onItemSelect(server -> {
@@ -154,12 +162,14 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         resources))
         );
         this.finder = finder;
+        this.metadataRegistry = metadataRegistry;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
             boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
+                processAddColumnAction(statementContext.selectedHost());
                 serverConfigsFn = control -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
@@ -371,13 +381,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
-        // TODO Move the addColumnAction() calls into the item provider and use a drop-down for add with the host
-        // TODO name in each add constraint
-        addColumnAction(
-                columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER, AddressTemplate.of("/host=*/server-config=*"),
-                        column -> {
-                            addServer(BrowseByColumn.browseByHosts(finder.getContext()));
-                        }));
+        // Don't use columnActionFactory.add() here. This would add a constraint,
+        // but we want to manage the visibility by ourselves.
+        ColumnAction<Server> addAction = new ColumnAction.Builder<Server>(Ids.SERVER_ADD)
+                .element(columnActionFactory.addButton(Names.SERVER))
+                .handler(column -> addServer(BrowseByColumn.browseByHosts(finder.getContext())))
+                .build();
+        addColumnAction(addAction);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_REFRESH));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
@@ -395,6 +405,18 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private boolean serverIsLastSegment() {
         FinderSegment segment = Iterables.getLast(finder.getContext().getPath(), null);
         return segment != null && Ids.SERVER.equals(segment.getColumnId());
+    }
+
+    private void processAddColumnAction(String host) {
+        AuthorisationDecision ad = AuthorisationDecision.strict(c -> {
+            if (metadataRegistry.contains(c.getTemplate())) {
+                return Optional.of(metadataRegistry.lookup(c.getTemplate()).getSecurityContext());
+            }
+            return Optional.empty();
+        });
+        Element addButton = Browser.getDocument().getElementById(Ids.SERVER_ADD);
+        AddressTemplate template = AddressTemplate.of("/host=" + host + "/server-config=*");
+        ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(template, ADD)));
     }
 
     @Override
