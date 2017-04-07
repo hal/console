@@ -50,6 +50,10 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * TODO The empty state action to enable statistics makes only sense in standalone mode or w/o RBAC enabled.
+ * TODO Otherwise we'd need to have the metadata to resolve the constraint
+ * TODO "writable(profile=[*]/subsystem=datasources/data-source=*@enabled)"
+ *
  * @author Harald Pehl
  */
 class DataSourcePreview extends PreviewContent<DataSource> {

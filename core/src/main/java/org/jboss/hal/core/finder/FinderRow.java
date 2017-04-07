@@ -95,7 +95,8 @@ class FinderRow<T> implements IsElement {
 
     private List<ItemAction<T>> allowedActions(final List<ItemAction<T>> actions) {
         return actions.stream()
-                .filter(action -> AuthorisationDecision.strict(finder.metadataRegistry()).isAllowed(action.constraints))
+                .filter(action -> AuthorisationDecision.strict(finder.environment(),
+                        finder.metadataRegistry()).isAllowed(action.constraints))
                 .collect(toList());
     }
 
@@ -261,7 +262,7 @@ class FinderRow<T> implements IsElement {
         }
         previewContent.update(item);
 
-        AuthorisationDecision ad = AuthorisationDecision.strict(finder.metadataRegistry());
+        AuthorisationDecision ad = AuthorisationDecision.strict(finder.environment(), finder.metadataRegistry());
         ElementGuard.processElements(ad, "#" + Ids.PREVIEW_ID + " [" + data(UIConstants.CONSTRAINT + "]"));
     }
 

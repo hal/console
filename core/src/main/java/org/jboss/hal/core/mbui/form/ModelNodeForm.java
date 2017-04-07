@@ -529,7 +529,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
             switch (state) {
                 case EMPTY:
-                    ElementGuard.processElements(AuthorisationDecision.strict(securityContext), asElement());
+                    ElementGuard.processElements(
+                            AuthorisationDecision.strict(Core.INSTANCE.environment(), securityContext), asElement());
                     break;
 
                 case READONLY:

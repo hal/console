@@ -223,7 +223,7 @@ class RrdParserTestHelper {
 
         for (String address : addresses) {
             assertTrue("RrdResults does not contain address " + address, //NON-NLS
-                    results.contains(new RrdResult(AddressTemplate.of(address).resolve(StatementContext.NOOP))));
+                    results.contains(new RrdResult(AddressTemplate.of(address).resolve(StatementContext.NOOP), false)));
         }
     }
 

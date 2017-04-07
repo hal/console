@@ -18,6 +18,8 @@ package org.jboss.hal.meta.security;
 import java.util.Optional;
 import java.util.Set;
 
+import org.jboss.hal.config.AccessControlProvider;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jetbrains.annotations.NonNls;
@@ -53,13 +55,16 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
  * constraints as {@code data-constraint} attribute. Later when you have access to the security context
  * post-process the elements using one of the {@code processElements()} method from {@link ElementGuard}.</dd>
  * </dl>
+ * <p>
+ * If WildFly uses {@link AccessControlProvider#SIMPLE}, {@code isAllowed()} will <strong>always</strong>
+ * return {@code true}.
  *
  * @author Harald Pehl
  */
 public class AuthorisationDecision {
 
-    public static AuthorisationDecision strict(final MetadataRegistry metadataRegistry) {
-        return new AuthorisationDecision(true, constraint -> {
+    public static AuthorisationDecision strict(final Environment environment, final MetadataRegistry metadataRegistry) {
+        return new AuthorisationDecision(true, environment, constraint -> {
             if (metadataRegistry.contains(constraint.getTemplate())) {
                 return Optional.of(metadataRegistry.lookup(constraint.getTemplate()).getSecurityContext());
             }
@@ -67,20 +72,21 @@ public class AuthorisationDecision {
         });
     }
 
-    public static AuthorisationDecision strict(final Metadata metadata) {
-        return new AuthorisationDecision(true, constraint -> Optional.of(metadata.getSecurityContext()));
+    public static AuthorisationDecision strict(final Environment environment, final Metadata metadata) {
+        return new AuthorisationDecision(true, environment, constraint -> Optional.of(metadata.getSecurityContext()));
     }
 
-    public static AuthorisationDecision strict(final SecurityContext securityContext) {
-        return new AuthorisationDecision(true, constraint -> Optional.of(securityContext));
+    public static AuthorisationDecision strict(final Environment environment, final SecurityContext securityContext) {
+        return new AuthorisationDecision(true, environment, constraint -> Optional.of(securityContext));
     }
 
-    public static AuthorisationDecision strict(final SecurityContextResolver resolver) {
-        return new AuthorisationDecision(true, resolver);
+    public static AuthorisationDecision strict(final Environment environment, final SecurityContextResolver resolver) {
+        return new AuthorisationDecision(true, environment, resolver);
     }
 
-    public static AuthorisationDecision lenient(final MetadataRegistry metadataRegistry) {
-        return new AuthorisationDecision(false, constraint -> {
+    public static AuthorisationDecision lenient(final Environment environment,
+            final MetadataRegistry metadataRegistry) {
+        return new AuthorisationDecision(false, environment, constraint -> {
             if (metadataRegistry.contains(constraint.getTemplate())) {
                 return Optional.of(metadataRegistry.lookup(constraint.getTemplate()).getSecurityContext());
             }
@@ -89,29 +95,37 @@ public class AuthorisationDecision {
 
     }
 
-    public static AuthorisationDecision lenient(final Metadata metadata) {
-        return new AuthorisationDecision(false, constraint -> Optional.of(metadata.getSecurityContext()));
+    public static AuthorisationDecision lenient(final Environment environment, final Metadata metadata) {
+        return new AuthorisationDecision(false, environment, constraint -> Optional.of(metadata.getSecurityContext()));
     }
 
-    public static AuthorisationDecision lenient(final SecurityContext securityContext) {
-        return new AuthorisationDecision(false, constraint -> Optional.of(securityContext));
+    public static AuthorisationDecision lenient(final Environment environment, final SecurityContext securityContext) {
+        return new AuthorisationDecision(false, environment, constraint -> Optional.of(securityContext));
     }
 
-    public static AuthorisationDecision lenient(final SecurityContextResolver resolver) {
-        return new AuthorisationDecision(false, resolver);
+    public static AuthorisationDecision lenient(final Environment environment, final SecurityContextResolver resolver) {
+        return new AuthorisationDecision(false, environment, resolver);
     }
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(AuthorisationDecision.class);
 
     private final boolean strict;
+    private final Environment environment;
     private final SecurityContextResolver resolver;
 
-    private AuthorisationDecision(final boolean strict, final SecurityContextResolver resolver) {
+    private AuthorisationDecision(final boolean strict, final Environment environment,
+            final SecurityContextResolver resolver) {
         this.strict = strict;
+        this.environment = environment;
         this.resolver = resolver;
+
     }
 
     public boolean isAllowed(Set<Constraint> constraints) {
+        if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
+            return true;
+        }
+
         for (Constraint constraint : constraints) {
             if (!isAllowed(constraint)) {
                 return false;
@@ -121,6 +135,10 @@ public class AuthorisationDecision {
     }
 
     public boolean isAllowed(Constraint constraint) {
+        if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
+            return true;
+        }
+
         boolean allowed = !strict;
         Optional<SecurityContext> optional = resolver.resolve(constraint);
         if (optional.isPresent()) {

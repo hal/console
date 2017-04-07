@@ -463,7 +463,7 @@ public class ModelBrowser implements HasElements {
     }
 
     static AddressTemplate asGenericTemplate(Node<Context> node, ResourceAddress address) {
-        return AddressTemplate.of(address, (name, value, first, last, index) -> {
+        return AddressTemplate.of(address, (name, value, first, last, index, size) -> {
             String segment;
             if (PROFILE.equals(name)) {
                 segment = SELECTED_PROFILE.variable();

@@ -55,7 +55,7 @@ class SingleRrdParser {
     }
 
     private void parseSingle(ResourceAddress address, ModelNode modelNode, Set<RrdResult> results) {
-        RrdResult rr = new RrdResult(address);
+        RrdResult rr = new RrdResult(address, false);
 
         // resource description
         if (modelNode.hasDefined(DESCRIPTION)) {
@@ -75,7 +75,8 @@ class SingleRrdParser {
                 for (Property property : exceptions) {
                     ModelNode exception = property.getValue();
                     ResourceAddress exceptionAddress = new ResourceAddress(exception.get(ADDRESS));
-                    RrdResult exceptionRr = new RrdResult(exceptionAddress);
+                    RrdResult exceptionRr = new RrdResult(exceptionAddress, true);
+                    exceptionRr.resourceDescription = rr.resourceDescription;
                     exceptionRr.securityContext = new SecurityContext(exception);
                     results.add(exceptionRr);
                 }

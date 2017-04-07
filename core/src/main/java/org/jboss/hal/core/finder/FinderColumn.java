@@ -975,13 +975,15 @@ public class FinderColumn<T> implements IsElement {
             constraints.addAll(a.constraints);
             a.actions.forEach(innerA -> constraints.addAll(innerA.constraints));
         });
-        return AuthorisationDecision.strict(finder.metadataRegistry()).isAllowed(constraints);
+        return AuthorisationDecision.strict(finder.environment(), finder.metadataRegistry())
+                .isAllowed(constraints);
     }
 
     private boolean isAllowed(ColumnAction<T> action) {
         Set<Constraint> constraints = new HashSet<>();
         constraints.addAll(action.constraints);
         action.actions.forEach(a -> constraints.addAll(a.constraints));
-        return AuthorisationDecision.strict(finder.metadataRegistry()).isAllowed(constraints);
+        return AuthorisationDecision.strict(finder.environment(), finder.metadataRegistry())
+                .isAllowed(constraints);
     }
 }

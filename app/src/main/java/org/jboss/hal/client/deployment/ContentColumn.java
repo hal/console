@@ -273,7 +273,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT),
                 Constraint.executable(CONTENT_TEMPLATE, ADD));
         if (JsHelper.supportsAdvancedUpload() &&
-                AuthorisationDecision.strict(metadataRegistry).isAllowed(deployConstraints)) {
+                AuthorisationDecision.strict(environment, metadataRegistry).isAllowed(deployConstraints)) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources));
         }

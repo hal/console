@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.RefreshMode;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -124,7 +125,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
     private void applySecurity() {
-        AuthorisationDecision ad = AuthorisationDecision.strict(metadata);
+        AuthorisationDecision ad = AuthorisationDecision.strict(Core.INSTANCE.environment(), metadata);
         ElementGuard.processElements(ad, asElement());
     }
 }

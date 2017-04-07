@@ -12,6 +12,7 @@ import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
@@ -41,8 +42,8 @@ public class ModelNodeFormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        Core.INSTANCE = new Core(mock(MetadataRegistry.class), mock(Dispatcher.class), mock(StatementContext.class),
-                mock(EventBus.class));
+        Core.INSTANCE = new Core(mock(Environment.class), mock(MetadataRegistry.class), mock(Dispatcher.class),
+                mock(StatementContext.class), mock(EventBus.class));
         attributes = new ResourceDescriptionBuilder().attributes("foo", "bar", "baz", "qux");
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));

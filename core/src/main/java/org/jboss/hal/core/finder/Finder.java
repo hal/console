@@ -40,6 +40,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -162,6 +163,7 @@ public class Finder implements IsElement, Attachable {
     private static final String PREVIEW_COLUMN = "previewColumn";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
+    private final Environment environment;
     private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
@@ -178,11 +180,13 @@ public class Finder implements IsElement, Attachable {
     // ------------------------------------------------------ ui
 
     @Inject
-    public Finder(final EventBus eventBus,
+    public Finder(final Environment environment,
+            final EventBus eventBus,
             final PlaceManager placeManager,
             final ColumnRegistry columnRegistry,
             final MetadataRegistry metadataRegistry,
             @Footer final Provider<Progress> progress) {
+        this.environment = environment;
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.columnRegistry = columnRegistry;
@@ -422,6 +426,10 @@ public class Finder implements IsElement, Attachable {
         if (previewContent != null) {
             showPreview(previewContent);
         }
+    }
+
+    Environment environment() {
+        return environment;
     }
 
     MetadataRegistry metadataRegistry() {

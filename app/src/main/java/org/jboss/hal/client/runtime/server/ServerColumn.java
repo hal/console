@@ -97,6 +97,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private final Finder finder;
+    private final Environment environment;
     private final MetadataRegistry metadataRegistry;
     private FinderPath refreshPath;
 
@@ -162,6 +163,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         resources))
         );
         this.finder = finder;
+        this.environment = environment;
         this.metadataRegistry = metadataRegistry;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
@@ -408,7 +410,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void processAddColumnAction(String host) {
-        AuthorisationDecision ad = AuthorisationDecision.strict(c -> {
+        AuthorisationDecision ad = AuthorisationDecision.strict(environment, c -> {
             if (metadataRegistry.contains(c.getTemplate())) {
                 return Optional.of(metadataRegistry.lookup(c.getTemplate()).getSecurityContext());
             }

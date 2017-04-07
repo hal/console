@@ -78,7 +78,7 @@ public final class AddressTemplate {
     @FunctionalInterface
     public interface Unresolver {
 
-        String unresolve(String name, String value, boolean first, boolean last, int index);
+        String unresolve(String name, String value, boolean first, boolean last, int index, int size);
     }
 
 
@@ -157,6 +157,7 @@ public final class AddressTemplate {
         boolean first = true;
         StringBuilder builder = new StringBuilder();
         if (address.isDefined()) {
+            int size = address.size();
             for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
                 Property property = iterator.next();
                 String name = property.getName();
@@ -164,7 +165,7 @@ public final class AddressTemplate {
 
                 String segment = unresolver == null
                         ? name + "=" + value
-                        : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
+                        : unresolver.unresolve(name, value, first, !iterator.hasNext(), index, size);
                 builder.append(segment);
 
                 if (iterator.hasNext()) {

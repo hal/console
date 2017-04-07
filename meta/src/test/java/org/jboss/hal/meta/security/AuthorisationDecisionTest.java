@@ -17,6 +17,8 @@ package org.jboss.hal.meta.security;
 
 import java.util.Optional;
 
+import org.jboss.hal.config.AccessControlProvider;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,8 @@ import org.junit.Test;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Harald Pehl
@@ -32,25 +36,52 @@ import static org.junit.Assert.assertTrue;
 public class AuthorisationDecisionTest {
 
     private Constraint constraint;
+    private Environment rbac;
+    private Environment simple;
 
     @Before
     public void setUp() throws Exception {
+        rbac = mock(Environment.class);
+        when(rbac.getAccessControlProvider()).thenReturn(AccessControlProvider.RBAC);
+
+        simple = mock(Environment.class);
+        when(simple.getAccessControlProvider()).thenReturn(AccessControlProvider.SIMPLE);
+
         constraint = Constraint.executable(AddressTemplate.of("{selected.profile}/subsystem=datasources/data-source=*"),
                 REMOVE);
     }
 
     @Test
-    public void strictAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.strict(c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
+    public void strictRbacAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.strict(rbac, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
     }
 
     @Test
-    public void strictForbidden() throws Exception {
-        assertFalse(AuthorisationDecision.strict(c -> Optional.of(SecurityContext.READ_ONLY)).isAllowed(constraint));
+    public void strictRbacForbidden() throws Exception {
+        assertFalse(
+                AuthorisationDecision.strict(rbac, c -> Optional.of(SecurityContext.READ_ONLY)).isAllowed(constraint));
     }
 
     @Test
-    public void lenientAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.lenient(c -> Optional.empty()).isAllowed(constraint));
+    public void lenientRbacAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.lenient(rbac, c -> Optional.empty()).isAllowed(constraint));
     }
+
+    @Test
+    public void strictSimpleAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.strict(simple, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
+    }
+
+    @Test
+    public void strictSimpleForbidden() throws Exception {
+        assertTrue(
+                AuthorisationDecision.strict(simple, c -> Optional.of(SecurityContext.READ_ONLY))
+                        .isAllowed(constraint));
+    }
+
+    @Test
+    public void lenientSimpleAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.lenient(simple, c -> Optional.empty()).isAllowed(constraint));
+    }
+
 }
