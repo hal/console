@@ -109,6 +109,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                 }
             }
         }
+        applySecurity();
     }
 
     @Override
@@ -118,9 +119,12 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         Metadata update = metadata.refresh();
         if (update != metadata) {
             metadata = update;
-
-            AuthorisationDecision ad = AuthorisationDecision.strict(metadata);
-            ElementGuard.processElements(ad, asElement());
+            applySecurity();
         }
+    }
+
+    private void applySecurity() {
+        AuthorisationDecision ad = AuthorisationDecision.strict(metadata);
+        ElementGuard.processElements(ad, asElement());
     }
 }

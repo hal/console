@@ -25,6 +25,7 @@
                       include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
+                        <attribute form-item='{{new org.jboss.hal.ballroom.form.TextBoxItem("host")}}'/>
                         <attribute name="group"/>
                         <attribute name="auto-start"/>
                         <attribute name="update-auto-start-with-server-status"/>

@@ -17,6 +17,8 @@ package org.jboss.hal.client.runtime.server;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -26,6 +28,8 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 
 /**
  * @author Harald Pehl
@@ -53,9 +57,15 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
         super(mbuiContext);
     }
 
+    @PostConstruct
+    void init() {
+        serverConfigurationForm.getFormItem(HOST).setEnabled(false);
+    }
+
     @Override
     public void updateServer(final Server server) {
         serverConfigurationForm.view(server);
+        serverConfigurationForm.getFormItem(HOST).<String>setValue(server.getHost());
     }
 
     @Override

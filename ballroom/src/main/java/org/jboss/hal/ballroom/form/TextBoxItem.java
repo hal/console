@@ -19,6 +19,7 @@ import java.util.EnumSet;
 
 import com.google.common.base.Strings;
 import elemental.client.Browser;
+import org.jboss.hal.ballroom.LabelBuilder;
 
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -69,6 +70,10 @@ public class TextBoxItem extends AbstractFormItem<String> {
         }
     }
 
+
+    public TextBoxItem(final String name) {
+        this(name, new LabelBuilder().label(name), null);
+    }
 
     public TextBoxItem(final String name, final String label) {
         this(name, label, null);

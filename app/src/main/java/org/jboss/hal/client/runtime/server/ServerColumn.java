@@ -131,14 +131,17 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         String addressParam = current.getParameter(Places.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
-                            ResourceAddress newAddress = currentAddress.replaceValue(SERVER, item.getName())
+                            ResourceAddress newAddress = currentAddress
+                                    .replaceValue(HOST, item.getHost())
+                                    .replaceValue(SERVER, item.getName())
                                     .replaceValue(SERVER_CONFIG, item.getName());
                             builder.with(Places.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {
-                        // try to replace 'server' and 'server-config' request parameter
-                        PlaceRequest place = places.replaceParameter(current, SERVER, item.getName()).build();
+                        // try to replace 'host', 'server' and 'server-config' request parameter
+                        PlaceRequest place = places.replaceParameter(current, HOST, item.getHost()).build();
+                        place = places.replaceParameter(place, SERVER, item.getName()).build();
                         builder = places.replaceParameter(place, SERVER_CONFIG, item.getName());
                     }
                     placeManager.revealPlace(builder.build());
