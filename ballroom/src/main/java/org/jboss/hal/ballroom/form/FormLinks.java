@@ -24,7 +24,6 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -56,14 +55,13 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @author Harald Pehl
  */
-class FormLinks<T> implements IsElement {
+public class FormLinks<T> implements IsElement {
 
     private static final String LINKS = "links";
     private static final String HELP_CONTENT = "helpContent";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final AbstractForm<T> form;
-    private final StateMachine stateMachine;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
 
     private final Element root;
@@ -80,7 +78,6 @@ class FormLinks<T> implements IsElement {
             final EventListener onRemove) {
         this.form = form;
 
-        this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
         String linksId = Ids.build(form.getId(), LINKS);
@@ -172,24 +169,31 @@ class FormLinks<T> implements IsElement {
         return root;
     }
 
-    void switchTo(State state) {
-        Elements.setVisible(editLink, form.showEditLink(state));
-        Elements.setVisible(resetLink, form.showResetLink(state));
-        Elements.setVisible(removeLink, form.showRemoveLink(state));
+    public void setVisible(boolean edit, boolean reset, boolean remove, boolean help) {
+        Elements.setVisible(editLink, edit);
+        Elements.setVisible(resetLink, reset);
+        Elements.setVisible(removeLink, remove);
+        Elements.setVisible(helpLink, help && !helpTexts.isEmpty());
 
-        if (state == State.EMPTY) {
-            Elements.setVisible(helpLink, false);
-        } else {
-            Elements.setVisible(helpLink, !helpTexts.isEmpty());
-        }
-
-        Elements.setVisible(root, isVisible(editLink) ||
-                isVisible(resetLink) ||
-                isVisible(removeLink) ||
-                isVisible(helpLink));
+        Elements.setVisible(root, Elements.isVisible(editLink) ||
+                Elements.isVisible(resetLink) ||
+                Elements.isVisible(removeLink) ||
+                Elements.isVisible(helpLink));
     }
 
-    private boolean isVisible(Element element) {
-        return element != null && Elements.isVisible(element) && !element.getClassList().contains(hidden);
+    public void setVisible(Form.Operation operation, boolean visible) {
+        switch (operation) {
+            case EDIT:
+                Elements.setVisible(editLink, visible);
+                break;
+            case RESET:
+                Elements.setVisible(resetLink, visible);
+                break;
+            case REMOVE:
+                Elements.setVisible(removeLink, visible);
+                break;
+            default:
+                break;
+        }
     }
 }

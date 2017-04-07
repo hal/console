@@ -519,22 +519,35 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    protected void prepareViewState() {
-        super.prepareViewState();
+    protected void prepare(final State state) {
+        super.prepare(state);
 
         Metadata update = metadata.refresh();
         if (update != metadata) {
             metadata = update;
             SecurityContext securityContext = metadata.getSecurityContext();
 
-            // process actions in the empty state element
-            ElementGuard.processElements(AuthorisationDecision.strict(securityContext), asElement());
+            switch (state) {
+                case EMPTY:
+                    ElementGuard.processElements(AuthorisationDecision.strict(securityContext), asElement());
+                    break;
 
-            // change restricted and enabled state
-            getBoundFormItems().forEach(formItem -> {
-                formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
-                formItem.setEnabled(securityContext.isWritable(formItem.getName()));
-            });
+                case READONLY:
+                case EDITING:
+                    // change restricted and enabled state
+                    getBoundFormItems().forEach(formItem -> {
+                        formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
+                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+                    });
+                    break;
+            }
+        }
+
+        // adjust form links in any case
+        if (!metadata.getSecurityContext().isWritable()) {
+            formLinks.setVisible(Operation.EDIT, false);
+            formLinks.setVisible(Operation.RESET, false);
+            formLinks.setVisible(Operation.REMOVE, false);
         }
     }
 
@@ -553,21 +566,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         if (!requires.isEmpty()) {
             requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
         }
-    }
-
-    @Override
-    protected boolean showEditLink(final State state) {
-        return super.showEditLink(state) && metadata.getSecurityContext().isWritable();
-    }
-
-    @Override
-    protected boolean showResetLink(final State state) {
-        return super.showResetLink(state) && metadata.getSecurityContext().isWritable();
-    }
-
-    @Override
-    protected boolean showRemoveLink(final State state) {
-        return super.showRemoveLink(state) && metadata.getSecurityContext().isWritable();
     }
 
     @Override

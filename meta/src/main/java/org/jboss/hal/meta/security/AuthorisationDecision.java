@@ -153,10 +153,7 @@ public class AuthorisationDecision {
                 }
             }
         } else {
-            logger.debug("No security context found for {}", constraint);
-        }
-        if (!allowed) {
-            logger.debug("{} is not allowed", constraint);
+            logger.warn("No security context found for {}", constraint);
         }
         return allowed;
     }

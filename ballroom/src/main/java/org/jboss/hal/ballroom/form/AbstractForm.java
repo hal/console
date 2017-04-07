@@ -88,7 +88,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private T model;
     private final EmptyState emptyState;
 
-    private FormLinks<T> formLinks;
+    protected FormLinks<T> formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
     private UListElement errorMessages;
@@ -287,6 +287,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         getFormItems().forEach(Attachable::detach);
     }
 
+
     // ------------------------------------------------------ form operations
 
     /**
@@ -465,37 +466,43 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         flip(stateMachine.current());
     }
 
-    private void prepare(State state) {
+    protected void prepare(State state) {
         switch (state) {
             case EMPTY:
+                formLinks.setVisible(false, false, false, false);
                 prepareEmptyState();
                 break;
             case READONLY:
+                formLinks.setVisible(model != null && stateMachine.supports(EDIT),
+                        model != null && stateMachine.supports(RESET),
+                        model != null && stateMachine.supports(REMOVE),
+                        true);
                 prepareViewState();
                 break;
             case EDITING:
+                formLinks.setVisible(false, false, false, true);
                 prepareEditState();
                 break;
         }
     }
 
     /**
-     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
     protected void prepareEmptyState() {}
 
     /**
-     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
     protected void prepareViewState() {}
 
     /**
-     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     protected void prepareEditState() {}
 
@@ -521,23 +528,10 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 break;
         }
 
-        formLinks.switchTo(state);
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
                 .forEach(panel -> Elements.setVisible(panel, false));
         Elements.setVisible(panels.get(state), true);
-    }
-
-    protected boolean showEditLink(State state) {
-        return state == READONLY && model != null && stateMachine.supports(EDIT);
-    }
-
-    protected boolean showResetLink(State state) {
-        return state == READONLY && model != null && stateMachine.supports(RESET);
-    }
-
-    protected boolean showRemoveLink(State state) {
-        return state == READONLY && model != null && stateMachine.supports(REMOVE);
     }
 
 

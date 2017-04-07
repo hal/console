@@ -530,19 +530,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setTabIndex(final int index) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        appearance.ifPresent(a -> a.setTabIndex(index));
+        appearance.ifPresent((Appearance<T> a) -> a.setTabIndex(index));
     }
 
     @Override
     public void setAccessKey(final char accessKey) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        appearance.ifPresent(a -> a.setAccessKey(accessKey));
+        appearance.ifPresent((Appearance<T> a) -> a.setAccessKey(accessKey));
     }
 
     @Override
     public void setFocus(final boolean focus) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        // appearance.ifPresent(a -> a.setFocus(focus));
+        appearance.ifPresent((Appearance<T> a) -> a.setFocus(focus));
     }
 
     @Override
