@@ -75,7 +75,7 @@ public class BootErrorsElement implements IsElement, Attachable {
         modelNode.get(DESCRIPTION).set(description);
         modelNode.get(ATTRIBUTES).set(attributes);
         Metadata metadata = new Metadata(template, SecurityContext.READ_ONLY,
-                new ResourceDescription(modelNode), capabilities);
+                new ResourceDescription(managementMetadata.getDescription().getAddress(), modelNode), capabilities);
 
         Options<ModelNode> options = new ModelNodeTable.Builder<>(metadata)
                 .column(Ids.BOOT_ERRORS_ADDRESS_COLUMN, resources.constants().address(),

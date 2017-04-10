@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
@@ -25,32 +27,31 @@ import org.jboss.hal.meta.security.SecurityContext;
  */
 class RrdResult {
 
-    final AddressTemplate template;
-    final ResourceAddress address;
-    ResourceDescription resourceDescription;
-    SecurityContext securityContext;
+    final Map<ResourceAddress, ResourceDescription> resourceDescriptions;
+    final Map<ResourceAddress, SecurityContext> securityContexts;
 
-    RrdResult(final ResourceAddress address, boolean asIs) {
-        this.address = address;
-        this.template = AddressTemplate.of(address, new MetadataAddressToTemplate(asIs));
+    RrdResult() {
+        resourceDescriptions = new HashMap<>();
+        securityContexts = new HashMap<>();
     }
 
-    boolean isDefined() {
-        return resourceDescription != null || securityContext != null;
+    boolean containsResourceDescription(ResourceAddress address) {
+        return resourceDescriptions.containsKey(address);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof RrdResult)) { return false; }
-
-        RrdResult rrdResult = (RrdResult) o;
-
-        return address.equals(rrdResult.address);
+    void addResourceDescription(ResourceDescription resourceDescription) {
+        if (!resourceDescriptions.containsKey(resourceDescription.getAddress())) {
+            resourceDescriptions.put(resourceDescription.getAddress(), resourceDescription);
+        }
     }
 
-    @Override
-    public int hashCode() {
-        return address.hashCode();
+    boolean containsSecurityContext(ResourceAddress address) {
+        return securityContexts.containsKey(address);
+    }
+
+    void addSecurityContext(SecurityContext securityContext) {
+        if (!securityContexts.containsKey(securityContext.getAddress())) {
+            securityContexts.put(securityContext.getAddress(), securityContext);
+        }
     }
 }

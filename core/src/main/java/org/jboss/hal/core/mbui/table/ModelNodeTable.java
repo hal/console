@@ -117,7 +117,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
         super.update(data, mode, identifier);
 
-        Metadata update = metadata.refresh();
+        Metadata update = metadata.updateSecurityContext();
         if (update != metadata) {
             metadata = update;
             applySecurity();

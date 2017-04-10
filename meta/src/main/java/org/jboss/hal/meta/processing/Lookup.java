@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContextRegistry;
-
 import java.util.Set;
+
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
@@ -29,12 +29,12 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
  */
 class Lookup {
 
-    private final ResourceDescriptions descriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;
+    private final ResourceDescriptionRegistry descriptionRegistry;
 
-    Lookup(ResourceDescriptions descriptionRegistry, SecurityContextRegistry securityContextRegistry) {
-        this.descriptionRegistry = descriptionRegistry;
+    Lookup(SecurityContextRegistry securityContextRegistry, ResourceDescriptionRegistry descriptionRegistry) {
         this.securityContextRegistry = securityContextRegistry;
+        this.descriptionRegistry = descriptionRegistry;
     }
 
     public LookupResult check(Set<AddressTemplate> templates, boolean recursive) {

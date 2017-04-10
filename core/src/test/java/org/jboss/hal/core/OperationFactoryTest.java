@@ -58,7 +58,8 @@ public class OperationFactoryTest {
                 "/{selected.profile}/subsystem=resource-adapters/resource-adapter=*/connection-definitions=*");
         ModelNode rrd = ExternalModelNode.read(
                 OperationFactoryTest.class.getResourceAsStream("connection-definition.dmr"));
-        metadata = new Metadata(template, SecurityContext.RWX, new ResourceDescription(rrd), new Capabilities(null));
+        metadata = new Metadata(template, SecurityContext.RWX, new ResourceDescription(ResourceAddress.root(), rrd),
+                new Capabilities(null));
         address = ResourceAddress.root();
         operationFactory = new OperationFactory();
     }

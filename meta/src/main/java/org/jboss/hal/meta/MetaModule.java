@@ -18,7 +18,7 @@ package org.jboss.hal.meta;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescriptions;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.GinModule;
@@ -34,7 +34,7 @@ public class MetaModule extends AbstractGinModule {
         bind(Capabilities.class).in(Singleton.class);
         bind(MetadataProcessor.class).in(Singleton.class);
         bind(MetadataRegistry.class).in(Singleton.class);
-        bind(ResourceDescriptions.class).in(Singleton.class);
+        bind(ResourceDescriptionRegistry.class).in(Singleton.class);
         bind(SecurityContextRegistry.class).in(Singleton.class);
     }
 }

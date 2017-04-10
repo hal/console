@@ -24,16 +24,19 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
 
-public class ResourceDescriptions extends AbstractRegistry<ResourceDescription> {
+
+/**
+ * A registry for resource descriptions.
+ */
+public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescription> {
 
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
-    // TODO Replace map with local storage (constrained by language and management model version)
     private final Map<ResourceAddress, ResourceDescription> registry;
 
     @Inject
-    public ResourceDescriptions(final StatementContext statementContext, final Environment environment) {
-        super(statementContext, RESOURCE_DESCRIPTION_TYPE, environment);
+    public ResourceDescriptionRegistry(final StatementContext statementContext, final Environment environment) {
+        super(new ResourceDescriptionStatementContext(statementContext, environment), RESOURCE_DESCRIPTION_TYPE);
         this.registry = new HashMap<>();
     }
 

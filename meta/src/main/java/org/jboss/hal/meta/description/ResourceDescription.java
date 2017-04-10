@@ -22,6 +22,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -33,8 +34,33 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class ResourceDescription extends ModelNode {
 
-    public ResourceDescription(ModelNode payload) {
+    private final ResourceAddress address;
+
+    public ResourceDescription(final ResourceAddress address, final ModelNode payload) {
+        this.address = address;
         set(payload);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof ResourceDescription)) { return false; }
+        if (!super.equals(o)) { return false; }
+
+        ResourceDescription that = (ResourceDescription) o;
+
+        return address.equals(that.address);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + address.hashCode();
+        return result;
+    }
+
+    public ResourceAddress getAddress() {
+        return address;
     }
 
     public String getDescription() {

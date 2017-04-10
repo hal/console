@@ -35,7 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class AddUnmanagedDialog {
 
-    private final AddResourceDialog  dialog;
+    private final AddResourceDialog dialog;
 
     public AddUnmanagedDialog(final Metadata metadata, final Resources resources,
             final AddResourceDialog.Callback callback) {
@@ -50,7 +50,8 @@ public class AddUnmanagedDialog {
         ModelNode description = new ModelNode();
         description.get(ATTRIBUTES).set(attributes);
 
-        Metadata unmanagedMeta = Metadata.staticDescription(new ResourceDescription(description));
+        Metadata unmanagedMeta = Metadata.staticDescription(
+                new ResourceDescription(metadata.getDescription().getAddress(), description));
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNMANAGED_FORM, unmanagedMeta)
                 .unboundFormItem(new NameItem(), 0)
                 .include(RUNTIME_NAME, PATH, RELATIVE_TO, ARCHIVE)

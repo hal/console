@@ -17,6 +17,7 @@ package org.jboss.hal.meta.description;
 
 import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
@@ -27,7 +28,7 @@ public final class StaticResourceDescription {
 
     public static ResourceDescription from(TextResource resource) {
         try {
-            return new ResourceDescription(ModelNode.fromBase64(resource.getText()));
+            return new ResourceDescription(ResourceAddress.root(), ModelNode.fromBase64(resource.getText()));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to read static resource description from " + resource.getName());
         }

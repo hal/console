@@ -35,8 +35,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescriptions;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
@@ -79,9 +78,8 @@ public class MetadataProcessor {
     private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
     private final MetadataRegistry metadataRegistry;
-    private final ResourceDescriptions resourceDescriptions;
+    private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final SecurityContextRegistry securityContextRegistry;
-    private final Capabilities capabilities;
     private final Lookup lookup;
     private final CreateRrdOperations rrdOps;
 
@@ -92,15 +90,13 @@ public class MetadataProcessor {
             final RequiredResources requiredResources,
             final MetadataRegistry metadataRegistry,
             final SecurityContextRegistry securityContextRegistry,
-            final ResourceDescriptions resourceDescriptions,
-            final Capabilities capabilities) {
+            final ResourceDescriptionRegistry resourceDescriptionRegistry) {
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.requiredResources = requiredResources;
         this.securityContextRegistry = securityContextRegistry;
-        this.resourceDescriptions = resourceDescriptions;
-        this.capabilities = capabilities;
-        this.lookup = new Lookup(resourceDescriptions, securityContextRegistry);
+        this.resourceDescriptionRegistry = resourceDescriptionRegistry;
+        this.lookup = new Lookup(securityContextRegistry, resourceDescriptionRegistry);
         this.rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
@@ -147,8 +143,8 @@ public class MetadataProcessor {
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
             List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
             List<RrdFunction> functions = composites.stream()
-                    .map(composite -> new RrdFunction(metadataRegistry, securityContextRegistry, resourceDescriptions,
-                            capabilities, dispatcher, composite, false))
+                    .map(composite -> new RrdFunction(securityContextRegistry, resourceDescriptionRegistry,
+                            dispatcher, composite, false))
                     .collect(toList());
 
             // create optional operations w/o partitioning!
@@ -159,8 +155,8 @@ public class MetadataProcessor {
             List<Composite> optionalComposites = new ArrayList<>();
             optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
             List<RrdFunction> optionalFunctions = optionalComposites.stream()
-                    .map(composite -> new RrdFunction(metadataRegistry, securityContextRegistry, resourceDescriptions,
-                            capabilities, dispatcher, composite, true))
+                    .map(composite -> new RrdFunction(securityContextRegistry, resourceDescriptionRegistry,
+                            dispatcher, composite, true))
                     .collect(toList());
 
             logger.debug("About to execute {} composite operations", composites.size() + optionalComposites.size());

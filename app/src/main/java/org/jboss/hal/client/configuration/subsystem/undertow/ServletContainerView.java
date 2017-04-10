@@ -36,6 +36,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -89,7 +90,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         Metadata emptyMetadata = new Metadata(configurationMetadata.getTemplate(),
                 configurationMetadata.getSecurityContext(),
-                new ResourceDescription(new ModelNode()),
+                new ResourceDescription(ResourceAddress.root(), new ModelNode()),
                 configurationMetadata.getCapabilities());
 
         ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),

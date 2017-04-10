@@ -522,7 +522,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     protected void prepare(final State state) {
         super.prepare(state);
 
-        Metadata update = metadata.refresh();
+        Metadata update = metadata.updateSecurityContext();
         if (update != metadata) {
             metadata = update;
             SecurityContext securityContext = metadata.getSecurityContext();

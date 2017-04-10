@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -44,9 +42,9 @@ class CompositeRrdParser {
         this.composite = composite;
     }
 
-    public Set<RrdResult> parse(CompositeResult compositeResult) throws ParserException {
+    public RrdResult parse(CompositeResult compositeResult) throws ParserException {
         int index = 0;
-        Set<RrdResult> overallResults = new HashSet<>();
+        RrdResult rrdResult = new RrdResult();
 
         for (ModelNode step : compositeResult) {
             if (step.isFailure()) {
@@ -65,21 +63,19 @@ class CompositeRrdParser {
                         ResourceAddress resultAddress = new ResourceAddress(modelNode.get(ADDRESS));
                         ResourceAddress resolvedAddress = adjustAddress(operationAddress, resultAddress);
 
-                        Set<RrdResult> results = new SingleRrdParser().parse(resolvedAddress, result);
-                        overallResults.addAll(results);
+                        new SingleRrdParser(rrdResult).parse(resolvedAddress, result);
                     }
                 }
 
             } else {
                 // a single rrd result
                 ResourceAddress address = operationAddress(index);
-                Set<RrdResult> results = new SingleRrdParser().parse(address, stepResult);
-                overallResults.addAll(results);
+                new SingleRrdParser(rrdResult).parse(address, stepResult);
             }
             index++;
         }
 
-        return overallResults;
+        return rrdResult;
     }
 
     private ResourceAddress operationAddress(int index) {

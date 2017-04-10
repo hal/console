@@ -1,8 +1,5 @@
 package org.jboss.hal.meta.processing;
 
-import java.util.Set;
-
-import elemental.client.Browser;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -11,8 +8,8 @@ import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.meta.processing.RrdParserTestHelper.*;
-import static org.mockito.Mockito.mock;
+import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;
+import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertSecurityContexts;
 
 /**
  * @author Harald Pehl
@@ -20,10 +17,12 @@ import static org.mockito.Mockito.mock;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
 public class SingleRrdParserTest {
 
+    private RrdResult rrdResult;
 
     @Before
     public void setUp() throws Exception {
-        mock(Browser.class);
+        rrdResult = new RrdResult();
+        // mock(Browser.class);
     }
 
 
@@ -35,16 +34,15 @@ public class SingleRrdParserTest {
         ResourceAddress address = AddressTemplate.of("/subsystem=mail").resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_concrete_resource_description_only.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 6,
+        assertResourceDescriptions(rrdResult, 6,
                 "/subsystem=mail",
                 "/subsystem=mail/mail-session=*",
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap",
                 "/subsystem=mail/mail-session=*/custom=*");
-        assertDescriptionOnly(results);
     }
 
     @Test
@@ -53,16 +51,15 @@ public class SingleRrdParserTest {
         ResourceAddress address = AddressTemplate.of("/subsystem=mail").resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_concrete_resource_security_only.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 6,
+        assertSecurityContexts(rrdResult, 6,
                 "/subsystem=mail",
                 "/subsystem=mail/mail-session=*",
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap",
                 "/subsystem=mail/mail-session=*/custom=*");
-        assertSecurityContextOnly(results);
     }
 
     @Test
@@ -71,16 +68,23 @@ public class SingleRrdParserTest {
         ResourceAddress address = AddressTemplate.of("/subsystem=mail").resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_concrete_resource_combined.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 6,
+        assertResourceDescriptions(rrdResult, 6,
                 "/subsystem=mail",
                 "/subsystem=mail/mail-session=*",
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap",
                 "/subsystem=mail/mail-session=*/custom=*");
-        assertCombined(results);
+
+        assertSecurityContexts(rrdResult, 6,
+                "/subsystem=mail",
+                "/subsystem=mail/mail-session=*",
+                "/subsystem=mail/mail-session=*/server=smtp",
+                "/subsystem=mail/mail-session=*/server=pop3",
+                "/subsystem=mail/mail-session=*/server=imap",
+                "/subsystem=mail/mail-session=*/custom=*");
     }
 
 
@@ -93,13 +97,12 @@ public class SingleRrdParserTest {
                 .resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_wildcard_resource_description_only.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 3,
+        assertResourceDescriptions(rrdResult, 3,
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap");
-        assertDescriptionOnly(results);
     }
 
     @Test
@@ -109,13 +112,12 @@ public class SingleRrdParserTest {
                 .resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_wildcard_resource_security_only.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 3,
+        assertSecurityContexts(rrdResult, 3,
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap");
-        assertSecurityContextOnly(results);
     }
 
     @Test
@@ -125,13 +127,17 @@ public class SingleRrdParserTest {
                 .resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_wildcard_resource_combined.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 3,
+        assertResourceDescriptions(rrdResult, 3,
                 "/subsystem=mail/mail-session=*/server=smtp",
                 "/subsystem=mail/mail-session=*/server=pop3",
                 "/subsystem=mail/mail-session=*/server=imap");
-        assertCombined(results);
+
+        assertSecurityContexts(rrdResult, 3,
+                "/subsystem=mail/mail-session=*/server=smtp",
+                "/subsystem=mail/mail-session=*/server=pop3",
+                "/subsystem=mail/mail-session=*/server=imap");
     }
 
 
@@ -143,9 +149,9 @@ public class SingleRrdParserTest {
         ResourceAddress address = AddressTemplate.of("/server-group=*").resolve(StatementContext.NOOP);
         ModelNode modelNode = ExternalModelNode
                 .read(SingleRrdParserTest.class.getResourceAsStream("rrd_security_exceptions.dmr"));
-        Set<RrdResult> results = new SingleRrdParser().parse(address, modelNode);
+        new SingleRrdParser(rrdResult).parse(address, modelNode);
 
-        assertResults(results, 8,
+        assertSecurityContexts(rrdResult, 8,
                 "/server-group=*",
                 "/server-group=*/deployment=*",
                 "/server-group=*/jvm=*",
@@ -154,6 +160,5 @@ public class SingleRrdParserTest {
                 "/server-group=*/system-property=*",
                 "/server-group=other-server-group",
                 "/server-group=other-server-group/jvm=default");
-        assertSecurityContextOnly(results);
     }
 }

@@ -22,7 +22,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
  * following contract for adding and resolving meta data:
  * <ol>
  * <li>The meta data is added using a concrete {@link ResourceAddress}</li>
- * <li>The meta data needs to be resolved using a generic {@link AddressTemplate}</li>
+ * <li>The meta data is resolved against a generic {@link AddressTemplate}</li>
  * </ol>
  * <p>
  * It's up to the concrete implementation how to resolve the generic address template and lookup the associated meta

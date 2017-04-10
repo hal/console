@@ -166,7 +166,8 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
             modelNode.get(DESCRIPTION).set(clientMappings.getValue().get(DESCRIPTION));
             modelNode.get(ATTRIBUTES).set(clientMappings.getValue().get(VALUE_TYPE));
         }
-        ResourceDescription resourceDescription = new ResourceDescription(modelNode);
+        ResourceDescription resourceDescription = new ResourceDescription(inboundMetadata.getDescription().getAddress(),
+                modelNode);
         return new Metadata(inboundMetadata.getTemplate(), inboundMetadata.getSecurityContext(), resourceDescription,
                 inboundMetadata.getCapabilities());
     }
