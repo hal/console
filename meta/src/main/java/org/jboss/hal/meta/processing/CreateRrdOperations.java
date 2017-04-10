@@ -22,7 +22,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.WildcardStatementContext;
+import org.jboss.hal.meta.RegistryStatementContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
@@ -39,7 +39,7 @@ class CreateRrdOperations {
     private final StatementContext statementContext;
 
     CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
-        this.statementContext = new WildcardStatementContext(statementContext, environment);
+        this.statementContext = new RegistryStatementContext(statementContext, environment);
     }
 
     public List<Operation> create(LookupResult lookupResult, boolean optional) {

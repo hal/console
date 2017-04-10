@@ -27,14 +27,14 @@ import static org.mockito.Mockito.mock;
  * @author Harald Pehl
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
-public class WildcardStatementContextTest {
+public class RegistryStatementContextTest {
 
     private StatementContext statementContext;
 
     @Before
     public void setUp() throws Exception {
         Environment environment = mock(Environment.class);
-        statementContext = new WildcardStatementContext(StatementContext.NOOP, environment);
+        statementContext = new RegistryStatementContext(StatementContext.NOOP, environment);
     }
 
     @Test

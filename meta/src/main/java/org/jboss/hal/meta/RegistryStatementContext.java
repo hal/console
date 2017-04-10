@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta;
 
+import com.google.common.base.Strings;
 import org.jboss.hal.config.Environment;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
@@ -34,10 +35,10 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
  *
  * @author Harald Pehl
  */
-public class WildcardStatementContext extends FilteringStatementContext
+public class RegistryStatementContext extends FilteringStatementContext
         implements StatementContext {
 
-    public WildcardStatementContext(final StatementContext delegate, Environment environment) {
+    public RegistryStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String placeholder) {
@@ -51,7 +52,8 @@ public class WildcardStatementContext extends FilteringStatementContext
             public String[] filterTuple(final String placeholder) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(placeholder);
-                    if (t == SELECTED_PROFILE || t == SELECTED_GROUP) {
+                    if (t == SELECTED_PROFILE ||
+                            (t == SELECTED_GROUP && Strings.isNullOrEmpty(delegate.selectedServerGroup()))) {
                         return new String[]{t.resource(), "*"};
                     }
                 }

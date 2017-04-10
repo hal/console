@@ -49,7 +49,6 @@ class MetadataAddressToTemplate implements AddressTemplate.Unresolver {
 
         } else {
             if (size == 1) {
-                // it's an address with one segment only
                 switch (name) {
                     case HOST:
                         segment.append(SELECTED_HOST.variable());
@@ -63,7 +62,6 @@ class MetadataAddressToTemplate implements AddressTemplate.Unresolver {
                 }
 
             } else {
-                // an address with more than one segment
                 switch (name) {
                     case HOST:
                         segment.append(SELECTED_HOST.variable());
