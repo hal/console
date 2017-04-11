@@ -168,11 +168,7 @@ public class HostPresenter
         if (changedValues.containsKey(NAME)) {
             String newHost = String.valueOf(changedValues.get(NAME));
             if (!newHost.equals(form.getModel().getName())) {
-                // If the host name has changed, we need to update the metadata registry:
-                // Copy the metadata of the existing (old) host name, so that also the metadata for the new host name
-                // will be found.
-                Metadata metadata = metadataRegistry.lookup(template);
-                metadataRegistry.add(new ResourceAddress().add(HOST, newHost), metadata);
+                // TODO reload browser to update the metadata registries!
             }
         }
 

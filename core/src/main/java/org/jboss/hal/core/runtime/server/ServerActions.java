@@ -149,6 +149,8 @@ public class ServerActions {
     public static final int SERVER_KILL_TIMEOUT = 3;
     public static final int SERVER_RELOAD_TIMEOUT = 5;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
+    private static final AddressTemplate SERVER_CONFIG_TEMPLATE = AddressTemplate
+            .of("/{selected.host}/{selected.server-config");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private final EventBus eventBus;
@@ -269,8 +271,7 @@ public class ServerActions {
             return;
         }
 
-        AddressTemplate template = server.isStandalone() ? AddressTemplate.ROOT : AddressTemplate
-                .of("/host=" + server.getHost() + "/server-config=" + server.getName());
+        AddressTemplate template = server.isStandalone() ? AddressTemplate.ROOT : SERVER_CONFIG_TEMPLATE;
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
@@ -342,9 +343,7 @@ public class ServerActions {
     }
 
     public void stop(Server server) {
-        AddressTemplate template = AddressTemplate
-                .of("/host=" + server.getHost() + "/server-config=" + server.getName());
-        metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
+        metadataProcessor.lookup(SERVER_CONFIG_TEMPLATE, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 String id = Ids.build(STOP, server.getName(), Ids.FORM_SUFFIX);

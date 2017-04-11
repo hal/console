@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 /**
  * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
@@ -34,16 +34,15 @@ public class Core {
     public static Core INSTANCE;
 
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final EventBus eventBus;
 
     @Inject
-    public Core(final Environment environment, final MetadataRegistry metadataRegistry, final Dispatcher dispatcher,
-            final StatementContext statementContext, final EventBus eventBus) {
+    public Core(final Environment environment, final Dispatcher dispatcher, final StatementContext statementContext,
+            final EventBus eventBus) {
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.eventBus = eventBus;
@@ -51,10 +50,6 @@ public class Core {
 
     public Environment environment() {
         return environment;
-    }
-
-    public MetadataRegistry metadataRegistry() {
-        return metadataRegistry;
     }
 
     public Dispatcher dispatcher() {

@@ -71,7 +71,7 @@ public class OperationFormBuilder<T extends ModelNode> {
         repackaged.get(ATTRIBUTES).set(modelNode);
         ResourceDescription reloadDescription = new ResourceDescription(metadata.getDescription().getAddress(),
                 repackaged);
-        Metadata formMetadata = new Metadata(metadata.getTemplate(), SecurityContext.RWX, reloadDescription,
+        Metadata formMetadata = new Metadata(metadata.getTemplate(), () -> SecurityContext.RWX, reloadDescription,
                 metadata.getCapabilities());
         return new ModelNodeForm.Builder<T>(id, formMetadata)
                 .include(includes)

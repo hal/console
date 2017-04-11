@@ -70,6 +70,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -129,6 +130,7 @@ public class ContentColumn extends FinderColumn<Content> {
             final Places places,
             @Footer final Provider<Progress> progress,
             final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             final Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
@@ -273,7 +275,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT),
                 Constraint.executable(CONTENT_TEMPLATE, ADD));
         if (JsHelper.supportsAdvancedUpload() &&
-                AuthorisationDecision.strict(environment, metadataRegistry).isAllowed(deployConstraints)) {
+                AuthorisationDecision.strict(environment, securityContextRegistry).isAllowed(deployConstraints)) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources));
         }

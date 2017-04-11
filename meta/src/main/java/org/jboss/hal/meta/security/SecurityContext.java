@@ -94,6 +94,7 @@ public class SecurityContext extends ModelNode {
 
 
     private final ResourceAddress address;
+    private SecurityContextRegistry registry;
 
     public SecurityContext(final ResourceAddress address, final ModelNode payload) {
         this.address = address;

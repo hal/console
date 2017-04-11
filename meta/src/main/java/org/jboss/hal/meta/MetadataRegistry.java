@@ -21,7 +21,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 /**
@@ -49,11 +48,9 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     @Override
     public Metadata lookup(final AddressTemplate template) throws MissingMetadataException {
-        SecurityContext securityContext = securityContextRegistry.lookup(template);
         ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
-        Metadata metadata = new Metadata(template, securityContext, resourceDescription, capabilities);
-        metadata.injectSecurityContextRegistry(securityContextRegistry);
-        return metadata;
+        return new Metadata(template, () -> securityContextRegistry.lookup(template), resourceDescription,
+                capabilities);
     }
 
     @Override

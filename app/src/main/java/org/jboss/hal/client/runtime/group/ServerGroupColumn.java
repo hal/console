@@ -107,7 +107,6 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                                 new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
-                // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()

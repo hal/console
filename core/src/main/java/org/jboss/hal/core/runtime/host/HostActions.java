@@ -104,6 +104,7 @@ public class HostActions {
 
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
+    private static final AddressTemplate HOST_TEMPLATE = AddressTemplate.of("/{selected.host}");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
     private final EventBus eventBus;
@@ -135,68 +136,67 @@ public class HostActions {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void reload(final Host host) {
-        metadataProcessor.lookup(AddressTemplate.of("/host=" + host.getAddressName()), progress.get(),
-                new MetadataCallback() {
-                    @Override
-                    public void onMetadata(final Metadata metadata) {
-                        Form<ModelNode> form = new OperationFormBuilder<>(
-                                Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX), metadata, RELOAD)
-                                .include(RESTART_SERVERS)
-                                .build();
+        metadataProcessor.lookup(HOST_TEMPLATE, progress.get(), new MetadataCallback() {
+            @Override
+            public void onMetadata(final Metadata metadata) {
+                Form<ModelNode> form = new OperationFormBuilder<>(
+                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX), metadata, RELOAD)
+                        .include(RESTART_SERVERS)
+                        .build();
 
-                        SafeHtml question;
-                        if (host.isDomainController()) {
-                            question = resources.messages().reloadDomainControllerQuestion(host.getName());
-                        } else {
-                            question = resources.messages().reloadHostControllerQuestion(host.getName());
-                        }
-                        Dialog dialog = DialogFactory.buildConfirmation(
-                                resources.messages().reload(host.getName()), question, form.asElement(), MEDIUM,
-                                () -> {
-                                    form.save();
-                                    boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
-                                    prepare(host, restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                            Action.RELOAD);
-                                    Operation operation = new Operation.Builder(RELOAD, host.getAddress())
-                                            .param(RESTART_SERVERS, restartServers)
-                                            .build();
+                SafeHtml question;
+                if (host.isDomainController()) {
+                    question = resources.messages().reloadDomainControllerQuestion(host.getName());
+                } else {
+                    question = resources.messages().reloadHostControllerQuestion(host.getName());
+                }
+                Dialog dialog = DialogFactory.buildConfirmation(
+                        resources.messages().reload(host.getName()), question, form.asElement(), MEDIUM,
+                        () -> {
+                            form.save();
+                            boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
+                            prepare(host, restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                    Action.RELOAD);
+                            Operation operation = new Operation.Builder(RELOAD, host.getAddress())
+                                    .param(RESTART_SERVERS, restartServers)
+                                    .build();
 
-                                    // execute the reload with a little delay to ensure the confirmation dialog is closed
-                                    // before the next dialog is opened (only one modal can be open at a time!)
-                                    Browser.getWindow().setTimeout(() -> {
+                            // execute the reload with a little delay to ensure the confirmation dialog is closed
+                            // before the next dialog is opened (only one modal can be open at a time!)
+                            Browser.getWindow().setTimeout(() -> {
 
-                                        if (host.isDomainController()) {
-                                            domainControllerOperation(host, operation, reloadTimeout(host),
-                                                    restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                                    resources.messages().reload(host.getName()),
-                                                    resources.messages().reloadDomainControllerPending(host.getName()),
-                                                    resources.messages().reloadHostSuccess(host.getName()),
-                                                    resources.messages().reloadHostError(host.getName()),
-                                                    resources.messages().domainControllerTimeout(host.getName()));
+                                if (host.isDomainController()) {
+                                    domainControllerOperation(host, operation, reloadTimeout(host),
+                                            restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                            resources.messages().reload(host.getName()),
+                                            resources.messages().reloadDomainControllerPending(host.getName()),
+                                            resources.messages().reloadHostSuccess(host.getName()),
+                                            resources.messages().reloadHostError(host.getName()),
+                                            resources.messages().domainControllerTimeout(host.getName()));
 
-                                        } else {
-                                            hostControllerOperation(host, operation, reloadTimeout(host),
-                                                    restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                                    resources.messages().reloadHostSuccess(host.getName()),
-                                                    resources.messages().reloadHostError(host.getName()),
-                                                    resources.messages().hostControllerTimeout(host.getName()));
-                                        }
-                                    }, SHORT_TIMEOUT);
-                                });
-                        dialog.registerAttachable(form);
-                        dialog.show();
+                                } else {
+                                    hostControllerOperation(host, operation, reloadTimeout(host),
+                                            restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                            resources.messages().reloadHostSuccess(host.getName()),
+                                            resources.messages().reloadHostError(host.getName()),
+                                            resources.messages().hostControllerTimeout(host.getName()));
+                                }
+                            }, SHORT_TIMEOUT);
+                        });
+                dialog.registerAttachable(form);
+                dialog.show();
 
-                        ModelNode model = new ModelNode();
-                        model.get(RESTART_SERVERS).set(true);
-                        form.edit(model);
-                    }
+                ModelNode model = new ModelNode();
+                model.get(RESTART_SERVERS).set(true);
+                form.edit(model);
+            }
 
-                    @Override
-                    public void onError(final Throwable error) {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().metadataError(), error.getMessage()));
-                    }
-                });
+            @Override
+            public void onError(final Throwable error) {
+                MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().metadataError(), error.getMessage()));
+            }
+        });
     }
 
 

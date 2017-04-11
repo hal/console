@@ -20,8 +20,6 @@ import java.util.Set;
 
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,17 +61,16 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
  */
 public class AuthorisationDecision {
 
-    public static AuthorisationDecision strict(final Environment environment, final MetadataRegistry metadataRegistry) {
+    // ------------------------------------------------------ strict
+
+    public static AuthorisationDecision strict(final Environment environment,
+            final SecurityContextRegistry securityContextRegistry) {
         return new AuthorisationDecision(true, environment, constraint -> {
-            if (metadataRegistry.contains(constraint.getTemplate())) {
-                return Optional.of(metadataRegistry.lookup(constraint.getTemplate()).getSecurityContext());
+            if (securityContextRegistry.contains(constraint.getTemplate())) {
+                return Optional.of(securityContextRegistry.lookup(constraint.getTemplate()));
             }
             return Optional.empty();
         });
-    }
-
-    public static AuthorisationDecision strict(final Environment environment, final Metadata metadata) {
-        return new AuthorisationDecision(true, environment, constraint -> Optional.of(metadata.getSecurityContext()));
     }
 
     public static AuthorisationDecision strict(final Environment environment, final SecurityContext securityContext) {
@@ -84,19 +81,18 @@ public class AuthorisationDecision {
         return new AuthorisationDecision(true, environment, resolver);
     }
 
+
+    // ------------------------------------------------------ lenient
+
     public static AuthorisationDecision lenient(final Environment environment,
-            final MetadataRegistry metadataRegistry) {
+            final SecurityContextRegistry securityContextRegistry) {
         return new AuthorisationDecision(false, environment, constraint -> {
-            if (metadataRegistry.contains(constraint.getTemplate())) {
-                return Optional.of(metadataRegistry.lookup(constraint.getTemplate()).getSecurityContext());
+            if (securityContextRegistry.contains(constraint.getTemplate())) {
+                return Optional.of(securityContextRegistry.lookup(constraint.getTemplate()));
             }
             return Optional.empty();
         });
 
-    }
-
-    public static AuthorisationDecision lenient(final Environment environment, final Metadata metadata) {
-        return new AuthorisationDecision(false, environment, constraint -> Optional.of(metadata.getSecurityContext()));
     }
 
     public static AuthorisationDecision lenient(final Environment environment, final SecurityContext securityContext) {

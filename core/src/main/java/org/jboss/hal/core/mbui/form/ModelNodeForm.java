@@ -522,30 +522,25 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     protected void prepare(final State state) {
         super.prepare(state);
 
-        Metadata update = metadata.updateSecurityContext();
-        if (update != metadata) {
-            metadata = update;
-            SecurityContext securityContext = metadata.getSecurityContext();
+        SecurityContext securityContext = metadata.getSecurityContext();
+        switch (state) {
+            case EMPTY:
+                ElementGuard.processElements(
+                        AuthorisationDecision.strict(Core.INSTANCE.environment(), securityContext), asElement());
+                break;
 
-            switch (state) {
-                case EMPTY:
-                    ElementGuard.processElements(
-                            AuthorisationDecision.strict(Core.INSTANCE.environment(), securityContext), asElement());
-                    break;
-
-                case READONLY:
-                case EDITING:
-                    // change restricted and enabled state
-                    getBoundFormItems().forEach(formItem -> {
-                        formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
-                        formItem.setEnabled(securityContext.isWritable(formItem.getName()));
-                    });
-                    break;
-            }
+            case READONLY:
+            case EDITING:
+                // change restricted and enabled state
+                getBoundFormItems().forEach(formItem -> {
+                    formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
+                    formItem.setEnabled(securityContext.isWritable(formItem.getName()));
+                });
+                break;
         }
 
         // adjust form links in any case
-        if (!metadata.getSecurityContext().isWritable()) {
+        if (!securityContext.isWritable()) {
             formLinks.setVisible(Operation.EDIT, false);
             formLinks.setVisible(Operation.RESET, false);
             formLinks.setVisible(Operation.REMOVE, false);

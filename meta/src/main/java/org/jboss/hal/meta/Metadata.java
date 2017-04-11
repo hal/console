@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.function.Supplier;
+
 import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -22,7 +24,6 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
@@ -35,7 +36,7 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 public class Metadata {
 
     public static Metadata empty() {
-        return new Metadata(ROOT, RWX, new ResourceDescription(ResourceAddress.root(), new ModelNode()),
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(ResourceAddress.root(), new ModelNode()),
                 new Capabilities(null));
     }
 
@@ -44,17 +45,16 @@ public class Metadata {
     }
 
     public static Metadata staticDescription(ResourceDescription description) {
-        return new Metadata(ROOT, RWX, new ResourceDescription(ResourceAddress.root(), description),
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(ResourceAddress.root(), description),
                 new Capabilities(null));
     }
 
     private final AddressTemplate template;
-    private final SecurityContext securityContext;
+    private final Supplier<SecurityContext> securityContext;
     private final ResourceDescription description;
     private final Capabilities capabilities;
-    private SecurityContextRegistry securityContextRegistry;
 
-    public Metadata(final AddressTemplate template, final SecurityContext securityContext,
+    public Metadata(final AddressTemplate template, final Supplier<SecurityContext> securityContext,
             final ResourceDescription description, final Capabilities capabilities) {
         this.template = template;
         this.securityContext = securityContext;
@@ -62,16 +62,8 @@ public class Metadata {
         this.capabilities = capabilities;
     }
 
-    void injectSecurityContextRegistry(SecurityContextRegistry securityContextRegistry) {
-        this.securityContextRegistry = securityContextRegistry;
-    }
-
-    public Metadata updateSecurityContext() {
-        if (securityContextRegistry != null && securityContextRegistry.contains(template)) {
-            SecurityContext update = securityContextRegistry.lookup(template);
-            return new Metadata(template, update, description, capabilities);
-        }
-        return this;
+    public Metadata customResourceDescription(ResourceDescription resourceDescription) {
+        return new Metadata(template, securityContext, resourceDescription, capabilities);
     }
 
     public AddressTemplate getTemplate() {
@@ -79,7 +71,7 @@ public class Metadata {
     }
 
     public SecurityContext getSecurityContext() {
-        return securityContext;
+        return securityContext.get();
     }
 
     public ResourceDescription getDescription() {

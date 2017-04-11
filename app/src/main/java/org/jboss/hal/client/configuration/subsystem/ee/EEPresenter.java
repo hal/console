@@ -90,8 +90,7 @@ public class EEPresenter
         } else {
             globalModulesDescription = new ResourceDescription(ResourceAddress.root(), new ModelNode());
         }
-        return new Metadata(metadata.getTemplate(), metadata.getSecurityContext(), globalModulesDescription,
-                metadata.getCapabilities());
+        return metadata.customResourceDescription(globalModulesDescription);
     }
 
     private final CrudOperations crud;

@@ -138,6 +138,7 @@ public class ServerGroupActions {
 
 
     private static final int DEFAULT_TIMEOUT = 10; // seconds
+    private static final AddressTemplate SERVER_GROUP_TEMPLATE = AddressTemplate.of("/{selected.group}");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
 
     private final EventBus eventBus;
@@ -209,8 +210,7 @@ public class ServerGroupActions {
     public void suspend(ServerGroup serverGroup) {
         List<Server> startedServers = serverGroup.getServers(Server::isStarted);
         if (!startedServers.isEmpty()) {
-            AddressTemplate template = AddressTemplate.of("/server-group=" + serverGroup.getName());
-            metadataProcessor.lookup(template, progress.get(), new MetadataCallback() {
+            metadataProcessor.lookup(SERVER_GROUP_TEMPLATE, progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
                     String id = Ids.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
@@ -290,8 +290,7 @@ public class ServerGroupActions {
     public void stop(ServerGroup serverGroup) {
         List<Server> startedServers = serverGroup.getServers(Server::isStarted);
         if (!startedServers.isEmpty()) {
-            AddressTemplate template = AddressTemplate.of("/server-group=" + serverGroup.getName());
-            metadataProcessor.lookup(template, progress.get(), new MetadataCallback() {
+            metadataProcessor.lookup(SERVER_GROUP_TEMPLATE, progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
                     String id = Ids.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);

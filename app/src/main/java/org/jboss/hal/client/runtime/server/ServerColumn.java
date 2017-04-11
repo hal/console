@@ -66,11 +66,11 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -98,7 +98,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private final Finder finder;
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private FinderPath refreshPath;
 
     @Inject
@@ -107,7 +107,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Environment environment,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
-            final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
@@ -164,7 +164,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         );
         this.finder = finder;
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
@@ -411,8 +411,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private void processAddColumnAction(String host) {
         AuthorisationDecision ad = AuthorisationDecision.strict(environment, c -> {
-            if (metadataRegistry.contains(c.getTemplate())) {
-                return Optional.of(metadataRegistry.lookup(c.getTemplate()).getSecurityContext());
+            if (securityContextRegistry.contains(c.getTemplate())) {
+                return Optional.of(securityContextRegistry.lookup(c.getTemplate()));
             }
             return Optional.empty();
         });

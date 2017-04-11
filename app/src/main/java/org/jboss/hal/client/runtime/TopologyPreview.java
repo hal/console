@@ -73,6 +73,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -103,6 +104,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
     private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
@@ -122,6 +124,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<Server> serverAttributes;
 
     TopologyPreview(final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             final Environment environment,
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
@@ -134,6 +137,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
         this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;
@@ -661,7 +665,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Host host) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
     }
 
@@ -724,7 +728,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(ServerGroup serverGroup) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=*"), RELOAD_SERVERS));
     }
 
@@ -806,7 +810,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Server server) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + server.getHost() + "/server-config=*"),
                         RELOAD));
     }

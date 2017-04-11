@@ -29,7 +29,7 @@ import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.runtime.host.HostColumn.HOST_TEMPLATE;
+import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
@@ -61,12 +61,12 @@ class HostPreview extends RuntimePreview<Host> {
                 .span().textContent(" ").end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
                     .on(click, event -> hostActions.reload(host))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(HOST_TEMPLATE, RELOAD).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
                     .on(click, event -> hostActions.restart(host))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(HOST_TEMPLATE, RESTART).data())
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
                     .textContent(resources.constants().restart())
                 .end()
             .end();

@@ -88,10 +88,8 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .prepareReset(form -> presenter.resetServletContainer(form))
                 .build();
 
-        Metadata emptyMetadata = new Metadata(configurationMetadata.getTemplate(),
-                configurationMetadata.getSecurityContext(),
-                new ResourceDescription(ResourceAddress.root(), new ModelNode()),
-                configurationMetadata.getCapabilities());
+        Metadata emptyMetadata = configurationMetadata.customResourceDescription(
+                new ResourceDescription(ResourceAddress.root(), new ModelNode()));
 
         ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
                 "children/mime-mapping/description"); //NON-NLS
