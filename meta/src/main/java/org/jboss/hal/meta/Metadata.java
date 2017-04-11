@@ -71,7 +71,7 @@ public class Metadata {
     }
 
     public SecurityContext getSecurityContext() {
-        return securityContext.get();
+        return securityContext.get(); // TODO Surround with try/catch?
     }
 
     public ResourceDescription getDescription() {
