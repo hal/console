@@ -121,7 +121,6 @@ public class AuthorisationDecision {
         if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
             return true;
         }
-
         for (Constraint constraint : constraints) {
             if (!isAllowed(constraint)) {
                 return false;
@@ -134,7 +133,6 @@ public class AuthorisationDecision {
         if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
             return true;
         }
-
         boolean allowed = !strict;
         Optional<SecurityContext> optional = resolver.resolve(constraint);
         if (optional.isPresent()) {

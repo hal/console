@@ -131,6 +131,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml hostAdminMode(String name);
     SafeHtml hostControllerTimeout(String name);
+    SafeHtml hostNameChanged();
     SafeHtml hostNeedsReload(String name);
     SafeHtml hostNeedsRestart(String name);
     SafeHtml hostPending(String name);

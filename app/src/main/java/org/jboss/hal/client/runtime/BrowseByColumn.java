@@ -34,7 +34,6 @@ import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -75,7 +74,6 @@ public class BrowseByColumn extends StaticItemColumn {
     @Inject
     public BrowseByColumn(final Finder finder,
             final Environment environment,
-            final MetadataRegistry metadataRegistry,
             final SecurityContextRegistry securityContextRegistry,
             final @Footer Provider<Progress> progress,
             final EventBus eventBus,
@@ -89,7 +87,7 @@ public class BrowseByColumn extends StaticItemColumn {
         super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(new TopologyPreview(metadataRegistry, securityContextRegistry, environment,
+                                .onPreview(new TopologyPreview(securityContextRegistry, environment,
                                         dispatcher, progress, eventBus, places, finderPathFactory, hostActions,
                                         serverGroupActions, serverActions, resources))
                                 .build(),

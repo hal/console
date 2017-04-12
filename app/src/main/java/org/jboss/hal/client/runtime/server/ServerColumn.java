@@ -93,7 +93,11 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static AddressTemplate serverConfigTemplate(Server server) {
-        return AddressTemplate.of("/host=" + server.getHost() + "/server-config=*");
+        return serverConfigTemplate(server.getHost());
+    }
+
+    static AddressTemplate serverConfigTemplate(String host) {
+        return AddressTemplate.of("/host=" + host + "/server-config=*");
     }
 
     private final Finder finder;
@@ -383,7 +387,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
-        // Don't use columnActionFactory.add() here. This would add a constraint,
+        // Don't use columnActionFactory.add() here. This would add a default constraint,
         // but we want to manage the visibility by ourselves.
         ColumnAction<Server> addAction = new ColumnAction.Builder<Server>(Ids.SERVER_ADD)
                 .element(columnActionFactory.addButton(Names.SERVER))
@@ -417,8 +421,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             return Optional.empty();
         });
         Element addButton = Browser.getDocument().getElementById(Ids.SERVER_ADD);
-        AddressTemplate template = AddressTemplate.of("/host=" + host + "/server-config=*");
-        ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(template, ADD)));
+        ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(serverConfigTemplate(host), ADD)));
     }
 
     @Override
