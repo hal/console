@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
 
@@ -33,11 +34,13 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
     private final Map<ResourceAddress, ResourceDescription> registry;
+    private final ResourceDescriptionTemplateProcessor templateProcessor;
 
     @Inject
     public ResourceDescriptionRegistry(final StatementContext statementContext, final Environment environment) {
         super(new ResourceDescriptionStatementContext(statementContext, environment), RESOURCE_DESCRIPTION_TYPE);
         this.registry = new HashMap<>();
+        this.templateProcessor = new ResourceDescriptionTemplateProcessor();
     }
 
     @Override
@@ -48,5 +51,10 @@ public class ResourceDescriptionRegistry extends AbstractRegistry<ResourceDescri
     @Override
     public void add(final ResourceAddress address, final ResourceDescription description) {
         registry.put(address, description);
+    }
+
+    @Override
+    protected ResourceAddress resolveTemplate(final AddressTemplate template) {
+        return super.resolveTemplate(templateProcessor.apply(template));
     }
 }

@@ -39,9 +39,9 @@ class RrdResult {
         return resourceDescriptions.containsKey(address);
     }
 
-    void addResourceDescription(ResourceDescription resourceDescription) {
-        if (!resourceDescriptions.containsKey(resourceDescription.getAddress())) {
-            resourceDescriptions.put(resourceDescription.getAddress(), resourceDescription);
+    void addResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
+        if (!containsResourceDescription(address)) {
+            resourceDescriptions.put(address, resourceDescription);
         }
     }
 
@@ -49,9 +49,9 @@ class RrdResult {
         return securityContexts.containsKey(address);
     }
 
-    void addSecurityContext(SecurityContext securityContext) {
-        if (!securityContexts.containsKey(securityContext.getAddress())) {
-            securityContexts.put(securityContext.getAddress(), securityContext);
+    void addSecurityContext(ResourceAddress address, SecurityContext securityContext) {
+        if (!containsSecurityContext(address)) {
+            securityContexts.put(address, securityContext);
         }
     }
 }

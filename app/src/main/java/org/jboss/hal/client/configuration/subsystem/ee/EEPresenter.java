@@ -86,9 +86,9 @@ public class EEPresenter
             ModelNode repackaged = new ModelNode();
             repackaged.get(DESCRIPTION).set(globalModules.getValue().get(DESCRIPTION).asString());
             repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
-            globalModulesDescription = new ResourceDescription(metadata.getDescription().getAddress(), repackaged);
+            globalModulesDescription = new ResourceDescription(repackaged);
         } else {
-            globalModulesDescription = new ResourceDescription(ResourceAddress.root(), new ModelNode());
+            globalModulesDescription = new ResourceDescription(new ModelNode());
         }
         return metadata.customResourceDescription(globalModulesDescription);
     }

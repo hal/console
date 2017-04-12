@@ -48,7 +48,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityContextRegistry.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(NOTHING_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -57,7 +57,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityContextRegistry.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(RESOURCE_DESCRIPTION_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -66,7 +66,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityContextRegistry.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(SECURITY_CONTEXT_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -75,7 +75,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityContextRegistry.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(ALL_PRESENT, lookupResult.missingMetadata(foo));
     }
 }

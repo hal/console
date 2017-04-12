@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 
 import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
@@ -36,7 +35,7 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 public class Metadata {
 
     public static Metadata empty() {
-        return new Metadata(ROOT, () -> RWX, new ResourceDescription(ResourceAddress.root(), new ModelNode()),
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(new ModelNode()),
                 new Capabilities(null));
     }
 
@@ -45,7 +44,7 @@ public class Metadata {
     }
 
     public static Metadata staticDescription(ResourceDescription description) {
-        return new Metadata(ROOT, () -> RWX, new ResourceDescription(ResourceAddress.root(), description),
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description),
                 new Capabilities(null));
     }
 

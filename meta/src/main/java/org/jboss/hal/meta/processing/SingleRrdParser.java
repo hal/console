@@ -21,6 +21,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.description.ResourceDescriptionAddressProcessor;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
@@ -34,9 +35,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 class SingleRrdParser {
 
     private final RrdResult rrdResult;
+    private final ResourceDescriptionAddressProcessor addressProcessor;
 
     SingleRrdParser(final RrdResult rrdResult) {
         this.rrdResult = rrdResult;
+        this.addressProcessor = new ResourceDescriptionAddressProcessor();
     }
 
     public void parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
@@ -54,14 +57,14 @@ class SingleRrdParser {
     private void parseSingle(ResourceAddress address, ModelNode modelNode) {
         // resource description
         if (!rrdResult.containsResourceDescription(address) && modelNode.hasDefined(DESCRIPTION)) {
-            rrdResult.addResourceDescription(new ResourceDescription(anonymizeAddress(address), modelNode));
+            rrdResult.addResourceDescription(addressProcessor.apply(address), new ResourceDescription(modelNode));
         }
 
         // security context
         ModelNode accessControl = modelNode.get(ACCESS_CONTROL);
         if (accessControl.isDefined()) {
             if (!rrdResult.containsSecurityContext(address) && accessControl.hasDefined(DEFAULT)) {
-                rrdResult.addSecurityContext(new SecurityContext(address, accessControl.get(DEFAULT)));
+                rrdResult.addSecurityContext(address, new SecurityContext(accessControl.get(DEFAULT)));
             }
 
             // exceptions
@@ -71,7 +74,7 @@ class SingleRrdParser {
                     ModelNode exception = property.getValue();
                     ResourceAddress exceptionAddress = new ResourceAddress(exception.get(ADDRESS));
                     if (!rrdResult.containsSecurityContext(exceptionAddress)) {
-                        rrdResult.addSecurityContext(new SecurityContext(exceptionAddress, exception));
+                        rrdResult.addSecurityContext(exceptionAddress, new SecurityContext(exception));
                     }
                 }
             }
@@ -93,33 +96,5 @@ class SingleRrdParser {
                 }
             }
         }
-    }
-
-    private ResourceAddress anonymizeAddress(ResourceAddress address) {
-        ResourceAddress anonymized = new ResourceAddress();
-
-        int index = 0;
-        for (Property property : address.asPropertyList()) {
-            String name = property.getName();
-            String value = property.getValue().asString();
-            switch (name) {
-                case HOST:
-                case SERVER_GROUP:
-                case SERVER_CONFIG:
-                    value = "*";
-                    break;
-
-                case SERVER:
-                    // only anonymize /host=foo/server=bar or /host=foo/server-config=bar,
-                    // but don't touch resources like /subsystem=mail/mail-session=*/server=*
-                    if (index == 1) {
-                        value = "*";
-                    }
-                    break;
-            }
-            anonymized.add(name, value);
-            index++;
-        }
-        return anonymized;
     }
 }

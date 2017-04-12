@@ -206,7 +206,6 @@ package org.jboss.hal.core.mbui;
 import java.util.Map;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -217,7 +216,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ResourceDescriptionBuilder {
 
     public ResourceDescription empty() {
-        return new ResourceDescription(ResourceAddress.root(), new ModelNode());
+        return new ResourceDescription(new ModelNode());
     }
 
     public ResourceDescription attributes(String... attributes) {
@@ -227,7 +226,7 @@ public class ResourceDescriptionBuilder {
                 list.get(attribute).set(new ModelNode());
             }
         }
-        return new ResourceDescription(ResourceAddress.root(), new ModelNode().set(ATTRIBUTES, list));
+        return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
     }
 
     public ResourceDescription storage(Map<String, String> storageAttributes) {
@@ -237,7 +236,7 @@ public class ResourceDescriptionBuilder {
                 list.get(entry.getKey()).set(new ModelNode().set(STORAGE, entry.getValue()));
             }
         }
-        return new ResourceDescription(ResourceAddress.root(), new ModelNode().set(ATTRIBUTES, list));
+        return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
     }
 
     public ResourceDescription requestProperties(Map<String, Boolean> requestProperties) {
@@ -247,9 +246,7 @@ public class ResourceDescriptionBuilder {
                 list.get(entry.getKey()).set(new ModelNode().set(REQUIRED, entry.getValue()));
             }
         }
-        return new ResourceDescription(ResourceAddress.root(),
-                new ModelNode().set(OPERATIONS,
-                        new ModelNode().set(ADD,
-                                new ModelNode().set(REQUEST_PROPERTIES, list))));
+        return new ResourceDescription(new ModelNode().set(OPERATIONS,
+                new ModelNode().set(ADD, new ModelNode().set(REQUEST_PROPERTIES, list))));
     }
 }

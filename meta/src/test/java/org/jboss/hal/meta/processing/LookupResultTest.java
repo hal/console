@@ -20,7 +20,7 @@ public class LookupResultTest {
     @Before
     public void setUp() {
         foo = AddressTemplate.of("foo");
-        lookupResult = new LookupResult(Sets.newHashSet(foo), false);
+        lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(foo), false);
     }
 
     @Test

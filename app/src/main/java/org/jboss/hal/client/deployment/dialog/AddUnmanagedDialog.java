@@ -50,8 +50,7 @@ public class AddUnmanagedDialog {
         ModelNode description = new ModelNode();
         description.get(ATTRIBUTES).set(attributes);
 
-        Metadata unmanagedMeta = Metadata.staticDescription(
-                new ResourceDescription(metadata.getDescription().getAddress(), description));
+        Metadata unmanagedMeta = Metadata.staticDescription(new ResourceDescription(description));
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNMANAGED_FORM, unmanagedMeta)
                 .unboundFormItem(new NameItem(), 0)
                 .include(RUNTIME_NAME, PATH, RELATIVE_TO, ARCHIVE)

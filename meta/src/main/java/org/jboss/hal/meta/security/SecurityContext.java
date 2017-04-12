@@ -16,13 +16,8 @@
 package org.jboss.hal.meta.security;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Represents the RBAC related payload from the {@code r-r-d} operation.
@@ -35,7 +30,7 @@ public class SecurityContext extends ModelNode {
     /**
      * A security context with hardcoded permissions to read resources, write and execute operations are not allowed.
      */
-    public static final SecurityContext READ_ONLY = new SecurityContext(ResourceAddress.root(), new ModelNode()) {
+    public static final SecurityContext READ_ONLY = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
             return true;
@@ -65,7 +60,7 @@ public class SecurityContext extends ModelNode {
     /**
      * A security context with hardcoded permissions to read, write and execute any resource.
      */
-    public static final SecurityContext RWX = new SecurityContext(ResourceAddress.root(), new ModelNode()) {
+    public static final SecurityContext RWX = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
             return true;
@@ -93,34 +88,8 @@ public class SecurityContext extends ModelNode {
     };
 
 
-    private final ResourceAddress address;
-    private SecurityContextRegistry registry;
-
-    public SecurityContext(final ResourceAddress address, final ModelNode payload) {
-        this.address = address;
+    public SecurityContext(final ModelNode payload) {
         set(payload);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof SecurityContext)) { return false; }
-        if (!super.equals(o)) { return false; }
-
-        SecurityContext that = (SecurityContext) o;
-
-        return address.equals(that.address);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + address.hashCode();
-        return result;
-    }
-
-    public ResourceAddress getAddress() {
-        return address;
     }
 
     public boolean isReadable() {

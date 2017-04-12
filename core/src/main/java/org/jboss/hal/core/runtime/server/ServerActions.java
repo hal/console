@@ -146,12 +146,17 @@ public class ServerActions {
     public static final int SERVER_RESUME_TIMEOUT = 3;
     public static final int SERVER_START_TIMEOUT = 15;
     public static final int SERVER_STOP_TIMEOUT = 4;
-    public static final int SERVER_KILL_TIMEOUT = 3;
     public static final int SERVER_RELOAD_TIMEOUT = 5;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
-    private static final AddressTemplate SERVER_CONFIG_TEMPLATE = AddressTemplate
-            .of("/{selected.host}/{selected.server-config");
+    private static final int SERVER_KILL_TIMEOUT = 3;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
+
+    private static AddressTemplate serverConfigTemplate(Server server) {
+        return server.isStandalone()
+                ? AddressTemplate.ROOT
+                : AddressTemplate.of("/host=" + server.getHost() + "/server-config=*" + server.getName());
+    }
+
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -271,55 +276,56 @@ public class ServerActions {
             return;
         }
 
-        AddressTemplate template = server.isStandalone() ? AddressTemplate.ROOT : SERVER_CONFIG_TEMPLATE;
-        metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
-            @Override
-            public void onMetadata(final Metadata metadata) {
-                String id = Ids.build(SUSPEND, server.getName(), Ids.FORM_SUFFIX);
-                Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
+        metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
+                new MetadataProcessor.MetadataCallback() {
+                    @Override
+                    public void onMetadata(final Metadata metadata) {
+                        String id = Ids.build(SUSPEND, server.getName(), Ids.FORM_SUFFIX);
+                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
-                Dialog dialog = DialogFactory.buildConfirmation(
-                        resources.messages().suspend(server.getName()),
-                        resources.messages().suspendServerQuestion(server.getName()),
-                        form.asElement(),
-                        () -> {
+                        Dialog dialog = DialogFactory.buildConfirmation(
+                                resources.messages().suspend(server.getName()),
+                                resources.messages().suspendServerQuestion(server.getName()),
+                                form.asElement(),
+                                () -> {
 
-                            form.save();
-                            int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                    () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                            int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
+                                    form.save();
+                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                    int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
-                            prepare(server, Action.SUSPEND);
-                            Operation operation = new Operation.Builder(SUSPEND,
-                                    server.getServerConfigAddress())
-                                    .param(TIMEOUT, timeout)
-                                    .build();
-                            dispatcher.execute(operation,
-                                    result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                            readSuspendState(server),
-                                            checkSuspendState(SUSPENDED),
-                                            new ServerTimeoutCallback(server, Action.SUSPEND, resources.messages()
-                                                    .suspendServerSuccess(server.getName()))),
-                                    new ServerFailedCallback(server,
-                                            resources.messages().suspendServerError(server.getName())),
-                                    new ServerExceptionCallback(server,
-                                            resources.messages().suspendServerError(server.getName())));
-                        });
+                                    prepare(server, Action.SUSPEND);
+                                    Operation operation = new Operation.Builder(SUSPEND,
+                                            server.getServerConfigAddress())
+                                            .param(TIMEOUT, timeout)
+                                            .build();
+                                    dispatcher.execute(operation,
+                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                    readSuspendState(server),
+                                                    checkSuspendState(SUSPENDED),
+                                                    new ServerTimeoutCallback(server, Action.SUSPEND,
+                                                            resources.messages()
+                                                                    .suspendServerSuccess(server.getName()))),
+                                            new ServerFailedCallback(server,
+                                                    resources.messages().suspendServerError(server.getName())),
+                                            new ServerExceptionCallback(server,
+                                                    resources.messages().suspendServerError(server.getName())));
+                                });
 
-                dialog.registerAttachable(form);
-                dialog.show();
+                        dialog.registerAttachable(form);
+                        dialog.show();
 
-                ModelNode model = new ModelNode();
-                model.get(TIMEOUT).set(0);
-                form.edit(model);
-            }
+                        ModelNode model = new ModelNode();
+                        model.get(TIMEOUT).set(0);
+                        form.edit(model);
+                    }
 
-            @Override
-            public void onError(final Throwable error) {
-                MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().metadataError(), error.getMessage()));
-            }
-        });
+                    @Override
+                    public void onError(final Throwable error) {
+                        MessageEvent.fire(eventBus,
+                                Message.error(resources.messages().metadataError(), error.getMessage()));
+                    }
+                });
     }
 
     public void resume(Server server) {
@@ -343,55 +349,57 @@ public class ServerActions {
     }
 
     public void stop(Server server) {
-        metadataProcessor.lookup(SERVER_CONFIG_TEMPLATE, progress.get(), new MetadataProcessor.MetadataCallback() {
-            @Override
-            public void onMetadata(final Metadata metadata) {
-                String id = Ids.build(STOP, server.getName(), Ids.FORM_SUFFIX);
-                Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
-                        .include(TIMEOUT).build();
+        metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
+                new MetadataProcessor.MetadataCallback() {
+                    @Override
+                    public void onMetadata(final Metadata metadata) {
+                        String id = Ids.build(STOP, server.getName(), Ids.FORM_SUFFIX);
+                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
+                                .include(TIMEOUT).build();
 
-                Dialog dialog = DialogFactory.buildConfirmation(
-                        resources.messages().stop(server.getName()),
-                        resources.messages().stopServerQuestion(server.getName()),
-                        form.asElement(),
-                        () -> {
+                        Dialog dialog = DialogFactory.buildConfirmation(
+                                resources.messages().stop(server.getName()),
+                                resources.messages().stopServerQuestion(server.getName()),
+                                form.asElement(),
+                                () -> {
 
-                            form.save();
-                            int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                    () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                            int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
+                                    form.save();
+                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                    int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
-                            prepare(server, Action.STOP);
-                            Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
-                                    .param(TIMEOUT, timeout)
-                                    .param(BLOCKING, false)
-                                    .build();
-                            dispatcher.execute(operation,
-                                    result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                            readServerConfigStatus(server),
-                                            checkServerConfigStatus(STOPPED, DISABLED),
-                                            new ServerTimeoutCallback(server, Action.STOP,
-                                                    resources.messages().stopServerSuccess(server.getName()))),
-                                    new ServerFailedCallback(server,
-                                            resources.messages().stopServerError(server.getName())),
-                                    new ServerExceptionCallback(server,
-                                            resources.messages().stopServerError(server.getName())));
-                        });
+                                    prepare(server, Action.STOP);
+                                    Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
+                                            .param(TIMEOUT, timeout)
+                                            .param(BLOCKING, false)
+                                            .build();
+                                    dispatcher.execute(operation,
+                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                    readServerConfigStatus(server),
+                                                    checkServerConfigStatus(STOPPED, DISABLED),
+                                                    new ServerTimeoutCallback(server, Action.STOP,
+                                                            resources.messages().stopServerSuccess(server.getName()))),
+                                            new ServerFailedCallback(server,
+                                                    resources.messages().stopServerError(server.getName())),
+                                            new ServerExceptionCallback(server,
+                                                    resources.messages().stopServerError(server.getName())));
+                                });
 
-                dialog.registerAttachable(form);
-                dialog.show();
+                        dialog.registerAttachable(form);
+                        dialog.show();
 
-                ModelNode model = new ModelNode();
-                model.get(TIMEOUT).set(0);
-                form.edit(model);
-            }
+                        ModelNode model = new ModelNode();
+                        model.get(TIMEOUT).set(0);
+                        form.edit(model);
+                    }
 
-            @Override
-            public void onError(final Throwable error) {
-                MessageEvent
-                        .fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
-            }
-        });
+                    @Override
+                    public void onError(final Throwable error) {
+                        MessageEvent
+                                .fire(eventBus,
+                                        Message.error(resources.messages().metadataError(), error.getMessage()));
+                    }
+                });
     }
 
     public void kill(Server server) {

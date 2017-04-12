@@ -104,8 +104,11 @@ public class HostActions {
 
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
-    private static final AddressTemplate HOST_TEMPLATE = AddressTemplate.of("/{selected.host}");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
+
+    private static AddressTemplate hostTemplate(Host host) {
+        return AddressTemplate.of("/host=" + host.getAddressName());
+    }
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -136,7 +139,7 @@ public class HostActions {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void reload(final Host host) {
-        metadataProcessor.lookup(HOST_TEMPLATE, progress.get(), new MetadataCallback() {
+        metadataProcessor.lookup(hostTemplate(host), progress.get(), new MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
