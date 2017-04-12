@@ -175,6 +175,7 @@
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
                 <configuration>
+                    <server>github</server>
                     <branch>refs/heads/site</branch>
                     <message>Creating site for ${project.name} ${project.version}</message>
                 </configuration>
@@ -208,9 +209,17 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <detectLinks>true</detectLinks>
+                    <doctitle>HAL ${project.version} API</doctitle>
+                    <excludePackageNames>org.jboss.hal.client.rhcp</excludePackageNames>
+                    <sourceFileExcludes>
+                        <sourceFileExclude>Mbui_*</sourceFileExclude>
+                        <sourceFileExclude>Templated_*</sourceFileExclude>
+                    </sourceFileExcludes>
+                    <header>HAL ${project.version}</header>
                     <links>
                         <link>http://www.gwtproject.org/javadoc/latest/</link>
                     </links>
+                    <windowtitle>HAL ${project.version} API</windowtitle>
                 </configuration>
                 <reportSets>
                     <reportSet>
