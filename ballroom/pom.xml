@@ -112,6 +112,14 @@
                     <moduleName>org.jboss.hal.Ballroom</moduleName>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <message/>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
