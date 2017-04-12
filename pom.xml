@@ -30,9 +30,9 @@
     <version>0.5.0</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
+    <url>http://hal.github.io/</url>
     <packaging>pom</packaging>
 
-    <url>http://hal.github.io/</url>
     <organization>
         <name>JBoss, a division of Red Hat</name>
         <url>http://www.jboss.org</url>
@@ -49,6 +49,13 @@
                 <role>Lead</role>
             </roles>
         </developer>
+        <developer>
+            <name>Claudio Miranda</name>
+            <id>claudio4j</id>
+            <email>claudio@redhat.com</email>
+            <organization>Red Hat</organization>
+            <timezone>-3</timezone>
+        </developer>
     </developers>
 
     <licenses>
@@ -58,6 +65,12 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git@github.com:hal/hal.next.git</connection>
+        <developerConnection>scm:git:git@github.com:hal/hal.next.git</developerConnection>
+        <url>git@github.com:hal/hal.next.git</url>
+    </scm>
 
     <issueManagement>
         <system>jira</system>
