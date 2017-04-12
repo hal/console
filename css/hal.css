@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for hal-next 0.5.0
- * Build date: 2017-03-23 12:10:34
+ * Generated CSS file for hal-next 0.6.0
+ * Build date: 2017-04-12 21:46:36
  */
 /*
  * Fonts
@@ -230,8 +230,7 @@
 :root .fa-rotate-270,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
-  -webkit-filter: none;
-          filter: none;
+  filter: none;
 }
 .fa-stack {
   position: relative;
@@ -11094,6 +11093,12 @@ li.L9 {
 /*
  * PatternFly
  */
+.text-overflow-pf {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
 .alert {
   border-width: 1px;
   padding-left: 47px;
@@ -13247,7 +13252,7 @@ h2,
   content: "\e906";
 }
 .pficon-equalizer:before {
-  content: "\e906";
+  content: "\e610";
 }
 .pficon-error-circle-o:before {
   color: #cc0000;
@@ -13285,7 +13290,7 @@ h2,
   content: "\e615";
 }
 .pficon-info:before {
-  content: "\e925";
+  content: "\e92b";
 }
 .pficon-key:before {
   content: "\e924";
@@ -17034,6 +17039,9 @@ h2.underline {
 .margin-bottom-small {
   margin-bottom: 10px;
 }
+.margin-left-small {
+  margin-left: 10px;
+}
 .margin-left-5 {
   margin-left: 5px;
 }
@@ -17051,6 +17059,9 @@ h2.underline {
 }
 .page {
   margin-top: 20px;
+}
+.rbac-hidden {
+  display: none !important;
 }
 .with-progress {
   animation: progress-animation 1s linear infinite;
@@ -17977,6 +17988,12 @@ pre.editor {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.jstree-contextmenu .jstree-anchor {
+  -webkit-user-select: none;
+  /* disable selection/Copy of UIWebView */
+  -webkit-touch-callout: none;
+  /* disable the IOS popup when long-press on a link */
 }
 .vakata-context {
   display: none;
@@ -19319,6 +19336,14 @@ table.topology a {
     line-height: 20px;
     padding: 5px 15px 5px 30px;
   }
+}
+.user-dropdown {
+  max-width: 260px;
+}
+.active-roles {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .navbar-pf .drawer-pf-hal {
   height: calc(100vh - 52px);
