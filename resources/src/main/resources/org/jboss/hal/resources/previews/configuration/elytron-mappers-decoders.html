@@ -1,9 +1,0 @@
-<h2>Role Mappers</h2>
-<p>A role mapper applies a role modification to an identity. This can range from normalizing the format of the roles to adding or removing specific roles. A role mapper can be associated with both security realms as well as security domains.</p>
-<h2>Permission Mappers</h2>
-<p>A permission mapper is associated with a security domain and assigns a set of permissions to a SecurityIdentity.</p>
-<h2>Principal Decoders</h2>
-<p>A principal decoder can be used in multiple locations within the elytron subsystem. A principal decoder converts an identity from a Principal to a string representation of the name. For example, the X500PrincipalDecoder allows you to convert an X500Principal from a certificate’s distinguished name to a string representation.</p>
-<h2>Role Decoders</h2>
-<p>A role decoder is associated with a security domain and is used to decode the current user’s roles. The role decoder takes the raw AuthorizationIdentity returned from the security realm and converts its attributes into roles. </p>
-
