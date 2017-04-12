@@ -15,58 +15,56 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.description.ResourceDescriptionAddressProcessor;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * This class does the bulk of work when it comes to parseSingle the r-r-d response. Therefore it processes three parts:
- * <ol>
- * <li>The actual description of the resource and its attributes</li>
- * <li>The security relevant information</li>
- * <li>The capabilities</li>
- * </ol>
+ * This class does the bulk of work when it comes to parse the r-r-d response and collect the results.
  *
  * @author Harald Pehl
  */
 class SingleRrdParser {
 
-    public Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
-        Set<RrdResult> results = new HashSet<>();
+    private final RrdResult rrdResult;
+    private final ResourceDescriptionAddressProcessor addressProcessor;
+
+    SingleRrdParser(final RrdResult rrdResult) {
+        this.rrdResult = rrdResult;
+        this.addressProcessor = new ResourceDescriptionAddressProcessor();
+    }
+
+    public void parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         if (modelNode.getType() == ModelType.LIST) {
             for (ModelNode nestedNode : modelNode.asList()) {
                 ResourceAddress nestedAddress = new ResourceAddress(nestedNode.get(ADDRESS));
                 ModelNode nestedResult = nestedNode.get(RESULT);
-                parseSingle(nestedAddress, nestedResult, results);
+                parseSingle(nestedAddress, nestedResult);
             }
         } else {
-            parseSingle(address, modelNode, results);
+            parseSingle(address, modelNode);
         }
-        return results;
     }
 
-    private void parseSingle(ResourceAddress address, ModelNode modelNode, Set<RrdResult> results) {
-        RrdResult rr = new RrdResult(address, false);
-
+    private void parseSingle(ResourceAddress address, ModelNode modelNode) {
         // resource description
-        if (modelNode.hasDefined(DESCRIPTION)) {
-            rr.resourceDescription = new ResourceDescription(modelNode);
+        if (!rrdResult.containsResourceDescription(address) && modelNode.hasDefined(DESCRIPTION)) {
+            rrdResult.addResourceDescription(addressProcessor.apply(address), new ResourceDescription(modelNode));
         }
 
         // security context
         ModelNode accessControl = modelNode.get(ACCESS_CONTROL);
         if (accessControl.isDefined()) {
-            if (accessControl.hasDefined(DEFAULT)) {
-                rr.securityContext = new SecurityContext(accessControl.get(DEFAULT));
+            if (!rrdResult.containsSecurityContext(address) && accessControl.hasDefined(DEFAULT)) {
+                rrdResult.addSecurityContext(address, new SecurityContext(accessControl.get(DEFAULT)));
             }
 
             // exceptions
@@ -75,10 +73,9 @@ class SingleRrdParser {
                 for (Property property : exceptions) {
                     ModelNode exception = property.getValue();
                     ResourceAddress exceptionAddress = new ResourceAddress(exception.get(ADDRESS));
-                    RrdResult exceptionRr = new RrdResult(exceptionAddress, true);
-                    exceptionRr.resourceDescription = rr.resourceDescription;
-                    exceptionRr.securityContext = new SecurityContext(exception);
-                    results.add(exceptionRr);
+                    if (!rrdResult.containsSecurityContext(exceptionAddress)) {
+                        rrdResult.addSecurityContext(exceptionAddress, new SecurityContext(exception));
+                    }
                 }
             }
         }
@@ -94,12 +91,10 @@ class SingleRrdParser {
                         String addressValue = modelDescription.getName();
                         ModelNode childNode = modelDescription.getValue();
                         ResourceAddress childAddress = new ResourceAddress(address).add(addressKey, addressValue);
-                        parseSingle(childAddress, childNode, results);
+                        parseSingle(childAddress, childNode);
                     }
                 }
             }
         }
-
-        results.add(rr);
     }
 }

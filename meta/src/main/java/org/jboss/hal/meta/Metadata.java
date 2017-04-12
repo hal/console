@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.function.Supplier;
+
 import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -33,7 +35,8 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 public class Metadata {
 
     public static Metadata empty() {
-        return new Metadata(ROOT, RWX, new ResourceDescription(new ModelNode()), new Capabilities(null));
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(new ModelNode()),
+                new Capabilities(null));
     }
 
     public static Metadata staticDescription(TextResource description) {
@@ -41,16 +44,16 @@ public class Metadata {
     }
 
     public static Metadata staticDescription(ResourceDescription description) {
-        return new Metadata(ROOT, RWX, new ResourceDescription(description), new Capabilities(null));
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description),
+                new Capabilities(null));
     }
 
     private final AddressTemplate template;
-    private final SecurityContext securityContext;
+    private final Supplier<SecurityContext> securityContext;
     private final ResourceDescription description;
     private final Capabilities capabilities;
-    private MetadataRegistry registry;
 
-    public Metadata(final AddressTemplate template, final SecurityContext securityContext,
+    public Metadata(final AddressTemplate template, final Supplier<SecurityContext> securityContext,
             final ResourceDescription description, final Capabilities capabilities) {
         this.template = template;
         this.securityContext = securityContext;
@@ -58,15 +61,8 @@ public class Metadata {
         this.capabilities = capabilities;
     }
 
-    void injectRegistry(MetadataRegistry registry) {
-        this.registry = registry;
-    }
-
-    public Metadata refresh() {
-        if (registry != null && registry.contains(template)) {
-            return registry.lookup(template);
-        }
-        return this;
+    public Metadata customResourceDescription(ResourceDescription resourceDescription) {
+        return new Metadata(template, securityContext, resourceDescription, capabilities);
     }
 
     public AddressTemplate getTemplate() {
@@ -74,7 +70,7 @@ public class Metadata {
     }
 
     public SecurityContext getSecurityContext() {
-        return securityContext;
+        return securityContext.get(); // TODO Surround with try/catch?
     }
 
     public ResourceDescription getDescription() {

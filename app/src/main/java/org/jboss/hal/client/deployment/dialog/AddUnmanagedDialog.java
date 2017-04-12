@@ -35,7 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class AddUnmanagedDialog {
 
-    private final AddResourceDialog  dialog;
+    private final AddResourceDialog dialog;
 
     public AddUnmanagedDialog(final Metadata metadata, final Resources resources,
             final AddResourceDialog.Callback callback) {

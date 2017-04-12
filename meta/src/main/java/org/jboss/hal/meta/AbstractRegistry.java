@@ -15,11 +15,10 @@
  */
 package org.jboss.hal.meta;
 
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
- * Abstract registry which uses {@link RegistryStatementContext} to resolve address template for lookup.
+ * Abstract registry which uses the specified statement context to resolve the address template.
  *
  * @author Harald Pehl
  */
@@ -28,9 +27,8 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     private final StatementContext statementContext;
     private final String type;
 
-    protected AbstractRegistry(final StatementContext statementContext, final String type,
-            final Environment environment) {
-        this.statementContext = new RegistryStatementContext(statementContext, environment);
+    protected AbstractRegistry(final StatementContext statementContext, final String type) {
+        this.statementContext = statementContext;
         this.type = type;
     }
 
@@ -50,7 +48,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
         return lookupAddress(address) != null;
     }
 
-    private ResourceAddress resolveTemplate(final AddressTemplate template) {
+    protected ResourceAddress resolveTemplate(final AddressTemplate template) {
         return template.resolve(statementContext);
     }
 

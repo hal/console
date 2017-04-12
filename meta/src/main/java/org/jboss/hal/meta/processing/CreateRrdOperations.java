@@ -22,7 +22,8 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.RegistryStatementContext;
+import org.jboss.hal.meta.description.ResourceDescriptionStatementContext;
+import org.jboss.hal.meta.security.SecurityContextStatementContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
@@ -36,10 +37,12 @@ import static org.jboss.hal.meta.processing.MetadataProcessor.RRD_DEPTH;
  */
 class CreateRrdOperations {
 
-    private final StatementContext statementContext;
+    private final SecurityContextStatementContext securityContextStatementContext;
+    private final ResourceDescriptionStatementContext resourceDescriptionStatementContext;
 
     CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
-        this.statementContext = new RegistryStatementContext(statementContext, environment);
+        securityContextStatementContext = new SecurityContextStatementContext(statementContext, environment);
+        resourceDescriptionStatementContext = new ResourceDescriptionStatementContext(statementContext, environment);
     }
 
     public List<Operation> create(LookupResult lookupResult, boolean optional) {
@@ -49,26 +52,34 @@ class CreateRrdOperations {
                 .forEach(template -> {
                     int missingMetadata = lookupResult.missingMetadata(template);
                     if (missingMetadata != ALL_PRESENT) {
-                        ResourceAddress address = template.resolve(statementContext);
-                        Operation.Builder builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address);
-                        switch (missingMetadata) {
-                            case NOTHING_PRESENT:
-                                // all missing
-                                builder.param(ACCESS_CONTROL, COMBINED_DESCRIPTIONS).param(OPERATIONS, true);
-                                break;
-                            case RESOURCE_DESCRIPTION_PRESENT:
-                                // security context missing
-                                builder.param(ACCESS_CONTROL, TRIM_DESCRIPTIONS).param(OPERATIONS, true);
-                                break;
-                            case SECURITY_CONTEXT_PRESENT:
-                                // resource description missing
-                                builder.param(OPERATIONS, true);
-                                break;
+
+                        ResourceAddress address;
+                        Operation.Builder builder = null;
+
+                        if (missingMetadata == NOTHING_PRESENT) {
+                            address = template.resolve(securityContextStatementContext);
+                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                                    .param(ACCESS_CONTROL, COMBINED_DESCRIPTIONS)
+                                    .param(OPERATIONS, true);
+
+                        } else if (missingMetadata == RESOURCE_DESCRIPTION_PRESENT) {
+                            address = template.resolve(securityContextStatementContext);
+                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                                    .param(ACCESS_CONTROL, TRIM_DESCRIPTIONS)
+                                    .param(OPERATIONS, true);
+
+                        } else if (missingMetadata == SECURITY_CONTEXT_PRESENT) {
+                            address = template.resolve(resourceDescriptionStatementContext);
+                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                                    .param(OPERATIONS, true);
                         }
-                        if (lookupResult.recursive()) {
-                            builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
+
+                        if (builder != null) {
+                            if (lookupResult.recursive()) {
+                                builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
+                            }
+                            operations.add(builder.build());
                         }
-                        operations.add(builder.build());
                     }
                 });
         return operations;

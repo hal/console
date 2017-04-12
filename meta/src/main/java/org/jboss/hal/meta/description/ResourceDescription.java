@@ -33,7 +33,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class ResourceDescription extends ModelNode {
 
-    public ResourceDescription(ModelNode payload) {
+    public ResourceDescription(final ModelNode payload) {
         set(payload);
     }
 

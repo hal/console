@@ -56,7 +56,6 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.group.ServerGroupColumn.SERVER_GROUP_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -64,12 +63,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(Ids.SERVER_GROUP)
-@Requires(SERVER_GROUP_ADDRESS)
+@Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
 
-    static final String SERVER_GROUP_ADDRESS = "/server-group=*";
-    private static final AddressTemplate SERVER_GROUP_TEMPLATE = AddressTemplate.of(SERVER_GROUP_ADDRESS);
+    static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
+        return AddressTemplate.of("/server-group=" + serverGroup.getName());
+    }
 
     @Inject
     public ServerGroupColumn(final Finder finder,
@@ -86,7 +86,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
                 .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_ADD, Names.SERVER_GROUP,
-                        SERVER_GROUP_TEMPLATE, Ids::serverGroup))
+                        AddressTemplate.of("/server-group=*"), Ids::serverGroup))
                 .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
                 .itemsProvider((context, callback) ->
@@ -107,7 +107,6 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                                 new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
-                // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()
@@ -157,12 +156,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().reload())
                             .handler(serverGroupActions::reload)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, RELOAD_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RELOAD_SERVERS))
                             .build());
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().restart())
                             .handler(serverGroupActions::restart)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, RESTART_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RESTART_SERVERS))
                             .build());
                 }
                 if (item.getServers(Server::isStarted).size() - item.getServers(Server::isSuspended)
@@ -170,28 +169,28 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().suspend())
                             .handler(serverGroupActions::suspend)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, SUSPEND_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), SUSPEND_SERVERS))
                             .build());
                 }
                 if (item.hasServers(Server::isSuspended)) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().resume())
                             .handler(serverGroupActions::resume)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, RESUME_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RESUME_SERVERS))
                             .build());
                 }
                 if (item.hasServers(Server::isStarted)) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().stop())
                             .handler(serverGroupActions::stop)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, STOP_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), STOP_SERVERS))
                             .build());
                 }
                 if (item.hasServers(server -> server.isStopped() || server.isFailed())) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().start())
                             .handler(serverGroupActions::start)
-                            .constraint(Constraint.executable(SERVER_GROUP_TEMPLATE, START_SERVERS))
+                            .constraint(Constraint.executable(serverGroupTemplate(item), START_SERVERS))
                             .build());
                 }
                 return actions;

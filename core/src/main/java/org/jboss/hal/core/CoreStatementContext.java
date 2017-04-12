@@ -52,10 +52,12 @@ public class CoreStatementContext implements StatementContext,
         this.environment = environment;
 
         context = new EnumMap<>(Tuple.class);
+        context.put(DOMAIN_CONTROLLER, null);
         context.put(SELECTED_PROFILE, null);
         context.put(SELECTED_GROUP, null);
         context.put(SELECTED_HOST, null);
         context.put(SELECTED_SERVER_CONFIG, null);
+        context.put(SELECTED_SERVER, null);
 
         eventBus.addHandler(ProfileSelectionEvent.getType(), this);
         eventBus.addHandler(ServerGroupSelectionEvent.getType(), this);

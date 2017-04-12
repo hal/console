@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import com.google.common.collect.Sets;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.description.ResourceDescriptions;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  */
 public class LookupTest {
 
-    private ResourceDescriptions descriptionRegistry;
+    private ResourceDescriptionRegistry descriptionRegistry;
     private SecurityContextRegistry securityContextRegistry;
     private Lookup lookup;
     private AddressTemplate foo;
@@ -31,9 +31,9 @@ public class LookupTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        descriptionRegistry = mock(ResourceDescriptions.class);
+        descriptionRegistry = mock(ResourceDescriptionRegistry.class);
         securityContextRegistry = mock(SecurityContextRegistry.class);
-        lookup = new Lookup(descriptionRegistry, securityContextRegistry);
+        lookup = new Lookup(securityContextRegistry, descriptionRegistry);
         foo = AddressTemplate.of("foo");
     }
 
@@ -48,7 +48,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityContextRegistry.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(NOTHING_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -57,7 +57,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityContextRegistry.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(RESOURCE_DESCRIPTION_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -66,7 +66,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityContextRegistry.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(SECURITY_CONTEXT_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -75,7 +75,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityContextRegistry.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check(Sets.<AddressTemplate>newHashSet(foo), false);
         assertEquals(ALL_PRESENT, lookupResult.missingMetadata(foo));
     }
 }

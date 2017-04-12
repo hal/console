@@ -975,7 +975,7 @@ public class FinderColumn<T> implements IsElement {
             constraints.addAll(a.constraints);
             a.actions.forEach(innerA -> constraints.addAll(innerA.constraints));
         });
-        return AuthorisationDecision.strict(finder.environment(), finder.metadataRegistry())
+        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
                 .isAllowed(constraints);
     }
 
@@ -983,7 +983,7 @@ public class FinderColumn<T> implements IsElement {
         Set<Constraint> constraints = new HashSet<>();
         constraints.addAll(action.constraints);
         action.actions.forEach(a -> constraints.addAll(a.constraints));
-        return AuthorisationDecision.strict(finder.environment(), finder.metadataRegistry())
+        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
                 .isAllowed(constraints);
     }
 }

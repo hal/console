@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
 
@@ -73,7 +74,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Harald Pehl
  */
-public final class AddressTemplate {
+public final class AddressTemplate implements Iterable<String> {
 
     @FunctionalInterface
     public interface Unresolver {
@@ -179,7 +180,6 @@ public final class AddressTemplate {
     }
 
 
-
     // ------------------------------------------------------ template methods
 
     public static final String OPTIONAL = "opt://";
@@ -262,6 +262,12 @@ public final class AddressTemplate {
      */
     public int size() {return tokens.size();}
 
+    @NotNull
+    @Override
+    public Iterator<String> iterator() {
+        return tokens.stream().map(Token::toString).collect(toList()).iterator();
+    }
+
     /**
      * Appends the specified encoded template to this template and returns a new template. If the specified template
      * does not start with a slash, '/' is automatically appended. '/' characters inside values must have been encoded
@@ -276,6 +282,10 @@ public final class AddressTemplate {
         return AddressTemplate.of(this.template + slashTemplate);
     }
 
+    public AddressTemplate append(AddressTemplate template) {
+        return append(template.toString());
+    }
+
     /**
      * Works like {@link List#subList(int, int)} over the tokens of this template and throws the same exceptions.
      *
@@ -288,7 +298,7 @@ public final class AddressTemplate {
      *                                   (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
      *                                   fromIndex &gt; toIndex</tt>)
      */
-    AddressTemplate subTemplate(int fromIndex, int toIndex) {
+    public AddressTemplate subTemplate(int fromIndex, int toIndex) {
         LinkedList<Token> subTokens = new LinkedList<>();
         subTokens.addAll(this.tokens.subList(fromIndex, toIndex));
         return AddressTemplate.of(join(this.optional, subTokens));
@@ -322,6 +332,20 @@ public final class AddressTemplate {
             }
         }
         return AddressTemplate.of(join(this.optional, replacedTokens));
+    }
+
+    public String firstKey() {
+        if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
+            return tokens.getFirst().getKey();
+        }
+        return null;
+    }
+
+    public String firstValue() {
+        if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
+            return tokens.getFirst().getValue();
+        }
+        return null;
     }
 
     public String lastKey() {

@@ -246,9 +246,7 @@ public class ResourceDescriptionBuilder {
                 list.get(entry.getKey()).set(new ModelNode().set(REQUIRED, entry.getValue()));
             }
         }
-        return new ResourceDescription(
-                new ModelNode().set(OPERATIONS,
-                        new ModelNode().set(ADD,
-                                new ModelNode().set(REQUEST_PROPERTIES, list))));
+        return new ResourceDescription(new ModelNode().set(OPERATIONS,
+                new ModelNode().set(ADD, new ModelNode().set(REQUEST_PROPERTIES, list))));
     }
 }

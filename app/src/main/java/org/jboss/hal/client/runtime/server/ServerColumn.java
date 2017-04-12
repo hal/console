@@ -66,11 +66,11 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -93,12 +93,16 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static AddressTemplate serverConfigTemplate(Server server) {
-        return AddressTemplate.of("/host=" + server.getHost() + "/server-config=*");
+        return serverConfigTemplate(server.getHost());
+    }
+
+    static AddressTemplate serverConfigTemplate(String host) {
+        return AddressTemplate.of("/host=" + host + "/server-config=*");
     }
 
     private final Finder finder;
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private FinderPath refreshPath;
 
     @Inject
@@ -107,7 +111,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Environment environment,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
-            final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
@@ -164,7 +168,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         );
         this.finder = finder;
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
@@ -383,7 +387,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
-        // Don't use columnActionFactory.add() here. This would add a constraint,
+        // Don't use columnActionFactory.add() here. This would add a default constraint,
         // but we want to manage the visibility by ourselves.
         ColumnAction<Server> addAction = new ColumnAction.Builder<Server>(Ids.SERVER_ADD)
                 .element(columnActionFactory.addButton(Names.SERVER))
@@ -411,14 +415,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private void processAddColumnAction(String host) {
         AuthorisationDecision ad = AuthorisationDecision.strict(environment, c -> {
-            if (metadataRegistry.contains(c.getTemplate())) {
-                return Optional.of(metadataRegistry.lookup(c.getTemplate()).getSecurityContext());
+            if (securityContextRegistry.contains(c.getTemplate())) {
+                return Optional.of(securityContextRegistry.lookup(c.getTemplate()));
             }
             return Optional.empty();
         });
         Element addButton = Browser.getDocument().getElementById(Ids.SERVER_ADD);
-        AddressTemplate template = AddressTemplate.of("/host=" + host + "/server-config=*");
-        ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(template, ADD)));
+        ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(serverConfigTemplate(host), ADD)));
     }
 
     @Override

@@ -44,6 +44,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
 import org.jetbrains.annotations.NonNls;
@@ -168,6 +169,7 @@ public class Finder implements IsElement, Attachable {
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
     private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Provider<Progress> progress;
     private final FinderContext context;
     private final LinkedHashMap<String, FinderColumn> columns;
@@ -185,12 +187,14 @@ public class Finder implements IsElement, Attachable {
             final PlaceManager placeManager,
             final ColumnRegistry columnRegistry,
             final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             @Footer final Provider<Progress> progress) {
         this.environment = environment;
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.columnRegistry = columnRegistry;
         this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
         this.progress = progress;
 
         this.context = new FinderContext();
@@ -432,8 +436,8 @@ public class Finder implements IsElement, Attachable {
         return environment;
     }
 
-    MetadataRegistry metadataRegistry() {
-        return metadataRegistry;
+    SecurityContextRegistry securityContextRegistry() {
+        return securityContextRegistry;
     }
 
 

@@ -116,16 +116,12 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     @Override
     public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
         super.update(data, mode, identifier);
-
-        Metadata update = metadata.refresh();
-        if (update != metadata) {
-            metadata = update;
-            applySecurity();
-        }
+        applySecurity();
     }
 
     private void applySecurity() {
-        AuthorisationDecision ad = AuthorisationDecision.strict(Core.INSTANCE.environment(), metadata);
+        AuthorisationDecision ad = AuthorisationDecision.strict(Core.INSTANCE.environment(),
+                metadata.getSecurityContext());
         ElementGuard.processElements(ad, asElement());
     }
 }

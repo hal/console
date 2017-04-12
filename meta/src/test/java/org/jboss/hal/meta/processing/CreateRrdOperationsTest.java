@@ -91,8 +91,8 @@ public class CreateRrdOperationsTest {
 
     @Test
     public void recursive() {
-        List<Operation> operations = rrdOps
-                .create(new LookupResult(Sets.newHashSet(AddressTemplate.of("foo=bar")), true), false);
+        List<Operation> operations = rrdOps.create(
+                new LookupResult(Sets.<AddressTemplate>newHashSet(AddressTemplate.of("foo=bar")), true), false);
         Operation operation = operations.get(0);
         assertEquals(RRD_DEPTH, operation.get(RECURSIVE_DEPTH).asInt());
     }

@@ -70,9 +70,9 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -102,7 +102,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
-    private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
@@ -121,7 +121,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
 
-    TopologyPreview(final MetadataRegistry metadataRegistry,
+    TopologyPreview(final SecurityContextRegistry securityContextRegistry,
             final Environment environment,
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
@@ -133,7 +133,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final ServerActions serverActions,
             final Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
-        this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;
@@ -291,7 +291,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(topologySection, false);
         hideDetails();
 
-        // show the loading indicator if the dmr operation take too long
+        // show the loading indicator if the dmr operation takes too long
         int timeoutHandle = Browser.getWindow()
                 .setTimeout(() -> Elements.setVisible(loadingSection, true), UIConstants.MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
@@ -661,7 +661,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Host host) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
     }
 
@@ -724,8 +724,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(ServerGroup serverGroup) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
-                .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=*"), RELOAD_SERVERS));
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=" + serverGroup.getName()),
+                        RELOAD_SERVERS));
     }
 
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
@@ -806,7 +807,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Server server) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, metadataRegistry)
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + server.getHost() + "/server-config=*"),
                         RELOAD));
     }

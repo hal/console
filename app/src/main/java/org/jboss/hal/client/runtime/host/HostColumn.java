@@ -69,7 +69,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
-    static final AddressTemplate HOST_TEMPLATE = AddressTemplate.of("/{selected.host}");
+    static AddressTemplate hostTemplate(Host host) {
+        return AddressTemplate.of("/host=" + host.getAddressName());
+    }
 
     @Inject
     public HostColumn(final Finder finder,
@@ -110,7 +112,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                 new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.HostsStartedServers(environment, dispatcher)))
 
-                // TODO Change the security context (host scoped roles!)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
                 .onPreview(item -> new HostPreview(hostActions, item, resources))
                 .pinnable()
@@ -210,10 +211,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
         eventBus.addHandler(HostActionEvent.getType(), this);
         eventBus.addHandler(HostResultEvent.getType(), this);
-    }
-
-    private AddressTemplate hostTemplate(Host host) {
-        return AddressTemplate.of("/host=" + host.getAddressName());
     }
 
     @Override

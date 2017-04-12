@@ -17,11 +17,7 @@ package org.jboss.hal.meta.security;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Represents the RBAC related payload from the {@code r-r-d} operation.
@@ -91,7 +87,8 @@ public class SecurityContext extends ModelNode {
         }
     };
 
-    public SecurityContext(ModelNode payload) {
+
+    public SecurityContext(final ModelNode payload) {
         set(payload);
     }
 
