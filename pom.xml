@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <url>http://hal.github.io/</url>
@@ -212,8 +212,8 @@
                     <doctitle>HAL ${project.version} API</doctitle>
                     <excludePackageNames>org.jboss.hal.client.rhcp</excludePackageNames>
                     <sourceFileExcludes>
-                        <sourceFileExclude>Mbui_*</sourceFileExclude>
-                        <sourceFileExclude>Templated_*</sourceFileExclude>
+                        <exclude>**/Mbui_*.java</exclude>
+                        <exclude>**/Templated_*.java</exclude>
                     </sourceFileExcludes>
                     <header>HAL ${project.version}</header>
                     <links>

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </parent>
 
     <artifactId>hal-bom</artifactId>
@@ -30,8 +30,19 @@
     <description>Import this BOM in your dependencyManagement if you want to depend on multiple artifacts.</description>
     <packaging>pom</packaging>
 
-    <!-- Do not declare any build things here! Declare them in hal-parent. -->
-    <build/>
+    <!-- Do not declare any relevant build things here! Declare them in hal-parent. -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <message/>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencyManagement>
         <dependencies>
