@@ -60,7 +60,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 
 /**
  * Handles {@link org.jboss.hal.dmr.dispatch.ProcessState} events and emits {@linkplain org.jboss.hal.spi.Message
- * messages} if necessary. Messages are emitted only if there was no message in the last {@value MESSAGE_TIMEOUT} ms
+ * messages} if necessary. Messages are emitted only if there was no message in the last {@value #MESSAGE_TIMEOUT} ms
  * and if the server was not restarted recently (a server restart resets the timeout).
  * <p>
  * In standalone mode the message contains an action link to reload / restart the server. Whereas in domain mode

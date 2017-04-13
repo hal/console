@@ -17,11 +17,10 @@ package org.jboss.hal.core.runtime.server;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.StatementContext.Tuple;
 
 /**
- * Selects both {@link StatementContext.Tuple#SELECTED_SERVER_CONFIG} and {@link
- * StatementContext.Tuple#SELECTED_SERVER}
+ * Selects both {@link Tuple#SELECTED_SERVER_CONFIG} and {@link Tuple#SELECTED_SERVER}
  *
  * @author Harald Pehl
  */

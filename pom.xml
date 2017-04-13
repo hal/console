@@ -212,8 +212,8 @@
                     <doctitle>HAL ${project.version} API</doctitle>
                     <excludePackageNames>org.jboss.hal.client.rhcp</excludePackageNames>
                     <sourceFileExcludes>
-                        <sourceFileExclude>Mbui_*</sourceFileExclude>
-                        <sourceFileExclude>Templated_*</sourceFileExclude>
+                        <exclude>**/Mbui_*.java</exclude>
+                        <exclude>**/Templated_*.java</exclude>
                     </sourceFileExcludes>
                     <header>HAL ${project.version}</header>
                     <links>
