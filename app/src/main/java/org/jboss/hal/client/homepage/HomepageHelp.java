@@ -15,16 +15,16 @@
  */
 package org.jboss.hal.client.homepage;
 
+import javax.annotation.PostConstruct;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.resources.Resources;
-
-import javax.annotation.PostConstruct;
 
 import static org.jboss.hal.resources.Urls.*;
 
@@ -35,11 +35,11 @@ import static org.jboss.hal.resources.Urls.*;
 abstract class HomepageHelp implements IsElement {
 
     // @formatter:off
-    static HomepageHelp create(final Environment env, final Resources resources) {
-        return new Templated_HomepageHelp(env, resources);
+    static HomepageHelp create(final Environment environment, final Resources resources) {
+        return new Templated_HomepageHelp(environment, resources);
     }
 
-    abstract Environment env();
+    abstract Environment environment();
     abstract Resources resources();
     // @formatter:on
 
@@ -49,7 +49,7 @@ abstract class HomepageHelp implements IsElement {
 
     @PostConstruct
     void init() {
-        if (env().getInstanceInfo() == InstanceInfo.WILDFLY) {
+        if (environment().getHalBuild() == Build.COMMUNITY) {
             generalResources.appendChild(helpLink(WILDFLY_HOMEPAGE,
                     resources().constants().homepageHelpWildFlyHomeText()));
             generalResources.appendChild(helpLink(WFLY10_DOCUMENTATION,

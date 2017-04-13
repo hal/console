@@ -48,6 +48,7 @@ public interface UIConstants {
     String BUTTON = "button";
     String CHECKED = "checked";
     String COLLAPSE = "collapse";
+    String CONSTRAINT = "constraint";
     String CONTAINER = "container";
     String CONTROLS = "controls";
     String DIALOG = "dialog";
@@ -84,4 +85,9 @@ public interface UIConstants {
     String TOOLTIP = "tooltip";
     String TRUE = "true";
     String VALUE = "value";
+
+
+    static String data(String name) {
+        return "data-" + name; //NON-NLS
+    }
 }

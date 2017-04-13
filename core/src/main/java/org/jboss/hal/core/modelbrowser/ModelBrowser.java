@@ -46,7 +46,6 @@ import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -75,7 +74,10 @@ import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -100,7 +102,7 @@ public class ModelBrowser implements HasElements {
 
         private FilterInfo(Node<Context> parent, Node<Context> child) {
             this.address = child == null ? ResourceAddress.root() : child.data.getAddress();
-            this.node = child == null ? null : child;
+            this.node = child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
             this.parents = child == null ? Collections.emptyList() : asList(child.parents);
@@ -409,26 +411,8 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
-                    @Override
-                    public void onMetadata(Metadata metadata) {
-                        boolean hasRequiredAttributes = !metadata.getDescription()
-                                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
-                        if (hasRequiredAttributes) {
-                            String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
-                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                                    .fromRequestProperties()
-                                    .build();
-                            AddResourceDialog dialog = new AddResourceDialog(
-                                    resources.messages().addResourceTitle(singleton), form,
-                                    (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton),
-                                            modelNode, (n2, address) -> refresh(parent)));
-                            dialog.show();
-                        } else {
-                            crud.addSingleton(singleton, fqAddress(parent, singleton), null, (n, a) -> refresh(parent));
-                        }
-                    }
-                });
+                String id = Ids.build(parent.id, "singleton", Ids.ADD_SUFFIX);
+                crud.addSingleton(id, singleton, template, address -> refresh(parent));
 
             } else {
                 // open wizard to choose the singleton
@@ -479,7 +463,7 @@ public class ModelBrowser implements HasElements {
     }
 
     static AddressTemplate asGenericTemplate(Node<Context> node, ResourceAddress address) {
-        return AddressTemplate.of(address, (name, value, first, last, index) -> {
+        return AddressTemplate.of(address, (name, value, first, last, index, size) -> {
             String segment;
             if (PROFILE.equals(name)) {
                 segment = SELECTED_PROFILE.variable();

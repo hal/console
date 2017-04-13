@@ -17,19 +17,19 @@ package org.jboss.hal.meta.security;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Represents the RBAC related payload for the {@code r-r-d} operation.
+ * Represents the RBAC related payload from the {@code r-r-d} operation.
  *
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {
 
-    public static final String RBAC_DATA_KEY = "rbac";
-
+    /**
+     * A security context with hardcoded permissions to read resources, write and execute operations are not allowed.
+     */
     public static final SecurityContext READ_ONLY = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
@@ -59,7 +59,6 @@ public class SecurityContext extends ModelNode {
 
     /**
      * A security context with hardcoded permissions to read, write and execute any resource.
-     * 
      */
     public static final SecurityContext RWX = new SecurityContext(new ModelNode()) {
         @Override
@@ -88,33 +87,34 @@ public class SecurityContext extends ModelNode {
         }
     };
 
-    public SecurityContext(ModelNode payload) {
+
+    public SecurityContext(final ModelNode payload) {
         set(payload);
     }
 
     public boolean isReadable() {
-        return get("read").asBoolean();
+        return get(READ).asBoolean();
     }
 
     public boolean isWritable() {
-        return get("write").asBoolean();
+        return get(WRITE).asBoolean();
     }
 
     public boolean isReadable(final String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
-                get(ATTRIBUTES).get(attribute).get("read").asBoolean();
+                get(ATTRIBUTES).get(attribute).get(READ).asBoolean();
     }
 
     public boolean isWritable(final String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
-                get(ATTRIBUTES).get(attribute).get("write").asBoolean();
+                get(ATTRIBUTES).get(attribute).get(WRITE).asBoolean();
     }
 
     public boolean isExecutable(String operation) {
         return hasDefined(OPERATIONS) &&
                 get(OPERATIONS).hasDefined(operation) &&
-                get(OPERATIONS).get(operation).get("execute").asBoolean();
+                get(OPERATIONS).get(operation).get(EXECUTE).asBoolean();
     }
 }

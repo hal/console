@@ -60,6 +60,7 @@ public interface Ids {
     // ------------------------------------------------------ common suffixes used in IDs below
 
     String ADD_SUFFIX = "add";
+    String COOKIE_PREFIX = "hal-cookie";
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
     String PAGE_SUFFIX = "page";
@@ -99,7 +100,7 @@ public interface Ids {
     String CACHE_STORE_FILE = "cache-store-file";
     String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
     String CACHE_STORE_REMOTE = "cache-store-remote";
-    String CACHE_STORE_STRING_JDBC = "cache-store-string-jdbc";
+    String CACHE_STORE_JDBC = "cache-store-jdbc";
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
@@ -176,6 +177,10 @@ public interface Ids {
     String EJB_APPLICATION_SECURITY_DOMAIN_ENTRY = build(EJB_APPLICATION_SECURITY_DOMAIN, ENTRY_SUFFIX);
     String EJB_APPLICATION_SECURITY_DOMAIN_FORM = build(EJB_APPLICATION_SECURITY_DOMAIN, FORM_SUFFIX);
     String EJB_APPLICATION_SECURITY_DOMAIN_TABLE = build(EJB_APPLICATION_SECURITY_DOMAIN, TABLE_SUFFIX);
+
+    String ELYTRON = "elytron";
+
+
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
@@ -193,7 +198,6 @@ public interface Ids {
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
-    String HEADER_ROLES = build(HEADER, "roles");
     String HEADER_USERNAME = build(HEADER, "username");
     String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = build(HOMEPAGE, "access-control-section");
@@ -278,7 +282,7 @@ public interface Ids {
     String JGROUPS_CHANNEL_FORK = "fork";
     String JGROUPS_CHANNEL_FORK_PROTOCOL = "fork-protocol";
     String JGROUPS_CHANNEL_FORK_ENTRY = build(JGROUPS_CHANNEL_ENTRY, JGROUPS_CHANNEL_FORK, ENTRY_SUFFIX);
-    
+
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
@@ -390,6 +394,7 @@ public interface Ids {
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
+    String PROFILE_CLONE = build(PROFILE, "clone");
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String REMOTING = "remoting";
@@ -455,12 +460,26 @@ public interface Ids {
     String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
-    String SOCKET_BINDING = "socket-binding";
-    String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
-    String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
+    String SETTINGS_FORM = "settings-form";
+    String SOCKET_BINDING_GROUP = "socket-binding-group";
+    String SOCKET_BINDING_GROUP_ADD = build(SOCKET_BINDING_GROUP, ADD_SUFFIX);
+    String SOCKET_BINDING_GROUP_REFRESH = build(SOCKET_BINDING_GROUP, REFRESH_SUFFIX);
+    String SOCKET_BINDING_GROUP_INBOUND = build(SOCKET_BINDING_GROUP, "inbound");
+    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING = build(SOCKET_BINDING_GROUP_INBOUND, "client-mapping");
+    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_ADD = build(SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING,
+            ADD_SUFFIX);
+    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_FORM = build(SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING,
+            FORM_SUFFIX);
+    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_PAGE = build(SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING,
+            PAGE_SUFFIX);
+    String SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE = build(SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING,
+            TABLE_SUFFIX);
+    String SOCKET_BINDING_GROUP_OUTBOUND_LOCAL = build(SOCKET_BINDING_GROUP, "outbound-local");
+    String SOCKET_BINDING_GROUP_OUTBOUND_REMOTE = build(SOCKET_BINDING_GROUP, "outbound-remote");
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
+    String SYSTEM_PROPERTY_ADD = "system-property-add";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
@@ -481,6 +500,7 @@ public interface Ids {
     String UNDERTOW_HOST_FILTER_REF_FORM = build(UNDERTOW_HOST, "filter-ref", FORM_SUFFIX);
     String UNDERTOW_HOST_FILTER_REF_PAGE = build(UNDERTOW_HOST, "filter-ref", PAGE_SUFFIX);
     String UNDERTOW_HOST_FILTER_REF_TABLE = build(UNDERTOW_HOST, "filter-ref", TABLE_SUFFIX);
+    String UNDERTOW_HOST_HTTP_INVOKER = build(UNDERTOW_HOST, "http-invoker");
     String UNDERTOW_HOST_LOCATION_ADD = build(UNDERTOW_HOST, "location", ADD_SUFFIX);
     String UNDERTOW_HOST_LOCATION_FORM = build(UNDERTOW_HOST, "location", FORM_SUFFIX);
     String UNDERTOW_HOST_LOCATION_PAGE = build(UNDERTOW_HOST, "location", PAGE_SUFFIX);
@@ -612,10 +632,6 @@ public interface Ids {
 
     static String role(String name) {
         return asId(name);
-    }
-
-    static String server(final String name) {
-        return build(SERVER, name);
     }
 
     static String securityDomain(final String name) {

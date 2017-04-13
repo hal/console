@@ -19,6 +19,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
@@ -44,6 +45,7 @@ public class CoreModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
+        bind(AccessControl.class).in(Singleton.class);
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);

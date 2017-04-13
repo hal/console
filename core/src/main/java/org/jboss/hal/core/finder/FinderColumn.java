@@ -18,6 +18,7 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,8 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -69,12 +70,14 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * <p>
  * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
  * Instead add an id to {@link org.jboss.hal.resources.Ids}.
+ * <p>
+ * TODO This class is huge! Try to refactor and break into smaller pieces.
  *
  * @param <T> The column and items type.
  *
  * @author Harald Pehl
  */
-public class FinderColumn<T> implements IsElement, SecurityContextAware {
+public class FinderColumn<T> implements IsElement {
 
     public static class Builder<T> {
 
@@ -267,12 +270,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         // column actions
         eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
         if (builder.columnActions.size() == 1) {
-            eb.add(newColumnButton(builder.columnActions.get(0)));
+            if (isAllowed(builder.columnActions.get(0))) {
+                eb.add(newColumnButton(builder.columnActions.get(0)));
+            }
         } else {
             //noinspection DuplicateStringLiteralInspection
-            eb.css(btnGroup).attr(ROLE, GROUP);
-            for (ColumnAction<T> action : builder.columnActions) {
-                eb.add(newColumnButton(action));
+            if (isAllowed(builder.columnActions)) {
+                eb.css(btnGroup).attr(ROLE, GROUP);
+                for (ColumnAction<T> action : builder.columnActions) {
+                    if (isAllowed(action)) {
+                        eb.add(newColumnButton(action));
+                    }
+                }
             }
         }
         eb.end().end(); // </columnActions> && </header>
@@ -318,40 +327,39 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     @SuppressWarnings("Duplicates")
     private Element newColumnButton(final ColumnAction<T> action) {
         Elements.Builder builder = new Elements.Builder();
-        if (action instanceof DropdownColumnAction) {
-            DropdownColumnAction<T> ddAction = ((DropdownColumnAction<T>) action);
+        if (!action.actions.isEmpty()) {
             // @formatter:off
             builder.div().css(dropdown)
-                .button().css(btn, btnFinder, dropdownToggle).id(ddAction.id)
+                .button().css(btn, btnFinder, dropdownToggle).id(action.id)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.EXPANDED, "false"); //NON-NLS
-                    if (ddAction.title != null) {
-                        builder.textContent(ddAction.title);
-                    } else if (ddAction.element != null) {
-                        builder.add(ddAction.element);
+                    if (action.title != null) {
+                        builder.textContent(action.title);
+                    } else if (action.element != null) {
+                        builder.add(action.element);
                     } else {
                         builder.textContent(NOT_AVAILABLE);
                     }
                     builder.span().css(caret).end()
                 .end()
-                .ul().css(dropdownMenu)
+                .ul().id(Ids.uniqueId()).css(dropdownMenu)
                         .attr(UIConstants.ROLE, UIConstants.MENU)
-                        .aria(UIConstants.LABELLED_BY, ddAction.id);
-                    for (ColumnAction<T> actn : ddAction.actions) {
-                        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
-                            .a()
-                                .id(actn.id)
+                        .aria(UIConstants.LABELLED_BY, action.id);
+                    for (ColumnAction<T> liAction : action.actions) {
+                        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION);
+                            builder.a()
+                                .id(liAction.id)
                                 .attr(UIConstants.ROLE, UIConstants.MENUITEM)
                                 .attr(UIConstants.TABINDEX, "-1")
                                 .on(click, event -> {
-                                    if (actn.handler!= null) {
-                                        actn.handler.execute(this);
+                                    if (liAction.handler!= null) {
+                                        liAction.handler.execute(this);
                                     }
                                 });
-                                if (actn.title != null){
-                                    builder.textContent(actn.title);
-                                } else if (actn.element != null) {
-                                    builder.add(actn.element);
+                                if (liAction.title != null){
+                                    builder.textContent(liAction.title);
+                                } else if (liAction.element != null) {
+                                    builder.add(liAction.element);
                                 } else {
                                     builder.textContent(NOT_AVAILABLE);
                                 }
@@ -363,15 +371,14 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             // @formatter:on
 
         } else {
-            builder.button()
-                    .id(action.id)
+            builder.button();
+            builder.id(action.id)
                     .css(btn, btnFinder)
                     .on(click, event -> {
                         if (action.handler != null) {
                             action.handler.execute(this);
                         }
                     });
-
             if (action.title != null) {
                 builder.textContent(action.title);
             } else if (action.element != null) {
@@ -688,7 +695,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    callback.onFailure(throwable);
+                    if (callback != null) {
+                        callback.onFailure(throwable);
+                    }
                 }
 
                 @Override
@@ -758,24 +767,32 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * actions <strong>after</strong> the call to {@code super()}.
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
-        columnActions.appendChild(newColumnButton(columnAction));
-        if (columnActions.getChildElementCount() > 1) {
-            columnActions.getClassList().add(btnGroup);
-            columnActions.setAttribute(ROLE, GROUP);
+        if (isAllowed(columnAction)) {
+            columnActions.appendChild(newColumnButton(columnAction));
+            if (columnActions.getChildElementCount() > 1) {
+                columnActions.getClassList().add(btnGroup);
+                columnActions.setAttribute(ROLE, GROUP);
+            }
         }
     }
 
     protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
-        Element element = new Elements.Builder().span()
-                .css(iconsCss)
-                .title(title)
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        columnActions.appendChild(newColumnButton(new DropdownColumnAction<>(id, element, actions)));
-        if (columnActions.getChildElementCount() > 1) {
-            columnActions.getClassList().add(btnGroup);
-            columnActions.setAttribute(ROLE, GROUP);
+        if (isAllowed(actions)) {
+            Element element = new Elements.Builder().span()
+                    .css(iconsCss)
+                    .title(title)
+                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                    .data(UIConstants.PLACEMENT, "bottom")
+                    .end().build();
+            ColumnAction<T> dropdownAction = new ColumnAction.Builder<T>(id)
+                    .element(element)
+                    .actions(actions)
+                    .build();
+            columnActions.appendChild(newColumnButton(dropdownAction));
+            if (columnActions.getChildElementCount() > 1) {
+                columnActions.getClassList().add(btnGroup);
+                columnActions.setAttribute(ROLE, GROUP);
+            }
         }
     }
 
@@ -937,14 +954,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         });
     }
 
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        // TODO Check column actions
-        for (FinderRow<T> row : rows.values()) {
-            row.onSecurityContextChange(securityContext);
-        }
-    }
-
     public String getId() {
         return id;
     }
@@ -955,5 +964,26 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     protected Finder getFinder() {
         return finder;
+    }
+
+
+    // ------------------------------------------------------ rbac / security
+
+    private boolean isAllowed(List<ColumnAction<T>> actions) {
+        Set<Constraint> constraints = new HashSet<>();
+        actions.forEach(a -> {
+            constraints.addAll(a.constraints);
+            a.actions.forEach(innerA -> constraints.addAll(innerA.constraints));
+        });
+        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
+                .isAllowed(constraints);
+    }
+
+    private boolean isAllowed(ColumnAction<T> action) {
+        Set<Constraint> constraints = new HashSet<>();
+        constraints.addAll(action.constraints);
+        action.actions.forEach(a -> constraints.addAll(a.constraints));
+        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
+                .isAllowed(constraints);
     }
 }

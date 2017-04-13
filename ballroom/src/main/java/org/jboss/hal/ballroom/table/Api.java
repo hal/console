@@ -25,6 +25,7 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.JQuery;
 
 import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
@@ -48,11 +49,24 @@ public class Api<T> {
     @JsProperty Row<T> row;
 
 
+    // ------------------------------------------------------ internal API
+
+    @JsOverlay
+    final Api<T> add(Iterable<T> data) {
+        if (data != null) {
+            for (T d : data) {
+                row.add(d);
+            }
+        }
+        return this;
+    }
+
+    native Api<T> clear();
+
+
     // ------------------------------------------------------ API a-z
 
     public native Api<T> button(int index);
-
-    public native Api<T> clear();
 
     public native Api<T> data();
 
@@ -64,6 +78,11 @@ public class Api<T> {
     public native Api<T> enable(boolean enable);
 
     public native Options<T> init();
+
+    /**
+     * Returns the jQuery object for the button selected with {@link #button(int)}
+     */
+    public native JQuery node();
 
     /**
      * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
@@ -101,21 +120,6 @@ public class Api<T> {
 
 
     // ------------------------------------------------------ overlay methods
-
-    @JsOverlay
-    public final Api<T> add(T data) {
-        return row.add(data);
-    }
-
-    @JsOverlay
-    public final Api<T> add(Iterable<T> data) {
-        if (data != null) {
-            for (T d : data) {
-                row.add(d);
-            }
-        }
-        return this;
-    }
 
     @JsOverlay
     public final boolean hasSelection() {

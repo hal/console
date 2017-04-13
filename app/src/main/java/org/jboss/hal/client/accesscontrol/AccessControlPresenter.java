@@ -20,8 +20,10 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.accesscontrol.SensitiveGatekeeper;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
@@ -44,7 +46,8 @@ public class AccessControlPresenter extends
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.ACCESS_CONTROL)
-    @Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+    @UseGatekeeper(SensitiveGatekeeper.class)
+    @Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
 
     public interface MyView extends FinderView {}

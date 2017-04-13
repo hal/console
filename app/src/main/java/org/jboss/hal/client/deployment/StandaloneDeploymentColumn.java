@@ -59,6 +59,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -88,7 +89,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     static final String DEPLOYMENT_ADDRESS = "/deployment=*";
-    private static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
+    static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
 
     private final Environment environment;
     private final Dispatcher dispatcher;
@@ -138,10 +139,16 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         this.resources = resources;
 
         List<ColumnAction<Deployment>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.DEPLOYMENT_UPLOAD, resources.constants().uploadDeployment(),
-                column -> uploadDeployment()));
-        addActions.add(new ColumnAction<>(Ids.DEPLOYMENT_UNMANAGED_ADD,
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), column -> addUnmanaged()));
+        addActions.add(new ColumnAction.Builder<Deployment>(Ids.DEPLOYMENT_UPLOAD)
+                .title(resources.constants().uploadDeployment())
+                .handler(column -> uploadDeployment())
+                .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<Deployment>(Ids.DEPLOYMENT_UNMANAGED_ADD)
+                .title(resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT))
+                .handler(column -> addUnmanaged())
+                .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
+                .build());
         addColumnActions(Ids.DEPLOYMENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DEPLOYMENT_REFRESH));
 
@@ -188,13 +195,25 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 List<ItemAction<Deployment>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT, Ids.DEPLOYMENT, item.getName()));
                 if (item.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().disable(), deployment -> disable(deployment)));
+                    actions.add(new ItemAction.Builder<Deployment>()
+                            .title(resources.constants().disable())
+                            .handler(deployment -> disable(deployment))
+                            .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, UNDEPLOY))
+                            .build());
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
+                    actions.add(new ItemAction.Builder<Deployment>()
+                            .title(resources.constants().enable())
+                            .handler(deployment -> enable(deployment))
+                            .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, DEPLOY))
+                            .build());
                 }
                 if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
                         && !item.isExploded() && !item.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
+                    actions.add(new ItemAction.Builder<Deployment>()
+                            .title(resources.constants().explode())
+                            .handler(itm -> explode(itm))
+                            .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, EXPLODE))
+                            .build());
                 }
                 actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
                         StandaloneDeploymentColumn.this));
@@ -294,7 +313,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     private void explode(Deployment deployment) {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
-        Operation operation = new Operation.Builder("explode", address).build();
+        Operation operation = new Operation.Builder(EXPLODE, address).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent

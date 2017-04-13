@@ -20,6 +20,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -45,12 +46,13 @@ public class GroupColumn extends PrincipalColumn {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
+            final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final AccessControlResources accessControlResources,
             final Resources resources) {
         super(finder, Ids.GROUP, resources.constants().group(), Principal.Type.GROUP,
-                columnActionFactory, dispatcher, eventBus, progress, accessControl, tokens,
+                columnActionFactory, dispatcher, eventBus, progress, currentUser, accessControl, tokens,
                 accessControlResources, resources);
     }
 }

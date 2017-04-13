@@ -28,6 +28,7 @@ public interface XmlTags {
     String AUTO_SAVE = "auto-save";
     String COLUMN = "column";
     String COLUMNS = "columns";
+    String CONSTRAINT = "constraint";
     String EXCLUDE = "exclude";
     String SINGLETON_FORM = "singleton-form";
     String FORM = "form";

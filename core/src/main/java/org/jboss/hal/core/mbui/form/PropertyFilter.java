@@ -62,9 +62,10 @@ class PropertyFilter implements Predicate<Property> {
             } else {
                 filter = p -> builder.includes.contains(p.getName());
             }
-            if (!builder.includeRuntime) {
-                filter = filter.and(p -> !RUNTIME.equals(p.getValue().get(STORAGE).asString()));
-            }
+        }
+        if (!builder.includeRuntime) {
+            filter = filter.and(
+                    p -> !p.getValue().hasDefined(STORAGE) || !RUNTIME.equals(p.getValue().get(STORAGE).asString()));
         }
 
         return filter.test(property);

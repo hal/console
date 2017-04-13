@@ -7,90 +7,106 @@ import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  */
 public class ExistingStateMachineTest {
 
-    private StateMachine stateMachine;
+    private StateMachine stateMachineWithReset;
+    private StateMachine stateMachineWithoutReset;
 
     @Before
     public void setUp() {
-        stateMachine = new ExistingStateMachine();
+        stateMachineWithReset = new ExistingStateMachine(true);
+        stateMachineWithoutReset = new ExistingStateMachine(false);
     }
 
     @Test
     public void initialState() {
-        assertEquals(READONLY, stateMachine.current());
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test
     public void supports() {
-        assertFalse(stateMachine.supports(EMPTY));
-        assertTrue(stateMachine.supports(READONLY));
-        assertTrue(stateMachine.supports(EDITING));
+        assertFalse(stateMachineWithReset.supports(EMPTY));
+        assertTrue(stateMachineWithReset.supports(READONLY));
+        assertTrue(stateMachineWithReset.supports(EDITING));
 
-        assertTrue(stateMachine.supports(VIEW));
-        assertTrue(stateMachine.supports(CLEAR));
-        assertTrue(stateMachine.supports(RESET));
-        assertTrue(stateMachine.supports(EDIT));
-        assertTrue(stateMachine.supports(SAVE));
-        assertTrue(stateMachine.supports(CANCEL));
-        assertFalse(stateMachine.supports(REMOVE));
+        assertTrue(stateMachineWithReset.supports(VIEW));
+        assertTrue(stateMachineWithReset.supports(CLEAR));
+        assertTrue(stateMachineWithReset.supports(RESET));
+        assertTrue(stateMachineWithReset.supports(EDIT));
+        assertTrue(stateMachineWithReset.supports(SAVE));
+        assertTrue(stateMachineWithReset.supports(CANCEL));
+        assertFalse(stateMachineWithReset.supports(REMOVE));
+
+        assertFalse(stateMachineWithoutReset.supports(EMPTY));
+        assertTrue(stateMachineWithoutReset.supports(READONLY));
+        assertTrue(stateMachineWithoutReset.supports(EDITING));
+
+        assertTrue(stateMachineWithoutReset.supports(VIEW));
+        assertTrue(stateMachineWithoutReset.supports(CLEAR));
+        assertFalse(stateMachineWithoutReset.supports(RESET));
+        assertTrue(stateMachineWithoutReset.supports(EDIT));
+        assertTrue(stateMachineWithoutReset.supports(SAVE));
+        assertTrue(stateMachineWithoutReset.supports(CANCEL));
+        assertFalse(stateMachineWithoutReset.supports(REMOVE));
     }
 
     @Test
     public void view() {
-        stateMachine.execute(VIEW);
-        assertEquals(READONLY, stateMachine.current());
+        stateMachineWithReset.execute(VIEW);
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test
     public void clear() {
-        stateMachine.execute(CLEAR);
-        assertEquals(READONLY, stateMachine.current());
+        stateMachineWithReset.execute(CLEAR);
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test
     public void reset() {
-        stateMachine.execute(RESET);
-        assertEquals(READONLY, stateMachine.current());
+        stateMachineWithReset.execute(RESET);
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test
     public void edit() {
-        stateMachine.execute(EDIT);
-        assertEquals(EDITING, stateMachine.current());
+        stateMachineWithReset.execute(EDIT);
+        assertEquals(EDITING, stateMachineWithReset.current());
     }
 
     @Test(expected = IllegalStateException.class)
     public void initialSave() {
-        stateMachine.execute(SAVE);
+        stateMachineWithReset.execute(SAVE);
     }
 
     @Test
     public void save() {
-        stateMachine.execute(EDIT);
-        stateMachine.execute(SAVE);
-        assertEquals(READONLY, stateMachine.current());
+        stateMachineWithReset.execute(EDIT);
+        stateMachineWithReset.execute(SAVE);
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test(expected = IllegalStateException.class)
     public void initialCancel() {
-        stateMachine.execute(CANCEL);
+        stateMachineWithReset.execute(CANCEL);
     }
 
     @Test
     public void cancel() {
-        stateMachine.execute(EDIT);
-        stateMachine.execute(CANCEL);
-        assertEquals(READONLY, stateMachine.current());
+        stateMachineWithReset.execute(EDIT);
+        stateMachineWithReset.execute(CANCEL);
+        assertEquals(READONLY, stateMachineWithReset.current());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void remove() {
-        stateMachine.execute(REMOVE);
+        stateMachineWithReset.execute(REMOVE);
     }
 }

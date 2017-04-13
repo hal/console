@@ -15,23 +15,28 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
+import static org.jboss.hal.resources.UIConstants.data;
 
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.
@@ -41,7 +46,7 @@ import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
  *
  * @author Harald Pehl
  */
-class FinderRow<T> implements IsElement, SecurityContextAware {
+class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
@@ -51,6 +56,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private final Finder finder;
     private final FinderColumn<T> column;
     private final ItemDisplay<T> display;
+    private final List<ItemAction<T>> actions;
     private final String nextColumn;
     private ItemActionHandler<T> primaryAction;
     private final PreviewContent<T> previewContent;
@@ -71,9 +77,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         this.finder = finder;
         this.column = column;
         this.display = display;
+        this.actions = allowedActions(display.actions());
         this.nextColumn = display.nextColumn();
         this.id = display.getId();
-        this.primaryAction = display.actions().isEmpty() ? null : display.actions().get(0).handler;
+        this.primaryAction = actions.isEmpty() ? null : actions.get(0).handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
@@ -84,6 +91,13 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         updateItem(item);
         drawItem();
         root.setOnclick(event -> onClick(((Element) event.getTarget())));
+    }
+
+    private List<ItemAction<T>> allowedActions(final List<ItemAction<T>> actions) {
+        return actions.stream()
+                .filter(action -> AuthorisationDecision.strict(finder.environment(),
+                        finder.securityContextRegistry()).isAllowed(action.constraints))
+                .collect(toList());
     }
 
     private void updateItem(final T item) {
@@ -120,7 +134,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         root.appendChild(itemElement);
 
         Elements.Builder eb = new Elements.Builder();
-        boolean controls = column.isPinnable() || display.nextColumn() != null || !display.actions().isEmpty();
+        boolean controls = column.isPinnable() || display.nextColumn() != null || !actions.isEmpty();
         // oder: 1) pin/unpin icon, 2) folder icon, 3) button(s)
         if (column.isPinnable()) {
             eb.span()
@@ -139,16 +153,16 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
         }
-        if (!display.actions().isEmpty()) {
-            if (display.actions().size() == 1) {
-                ItemAction<T> action = display.actions().get(0);
+        if (!actions.isEmpty()) {
+            if (actions.size() == 1) {
+                ItemAction<T> action = actions.get(0);
                 actionLink(eb, action, false, BUTTON_CONTAINER);
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
                 eb.div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                         .rememberAs(BUTTON_CONTAINER);
-                for (ItemAction<T> action : display.actions()) {
+                for (ItemAction<T> action : actions) {
                     if (firstAction) {
                         // @formatter:off
                         actionLink(eb, action, false, null);
@@ -181,7 +195,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             }
         }
         folderElement = display.nextColumn() != null ? eb.referenceFor(FOLDER_ELEMENT) : null;
-        buttonContainer = display.actions().isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
+        buttonContainer = actions.isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
         if (controls) {
             eb.elements().forEach(element -> root.appendChild(element));
             Elements.setVisible(buttonContainer, isSelected());
@@ -247,6 +261,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             finder.showPreview(previewContent);
         }
         previewContent.update(item);
+
+        AuthorisationDecision ad = AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry());
+        ElementGuard.processElements(ad, "#" + Ids.PREVIEW_ID + " [" + data(UIConstants.CONSTRAINT + "]"));
     }
 
     private boolean isSelected() {
@@ -256,11 +273,6 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     @Override
     public Element asElement() {
         return root;
-    }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-
     }
 
 

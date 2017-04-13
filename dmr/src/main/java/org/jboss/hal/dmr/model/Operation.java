@@ -15,10 +15,9 @@
  */
 package org.jboss.hal.dmr.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -26,7 +25,8 @@ import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
 
-import static java.util.stream.Collectors.toList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -40,14 +40,14 @@ public class Operation extends ModelNode {
         private final ResourceAddress address;
         private ModelNode parameter;
         private ModelNode header;
-        private List<String> roles;
+        private Set<String> roles;
 
         public Builder(final String name, final ResourceAddress address) {
             this.address = address;
             this.name = name;
             this.parameter = new ModelNode();
             this.header = new ModelNode();
-            this.roles = new ArrayList<>();
+            this.roles = new HashSet<>();
         }
 
         public Builder param(String name, boolean value) {
@@ -102,14 +102,6 @@ public class Operation extends ModelNode {
             return this;
         }
 
-        public Builder runAs(String role, String... moreRoles) {
-            this.roles.add(role);
-            if (moreRoles != null) {
-                roles.addAll(Arrays.asList(moreRoles));
-            }
-            return this;
-        }
-
         public Operation build() {
             return new Operation(name, address, parameter, header, roles);
         }
@@ -120,7 +112,7 @@ public class Operation extends ModelNode {
     private final ResourceAddress address;
     private final ModelNode parameter;
     private final ModelNode header;
-    private final List<String> roles;
+    private final Set<String> roles;
 
     public Operation(ModelNode modelNode) {
         this.name = modelNode.get(OP).asString();
@@ -133,21 +125,22 @@ public class Operation extends ModelNode {
         ModelNode roles = ModelNodeHelper.failSafeGet(modelNode, OPERATION_HEADERS + "/" + ROLES);
         if (roles.isDefined()) {
             if (roles.getType() == ModelType.LIST) {
-                this.roles = roles.asList().stream().map(ModelNode::asString).collect(toList());
+                this.roles = roles.asList().stream().map(ModelNode::asString).collect(toSet());
             } else if (roles.getType() == ModelType.STRING) {
-                this.roles = new ArrayList<>();
+                this.roles = new HashSet<>();
                 this.roles.add(roles.asString());
             } else {
-                this.roles = new ArrayList<>();
+                this.roles = new HashSet<>();
             }
         } else {
-            this.roles = new ArrayList<>();
+            this.roles = new HashSet<>();
         }
+        addRolesAsHeaders();
         set(modelNode.clone());
     }
 
     public Operation(final String name, final ResourceAddress address, final ModelNode parameter,
-            final ModelNode header, final List<String> roles) {
+            final ModelNode header, final Set<String> roles) {
         this.name = name;
         this.address = address;
         this.parameter = parameter == null ? new ModelNode() : parameter;
@@ -160,14 +153,18 @@ public class Operation extends ModelNode {
         if (header.isDefined()) {
             get(OPERATION_HEADERS).set(header);
         }
+        addRolesAsHeaders();
+    }
+
+    private void addRolesAsHeaders() {
         if (roles != null && !roles.isEmpty() && !name.equals(WHOAMI)) {
             // roles are headers!
             if (roles.size() == 1) {
-                this.header.get(ROLES).set(roles.get(0));
+                header.get(ROLES).set(roles.iterator().next());
             } else {
-                roles.forEach(role -> this.header.get(ROLES).add(role));
+                roles.forEach(role -> header.get(ROLES).add(role));
             }
-            roles.forEach(role -> get(OPERATION_HEADERS).get(ROLES).add(role));
+            get(OPERATION_HEADERS).set(header);
         }
     }
 
@@ -187,17 +184,16 @@ public class Operation extends ModelNode {
         return header;
     }
 
-    public boolean hasParamter() {
+    public boolean hasParameter() {
         return parameter.isDefined() && !parameter.asList().isEmpty();
     }
 
-    public List<String> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
-    @Override
-    public Operation clone() {
-        return new Operation(name, address, parameter, header, roles);
+    public Operation runAs(final Set<String> runAs) {
+        return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
     @Override
@@ -211,7 +207,7 @@ public class Operation extends ModelNode {
             builder.append(address);
         }
         builder.append(":").append(name);
-        if (hasParamter()) {
+        if (hasParameter()) {
             builder.append("(");
             for (Iterator<Property> iterator = parameter.asPropertyList().iterator(); iterator.hasNext(); ) {
                 Property p = iterator.next();

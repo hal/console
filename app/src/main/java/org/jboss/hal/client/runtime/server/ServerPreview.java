@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime.server;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -27,19 +26,19 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.runtime.server.ServerColumn.serverConfigTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.alert;
-import static org.jboss.hal.resources.CSS.alertInfo;
-import static org.jboss.hal.resources.CSS.alertLink;
-import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -75,22 +74,27 @@ class ServerPreview extends RuntimePreview<Server> {
                 .span().textContent(" ").end()
                 .a().rememberAs(START_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.start(server))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), START).data())
                     .textContent(resources.constants().start())
                 .end()
                 .a().rememberAs(STOP_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.stop(server))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), STOP).data())
                     .textContent(resources.constants().stop())
                 .end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.reload(server))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RELOAD).data())
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.restart(server))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RESTART).data())
                     .textContent(resources.constants().restart())
                 .end()
                 .a().rememberAs(RESUME_LINK).css(clickable, alertLink)
                     .on(click, event -> serverActions.resume(server))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(serverConfigTemplate(server), RESUME).data())
                     .textContent(resources.constants().resume())
                 .end()
                 .a().rememberAs(BOOT_ERRORS_LINK).css(clickable, alertLink)
@@ -252,7 +256,9 @@ class ServerPreview extends RuntimePreview<Server> {
 
     private void disableAllLinks() {
         for (Element l : links) {
-            Elements.setVisible(l, false);
+            // Do not simply hide the links, but add the hidden CSS class.
+            // Important when constraints for the links are processed later.
+            l.getClassList().add(hidden);
         }
     }
 
@@ -261,7 +267,9 @@ class ServerPreview extends RuntimePreview<Server> {
             if (l == link) {
                 continue;
             }
-            Elements.setVisible(l, false);
+            // Do not simply hide the links, but add the hidden CSS class.
+            // Important when constraints for the links are processed later.
+            l.getClassList().add(hidden);
         }
     }
 }

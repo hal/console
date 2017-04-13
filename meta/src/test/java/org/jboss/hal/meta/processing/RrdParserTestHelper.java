@@ -203,14 +203,11 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.Set;
-
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -218,33 +215,23 @@ import static org.junit.Assert.assertTrue;
  */
 class RrdParserTestHelper {
 
-    static void assertResults(Set<RrdResult> results, int size, String... addresses) {
-        assertEquals(size, results.size());
+    static void assertResourceDescriptions(RrdResult rrdResult, int size, String... addresses) {
+        assertEquals(size, rrdResult.resourceDescriptions.size());
 
-        for (String address : addresses) {
-            assertTrue("RrdResults does not contain address " + address, //NON-NLS
-                    results.contains(new RrdResult(AddressTemplate.of(address).resolve(StatementContext.NOOP))));
+        for (String a : addresses) {
+            ResourceAddress address = AddressTemplate.of(a).resolve(StatementContext.NOOP);
+            assertTrue("RrdResult does not contain resource description for " + a, //NON-NLS
+                    rrdResult.containsResourceDescription(address));
         }
     }
 
-    static void assertDescriptionOnly(Set<RrdResult> results) {
-        for (RrdResult result : results) {
-            assertNotNull(result.resourceDescription);
-            assertNull(result.securityContext);
-        }
-    }
+    static void assertSecurityContexts(RrdResult rrdResult, int size, String... addresses) {
+        assertEquals(size, rrdResult.securityContexts.size());
 
-    static void assertSecurityContextOnly(Set<RrdResult> results) {
-        for (RrdResult result : results) {
-            assertNull(result.resourceDescription);
-            assertNotNull(result.securityContext);
-        }
-    }
-
-    static void assertCombined(Set<RrdResult> results) {
-        for (RrdResult result : results) {
-            assertNotNull(result.resourceDescription);
-            assertNotNull(result.securityContext);
+        for (String a : addresses) {
+            ResourceAddress address = AddressTemplate.of(a).resolve(StatementContext.NOOP);
+            assertTrue("RrdResult does not contain security context for " + a, //NON-NLS
+                    rrdResult.containsSecurityContext(address));
         }
     }
 }

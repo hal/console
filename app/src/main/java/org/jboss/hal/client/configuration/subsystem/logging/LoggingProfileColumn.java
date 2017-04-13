@@ -69,7 +69,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 .columnAction(columnActionFactory.add(
                         Ids.LOGGING_PROFILE_ADD,
                         Names.LOGGING_PROFILE,
-                        AddressTemplates.LOGGING_PROFILE_TEMPLATE,
+                        LOGGING_PROFILE_TEMPLATE,
                         Ids::loggingProfile))
 
                 .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
@@ -104,7 +104,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 return Arrays.asList(
                         itemActionFactory.viewAndMonitor(Ids.loggingProfile(item.getName()), placeRequest),
                         itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),
-                                AddressTemplates.LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
+                                LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
             }
         });
     }

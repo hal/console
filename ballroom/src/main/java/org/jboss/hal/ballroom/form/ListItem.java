@@ -156,7 +156,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
         void unapplyInvalid() {
             root.getClassList().remove(hasError);
             helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setTextContent(MESSAGES.listHint().asString());
+            helpBlock.setInnerHTML(MESSAGES.listHint().asString());
         }
     }
 

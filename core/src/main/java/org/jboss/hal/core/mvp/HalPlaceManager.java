@@ -137,4 +137,13 @@ public class HalPlaceManager extends DefaultPlaceManager {
             super.revealErrorPlace(invalidHistoryToken);
         }
     }
+
+    @Override
+    public void revealUnauthorizedPlace(final String unauthorizedHistoryToken) {
+        MessageEvent.fire(getEventBus(), Message.error(resources.messages().unauthorized()));
+        if (firstRequest) {
+            // TODO find a more elegant way to get hold of the very first request
+            super.revealUnauthorizedPlace(unauthorizedHistoryToken);
+        }
+    }
 }

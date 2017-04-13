@@ -290,6 +290,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         apply(SENSITIVE);
     }
 
+    @Override
+    public void unmask() {
+        unapply(SENSITIVE);
+    }
+
     private void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
     }
@@ -412,7 +417,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.value = null;
         this.expressionValue = expressionValue;
 
-        appearances.values().forEach(a -> a.showExpression(expressionValue));
+        appearances.values().forEach(a -> {
+            a.unapply(DEFAULT);
+            a.showExpression(expressionValue);
+        });
         toggleExpressionSupport(expressionValue);
     }
 
@@ -486,11 +494,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRestricted(final boolean restricted) {
-        this.restricted = restricted;
-        if (restricted) {
-            apply(RESTRICTED);
-        } else {
-            unapply(RESTRICTED);
+        if (this.restricted != restricted) {
+            this.restricted = restricted;
+            if (restricted) {
+                apply(RESTRICTED);
+            } else {
+                unapply(RESTRICTED);
+            }
         }
     }
 
@@ -501,11 +511,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-        if (enabled) {
-            apply(ENABLED);
-        } else {
-            unapply(ENABLED);
+        if (this.enabled != enabled) {
+            this.enabled = enabled;
+            if (enabled) {
+                apply(ENABLED);
+            } else {
+                unapply(ENABLED);
+            }
         }
     }
 
@@ -518,19 +530,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setTabIndex(final int index) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        appearance.ifPresent(a -> a.setTabIndex(index));
+        appearance.ifPresent((Appearance<T> a) -> a.setTabIndex(index));
     }
 
     @Override
     public void setAccessKey(final char accessKey) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        appearance.ifPresent(a -> a.setAccessKey(accessKey));
+        appearance.ifPresent((Appearance<T> a) -> a.setAccessKey(accessKey));
     }
 
     @Override
     public void setFocus(final boolean focus) {
         Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
-        // appearance.ifPresent(a -> a.setFocus(focus));
+        appearance.ifPresent((Appearance<T> a) -> a.setFocus(focus));
     }
 
     @Override
@@ -550,11 +562,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRequired(boolean required) {
-        this.required = required;
-        if (required) {
-            apply(REQUIRED);
-        } else {
-            unapply(REQUIRED);
+        if (this.required != required) {
+            this.required = required;
+            if (required) {
+                apply(REQUIRED);
+            } else {
+                unapply(REQUIRED);
+            }
         }
     }
 

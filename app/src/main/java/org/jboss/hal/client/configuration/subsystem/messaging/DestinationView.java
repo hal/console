@@ -36,7 +36,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_SETTING;
@@ -79,15 +78,16 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     void init() {
         Metadata roleMetadata = mbuiContext.metadataRegistry().lookup(ROLE_TEMPLATE);
         Options<NamedNode> roleOptions = new ModelNodeTable.Builder<NamedNode>(roleMetadata)
-                .button(mbuiContext.resources().constants().add(), (event, api) -> presenter.addSecuritySettingRole())
-                .button(mbuiContext.resources().constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeSecuritySettingRole(api.selectedRow()))
+                .button(mbuiContext.tableButtonFactory().add(ROLE_TEMPLATE,
+                        (event, api) -> presenter.addSecuritySettingRole()))
+                .button(mbuiContext.tableButtonFactory().remove(ROLE_TEMPLATE,
+                        (event, api) -> presenter.removeSecuritySettingRole(api.selectedRow())))
                 .column(SECURITY_SETTING, mbuiContext.resources().constants().pattern(),
                         (cell, type, row, meta) -> row.get(SECURITY_SETTING).asString())
                 .column(ROLE, mbuiContext.resources().constants().role(),
                         (cell, type, row, meta) -> row.getName())
                 .build();
-        roleTable = new NamedNodeTable<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_TABLE, roleOptions);
+        roleTable = new NamedNodeTable<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_TABLE, roleMetadata, roleOptions);
 
         roleForm = new ModelNodeForm.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_FORM, roleMetadata)
                 .onSave((form, changedValues) -> presenter.saveSecuritySettingRole(form, changedValues))

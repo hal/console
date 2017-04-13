@@ -17,19 +17,17 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -48,11 +46,11 @@ import static org.jboss.hal.resources.CSS.columnAction;
  */
 class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
 
-    static final String STACK_ID = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGE_SUFFIX);
-    static final String RELAY_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
     static final String REMOTE_SITE_ID = Ids.build(Ids.JGROUPS_REMOTE_SITE, Ids.PAGE_SUFFIX);
-    static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_PROTOCOL, Ids.PAGE_SUFFIX);
-    static final String TRANSPORT_ID = Ids.build(Ids.JGROUPS_TRANSPORT, Ids.PAGE_SUFFIX);
+    private static final String STACK_ID = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGE_SUFFIX);
+    private static final String RELAY_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
+    private static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_PROTOCOL, Ids.PAGE_SUFFIX);
+    private static final String TRANSPORT_ID = Ids.build(Ids.JGROUPS_TRANSPORT, Ids.PAGE_SUFFIX);
 
     private final Pages innerPages;
     private final NamedNodeTable<NamedNode> table;
@@ -60,24 +58,22 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     private String selectedStack;
 
     private final RelayElement relayElement;
-    private final GenericElement remotesiteElement;
+    private final GenericElement remoteSiteElement;
     private final GenericElement protocolElement;
     private final TransportElement transportElement;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    StackElement(final MetadataRegistry metadataRegistry, final Resources resources,
-            final Dispatcher dispatcher,
-            final EventBus eventBus) {
+    StackElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) ->
-                        presenter.addStack())
+                .button(tableButtonFactory.add(STACK_TEMPLATE, (event, api) -> presenter.addStack()))
                 //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
                 //        Names.STACK))
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter
-                                .removeResource(STACK_TEMPLATE, api.selectedRow().getName(), Names.STACK))
+                .button(tableButtonFactory.remove(STACK_TEMPLATE,
+                        (event, api) -> presenter.removeResource(STACK_TEMPLATE, api.selectedRow().getName(),
+                                Names.STACK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_STACK_COLUMN,
                         "Action",
@@ -110,7 +106,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
                         .width("18em")
                         .build())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata, options);
 
         // @formatter:off
         Element section = new Elements.Builder()
@@ -122,17 +118,14 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
         .build();
         // @formatter:on
 
-        relayElement = new RelayElement(metadataRegistry, resources);
-        remotesiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE),
-                resources,
-                SELECTED_REMOTE_SITE_TEMPLATE,
-                Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
-        protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), resources,
-                SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL,
-                Ids.JGROUPS_PROTOCOL);
-        transportElement = new TransportElement(metadataRegistry, metadataRegistry.lookup(TRANSPORT_TEMPLATE),
-                resources, SELECTED_TRANSPORT_TEMPLATE,
-                Names.TRANSPORT, Ids.JGROUPS_TRANSPORT);
+        relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
+        remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE), tableButtonFactory,
+                resources, SELECTED_REMOTE_SITE_TEMPLATE, Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
+        protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), tableButtonFactory,
+                resources, SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL, Ids.JGROUPS_PROTOCOL);
+        transportElement = new TransportElement(metadataRegistry, tableButtonFactory,
+                metadataRegistry.lookup(TRANSPORT_TEMPLATE), resources, SELECTED_TRANSPORT_TEMPLATE, Names.TRANSPORT,
+                Ids.JGROUPS_TRANSPORT);
 
         innerPages = new Pages(STACK_ID, section);
         // Relay page
@@ -144,7 +137,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
         innerPages.addPage(RELAY_ID, REMOTE_SITE_ID,
                 () -> Names.RELAY + ": relay.RELAY2: ",
                 () -> Names.REMOTE_SITE,
-                remotesiteElement);
+                remoteSiteElement);
         // protocol page
         innerPages.addPage(STACK_ID, PROTOCOL_ID,
                 () -> Names.STACK + ": " + selectedStack,
@@ -167,7 +160,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     public void attach() {
         table.attach();
         relayElement.attach();
-        remotesiteElement.attach();
+        remoteSiteElement.attach();
         protocolElement.attach();
         transportElement.attach();
     }
@@ -176,7 +169,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     public void detach() {
         relayElement.detach();
         table.detach();
-        remotesiteElement.detach();
+        remoteSiteElement.detach();
         protocolElement.detach();
         transportElement.detach();
     }
@@ -185,7 +178,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     public void setPresenter(final JGroupsPresenter presenter) {
         this.presenter = presenter;
         relayElement.setPresenter(presenter);
-        remotesiteElement.setPresenter(presenter);
+        remoteSiteElement.setPresenter(presenter);
         protocolElement.setPresenter(presenter);
         transportElement.setPresenter(presenter);
     }
@@ -202,15 +195,15 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
         protocolElement.update(node);
     }
 
-    public void updateRemoteSite(final List<NamedNode> model) {
-        remotesiteElement.update(model);
+    void updateRemoteSite(final List<NamedNode> model) {
+        remoteSiteElement.update(model);
     }
 
-    public void updateTransport(final List<NamedNode> model) {
+    void updateTransport(final List<NamedNode> model) {
         transportElement.update(model);
     }
 
-    public void showInnerPage(final String id) {
+    void showInnerPage(final String id) {
         innerPages.showPage(id);
     }
 }

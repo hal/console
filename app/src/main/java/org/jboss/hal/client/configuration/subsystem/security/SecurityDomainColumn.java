@@ -36,6 +36,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -45,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
-@Requires(value = SECURITY_DOMAIN_ADDRESS)
+@Requires(SECURITY_DOMAIN_ADDRESS)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
     @Inject
@@ -60,18 +61,17 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                 .columnAction(columnActionFactory.add(
                         Ids.SECURITY_DOMAIN_ADD,
                         Names.SECURITY_DOMAIN,
-                        AddressTemplates.SECURITY_DOMAIN_TEMPLATE,
+                        SECURITY_DOMAIN_TEMPLATE,
                         Collections.singletonList(CACHE_TYPE),
                         Ids::securityDomain))
 
-                .itemsProvider((context, callback) -> {
-                    crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
-                        List<SecurityDomain> securityDomains = children.stream()
-                                .map(SecurityDomain::new)
-                                .collect(toList());
-                        callback.onSuccess(securityDomains);
-                    });
-                })
+                .itemsProvider((context, callback) ->
+                        crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
+                            List<SecurityDomain> securityDomains = children.stream()
+                                    .map(SecurityDomain::new)
+                                    .collect(toList());
+                            callback.onSuccess(securityDomains);
+                        }))
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
@@ -104,10 +104,8 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                 List<ItemAction<SecurityDomain>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.SECURITY_DOMAIN)
                         .with(NAME, item.getName()).build()));
-                actions.add(itemActionFactory
-                        .remove(Names.SECURITY_DOMAIN, item.getName(),
-                                AddressTemplates.SECURITY_DOMAIN_TEMPLATE,
-                                SecurityDomainColumn.this));
+                actions.add(itemActionFactory.remove(Names.SECURITY_DOMAIN, item.getName(),
+                        SECURITY_DOMAIN_TEMPLATE, SecurityDomainColumn.this));
                 return actions;
             }
         });

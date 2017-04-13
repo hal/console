@@ -18,6 +18,7 @@ package org.jboss.hal.core;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 
@@ -31,15 +32,22 @@ public class Core {
     @Inject
     public static Core INSTANCE;
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final EventBus eventBus;
 
     @Inject
-    public Core(final Dispatcher dispatcher, final StatementContext statementContext, final EventBus eventBus) {
+    public Core(final Environment environment, final Dispatcher dispatcher, final StatementContext statementContext,
+            final EventBus eventBus) {
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.eventBus = eventBus;
+    }
+
+    public Environment environment() {
+        return environment;
     }
 
     public Dispatcher dispatcher() {

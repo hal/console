@@ -20,8 +20,8 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
 import org.jetbrains.annotations.NonNls;
@@ -47,7 +47,7 @@ class CheckForUpdate {
 
     void execute(VersionCallback callback) {
         // only check for community updates
-        if (environment.getInstanceInfo() == InstanceInfo.EAP) {
+        if (environment.getHalBuild() == Build.PRODUCT) {
             logger.debug("Version update check skipped for EAP");
         } else {
             RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, UPDATE_URL);

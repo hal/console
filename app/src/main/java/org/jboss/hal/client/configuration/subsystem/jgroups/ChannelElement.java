@@ -23,11 +23,11 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -62,15 +62,17 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
     private final GenericElement protocolElement;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    ChannelElement(final MetadataRegistry metadataRegistry, final Resources resources) {
+    ChannelElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
-                        Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL))
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter
-                                .removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(), Names.CHANNEL))
+                .button(tableButtonFactory.add(CHANNEL_TEMPLATE,
+                        (event, api) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
+                                Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL)))
+                .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
+                        (event, api) -> presenter.removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(),
+                                Names.CHANNEL)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Forks", row -> {
                     selectedChannel = row.getName();
@@ -78,7 +80,7 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
                     presenter.showChannelInnerPage(FORK_ID);
                 })
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), metadata, options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues, metadata,
@@ -98,9 +100,10 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
         .build();
         // @formatter:on
 
-        forkElement = new ForkElement(metadataRegistry, resources);
-        protocolElement = new GenericElement(metadataRegistry.lookup(CHANNEL_FORK_PROTOCOL_TEMPLATE), resources,
-                SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE, Names.PROTOCOL, Ids.JGROUPS_CHANNEL_FORK_PROTOCOL);
+        forkElement = new ForkElement(metadataRegistry, tableButtonFactory, resources);
+        protocolElement = new GenericElement(metadataRegistry.lookup(CHANNEL_FORK_PROTOCOL_TEMPLATE),
+                tableButtonFactory, resources, SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE, Names.PROTOCOL,
+                Ids.JGROUPS_CHANNEL_FORK_PROTOCOL);
 
         innerPages = new Pages(CHANNEL_ID, section);
         // Fork page

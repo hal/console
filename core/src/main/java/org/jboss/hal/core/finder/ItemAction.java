@@ -16,58 +16,89 @@
 package org.jboss.hal.core.finder;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import elemental.dom.Element;
+import org.jboss.hal.meta.security.Constraint;
 
 /**
  * @author Harald Pehl
  */
 public class ItemAction<T> {
 
+    public static class Builder<T> {
+
+        private String title;
+        private Element element;
+        private ItemActionHandler<T> handler;
+        private String href;
+        private final Map<String, String> attributes;
+        private final Set<Constraint> constraints;
+
+        public Builder() {
+            this.title = null;
+            this.element = null;
+            this.handler = null;
+            this.href = null;
+            this.attributes = new HashMap<>();
+            this.constraints = new HashSet<>();
+        }
+
+        public Builder<T> title(final String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder<T> element(final Element element) {
+            this.element = element;
+            return this;
+        }
+
+        public Builder<T> handler(final ItemActionHandler<T> handler) {
+            this.handler = handler;
+            return this;
+        }
+
+        public Builder<T> href(final String href, final String... attributes) {
+            this.href = href;
+            if (attributes != null && attributes.length > 1) {
+                if (attributes.length % 2 != 0) {
+                    throw new IllegalArgumentException("Attributes for item action must be key/value pairs");
+                }
+                for (int i = 0; i < attributes.length; i += 2) {
+                    this.attributes.put(attributes[i], attributes[i + 1]);
+                }
+            }
+            return this;
+        }
+
+        public Builder<T> constraint(final Constraint constraint) {
+            this.constraints.add(constraint);
+            return this;
+        }
+
+        public ItemAction<T> build() {
+            return new ItemAction<>(this);
+        }
+    }
+
+
     final String title;
     final Element element;
     final ItemActionHandler<T> handler;
     final String href;
     final Map<String, String> attributes;
+    final Set<Constraint> constraints;
 
-    public ItemAction(final String title, final ItemActionHandler<T> handler) {
-        this(title, null, handler, null, (String[]) null);
-    }
-
-    public ItemAction(final Element element, final ItemActionHandler<T> handler) {
-        this(null, element, handler, null, (String[]) null);
-    }
-
-    /**
-     * Creates an action using an href.
-     * @param title the title for the action
-     * @param href the href which is followed by the browser
-     * @param attributes attributes when creating the {@code <a/>} tag.
-     */
-    public ItemAction(final String title, final String href, String... attributes) {
-        this(title, null, null, href, attributes);
-    }
-
-    public ItemAction(final Element element, final String href, String... attributes) {
-        this(null, element, null, href, attributes);
-    }
-
-    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler,
-            final String href, String... attributes) {
-        this.title = title;
-        this.element = element;
-        this.handler = handler;
-        this.href = href;
-        this.attributes = new HashMap<>();
-        if (attributes != null && attributes.length > 1) {
-            if (attributes.length % 2 != 0) {
-                throw new IllegalArgumentException("Attributes in new ItemAction() must be key/value pairs");
-            }
-            for (int i = 0; i < attributes.length; i += 2) {
-                this.attributes.put(attributes[i], attributes[i + 1]);
-            }
-        }
+    private ItemAction(final Builder<T> builder) {
+        this.title = builder.title;
+        this.element = builder.element;
+        this.handler = builder.handler;
+        this.href = builder.href;
+        this.attributes = builder.attributes;
+        this.constraints = builder.constraints;
     }
 
     public String getTitle() {

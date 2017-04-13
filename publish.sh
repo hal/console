@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Script to build, deploy and publish HAL.next to branch 'gh-pages'.
 # Should be executed after a new version was tagged.
 #
@@ -12,12 +11,10 @@
 #   1. Build and deploy w/ profiles prod, theme-hal and docker
 #   2. Publish the compiled GWT app to branch 'gh-pages'
 
-
 ROOT=$PWD
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
 BRANCH=${BRANCH:-HEAD}
-
 
 # Prerequisites
 if ! git diff --no-ext-diff --quiet --exit-code; then
@@ -28,7 +25,6 @@ if ! docker info > /dev/null 2>&1; then
     echo "Docker not running. Please start docker before running this script."
     exit -1
 fi
-
 
 # Deploying hal.next
 mvn clean deploy -P prod,theme-hal,docker
@@ -48,5 +44,10 @@ cd ${ROOT}
 
 echo
 echo
-echo "HAL.next successfully build, deployed and published to branch 'gh-pages'."
+echo "+-----------------------------------------------------------+"
+echo "|                                                           |"
+echo "|  HAL.next successfully build, deployed and published.     |"
+echo "|  https://rawgit.com/hal/hal.next/site/apidocs/index.html  |"
+echo "|                                                           |"
+echo "+-----------------------------------------------------------+"
 echo

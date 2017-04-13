@@ -51,12 +51,16 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
         Options options = new OptionsBuilder<String>(
                 (query, response) -> dispatcher.execute(operation,
                         result -> {
-                            List<String> items = result.asList().stream()
-                                    .map(ModelNode::asString)
-                                    .filter(value -> SHOW_ALL_VALUE.equals(query) ||
-                                            value.toLowerCase().contains(query.toLowerCase()))
-                                    .collect(toList());
-                            response.response(JsHelper.asJsArray(items));
+                            if (result.isDefined()) {
+                                List<String> items = result.asList().stream()
+                                        .map(ModelNode::asString)
+                                        .filter(value -> SHOW_ALL_VALUE.equals(query) ||
+                                                value.toLowerCase().contains(query.toLowerCase()))
+                                        .collect(toList());
+                                response.response(JsHelper.asJsArray(items));
+                            } else {
+                                response.response(JsArrayOf.create());
+                            }
                         },
                         (op, failure) -> {
                             logger.error(ERROR_MESSAGE, capability, template, failure);

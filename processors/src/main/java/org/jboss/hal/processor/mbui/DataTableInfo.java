@@ -64,14 +64,17 @@ public class DataTableInfo extends MbuiElementInfo {
         private final HandlerRef handlerRef;
         private final String title;
         private final Button.Scope scope;
+        private final String constraint;
         private final String nameResolver;
         private final List<Attribute> attributes;
 
-        public Action(final String handler, final String title, final String scope, final String nameResolver) {
+        public Action(final String handler, final String title, final String scope, final String constraint,
+                final String nameResolver) {
             this.handler = Handlebars.stripHandlebar(handler);
             this.handlerRef = HandlerRef.referenceFor(handler);
             this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
             this.scope = scope != null ? Button.Scope.valueOf(scope.toUpperCase()) : null;
+            this.constraint = constraint;
             this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
             this.attributes = new ArrayList<>();
         }
@@ -94,6 +97,10 @@ public class DataTableInfo extends MbuiElementInfo {
 
         public Button.Scope getScope() {
             return scope;
+        }
+
+        public String getConstraint() {
+            return constraint;
         }
 
         public String getNameResolver() {

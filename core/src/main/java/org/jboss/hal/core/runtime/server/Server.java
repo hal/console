@@ -64,6 +64,20 @@ public class Server extends NamedNode {
         }
     }
 
+    /**
+     * Unique server identifier containing the host and server name.
+     */
+    public String getId() {
+        return Ids.hostServer(getHost(), getName());
+    }
+
+    /**
+     * @return {@code <host-name>}-{@code <server-name>}
+     */
+    public String getFqName() {
+        return getHost() + "-" + getName();
+    }
+
     public boolean isStandalone() {
         return standalone;
     }

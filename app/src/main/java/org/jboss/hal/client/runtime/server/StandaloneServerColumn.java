@@ -43,13 +43,17 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -57,7 +61,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(Ids.STANDALONE_SERVER)
+@Requires(MANAGEMENT_ADDRESS)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
+
+    static final String MANAGEMENT_ADDRESS = "/core-service=management";
+    private static final AddressTemplate MANAGEMENT_TEMPLATE = AddressTemplate.of(MANAGEMENT_ADDRESS);
+
 
     private final Finder finder;
     private FinderPath refreshPath;
@@ -83,7 +92,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                         // Restore pending servers visualization
                         if (serverActions.isPending(Server.STANDALONE)) {
-                            ItemMonitor.startProgress(Ids.server(Server.STANDALONE.getName()));
+                            ItemMonitor.startProgress(Server.STANDALONE.getId());
                         }
                     });
                 })
@@ -91,7 +100,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                 .itemRenderer(item -> new ItemDisplay<Server>() {
                     @Override
                     public String getId() {
-                        return Ids.server(item.getName());
+                        return item.getId();
                     }
 
                     @Override
@@ -114,17 +123,34 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                         List<ItemAction<Server>> actions = new ArrayList<>();
                         if (!serverActions.isPending(item)) {
                             // Order is: reload, restart, (resume | suspend), boot errors
-                            actions.add(new ItemAction<>(resources.constants().reload(), serverActions::reload));
-                            actions.add(new ItemAction<>(resources.constants().restart(), serverActions::restart));
+                            actions.add(new ItemAction.Builder<Server>()
+                                    .title(resources.constants().reload())
+                                    .handler(serverActions::reload)
+                                    .constraint(Constraint.executable(AddressTemplate.ROOT, RELOAD))
+                                    .build());
+                            actions.add(new ItemAction.Builder<Server>()
+                                    .title(resources.constants().restart())
+                                    .handler(serverActions::restart)
+                                    .constraint(Constraint.executable(AddressTemplate.ROOT, SHUTDOWN))
+                                    .build());
                             if (item.isSuspended()) {
-                                actions.add(new ItemAction<>(resources.constants().resume(), serverActions::resume));
+                                actions.add(new ItemAction.Builder<Server>()
+                                        .title(resources.constants().resume())
+                                        .handler(serverActions::resume)
+                                        .constraint(Constraint.executable(AddressTemplate.ROOT, RESUME))
+                                        .build());
                             } else {
-                                actions.add(new ItemAction<>(resources.constants().suspend(), serverActions::suspend));
+                                actions.add(new ItemAction.Builder<Server>()
+                                        .title(resources.constants().suspend())
+                                        .handler(serverActions::suspend)
+                                        .constraint(Constraint.executable(AddressTemplate.ROOT, SUSPEND))
+                                        .build());
                             }
                             if (item.hasBootErrors()) {
                                 PlaceRequest bootErrorsRequest = new PlaceRequest.Builder().nameToken(
                                         NameTokens.SERVER_BOOT_ERRORS).build();
-                                actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest));
+                                actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest,
+                                        Constraint.executable(MANAGEMENT_TEMPLATE, READ_BOOT_ERRORS)));
                             }
                         }
                         return actions;
@@ -149,7 +175,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             refreshPath = finder.getContext().getPath().copy();
-            ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
+            ItemMonitor.startProgress(event.getServer().getId());
             refresh(RESTORE_SELECTION);
         }
     }
@@ -158,9 +184,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     public void onServerResult(final ServerResultEvent event) {
         //noinspection Duplicates
         if (isVisible()) {
-            Server server = event.getServer();
-            String itemId = Ids.server(server.getName());
-            ItemMonitor.stopProgress(itemId);
+            ItemMonitor.stopProgress(event.getServer().getId());
 
             FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
             refreshPath = null;

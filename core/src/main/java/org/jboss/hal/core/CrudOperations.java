@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
@@ -30,6 +31,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -83,7 +85,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class CrudOperations {
 
     /**
-     * Callback used in {@code add} and {@code addSingleton} methods
+     * Callback used in {@code add} methods
      */
     @FunctionalInterface
     public interface AddCallback {
@@ -91,10 +93,25 @@ public class CrudOperations {
         /**
          * Called after the resource has been added.
          *
-         * @param name    the name of the resource, {@code null} for {@code addSingleton} methods.
+         * @param name    the name of the resource
          * @param address the resource address of the newly added resource
          */
         void execute(@Nullable final String name, final ResourceAddress address);
+    }
+
+
+    /**
+     * Callback used in {@code addSingleton} methods
+     */
+    @FunctionalInterface
+    public interface AddSingletonCallback {
+
+        /**
+         * Called after the resource has been added.
+         *
+         * @param address the resource address of the newly added resource
+         */
+        void execute(final ResourceAddress address);
     }
 
 
@@ -273,7 +290,7 @@ public class CrudOperations {
      * @param callback the callback executed after adding the singleton resource
      */
     public void addSingleton(final String id, final String type, final AddressTemplate template,
-            final AddCallback callback) {
+            final AddSingletonCallback callback) {
         addSingleton(id, type, template, Collections.emptyList(), callback);
     }
 
@@ -291,13 +308,26 @@ public class CrudOperations {
      * @param callback   the callback executed after adding the singleton resource
      */
     public void addSingleton(final String id, final String type, final AddressTemplate template,
-            final Iterable<String> attributes, final AddCallback callback) {
+            final Iterable<String> attributes, final AddSingletonCallback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
-                AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle(type),
-                        metadata, attributes, (name, model) -> addSingleton(type, template, model, callback));
-                dialog.show();
+                boolean hasRequiredAttributes = !metadata.getDescription()
+                        .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+                if (hasRequiredAttributes || !Iterables.isEmpty(attributes)) {
+                    // no unbound name item!
+                    ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
+                            .fromRequestProperties()
+                            .requiredOnly();
+                    if (!Iterables.isEmpty(attributes)) {
+                        builder.include(attributes).unsorted();
+                    }
+                    AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
+                            builder.build(), (name, model) -> addSingleton(type, template, model, callback));
+                    dialog.show();
+                } else {
+                    addSingleton(type, template, null, callback);
+                }
             }
         });
     }
@@ -314,7 +344,7 @@ public class CrudOperations {
      *                 singleton resource address for the add operation
      * @param callback the callback executed after adding the singleton resource
      */
-    public void addSingleton(final String type, final AddressTemplate template, final AddCallback callback) {
+    public void addSingleton(final String type, final AddressTemplate template, final AddSingletonCallback callback) {
         addSingleton(type, template.resolve(statementContext), null, callback);
     }
 
@@ -329,7 +359,7 @@ public class CrudOperations {
      * @param callback the callback executed after adding the singleton resource
      */
     public void addSingleton(final String type, final AddressTemplate template, @Nullable final ModelNode payload,
-            final AddCallback callback) {
+            final AddSingletonCallback callback) {
         addSingleton(type, template.resolve(statementContext), payload, callback);
     }
 
@@ -343,7 +373,7 @@ public class CrudOperations {
      * @param callback the callback executed after adding the singleton resource
      */
     public void addSingleton(final String type, final ResourceAddress address, @Nullable final ModelNode payload,
-            final AddCallback callback) {
+            final AddSingletonCallback callback) {
         Operation.Builder builder = new Operation.Builder(ADD, address);
         if (payload != null && payload.isDefined()) {
             builder.payload(payload);
@@ -359,10 +389,10 @@ public class CrudOperations {
      * @param type      the human readable resource type used in the dialog header and success message
      * @param callback  the callback executed after adding the singleton resource
      */
-    public void addSingleton(final String type, final Operation operation, final AddCallback callback) {
+    public void addSingleton(final String type, final Operation operation, final AddSingletonCallback callback) {
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
-            callback.execute(null, operation.getAddress());
+            callback.execute(operation.getAddress());
         });
     }
 
@@ -1079,7 +1109,7 @@ public class CrudOperations {
         Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
                 .map(FormItem::getName)
                 .collect(toSet());
-        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonConfirmationQuestion(),
+        reset(type, null, address, attributes, metadata, resources.messages().resetSingletonSuccess(type),
                 callback);
     }
 

@@ -23,12 +23,14 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -77,25 +79,45 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
             Function<String, String> identifier) {
-        return add(id, type, column -> crud.add(id, type, template, attributes, (name, address) -> {
-            if (name != null) {
-                column.refresh(identifier.apply(name));
+        //noinspection Convert2Lambda
+        return add(id, type, template, new ColumnActionHandler<T>() {
+            @Override
+            public void execute(final FinderColumn<T> column) {
+                crud.add(id, type, template, attributes, (name, address) -> {
+                    if (name != null) {
+                        column.refresh(identifier.apply(name));
+                    }
+                });
             }
-        }));
+        });
     }
 
-    public <T> ColumnAction<T> add(String id, String type, ColumnActionHandler<T> handler) {
-        return add(id, type, pfIcon("add-circle-o"), handler);
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, ColumnActionHandler<T> handler) {
+        return add(id, type, template, pfIcon("add-circle-o"), handler);
     }
 
-    public <T> ColumnAction<T> add(String id, String type, String iconCss, ColumnActionHandler<T> handler) {
-        Element element = new Elements.Builder().span()
+    public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, String iconCss,
+            ColumnActionHandler<T> handler) {
+        ColumnAction.Builder<T> builder = new ColumnAction.Builder<T>(id)
+                .element(addButton(type, iconCss))
+                .handler(handler);
+        if (template != null) {
+            builder.constraint(Constraint.executable(template, ADD));
+        }
+        return builder.build();
+    }
+
+    public Element addButton(String type) {
+        return addButton(type, pfIcon("add-circle-o"));
+    }
+
+    public Element addButton(String type, String iconCss) {
+        return new Elements.Builder().span()
                 .css(iconCss)
                 .title(resources.messages().addResourceTitle(type))
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
                 .end().build();
-        return new ColumnAction<>(id, element, handler);
     }
 
     public <T> ColumnAction<T> refresh(String id) {
@@ -109,6 +131,9 @@ public class ColumnActionFactory {
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
                 .end().build();
-        return new ColumnAction<>(id, element, handler);
+        return new ColumnAction.Builder<T>(id)
+                .element(element)
+                .handler(handler)
+                .build();
     }
 }

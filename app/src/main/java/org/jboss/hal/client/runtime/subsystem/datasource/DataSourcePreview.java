@@ -38,6 +38,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -49,6 +50,10 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * TODO The empty state action to enable statistics makes only sense in standalone mode or w/o RBAC enabled.
+ * TODO Otherwise we'd need to have the metadata to resolve the constraint
+ * TODO "writable(profile=[*]/subsystem=datasources/data-source=*@enabled)"
+ *
  * @author Harald Pehl
  */
 class DataSourcePreview extends PreviewContent<DataSource> {
@@ -90,7 +95,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
                 .description(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
                 .icon(fontAwesome("line-chart"))
-                .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource))
+                .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource),
+                        Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), ENABLED))
                 .build();
 
         needsReloadWarning = new Alert(Icons.WARNING,
@@ -99,7 +105,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .appendEscaped(" ")
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
-                resources.constants().reload(), event -> serverActions.reload(server));
+                resources.constants().reload(), event -> serverActions.reload(server),
+                Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RELOAD));
 
         needsRestartWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
@@ -107,11 +114,13 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .appendEscaped(" ")
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
-                resources.constants().restart(), event -> serverActions.restart(server));
+                resources.constants().restart(), event -> serverActions.restart(server),
+                Constraint.executable(AddressTemplate.of("/{selected.host}/server-config=*"), RESTART));
 
         disabledWarning = new Alert(Icons.WARNING,
                 resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()),
-                resources.constants().enable(), event -> column.enableDataSource(dataSource));
+                resources.constants().enable(), event -> column.enableDataSource(dataSource),
+                Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), STATISTICS_ENABLED));
 
         activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(),
                 environment.isStandalone(), true);
@@ -144,9 +153,9 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         // to prevent flickering we initially hide everything
         Elements.setVisible(noStatistics.asElement(), false);
-        Elements.setVisible(needsReloadWarning.asElement(), false);
-        Elements.setVisible(needsRestartWarning.asElement(), false);
-        Elements.setVisible(disabledWarning.asElement(), false);
+        needsReloadWarning.asElement().getClassList().add(hidden);
+        needsRestartWarning.asElement().getClassList().add(hidden);
+        disabledWarning.asElement().getClassList().add(hidden);
         refresh = previewBuilder().referenceFor(REFRESH_ELEMENT);
         poolHeader = previewBuilder().referenceFor(POOL_HEADER);
         cacheHeader = previewBuilder().referenceFor(CACHE_HEADER);
@@ -185,9 +194,6 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
             boolean statisticsEnabled = dataSource.isStatisticsEnabled();
             Elements.setVisible(noStatistics.asElement(), !statisticsEnabled);
-            Elements.setVisible(needsReloadWarning.asElement(), false);
-            Elements.setVisible(needsRestartWarning.asElement(), false);
-            Elements.setVisible(disabledWarning.asElement(), false);
             Elements.setVisible(refresh, statisticsEnabled);
             Elements.setVisible(poolHeader, statisticsEnabled);
             Elements.setVisible(activeConnections.asElement(), statisticsEnabled);
@@ -196,12 +202,17 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             Elements.setVisible(hitCount.asElement(), statisticsEnabled);
             Elements.setVisible(missCount.asElement(), statisticsEnabled);
 
+            // Do not simply hide the links, but add the hidden CSS class.
+            // Important when constraints for the links are processed later.
+            needsReloadWarning.asElement().getClassList().add(hidden);
+            needsRestartWarning.asElement().getClassList().add(hidden);
+            disabledWarning.asElement().getClassList().add(hidden);
             if (statisticsEnabled) {
                 if (!dataSource.isEnabled()) {
-                    Elements.setVisible(disabledWarning.asElement(), true);
+                    disabledWarning.asElement().getClassList().remove(hidden);
                 } else {
-                    Elements.setVisible(needsReloadWarning.asElement(), server.needsReload());
-                    Elements.setVisible(needsRestartWarning.asElement(), server.needsRestart());
+                    Elements.toggle(needsReloadWarning.asElement(), hidden, !server.needsReload());
+                    Elements.toggle(needsRestartWarning.asElement(), hidden, !server.needsRestart());
                 }
 
                 // pool statistics

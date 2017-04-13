@@ -77,6 +77,7 @@ public interface ModelDescriptionConstants {
     String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
+    String BOOT_TIME = "boot-time";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
     String BROWSE_CONTENT = "browse-content";
@@ -91,6 +92,8 @@ public interface ModelDescriptionConstants {
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
     String CLIENT_CONFIG = "client-config";
+    String CLIENT_MAPPINGS = "client-mappings";
+    String CLONE = "clone";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPONENT = "component";
@@ -107,6 +110,7 @@ public interface ModelDescriptionConstants {
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String COPY = "copy";
     String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CUSTOM = "custom";
@@ -118,6 +122,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_BINDINGS = "default-bindings";
     String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
+    String DEFAULT_INTERFACE = "default-interface";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
@@ -125,6 +130,8 @@ public interface ModelDescriptionConstants {
     String DEPLOYMENT_SCANNER = "deployment-scanner";
     String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
+    String DESTINATION_ADDRESS = "destination-address";
+    String DESTINATION_PORT = "destination-port";
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
@@ -141,13 +148,16 @@ public interface ModelDescriptionConstants {
 
     String EE = "ee";
     String EJB3 = "ejb3";
+    String ELYTRON = "elytron";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
     String EVICTION = "eviction";
+    String EXECUTE = "execute";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
     String EXPIRATION = "expiration";
+    String EXPLODE = "explode";
     String EXPLODED = "exploded";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
@@ -159,6 +169,11 @@ public interface ModelDescriptionConstants {
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILTER_REF = "filter-ref";
+    String FIXED_PORT = "fixed-port";
+    String FLUSH_GRACEFULLY_CONNECTION_IN_POOL = "flush-gracefully-connection-in-pool";
+    String FLUSH_IDLE_CONNECTION_IN_POOL = "flush-idle-connection-in-pool";
+    String FLUSH_INVALID_CONNECTION_IN_POOL = "flush-invalid-connection-in-pool";
+    String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
     String FORK = "fork";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
@@ -176,9 +191,12 @@ public interface ModelDescriptionConstants {
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
+    String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
     String HTTP_CONNECTOR = "http-connector";
+    String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
+    String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";
 
     String ID_COLUMN = "id-column";
@@ -187,17 +205,20 @@ public interface ModelDescriptionConstants {
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
+    String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
     String INCLUDE_ALL = "include-all";
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
+    String INDEX = "index";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
     String INTERFACE = "interface";
     String IO = "io";
 
     String JCA = "jca";
+    String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
     String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
@@ -218,6 +239,7 @@ public interface ModelDescriptionConstants {
     String LIST_REMOVE = "list-remove";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
+    String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";
     String LOCATION = "location";
     String LOCKING = "locking";
     String LOGGING = "logging";
@@ -231,6 +253,8 @@ public interface ModelDescriptionConstants {
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
     String MANAGEMENT = "management";
+    String MANAGEMENT_HTTP = "management-http";
+    String MANAGEMENT_HTTPS = "management-https";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
@@ -248,6 +272,8 @@ public interface ModelDescriptionConstants {
     String MODULE = "module";
     String MODCLUSTER = "modcluster";
     String MODEL_DESCRIPTION = "model-description";
+    String MULTICAST_ADDRESS = "multicast-address";
+    String MULTICAST_PORT = "multicast-port";
 
     String NAME = "name";
     String NILLABLE = "nillable";
@@ -272,6 +298,7 @@ public interface ModelDescriptionConstants {
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
     String PORT = "port";
+    String PORT_OFFSET = "port-offset";
     String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
@@ -293,6 +320,7 @@ public interface ModelDescriptionConstants {
     String QUEUE_LENGTH = "queue-length";
     String QUEUE_NAME = "queue-name";
 
+    String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_BOOT_ERRORS = "read-boot-errors";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -308,6 +336,7 @@ public interface ModelDescriptionConstants {
     String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";
+    String REMOTE_DESTINATION_OUTBOUND_SOCKET_BINDING = "remote-destination-outbound-socket-binding";
     String RELAY = "relay";
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_COMMAND = "remote-command";
@@ -349,6 +378,7 @@ public interface ModelDescriptionConstants {
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
+    //String SECURITY = "security-elytron";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
     String SECURITY_SETTING = "security-setting";
@@ -372,9 +402,11 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_SLAVE = "shared-store-slave";
     String SINCE = "since";
     String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_REF = "socket-binding-ref";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
+    String SOURCE_NETWORK = "source-network";
     String SHUTDOWN = "shutdown";
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";
@@ -393,8 +425,8 @@ public interface ModelDescriptionConstants {
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
     String STORE = "store";
+    String STREAM = "stream";
     String STRING = "string";
-    String STRING_JDBC = "string-jdbc";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
@@ -413,6 +445,7 @@ public interface ModelDescriptionConstants {
     String TIMEOUT = "timeout";
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
+    String TO_PROFILE = "to-profile";
     String TRANSACTION_SUPPORT = "transaction-support";
     String TRANSACTION = "transaction";
     String TRANSACTIONS = "transactions";

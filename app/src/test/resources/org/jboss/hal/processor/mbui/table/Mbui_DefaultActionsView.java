@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -51,14 +52,12 @@ final class Mbui_DefaultActionsView extends DefaultActionsView {
 
         Options<org.jboss.hal.dmr.model.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.model.NamedNode>(metadata0)
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
-                        metadata0Template,
-                        (name, address) -> presenter.reload()))
+                        metadata0Template, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,
-                        (api) -> api.selectedRow().getName(),
-                        () -> presenter.reload()))
+                        (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

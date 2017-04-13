@@ -47,10 +47,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -87,7 +84,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             });
         });
 
-        addColumnAction(columnActionFactory.add(Ids.MAIL_SESSION_ADD, Names.MAIL_SESSION,
+        addColumnAction(columnActionFactory.add(Ids.MAIL_SESSION_ADD, Names.MAIL_SESSION, MAIL_SESSION_TEMPLATE,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(AddressTemplates.MAIL_SESSION_TEMPLATE);
                     AddResourceDialog dialog = new AddResourceDialog(Ids.MAIL_SESSION_DIALOG,
@@ -141,9 +138,8 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                 List<ItemAction<MailSession>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.MAIL_SESSION)
                         .with(NAME, mailSession.getName()).build()));
-                actions.add(itemActionFactory
-                        .remove(Names.MAIL_SESSION, mailSession.getName(), AddressTemplates.MAIL_SESSION_TEMPLATE,
-                                MailSessionColumn.this));
+                actions.add(itemActionFactory.remove(Names.MAIL_SESSION, mailSession.getName(),
+                        AddressTemplates.MAIL_SESSION_TEMPLATE, MailSessionColumn.this));
                 return actions;
             }
         });

@@ -45,7 +45,7 @@ public class StaticItem {
         }
 
         public Builder action(String title, ItemActionHandler<StaticItem> action) {
-            actions.add(new ItemAction<>(title, action));
+            actions.add(new ItemAction.Builder<StaticItem>().title(title).handler(action).build());
             return this;
         }
 

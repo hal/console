@@ -16,4 +16,5 @@
   -->
 <module>
     <source path="wildfly"/>
+    <set-configuration-property name="hal.build" value="community"/>
 </module>

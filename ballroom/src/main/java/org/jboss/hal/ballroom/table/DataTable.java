@@ -36,7 +36,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * Table element which implements the DataTables plugin for jQuery. Using the data table consists of multiple steps:
  * <ol>
- * <li>Create an instance passing an id, a security context and an {@linkplain Options options} instance</li>
+ * <li>Create an instance passing an id and an {@linkplain Options options} instance</li>
  * <li>Call {@link #attach()} <strong>after</strong> the data table element was attached to the DOM</li>
  * <li>Call any of the API methods using the {@link #api()} getter</li>
  * </ol>
@@ -110,7 +110,6 @@ public class DataTable<T> implements IsElement, Attachable {
     @Override
     public void attach() {
         if (api == null) {
-            // TODO check security context and adjust options if necessary
             options.id = id;
             api = Bridge.<T>select("#" + id).dataTable(options);
         }
@@ -175,6 +174,27 @@ public class DataTable<T> implements IsElement, Attachable {
         });
     }
 
+    public void clear() {
+        api().clear();
+    }
+
+    /**
+     * Replaces the existing data with the new one.
+     *
+     * @param data       the new data
+     */
+    public void update(final Iterable<T> data) {
+        update(data, RESET, null);
+    }
+
+    public void update(final Iterable<T> data, final RefreshMode mode) {
+        update(data, mode, null);
+    }
+
+    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+        update(data, RESET, identifier);
+    }
+
     /**
      * Replaces the existing data with the new one. If necessary, restores the current selection based on the specified
      * function.
@@ -183,24 +203,26 @@ public class DataTable<T> implements IsElement, Attachable {
      * @param identifier a function which must return an unique identifier for a given row. Used to restore the
      *                   selection after replacing the data.
      */
-    public void update(final Iterable<T> data, final Function<T, String> identifier) {
+    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
-        api().clear().add(data).refresh(RESET);
-        if (!selection.isEmpty()) {
-            RowSelection<T> rows = (index, d1, tr) -> {
-                if (d1 != null) {
-                    String id1 = identifier.apply(d1);
-                    return selection.stream().anyMatch(d2 -> {
-                        if (d2 != null) {
-                            String id2 = identifier.apply(d2);
-                            return id1.equals(id2);
-                        }
-                        return false;
-                    });
-                }
-                return false;
-            };
-            api().rows(rows).select();
+        api().clear().add(data).refresh(mode);
+        if (identifier != null) {
+            if (!selection.isEmpty()) {
+                RowSelection<T> rows = (index, d1, tr) -> {
+                    if (d1 != null) {
+                        String id1 = identifier.apply(d1);
+                        return selection.stream().anyMatch(d2 -> {
+                            if (d2 != null) {
+                                String id2 = identifier.apply(d2);
+                                return id1.equals(id2);
+                            }
+                            return false;
+                        });
+                    }
+                    return false;
+                };
+                api().rows(rows).select();
+            }
         }
     }
 

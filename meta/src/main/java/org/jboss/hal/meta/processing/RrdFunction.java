@@ -15,19 +15,14 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.Set;
-
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,21 +34,19 @@ class RrdFunction implements Function<FunctionContext> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
-    private final MetadataRegistry metadataRegistry;
-    private final SecurityFramework securityFramework;
-    private final ResourceDescriptions resourceDescriptions;
-    private final Capabilities capabilities;
+    private final SecurityContextRegistry securityContextRegistry;
+    private final ResourceDescriptionRegistry resourceDescriptionRegistry;
     private final Dispatcher dispatcher;
     private final Composite composite;
     private final boolean optional;
 
-    RrdFunction(final MetadataRegistry metadataRegistry, final SecurityFramework securityFramework,
-            final ResourceDescriptions resourceDescriptions, final Capabilities capabilities,
-            final Dispatcher dispatcher, final Composite composite, final boolean optional) {
-        this.metadataRegistry = metadataRegistry;
-        this.securityFramework = securityFramework;
-        this.resourceDescriptions = resourceDescriptions;
-        this.capabilities = capabilities;
+    RrdFunction(final SecurityContextRegistry securityContextRegistry,
+            final ResourceDescriptionRegistry resourceDescriptionRegistry,
+            final Dispatcher dispatcher,
+            final Composite composite,
+            final boolean optional) {
+        this.securityContextRegistry = securityContextRegistry;
+        this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.dispatcher = dispatcher;
         this.composite = composite;
         this.optional = optional;
@@ -64,22 +57,15 @@ class RrdFunction implements Function<FunctionContext> {
         dispatcher.executeInFunction(control, composite,
                 (CompositeResult compositeResult) -> {
                     try {
-                        Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
-                        for (RrdResult rr : results) {
-                            if (rr.securityContext != null) {
-                                logger.debug("Add security context for {}", rr.template);
-                                securityFramework.add(rr.address, rr.securityContext);
-                            }
-                            if (rr.resourceDescription != null) {
-                                logger.debug("Add resource description for {}", rr.template);
-                                resourceDescriptions.add(rr.address, rr.resourceDescription);
-                            }
-                            if (rr.resourceDescription != null && rr.securityContext != null) {
-                                logger.debug("Add metadata for {}", rr.template);
-                                metadataRegistry.add(rr.address, new Metadata(rr.template, rr.securityContext,
-                                        rr.resourceDescription, capabilities));
-                            }
-                        }
+                        RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
+                        rrdResult.securityContexts.forEach((address, securityContext) -> {
+                            logger.debug("Add security context for {}", address);
+                            securityContextRegistry.add(address, securityContext);
+                        });
+                        rrdResult.resourceDescriptions.forEach((address, resourceDescription) -> {
+                            logger.debug("Add resource description for {}", address);
+                            resourceDescriptionRegistry.add(address, resourceDescription);
+                        });
                         control.proceed();
                     } catch (ParserException e) {
                         control.getContext().failed(e);

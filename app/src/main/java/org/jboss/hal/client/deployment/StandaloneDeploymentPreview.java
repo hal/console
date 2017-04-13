@@ -19,12 +19,16 @@ import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 
 /**
  * @author Harald Pehl
@@ -42,18 +46,22 @@ class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
             previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(deployment.getName())));
         } else if (deployment.getStatus() == Status.STOPPED) {
             previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(deployment.getName()),
-                    resources.constants().enable(), event -> column.enable(deployment)));
+                    resources.constants().enable(), event -> column.enable(deployment),
+                    Constraint.executable(DEPLOYMENT_TEMPLATE, DEPLOY)));
         } else if (deployment.getStatus() == Status.OK) {
             previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentActive(deployment.getName()),
-                    resources.constants().disable(), event -> column.disable(deployment)));
+                    resources.constants().disable(), event -> column.disable(deployment),
+                    Constraint.executable(DEPLOYMENT_TEMPLATE, UNDEPLOY)));
         } else {
             if (deployment.isEnabled()) {
                 previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(deployment.getName()),
-                        resources.constants().disable(), event -> column.disable(deployment)));
+                        resources.constants().disable(), event -> column.disable(deployment),
+                        Constraint.executable(DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             } else {
                 previewBuilder()
                         .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(deployment.getName()),
-                                resources.constants().enable(), event -> column.enable(deployment)));
+                                resources.constants().enable(), event -> column.enable(deployment),
+                                Constraint.executable(DEPLOYMENT_TEMPLATE, DEPLOY)));
             }
         }
 

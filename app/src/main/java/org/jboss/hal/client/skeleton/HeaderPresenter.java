@@ -26,10 +26,16 @@ import elemental.dom.Element;
 import elemental.html.Location;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.RolesChangedEvent;
+import org.jboss.hal.config.RolesChangedEvent.RolesChangedHandler;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
+import org.jboss.hal.config.UserChangedEvent;
+import org.jboss.hal.config.UserChangedEvent.UserChangedHandler;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
@@ -66,6 +72,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
+
 /**
  * Presenter which controls the header. The header is a central UI element in HAL showing global state such as
  * reload state, messages or the current user. Additionally it contains the navigation which is either the top level
@@ -99,11 +107,12 @@ import org.jboss.hal.spi.MessageEvent.MessageHandler;
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
         MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,
         HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler,
-        ProcessStateHandler, IsElement {
+        ProcessStateHandler, UserChangedHandler, RolesChangedHandler, IsElement {
 
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
-        void init(Environment environment, Endpoints endpoints, User user);
+        void init(Environment environment, Endpoints endpoints, Settings settings, User user);
+        void updateRoles(Environment environment, Settings settings, User user);
 
         void topLevelCategoryMode();
         void applicationMode();
@@ -137,6 +146,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private final Places places;
     private final Environment environment;
     private final Endpoints endpoints;
+    private final Settings settings;
     private final User user;
     private final ServerActions serverActions;
     private final Resources resources;
@@ -153,6 +163,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             final Places places,
             final Environment environment,
             final Endpoints endpoints,
+            final Settings settings,
             final User user,
             final ServerActions serverActions,
             final Resources resources) {
@@ -161,6 +172,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         this.places = places;
         this.environment = environment;
         this.endpoints = endpoints;
+        this.settings = settings;
         this.user = user;
         this.serverActions = serverActions;
         this.resources = resources;
@@ -175,7 +187,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getView().init(environment, endpoints, user);
+        getView().init(environment, endpoints, settings, user);
 
         registerHandler(getEventBus().addHandler(ProcessStateEvent.getType(), this));
         registerHandler(getEventBus().addHandler(HostResultEvent.getType(), this));
@@ -186,6 +198,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         registerHandler(getEventBus().addHandler(HeaderModeEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(UserChangedEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(RolesChangedEvent.getType(), this));
     }
 
     @Override
@@ -348,6 +362,35 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     FinderContext lastFinderContext() {
         return lastFinderContext;
+    }
+
+
+    // ------------------------------------------------------ user & roles
+
+    @Override
+    public void onUserChanged(final UserChangedEvent event) {
+        getView().updateRoles(environment, settings, user);
+    }
+
+    @Override
+    public void onRolesChanged(final RolesChangedEvent event) {
+        getView().updateRoles(environment, settings, user);
+    }
+
+    void runAs(final String role) {
+        DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
+                resources.messages().reloadSettings(), () -> {
+                    settings.set(RUN_AS, role);
+                    Browser.getWindow().getLocation().reload();
+                });
+    }
+
+    void clearRunAs() {
+        DialogFactory.showConfirmation(resources.constants().clearRunAsTitle(),
+                resources.messages().reloadSettings(), () -> {
+                    settings.set(RUN_AS, null);
+                    Browser.getWindow().getLocation().reload();
+                });
     }
 
 

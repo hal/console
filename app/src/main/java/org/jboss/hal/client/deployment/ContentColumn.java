@@ -21,8 +21,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -68,6 +68,9 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -82,6 +85,8 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
+import static org.jboss.hal.client.deployment.ContentColumn.ROOT_ADDRESS;
+import static org.jboss.hal.client.deployment.ContentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
@@ -97,11 +102,16 @@ import static org.jboss.hal.spi.MessageEvent.fire;
  * @author Harald Pehl
  */
 @Column(Ids.CONTENT)
-@Requires(CONTENT_ADDRESS)
+@Requires(value = {ROOT_ADDRESS, CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
 public class ContentColumn extends FinderColumn<Content> {
 
+    static final String ROOT_ADDRESS = "/";
     static final String CONTENT_ADDRESS = "/deployment=*";
+    static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";
+
     static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of(CONTENT_ADDRESS);
+    private static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate.of(
+            SERVER_GROUP_DEPLOYMENT_ADDRESS);
 
     private final Environment environment;
     private final Dispatcher dispatcher;
@@ -117,10 +127,10 @@ public class ContentColumn extends FinderColumn<Content> {
             final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final PlaceManager placeManager,
             final Places places,
             @Footer final Provider<Progress> progress,
             final MetadataRegistry metadataRegistry,
+            final SecurityContextRegistry securityContextRegistry,
             final Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
@@ -155,10 +165,16 @@ public class ContentColumn extends FinderColumn<Content> {
         this.resources = resources;
 
         List<ColumnAction<Content>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD, resources.constants().uploadContent(),
-                column -> uploadContent()));
-        addActions.add(new ColumnAction<>(Ids.CONTENT_UNMANAGED_ADD,
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), column -> addUnmanaged()));
+        addActions.add(new ColumnAction.Builder<Content>(Ids.CONTENT_ADD)
+                .title(resources.constants().uploadContent())
+                .handler(column -> uploadContent())
+                .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<Content>(Ids.CONTENT_UNMANAGED_ADD)
+                .title(resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT))
+                .handler(column -> addUnmanaged())
+                .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
+                .build());
         addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
         setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
@@ -210,27 +226,56 @@ public class ContentColumn extends FinderColumn<Content> {
                         .with(CONTENT, item.getName()).build()));
                 if (ManagementModel.supportsExplodeDeployment(environment.getManagementVersion())
                         && item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
-                    actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
+                    actions.add(new ItemAction.Builder<Content>()
+                            .title(resources.constants().explode())
+                            .handler(itm -> explode(itm))
+                            .constraint(Constraint.executable(CONTENT_TEMPLATE, EXPLODE))
+                            .build());
                 }
-                actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
+                actions.add(new ItemAction.Builder<Content>()
+                        .title(resources.constants().deploy())
+                        .handler(itm -> deploy(itm))
+                        .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))
+                        .build());
                 if (item.isManaged()) {
-                    actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
+                    actions.add(new ItemAction.Builder<Content>()
+                            .title(resources.constants().replace())
+                            .handler(itm -> replace(itm))
+                            .constraint(Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT))
+                            .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
+                            .build());
                 }
                 if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
                     Operation operation = new Operation.Builder(READ_CONTENT, address).build();
-                    actions.add(new ItemAction<>(resources.constants().download(), dispatcher.downloadUrl(operation)));
+                    actions.add(new ItemAction.Builder<Content>()
+                            .title(resources.constants().download())
+                            .href(dispatcher.downloadUrl(operation))
+                            .constraint(Constraint.executable(CONTENT_TEMPLATE, READ_CONTENT))
+                            .build());
                 }
                 if (item.getServerGroupDeployments().isEmpty()) {
-                    actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
+                    actions.add(new ItemAction.Builder<Content>()
+                            .title(resources.constants().remove())
+                            .handler(itm -> remove(itm))
+                            .constraint(Constraint.executable(CONTENT_TEMPLATE, REMOVE))
+                            .build());
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().undeploy(), itm -> undeploy(itm)));
+                    actions.add(new ItemAction.Builder<Content>()
+                            .title(resources.constants().undeploy())
+                            .handler(itm -> undeploy(itm))
+                            .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, REMOVE))
+                            .build());
                 }
                 return actions;
             }
         });
 
-        if (JsHelper.supportsAdvancedUpload()) {
+        Set<Constraint> deployConstraints = Sets.newHashSet(
+                Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT),
+                Constraint.executable(CONTENT_TEMPLATE, ADD));
+        if (JsHelper.supportsAdvancedUpload() &&
+                AuthorisationDecision.strict(environment, securityContextRegistry).isAllowed(deployConstraints)) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources));
         }
@@ -336,7 +381,7 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     private void explode(Content content) {
-        Operation operation = new Operation.Builder("explode", contentAddress(content)).build();
+        Operation operation = new Operation.Builder(EXPLODE, contentAddress(content)).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent

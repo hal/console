@@ -15,77 +15,43 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
  */
 class RrdResult {
 
-    final AddressTemplate template;
-    final ResourceAddress address;
-    ResourceDescription resourceDescription;
-    SecurityContext securityContext;
+    final Map<ResourceAddress, ResourceDescription> resourceDescriptions;
+    final Map<ResourceAddress, SecurityContext> securityContexts;
 
-    RrdResult(final ResourceAddress address) {
-        this.address = address;
-        if (address.size() == 1) {
-            // do not replace "/profile=*" with "{selected.profile}"
-            this.template = AddressTemplate.of(address.lastName() + "=*");
-        } else {
-            // but replace "/profile=*/foo=bar" with "{selected.profile}/foo=*"
-            this.template = AddressTemplate.of(address, (name, value, first, last, index) -> {
-                String segment;
+    RrdResult() {
+        resourceDescriptions = new HashMap<>();
+        securityContexts = new HashMap<>();
+    }
 
-                if (first && last) {
-                    segment = name + "=*";
-                } else {
-                    switch (name) {
-                        case PROFILE:
-                            segment = SELECTED_PROFILE.variable();
-                            break;
-                        case SERVER_GROUP:
-                            segment = SELECTED_GROUP.variable();
-                            break;
-                        case SUBSYSTEM:
-                            segment = SUBSYSTEM + "=" + value;
-                            break;
-                        default:
-                            segment = name + "=" + (last ? "*" : value);
-                            break;
-                    }
-                }
-                return segment;
-            });
+    boolean containsResourceDescription(ResourceAddress address) {
+        return resourceDescriptions.containsKey(address);
+    }
+
+    void addResourceDescription(ResourceAddress address, ResourceDescription resourceDescription) {
+        if (!containsResourceDescription(address)) {
+            resourceDescriptions.put(address, resourceDescription);
         }
     }
 
-    boolean isDefined() {
-        return resourceDescription != null || securityContext != null;
+    boolean containsSecurityContext(ResourceAddress address) {
+        return securityContexts.containsKey(address);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof RrdResult)) { return false; }
-
-        RrdResult rrdResult = (RrdResult) o;
-
-        return address.equals(rrdResult.address);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return address.hashCode();
+    void addSecurityContext(ResourceAddress address, SecurityContext securityContext) {
+        if (!containsSecurityContext(address)) {
+            securityContexts.put(address, securityContext);
+        }
     }
 }

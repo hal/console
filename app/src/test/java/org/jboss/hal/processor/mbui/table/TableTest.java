@@ -56,6 +56,24 @@ public class TableTest extends MbuiViewProcessorTest {
     }
 
     @Test
+    public void addConstraintAction() {
+        Compilation compilation = compile("AddConstraintActionView");
+        assertSourceEquals(compilation, "Mbui_AddConstraintActionView");
+    }
+
+    @Test
+    public void removeConstraintAction() {
+        Compilation compilation = compile("RemoveConstraintActionView");
+        assertSourceEquals(compilation, "Mbui_RemoveConstraintActionView");
+    }
+
+    @Test
+    public void customConstraintAction() {
+        Compilation compilation = compile("CustomConstraintActionView");
+        assertSourceEquals(compilation, "Mbui_CustomConstraintActionView");
+    }
+
+    @Test
     public void customColumn() {
         Compilation compilation = compile("CustomColumnView");
         assertSourceEquals(compilation, "Mbui_CustomColumnView");

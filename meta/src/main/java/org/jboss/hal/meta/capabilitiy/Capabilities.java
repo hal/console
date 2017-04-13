@@ -54,7 +54,9 @@ public class Capabilities {
         return Collections.emptyList();
     }
 
-    public boolean contains(final String name) {return registry.containsKey(name);}
+    public boolean contains(final String name) {
+        return registry.containsKey(name);
+    }
 
     public void register(final String name, final AddressTemplate first, final AddressTemplate... rest) {
         safeGet(name).addTemplate(first);

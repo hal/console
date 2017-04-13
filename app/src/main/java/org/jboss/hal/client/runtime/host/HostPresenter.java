@@ -23,7 +23,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import elemental.client.Browser;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -36,16 +39,12 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -77,17 +76,17 @@ public class HostPresenter
         void updateHost(Host host);
         void updateInterfaces(List<NamedNode> interfaces);
         void updateJvms(List<NamedNode> interfaces);
-        void updatePaths(List<NamedNode> interfaces);
-        void updateSocketBindingGroups(List<NamedNode> interfaces);
-        void updateSystemProperties(List<NamedNode> interfaces);
+        void updatePaths(List<NamedNode> paths);
+        void updateSocketBindingGroups(List<NamedNode> groups);
+        void updateSystemProperties(List<NamedNode> properties);
     }
     // @formatter:on
 
 
     private final FinderPathFactory finderPathFactory;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
+    private final CrudOperations crud;
     private final Resources resources;
 
     @Inject
@@ -96,15 +95,15 @@ public class HostPresenter
             final HostPresenter.MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
+            final CrudOperations crud,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.crud = crud;
         this.resources = resources;
     }
 
@@ -164,25 +163,14 @@ public class HostPresenter
     }
 
     void saveHost(Form<Host> form, Map<String, Object> changedValues) {
-        AddressTemplate template = AddressTemplate.of(HOST_ADDRESS);
-        if (changedValues.containsKey(NAME)) {
-            String newHost = String.valueOf(changedValues.get(NAME));
-            if (!newHost.equals(form.getModel().getName())) {
-                // If the host name has changed, we need to update the metadata registry:
-                // Copy the metadata of the existing (old) host name, so that also the metadata for the new host name will
-                // be found.
-                Metadata metadata = metadataRegistry.lookup(template);
-                metadataRegistry.add(new ResourceAddress().add(HOST, newHost), metadata);
-            }
-        }
-
-        ResourceAddress address = template.resolve(statementContext);
-        Metadata metadata = metadataRegistry.lookup(template);
-        Composite composite = new OperationFactory().fromChangeSet(address, changedValues, metadata);
-        dispatcher.execute(composite, (CompositeResult result) -> {
+        boolean hostNameChanged = changedValues.containsKey(NAME);
+        crud.save(Names.HOST, form.getModel().getName(), AddressTemplate.of(HOST_ADDRESS), changedValues, () -> {
             reload();
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifySingleResourceSuccess("Host Configuration"))); //NON-NLS
+            if (hostNameChanged) {
+                DialogFactory.showConfirmation(resources.constants().hostNameChanged(),
+                        resources.messages().hostNameChanged(),
+                        () -> Browser.getWindow().getLocation().reload());
+            }
         });
     }
 }

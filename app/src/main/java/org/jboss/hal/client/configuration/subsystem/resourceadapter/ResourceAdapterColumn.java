@@ -49,6 +49,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -58,7 +59,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.RESOURCE_ADAPTER)
-@Requires(AddressTemplates.RESOURCE_ADAPTER_ADDRESS)
+@Requires(RESOURCE_ADAPTER_ADDRESS)
 public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
 
     @Inject
@@ -72,14 +73,13 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
 
         super(new Builder<ResourceAdapter>(finder, Ids.RESOURCE_ADAPTER, Names.RESOURCE_ADAPTER)
 
-                .itemsProvider((context, callback) -> {
-                    crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER, children -> {
-                        List<ResourceAdapter> resourceAdapters = children.stream()
-                                .map(ResourceAdapter::new)
-                                .collect(toList());
-                        callback.onSuccess(resourceAdapters);
-                    });
-                })
+                .itemsProvider((context, callback) ->
+                        crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER, children -> {
+                            List<ResourceAdapter> resourceAdapters = children.stream()
+                                    .map(ResourceAdapter::new)
+                                    .collect(toList());
+                            callback.onSuccess(resourceAdapters);
+                        }))
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
@@ -89,6 +89,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
         addColumnAction(columnActionFactory.add(
                 Ids.RESOURCE_ADAPTER_ADD,
                 Names.RESOURCE_ADAPTER,
+                RESOURCE_ADAPTER_TEMPLATE,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(RESOURCE_ADAPTER_TEMPLATE);
                     ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
@@ -165,10 +166,8 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                 List<ItemAction<ResourceAdapter>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.RESOURCE_ADAPTER)
                         .with(NAME, item.getName()).build()));
-                actions.add(itemActionFactory
-                        .remove(Names.RESOURCE_ADAPTER, item.getName(),
-                                AddressTemplates.RESOURCE_ADAPTER_TEMPLATE,
-                                ResourceAdapterColumn.this));
+                actions.add(itemActionFactory.remove(Names.RESOURCE_ADAPTER, item.getName(),
+                        AddressTemplates.RESOURCE_ADAPTER_TEMPLATE, ResourceAdapterColumn.this));
                 return actions;
             }
         });

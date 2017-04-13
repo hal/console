@@ -66,6 +66,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseTemplate();
     String clear();
     String clearMessages();
+    String clearRunAs();
+    String clearRunAsTitle();
+    String clone();
+    String cloneProfile();
     String close();
     String closed();
     String committed();
@@ -221,6 +225,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
+    String hostNameChanged();
     String hostsUsingThisFilter();
     String hostsUsingThisHandler();
     String hostScopedRole();
@@ -353,6 +358,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String review();
     String role();
     String roles();
+    String runAs();
+    String runAsRoleTitle();
     String running();
 
     String sameOrigin();

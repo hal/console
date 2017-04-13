@@ -24,8 +24,6 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.form.Form.State;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -57,13 +55,13 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @author Harald Pehl
  */
-class FormLinks<T> implements IsElement {
+public class FormLinks<T> implements IsElement {
 
     private static final String LINKS = "links";
     private static final String HELP_CONTENT = "helpContent";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private final StateMachine stateMachine;
+    private final AbstractForm<T> form;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
 
     private final Element root;
@@ -72,22 +70,22 @@ class FormLinks<T> implements IsElement {
     private Element removeLink;
     private Element helpLink;
 
-    FormLinks(final String formId,
+    FormLinks(final AbstractForm<T> form,
             final StateMachine stateMachine,
             final LinkedHashMap<String, SafeHtml> helpTexts,
             final EventListener onEdit,
             final EventListener onReset,
             final EventListener onRemove) {
+        this.form = form;
 
-        this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
-        String linksId = Ids.build(formId, LINKS);
-        String helpId = Ids.build(formId, "help");
+        String linksId = Ids.build(form.getId(), LINKS);
+        String helpId = Ids.build(form.getId(), "help");
 
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-            .div().css(form, formHorizontal)
+            .div().css(CSS.form, formHorizontal)
                 .ul().id(linksId).css(formLinks, clearfix).rememberAs(LINKS).end()
                 .div().id(helpId).css(formHelpContent, collapse)
                     .div().rememberAs(HELP_CONTENT).end()
@@ -171,35 +169,31 @@ class FormLinks<T> implements IsElement {
         return root;
     }
 
-    void switchTo(State state, T model, SecurityContext securityContext) {
-        switch (state) {
-            case EMPTY:
-                Elements.setVisible(editLink, false);
-                Elements.setVisible(resetLink, false);
-                Elements.setVisible(removeLink, false);
-                Elements.setVisible(helpLink, false);
-                break;
+    public void setVisible(boolean edit, boolean reset, boolean remove, boolean help) {
+        Elements.setVisible(editLink, edit);
+        Elements.setVisible(resetLink, reset);
+        Elements.setVisible(removeLink, remove);
+        Elements.setVisible(helpLink, help && !helpTexts.isEmpty());
 
-            case READONLY:
-                Elements.setVisible(editLink,
-                        model != null && stateMachine.supports(EDIT) && securityContext.isWritable());
-                Elements.setVisible(resetLink,
-                        model != null && stateMachine.supports(RESET) && securityContext.isWritable());
-                Elements.setVisible(removeLink,
-                        model != null && stateMachine.supports(REMOVE) && securityContext.isWritable());
-                Elements.setVisible(helpLink, !helpTexts.isEmpty());
-                break;
-
-            case EDITING:
-                Elements.setVisible(editLink, false);
-                Elements.setVisible(resetLink, false);
-                Elements.setVisible(removeLink, false);
-                Elements.setVisible(helpLink, !helpTexts.isEmpty());
-                break;
-        }
         Elements.setVisible(root, Elements.isVisible(editLink) ||
                 Elements.isVisible(resetLink) ||
                 Elements.isVisible(removeLink) ||
                 Elements.isVisible(helpLink));
+    }
+
+    public void setVisible(Form.Operation operation, boolean visible) {
+        switch (operation) {
+            case EDIT:
+                Elements.setVisible(editLink, visible);
+                break;
+            case RESET:
+                Elements.setVisible(resetLink, visible);
+                break;
+            case REMOVE:
+                Elements.setVisible(removeLink, visible);
+                break;
+            default:
+                break;
+        }
     }
 }

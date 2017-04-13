@@ -31,6 +31,8 @@ public interface Environment {
      */
     Version getHalVersion();
 
+    Build getHalBuild();
+
     /**
      * The configured locales in the GWT module.
      *
@@ -63,4 +65,6 @@ public interface Environment {
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
     boolean isSingleSignOn();
+
+    Roles getRoles();
 }

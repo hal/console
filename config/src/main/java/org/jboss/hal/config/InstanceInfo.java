@@ -15,14 +15,12 @@
  */
 package org.jboss.hal.config;
 
+import org.jboss.hal.resources.Names;
+
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-public enum InstanceInfo {
-
-    WILDFLY("WildFly", "n/a", "WildFly", "na/", "n/a"),
-    EAP("JBoss EAP", "n/a", "n/a", "EAP", "n/a");
+public class InstanceInfo {
 
     private String productName;
     private String productVersion;
@@ -30,14 +28,12 @@ public enum InstanceInfo {
     private String releaseVersion;
     private String serverName;
 
-    InstanceInfo(final String productName, final String productVersion,
-            final String releaseName, final String releaseVersion,
-            final String serverName) {
-        this.productName = productName;
-        this.productVersion = productVersion;
-        this.releaseName = releaseName;
-        this.releaseVersion = releaseVersion;
-        this.serverName = serverName;
+    InstanceInfo() {
+        this.productName = Names.NOT_AVAILABLE;
+        this.productVersion = Names.NOT_AVAILABLE;
+        this.releaseName = Names.NOT_AVAILABLE;
+        this.releaseVersion = Names.NOT_AVAILABLE;
+        this.serverName = Names.NOT_AVAILABLE;
     }
 
     public String productName() {

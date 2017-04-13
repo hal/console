@@ -26,6 +26,9 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
+import org.jboss.hal.core.Core;
+import org.jboss.hal.core.expression.Expression;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
@@ -33,13 +36,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.hal.resources.CSS.key;
-import static org.jboss.hal.resources.CSS.listGroup;
-import static org.jboss.hal.resources.CSS.listGroupItem;
-import static org.jboss.hal.resources.CSS.value;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * Element to show the basic attributes of a resource inside the preview pane.
+ * TODO Apply constraints to attributes?
  *
  * @author Harald Pehl
  */
@@ -90,6 +92,10 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
         private boolean isUndefined() {
             return value == null && htmlValue == null;
+        }
+
+        private boolean isExpression() {
+            return Expression.isExpression(value);
         }
     }
 
@@ -191,9 +197,22 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                 else if (previewAttribute.htmlValue != null) {
                     builder.innerHtml(previewAttribute.htmlValue);
                 } else {
+                    if (previewAttribute.isExpression()) {
+                        builder.span();
+                    }
                     builder.textContent(previewAttribute.value);
                     if (previewAttribute.value.length() > 15) {
                         builder.title(previewAttribute.value);
+                    }
+                    if (previewAttribute.isExpression()) {
+                        builder.end();
+                        builder.span()
+                                .css(fontAwesome("link"), clickable, marginLeft5)
+                                .title(CONSTANTS.resolveExpression())
+                                .on(click, event ->
+                                        Core.INSTANCE.eventBus().fireEvent(
+                                                new ResolveExpressionEvent(previewAttribute.value)))
+                                .end();
                     }
                 }
                 builder.end();

@@ -47,6 +47,8 @@ class AccessControlPreview extends PreviewContent<Void> {
         previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
         Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
         Previews.innerHtml(content, resources.previews().rbacOverview());
+
+        update(null);
     }
 
     @Override

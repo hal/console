@@ -22,14 +22,18 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.hidden;
 
 /**
  * @author Harald Pehl
@@ -57,10 +61,12 @@ class HostPreview extends RuntimePreview<Host> {
                 .span().textContent(" ").end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
                     .on(click, event -> hostActions.reload(host))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
                     .on(click, event -> hostActions.restart(host))
+                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
                     .textContent(resources.constants().restart())
                 .end()
             .end();
@@ -105,8 +111,11 @@ class HostPreview extends RuntimePreview<Host> {
             unknown(resources.messages().hostUndefined(host.getName()));
         }
 
-        Elements.setVisible(reloadLink, host.needsReload());
-        Elements.setVisible(restartLink, host.needsRestart());
+        // Do not simply hide the links, but add the hidden CSS class.
+        // Important when constraints for the links are processed later.
+        Elements.toggle(reloadLink, hidden, !host.needsReload());
+        Elements.toggle(restartLink, hidden, !host.needsRestart());
+
         attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }
 }

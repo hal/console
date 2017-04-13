@@ -59,7 +59,7 @@ public class ServerPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(value = SERVER_ADDRESS)
+    @Requires(SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER) // TODO Add recursive = false once WFCORE-2022 is resolved
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 

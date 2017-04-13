@@ -29,7 +29,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-class Buttons<T> {
+public class Buttons<T> {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Dom {

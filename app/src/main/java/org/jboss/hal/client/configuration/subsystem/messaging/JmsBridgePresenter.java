@@ -60,7 +60,7 @@ public class JmsBridgePresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.JMS_BRIDGE)
-    @Requires(value = JMS_BRIDGE_ADDRESS)
+    @Requires(JMS_BRIDGE_ADDRESS)
     public interface MyProxy extends ProxyPlace<JmsBridgePresenter> {}
 
     public interface MyView extends MbuiView<JmsBridgePresenter> {

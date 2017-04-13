@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -44,9 +42,9 @@ class CompositeRrdParser {
         this.composite = composite;
     }
 
-    public Set<RrdResult> parse(CompositeResult compositeResult) throws ParserException {
+    public RrdResult parse(CompositeResult compositeResult) throws ParserException {
         int index = 0;
-        Set<RrdResult> overallResults = new HashSet<>();
+        RrdResult rrdResult = new RrdResult();
 
         for (ModelNode step : compositeResult) {
             if (step.isFailure()) {
@@ -65,21 +63,19 @@ class CompositeRrdParser {
                         ResourceAddress resultAddress = new ResourceAddress(modelNode.get(ADDRESS));
                         ResourceAddress resolvedAddress = adjustAddress(operationAddress, resultAddress);
 
-                        Set<RrdResult> results = new SingleRrdParser().parse(resolvedAddress, result);
-                        overallResults.addAll(results);
+                        new SingleRrdParser(rrdResult).parse(resolvedAddress, result);
                     }
                 }
 
             } else {
                 // a single rrd result
                 ResourceAddress address = operationAddress(index);
-                Set<RrdResult> results = new SingleRrdParser().parse(address, stepResult);
-                overallResults.addAll(results);
+                new SingleRrdParser(rrdResult).parse(address, stepResult);
             }
             index++;
         }
 
-        return overallResults;
+        return rrdResult;
     }
 
     private ResourceAddress operationAddress(int index) {
@@ -91,14 +87,15 @@ class CompositeRrdParser {
         return new ResourceAddress(operation.get(ADDRESS));
     }
 
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
-        // For wildcard rrd operations against running servers like /host=master/server=server-one/interfaces=*
-        // the result does *not* contain fully qualified addresses. But since we need fq addresses in the
-        // registries this method fixes this corner case.
-
         ResourceAddress resolved = resultAddress;
         List<Property> operationSegments = operationAddress.asPropertyList();
         List<Property> resultSegments = resultAddress.asPropertyList();
+
+        // For wildcard rrd operations against running servers like /host=master/server=server-one/interface=*
+        // the result does *not* contain absolute addresses. But since we need them in the registries,
+        // this method fixes this corner case.
         if (operationSegments.size() > 2 &&
                 operationSegments.size() == resultSegments.size() + 2 &&
                 HOST.equals(operationSegments.get(0).getName()) &&

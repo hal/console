@@ -22,11 +22,11 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -48,18 +48,19 @@ public class GenericElement implements IsElement, Attachable, HasPresenter<JGrou
     private Element section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    GenericElement(final Metadata metadata, final Resources resources, AddressTemplate template,
-            String name, String resourceId) {
+    GenericElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
+            final Resources resources,
+            AddressTemplate template, String name, String resourceId) {
         this.resources = resources;
 
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter
-                        .addResourceDialog(template, Ids.build(resourceId, Ids.ADD_SUFFIX, Ids.FORM_SUFFIX), name))
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeResource(template, api.selectedRow().getName(), name))
+                .button(tableButtonFactory.add(template, (event, api) -> presenter.addResourceDialog(template,
+                        Ids.build(resourceId, Ids.ADD_SUFFIX, Ids.FORM_SUFFIX), name)))
+                .button(tableButtonFactory.remove(template,
+                        (event, api) -> presenter.removeResource(template, api.selectedRow().getName(), name)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(resourceId, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(resourceId, Ids.TABLE_SUFFIX), metadata, options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
                         .saveResource(template, table.api().selectedRow().getName(), changedValues, metadata,

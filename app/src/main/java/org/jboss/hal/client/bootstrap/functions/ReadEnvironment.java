@@ -43,6 +43,7 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.OperationMode;
+import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.server.Server;
@@ -122,7 +123,7 @@ public class ReadEnvironment implements BootstrapFunction {
                         List<ModelNode> roles = whoami.get("mapped-roles").asList();
                         for (ModelNode role : roles) {
                             String roleName = role.asString();
-                            user.addRole(roleName);
+                            user.addRole(new Role(roleName));
                         }
                     }
 

@@ -67,7 +67,7 @@ public class ConfigurationColumn extends StaticItemColumn {
                             .build(),
 
                     new StaticItem.Builder(Names.SOCKET_BINDINGS)
-                            .nextColumn(Ids.SOCKET_BINDING)
+                            .nextColumn(Ids.SOCKET_BINDING_GROUP)
                             .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().configurationSocketBindings()))
                             .build(),
 

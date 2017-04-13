@@ -211,9 +211,10 @@
                        form-ref="undertow-response-header-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addResponseHeader()}}"/>
+                                handler="{{presenter.addResponseHeader()}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeResponseHeader(api.selectedRow())}}" scope="selected"/>
+                                handler="{{presenter.removeResponseHeader(api.selectedRow())}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value='{{row.get("header-name").asString()}}'/>

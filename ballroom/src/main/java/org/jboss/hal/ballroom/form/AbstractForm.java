@@ -40,8 +40,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -69,7 +67,7 @@ import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
  *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -89,9 +87,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     private T model;
     private final EmptyState emptyState;
-    private SecurityContext securityContext;
 
-    private FormLinks<T> formLinks;
+    protected FormLinks<T> formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
     private UListElement errorMessages;
@@ -107,14 +104,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
     // ------------------------------------------------------ initialization
 
     public AbstractForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
-            final EmptyState emptyState, final SecurityContext securityContext) {
+            final EmptyState emptyState) {
+        this.id = id;
         this.stateMachine = stateMachine;
         this.dataMapping = dataMapping;
         this.emptyState = emptyState;
-        this.securityContext = securityContext;
 
-        this.id = id;
-        this.securityContext = securityContext;
         this.panels = new LinkedHashMap<>();
         this.formItems = new LinkedHashMap<>();
         this.unboundItems = new HashSet<>();
@@ -152,7 +147,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         section.setId(id);
         section.getClassList().add(formSection);
 
-        formLinks = new FormLinks<>(id, stateMachine, helpTexts,
+        formLinks = new FormLinks<>(this, stateMachine, helpTexts,
                 event -> edit(getModel()),
                 event -> {
                     if (prepareReset != null) {
@@ -291,6 +286,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         stateMachine.reset();
         getFormItems().forEach(Attachable::detach);
     }
+
 
     // ------------------------------------------------------ form operations
 
@@ -470,41 +466,48 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         flip(stateMachine.current());
     }
 
-    private void prepare(State state) {
+    protected void prepare(State state) {
         switch (state) {
             case EMPTY:
+                formLinks.setVisible(false, false, false, false);
                 prepareEmptyState();
                 break;
             case READONLY:
+                formLinks.setVisible(model != null && stateMachine.supports(EDIT),
+                        model != null && stateMachine.supports(RESET),
+                        model != null && stateMachine.supports(REMOVE),
+                        true);
                 prepareViewState();
                 break;
             case EDITING:
+                formLinks.setVisible(false, false, false, true);
                 prepareEditState();
                 break;
         }
     }
 
     /**
-     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
     protected void prepareEmptyState() {}
 
     /**
-     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     @SuppressWarnings("WeakerAccess")
     protected void prepareViewState() {}
 
     /**
-     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips to
-     * the new state.
+     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
+     * to the new state.
      */
     protected void prepareEditState() {}
 
     protected void flip(State state) {
+        // exit with ESC handler
         switch (state) {
             case EMPTY:
             case READONLY:
@@ -525,30 +528,10 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
                 break;
         }
 
-        formLinks.switchTo(state, model, securityContext);
         panels.values().stream()
                 .filter(panel -> panel != panels.get(state))
                 .forEach(panel -> Elements.setVisible(panel, false));
         Elements.setVisible(panels.get(state), true);
-    }
-
-
-    // ------------------------------------------------------ security
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        this.securityContext = securityContext;
-        applySecurity();
-    }
-
-    private void applySecurity() {
-        if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
-            stateExec(CANCEL);
-        }
-        formLinks.switchTo(stateMachine.current(), model, securityContext);
-        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
-            entry.getValue().setRestricted(!securityContext.isWritable(entry.getKey()));
-        }
     }
 
 

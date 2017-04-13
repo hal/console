@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityFramework;
-
 import java.util.Set;
+
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
@@ -29,12 +29,12 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
  */
 class Lookup {
 
-    private final ResourceDescriptions descriptionRegistry;
-    private final SecurityFramework securityFramework;
+    private final SecurityContextRegistry securityContextRegistry;
+    private final ResourceDescriptionRegistry descriptionRegistry;
 
-    Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
+    Lookup(SecurityContextRegistry securityContextRegistry, ResourceDescriptionRegistry descriptionRegistry) {
+        this.securityContextRegistry = securityContextRegistry;
         this.descriptionRegistry = descriptionRegistry;
-        this.securityFramework = securityFramework;
     }
 
     public LookupResult check(Set<AddressTemplate> templates, boolean recursive) {
@@ -43,7 +43,7 @@ class Lookup {
             if (descriptionRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
             }
-            if (securityFramework.contains(template)) {
+            if (securityContextRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
             }
         }

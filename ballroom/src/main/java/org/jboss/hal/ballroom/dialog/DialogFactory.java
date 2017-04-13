@@ -56,6 +56,11 @@ public final class DialogFactory {
      * on the returned dialog.
      */
     public static Dialog buildConfirmation(String title, SafeHtml question, Element element, Callback confirm) {
+        return buildConfirmation(title, question, element, SMALL, confirm);
+    }
+
+    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, Dialog.Size size,
+            Callback confirm) {
         Element content;
         if (element != null) {
             content = new Elements.Builder().div().p().innerHtml(question).end().add(element).end().build();
@@ -67,7 +72,7 @@ public final class DialogFactory {
                 .closeIcon(true)
                 .closeOnEsc(true)
                 .yesNo(confirm)
-                .size(SMALL)
+                .size(size)
                 .add(content)
                 .build();
     }

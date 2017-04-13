@@ -27,8 +27,6 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.Strings;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Previews;
 
@@ -39,7 +37,7 @@ import static org.jboss.hal.resources.CSS.finderPreview;
  *
  * @author Harald Pehl
  */
-public class PreviewContent<T> implements HasElements, Attachable, SecurityContextAware {
+public class PreviewContent<T> implements HasElements, Attachable {
 
     private static final int MAX_HEADER_LENGTH = 30;
 
@@ -149,9 +147,4 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
 
     @SuppressWarnings("UnusedParameters")
     public void update(T item) {}
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-
-    }
 }

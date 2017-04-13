@@ -22,6 +22,7 @@ import com.google.gwt.resources.client.ExternalTextResource;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;

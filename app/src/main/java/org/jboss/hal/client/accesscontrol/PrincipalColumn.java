@@ -35,6 +35,8 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -57,6 +59,7 @@ import org.jboss.hal.spi.MessageEvent;
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -89,6 +92,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final Provider<Progress> progress,
+            final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final AccessControlResources accessControlResources,
@@ -104,7 +108,8 @@ class PrincipalColumn extends FinderColumn<Principal> {
         this.accessControl = accessControl;
         this.resources = resources;
 
-        addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, title, column -> {
+        // we assume that the add operations for INCLUDE_TEMPLATE and EXCLUDE_TEMPLATE have the same rights
+        addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, title, INCLUDE_TEMPLATE, column -> {
             Metadata metadata = Metadata.staticDescription(accessControlResources.principal());
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(id, Ids.FORM_SUFFIX), metadata)
                     .addOnly()
@@ -175,19 +180,28 @@ class PrincipalColumn extends FinderColumn<Principal> {
                         .removeUserQuestion(item.getName()) : resources.messages().removeGroupQuestion(item.getName());
                 SafeHtml success = item.getType() == Principal.Type.USER ? resources.messages()
                         .removeUserSuccess(item.getName()) : resources.messages().removeGroupSuccess(item.getName());
-                return singletonList(new ItemAction<Principal>(resources.constants().remove(), itm ->
-                        DialogFactory.showConfirmation(
-                                resources.messages().removeConfirmationTitle(title), question,
-                                () -> {
-                                    List<Operation> operations = accessControl.assignments().byPrincipal(item)
-                                            .map(assignment -> new Operation.Builder(REMOVE,
-                                                    AddressTemplates.assignment(assignment)).build())
-                                            .collect(toList());
-                                    dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
-                                        MessageEvent.fire(eventBus, Message.success(success));
-                                        accessControl.reload(() -> refresh(CLEAR_SELECTION));
-                                    });
-                                })));
+                return singletonList(new ItemAction.Builder<Principal>()
+                        .title(resources.constants().remove())
+                        .handler(itm -> {
+                            if (type == Principal.Type.USER && itm.getName().equals(currentUser.getName())) {
+                                MessageEvent.fire(eventBus,
+                                        Message.error(resources.messages().removeCurrentUserError()));
+                            } else {
+                                DialogFactory.showConfirmation(
+                                        resources.messages().removeConfirmationTitle(title), question,
+                                        () -> {
+                                            List<Operation> operations = accessControl.assignments().byPrincipal(item)
+                                                    .map(assignment -> new Operation.Builder(REMOVE,
+                                                            AddressTemplates.assignment(assignment)).build())
+                                                    .collect(toList());
+                                            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                                                MessageEvent.fire(eventBus, Message.success(success));
+                                                accessControl.reload(() -> refresh(CLEAR_SELECTION));
+                                            });
+                                        });
+                            }
+                        })
+                        .build());
             }
 
             @Override

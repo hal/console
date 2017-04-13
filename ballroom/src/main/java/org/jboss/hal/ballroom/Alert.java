@@ -20,24 +20,33 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * Alert element with an optional icon and link.
+ * <p>
+ * {@linkplain Constraint Constraints} for the links are encoded as {@code data-constraint} attributes. Please make
+ * sure to call {@link ElementGuard#processElements(AuthorisationDecision, String)} when
+ * the alert element is added to the DOM.
+ *
  * @author Harald Pehl
+ * @see <a href="http://www.patternfly.org/pattern-library/communication/inline-notifications/">http://www.patternfly.org/pattern-library/communication/inline-notifications/</a>
  */
 public class Alert implements IsElement {
 
     private static final String ALERT_ICON = "alertIconElement";
     private static final String ALERT_TEXT = "alertTextElement";
-    private static final String ALERT_LINK = "alertLinkElement";
 
     private final Element root;
     private final Element icon;
     private final Element text;
-    private final Element link;
 
     public Alert() {
         this(null, null, null, null);
@@ -48,6 +57,11 @@ public class Alert implements IsElement {
     }
 
     public Alert(final String icon, final SafeHtml text, final String linkText, final EventListener linkHandler) {
+        this(icon, text, linkText, linkHandler, null);
+    }
+
+    public Alert(final String icon, final SafeHtml text, final String linkText, final EventListener linkHandler,
+            final Constraint constraint) {
         Elements.Builder builder = new Elements.Builder();
 
         // @formatter:off
@@ -61,9 +75,11 @@ public class Alert implements IsElement {
                 builder.end();
                 if (linkText != null && linkHandler != null) {
                     builder.span().textContent(" ").end()
-                    .a().rememberAs(ALERT_LINK).css(clickable, alertLink).on(click, linkHandler)
-                        .textContent(linkText)
-                    .end();
+                    .a().css(clickable, alertLink).on(click, linkHandler);
+                    if (constraint!= null) {
+                        builder.data(UIConstants.CONSTRAINT, constraint.data());
+                    }
+                    builder.textContent(linkText).end();
                 }
             builder.end();
         // @formatter:on
@@ -71,7 +87,6 @@ public class Alert implements IsElement {
         this.root = builder.build();
         this.icon = builder.referenceFor(ALERT_ICON);
         this.text = builder.referenceFor(ALERT_TEXT);
-        this.link = linkText != null && linkHandler != null ? builder.referenceFor(ALERT_LINK) : null;
     }
 
     private String alertCss(final String icon) {
@@ -97,13 +112,6 @@ public class Alert implements IsElement {
 
     public Alert setText(SafeHtml text) {
         this.text.setInnerHTML(text.asString());
-        return this;
-    }
-
-    public Alert setLink(String text) {
-        if (this.link != null) {
-            this.link.setTextContent(text);
-        }
         return this;
     }
 

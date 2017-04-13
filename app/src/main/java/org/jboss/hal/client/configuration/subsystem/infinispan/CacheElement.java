@@ -32,17 +32,18 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -68,14 +69,15 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     private CacheContainerPresenter presenter;
 
     @SuppressWarnings("ConstantConditions")
-    CacheElement(Cache cache, MetadataRegistry metadataRegistry, Resources resources) {
+    CacheElement(Cache cache, MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
+            Resources resources) {
         this.cache = cache;
 
         Metadata metadata = metadataRegistry.lookup(cache.template);
         ModelNodeTable.Builder<NamedNode> builder = new NamedNodeTable.Builder<>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addCache(cache))
-                .button(resources.constants().remove(), SELECTED,
-                        (event, api) -> presenter.removeCache(cache, api.selectedRow().getName()))
+                .button(tableButtonFactory.add(cache.template, (event, api) -> presenter.addCache(cache)))
+                .button(tableButtonFactory.remove(cache.template,
+                        (event, api) -> presenter.removeCache(cache, api.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName());
         if (cache != LOCAL) {
             builder.column(MODE);
@@ -103,7 +105,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                                 })
                                 .orderable(false)
                                 .searchable(false)
-                                .width("12em")
+                                .width("12em") //NON-NLS
                                 .build();
                     });
         } else {
@@ -113,7 +115,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 presenter.showCacheStore();
             });
         }
-        table = new NamedNodeTable<>(Ids.build(cache.baseId, Ids.TABLE_SUFFIX), builder.build());
+        table = new NamedNodeTable<>(Ids.build(cache.baseId, Ids.TABLE_SUFFIX), metadata, builder.build());
 
         Tabs tabs = new Tabs();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM_SUFFIX), metadata)
@@ -157,17 +159,17 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 () -> presenter.cacheSegment(), () -> presenter.storeSegment(), storeElement);
 
         if (cache.backups) {
-            Metadata backupMeta = metadataRegistry.lookup(
-                    cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*"));
+            AddressTemplate backupTemplate = cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*");
+            Metadata backupMeta = metadataRegistry.lookup(backupTemplate);
 
             Options<NamedNode> backupOptions = new NamedNodeTable.Builder<>(backupMeta)
-                    .button(resources.constants().add(), (event, api) -> presenter.addCacheBackup())
-                    .button(resources.constants().remove(), SELECTED,
-                            (event, api) -> presenter.removeCacheBackup(api.selectedRow().getName()))
+                    .button(tableButtonFactory.add(backupTemplate, (event, api) -> presenter.addCacheBackup()))
+                    .button(tableButtonFactory.remove(backupTemplate,
+                            (event, api) -> presenter.removeCacheBackup(api.selectedRow().getName())))
                     .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                     .build();
             backupTable = new NamedNodeTable<>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),
-                    backupOptions);
+                    backupMeta, backupOptions);
 
             backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.FORM_SUFFIX),
                     backupMeta)

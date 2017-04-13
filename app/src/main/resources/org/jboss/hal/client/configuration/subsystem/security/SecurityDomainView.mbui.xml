@@ -36,9 +36,10 @@
                        form-ref="security-domain-authentication-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addClassicAuthenticationModule()}}"/>
+                                handler="{{presenter.addClassicAuthenticationModule()}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUTHENTICATION)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.AUTHENTICATION)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -59,9 +60,10 @@
                        form-ref="security-domain-authorization-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.AUTHORIZATION)}}"/>
+                                handler="{{presenter.addModule(Module.AUTHORIZATION)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUTHORIZATION)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.AUTHORIZATION)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -82,9 +84,10 @@
                        form-ref="security-domain-audit-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.AUDIT)}}"/>
+                                handler="{{presenter.addModule(Module.AUDIT)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUDIT)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.AUDIT)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -104,9 +107,10 @@
                        form-ref="security-domain-acl-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.ACL)}}"/>
+                                handler="{{presenter.addModule(Module.ACL)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.ACL)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.ACL)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -127,9 +131,10 @@
                        form-ref="security-domain-mapping-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.MAPPING)}}"/>
+                                handler="{{presenter.addModule(Module.MAPPING)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.MAPPING)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.MAPPING)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -150,9 +155,10 @@
                        form-ref="security-domain-trust-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addModule(Module.TRUST)}}"/>
+                                handler="{{presenter.addModule(Module.TRUST)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.TRUST)}}" scope="selected"/>
+                                handler="{{presenter.removeModule(api, Module.TRUST)}}" scope="selected"
+                                constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

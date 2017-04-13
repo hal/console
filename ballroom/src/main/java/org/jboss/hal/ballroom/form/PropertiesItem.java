@@ -169,13 +169,13 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         void unapplyInvalid() {
             root.getClassList().remove(hasError);
             helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setTextContent(MESSAGES.propertiesHint().asString());
+            helpBlock.setInnerHTML(MESSAGES.propertiesHint().asString());
         }
     }
 
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d\\-\\._/]+)=([\\w\\d\\-\\._/]+)$"); //NON-NLS
+    private static final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/]+)$"); //NON-NLS
 
     public PropertiesItem(final String name) {
         this(name, new LabelBuilder().label(name), MESSAGES.propertiesHint());

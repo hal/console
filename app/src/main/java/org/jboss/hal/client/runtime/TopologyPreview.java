@@ -19,9 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.inject.Provider;
 
+import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -65,6 +68,11 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -75,7 +83,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
-import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -88,18 +95,19 @@ import static org.jboss.hal.resources.CSS.*;
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 
+    private static final String CONTAINER = "container";
     private static final String LOADING_SECTION = "loading-section";
     private static final String TOPOLOGY_SECTION = "topology-section";
     private static final String HOST_ATTRIBUTES_SECTION = "host-attributes-section";
     private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
+    private final SecurityContextRegistry securityContextRegistry;
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final EventBus eventBus;
     private final Places places;
-    private final FinderPathFactory finderPathFactory;
     private final HostActions hostActions;
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
@@ -113,7 +121,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
 
-    TopologyPreview(final Environment environment,
+    TopologyPreview(final SecurityContextRegistry securityContextRegistry,
+            final Environment environment,
             final Dispatcher dispatcher,
             final Provider<Progress> progress,
             final EventBus eventBus,
@@ -124,12 +133,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final ServerActions serverActions,
             final Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
+        this.securityContextRegistry = securityContextRegistry;
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.eventBus = eventBus;
         this.places = places;
-        this.finderPathFactory = finderPathFactory;
         this.hostActions = hostActions;
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
@@ -161,9 +170,18 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         loadingSection = previewBuilder().referenceFor(LOADING_SECTION);
         topologySection = previewBuilder().referenceFor(TOPOLOGY_SECTION);
 
-        hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST,
-                asList(NAME, RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
-                        HOST_STATE, RUNNING_MODE))
+        hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST)
+                .append(model -> {
+                    String token = lazyToken(NameTokens.RUNTIME, model, ModelNode::isDefined,
+                            m -> finderPathFactory.runtimeHostPath(m.getAddressName()));
+                    return new PreviewAttribute(Names.NAME, model.getName(), token);
+                })
+                .append(RELEASE_CODENAME)
+                .append(RELEASE_VERSION)
+                .append(PRODUCT_NAME)
+                .append(PRODUCT_VERSION)
+                .append(HOST_STATE)
+                .append(RUNNING_MODE)
                 .append(model -> new PreviewAttribute(
                         "Management Version", //NON-NLS
                         String.join(".",
@@ -174,54 +192,52 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .end();
 
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP)
-                .append(NAME)
                 .append(model -> {
-                    String profile = model.getProfile();
-                    PlaceRequest profilePlaceRequest = places
-                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
-                                    .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
-                                    .append(Ids.PROFILE, profile))
-                            .build();
-                    String token = places.historyToken(profilePlaceRequest);
-                    return new PreviewAttribute(Names.PROFILE, profile, token);
+                    String token = lazyToken(NameTokens.RUNTIME, model, ModelNode::isDefined,
+                            m -> finderPathFactory.runtimeServerGroupPath(m.getName()));
+                    return new PreviewAttribute(Names.NAME, model.getName(), token);
                 })
                 .append(model -> {
-                    String sbg = model.get(SOCKET_BINDING_GROUP).asString();
-                    PlaceRequest sbgPlaceRequest = places
-                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                    String token = lazyToken(NameTokens.CONFIGURATION, model, ModelNode::isDefined,
+                            m -> new FinderPath()
+                                    .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                                    .append(Ids.PROFILE, m.getProfile()));
+                    return new PreviewAttribute(Names.PROFILE, model.getProfile(), token);
+                })
+                .append(model -> {
+                    String token = lazyToken(NameTokens.CONFIGURATION, model, ModelNode::isDefined,
+                            m -> new FinderPath()
                                     .append(Ids.CONFIGURATION, Ids.asId(Names.SOCKET_BINDINGS))
-                                    .append(Ids.SOCKET_BINDING, sbg))
-                            .build();
-                    String token = places.historyToken(sbgPlaceRequest);
-                    return new PreviewAttribute(Names.SOCKET_BINDING_GROUP, sbg, token);
+                                    .append(Ids.SOCKET_BINDING_GROUP, model.get(SOCKET_BINDING_GROUP).asString()));
+                    return new PreviewAttribute(Names.SOCKET_BINDING_GROUP, model.get(SOCKET_BINDING_GROUP).asString(),
+                            token);
                 })
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(SOCKET_BINDING_DEFAULT_INTERFACE)
                 .end();
 
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
-                .append(NAME)
                 .append(model -> {
-                    String host = model.getHost();
-                    String token = places.historyToken(
-                            places.finderPlace(NameTokens.RUNTIME, finderPathFactory.runtimeHostPath(host)).build());
-                    return new PreviewAttribute(Names.HOST, host, token);
+                    String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
+                            m -> finderPathFactory.runtimeServerPath(model.getHost(), model.getName()));
+                    return new PreviewAttribute(Names.NAME, model.getName(), token);
                 })
                 .append(model -> {
-                    String serverGroup = model.getServerGroup();
-                    String token = places.historyToken(places.finderPlace(NameTokens.RUNTIME,
-                            finderPathFactory.runtimeServerGroupPath(serverGroup)).build());
-                    return new PreviewAttribute(Names.SERVER_GROUP, serverGroup, token);
+                    String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
+                            m -> finderPathFactory.runtimeHostPath(model.getHost()));
+                    return new PreviewAttribute(Names.HOST, model.getHost(), token);
                 })
                 .append(model -> {
-                    String profile = model.get(PROFILE_NAME).asString();
-                    PlaceRequest profilePlaceRequest = places
-                            .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                    String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
+                            m -> finderPathFactory.runtimeServerGroupPath(model.getServerGroup()));
+                    return new PreviewAttribute(Names.SERVER_GROUP, model.getServerGroup(), token);
+                })
+                .append(model -> {
+                    String token = lazyToken(NameTokens.CONFIGURATION, model, m -> !Strings.isNullOrEmpty(m.getHost()),
+                            m -> new FinderPath()
                                     .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
-                                    .append(Ids.PROFILE, profile))
-                            .build();
-                    String token = places.historyToken(profilePlaceRequest);
-                    return new PreviewAttribute(Names.PROFILE, profile, token);
+                                    .append(Ids.PROFILE, model.get(PROFILE_NAME).asString()));
+                    return new PreviewAttribute(Names.PROFILE, model.get(PROFILE_NAME).asString(), token);
                 })
                 .append(AUTO_START)
                 .append(SOCKET_BINDING_PORT_OFFSET)
@@ -248,6 +264,16 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         serverAttributesSection = previewBuilder().referenceFor(SERVER_ATTRIBUTES_SECTION);
     }
 
+    private <T extends NamedNode> String lazyToken(String tlc, T model,
+            Predicate<T> defined, Function<T, FinderPath> path) {
+        String token = "";
+        if (defined.test(model)) {
+            PlaceRequest placeRequest = places.finderPlace(tlc, path.apply(model)).build();
+            token = places.historyToken(placeRequest);
+        }
+        return token;
+    }
+
 
     // ------------------------------------------------------ dmr functions
 
@@ -265,7 +291,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(topologySection, false);
         hideDetails();
 
-        // show the loading indicator if the dmr operation take too long
+        // show the loading indicator if the dmr operation takes too long
         int timeoutHandle = Browser.getWindow()
                 .setTimeout(() -> Elements.setVisible(loadingSection, true), UIConstants.MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
@@ -336,13 +362,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             // Does not matter where we take the updated server from (must be included in both
                             // host and server group)
                             host.getServers().stream()
-                                    .filter(srv -> srv.getHost().equals(server.getHost()) &&
-                                            srv.getName().equals(server.getName()))
+                                    .filter(srv -> srv.getId().equals(server.getId()))
                                     .findAny()
                                     .ifPresent(updatedServer -> {
-                                        String serverId = Ids
-                                                .hostServer(updatedServer.getHost(), updatedServer.getName());
-                                        replaceElement(document.getElementById(serverId),
+                                        String updatedContainerId = Ids.build(updatedServer.getId(), CONTAINER);
+                                        replaceElement(document.getElementById(updatedContainerId),
                                                 () -> serverElement(updatedServer),
                                                 whatever -> serverDetails(updatedServer));
                                     });
@@ -440,7 +464,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 // The dropdown is also added if there are no servers. Otherwise the heights of
                 // the cells w/ and w/o servers would be different.
                 .div().css(dropdown);
-                    if (host.hasServers() && !hostActions.isPending(host)) {
+                    if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
                         builder.a()
                             .id(hostDropDownId)
                             .css(clickable, dropdownToggle, name)
@@ -482,7 +506,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 // The dropdown is also added if there are no servers. Otherwise the heights of
                 // the cells w/ and w/o servers would be different.
                 .div().css(dropdown);
-                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup)) {
+                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
                         builder.a().id(serverGroupDropDownId)
                             .css(clickable, dropdownToggle, name)
                             .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -514,16 +538,15 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServer(Elements.Builder builder, Server srv) {
         // @formatter:off
-        String serverDropDownId = Ids.server(srv.getName());
         builder.div()
+                .id(Ids.build(srv.getId(), CONTAINER))
                 .css(server, statusCss(srv))
+                .data(SERVER, srv.getId())
                 .on(click, event -> serverDetails(srv))
-                .id(Ids.hostServer(srv.getHost(), srv.getName()))
-                .data(SERVER, srv.getName())
             .div().css(dropdown);
-                if (!serverActions.isPending(srv)) {
+                if (!serverActions.isPending(srv) && isAllowed(srv)) {
                     builder.a()
-                        .id(serverDropDownId)
+                        .id(srv.getId())
                         .css(clickable, dropdownToggle, name)
                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
@@ -532,7 +555,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .end()
                     .ul().css(dropdownMenu)
                             .attr(UIConstants.ROLE, UIConstants.MENU)
-                            .aria(UIConstants.LABELLED_BY, serverDropDownId);
+                            .aria(UIConstants.LABELLED_BY, srv.getId());
                         serverActions(builder, srv);
                     builder.end();
                 } else {
@@ -635,6 +658,13 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverAttributesSection, false);
     }
 
+    private boolean isAllowed(Host host) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
+    }
+
     private void hostActions(final Elements.Builder builder, final Host host) {
         actionLink(builder, event -> hostActions.reload(host), resources.constants().reload());
         actionLink(builder, event -> hostActions.restart(host), resources.constants().restart());
@@ -653,7 +683,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             startProgress(hostSelector(host));
 
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.server(server.getName()), server.getName());
+                disableDropdown(server.getId(), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -671,7 +701,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String hostSelector(final Host host) {
-        return "[data-host=" + host.getName() + "]"; //NON-NLS
+        return "[data-host='" + host.getName() + "']"; //NON-NLS
     }
 
 
@@ -688,6 +718,15 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverGroupAttributesSection, true);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, false);
+    }
+
+    @SuppressWarnings("unused")
+    private boolean isAllowed(ServerGroup serverGroup) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=" + serverGroup.getName()),
+                        RELOAD_SERVERS));
     }
 
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
@@ -717,7 +756,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             ServerGroup serverGroup = event.getServerGroup();
             disableDropdown(Ids.serverGroup(serverGroup.getName()), serverGroup.getName());
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.server(server.getName()), server.getName());
+                disableDropdown(server.getId(), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -732,7 +771,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverGroupSelector(final ServerGroup serverGroup) {
-        return "[data-server-group=" + serverGroup.getName() + "]"; //NON-NLS
+        return "[data-server-group='" + serverGroup.getName() + "']"; //NON-NLS
     }
 
 
@@ -763,6 +802,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, true);
+    }
+
+    private boolean isAllowed(Server server) {
+        // To keep it simple, we take a all or nothing approach:
+        // We check *one* action and assume that the other actions have the same constraints
+        return AuthorisationDecision.strict(environment, securityContextRegistry)
+                .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + server.getHost() + "/server-config=*"),
+                        RELOAD));
     }
 
     private void serverActions(final Elements.Builder builder, final Server server) {
@@ -847,7 +894,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            disableDropdown(Ids.server(server.getName()), server.getName());
+            disableDropdown(server.getId(), server.getName());
             startProgress(serverSelector(server));
         }
     }
@@ -861,6 +908,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverSelector(final Server server) {
-        return "[data-server=" + server.getName() + "]"; //NON-NLS
+        return "[data-server='" + server.getId() + "']"; //NON-NLS
     }
 }

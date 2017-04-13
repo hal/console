@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -53,7 +54,7 @@ final class Mbui_CustomActionView extends CustomActionView {
                 .button("Foo", (event, api) -> presenter.reload())
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", tableOptions);
+        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

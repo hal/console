@@ -115,7 +115,7 @@ public class Dialog implements IsElement {
         private boolean closeIcon;
         private boolean closeOnEsc;
         private boolean fadeIn;
-        private Callback onClose;
+        private Callback closed;
 
         public Builder(final String title) {
             this.title = title;
@@ -221,8 +221,8 @@ public class Dialog implements IsElement {
             return this;
         }
 
-        public Builder onClose(Callback onClose) {
-            this.onClose = onClose;
+        public Builder closed(Callback closed) {
+            this.closed = closed;
             return this;
         }
 
@@ -329,14 +329,14 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ dialog instance
 
     private final boolean closeOnEsc;
-    private final Callback onClose;
+    private final Callback closed;
     private final Map<Integer, ButtonElement> buttons;
     private final List<Attachable> attachables;
 
     Dialog(final Builder builder) {
         reset();
         this.closeOnEsc = builder.closeOnEsc;
-        this.onClose = builder.onClose;
+        this.closed = builder.closed;
         this.buttons = new HashMap<>();
         this.attachables = new ArrayList<>();
 
@@ -412,10 +412,10 @@ public class Dialog implements IsElement {
      */
     void close() {
         attachables.forEach(Attachable::detach);
-        if (onClose != null) {
-            onClose.execute();
-        }
         $(SELECTOR_ID).modal("hide");
+        if (closed != null) {
+            closed.execute();
+        }
     }
 
 

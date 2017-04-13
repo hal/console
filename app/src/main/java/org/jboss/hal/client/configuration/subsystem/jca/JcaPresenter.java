@@ -185,7 +185,7 @@ public class JcaPresenter
     // ------------------------------------------------------ tracer
 
     void addTracer() {
-        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, (n, a) -> reload());
+        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, address -> reload());
     }
 
 
@@ -261,13 +261,32 @@ public class JcaPresenter
         });
     }
 
-    void removeThreadPool(AddressTemplate workmanagerTemplate, String workmanager, String threadPoolName,
-            boolean longRunning) {
-        AddressTemplate template = longRunning
-                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + threadPoolName)
-                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + threadPoolName);
-        ResourceAddress address = template.resolve(statementContext, workmanager);
-        crud.remove(THREAD_POOL, threadPoolName, address, () -> loadThreadPools(workmanagerTemplate, workmanager));
+    void saveThreadPool(AddressTemplate workmanagerTemplate, String workmanager, ThreadPool threadPool,
+            Map<String, Object> changedValues) {
+        Metadata metadata = metadataRegistry.lookup(
+                threadPool.isLongRunning() ? WORKMANAGER_LRT_TEMPLATE : WORKMANAGER_SRT_TEMPLATE);
+        ResourceAddress address = threadPoolAddress(workmanagerTemplate, workmanager, threadPool);
+        crud.save(THREAD_POOL, threadPool.getName(), address, changedValues, metadata,
+                () -> loadThreadPools(workmanagerTemplate, workmanager));
+    }
+
+    void resetThreadPool(AddressTemplate workmanagerTemplate, String workmanager, ThreadPool threadPool,
+            Form<ThreadPool> form) {
+        Metadata metadata = metadataRegistry.lookup(
+                threadPool.isLongRunning() ? WORKMANAGER_LRT_TEMPLATE : WORKMANAGER_SRT_TEMPLATE);
+        ResourceAddress address = threadPoolAddress(workmanagerTemplate, workmanager, threadPool);
+        crud.reset(THREAD_POOL, threadPool.getName(), address, form, metadata, new FinishReset<ThreadPool>(form) {
+            @Override
+            public void afterReset(final Form<ThreadPool> form) {
+                loadThreadPools(workmanagerTemplate, workmanager);
+            }
+        });
+    }
+
+    void removeThreadPool(AddressTemplate workmanagerTemplate, String workmanager, ThreadPool threadPool) {
+        ResourceAddress address = threadPoolAddress(workmanagerTemplate, workmanager, threadPool);
+        crud.remove(THREAD_POOL, threadPool.getName(), address,
+                () -> loadThreadPools(workmanagerTemplate, workmanager));
     }
 
     private Composite threadPoolsOperation(final AddressTemplate template, final String name) {
@@ -280,5 +299,13 @@ public class JcaPresenter
                 .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastKey())
                 .build();
         return new Composite(lrtOp, srtOp);
+    }
+
+    private ResourceAddress threadPoolAddress(AddressTemplate workmanagerTemplate, String workmanager,
+            ThreadPool threadPool) {
+        AddressTemplate template = threadPool.isLongRunning()
+                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + threadPool.getName())
+                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + threadPool.getName());
+        return template.resolve(statementContext, workmanager);
     }
 }

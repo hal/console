@@ -25,7 +25,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -173,8 +172,8 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
     @Override
     public void updateLogger(final List<NamedNode> items) {
-        loggerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         loggerForm.clear();
+        loggerTable.update(items);
     }
 
 

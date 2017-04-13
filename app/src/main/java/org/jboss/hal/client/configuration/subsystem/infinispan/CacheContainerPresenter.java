@@ -234,7 +234,7 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ cache component
 
     void addCacheComponent(final Component component) {
-        crud.addSingleton(component.type, cacheComponentAddress(component), null, (n, a) -> reload());
+        crud.addSingleton(component.type, cacheComponentAddress(component), null, address -> reload());
     }
 
     Operation readCacheComponent(final Component component) {
@@ -356,7 +356,7 @@ public class CacheContainerPresenter
                                 .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
                                 .payload(model)
                                 .build();
-                        crud.addSingleton(store.type, operation, (n, a) -> showCacheStore());
+                        crud.addSingleton(store.type, operation, address -> showCacheStore());
                     });
             dialog.show();
 
@@ -364,7 +364,7 @@ public class CacheContainerPresenter
             Operation operation = new Operation.Builder(ADD, cacheStoreAddress(store))
                     .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
                     .build();
-            crud.addSingleton(store.type, operation, (n, a) -> showCacheStore());
+            crud.addSingleton(store.type, operation, address -> showCacheStore());
         }
     }
 
@@ -462,7 +462,7 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ write through / behind
 
     void addWrite(final Write write) {
-        crud.addSingleton(write.type, writeAddress(write), null, (n, a) -> showCacheStore());
+        crud.addSingleton(write.type, writeAddress(write), null, address -> showCacheStore());
     }
 
     void saveWrite(final Write write, final Map<String, Object> changedValues) {
@@ -542,7 +542,7 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ thread pool
 
     void addThreadPool(final ThreadPool threadPool) {
-        crud.addSingleton(threadPool.type, threadPoolAddress(threadPool), null, (n, a) -> reload());
+        crud.addSingleton(threadPool.type, threadPoolAddress(threadPool), null, address -> reload());
     }
 
     Operation readThreadPool(final ThreadPool threadPool) {
@@ -586,7 +586,7 @@ public class CacheContainerPresenter
     // ------------------------------------------------------ transport - jgroups
 
     void addJgroups() {
-        crud.addSingleton(Names.JGROUPS, jgroupsAddress(), null, (n, a) -> reload());
+        crud.addSingleton(Names.JGROUPS, jgroupsAddress(), null, address -> reload());
     }
 
     void saveJgroups(final Map<String, Object> changedValues) {

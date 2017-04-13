@@ -16,4 +16,5 @@
   -->
 <module>
     <source path="eap"/>
+    <set-configuration-property name="hal.build" value="product"/>
 </module>

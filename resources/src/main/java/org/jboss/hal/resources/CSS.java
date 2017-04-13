@@ -32,6 +32,7 @@ public interface CSS {
     String aboutModalPf = "about-modal-pf";
     String address = "address";
     String active = "active";
+    String activeRoles = "active-roles";
     String alert = "alert";
     String alertDanger = "alert-danger";
     String alertDismissable = "alert-dismissable";
@@ -92,6 +93,7 @@ public interface CSS {
     String deprecated = "deprecated";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
+    String divider = "divider";
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";
     String drawerPfAction = "drawer-pf-action";
@@ -146,10 +148,10 @@ public interface CSS {
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
     String halSearch = "hal-search";
+    String halTableButton = "hal-table-button";
     String hasButton = "has-button";
     String hasClear = "has-clear";
     String hasError = "has-error";
-    String hasFeedback = "has-feedback";
     String headerForm = "header-form";
     String header = "header";
     String helpBlock = "help-block";
@@ -277,6 +279,7 @@ public interface CSS {
     String questionsCircleO = "question-circle-o";
 
     String radio = "radio";
+    String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
     String refresh = "refresh";
     String restricted = "restricted";
@@ -297,6 +300,7 @@ public interface CSS {
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
+    String static_ = "static";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
     String suspended = "suspended";

@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.ballroom.table.SelectorModifier;
 import org.jboss.hal.ballroom.table.SelectorModifierBuilder;
 import org.jboss.hal.ballroom.tree.Node;
@@ -124,7 +123,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .build();
         dispatcher.execute(operation, result -> {
             List<String> names = result.asList().stream().map(ModelNode::asString).collect(toList());
-            table.api().clear().add(names).refresh(RefreshMode.RESET);
+            table.update(names);
             if (node.data.hasSingletons()) {
                 Browser.getWindow().getConsole()
                         .log("Read " + names.size() + " / " + node.data.getSingletons().size() + " singletons");

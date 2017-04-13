@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -62,7 +63,8 @@ public class CacheContainerView extends HalViewImpl
     private CacheContainerPresenter presenter;
 
     @Inject
-    public CacheContainerView(final MetadataRegistry metadataRegistry, final Resources resources) {
+    public CacheContainerView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
         Metadata metadata = metadataRegistry.lookup(CACHE_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.saveCacheContainer(changedValues))
@@ -71,7 +73,7 @@ public class CacheContainerView extends HalViewImpl
 
         caches = new HashMap<>();
         for (Cache cache : Cache.values()) {
-            caches.put(cache, new CacheElement(cache, metadataRegistry, resources));
+            caches.put(cache, new CacheElement(cache, metadataRegistry, tableButtonFactory, resources));
         }
 
         threadPools = new HashMap<>();

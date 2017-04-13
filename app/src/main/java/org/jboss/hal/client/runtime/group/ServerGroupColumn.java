@@ -47,6 +47,7 @@ import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -56,15 +57,19 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 @Column(Ids.SERVER_GROUP)
-@Requires(value = "/server-group=*")
+@Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
+
+    static AddressTemplate serverGroupTemplate(ServerGroup serverGroup) {
+        return AddressTemplate.of("/server-group=" + serverGroup.getName());
+    }
 
     @Inject
     public ServerGroupColumn(final Finder finder,
@@ -102,9 +107,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                                 new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
-                .onPreview(item -> new ServerGroupPreview(item, places))
-                // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
+                .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()
                 .showCount()
                 // Unlike other columns the server group column does not have a custom breadcrumb item handler.
@@ -149,21 +153,45 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
                 // Order is: reload, restart, suspend, resume, stop, start
                 if (item.hasServers(Server::isStarted)) {
-                    actions.add(new ItemAction<>(resources.constants().reload(), serverGroupActions::reload));
-                    actions.add(new ItemAction<>(resources.constants().restart(), serverGroupActions::restart));
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().reload())
+                            .handler(serverGroupActions::reload)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RELOAD_SERVERS))
+                            .build());
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().restart())
+                            .handler(serverGroupActions::restart)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RESTART_SERVERS))
+                            .build());
                 }
                 if (item.getServers(Server::isStarted).size() - item.getServers(Server::isSuspended)
                         .size() > 0) {
-                    actions.add(new ItemAction<>(resources.constants().suspend(), serverGroupActions::suspend));
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().suspend())
+                            .handler(serverGroupActions::suspend)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), SUSPEND_SERVERS))
+                            .build());
                 }
                 if (item.hasServers(Server::isSuspended)) {
-                    actions.add(new ItemAction<>(resources.constants().resume(), serverGroupActions::resume));
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().resume())
+                            .handler(serverGroupActions::resume)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), RESUME_SERVERS))
+                            .build());
                 }
                 if (item.hasServers(Server::isStarted)) {
-                    actions.add(new ItemAction<>(resources.constants().stop(), serverGroupActions::stop));
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().stop())
+                            .handler(serverGroupActions::stop)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), STOP_SERVERS))
+                            .build());
                 }
                 if (item.hasServers(server -> server.isStopped() || server.isFailed())) {
-                    actions.add(new ItemAction<>(resources.constants().start(), serverGroupActions::start));
+                    actions.add(new ItemAction.Builder<ServerGroup>()
+                            .title(resources.constants().start())
+                            .handler(serverGroupActions::start)
+                            .constraint(Constraint.executable(serverGroupTemplate(item), START_SERVERS))
+                            .build());
                 }
                 return actions;
             }
@@ -176,14 +204,14 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(server.getId()));
         }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.server(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);
         }
     }

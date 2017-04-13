@@ -16,20 +16,27 @@
 package org.jboss.hal.core.mbui.table;
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.RefreshMode;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.AuthorisationDecision;
+import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.resources.UIConstants.data;
 
 /**
  * @author Harald Pehl
@@ -84,7 +91,37 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    public ModelNodeTable(@NonNls final String id, final Options<T> options) {
+    private Metadata metadata;
+    private final Options<T> options;
+
+    public ModelNodeTable(@NonNls final String id, final Metadata metadata, Options<T> options) {
         super(id, options);
+        this.metadata = metadata;
+        this.options = options;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        if (options.buttons.buttons != null) {
+            for (int i = 0; i < options.buttons.buttons.length; i++) {
+                if (options.buttons.buttons[i].constraint != null) {
+                    api().button(i).node().attr(data(UIConstants.CONSTRAINT), options.buttons.buttons[i].constraint);
+                }
+            }
+        }
+        applySecurity();
+    }
+
+    @Override
+    public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
+        super.update(data, mode, identifier);
+        applySecurity();
+    }
+
+    private void applySecurity() {
+        AuthorisationDecision ad = AuthorisationDecision.strict(Core.INSTANCE.environment(),
+                metadata.getSecurityContext());
+        ElementGuard.processElements(ad, asElement());
     }
 }

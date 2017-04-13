@@ -29,6 +29,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @author Harald Pehl
  * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
  */
+@SuppressWarnings("WeakerAccess")
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Button<T> {
 
@@ -72,4 +73,5 @@ public class Button<T> {
     public String text;
     public ActionHandler<T> action;
     public String extend;
+    public String constraint;
 }

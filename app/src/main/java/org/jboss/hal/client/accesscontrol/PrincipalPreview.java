@@ -19,6 +19,8 @@ import java.util.List;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.Roles;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;

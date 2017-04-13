@@ -47,7 +47,8 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * @author Harald Pehl

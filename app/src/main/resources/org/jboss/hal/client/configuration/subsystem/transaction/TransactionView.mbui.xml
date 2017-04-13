@@ -18,7 +18,7 @@
 <view>
     <vertical-navigation id="tx-vertical-navigation">
 
-        <item id="tx-attributes-config-item" title="Configuration" icon="fa fa-list-ul">
+        <item id="tx-attributes-config-item" title="Configuration" icon="pficon pficon-settings">
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Transaction Manager</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>

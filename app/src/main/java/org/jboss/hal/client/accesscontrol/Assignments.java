@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jboss.hal.config.Role;
+
 /**
  * @author Harald Pehl
  */
@@ -28,7 +30,7 @@ class Assignments implements Iterable<Assignment> {
 
     // @formatter:off
     static final Comparator<Assignment> EXCLUDES_FIRST = (a1, a2) -> Boolean.compare(a1.isInclude(), a2.isInclude());
-    static final Comparator<Assignment> STANDARD_FIRST = (a1, a2) -> a1.getRole().getType() .compareTo(a2.getRole().getType());
+    static final Comparator<Assignment> STANDARD_FIRST = (a1, a2) -> a1.getRole().getType().compareTo(a2.getRole().getType());
     static final Comparator<Assignment> USERS_FIRST = (a1, a2) -> a1.getPrincipal().getType().compareTo(a2.getPrincipal().getType());
     static final Comparator<Assignment> BY_ROLE_NAME = (a1, a2) -> a1.getRole().getName().compareTo(a2.getRole().getName());
     static final Comparator<Assignment> BY_PRINCIPAL_NAME = (a1, a2) -> a1.getPrincipal().getName().compareTo(a2.getPrincipal().getName());

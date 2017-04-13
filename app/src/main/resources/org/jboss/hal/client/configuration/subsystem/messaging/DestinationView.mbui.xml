@@ -25,10 +25,10 @@
                 <table id="messaging-core-queue-table" title="Core Queue" form-ref="messaging-core-queue-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.CORE_QUEUE)}}"/>
+                                handler="{{presenter.add(ServerSubResource.CORE_QUEUE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.CORE_QUEUE, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -54,10 +54,10 @@
                 <table id="messaging-jms-queue-table" title="JMS Queue" form-ref="messaging-jms-queue-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.JMS_QUEUE)}}"/>
+                                handler="{{presenter.add(ServerSubResource.JMS_QUEUE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.JMS_QUEUE, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -83,10 +83,10 @@
                 <table id="messaging-jms-topic-table" title="JMS Topic" form-ref="messaging-jms-topic-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.JMS_TOPIC)}}"/>
+                                handler="{{presenter.add(ServerSubResource.JMS_TOPIC)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.JMS_TOPIC, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -110,10 +110,10 @@
                        form-ref="messaging-address-setting-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.ADDRESS_SETTING)}}"/>
+                                handler="{{presenter.add(ServerSubResource.ADDRESS_SETTING)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.ADDRESS_SETTING, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -132,10 +132,10 @@
                 <table id="messaging-divert-table" title="Divert" form-ref="messaging-divert-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.DIVERT)}}"/>
+                                handler="{{presenter.add(ServerSubResource.DIVERT)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.DIVERT, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

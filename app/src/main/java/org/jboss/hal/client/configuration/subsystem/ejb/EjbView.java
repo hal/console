@@ -23,7 +23,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
@@ -108,11 +107,10 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                             .add(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
                                     (name, address) -> presenter.reload()))
                     .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
-                            (api) -> api.selectedRow().getName(),
-                            () -> presenter.reload()))
+                            (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                     .column(NAME, (cell, type, row, meta) -> row.getName())
                     .build();
-            appSecurityDomainTable = new NamedNodeTable<>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE, options);
+            appSecurityDomainTable = new NamedNodeTable<>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE, metadata, options);
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_FORM,
                     metadata)
@@ -162,34 +160,19 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     public void update(final ModelNode payload) {
         configurationForm.view(payload);
 
-        threadPoolTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        threadPoolTable.update(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastKey())));
         threadPoolForm.clear();
 
-        remotingProfileTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, REMOTING_PROFILE_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        remotingProfileTable.update(asNamedNodes(failSafePropertyList(payload, REMOTING_PROFILE_TEMPLATE.lastKey())));
         remotingProfileForm.clear();
 
-        beanPoolTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, BEAN_POOL_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        beanPoolTable.update(asNamedNodes(failSafePropertyList(payload, BEAN_POOL_TEMPLATE.lastKey())));
         beanPoolForm.clear();
 
-        cacheTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, CACHE_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        cacheTable.update(asNamedNodes(failSafePropertyList(payload, CACHE_TEMPLATE.lastKey())));
         cacheForm.clear();
 
-        passivationTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, PASSIVATION_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        passivationTable.update(asNamedNodes(failSafePropertyList(payload, PASSIVATION_TEMPLATE.lastKey())));
         passivationForm.clear();
 
         serviceAsyncForm.view(payload.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
@@ -197,17 +180,13 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         serviceRemoteForm.view(payload.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
         serviceTimerForm.view(payload.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));
 
-        mdbDeliveryGroupTable.api()
-                .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())))
-                .refresh(RefreshMode.RESET);
+        mdbDeliveryGroupTable.update(
+                asNamedNodes(failSafePropertyList(payload, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())));
         mdbDeliveryGroupForm.clear();
 
         if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
-            appSecurityDomainTable.api()
-                    .clear()
-                    .add(asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())))
-                    .refresh(RefreshMode.RESET);
+            appSecurityDomainTable.update(
+                    asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())));
             appSecurityDomainForm.clear();
         }
     }

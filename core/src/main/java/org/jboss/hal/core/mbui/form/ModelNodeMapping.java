@@ -211,7 +211,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                             case LIST:
                                 List<String> list = (List<String>) value;
-                                if (list.isEmpty()) {
+                                if (list == null || list.isEmpty()) {
                                     failSafeRemove(model, name);
                                 } else {
                                     ModelNode listNode = new ModelNode();
@@ -224,7 +224,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                             case OBJECT:
                                 Map<String, String> map = (Map<String, String>) value;
-                                if (map.isEmpty()) {
+                                if (map == null || map.isEmpty()) {
                                     failSafeRemove(model, name);
                                 } else {
                                     ModelNode mapNode = new ModelNode();

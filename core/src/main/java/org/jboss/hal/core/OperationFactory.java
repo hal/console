@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.core.expression.Expression;
@@ -53,6 +54,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class OperationFactory {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
+
+    private final Function<String, String> nameFn;
+
+    public OperationFactory() {
+        this(null);
+    }
+
+    public OperationFactory(final Function<String, String> nameFn) {
+        this.nameFn = nameFn;
+    }
 
     /**
      * Turns a change-set into a composite operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION
@@ -204,7 +215,7 @@ public class OperationFactory {
                             case LONG:
                                 if (hasDefault) {
                                     operations.add(new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
-                                            .param(NAME, property.getName())
+                                            .param(NAME, attributeName(property.getName()))
                                             .param(VALUE, attributeDescription.get(DEFAULT))
                                             .build());
                                 }
@@ -215,7 +226,7 @@ public class OperationFactory {
                             case PROPERTY:
                             case STRING:
                                 operations.add(new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
-                                        .param(NAME, property.getName())
+                                        .param(NAME, attributeName(property.getName()))
                                         .build());
                                 break;
                             case TYPE:
@@ -235,7 +246,9 @@ public class OperationFactory {
     }
 
     private Operation undefineAttribute(ResourceAddress address, String name) {
-        return new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address).param(NAME, name).build();
+        return new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+                .param(NAME, attributeName(name))
+                .build();
     }
 
     private Operation writeAttribute(ResourceAddress address, String name, Object value,
@@ -247,13 +260,20 @@ public class OperationFactory {
             ModelNode valueNode = asValueNode(name, value, resourceDescription);
             if (valueNode != null) {
                 return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
-                        .param(NAME, name)
+                        .param(NAME, attributeName(name))
                         .param(VALUE, valueNode)
                         .build();
             } else {
                 return null;
             }
         }
+    }
+
+    private String attributeName(String name) {
+        if (nameFn != null) {
+            return nameFn.apply(name);
+        }
+        return name;
     }
 
     @SuppressWarnings("DuplicateStringLiteralInspection")

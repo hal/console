@@ -18,14 +18,15 @@ package org.jboss.hal.client.skeleton;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.LIElement;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
@@ -33,7 +34,11 @@ import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.Roles;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
@@ -54,8 +59,12 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
+import static org.jboss.hal.config.AccessControlProvider.RBAC;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
@@ -68,11 +77,13 @@ import static org.jboss.hal.resources.FontAwesomeSize.large;
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     // @formatter:off
-    public static HeaderView create(final Places places, final User user, final Resources resources) {
-        return new Templated_HeaderView(places, user, resources);
+    public static HeaderView create(final Places places, final AccessControl ac, final User user,
+            final Resources resources) {
+        return new Templated_HeaderView(places, ac, user, resources);
     }
 
     public abstract Places places();
+    public abstract AccessControl ac();
     public abstract User user();
     public abstract Resources resources();
     // @formatter:on
@@ -95,11 +106,12 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element reloadLabel;
     @DataElement Element messagesIcon;
     @DataElement Element userName;
-    @DataElement Element roles;
+    @DataElement Element userDropdown;
+    @DataElement Element logoutItem;
     @DataElement Element connectedToContainer;
     @DataElement Element connectedTo;
-    @DataElement Element accessControl;
     @DataElement Element patching;
+    @DataElement Element accessControl;
     @DataElement Element topLevelCategories;
     @DataElement Element breadcrumb;
     @DataElement Element backItem;
@@ -148,7 +160,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             });
         }
 
-        boolean su = user().isSuperuser() || user().isAdministrator();
+        boolean su = ac().isSuperUserOrAdministrator();
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
@@ -163,7 +175,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     }
 
     @Override
-    public void init(Environment environment, Endpoints endpoints, User user) {
+    public void init(Environment environment, Endpoints endpoints, Settings settings, User user) {
         setLogo(resources().theme().getFirstName(), resources().theme().getLastName());
 
         if (endpoints.isSameOrigin()) {
@@ -173,10 +185,85 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         }
 
         userName.setInnerHTML(user.getName());
-        // Keep this in sync with the template!
-        Elements.setVisible(roles, !user.getRoles().isEmpty());
-        Elements.setVisible(roles.getNextElementSibling(), !user.getRoles().isEmpty());
-        roles.setInnerText(resources().messages().activeRoles(Joiner.on(", ").join(user.getRoles())));
+        updateRoles(environment, settings, user);
+    }
+
+    @Override
+    public void updateRoles(Environment environment, Settings settings, User user) {
+        for (Iterator<Element> iterator = Elements.iterator(userDropdown); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == logoutItem) {
+                continue;
+            }
+            iterator.remove();
+        }
+
+        if (!user.getRoles().isEmpty()) {
+            String csr = user.getRoles().stream()
+                    .sorted(Roles.STANDARD_FIRST.thenComparing(Roles.BY_NAME))
+                    .map(Role::getName)
+                    .collect(joining(", "));
+            Element activeRoles = new Elements.Builder().li().css(static_, CSS.activeRoles)
+                    .textContent(resources().messages().activeRoles(csr))
+                    .title(resources().messages().activeRoles(csr))
+                    .end().build();
+            userDropdown.insertBefore(activeRoles, logoutItem);
+            userDropdown.insertBefore(divider(), logoutItem);
+
+            if (user.isSuperuser() && environment.getAccessControlProvider() == RBAC) {
+                Set<String> runAsRoleSetting = settings.get(RUN_AS).asSet();
+                Element runAs = new Elements.Builder().li().css(static_)
+                        .textContent(resources().constants().runAs())
+                        .end().build();
+                userDropdown.insertBefore(runAs, logoutItem);
+
+                stream(environment.getRoles().spliterator(), false)
+                        .sorted(Roles.STANDARD_FIRST.thenComparing(Roles.BY_NAME))
+                        .forEach(role -> {
+                            // @formatter:off
+                            Elements.Builder builder = new Elements.Builder()
+                                .li()
+                                    .a().css(clickable).on(click, event -> presenter.runAs(role.getName()))
+                                        .span().css(fontAwesome("check"), marginRight5);
+                                            if (!runAsRoleSetting.contains(role.getName())) {
+                                                builder.style("visibility: hidden");
+                                            }
+                                        builder.end()
+                                        .span().textContent(role.getName());
+                                            if (role.isScoped()) {
+                                                String scopedInfo = role.getBaseRole().getName()  +
+                                                        " / " + String.join(", ", role.getScope());
+                                                builder.title(scopedInfo);
+                                            }
+                                        builder.end()
+                                    .end()
+                                .end();
+                            // @formatter:on
+                            Element runAsRole = builder.build();
+                            userDropdown.insertBefore(runAsRole, logoutItem);
+                        });
+
+                if (runAsRoleSetting != null) {
+                    // @formatter:off
+                    Element clearRunAs = new Elements.Builder()
+                        .li()
+                            .a().css(clickable).on(click, event -> presenter.clearRunAs())
+                                .textContent(resources().constants().clearRunAs())
+                            .end()
+                        .end()
+                    .build();
+                    // @formatter:on
+                    userDropdown.insertBefore(clearRunAs, logoutItem);
+                }
+                userDropdown.insertBefore(divider(), logoutItem);
+            }
+        }
+    }
+
+    private Element divider() {
+        LIElement divider = Browser.getDocument().createLIElement();
+        divider.getClassList().add(CSS.divider);
+        return divider;
     }
 
     private void setLogo(String first, String last) {

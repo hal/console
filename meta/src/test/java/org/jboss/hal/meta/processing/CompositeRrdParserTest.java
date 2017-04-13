@@ -2,7 +2,6 @@ package org.jboss.hal.meta.processing;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.jboss.hal.dmr.ExternalModelNode;
@@ -17,8 +16,7 @@ import org.junit.Test;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertDescriptionOnly;
-import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResults;
+import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;
 
 /**
  * @author Harald Pehl
@@ -69,6 +67,7 @@ public class CompositeRrdParserTest {
                     "/subsystem=undertow/buffer-cache=*",
             })).toArray(String[]::new);
 
+
     @Test
     public void parseFlat() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
@@ -79,10 +78,9 @@ public class CompositeRrdParserTest {
 
         ModelNode modelNode = ExternalModelNode
                 .read(CompositeRrdParserTest.class.getResourceAsStream("composite_rrd_flat_description_only.dmr"));
-        Set<RrdResult> results = new CompositeRrdParser(composite).parse(new CompositeResult(modelNode));
+        RrdResult rrdResult = new CompositeRrdParser(composite).parse(new CompositeResult(modelNode));
 
-        assertResults(results, 6, FLAT_TEMPLATES);
-        assertDescriptionOnly(results);
+        assertResourceDescriptions(rrdResult, 6, FLAT_TEMPLATES);
     }
 
     @Test
@@ -95,10 +93,9 @@ public class CompositeRrdParserTest {
 
         ModelNode modelNode = ExternalModelNode
                 .read(CompositeRrdParserTest.class.getResourceAsStream("composite_rrd_recursive_description_only.dmr"));
-        Set<RrdResult> results = new CompositeRrdParser(composite).parse(new CompositeResult(modelNode));
+        RrdResult rrdResult = new CompositeRrdParser(composite).parse(new CompositeResult(modelNode));
 
         // There must be no duplicates!
-        assertResults(results, 36, RECURSIVE_TEMPLATES);
-        assertDescriptionOnly(results);
+        assertResourceDescriptions(rrdResult, 36, RECURSIVE_TEMPLATES);
     }
 }

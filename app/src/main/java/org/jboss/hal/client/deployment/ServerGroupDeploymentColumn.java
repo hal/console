@@ -68,6 +68,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -100,7 +101,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {
 
     static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";
-    private static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate
+    static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate
             .of(SERVER_GROUP_DEPLOYMENT_ADDRESS);
 
     private final Environment environment;
@@ -139,15 +140,21 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         this.resources = resources;
 
         List<ColumnAction<ServerGroupDeployment>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD,
-                resources.constants().uploadNewDeployment(),
-                column -> uploadAndDeploy()));
-        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_ADD,
-                resources.constants().deployExistingContent(),
-                column -> addDeploymentFromContentRepository()));
-        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD,
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT),
-                column -> addUnmanaged()));
+        addActions.add(new ColumnAction.Builder<ServerGroupDeployment>(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD)
+                .title(resources.constants().uploadNewDeployment())
+                .handler(column -> uploadAndDeploy())
+                .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<ServerGroupDeployment>(Ids.SERVER_GROUP_DEPLOYMENT_ADD)
+                .title(resources.constants().deployExistingContent())
+                .handler(column -> addDeploymentFromContentRepository())
+                .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))
+                .build());
+        addActions.add(new ColumnAction.Builder<ServerGroupDeployment>(Ids.SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD)
+                .title(resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT))
+                .handler(column -> addUnmanaged())
+                .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))
+                .build());
         addColumnActions(Ids.SERVER_GROUP_DEPLOYMENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(),
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
@@ -258,14 +265,22 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                             Ids.DEPLOYMENT, item.getName()));
                 }
                 if (item.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().disable(), itm -> disable(itm)));
+                    actions.add(new ItemAction.Builder<ServerGroupDeployment>()
+                            .title(resources.constants().disable())
+                            .handler(itm -> disable(itm))
+                            .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY))
+                            .build());
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().enable(), itm -> enable(itm)));
+                    actions.add(new ItemAction.Builder<ServerGroupDeployment>()
+                            .title(resources.constants().enable())
+                            .handler(itm -> enable(itm))
+                            .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY))
+                            .build());
                 }
                 AddressTemplate template = SERVER_GROUP_DEPLOYMENT_TEMPLATE
                         .replaceWildcards(statementContext.selectedServerGroup());
-                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), template,
-                        ServerGroupDeploymentColumn.this));
+                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(),
+                        template, SERVER_GROUP_DEPLOYMENT_TEMPLATE, ServerGroupDeploymentColumn.this));
                 return actions;
             }
         });

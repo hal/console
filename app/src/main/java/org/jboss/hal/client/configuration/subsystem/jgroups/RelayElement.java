@@ -22,11 +22,11 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -51,21 +51,23 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
     private Element section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    RelayElement(final MetadataRegistry metadataRegistry, final Resources resources) {
+    RelayElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addRelay())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, api.selectedRow().getName(), Names.RELAY))
+                .button(tableButtonFactory.add(RELAY_TEMPLATE, (event, api) -> presenter.addRelay()))
+                .button(tableButtonFactory.remove(RELAY_TEMPLATE,
+                        (event, api) -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, api.selectedRow().getName(),
+                                Names.RELAY)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Remote Sites", row -> {
                     presenter.showRemoteSites(row);
                     presenter.showStackInnerPage(REMOTE_SITE_ID);
-                    })
+                })
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), metadata, options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(Names.RELAY)))

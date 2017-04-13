@@ -15,38 +15,51 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.inject.Inject;
 
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityContextRegistry;
 
 /**
- * Registry for {@link Metadata} which combines the information from {@link org.jboss.hal.meta.description.ResourceDescriptions},
- * {@link org.jboss.hal.meta.security.SecurityFramework} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
+ * Registry for {@link Metadata} which combines the information from {@link ResourceDescriptionRegistry},
+ * {@link SecurityContextRegistry} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
+ * <p>
+ * Does not hold own state, but simply returns metadata which is built by using the registries from above.
  *
  * @author Harald Pehl
  */
-public class MetadataRegistry extends AbstractRegistry<Metadata> {
+public class MetadataRegistry implements Registry<Metadata> {
 
-    private static final String METADATA_TYPE = "meta data";
-
-    private final Map<ResourceAddress, Metadata> registry;
+    private final SecurityContextRegistry securityContextRegistry;
+    private final ResourceDescriptionRegistry resourceDescriptionRegistry;
+    private final Capabilities capabilities;
 
     @Inject
-    public MetadataRegistry(final StatementContext statementContext, final Environment environment) {
-        super(statementContext, METADATA_TYPE, environment);
-        this.registry = new HashMap<>();
+    public MetadataRegistry(final SecurityContextRegistry securityContextRegistry,
+            final ResourceDescriptionRegistry resourceDescriptionRegistry,
+            final Capabilities capabilities) {
+        this.securityContextRegistry = securityContextRegistry;
+        this.resourceDescriptionRegistry = resourceDescriptionRegistry;
+        this.capabilities = capabilities;
     }
 
     @Override
-    protected Metadata lookupAddress(final ResourceAddress address) {
-        return registry.get(address);
+    public Metadata lookup(final AddressTemplate template) throws MissingMetadataException {
+        ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
+        return new Metadata(template, () -> securityContextRegistry.lookup(template), resourceDescription,
+                capabilities);
+    }
+
+    @Override
+    public boolean contains(final AddressTemplate template) {
+        return securityContextRegistry.contains(template) && resourceDescriptionRegistry.contains(template);
     }
 
     @Override
     public void add(final ResourceAddress address, final Metadata metadata) {
-        registry.put(address, metadata);
+        // noop
     }
 }

@@ -7,11 +7,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
@@ -23,6 +24,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -38,7 +41,8 @@ public class ModelNodeFormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        Core.INSTANCE = new Core(mock(Dispatcher.class), mock(StatementContext.class), mock(EventBus.class));
+        Core.INSTANCE = new Core(mock(Environment.class), mock(Dispatcher.class), mock(StatementContext.class),
+                mock(EventBus.class));
         attributes = new ResourceDescriptionBuilder().attributes("foo", "bar", "baz", "qux");
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));
@@ -211,8 +215,35 @@ public class ModelNodeFormTest {
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
+        assertEquals(2, Iterables.size(formItems));
         assertEquals("baz", iterator.next().getName());
         assertEquals("qux", iterator.next().getName());
+    }
+
+    @Test
+    public void noRuntime() throws Exception {
+        ModelNodeForm<ModelNode> form = builder("noRuntime",
+                new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
+                .build();
+        Iterable<FormItem> formItems = form.getFormItems();
+        Iterator<FormItem> iterator = formItems.iterator();
+
+        assertEquals(1, Iterables.size(formItems));
+        assertEquals("foo", iterator.next().getName());
+    }
+
+    @Test
+    public void withRuntime() throws Exception {
+        ModelNodeForm<ModelNode> form = builder("withRuntime",
+                new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
+                .includeRuntime()
+                .build();
+        Iterable<FormItem> formItems = form.getFormItems();
+        Iterator<FormItem> iterator = formItems.iterator();
+
+        assertEquals(2, Iterables.size(formItems));
+        assertEquals("bar", iterator.next().getName());
+        assertEquals("foo", iterator.next().getName());
     }
 
 

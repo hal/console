@@ -99,13 +99,16 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                         builder.with(SERVER, statementContext.selectedServer())
                                 .with(NAME, item.getFilename());
 
-                        ItemAction<LogFile> download = new ItemAction<>(resources.constants().download(),
-                                logFiles.downloadUrl(item.getFilename()),
-                                UIConstants.DOWNLOAD, item.getFilename());
-
-                        ItemAction<LogFile> external = new ItemAction<>(resources.constants().openInExternalWindow(),
-                                logFiles.externalUrl(item.getFilename()),
-                                UIConstants.TARGET, logFiles.target(item.getFilename()));
+                        ItemAction<LogFile> download = new ItemAction.Builder<LogFile>()
+                                .title(resources.constants().download())
+                                .href(logFiles.downloadUrl(item.getFilename()),
+                                        UIConstants.DOWNLOAD, item.getFilename())
+                                .build();
+                        ItemAction<LogFile> external = new ItemAction.Builder<LogFile>()
+                                .title(resources.constants().openInExternalWindow())
+                                .href(logFiles.externalUrl(item.getFilename()),
+                                        UIConstants.TARGET, logFiles.target(item.getFilename()))
+                                .build();
 
                         return asList(itemActionFactory.view(builder.build()), download, external);
                     }

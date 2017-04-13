@@ -37,6 +37,7 @@ import static org.jboss.hal.resources.CSS.deprecated;
 abstract class AbstractAppearance<T> implements Appearance<T> {
 
     static final String LABEL_ELEMENT = "labelElement";
+    static final String INPUT_CONTAINER = "inputContainer";
     static final Messages MESSAGES = GWT.create(Messages.class);
     protected static final Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -49,6 +50,12 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     AbstractAppearance(final Set<Decoration> supportedDecorations) {
         this.supportedDecorations = new HashSet<>(supportedDecorations);
         this.appliedDecorations = new HashSet<>();
+        applyDefaults(appliedDecorations);
+    }
+
+    protected void applyDefaults(final Set<Decoration> appliedDecorations) {
+        // all appearances are enabled by default
+        appliedDecorations.add(Decoration.ENABLED);
     }
 
     /**

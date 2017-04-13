@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
@@ -105,6 +106,10 @@ public class HostActions {
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
+    private static AddressTemplate hostTemplate(Host host) {
+        return AddressTemplate.of("/host=" + host.getAddressName());
+    }
+
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
@@ -134,12 +139,11 @@ public class HostActions {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void reload(final Host host) {
-        metadataProcessor.lookup(AddressTemplate.of("/host=" + host.getName()), progress.get(), new MetadataCallback() {
+        metadataProcessor.lookup(hostTemplate(host), progress.get(), new MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
-                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX),
-                        metadata, RELOAD)
+                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX), metadata, RELOAD)
                         .include(RESTART_SERVERS)
                         .build();
 
@@ -150,7 +154,7 @@ public class HostActions {
                     question = resources.messages().reloadHostControllerQuestion(host.getName());
                 }
                 Dialog dialog = DialogFactory.buildConfirmation(
-                        resources.messages().reload(host.getName()), question, form.asElement(),
+                        resources.messages().reload(host.getName()), question, form.asElement(), MEDIUM,
                         () -> {
                             form.save();
                             boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
@@ -192,7 +196,8 @@ public class HostActions {
 
             @Override
             public void onError(final Throwable error) {
-                MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
+                MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().metadataError(), error.getMessage()));
             }
         });
     }

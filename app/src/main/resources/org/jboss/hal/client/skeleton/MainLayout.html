@@ -56,10 +56,9 @@
                     <span id="{{resources().HEADER_USERNAME}}" data-element="userName">John Doe</span>
                     <b class="caret"></b>
                 </a>
-                <ul class="dropdown-menu">
-                    <li id="{{resources().HEADER_ROLES}}" data-element="roles" class="static">Active Roles: Administrator</li>
-                    <li class="divider"></li>
-                    <li><a data-element="logout" class="clickable">{{resources().constants().logout()}}</a></li>
+                <ul data-element="userDropdown" class="dropdown-menu user-dropdown">
+                    <!-- active roles and run-as-roles are inserted before this element -->
+                    <li data-element="logoutItem"><a data-element="logout" class="clickable">{{resources().constants().logout()}}</a></li>
                 </ul>
             </li>
             <li class="dropdown" data-element="connectedToContainer">
@@ -70,7 +69,8 @@
                 <ul class="dropdown-menu">
                     <li id="{{resources().HEADER_CONNECTED_TO}}" data-element="connectedTo" class="static">Connected to localhost</li>
                     <li class="divider"></li>
-                    <li><a data-element="reconnect" class="clickable">{{resources().constants().connectToServer()}}</a></li>
+                    <li><a data-element="reconnect" class="clickable">{{resources().constants().connectToServer()}}</a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -80,10 +80,13 @@
             <li><a id="{{resources().TLC_CONFIGURATION}}" class="clickable">Configuration</a></li>
             <li><a id="{{resources().TLC_RUNTIME}}" class="clickable">Runtime</a></li>
             <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" class="clickable">Patching</a></li>
-            <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" class="clickable">Access Control</a></li>
+            <li data-element="accessControl">
+                <a id="{{resources().TLC_ACCESS_CONTROL}}" class="clickable">Access Control</a></li>
         </ul>
         <ol class="breadcrumb hal-breadcrumb" data-element="breadcrumb">
-            <li data-element="backItem"><a data-element="backLink" class="back clickable"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
+            <li data-element="backItem">
+                <a data-element="backLink" class="back clickable"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a>
+            </li>
             <li data-element="breadcrumbToolsItem" class="breadcrumb-tools">
                 <a data-element="switchModeLink" title="{{resources().constants().openInModelBrowser()}}" class="clickable">
                     <span data-element="switchModeIcon" class="fa fa-sitemap fa-lg"></span>

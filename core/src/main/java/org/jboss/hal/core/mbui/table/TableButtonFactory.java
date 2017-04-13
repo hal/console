@@ -24,10 +24,13 @@ import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
  * @author Harald Pehl
@@ -43,6 +46,14 @@ public class TableButtonFactory {
         this.resources = resources;
     }
 
+    public <T extends ModelNode> Button<T> add(AddressTemplate template, Button.ActionHandler<T> action) {
+        Button<T> button = new Button<>();
+        button.text = resources.constants().add();
+        button.action = action;
+        button.constraint = Constraint.executable(template, ADD).data();
+        return button;
+    }
+
     public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
             CrudOperations.AddCallback callback) {
         return add(id, type, template, Collections.emptyList(), callback);
@@ -53,6 +64,15 @@ public class TableButtonFactory {
         Button<T> button = new Button<>();
         button.text = resources.constants().add();
         button.action = (event, api) -> crud.add(id, type, template, attributes, callback);
+        button.constraint = Constraint.executable(template, ADD).data();
+        return button;
+    }
+
+    public <T extends ModelNode> Button<T> remove(AddressTemplate template, Button.ActionHandler<T> action) {
+        Button<T> button = new Button<>();
+        button.text = resources.constants().remove();
+        button.action = action;
+        button.constraint = Constraint.executable(template, REMOVE).data();
         return button;
     }
 
@@ -62,6 +82,7 @@ public class TableButtonFactory {
         button.text = resources.constants().remove();
         button.extend = SELECTED_SINGLE.selector();
         button.action = (event, api) -> crud.remove(type, nameFunction.apply(api), template, callback);
+        button.constraint = Constraint.executable(template, REMOVE).data();
         return button;
     }
 }

@@ -26,10 +26,10 @@
                     <table id="messaging-acceptor-table" title="Generic Acceptor" form-ref="messaging-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.ACCEPTOR)}}"/>
+                                    handler="{{presenter.add(ServerSubResource.ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.ACCEPTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -60,10 +60,10 @@
                            form-ref="messaging-in-vm-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.IN_VM_ACCEPTOR)}}"/>
+                                    handler="{{presenter.add(ServerSubResource.IN_VM_ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.IN_VM_ACCEPTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -88,10 +88,10 @@
                            form-ref="messaging-http-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_ACCEPTOR)}}"/>
+                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.HTTP_ACCEPTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -123,10 +123,11 @@
                            form-ref="messaging-remote-acceptor-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_ACCEPTOR)}}"/>
+                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_ACCEPTOR)}}"
+                                    constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.REMOTE_ACCEPTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -158,10 +159,10 @@
                     <table id="messaging-connector-table" title="Generic Connector" form-ref="messaging-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.CONNECTOR)}}"/>
+                                    handler="{{presenter.add(ServerSubResource.CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.CONNECTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -192,10 +193,10 @@
                            form-ref="messaging-in-vm-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.add(ServerSubResource.IN_VM_CONNECTOR)}}"/>
+                                    handler="{{presenter.add(ServerSubResource.IN_VM_CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.IN_VM_CONNECTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -220,10 +221,10 @@
                            form-ref="messaging-http-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_CONNECTOR)}}"/>
+                                    handler="{{presenter.addHttp(ServerSubResource.HTTP_CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.HTTP_CONNECTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -261,10 +262,11 @@
                            form-ref="messaging-remote-connector-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_CONNECTOR)}}"/>
+                                    handler="{{presenter.addRemote(ServerSubResource.REMOTE_CONNECTOR)}}"
+                                    constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{presenter.remove(ServerSubResource.REMOTE_CONNECTOR, api.selectedRow())}}"
-                                    scope="selected"/>
+                                    scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -296,10 +298,10 @@
                        form-ref="messaging-connector-service-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.CONNECTOR_SERVICE)}}"/>
+                                handler="{{presenter.add(ServerSubResource.CONNECTOR_SERVICE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.CONNECTOR_SERVICE, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -324,10 +326,10 @@
                        form-ref="messaging-connection-factory-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.CONNECTION_FACTORY)}}"/>
+                                handler="{{presenter.add(ServerSubResource.CONNECTION_FACTORY)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.CONNECTION_FACTORY, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -348,10 +350,11 @@
                        form-ref="messaging-pooled-connection-factory-form">
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.POOLED_CONNECTION_FACTORY)}}"/>
+                                handler="{{presenter.add(ServerSubResource.POOLED_CONNECTION_FACTORY)}}"
+                                constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
                                 handler="{{presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, api.selectedRow())}}"
-                                scope="selected"/>
+                                scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

@@ -30,8 +30,10 @@ public class ConfigModule extends AbstractGinModule {
     protected void configure() {
         bind(Endpoints.class).in(Singleton.class);
         bind(Environment.class).in(Singleton.class);
+        bind(Settings.class).in(Singleton.class);
 
         requestStaticInjection(Endpoints.class);
+        requestStaticInjection(Settings.class);
     }
 
     @Provides

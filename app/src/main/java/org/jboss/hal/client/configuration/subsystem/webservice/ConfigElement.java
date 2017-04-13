@@ -26,12 +26,12 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PropertiesItem;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -68,13 +68,14 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
     private WebservicePresenter presenter;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
-    ConfigElement(final Config configType, final MetadataRegistry metadataRegistry, final Resources resources) {
+    ConfigElement(final Config configType, final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory, final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(resources.constants().add(), (event, api) -> presenter.addConfig())
-                .button(resources.constants().remove(), Button.Scope.SELECTED,
-                        (event, api) -> presenter.removeConfig(api.selectedRow().getName()))
+                .button(tableButtonFactory.add(configType.template, (event, api) -> presenter.addConfig()))
+                .button(tableButtonFactory.remove(configType.template,
+                        (event, api) -> presenter.removeConfig(api.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.WEBSERVICES_HANDLER_CHAIN_COLUMN,
                         Names.HANDLER_CHAIN,
@@ -91,7 +92,7 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
                         .width("12em")
                         .build())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), options);
+        table = new NamedNodeTable<>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), metadata, options);
 
         ModelNode propertyDescription = failSafeGet(metadata.getDescription(), "children/property/description");
         propertiesItem = new PropertiesItem(PROPERTY);
@@ -112,8 +113,8 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
         .build();
         // @formatter:on
 
-        handlerChain = new HandlerChainElement(configType, metadataRegistry, resources);
-        handler = new HandlerElement(configType, metadataRegistry, resources);
+        handlerChain = new HandlerChainElement(configType, metadataRegistry, tableButtonFactory);
+        handler = new HandlerElement(configType, metadataRegistry, tableButtonFactory);
 
         String mainId = Ids.build(configType.baseId, Ids.PAGE_SUFFIX);
         pages = new Pages(mainId, section);

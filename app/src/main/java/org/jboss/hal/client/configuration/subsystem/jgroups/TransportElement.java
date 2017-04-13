@@ -21,6 +21,7 @@ import elemental.dom.Element;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -46,10 +47,10 @@ public class TransportElement extends GenericElement {
     private Form<ModelNode> threadPooloobForm;
 
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions", "DuplicateStringLiteralInspection"})
-    TransportElement(final MetadataRegistry metadataRegistry, final Metadata formMetadata,
-            final Resources resources, final AddressTemplate template,
+    TransportElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Metadata formMetadata, final Resources resources, final AddressTemplate template,
             final String name, final String resourceId) {
-        super(formMetadata, resources, template, name, resourceId);
+        super(formMetadata, tableButtonFactory, resources, template, name, resourceId);
 
         Metadata threadPoolMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_TEMPLATE);
 

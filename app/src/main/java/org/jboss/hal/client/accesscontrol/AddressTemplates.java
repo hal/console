@@ -15,12 +15,13 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import org.jboss.hal.config.Role;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import static org.jboss.hal.client.accesscontrol.Role.Type.HOST;
-import static org.jboss.hal.client.accesscontrol.Role.Type.SERVER_GROUP;
+import static org.jboss.hal.config.Role.Type.HOST;
+import static org.jboss.hal.config.Role.Type.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXCLUDE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_SCOPED_ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
@@ -42,6 +43,8 @@ interface AddressTemplates {
 
     AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     AddressTemplate ROLE_MAPPING_TEMPLATE = AddressTemplate.of(ROLE_MAPPING_ADDRESS);
+    AddressTemplate INCLUDE_TEMPLATE = AddressTemplate.of(INCLUDE_ADDRESS);
+    AddressTemplate EXCLUDE_TEMPLATE = AddressTemplate.of(EXCLUDE_ADDRESS);
     AddressTemplate SERVER_GROUP_SCOPED_ROLE_TEMPLATE = AddressTemplate.of(SERVER_GROUP_SCOPED_ROLE_ADDRESS);
     AddressTemplate HOST_SCOPED_ROLE_TEMPLATE = AddressTemplate.of(HOST_SCOPED_ROLE_ADDRESS);
 

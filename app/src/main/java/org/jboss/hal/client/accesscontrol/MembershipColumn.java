@@ -34,6 +34,9 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.User;
+import org.jboss.hal.config.UserChangedEvent;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionHandler;
 import org.jboss.hal.core.finder.Finder;
@@ -58,6 +61,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -72,6 +77,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
+    private final User currentUser;
     private final AccessControl accessControl;
     private final Resources resources;
 
@@ -81,6 +87,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
+            final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final Resources resources) {
@@ -88,9 +95,11 @@ public class MembershipColumn extends FinderColumn<Assignment> {
         super(new Builder<Assignment>(finder, Ids.MEMBERSHIP, resources.constants().membership())
                 .withFilter()
                 .onPreview(item -> new MembershipPreview(tokens, item.getPrincipal(), resources)));
+
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
+        this.currentUser = currentUser;
         this.accessControl = accessControl;
         this.resources = resources;
 
@@ -113,8 +122,10 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             List<ColumnAction<Assignment>> includeActions = missingPrincipals.stream()
                     .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
-                    .map(principal -> new ColumnAction<>(includeId(principal), typeAndName(principal),
-                            columnActionHandler(principal, true)))
+                    .map(principal -> new ColumnAction.Builder<Assignment>(includeId(principal))
+                            .title(typeAndName(principal))
+                            .handler(columnActionHandler(principal, true))
+                            .build())
                     .collect(toList());
             if (!includeActions.isEmpty()) {
                 addColumnActions(Ids.MEMBERSHIP_INCLUDE, fontAwesome("plus"), resources.constants().includeUserGroup(),
@@ -123,8 +134,10 @@ public class MembershipColumn extends FinderColumn<Assignment> {
 
             List<ColumnAction<Assignment>> excludeActions = missingPrincipals.stream()
                     .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
-                    .map(principal -> new ColumnAction<>(excludeId(principal), typeAndName(principal),
-                            columnActionHandler(principal, false)))
+                    .map(principal -> new ColumnAction.Builder<Assignment>(excludeId(principal))
+                            .title(typeAndName(principal))
+                            .handler(columnActionHandler(principal, false))
+                            .build())
                     .collect(toList());
             if (!excludeActions.isEmpty()) {
                 addColumnActions(Ids.MEMBERSHIP_EXCLUDE, fontAwesome("minus"), resources.constants().excludeUserGroup(),
@@ -180,18 +193,30 @@ public class MembershipColumn extends FinderColumn<Assignment> {
             @Override
             public List<ItemAction<Assignment>> actions() {
                 return singletonList(itemActionFactory.remove(resources.constants().membership(),
-                        item.getPrincipal().getName(), itm -> {
+                        item.getPrincipal().getName(), item.isInclude() ? INCLUDE_TEMPLATE : EXCLUDE_TEMPLATE,
+                        itm -> {
                             ResourceAddress address = AddressTemplates.assignment(itm);
                             Operation operation = new Operation.Builder(REMOVE, address).build();
                             dispatcher.execute(operation, result -> {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .removeResourceSuccess(resources.constants().membership(),
                                                 itm.getPrincipal().getName())));
-                                accessControl.reload(() -> refresh(RefreshMode.CLEAR_SELECTION));
+                                accessControl.reload(() -> {
+                                    refresh(RefreshMode.CLEAR_SELECTION);
+                                    if (isCurrentUser(itm.getPrincipal())) {
+                                        eventBus.fireEvent(new UserChangedEvent());
+                                    }
+                                });
                             });
                         }));
             }
         });
+    }
+
+    private boolean isCurrentUser(Principal principal) {
+        return principal != null &&
+                principal.getType() == Principal.Type.USER &&
+                principal.getName().equals(currentUser.getName());
     }
 
     private Role findRole(FinderPath path) {
@@ -199,8 +224,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                 .filter(segment -> Ids.ROLE.equals(segment.getColumnId()))
                 .findAny()
                 .map(FinderSegment::getItemId);
-
-        return optional.isPresent() ? accessControl.roles().get(optional.get()) : null;
+        return optional.map(id -> accessControl.roles().get(id)).orElse(null);
     }
 
     private String includeId(Principal principal) {
@@ -234,7 +258,12 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                                         ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
                                         : resources.messages().assignmentExcludeSuccess(type, principal.getName());
                                 MessageEvent.fire(eventBus, Message.success(message));
-                                accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION));
+                                accessControl.reload(() -> {
+                                    refresh(RefreshMode.RESTORE_SELECTION);
+                                    if (isCurrentUser(principal)) {
+                                        eventBus.fireEvent(new UserChangedEvent());
+                                    }
+                                });
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),

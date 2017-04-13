@@ -74,7 +74,9 @@ public class LogFiles {
 
     String downloadUrl(String name) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
-        Operation operation = new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, "stream").build();
+        Operation operation = new Operation.Builder(READ_ATTRIBUTE_OPERATION, address)
+                .param(NAME, STREAM)
+                .build();
         return dispatcher.downloadUrl(operation);
     }
 

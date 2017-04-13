@@ -19,13 +19,16 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.datasource.DataSource;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -44,12 +47,16 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         if (enabled) {
             previewBuilder().add(
                     new Alert(Icons.OK, resources.messages().resourceEnabled(type, dataSource.getName()),
-                            resources.constants().disable(), event -> column.disable(dataSource)));
+                            resources.constants().disable(), event -> column.disable(dataSource),
+                            Constraint.writable(dataSource.isXa() ? DATA_SOURCE_TEMPLATE : XA_DATA_SOURCE_TEMPLATE,
+                                    ENABLED)));
 
         } else {
             previewBuilder().add(
                     new Alert(Icons.DISABLED, resources.messages().resourceDisabled(type, dataSource.getName()),
-                            resources.constants().enable(), event -> column.enable(dataSource)));
+                            resources.constants().enable(), event -> column.enable(dataSource),
+                            Constraint.writable(dataSource.isXa() ? DATA_SOURCE_TEMPLATE : XA_DATA_SOURCE_TEMPLATE,
+                                    ENABLED)));
         }
 
         List<String> attributes = Lists

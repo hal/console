@@ -75,6 +75,7 @@ class DefaultFormItemProvider implements FormItemProvider {
         String name = property.getName();
         String label = labelBuilder.label(property);
         ModelNode attributeDescription = property.getValue();
+        // don't use 'required' here!
         boolean required = attributeDescription.hasDefined(NILLABLE) && !attributeDescription.get(NILLABLE).asBoolean();
         boolean expressionAllowed = attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                 attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean();

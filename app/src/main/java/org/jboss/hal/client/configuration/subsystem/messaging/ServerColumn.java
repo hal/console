@@ -46,7 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.MESSAGING_SERVER)
-@Requires(value = SERVER_ADDRESS) // TODO Add recursive = false once WFCORE-2022 is resolved
+@Requires(SERVER_ADDRESS) // TODO Add recursive = false once WFCORE-2022 is resolved
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject

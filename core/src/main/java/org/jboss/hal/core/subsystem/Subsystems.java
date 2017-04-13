@@ -28,6 +28,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Subsystem registry. Lives in core so that extensions can use this class to register their subsystems.
+ *
  * @author Harald Pehl
  */
 public class Subsystems {
@@ -113,8 +114,13 @@ public class Subsystems {
                 .nextColumn(Ids.RESOURCE_ADAPTER)
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
+        add(new SubsystemMetadata.Builder(ELYTRON, "Security")
+                .subtitle("Elytron")
+                .nextColumn(Ids.ELYTRON)
+                .preview(resources.previews().configurationSecurityElytron())
+                .build());
         add(new SubsystemMetadata.Builder(SECURITY, "Security")
-                .subtitle("deprecated")
+                .subtitle("Legacy")
                 .nextColumn(Ids.SECURITY_DOMAIN)
                 .token(NameTokens.SECURITY_CONFIGURATION)
                 .preview(resources.previews().configurationSecurityDomains())

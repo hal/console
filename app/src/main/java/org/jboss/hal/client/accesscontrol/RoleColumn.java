@@ -43,6 +43,9 @@ import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveAssignmen
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.RemoveScopedRole;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Role;
+import org.jboss.hal.config.RolesChangedEvent;
+import org.jboss.hal.config.Settings;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -71,6 +74,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.*;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -80,7 +84,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.ROLE)
-@Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+@Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
 public class RoleColumn extends FinderColumn<Role> {
 
     static List<String> filterData(Role role) {
@@ -116,6 +120,7 @@ public class RoleColumn extends FinderColumn<Role> {
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final Environment environment,
+            final Settings settings,
             final Resources resources) {
 
         super(new Builder<Role>(finder, Ids.ROLE, resources.constants().role())
@@ -150,16 +155,19 @@ public class RoleColumn extends FinderColumn<Role> {
 
         if (!environment.isStandalone()) {
             List<ColumnAction<Role>> actions = new ArrayList<>();
-            actions.add(new ColumnAction<>(Ids.ROLE_HOST_SCOPED_ADD,
-                    resources.constants().hostScopedRole(),
-                    column -> addScopedRole(Role.Type.HOST, resources.constants().hostScopedRole(),
+            actions.add(new ColumnAction.Builder<Role>(Ids.ROLE_HOST_SCOPED_ADD)
+                    .title(resources.constants().hostScopedRole())
+                    .handler(column -> addScopedRole(Role.Type.HOST, resources.constants().hostScopedRole(),
                             HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
-                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS)));
-            actions.add(new ColumnAction<>(Ids.ROLE_SERVER_GROUP_SCOPED_ADD,
-                    resources.constants().serverGroupScopedRole(),
-                    column -> addScopedRole(Role.Type.SERVER_GROUP, resources.constants().serverGroupScopedRole(),
+                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS))
+                    .build());
+            actions.add(new ColumnAction.Builder<Role>(Ids.ROLE_SERVER_GROUP_SCOPED_ADD)
+                    .title(resources.constants().serverGroupScopedRole())
+                    .handler(column -> addScopedRole(Role.Type.SERVER_GROUP,
+                            resources.constants().serverGroupScopedRole(),
                             SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
-                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS)));
+                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS))
+                    .build());
             addColumnActions(Ids.ROLE_ADD, pfIcon("add-circle-o"), resources.constants().add(), actions);
         }
         addColumnAction(columnActionFactory.refresh(Ids.ROLE_REFRESH,
@@ -210,34 +218,44 @@ public class RoleColumn extends FinderColumn<Role> {
             @Override
             public List<ItemAction<Role>> actions() {
                 List<ItemAction<Role>> actions = new ArrayList<>();
-                actions.add(new ItemAction<>(resources.constants().edit(), itm -> {
-                    switch (itm.getType()) {
-                        case STANDARD:
-                            editStandardRole(itm);
-                            break;
-                        case HOST:
-                            editScopedRole(itm, resources.constants().hostScopedRole(),
-                                    HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
-                                    Ids.ROLE_HOST_SCOPED_FORM, HOSTS);
-                            break;
-                        case SERVER_GROUP:
-                            editScopedRole(itm, resources.constants().serverGroupScopedRole(),
-                                    SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
-                                    Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS);
-                            break;
-                    }
-                }));
+                actions.add(new ItemAction.Builder<Role>()
+                        .title(resources.constants().edit())
+                        .handler(itm -> {
+                            switch (itm.getType()) {
+                                case STANDARD:
+                                    editStandardRole(itm);
+                                    break;
+                                case HOST:
+                                    editScopedRole(itm, resources.constants().hostScopedRole(),
+                                            HOST_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/host=*"),
+                                            Ids.ROLE_HOST_SCOPED_FORM, HOSTS);
+                                    break;
+                                case SERVER_GROUP:
+                                    editScopedRole(itm, resources.constants().serverGroupScopedRole(),
+                                            SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
+                                            Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS);
+                                    break;
+                            }
+                        })
+                        .build());
                 if (item.isScoped()) {
                     String type = item.getType() == Role.Type.HOST
                             ? resources.constants().hostScopedRole()
                             : resources.constants().serverGroupScopedRole();
-                    actions.add(new ItemAction<>(resources.constants().remove(), itm ->
-                            DialogFactory.showConfirmation(
-                                    resources.messages().removeConfirmationTitle(type),
-                                    resources.messages().removeRoleQuestion(itm.getName()),
-                                    () -> removeScopedRole(itm, type))
-
-                    ));
+                    actions.add(new ItemAction.Builder<Role>()
+                            .title(resources.constants().remove())
+                            .handler(itm -> {
+                                if (settings.get(RUN_AS).asSet().contains(itm.getName())) {
+                                    MessageEvent.fire(eventBus,
+                                            Message.error(resources.messages().removeRunAsRoleError(item.getName())));
+                                } else {
+                                    DialogFactory.showConfirmation(
+                                            resources.messages().removeConfirmationTitle(type),
+                                            resources.messages().removeRoleQuestion(itm.getName()),
+                                            () -> removeScopedRole(itm, type));
+                                }
+                            })
+                            .build());
                 }
                 return actions;
             }
@@ -290,7 +308,10 @@ public class RoleColumn extends FinderColumn<Role> {
                         public void onSuccess(final FunctionContext context) {
                             MessageEvent.fire(eventBus,
                                     Message.success(resources.messages().addResourceSuccess(typeName, name)));
-                            accessControl.reload(() -> refresh(Ids.role(name)));
+                            accessControl.reload(() -> {
+                                refresh(Ids.role(name));
+                                eventBus.fireEvent(new RolesChangedEvent());
+                            });
                         }
                     },
                     functions.toArray(new Function[functions.size()]));
@@ -319,7 +340,10 @@ public class RoleColumn extends FinderColumn<Role> {
                             public void onSuccess(final FunctionContext context) {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .modifyResourceSuccess(resources.constants().role(), role.getName())));
-                                accessControl.reload(() -> refresh(role.getId()));
+                                accessControl.reload(() -> {
+                                    refresh(role.getId());
+                                    eventBus.fireEvent(new RolesChangedEvent());
+                                });
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),
@@ -369,7 +393,10 @@ public class RoleColumn extends FinderColumn<Role> {
                         public void onSuccess(final FunctionContext context) {
                             MessageEvent.fire(eventBus,
                                     Message.success(resources.messages().modifyResourceSuccess(type, role.getName())));
-                            accessControl.reload(() -> refresh(role.getId()));
+                            accessControl.reload(() -> {
+                                refresh(role.getId());
+                                eventBus.fireEvent(new RolesChangedEvent());
+                            });
                         }
                     },
                     functions.toArray(new Function[functions.size()]));
@@ -395,7 +422,10 @@ public class RoleColumn extends FinderColumn<Role> {
                     public void onSuccess(final FunctionContext context) {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().removeResourceSuccess(type, role.getName())));
-                        accessControl.reload(() -> refresh(RefreshMode.CLEAR_SELECTION));
+                        accessControl.reload(() -> {
+                            refresh(RefreshMode.CLEAR_SELECTION);
+                            eventBus.fireEvent(new RolesChangedEvent());
+                        });
                     }
                 },
                 functions.toArray(new Function[functions.size()]));

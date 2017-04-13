@@ -189,6 +189,16 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         // ------------------------------------------------------ decorations
 
+
+        @Override
+        void applyDefault(final String defaultValue) {
+            if (attached) {
+                SwitchBridge.Bridge.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
+            } else {
+                inputElement.setChecked(Boolean.parseBoolean(defaultValue));
+            }
+        }
+
         @Override
         protected void applyExpression(final ExpressionContext expressionContext) {
             Elements.failSafeRemove(inputContainer, normalModeContainer);

@@ -203,10 +203,10 @@
  */
 package org.jboss.hal.core.mbui;
 
+import java.util.Map;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
-
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -229,6 +229,16 @@ public class ResourceDescriptionBuilder {
         return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
     }
 
+    public ResourceDescription storage(Map<String, String> storageAttributes) {
+        ModelNode list = new ModelNode();
+        if (storageAttributes != null) {
+            for (Map.Entry<String, String> entry : storageAttributes.entrySet()) {
+                list.get(entry.getKey()).set(new ModelNode().set(STORAGE, entry.getValue()));
+            }
+        }
+        return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
+    }
+
     public ResourceDescription requestProperties(Map<String, Boolean> requestProperties) {
         ModelNode list = new ModelNode();
         if (requestProperties != null) {
@@ -236,9 +246,7 @@ public class ResourceDescriptionBuilder {
                 list.get(entry.getKey()).set(new ModelNode().set(REQUIRED, entry.getValue()));
             }
         }
-        return new ResourceDescription(
-                new ModelNode().set(OPERATIONS,
-                        new ModelNode().set(ADD,
-                                new ModelNode().set(REQUEST_PROPERTIES, list))));
+        return new ResourceDescription(new ModelNode().set(OPERATIONS,
+                new ModelNode().set(ADD, new ModelNode().set(REQUEST_PROPERTIES, list))));
     }
 }

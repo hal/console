@@ -80,10 +80,10 @@ public class DestinationPresenter
     // @formatter:off
     @ProxyCodeSplit
     // TODO Replace with
-    // TODO value = {CORE_QUEUE_ADDRESS, JMS_QUEUE_ADDRESS, JMS_TOPIC_ADDRESS,
-    // TODO         SECURITY_SETTING_ADDRESS, ADDRESS_SETTING_ADDRESS, DIVERT_ADDRESS}
+    // TODO {CORE_QUEUE_ADDRESS, JMS_QUEUE_ADDRESS, JMS_TOPIC_ADDRESS,
+    // TODO  SECURITY_SETTING_ADDRESS, ADDRESS_SETTING_ADDRESS, DIVERT_ADDRESS}
     // TODO once WFCORE-2022 is resolved
-    @Requires(value = SERVER_ADDRESS)
+    @Requires(SERVER_ADDRESS)
     @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
     public interface MyProxy extends ProxyPlace<DestinationPresenter> {}
 

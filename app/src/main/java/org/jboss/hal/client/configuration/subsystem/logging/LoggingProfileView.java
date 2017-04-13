@@ -180,7 +180,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 (name, model) -> {
                     ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
                             .resolve(selectionAwareStatementContext);
-                    crud().addSingleton(Names.ROOT_LOGGER, address, model, (n, a) -> presenter.reload());
+                    crud().addSingleton(Names.ROOT_LOGGER, address, model, a -> presenter.reload());
                 });
 
         dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);

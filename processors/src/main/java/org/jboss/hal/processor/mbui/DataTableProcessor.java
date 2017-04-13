@@ -22,11 +22,14 @@ import javax.lang.model.util.Types;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.processor.mbui.DataTableInfo.HandlerRef;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
 import static java.util.stream.Collectors.joining;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 /**
@@ -60,6 +63,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                 String handlerRef = actionElement.getAttributeValue(XmlTags.HANDLER_REF);
                 String actionTitle = actionElement.getAttributeValue(XmlTags.TITLE);
                 String scope = actionElement.getAttributeValue(XmlTags.SCOPE);
+                String constraint = actionElement.getAttributeValue(XmlTags.CONSTRAINT);
                 String nameResolver = actionElement.getAttributeValue(XmlTags.NAME_RESOLVER);
                 Element attributesContainer = actionElement.getChild(XmlTags.ATTRIBUTES);
 
@@ -107,9 +111,16 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                             "Unknown scope \"%s\" in handler-ref \"%s\" in data-table#%s: Only \"selected\" is supported.",
                             scope, handlerRef, selector);
                 }
+                if (constraint != null) {
+                    if (ADD.equals(constraint)) {
+                        constraint = Constraint.executable(AddressTemplate.of(metadata.getTemplate()), ADD).data();
+                    } else if (REMOVE.equals(constraint)) {
+                        constraint = Constraint.executable(AddressTemplate.of(metadata.getTemplate()), REMOVE).data();
+                    }
+                }
 
                 DataTableInfo.Action action = new DataTableInfo.Action(handlerRef != null ? handlerRef : handler,
-                        actionTitle, scope, nameResolver);
+                        actionTitle, scope, constraint, nameResolver);
                 tableInfo.addAction(action);
 
                 if (attributesContainer != null) {

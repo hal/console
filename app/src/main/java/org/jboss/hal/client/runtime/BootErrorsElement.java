@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.form.PreListItem;
 import org.jboss.hal.ballroom.form.PreTextItem;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
@@ -75,8 +74,8 @@ public class BootErrorsElement implements IsElement, Attachable {
         ModelNode modelNode = new ModelNode();
         modelNode.get(DESCRIPTION).set(description);
         modelNode.get(ATTRIBUTES).set(attributes);
-        Metadata metadata = new Metadata(template, SecurityContext.READ_ONLY,
-                new ResourceDescription(modelNode), capabilities);
+        ResourceDescription resourceDescription = new ResourceDescription(modelNode);
+        Metadata metadata = new Metadata(template, () -> SecurityContext.READ_ONLY, resourceDescription, capabilities);
 
         Options<ModelNode> options = new ModelNodeTable.Builder<>(metadata)
                 .column(Ids.BOOT_ERRORS_ADDRESS_COLUMN, resources.constants().address(),
@@ -92,7 +91,7 @@ public class BootErrorsElement implements IsElement, Attachable {
                             return operation.isDefined() ? operation.asString() : Names.NOT_AVAILABLE;
                         })
                 .build();
-        table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, options);
+        table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, metadata, options);
 
         form = new ModelNodeForm.Builder<>(Ids.BOOT_ERRORS_FORM, metadata)
                 .readOnly()
@@ -167,7 +166,7 @@ public class BootErrorsElement implements IsElement, Attachable {
         Elements.setVisible(bootErrorsSection, !bootErrors.isEmpty());
         Elements.setVisible(noBootErrors.asElement(), bootErrors.isEmpty());
         if (!bootErrors.isEmpty()) {
-            table.api().clear().add(bootErrors).refresh(RefreshMode.RESET);
+            table.update(bootErrors);
             form.clear();
         }
     }

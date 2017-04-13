@@ -62,7 +62,8 @@ public class BrowseByColumn extends StaticItemColumn {
 
         @Override
         public void update(final StaticItem item) {
-            Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
+            Elements.setVisible(warning.asElement(),
+                    environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
         }
     }
 

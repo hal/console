@@ -649,7 +649,7 @@ public class TopologyFunctions {
                     String host = address.getParent().lastValue();
                     return new Server(host, modelNode.get(RESULT));
                 })
-                .collect(toMap(Server::getName, identity()));
+                .collect(toMap(Server::getId, identity()));
     }
 
     private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
@@ -700,12 +700,13 @@ public class TopologyFunctions {
      * </ol>
      */
     private static void addServerRuntimeAttributes(List<Server> servers, CompositeResult result) {
-        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getName, identity()));
+        Map<String, Server> serverConfigsByName = servers.stream().collect(toMap(Server::getId, identity()));
 
         for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
             ModelNode attributes = iterator.next().get(RESULT);
-            String serverName = attributes.get(NAME).asString();
-            Server server = serverConfigsByName.get(serverName);
+            String serverId = Ids.hostServer(attributes.get(ModelDescriptionConstants.HOST).asString(),
+                    attributes.get(NAME).asString());
+            Server server = serverConfigsByName.get(serverId);
             //noinspection Duplicates
             if (server != null) {
                 server.addServerAttributes(attributes);
