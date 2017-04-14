@@ -50,7 +50,7 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
  * based on the outcome of {@code isAllowed()}. Add only allowed elements to the DOM.</dd>
  * <dt>Late hiding</dt>
  * <dd>If the security context is <strong>not</strong> available when the UI elements are created, store the
- * constraints as {@code data-constraint} attribute. Later when you have access to the security context
+ * constraints as {@code data-constraint} attributes. Later when you have access to the security context
  * post-process the elements using one of the {@code processElements()} method from {@link ElementGuard}.</dd>
  * </dl>
  * <p>
