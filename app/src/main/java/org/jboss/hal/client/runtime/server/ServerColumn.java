@@ -414,7 +414,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void processAddColumnAction(String host) {
-        AuthorisationDecision ad = AuthorisationDecision.strict(environment, c -> {
+        AuthorisationDecision ad = AuthorisationDecision.from(environment, c -> {
             if (securityContextRegistry.contains(c.getTemplate())) {
                 return Optional.of(securityContextRegistry.lookup(c.getTemplate()));
             }

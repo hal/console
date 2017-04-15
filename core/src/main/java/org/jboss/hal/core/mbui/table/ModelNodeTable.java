@@ -120,7 +120,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
     private void applySecurity() {
-        AuthorisationDecision ad = AuthorisationDecision.strict(Core.INSTANCE.environment(),
+        AuthorisationDecision ad = AuthorisationDecision.from(Core.INSTANCE.environment(),
                 metadata.getSecurityContext());
         ElementGuard.processElements(ad, asElement());
     }

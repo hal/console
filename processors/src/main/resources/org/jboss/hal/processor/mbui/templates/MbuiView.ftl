@@ -273,7 +273,7 @@ final class ${context.subclass} extends ${context.base} {
                             <#break>
                     </#switch>
                 <#else>
-            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parseSingle("${action.constraint}"), </#if>(event, api) -> ${action.handler})
+            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parse("${action.constraint}"), </#if>(event, api) -> ${action.handler})
                 </#if>
             </#list>
             <#if table.onlySimpleColumns>

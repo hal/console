@@ -16,12 +16,11 @@
 package org.jboss.hal.core.finder;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import elemental.dom.Element;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 
 /**
  * @author Harald Pehl
@@ -35,7 +34,8 @@ public class ItemAction<T> {
         private ItemActionHandler<T> handler;
         private String href;
         private final Map<String, String> attributes;
-        private final Set<Constraint> constraints;
+        private Constraint constraint;
+        private Constraints constraints;
 
         public Builder() {
             this.title = null;
@@ -43,7 +43,6 @@ public class ItemAction<T> {
             this.handler = null;
             this.href = null;
             this.attributes = new HashMap<>();
-            this.constraints = new HashSet<>();
         }
 
         public Builder<T> title(final String title) {
@@ -75,7 +74,12 @@ public class ItemAction<T> {
         }
 
         public Builder<T> constraint(final Constraint constraint) {
-            this.constraints.add(constraint);
+            this.constraint = constraint;
+            return this;
+        }
+
+        public Builder<T> constraints(final Constraints constraints) {
+            this.constraints = constraints;
             return this;
         }
 
@@ -90,7 +94,7 @@ public class ItemAction<T> {
     final ItemActionHandler<T> handler;
     final String href;
     final Map<String, String> attributes;
-    final Set<Constraint> constraints;
+    final Constraints constraints;
 
     private ItemAction(final Builder<T> builder) {
         this.title = builder.title;
@@ -98,7 +102,13 @@ public class ItemAction<T> {
         this.handler = builder.handler;
         this.href = builder.href;
         this.attributes = builder.attributes;
-        this.constraints = builder.constraints;
+        if (builder.constraints != null) {
+            this.constraints = builder.constraints;
+        } else if (builder.constraint != null) {
+            this.constraints = Constraints.single(builder.constraint);
+        } else {
+            this.constraints = Constraints.empty();
+        }
     }
 
     public String getTitle() {

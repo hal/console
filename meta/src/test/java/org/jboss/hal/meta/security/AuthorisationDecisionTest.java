@@ -52,36 +52,24 @@ public class AuthorisationDecisionTest {
     }
 
     @Test
-    public void strictRbacAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.strict(rbac, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
+    public void rbacAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
     }
 
     @Test
-    public void strictRbacForbidden() throws Exception {
+    public void rbacForbidden() throws Exception {
         assertFalse(
-                AuthorisationDecision.strict(rbac, c -> Optional.of(SecurityContext.READ_ONLY)).isAllowed(constraint));
+                AuthorisationDecision.from(rbac, c -> Optional.of(SecurityContext.READ_ONLY)).isAllowed(constraint));
     }
 
     @Test
-    public void lenientRbacAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.lenient(rbac, c -> Optional.empty()).isAllowed(constraint));
+    public void simpleAllowed() throws Exception {
+        assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
     }
 
     @Test
-    public void strictSimpleAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.strict(simple, c -> Optional.of(SecurityContext.RWX)).isAllowed(constraint));
-    }
-
-    @Test
-    public void strictSimpleForbidden() throws Exception {
+    public void simpleForbidden() throws Exception {
         assertTrue(
-                AuthorisationDecision.strict(simple, c -> Optional.of(SecurityContext.READ_ONLY))
-                        .isAllowed(constraint));
+                AuthorisationDecision.from(simple, c -> Optional.of(SecurityContext.READ_ONLY)).isAllowed(constraint));
     }
-
-    @Test
-    public void lenientSimpleAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.lenient(simple, c -> Optional.empty()).isAllowed(constraint));
-    }
-
 }

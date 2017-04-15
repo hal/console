@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
@@ -70,6 +69,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -271,11 +271,11 @@ public class ContentColumn extends FinderColumn<Content> {
             }
         });
 
-        Set<Constraint> deployConstraints = Sets.newHashSet(
+        Constraints deployConstraints = Constraints.and(
                 Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT),
                 Constraint.executable(CONTENT_TEMPLATE, ADD));
         if (JsHelper.supportsAdvancedUpload() &&
-                AuthorisationDecision.strict(environment, securityContextRegistry).isAllowed(deployConstraints)) {
+                AuthorisationDecision.from(environment, securityContextRegistry).isAllowed(deployConstraints)) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources));
         }

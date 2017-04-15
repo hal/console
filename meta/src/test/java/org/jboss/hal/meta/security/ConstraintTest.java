@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.meta.security;
 
-import java.util.Set;
-
 import org.jboss.hal.meta.AddressTemplate;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +26,6 @@ import static org.jboss.hal.meta.security.Permission.WRITABLE;
 import static org.jboss.hal.meta.security.Target.ATTRIBUTE;
 import static org.jboss.hal.meta.security.Target.OPERATION;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
@@ -43,68 +40,38 @@ public class ConstraintTest {
         template = AddressTemplate.of("{selected.profile}/subsystem=datasources/data-source=*");
     }
 
-    @Test
-    public void parseMultipleNull() throws Exception {
-        assertTrue(Constraint.parseMultiple(null).isEmpty());
-    }
-
-    @Test
-    public void parseMultipleEmpty() throws Exception {
-        assertTrue(Constraint.parseMultiple("").isEmpty());
-    }
-
-    @Test
-    public void parseMultipleBlank() throws Exception {
-        assertTrue(Constraint.parseMultiple("   ").isEmpty());
-    }
-
-    @Test
-    public void parseMultipleInvalid() throws Exception {
-        assertTrue(Constraint.parseMultiple("foo").isEmpty());
-    }
-
-    @Test
-    public void parseMultiple() throws Exception {
-        String input = "executable({selected.profile}/subsystem=datasources/data-source=*:add)|writable({selected.profile}/subsystem=datasources/data-source=*@enabled)";
-        Set<Constraint> constraints = Constraint.parseMultiple(input);
-
-        assertEquals(2, constraints.size());
-        assertTrue(constraints.contains(Constraint.executable(template, ADD)));
-        assertTrue(constraints.contains(Constraint.writable(template, ENABLED)));
+    @Test(expected = IllegalArgumentException.class)
+    public void parseNull() throws Exception {
+        Constraint.parse(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseSingleNull() throws Exception {
-        Constraint.parseSingle(null);
+    public void parseEmpty() throws Exception {
+        Constraint.parse("");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseSingleEmpty() throws Exception {
-        Constraint.parseSingle("");
+    public void parseBlank() throws Exception {
+        Constraint.parse("   ");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseSingleBlank() throws Exception {
-        Constraint.parseSingle("   ");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void parseSingleInvalid() throws Exception {
-        Constraint.parseSingle("foo");
+    public void parseInvalid() throws Exception {
+        Constraint.parse("foo");
     }
 
     @Test
-    public void parseSingleOperation() throws Exception {
+    public void parseOperation() throws Exception {
         String input = "executable({selected.profile}/subsystem=datasources/data-source=*:add)";
-        Constraint constraint = Constraint.parseSingle(input);
+        Constraint constraint = Constraint.parse(input);
 
         assertEquals(Constraint.executable(template, ADD), constraint);
     }
 
     @Test
-    public void parseSingleAttribute() throws Exception {
+    public void parseAttribute() throws Exception {
         String input = "writable({selected.profile}/subsystem=datasources/data-source=*@enabled)";
-        Constraint constraint = Constraint.parseSingle(input);
+        Constraint constraint = Constraint.parse(input);
 
         assertEquals(Constraint.writable(template, ENABLED), constraint);
     }
@@ -145,7 +112,7 @@ public class ConstraintTest {
     public void operationRoundTrip() throws Exception {
         Constraint constraint1 = Constraint.executable(template, ADD);
         String data = constraint1.data();
-        Constraint constraint2 = Constraint.parseSingle(data);
+        Constraint constraint2 = Constraint.parse(data);
 
         assertEquals(constraint1, constraint2);
     }
@@ -154,7 +121,7 @@ public class ConstraintTest {
     public void attributeRoundTrip() throws Exception {
         Constraint constraint1 = Constraint.writable(template, ENABLED);
         String data = constraint1.data();
-        Constraint constraint2 = Constraint.parseSingle(data);
+        Constraint constraint2 = Constraint.parse(data);
 
         assertEquals(constraint1, constraint2);
     }

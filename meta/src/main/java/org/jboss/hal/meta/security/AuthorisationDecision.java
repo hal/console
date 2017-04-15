@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.meta.security;
 
+import java.util.BitSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.meta.security.Constraints.Operator.AND;
 import static org.jboss.hal.meta.security.Permission.EXECUTABLE;
 import static org.jboss.hal.meta.security.Permission.READABLE;
 import static org.jboss.hal.meta.security.Permission.WRITABLE;
@@ -32,16 +33,8 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
 
 /**
  * Class to decide whether a single or a set of constraints are allowed according to a given security context. The
- * security context must be provided by a {@link SecurityContextResolver}.
- * <p>
- * This class can operate in two modes:
- * <dl>
- * <dt>strict</dt>
- * <dd>{@code isAllowed()} returns {@code true} if the security context was resolved and the constraint is valid.</dd>
- * <dt>lenient</dt>
- * <dd>{@code isAllowed()} returns {@code true} if no security was resolved. Otherwise the constraint must be
- * valid.</dd>
- * </dl>
+ * security context must be provided by a {@link SecurityContextResolver}. {@code isAllowed()} returns {@code true} if
+ * the security context was resolved and the constraint is valid.
  * <p>
  * To hide or disable UI elements, use one of the following strategies:
  * <dl>
@@ -61,11 +54,11 @@ import static org.jboss.hal.meta.security.Target.OPERATION;
  */
 public class AuthorisationDecision {
 
-    // ------------------------------------------------------ strict
+    // ------------------------------------------------------ factory methods
 
-    public static AuthorisationDecision strict(final Environment environment,
+    public static AuthorisationDecision from(final Environment environment,
             final SecurityContextRegistry securityContextRegistry) {
-        return new AuthorisationDecision(true, environment, constraint -> {
+        return new AuthorisationDecision(environment, constraint -> {
             if (securityContextRegistry.contains(constraint.getTemplate())) {
                 return Optional.of(securityContextRegistry.lookup(constraint.getTemplate()));
             }
@@ -73,67 +66,52 @@ public class AuthorisationDecision {
         });
     }
 
-    public static AuthorisationDecision strict(final Environment environment, final SecurityContext securityContext) {
-        return new AuthorisationDecision(true, environment, constraint -> Optional.of(securityContext));
+    public static AuthorisationDecision from(final Environment environment, final SecurityContext securityContext) {
+        return new AuthorisationDecision(environment, constraint -> Optional.of(securityContext));
     }
 
-    public static AuthorisationDecision strict(final Environment environment, final SecurityContextResolver resolver) {
-        return new AuthorisationDecision(true, environment, resolver);
+    public static AuthorisationDecision from(final Environment environment, final SecurityContextResolver resolver) {
+        return new AuthorisationDecision(environment, resolver);
     }
 
 
-    // ------------------------------------------------------ lenient
-
-    public static AuthorisationDecision lenient(final Environment environment,
-            final SecurityContextRegistry securityContextRegistry) {
-        return new AuthorisationDecision(false, environment, constraint -> {
-            if (securityContextRegistry.contains(constraint.getTemplate())) {
-                return Optional.of(securityContextRegistry.lookup(constraint.getTemplate()));
-            }
-            return Optional.empty();
-        });
-
-    }
-
-    public static AuthorisationDecision lenient(final Environment environment, final SecurityContext securityContext) {
-        return new AuthorisationDecision(false, environment, constraint -> Optional.of(securityContext));
-    }
-
-    public static AuthorisationDecision lenient(final Environment environment, final SecurityContextResolver resolver) {
-        return new AuthorisationDecision(false, environment, resolver);
-    }
+    // ------------------------------------------------------ instance
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(AuthorisationDecision.class);
 
-    private final boolean strict;
     private final Environment environment;
     private final SecurityContextResolver resolver;
 
-    private AuthorisationDecision(final boolean strict, final Environment environment,
-            final SecurityContextResolver resolver) {
-        this.strict = strict;
+    private AuthorisationDecision(final Environment environment, final SecurityContextResolver resolver) {
         this.environment = environment;
         this.resolver = resolver;
-
     }
 
-    public boolean isAllowed(Set<Constraint> constraints) {
-        if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
+    public boolean isAllowed(Constraints constraints) {
+        if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE || constraints.isEmpty()) {
             return true;
         }
-        for (Constraint constraint : constraints) {
-            if (!isAllowed(constraint)) {
-                return false;
+
+        int size = constraints.size();
+        if (size == 1) {
+            return isAllowed(constraints.iterator().next());
+        } else {
+            int index = 0;
+            BitSet bits = new BitSet(size);
+            for (Constraint constraint : constraints) {
+                bits.set(index, isAllowed(constraint));
+                index++;
             }
+            int cardinality = bits.cardinality();
+            return constraints.getOperator() == AND ? cardinality == size : cardinality > 0;
         }
-        return true;
     }
 
     public boolean isAllowed(Constraint constraint) {
         if (environment.getAccessControlProvider() == AccessControlProvider.SIMPLE) {
             return true;
         }
-        boolean allowed = !strict;
+        boolean allowed = false;
         Optional<SecurityContext> optional = resolver.resolve(constraint);
         if (optional.isPresent()) {
             SecurityContext securityContext = optional.get();
