@@ -77,8 +77,7 @@ public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpress
                     .param(EXPRESSION, expression.toString())
                     .build();
             dispatcher.execute(operation,
-                    (result) ->
-                            callback.onSuccess(ImmutableMap.of(Server.STANDALONE.getName(), result.asString())),
+                    (result) -> callback.onSuccess(ImmutableMap.of(Server.STANDALONE.getName(), result.asString())),
                     (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
                     (op2, exception) -> callback.onFailure(exception));
         } else {

@@ -20,6 +20,7 @@ import java.util.Map;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.events.KeyboardEvent;
@@ -67,12 +68,12 @@ public class ExpressionDialog {
         this.resources = resources;
 
         alert = new Alert(Icons.ERROR, SafeHtmlUtils.EMPTY_SAFE_HTML);
-        Elements.setVisible(alert.asElement(), false);
+        noAlert();
 
         Metadata metadata = Metadata.staticDescription(RESOURCES.expression());
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.RESOLVE_EXPRESSION_FORM, metadata)
                 .addOnly()
-                .customFormItem("expression", attributeDescription -> new ExpressionItem(resources))
+                .customFormItem(EXPRESSION, attributeDescription -> new ExpressionItem(resources))
                 .onSave((f, changedValues) -> resolve(f.getModel()));
         resolvedValue = new StaticItem(VALUE, resources.constants().resolvedValue());
         builder.unboundFormItem(resolvedValue);
@@ -134,18 +135,21 @@ public class ExpressionDialog {
             expressionResolver.resolve(expression, new AsyncCallback<Map<String, String>>() {
                 @Override
                 public void onSuccess(final Map<String, String> result) {
-                    String v = standalone
-                            ? result.getOrDefault(Server.STANDALONE.getName(), Names.NOT_AVAILABLE)
-                            : Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(result);
-                    resolvedValue.setValue(v);
-                    Elements.setVisible(alert.asElement(), false);
+                    if (result.isEmpty()) {
+                        warning(resources.messages().expressionWarning(value));
+                    } else {
+                        String rv = standalone
+                                ? result.getOrDefault(Server.STANDALONE.getName(), Names.NOT_AVAILABLE)
+                                : Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(result);
+                        resolvedValue.setValue(rv);
+                        noAlert();
+                    }
                 }
 
                 @Override
                 public void onFailure(final Throwable caught) {
                     clearValue();
-                    alert.setText(resources.messages().expressionError(value));
-                    Elements.setVisible(alert.asElement(), true);
+                    error(resources.messages().expressionError(value));
                 }
             });
 
@@ -156,5 +160,21 @@ public class ExpressionDialog {
 
     private void clearValue() {
         resolvedValue.clearValue();
+    }
+
+    private void noAlert() {
+        Elements.setVisible(alert.asElement(), false);
+    }
+
+    private void error(SafeHtml message) {
+        alert.setIcon(Icons.ERROR);
+        alert.setText(message);
+        Elements.setVisible(alert.asElement(), true);
+    }
+
+    private void warning(SafeHtml message) {
+        alert.setIcon(Icons.WARNING);
+        alert.setText(message);
+        Elements.setVisible(alert.asElement(), true);
     }
 }
