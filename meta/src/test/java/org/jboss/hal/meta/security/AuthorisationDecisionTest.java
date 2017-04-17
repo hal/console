@@ -23,7 +23,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.meta.security.SecurityContext.READ_ONLY;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.junit.Assert.assertFalse;
@@ -40,7 +39,6 @@ public class AuthorisationDecisionTest {
     private Environment rbac;
     private Environment simple;
     private SecurityContext securityContext;
-    private Constraint constraint;
     private Constraint foo;
     private Constraint bar;
 
@@ -52,34 +50,32 @@ public class AuthorisationDecisionTest {
         simple = mock(Environment.class);
         when(simple.getAccessControlProvider()).thenReturn(AccessControlProvider.SIMPLE);
 
+        foo = Constraint.executable(AddressTemplate.ROOT, "foo");
+        bar = Constraint.executable(AddressTemplate.ROOT, "bar");
+
         securityContext = mock(SecurityContext.class);
         when(securityContext.isExecutable("foo")).thenReturn(true);
         when(securityContext.isExecutable("bar")).thenReturn(false);
-
-        constraint = Constraint.executable(AddressTemplate.of("{selected.profile}/subsystem=datasources/data-source=*"),
-                REMOVE);
-        foo = Constraint.executable(AddressTemplate.ROOT, "foo");
-        bar = Constraint.executable(AddressTemplate.ROOT, "bar");
     }
 
     @Test
     public void rbacAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(constraint));
+        assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(foo));
     }
 
     @Test
     public void rbacForbidden() throws Exception {
-        assertFalse(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY)).isAllowed(constraint));
+        assertFalse(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY)).isAllowed(foo));
     }
 
     @Test
     public void simpleAllowed() throws Exception {
-        assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(RWX)).isAllowed(constraint));
+        assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(RWX)).isAllowed(foo));
     }
 
     @Test
     public void simpleForbidden() throws Exception {
-        assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(READ_ONLY)).isAllowed(constraint));
+        assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(READ_ONLY)).isAllowed(foo));
     }
 
     @Test
@@ -95,12 +91,12 @@ public class AuthorisationDecisionTest {
     @Test
     public void singleReadOnly() throws Exception {
         assertFalse(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY))
-                .isAllowed(Constraints.single(constraint)));
+                .isAllowed(Constraints.single(foo)));
     }
 
     @Test
     public void singleRwx() throws Exception {
-        assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(Constraints.single(constraint)));
+        assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(Constraints.single(foo)));
     }
 
     @Test
