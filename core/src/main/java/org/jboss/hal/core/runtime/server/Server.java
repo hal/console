@@ -71,13 +71,6 @@ public class Server extends NamedNode {
         return Ids.hostServer(getHost(), getName());
     }
 
-    /**
-     * @return {@code <host-name>}-{@code <server-name>}
-     */
-    public String getFqName() {
-        return getHost() + "-" + getName();
-    }
-
     public boolean isStandalone() {
         return standalone;
     }
