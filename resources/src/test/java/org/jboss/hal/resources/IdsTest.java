@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public class IdsTest {
 
     @Test
@@ -45,7 +46,6 @@ public class IdsTest {
     }
 
     @Test
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     public void asId() {
         assertEquals("lorem-ipsum", Ids.asId("lorem-ipsum"));
         assertEquals("lorem-ipsum", Ids.asId("Lorem Ipsum"));
@@ -54,7 +54,6 @@ public class IdsTest {
     }
 
     @Test
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     public void build() {
         assertEquals("lorem-ipsum", Ids.build("lorem-ipsum"));
         assertEquals("lorem-ipsum", Ids.build("Lorem Ipsum"));

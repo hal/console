@@ -23,7 +23,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MICRO_VERSI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSION;
 
 /**
- * Static code related to management model versions and checking support for various operations and attributes
+ * Static code related to management model versions and support for various operations and attributes
  *
  * @author Harald Pehl
  */
