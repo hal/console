@@ -92,7 +92,6 @@ public interface CSS {
     String defaultValue = "default-value";
     String deprecated = "deprecated";
     String disabled = "disabled";
-    String disabledCircleO = "disabled-circle-o";
     String divider = "divider";
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";

@@ -54,7 +54,7 @@ class ServerIcon implements Function<Server, Element> {
 
             @Override
             protected void onAdminMode(final Server server) {
-                element[0] = Icons.disabled();
+                element[0] = Icons.lock();
             }
 
             @Override

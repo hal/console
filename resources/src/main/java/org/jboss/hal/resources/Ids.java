@@ -663,7 +663,7 @@ public interface Ids {
 
     /**
      * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated
-     * with "-".
+     * by "-".
      */
     static String asId(@NonNls String text) {
         Iterable<String> parts = Splitter
