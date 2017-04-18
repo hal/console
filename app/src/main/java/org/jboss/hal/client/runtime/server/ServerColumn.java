@@ -336,7 +336,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().copy())
                             .handler(itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext())))
-                            .constraint(Constraint.executable(serverConfigTemplate(item), COPY))
+                            .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
                             .build());
                     if (item.isStarted()) {
                         // Order is: reload, restart, (resume | suspend), stop
@@ -427,6 +427,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
+            // remember current selection for onServerResult()
             refreshPath = finder.getContext().getPath().copy();
             ItemMonitor.startProgress(event.getServer().getId());
             refresh(RESTORE_SELECTION);
