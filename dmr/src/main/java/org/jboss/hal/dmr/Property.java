@@ -35,19 +35,20 @@
 
 package org.jboss.hal.dmr;
 
+import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsType;
+
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@JsType
 public final class Property implements Cloneable {
 
     private final String name;
     private final ModelNode value;
 
+    @JsConstructor
     public Property(final String name, final ModelNode value) {
-        this(name, value, true);
-    }
-
-    Property(final String name, final ModelNode value, final boolean copy) {
         if (name == null) {
             throw new IllegalArgumentException("name is null");
         }
@@ -55,7 +56,7 @@ public final class Property implements Cloneable {
             throw new IllegalArgumentException("value is null");
         }
         this.name = name;
-        this.value = copy ? value.clone() : value;
+        this.value = value.clone();
     }
 
     public String getName() {

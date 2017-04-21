@@ -20,12 +20,14 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class CompositeResult implements Iterable<ModelNode> {
 
     private final LinkedHashMap<String, ModelNode> steps;
@@ -41,14 +43,17 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     /**
      * @param index zero-based!
+     *
      * @return the related step result
      */
+    @JsMethod(name = "stepIndex")
     public ModelNode step(int index) {
         return step("step-" + (index + 1)); //NON-NLS
     }
 
     /**
      * @param step Step as "step-n" (one-based!)
+     *
      * @return the related step result
      */
     public ModelNode step(String step) {
@@ -59,6 +64,7 @@ public class CompositeResult implements Iterable<ModelNode> {
     }
 
     @Override
+    @JsIgnore
     public Iterator<ModelNode> iterator() {
         return steps.values().iterator();
     }
@@ -67,6 +73,7 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     public boolean isEmpty() {return steps.isEmpty();}
 
+    @JsIgnore
     public Stream<ModelNode> stream() {
         return StreamSupport.stream(spliterator(), false);
     }

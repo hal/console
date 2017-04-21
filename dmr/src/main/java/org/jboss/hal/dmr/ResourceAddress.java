@@ -19,11 +19,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
+
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation.
  *
  * @author Harald Pehl
  */
+@JsType
 public class ResourceAddress extends ModelNode {
 
     public static ResourceAddress root() {
@@ -31,19 +36,31 @@ public class ResourceAddress extends ModelNode {
         return new ResourceAddress();
     }
 
+    /**
+     * For use from JavaScript
+     */
+    @JsMethod
+    public static ResourceAddress create() {
+        return new ResourceAddress();
+    }
+
+    @JsIgnore
     public ResourceAddress() {
         setEmptyList();
     }
 
+    @JsIgnore
     public ResourceAddress(ModelNode address) {
         set(address);
     }
 
+    @JsMethod(name = "addSegment")
     public ResourceAddress add(final String propertyName, final String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
+    @JsIgnore
     public ResourceAddress add(ResourceAddress address) {
         if (address != null) {
             for (Property property : address.asPropertyList()) {

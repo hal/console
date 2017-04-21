@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -28,8 +31,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
+@JsType
 public class Operation extends ModelNode {
 
+    @JsType(namespace = "dmr", name = "OperationBuilder")
     public static class Builder {
 
         private final String name;
@@ -46,31 +51,37 @@ public class Operation extends ModelNode {
             this.roles = new HashSet<>();
         }
 
+        @JsMethod(name = "booleanParam")
         public Builder param(String name, boolean value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsMethod(name = "intParam")
         public Builder param(String name, int value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, long value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, double value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsMethod(name = "stringParam")
         public Builder param(String name, @NonNls String value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, @NonNls String[] values) {
             for (String value : values) {
                 parameter.get(name).add(value);
@@ -78,16 +89,19 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        @JsMethod(name = "nodeParam")
         public Builder param(String name, ModelNode value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder header(String name, String value) {
             header.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder header(String name, boolean value) {
             header.get(name).set(value);
             return this;
@@ -110,6 +124,7 @@ public class Operation extends ModelNode {
     private final ModelNode header;
     private final Set<String> roles;
 
+    @JsIgnore
     public Operation(ModelNode modelNode) {
         this.name = modelNode.get(OP).asString();
         this.address = new ResourceAddress(modelNode.get(ADDRESS));
@@ -135,7 +150,7 @@ public class Operation extends ModelNode {
         set(modelNode.clone());
     }
 
-    public Operation(final String name, final ResourceAddress address, final ModelNode parameter,
+    Operation(final String name, final ResourceAddress address, final ModelNode parameter,
             final ModelNode header, final Set<String> roles) {
         this.name = name;
         this.address = address;
@@ -176,6 +191,7 @@ public class Operation extends ModelNode {
         return parameter;
     }
 
+    @JsIgnore
     public ModelNode getHeader() {
         return header;
     }
@@ -184,10 +200,12 @@ public class Operation extends ModelNode {
         return parameter.isDefined() && !parameter.asList().isEmpty();
     }
 
+    @JsIgnore
     public Set<String> getRoles() {
         return roles;
     }
 
+    @JsIgnore
     public Operation runAs(final Set<String> runAs) {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }

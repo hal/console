@@ -15,25 +15,40 @@
  */
 package org.jboss.hal.dmr;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsType;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class NamedNode extends ModelNode {
+
+    /**
+     * For use from JavaScript
+     */
+    public static NamedNode create(final String name, final ModelNode node) {
+        return new NamedNode(name, node);
+    }
+
 
     private final String name;
     private final ModelNode node;
 
+    @JsIgnore
     public NamedNode(final ModelNode node) {
         this(node.hasDefined(NAME) ? node.get(NAME).asString() : ModelDescriptionConstants.UNDEFINED + "_" + System
                 .currentTimeMillis(), node);
     }
 
+    @JsIgnore
     public NamedNode(final Property property) {
         this(property.getName(), property.getValue());
     }
 
+    @JsIgnore
     public NamedNode(final String name, final ModelNode node) {
         this.name = name;
         this.node = node;
@@ -42,6 +57,7 @@ public class NamedNode extends ModelNode {
     }
 
     @Override
+    @JsIgnore
     public boolean equals(final Object o) {
         if (this == o) { return true; }
         if (!(o instanceof NamedNode)) { return false; }
@@ -55,6 +71,7 @@ public class NamedNode extends ModelNode {
     }
 
     @Override
+    @JsIgnore
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();

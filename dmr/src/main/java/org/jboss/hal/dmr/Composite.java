@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
+
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
@@ -30,14 +34,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 /**
  * @author Harald Pehl
  */
+@JsType
 public class Composite extends Operation implements Iterable<Operation> {
 
     private List<Operation> operations;
 
-    public Composite(Operation first, Operation... rest) {
+    public Composite() {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
+    }
 
+    @JsIgnore
+    public Composite(Operation first, Operation... rest) {
+        this();
         add(first);
         if (rest != null) {
             for (Operation operation : rest) {
@@ -46,30 +55,33 @@ public class Composite extends Operation implements Iterable<Operation> {
         }
     }
 
+    @JsIgnore
     public Composite(List<Operation> operations) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
-        this.operations = new ArrayList<>();
-
+        this();
         operations.forEach(this::add);
     }
 
+    @JsMethod(name = "addOperation")
     public Composite add(Operation operation) {
         operations.add(operation);
         get(STEPS).add(operation);
         return this;
     }
 
+    @JsIgnore
     public Composite addHeader(String name, String value) {
         get(OPERATION_HEADERS).get(name).set(value);
         return this;
     }
 
+    @JsIgnore
     public Composite addHeader(String name, boolean value) {
         get(OPERATION_HEADERS).get(name).set(value);
         return this;
     }
 
     @Override
+    @JsIgnore
     public Iterator<Operation> iterator() {
         return operations.iterator();
     }
@@ -78,6 +90,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     public int size() {return operations.size();}
 
+    @JsIgnore
     public Composite runAs(final Set<String> runAs) {
         List<Operation> runAsOperations = operations.stream()
                 .map(operation -> operation.runAs(runAs))
