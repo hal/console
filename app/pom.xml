@@ -299,10 +299,6 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
-                    <compilerArgs>
-                        <compilerArg>-gen</compilerArg>
-                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                    </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
