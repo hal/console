@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -110,17 +111,29 @@ public class Roles implements Iterable<Role> {
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "all")
-    public Role[] jsAll() {
-        return lookup.values().toArray(new Role[lookup.values().size()]);
+    public JsArrayOf<Role> jsAll() {
+        JsArrayOf<Role> array = JsArrayOf.create();
+        for (Role role : lookup.values()) {
+            array.push(role);
+        }
+        return array;
     }
 
     @JsProperty(name = "standardRoles")
-    public Role[] jsStandardRoles() {
-        return standardRoles.toArray(new Role[standardRoles.size()]);
+    public JsArrayOf<Role> jsStandardRoles() {
+        JsArrayOf<Role> array = JsArrayOf.create();
+        for (Role role : standardRoles) {
+            array.push(role);
+        }
+        return array;
     }
 
     @JsProperty(name = "scopedRoles")
-    public Role[] jsScopedRoles() {
-        return scopedRoles.toArray(new Role[scopedRoles.size()]);
+    public JsArrayOf<Role> jsScopedRoles() {
+        JsArrayOf<Role> array = JsArrayOf.create();
+        for (Role role : scopedRoles) {
+            array.push(role);
+        }
+        return array;
     }
 }

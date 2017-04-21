@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -255,7 +256,11 @@ public class Operation extends ModelNode {
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "roles")
-    public String[] jsRoles() {
-        return roles.toArray(new String[roles.size()]);
+    public JsArrayOf<String> jsRoles() {
+        JsArrayOf<String> array = JsArrayOf.create();
+        for (String role : roles) {
+            array.push(role);
+        }
+        return array;
     }
 }

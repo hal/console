@@ -47,6 +47,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import elemental.client.Browser;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -1619,14 +1620,28 @@ public class ModelNode implements Cloneable {
     // ------------------------------------------------------ JS methods
 
     @JsMethod(name = "asProperties")
-    public Property[] jsAsProperties() {
+    public JsArrayOf<Property> jsAsProperties() {
         List<Property> properties = value.asPropertyList();
-        return properties == null ? new Property[0] : properties.toArray(new Property[properties.size()]);
+        if (properties != null) {
+            JsArrayOf<Property> array = JsArrayOf.create();
+            for (Property t : properties) {
+                array.push(t);
+            }
+            return array;
+        }
+        return JsArrayOf.create();
     }
 
     @JsMethod(name = "asList")
-    public ModelNode[] jsAsList() {
+    public JsArrayOf<ModelNode> jsAsList() {
         List<ModelNode> modelNodes = value.asList();
-        return modelNodes == null ? new ModelNode[0] : modelNodes.toArray(new ModelNode[modelNodes.size()]);
+        if (modelNodes != null) {
+            JsArrayOf<ModelNode> array = JsArrayOf.create();
+            for (ModelNode modelNode : modelNodes) {
+                array.push(modelNode);
+            }
+            return array;
+        }
+        return JsArrayOf.create();
     }
 }

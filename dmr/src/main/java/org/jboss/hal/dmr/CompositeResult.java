@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -85,7 +86,11 @@ public class CompositeResult implements Iterable<ModelNode> {
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "steps")
-    public ModelNode[] jsSteps() {
-        return steps.values().toArray(new ModelNode[steps.size()]);
+    public JsArrayOf<ModelNode> jsSteps() {
+        JsArrayOf<ModelNode> array = JsArrayOf.create();
+        for (ModelNode modelNode : steps.values()) {
+            array.push(modelNode);
+        }
+        return array;
     }
 }

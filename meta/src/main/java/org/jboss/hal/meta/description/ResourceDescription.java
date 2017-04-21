@@ -18,6 +18,7 @@ package org.jboss.hal.meta.description;
 import java.util.Collections;
 import java.util.List;
 
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -164,20 +165,32 @@ public class ResourceDescription extends ModelNode {
     // ------------------------------------------------------ JS methods
 
     @JsMethod(name = "getAttributes")
-    public Property[] jsGetAttributes(final String path) {
+    public JsArrayOf<Property> jsGetAttributes(final String path) {
         List<Property> attributes = getAttributes(path);
-        return attributes.toArray(new Property[attributes.size()]);
+        JsArrayOf<Property> array = JsArrayOf.create();
+        for (Property t : attributes) {
+            array.push(t);
+        }
+        return array;
     }
 
     @JsMethod(name = "getRequiredAttributes")
-    public Property[] jsGetRequiredAttributes(final String path) {
+    public JsArrayOf<Property> jsGetRequiredAttributes(final String path) {
         List<Property> attributes = getRequiredAttributes(path);
-        return attributes.toArray(new Property[attributes.size()]);
+        JsArrayOf<Property> array = JsArrayOf.create();
+        for (Property t : attributes) {
+            array.push(t);
+        }
+        return array;
     }
 
     @JsProperty(name = "operations")
-    public Property[] jsOperations() {
+    public JsArrayOf<Property> jsOperations() {
         List<Property> operations = getOperations();
-        return operations.toArray(new Property[operations.size()]);
+        JsArrayOf<Property> array = JsArrayOf.create();
+        for (Property t : operations) {
+            array.push(t);
+        }
+        return array;
     }
 }
