@@ -64,8 +64,8 @@ import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class which contains generic CRUD methods to add, read, update and remove (singleton) resources. Each group of
- * methods provides different signatures which use different levels of abstractions:
+ * Class which contains generic CRUD methods to add, read, update, reset and remove (singleton) resources.
+ * Each group of methods provides different signatures which use different levels of abstractions:
  * <dl>
  * <dt>{@link AddressTemplate}</dt>
  * <dd>The most generic form. The template is resolved against the current statement context</dd>
