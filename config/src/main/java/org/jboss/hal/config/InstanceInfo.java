@@ -15,11 +15,14 @@
  */
 package org.jboss.hal.config;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Names;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class InstanceInfo {
 
     private String productName;
@@ -28,6 +31,7 @@ public class InstanceInfo {
     private String releaseVersion;
     private String serverName;
 
+    @JsIgnore
     InstanceInfo() {
         this.productName = Names.NOT_AVAILABLE;
         this.productVersion = Names.NOT_AVAILABLE;
@@ -56,6 +60,7 @@ public class InstanceInfo {
         return serverName;
     }
 
+    @JsIgnore
     public void update(final String productName, final String productVersion,
             final String releaseName, final String releaseVersion,
             final String serverName) {

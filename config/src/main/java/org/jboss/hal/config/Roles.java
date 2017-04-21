@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.config.Role.*;
@@ -32,11 +35,12 @@ import static org.jboss.hal.config.Role.*;
  *
  * @author Harald Pehl
  */
+@JsType
 public class Roles implements Iterable<Role> {
 
-    public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
-    public static final Comparator<Role> BY_NAME = comparing(Role::getName);
-    public static final Set<Role> DEFAULT_ROLES = Sets.newHashSet(
+    @JsIgnore public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
+    @JsIgnore public static final Comparator<Role> BY_NAME = comparing(Role::getName);
+    @JsIgnore public static final Set<Role> DEFAULT_ROLES = Sets.newHashSet(
             ADMINISTRATOR,
             AUDITOR,
             DEPLOYER,
@@ -55,6 +59,7 @@ public class Roles implements Iterable<Role> {
         this.scopedRoles = new HashSet<>();
     }
 
+    @JsIgnore
     public void add(Role role) {
         if (role != null) {
             lookup.put(role.getId(), role);
@@ -66,10 +71,12 @@ public class Roles implements Iterable<Role> {
         }
     }
 
+    @JsIgnore
     public void addAll(Iterable<Role> roles) {
         roles.forEach(this::add);
     }
 
+    @JsIgnore
     public void clear() {
         lookup.clear();
         standardRoles.clear();
@@ -83,16 +90,37 @@ public class Roles implements Iterable<Role> {
         return null;
     }
 
+    @JsIgnore
     public Set<Role> standardRoles() {
         return standardRoles;
     }
 
+    @JsIgnore
     public Set<Role> scopedRoles() {
         return scopedRoles;
     }
 
     @Override
+    @JsIgnore
     public Iterator<Role> iterator() {
         return lookup.values().iterator();
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "all")
+    public Role[] jsAll() {
+        return lookup.values().toArray(new Role[lookup.values().size()]);
+    }
+
+    @JsMethod(name = "standardRoles")
+    public Role[] jsStandardRoles() {
+        return standardRoles.toArray(new Role[standardRoles.size()]);
+    }
+
+    @JsMethod(name = "scopedRoles")
+    public Role[] jsScopedRoles() {
+        return scopedRoles.toArray(new Role[scopedRoles.size()]);
     }
 }

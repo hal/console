@@ -13,17 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.config;
-
-import jsinterop.annotations.JsType;
-
-/**
- * @author Harald Pehl
- */
-@JsType
-public enum OperationMode {
-    SELF_CONTAINED, // WildFly Swarm
-    STANDALONE,
-    DOMAIN,
-    UNDEFINED
-}
+@jsinterop.annotations.JsPackage(namespace = "meta")
+package org.jboss.hal.meta;

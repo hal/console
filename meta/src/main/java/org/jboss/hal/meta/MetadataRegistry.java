@@ -17,6 +17,8 @@ package org.jboss.hal.meta;
 
 import javax.inject.Inject;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -31,6 +33,7 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
  *
  * @author Harald Pehl
  */
+@JsType
 public class MetadataRegistry implements Registry<Metadata> {
 
     private final SecurityContextRegistry securityContextRegistry;
@@ -38,6 +41,7 @@ public class MetadataRegistry implements Registry<Metadata> {
     private final Capabilities capabilities;
 
     @Inject
+    @JsIgnore
     public MetadataRegistry(final SecurityContextRegistry securityContextRegistry,
             final ResourceDescriptionRegistry resourceDescriptionRegistry,
             final Capabilities capabilities) {
@@ -59,6 +63,7 @@ public class MetadataRegistry implements Registry<Metadata> {
     }
 
     @Override
+    @JsIgnore
     public void add(final ResourceAddress address, final Metadata metadata) {
         // noop
     }

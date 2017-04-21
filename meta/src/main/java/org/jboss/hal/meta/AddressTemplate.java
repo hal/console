@@ -25,6 +25,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.google.common.collect.Lists;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -74,8 +78,10 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Harald Pehl
  */
+@JsType
 public final class AddressTemplate implements Iterable<String> {
 
+    @JsFunction
     @FunctionalInterface
     public interface Unresolver {
 
@@ -83,11 +89,12 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
 
-    public static AddressTemplate ROOT = AddressTemplate.of("/");
+    public static final AddressTemplate ROOT = AddressTemplate.of("/");
 
     /**
      * Creates a new address template from a well known placeholder.
      */
+    @JsIgnore
     public static AddressTemplate of(StatementContext.Tuple placeholder) {
         return AddressTemplate.of(String.join("/", placeholder.variable()));
     }
@@ -96,6 +103,7 @@ public final class AddressTemplate implements Iterable<String> {
      * Creates a new address template from a placeholder and an encoded string template. '/' characters inside values
      * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
+    @JsIgnore
     public static AddressTemplate of(StatementContext.Tuple placeholder, @NonNls String template) {
         return AddressTemplate.of(String.join("/", placeholder.variable(), withoutSlash(template)));
     }
@@ -103,6 +111,7 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * Creates a new address template from two placeholders.
      */
+    @JsIgnore
     public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2) {
         return AddressTemplate.of(
                 String.join("/", placeholder1.variable(), placeholder2.variable()));
@@ -112,6 +121,7 @@ public final class AddressTemplate implements Iterable<String> {
      * Creates a new address template from two placeholders and an encoded string template. '/' characters inside
      * values must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
+    @JsIgnore
     public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2,
             @NonNls String template) {
         return AddressTemplate.of(
@@ -126,24 +136,11 @@ public final class AddressTemplate implements Iterable<String> {
         return new AddressTemplate(withSlash(template));
     }
 
-    private static String withoutSlash(String template) {
-        if (template != null) {
-            return template.startsWith("/") ? template.substring(1) : template;
-        }
-        return null;
-    }
-
-    private static String withSlash(String template) {
-        if (template != null && !template.startsWith(OPTIONAL) && !template.startsWith("/")) {
-            return "/" + template;
-        }
-        return template;
-    }
-
     /**
      * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
      * String...)}.
      */
+    @JsMethod(name = "ofAddress")
     public static AddressTemplate of(ResourceAddress address) {
         return of(address, null);
     }
@@ -153,6 +150,7 @@ public final class AddressTemplate implements Iterable<String> {
      * String...)}. Use the {@link Unresolver} function to specify how the segments of the resource address are
      * "unresolved". It is called for each segment of the specified resource address.
      */
+    @JsMethod(name = "reverse")
     public static AddressTemplate of(ResourceAddress address, Unresolver unresolver) {
         int index = 0;
         boolean first = true;
@@ -177,6 +175,20 @@ public final class AddressTemplate implements Iterable<String> {
             }
         }
         return of(builder.toString());
+    }
+
+    private static String withoutSlash(String template) {
+        if (template != null) {
+            return template.startsWith("/") ? template.substring(1) : template;
+        }
+        return null;
+    }
+
+    private static String withSlash(String template) {
+        if (template != null && !template.startsWith(OPTIONAL) && !template.startsWith("/")) {
+            return "/" + template;
+        }
+        return template;
     }
 
 
@@ -230,6 +242,7 @@ public final class AddressTemplate implements Iterable<String> {
         return optional ? OPTIONAL + path : path;
     }
 
+    @JsIgnore
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
@@ -240,6 +253,7 @@ public final class AddressTemplate implements Iterable<String> {
 
     }
 
+    @JsIgnore
     @Override
     public int hashCode() {
         int result = template.hashCode();
@@ -264,6 +278,7 @@ public final class AddressTemplate implements Iterable<String> {
 
     @NotNull
     @Override
+    @JsIgnore
     public Iterator<String> iterator() {
         return tokens.stream().map(Token::toString).collect(toList()).iterator();
     }
@@ -282,6 +297,7 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(this.template + slashTemplate);
     }
 
+    @JsMethod(name = "appendTemplate")
     public AddressTemplate append(AddressTemplate template) {
         return append(template.toString());
     }

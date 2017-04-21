@@ -17,6 +17,8 @@ package org.jboss.hal.config;
 
 import java.util.List;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.config.semver.Version;
 
 /**
@@ -24,6 +26,7 @@ import org.jboss.hal.config.semver.Version;
  * An instance of this interface is generated using deferred binding.
  * Most of the information is updated by the bootstrap code of the console.
  */
+@JsType
 public interface Environment {
 
     /**
@@ -31,6 +34,7 @@ public interface Environment {
      */
     Version getHalVersion();
 
+    @JsIgnore
     Build getHalBuild();
 
     /**
@@ -42,6 +46,7 @@ public interface Environment {
 
     InstanceInfo getInstanceInfo();
 
+    @JsIgnore
     void setInstanceInfo(String productName, String productVersion,
             String releaseName, String releaseVersion,
             String serverName);
@@ -50,18 +55,22 @@ public interface Environment {
 
     boolean isStandalone();
 
+    @JsIgnore
     void setOperationMode(OperationMode operationMode);
 
     String getDomainController();
 
+    @JsIgnore
     void setDomainController(String domainController);
 
     Version getManagementVersion();
 
+    @JsIgnore
     void setManagementVersion(Version version);
 
     AccessControlProvider getAccessControlProvider();
 
+    @JsIgnore
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
     boolean isSingleSignOn();

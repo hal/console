@@ -18,6 +18,7 @@ import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
@@ -41,8 +42,8 @@ public class ModelNodeFormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        Core.INSTANCE = new Core(mock(Environment.class), mock(Dispatcher.class), mock(StatementContext.class),
-                mock(EventBus.class));
+        Core.INSTANCE = new Core(mock(Dispatcher.class), mock(Environment.class), mock(EventBus.class),
+                mock(MetadataRegistry.class), mock(StatementContext.class));
         attributes = new ResourceDescriptionBuilder().attributes("foo", "bar", "baz", "qux");
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));

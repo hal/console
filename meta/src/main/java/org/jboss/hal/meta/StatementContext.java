@@ -15,8 +15,11 @@
  */
 package org.jboss.hal.meta;
 
+import jsinterop.annotations.JsType;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
+@JsType
 public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")

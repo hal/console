@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @JsType
 public class Operation extends ModelNode {
 
-    @JsType(namespace = "dmr", name = "OperationBuilder")
+    @JsType
     public static class Builder {
 
         private final String name;
@@ -43,6 +43,7 @@ public class Operation extends ModelNode {
         private ModelNode header;
         private Set<String> roles;
 
+        @JsIgnore
         public Builder(final String name, final ResourceAddress address) {
             this.address = address;
             this.name = name;
@@ -244,5 +245,13 @@ public class Operation extends ModelNode {
             builder.append("}");
         }
         return builder.toString();
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "builder")
+    public static Builder jsBuilder(final String name, final ResourceAddress address) {
+        return new Operation.Builder(name, address);
     }
 }

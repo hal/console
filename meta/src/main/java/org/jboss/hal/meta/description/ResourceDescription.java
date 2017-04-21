@@ -18,6 +18,9 @@ package org.jboss.hal.meta.description;
 import java.util.Collections;
 import java.util.List;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
@@ -31,8 +34,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
+@JsType(namespace = "meta")
 public class ResourceDescription extends ModelNode {
 
+    @JsIgnore
     public ResourceDescription(final ModelNode payload) {
         set(payload);
     }
@@ -49,6 +54,7 @@ public class ResourceDescription extends ModelNode {
         return Collections.emptyList();
     }
 
+    @JsMethod(name = "getAttributesByPath")
     public List<Property> getAttributes(final String path, final String group) {
         List<Property> attributes = getAttributes(path);
         return attributes.stream()
