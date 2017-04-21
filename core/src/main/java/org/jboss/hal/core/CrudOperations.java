@@ -26,11 +26,13 @@ import javax.inject.Provider;
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -1314,7 +1316,7 @@ public class CrudOperations {
     @FunctionalInterface
     public interface JsReadChildrenCallback {
 
-        void execute(final Property[] children);
+        void execute(final JsArrayOf<Property> children);
     }
 
     @JsMethod(name = "read")
@@ -1341,7 +1343,7 @@ public class CrudOperations {
 
     @JsMethod(name = "readChildren")
     public void jsReadChildren(final Object address, final String resource, final JsReadChildrenCallback callback) {
-        ReadChildrenCallback rcc = children -> callback.execute(children.toArray(new Property[children.size()]));
+        ReadChildrenCallback rcc = children -> callback.execute(JsHelper.asJsArray(children));
         if (address instanceof AddressTemplate) {
             readChildren((AddressTemplate) address, resource, rcc);
         } else if (address instanceof ResourceAddress) {
