@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 
 import com.google.gwt.resources.client.TextResource;
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -55,8 +56,7 @@ public class Metadata {
 
     @JsIgnore
     public static Metadata staticDescription(ResourceDescription description) {
-        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description),
-                new Capabilities(null));
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(null));
     }
 
     private final AddressTemplate template;
@@ -78,10 +78,12 @@ public class Metadata {
         return new Metadata(template, securityContext, resourceDescription, capabilities);
     }
 
+    @JsProperty
     public AddressTemplate getTemplate() {
         return template;
     }
 
+    @JsProperty
     public SecurityContext getSecurityContext() {
         if (securityContext != null && securityContext.get() != null) {
             return securityContext.get();
@@ -91,6 +93,7 @@ public class Metadata {
         }
     }
 
+    @JsProperty
     public ResourceDescription getDescription() {
         return description;
     }

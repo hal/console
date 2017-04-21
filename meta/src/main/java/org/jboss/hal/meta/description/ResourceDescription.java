@@ -20,6 +20,7 @@ import java.util.List;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -34,7 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@JsType(namespace = "meta")
+@JsType
 public class ResourceDescription extends ModelNode {
 
     @JsIgnore
@@ -42,10 +43,12 @@ public class ResourceDescription extends ModelNode {
         set(payload);
     }
 
+    @JsProperty
     public String getDescription() {
         return get(DESCRIPTION).asString();
     }
 
+    @JsIgnore
     public List<Property> getAttributes(final String path) {
         ModelNode attributes = ModelNodeHelper.failSafeGet(this, path);
         if (attributes.isDefined()) {
@@ -54,7 +57,7 @@ public class ResourceDescription extends ModelNode {
         return Collections.emptyList();
     }
 
-    @JsMethod(name = "getAttributesByPath")
+    @JsIgnore
     public List<Property> getAttributes(final String path, final String group) {
         List<Property> attributes = getAttributes(path);
         return attributes.stream()
@@ -66,6 +69,7 @@ public class ResourceDescription extends ModelNode {
                 .collect(toList());
     }
 
+    @JsIgnore
     public List<Property> getRequiredAttributes(final String path) {
         return getAttributes(path).stream()
                 .filter(property -> {
@@ -80,6 +84,7 @@ public class ResourceDescription extends ModelNode {
                 .collect(toList());
     }
 
+    @JsIgnore
     public List<Property> getOperations() {
         return hasDefined(OPERATIONS) ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
     }
@@ -102,6 +107,7 @@ public class ResourceDescription extends ModelNode {
      * @return the alternatives for {@code name} or an empty list if {@code name} has no alternatives or if there's no
      * attribute {@code name}
      */
+    @JsIgnore
     public List<String> findAlternatives(final String path, final String name) {
         Property attribute = findAttribute(path, name);
         if (attribute != null) {
@@ -123,6 +129,7 @@ public class ResourceDescription extends ModelNode {
      * @return the attributes which require {@code} or an empty list if no attributes require {@code name} or if there's
      * no attribute {@code name}
      */
+    @JsIgnore
     public List<String> findRequires(final String path, final String name) {
         return getAttributes(path).stream()
                 .filter(attribute -> {
@@ -138,6 +145,7 @@ public class ResourceDescription extends ModelNode {
                 .collect(toList());
     }
 
+    @JsIgnore
     public boolean isDefaultValue(final String path, final String name, final Object value) {
         if (value != null) {
             Property attribute = findAttribute(path, name);
@@ -152,7 +160,24 @@ public class ResourceDescription extends ModelNode {
         return false;
     }
 
-    public boolean isDeprecated() {
-        return hasDefined(DEPRECATED);
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "getAttributes")
+    public Property[] jsGetAttributes(final String path) {
+        List<Property> attributes = getAttributes(path);
+        return attributes.toArray(new Property[attributes.size()]);
+    }
+
+    @JsMethod(name = "getRequiredAttributes")
+    public Property[] jsGetRequiredAttributes(final String path) {
+        List<Property> attributes = getRequiredAttributes(path);
+        return attributes.toArray(new Property[attributes.size()]);
+    }
+
+    @JsProperty(name = "operations")
+    public Property[] jsOperations() {
+        List<Property> operations = getOperations();
+        return operations.toArray(new Property[operations.size()]);
     }
 }

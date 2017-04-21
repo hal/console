@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 import static java.util.Collections.emptySet;
@@ -46,7 +47,7 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     @JsIgnore
     public Composite(Operation first, Operation... rest) {
-        this();
+        this(); // required by JsInterop
         add(first);
         if (rest != null) {
             for (Operation operation : rest) {
@@ -86,8 +87,10 @@ public class Composite extends Operation implements Iterable<Operation> {
         return operations.iterator();
     }
 
+    @JsProperty
     public boolean isEmpty() {return operations.isEmpty();}
 
+    @JsProperty(name = "size")
     public int size() {return operations.size();}
 
     @JsIgnore
@@ -105,5 +108,13 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     public String asCli() {
         return operations.stream().map(Operation::asCli).collect(joining("\n"));
+    }
+
+
+    // ------------------------------------------------------ JS Methods
+
+    @JsProperty(name = "operations")
+    public Operation[] jsOperations() {
+        return operations.toArray(new Operation[operations.size()]);
     }
 }

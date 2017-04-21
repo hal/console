@@ -20,7 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
@@ -102,26 +102,32 @@ public class Role {
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
 
+    @JsProperty
     public String getId() {
         return Ids.role(name);
     }
 
+    @JsProperty
     public boolean isStandard() {
         return type == Type.STANDARD;
     }
 
+    @JsProperty
     public boolean isScoped() {
         return type != Type.STANDARD;
     }
 
+    @JsProperty
     public String getName() {
         return name;
     }
 
+    @JsProperty
     public Role getBaseRole() {
         return baseRole;
     }
 
+    @JsProperty
     public Type getType() {
         return type;
     }
@@ -131,10 +137,12 @@ public class Role {
         return scope;
     }
 
+    @JsProperty
     public boolean isIncludeAll() {
         return includeAll;
     }
 
+    @JsIgnore
     public void setIncludeAll(final boolean includeAll) {
         this.includeAll = includeAll;
     }
@@ -142,8 +150,8 @@ public class Role {
 
     // ------------------------------------------------------ JS methods
 
-    @JsMethod(name = "getScope")
-    public String[] jsGetScope() {
+    @JsProperty(name = "scope")
+    public String[] jsScope() {
         return getScope().toArray(new String[getScope().size()]);
     }
 }

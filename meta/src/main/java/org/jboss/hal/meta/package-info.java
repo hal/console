@@ -13,5 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jsinterop.annotations.JsPackage(namespace = "meta")
+@jsinterop.annotations.JsPackage(namespace = "hal.meta")
 package org.jboss.hal.meta;

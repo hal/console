@@ -24,7 +24,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 import static java.util.Comparator.comparing;
@@ -109,17 +109,17 @@ public class Roles implements Iterable<Role> {
 
     // ------------------------------------------------------ JS methods
 
-    @JsMethod(name = "all")
+    @JsProperty(name = "all")
     public Role[] jsAll() {
         return lookup.values().toArray(new Role[lookup.values().size()]);
     }
 
-    @JsMethod(name = "standardRoles")
+    @JsProperty(name = "standardRoles")
     public Role[] jsStandardRoles() {
         return standardRoles.toArray(new Role[standardRoles.size()]);
     }
 
-    @JsMethod(name = "scopedRoles")
+    @JsProperty(name = "scopedRoles")
     public Role[] jsScopedRoles() {
         return scopedRoles.toArray(new Role[scopedRoles.size()]);
     }

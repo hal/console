@@ -16,6 +16,8 @@
 package org.jboss.hal.dmr;
 
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -25,14 +27,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  */
 @JsType
 public class NamedNode extends ModelNode {
-
-    /**
-     * For use from JavaScript
-     */
-    public static NamedNode create(final String name, final ModelNode node) {
-        return new NamedNode(name, node);
-    }
-
 
     private final String name;
     private final ModelNode node;
@@ -57,7 +51,6 @@ public class NamedNode extends ModelNode {
     }
 
     @Override
-    @JsIgnore
     public boolean equals(final Object o) {
         if (this == o) { return true; }
         if (!(o instanceof NamedNode)) { return false; }
@@ -84,20 +77,32 @@ public class NamedNode extends ModelNode {
         return "NamedNode(" + name + ")";
     }
 
+    @JsProperty
     public String getName() {
         return get(NAME).asString();
     }
 
+    @JsProperty
     public void setName(final String name) {
         get(NAME).set(name);
     }
 
+    @JsProperty(name = "modelNode")
     public ModelNode asModelNode() {
         return node;
     }
 
+    @JsProperty(name = "modelNode")
     public void update(ModelNode node) {
         set(node);
         setName(name); // restore name!
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "create")
+    public static NamedNode jsCreate(final String name, final ModelNode node) {
+        return new NamedNode(name, node);
     }
 }

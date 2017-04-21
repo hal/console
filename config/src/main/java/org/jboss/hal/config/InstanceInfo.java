@@ -16,6 +16,7 @@
 package org.jboss.hal.config;
 
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Names;
 
@@ -40,22 +41,27 @@ public class InstanceInfo {
         this.serverName = Names.NOT_AVAILABLE;
     }
 
+    @JsProperty(name = "productName")
     public String productName() {
         return productName;
     }
 
+    @JsProperty(name = "productVersion")
     public String productVersion() {
         return productVersion;
     }
 
+    @JsProperty(name = "releaseName")
     public String releaseName() {
         return releaseName;
     }
 
+    @JsProperty(name = "releaseVersion")
     public String releaseVersion() {
         return releaseVersion;
     }
 
+    @JsProperty(name = "serverName")
     public String serverName() {
         return serverName;
     }

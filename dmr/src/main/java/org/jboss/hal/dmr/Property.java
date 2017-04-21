@@ -36,6 +36,7 @@
 package org.jboss.hal.dmr;
 
 import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
@@ -59,10 +60,12 @@ public final class Property implements Cloneable {
         this.value = value.clone();
     }
 
+    @JsProperty
     public String getName() {
         return name;
     }
 
+    @JsProperty
     public ModelNode getValue() {
         return value;
     }

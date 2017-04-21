@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -194,7 +195,7 @@ public final class AddressTemplate implements Iterable<String> {
 
     // ------------------------------------------------------ template methods
 
-    public static final String OPTIONAL = "opt://";
+    @JsIgnore public static final String OPTIONAL = "opt://";
     private static final String BLANK = "_blank";
 
     private final String template;
@@ -242,7 +243,6 @@ public final class AddressTemplate implements Iterable<String> {
         return optional ? OPTIONAL + path : path;
     }
 
-    @JsIgnore
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
@@ -274,6 +274,7 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the number of tokens
      */
+    @JsProperty(name = "size")
     public int size() {return tokens.size();}
 
     @NotNull
@@ -350,6 +351,7 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(join(this.optional, replacedTokens));
     }
 
+    @JsProperty(name = "firstKey")
     public String firstKey() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
             return tokens.getFirst().getKey();
@@ -357,6 +359,7 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    @JsProperty(name = "firstValue")
     public String firstValue() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
             return tokens.getFirst().getValue();
@@ -364,6 +367,7 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    @JsProperty(name = "lastKey")
     public String lastKey() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getKey();
@@ -371,6 +375,7 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    @JsProperty(name = "lastValue")
     public String lastValue() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getValue();
@@ -378,10 +383,12 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    @JsProperty
     public boolean isOptional() {
         return optional;
     }
 
+    @JsProperty
     String getTemplate() {
         return template;
     }

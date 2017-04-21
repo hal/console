@@ -13,5 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jsinterop.annotations.JsPackage(namespace = "dmr")
+@jsinterop.annotations.JsPackage(namespace = "hal.dmr")
 package org.jboss.hal.dmr;

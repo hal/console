@@ -21,6 +21,7 @@ import java.util.List;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
@@ -33,14 +34,6 @@ public class ResourceAddress extends ModelNode {
 
     public static ResourceAddress root() {
         // Do not replace this with a static constant! In most cases the returned address is modified somehow.
-        return new ResourceAddress();
-    }
-
-    /**
-     * For use from JavaScript
-     */
-    @JsMethod
-    public static ResourceAddress create() {
         return new ResourceAddress();
     }
 
@@ -60,7 +53,7 @@ public class ResourceAddress extends ModelNode {
         return this;
     }
 
-    @JsIgnore
+    @JsMethod(name = "addAddress")
     public ResourceAddress add(ResourceAddress address) {
         if (address != null) {
             for (Property property : address.asPropertyList()) {
@@ -70,6 +63,7 @@ public class ResourceAddress extends ModelNode {
         return this;
     }
 
+    @JsProperty(name = "firstValue")
     public String firstValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -78,6 +72,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty(name = "lastName")
     public String lastName() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -86,6 +81,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty(name = "lastValue")
     public String lastValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -94,6 +90,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty
     public ResourceAddress getParent() {
         if (this.equals(root()) || asList().isEmpty()) {
             return this;
@@ -103,10 +100,12 @@ public class ResourceAddress extends ModelNode {
         return new ResourceAddress(new ModelNode().set(parent));
     }
 
+    @JsProperty(name = "size")
     public int size() {
         return isDefined() ? asList().size() : 0;
     }
 
+    @JsProperty
     public boolean isEmpty() {
         return size() == 0;
     }

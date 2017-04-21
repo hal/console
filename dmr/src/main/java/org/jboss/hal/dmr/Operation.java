@@ -21,6 +21,7 @@ import java.util.Set;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
@@ -180,14 +181,17 @@ public class Operation extends ModelNode {
         }
     }
 
+    @JsProperty
     public String getName() {
         return get(OP).asString();
     }
 
+    @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
 
+    @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
@@ -250,8 +254,8 @@ public class Operation extends ModelNode {
 
     // ------------------------------------------------------ JS methods
 
-    @JsMethod(name = "builder")
-    public static Builder jsBuilder(final String name, final ResourceAddress address) {
-        return new Operation.Builder(name, address);
+    @JsProperty(name = "roles")
+    public String[] jsRoles() {
+        return roles.toArray(new String[roles.size()]);
     }
 }

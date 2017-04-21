@@ -26,6 +26,7 @@ package org.jboss.hal.config.semver;
 import java.util.Comparator;
 
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
@@ -471,6 +472,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the major version number
      */
+    @JsProperty
     public int getMajorVersion() {
         return normal.getMajor();
     }
@@ -480,6 +482,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the minor version number
      */
+    @JsProperty
     public int getMinorVersion() {
         return normal.getMinor();
     }
@@ -489,6 +492,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the patch version number
      */
+    @JsProperty
     public int getPatchVersion() {
         return normal.getPatch();
     }
@@ -498,6 +502,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the normal version
      */
+    @JsProperty
     public String getNormalVersion() {
         return normal.toString();
     }
@@ -507,6 +512,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the pre-release version
      */
+    @JsProperty
     public String getPreReleaseVersion() {
         return preRelease.toString();
     }
@@ -516,6 +522,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the build metadata
      */
+    @JsProperty
     public String getBuildMetadata() {
         return build.toString();
     }

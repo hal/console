@@ -13,5 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@jsinterop.annotations.JsPackage(namespace = "hal.config")
-package org.jboss.hal.config;
+@jsinterop.annotations.JsPackage(namespace = "hal.core")
+package org.jboss.hal.core;

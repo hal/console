@@ -313,6 +313,7 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
+    @JsIgnore
     public List<Property> asPropertyList() throws IllegalArgumentException {
         return value.asPropertyList();
     }
@@ -1353,6 +1354,7 @@ public class ModelNode implements Cloneable {
      *
      * @return the entry list
      */
+    @JsIgnore
     public List<ModelNode> asList() {
         return value.asList();
     }
@@ -1440,7 +1442,6 @@ public class ModelNode implements Cloneable {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    @JsIgnore
     public boolean equals(final Object other) {
         return other instanceof ModelNode && equals((ModelNode) other);
     }
@@ -1612,5 +1613,20 @@ public class ModelNode implements Cloneable {
     @SuppressWarnings("unused")
     public Object getTag(String name) {
         if (tags == null) { return null; } else { return tags.get(name); }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "asProperties")
+    public Property[] jsAsProperties() {
+        List<Property> properties = value.asPropertyList();
+        return properties == null ? new Property[0] : properties.toArray(new Property[properties.size()]);
+    }
+
+    @JsMethod(name = "asList")
+    public ModelNode[] jsAsList() {
+        List<ModelNode> modelNodes = value.asList();
+        return modelNodes == null ? new ModelNode[0] : modelNodes.toArray(new ModelNode[modelNodes.size()]);
     }
 }

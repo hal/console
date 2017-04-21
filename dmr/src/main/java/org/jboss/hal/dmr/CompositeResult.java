@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
@@ -32,6 +32,7 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     private final LinkedHashMap<String, ModelNode> steps;
 
+    @JsIgnore
     public CompositeResult(ModelNode steps) {
         this.steps = new LinkedHashMap<>();
         if (steps.isDefined()) {
@@ -46,7 +47,7 @@ public class CompositeResult implements Iterable<ModelNode> {
      *
      * @return the related step result
      */
-    @JsMethod(name = "stepIndex")
+    @JsIgnore
     public ModelNode step(int index) {
         return step("step-" + (index + 1)); //NON-NLS
     }
@@ -69,12 +70,22 @@ public class CompositeResult implements Iterable<ModelNode> {
         return steps.values().iterator();
     }
 
+    @JsProperty(name = "size")
     public int size() {return steps.size();}
 
+    @JsProperty
     public boolean isEmpty() {return steps.isEmpty();}
 
     @JsIgnore
     public Stream<ModelNode> stream() {
         return StreamSupport.stream(spliterator(), false);
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "steps")
+    public ModelNode[] jsSteps() {
+        return steps.values().toArray(new ModelNode[steps.size()]);
     }
 }
