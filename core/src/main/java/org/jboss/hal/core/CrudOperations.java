@@ -50,6 +50,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
@@ -1311,6 +1312,48 @@ public class CrudOperations {
 
 
     // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "addDialog")
+    public void jsAddDialog(final String type, final Object address, final JsArrayOf<String> attributes,
+            final AddCallback callback) {
+        String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
+        if (address instanceof AddressTemplate) {
+            if (attributes != null) {
+                add(id, type, ((AddressTemplate) address), JsHelper.asList(attributes), callback);
+            } else {
+                add(id, type, ((AddressTemplate) address), callback);
+            }
+        } else if (address instanceof String) {
+            if (attributes != null) {
+                add(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
+            } else {
+                add(id, type, (AddressTemplate.of((String) address)), callback);
+            }
+        }
+    }
+
+    @JsMethod(name = "add")
+    public void jsAdd(final String type, final String name, final Object address, final AddCallback callback) {
+        if (address instanceof AddressTemplate) {
+            add(type, name, ((AddressTemplate) address), callback);
+        } else if (address instanceof ResourceAddress) {
+            add(type, name, ((ResourceAddress) address), null, callback);
+        } else if (address instanceof String) {
+            add(type, name, AddressTemplate.of(((String) address)), callback);
+        }
+    }
+
+    @JsMethod(name = "addModelNode")
+    public void jsAdd(final String type, final String name, final Object address, final ModelNode payload,
+            final AddCallback callback) {
+        if (address instanceof AddressTemplate) {
+            add(type, name, ((AddressTemplate) address), payload, callback);
+        } else if (address instanceof ResourceAddress) {
+            add(type, name, ((ResourceAddress) address), payload, callback);
+        } else if (address instanceof String) {
+            add(type, name, AddressTemplate.of(((String) address)), payload, callback);
+        }
+    }
 
     @JsFunction
     @FunctionalInterface
