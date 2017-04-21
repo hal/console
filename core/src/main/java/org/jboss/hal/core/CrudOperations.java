@@ -27,6 +27,7 @@ import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.js.util.JsArrayOf;
+import elemental.js.util.JsMapFromStringTo;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -1313,6 +1314,21 @@ public class CrudOperations {
 
     // ------------------------------------------------------ JS methods
 
+
+    @JsFunction
+    public interface JsCallback {
+
+        void execute();
+    }
+
+
+    @JsFunction
+    public interface JsReadChildrenCallback {
+
+        void execute(final JsArrayOf<Property> children);
+    }
+
+
     @JsMethod(name = "addDialog")
     public void jsAddDialog(final String type, final Object address, final JsArrayOf<String> attributes,
             final AddCallback callback) {
@@ -1343,23 +1359,34 @@ public class CrudOperations {
         }
     }
 
-    @JsMethod(name = "addModelNode")
-    public void jsAdd(final String type, final String name, final Object address, final ModelNode payload,
-            final AddCallback callback) {
+    @JsMethod(name = "addSingletonDialog")
+    public void jsAddSingletonDialog(final String type, final Object address, final JsArrayOf<String> attributes,
+            final AddSingletonCallback callback) {
+        String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
         if (address instanceof AddressTemplate) {
-            add(type, name, ((AddressTemplate) address), payload, callback);
-        } else if (address instanceof ResourceAddress) {
-            add(type, name, ((ResourceAddress) address), payload, callback);
+            if (attributes != null) {
+                addSingleton(id, type, ((AddressTemplate) address), JsHelper.asList(attributes), callback);
+            } else {
+                addSingleton(id, type, ((AddressTemplate) address), callback);
+            }
         } else if (address instanceof String) {
-            add(type, name, AddressTemplate.of(((String) address)), payload, callback);
+            if (attributes != null) {
+                addSingleton(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
+            } else {
+                addSingleton(id, type, (AddressTemplate.of((String) address)), callback);
+            }
         }
     }
 
-    @JsFunction
-    @FunctionalInterface
-    public interface JsReadChildrenCallback {
-
-        void execute(final JsArrayOf<Property> children);
+    @JsMethod(name = "addSingleton")
+    public void jsAddSingleton(final String type, final Object address, final AddSingletonCallback callback) {
+        if (address instanceof AddressTemplate) {
+            addSingleton(type, ((AddressTemplate) address), callback);
+        } else if (address instanceof ResourceAddress) {
+            addSingleton(type, ((ResourceAddress) address), null, callback);
+        } else if (address instanceof String) {
+            addSingleton(type, AddressTemplate.of(((String) address)), callback);
+        }
     }
 
     @JsMethod(name = "read")
@@ -1395,4 +1422,54 @@ public class CrudOperations {
             readChildren(AddressTemplate.of((String) address), resource, rcc);
         }
     }
+
+    @JsMethod(name = "save")
+    public void jsSave(final String type, final String name, final Object address,
+            final JsMapFromStringTo<Object> changeSet, final JsCallback callback) {
+        Callback c = callback::execute;
+        if (address instanceof AddressTemplate) {
+            save(type, name, ((AddressTemplate) address), JsHelper.asMap(changeSet), c);
+        } else if (address instanceof ResourceAddress) {
+            AddressTemplate template = AddressTemplate.of(((ResourceAddress) address));
+            save(type, name, template, JsHelper.asMap(changeSet), c);
+        } else if (address instanceof String) {
+            save(type, name, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
+        }
+    }
+
+    @JsMethod(name = "saveSingleton")
+    public void jsSaveSingleton(final String type, final Object address, final JsMapFromStringTo<Object> changeSet,
+            final JsCallback callback) {
+        Callback c = callback::execute;
+        if (address instanceof AddressTemplate) {
+            saveSingleton(type, ((AddressTemplate) address), JsHelper.asMap(changeSet), c);
+        } else if (address instanceof String) {
+            saveSingleton(type, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
+        }
+    }
+
+    @JsMethod(name = "remove")
+    public void jsRemove(final String type, final String name, final Object address, final JsCallback callback) {
+        Callback c = callback::execute;
+        if (address instanceof AddressTemplate) {
+            remove(type, name, ((AddressTemplate) address), c);
+        } else if (address instanceof ResourceAddress) {
+            remove(type, name, ((ResourceAddress) address), c);
+        } else if (address instanceof String) {
+            remove(type, name, AddressTemplate.of(((String) address)), c);
+        }
+    }
+
+    @JsMethod(name = "removeSingleton")
+    public void jsRemoveSingleton(final String type, final Object address, final JsCallback callback) {
+        Callback c = callback::execute;
+        if (address instanceof AddressTemplate) {
+            removeSingleton(type, ((AddressTemplate) address), c);
+        } else if (address instanceof ResourceAddress) {
+            removeSingleton(type, ((ResourceAddress) address), c);
+        } else if (address instanceof String) {
+            removeSingleton(type, AddressTemplate.of(((String) address)), c);
+        }
+    }
 }
+

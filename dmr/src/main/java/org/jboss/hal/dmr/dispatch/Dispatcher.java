@@ -613,7 +613,6 @@ public class Dispatcher implements RecordingHandler {
 
 
     @JsFunction
-    @FunctionalInterface
     public interface JsOperationCallback {
 
         void onSuccess(ModelNode result);
@@ -621,7 +620,6 @@ public class Dispatcher implements RecordingHandler {
 
 
     @JsFunction
-    @FunctionalInterface
     public interface JsCompositeCallback {
 
         void onSuccess(CompositeResult result);

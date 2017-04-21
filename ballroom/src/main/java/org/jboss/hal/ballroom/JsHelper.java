@@ -16,11 +16,14 @@
 package org.jboss.hal.ballroom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import elemental.dom.Element;
 import elemental.events.EventListener;
 import elemental.js.util.JsArrayOf;
+import elemental.js.util.JsMapFromStringTo;
 import org.jboss.hal.ballroom.dragndrop.DragEvent;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
 
@@ -48,6 +51,21 @@ public final class JsHelper {
             array.push(t);
         }
         return array;
+    }
+
+    public static Map<String, Object> asMap(JsMapFromStringTo<Object> jsMap) {
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < jsMap.keys().length(); i++) {
+            String key = jsMap.keys().get(i);
+            map.put(key, jsMap.get(key));
+        }
+        return map;
+    }
+
+    public static JsMapFromStringTo<Object> asJsMap(Map<String, Object> map) {
+        JsMapFromStringTo<Object> jsMap = JsMapFromStringTo.create();
+        map.forEach(jsMap::put);
+        return jsMap;
     }
 
     public static native boolean supportsAdvancedUpload() /*-{

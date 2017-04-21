@@ -29,11 +29,11 @@ import java.util.function.Function;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.core.expression.Expression;
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -282,35 +282,37 @@ public class OperationFactory {
 
         Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
         if (attribute != null) {
+            String stringValue = String.valueOf(value);
             ModelNode attributeDescription = attribute.getValue();
             if (attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                     attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
-                    Expression.isExpression(String.valueOf(value))) {
-                valueNode.setExpression(String.valueOf(value));
+                    Expression.isExpression(stringValue)) {
+                valueNode.setExpression(stringValue);
             } else {
                 ModelType type = attributeDescription.get(TYPE).asType();
                 try {
+
                     switch (type) {
                         case BIG_DECIMAL:
-                            valueNode.set(BigDecimal.valueOf((Double) value).doubleValue());
+                            valueNode.set(BigDecimal.valueOf(Double.parseDouble(stringValue)));
                             break;
                         case BIG_INTEGER:
-                            valueNode.set(BigInteger.valueOf((Long) value).longValue());
+                            valueNode.set(BigInteger.valueOf(Long.parseLong(stringValue)));
                             break;
                         case BOOLEAN:
-                            valueNode.set((Boolean) value);
+                            valueNode.set(Boolean.parseBoolean(stringValue));
                             break;
                         case BYTES:
                             valueNode.set((byte[]) value);
                             break;
                         case DOUBLE:
-                            valueNode.set((Double) value);
+                            valueNode.set(Double.parseDouble(stringValue));
                             break;
                         case EXPRESSION:
-                            valueNode.setExpression((String) value);
+                            valueNode.setExpression(stringValue);
                             break;
                         case INT:
-                            valueNode.set(((Long) value).intValue());
+                            valueNode.set(Long.valueOf(stringValue).intValue());
                             break;
                         case LIST: {
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
@@ -328,7 +330,7 @@ public class OperationFactory {
                             break;
                         }
                         case LONG:
-                            valueNode.set((Long) value);
+                            valueNode.set(Long.parseLong(stringValue));
                             break;
                         case OBJECT:
                             ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
@@ -346,7 +348,7 @@ public class OperationFactory {
                             }
                             break;
                         case STRING:
-                            valueNode.set((String) value);
+                            valueNode.set(stringValue);
                             break;
 
                         case PROPERTY:
