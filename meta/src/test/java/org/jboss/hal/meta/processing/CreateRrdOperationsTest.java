@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.Sets;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;

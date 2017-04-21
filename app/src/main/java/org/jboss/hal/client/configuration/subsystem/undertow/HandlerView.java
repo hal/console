@@ -26,9 +26,9 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 

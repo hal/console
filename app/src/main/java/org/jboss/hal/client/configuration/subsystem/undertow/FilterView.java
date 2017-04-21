@@ -31,11 +31,11 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.ResponseHeader;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 

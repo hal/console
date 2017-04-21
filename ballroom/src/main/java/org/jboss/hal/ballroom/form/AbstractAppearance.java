@@ -20,7 +20,7 @@ import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import elemental.html.LabelElement;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;

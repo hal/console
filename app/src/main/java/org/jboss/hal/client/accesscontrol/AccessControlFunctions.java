@@ -25,12 +25,12 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.core.OperationFactory;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.dmr.model.ResourceCheck;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.meta.Metadata;
 
 import static java.util.stream.Collectors.toList;

@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.stream.Collectors.toList;
 

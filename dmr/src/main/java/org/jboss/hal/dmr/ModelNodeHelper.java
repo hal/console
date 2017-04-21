@@ -23,7 +23,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
-import org.jboss.hal.dmr.model.NamedNode;
 
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;

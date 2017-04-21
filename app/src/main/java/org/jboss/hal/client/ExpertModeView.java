@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * @author Harald Pehl

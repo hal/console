@@ -36,7 +36,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;

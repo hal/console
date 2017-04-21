@@ -21,7 +21,7 @@ import com.google.common.base.Strings;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 

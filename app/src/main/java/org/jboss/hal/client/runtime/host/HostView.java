@@ -26,7 +26,7 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.host.Host;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;

@@ -23,8 +23,8 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;

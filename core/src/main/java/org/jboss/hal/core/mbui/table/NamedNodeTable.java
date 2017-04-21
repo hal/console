@@ -16,7 +16,7 @@
 package org.jboss.hal.core.mbui.table;
 
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 

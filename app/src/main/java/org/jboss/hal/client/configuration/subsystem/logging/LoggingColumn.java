@@ -26,7 +26,7 @@ import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;

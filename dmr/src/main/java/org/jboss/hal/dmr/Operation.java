@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.ModelType;
-import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;

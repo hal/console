@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescriptionStatementContext;
 import org.jboss.hal.meta.security.SecurityContextStatementContext;

@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

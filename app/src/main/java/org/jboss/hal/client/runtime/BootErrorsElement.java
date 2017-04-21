@@ -32,7 +32,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;

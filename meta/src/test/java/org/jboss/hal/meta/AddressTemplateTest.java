@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

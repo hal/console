@@ -18,6 +18,8 @@ package org.jboss.hal.dmr.model;
 import java.util.Collections;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.junit.Test;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

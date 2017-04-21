@@ -20,7 +20,7 @@ import java.util.List;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.CompositeResult;
 
 /**
  * Abstract result processor which makes it easy to unit test the processor. If your result processor is really trivial

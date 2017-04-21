@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Test;

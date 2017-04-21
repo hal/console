@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jboss.hal.dmr.ModelNode;
 
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;

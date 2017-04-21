@@ -73,7 +73,7 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     TypeParameter getTypeParameter(final VariableElement field) {
         TypeMirror type = elementUtils.getTypeElement("org.jboss.hal.dmr.ModelNode").asType();
-        TypeMirror namedNodeType = elementUtils.getTypeElement("org.jboss.hal.dmr.model.NamedNode").asType();
+        TypeMirror namedNodeType = elementUtils.getTypeElement("org.jboss.hal.dmr.NamedNode").asType();
         DeclaredType declaredType = MoreTypes.asDeclared(field.asType());
         List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
         if (!typeArguments.isEmpty()) {

@@ -36,7 +36,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;

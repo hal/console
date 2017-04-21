@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

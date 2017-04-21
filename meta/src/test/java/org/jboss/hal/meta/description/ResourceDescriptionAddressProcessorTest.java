@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.meta.description;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.junit.Before;
 import org.junit.Test;
 

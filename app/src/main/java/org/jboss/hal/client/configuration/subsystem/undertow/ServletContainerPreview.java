@@ -24,7 +24,7 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;

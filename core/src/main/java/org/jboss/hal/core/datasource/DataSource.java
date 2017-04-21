@@ -17,7 +17,7 @@ package org.jboss.hal.core.datasource;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;

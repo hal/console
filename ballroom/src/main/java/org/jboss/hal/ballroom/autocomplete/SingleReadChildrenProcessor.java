@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 

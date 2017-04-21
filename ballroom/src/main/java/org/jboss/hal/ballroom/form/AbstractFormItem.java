@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.form.Decoration.*;

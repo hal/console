@@ -17,7 +17,7 @@ package org.jboss.hal.meta;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;

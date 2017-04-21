@@ -25,7 +25,7 @@ import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

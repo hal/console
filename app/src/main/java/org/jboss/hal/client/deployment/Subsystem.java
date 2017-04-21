@@ -16,7 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 /**
  * @author Harald Pehl

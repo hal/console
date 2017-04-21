@@ -31,10 +31,10 @@ import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;

@@ -36,7 +36,7 @@ import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;

@@ -18,7 +18,7 @@ package org.jboss.hal.meta.processing;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 

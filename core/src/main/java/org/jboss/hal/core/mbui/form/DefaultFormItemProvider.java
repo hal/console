@@ -38,7 +38,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;

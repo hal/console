@@ -35,8 +35,8 @@ import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 

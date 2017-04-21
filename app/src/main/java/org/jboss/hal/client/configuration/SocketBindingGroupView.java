@@ -31,7 +31,7 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;

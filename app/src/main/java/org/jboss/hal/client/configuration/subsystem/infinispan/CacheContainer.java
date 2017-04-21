@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 /**
  * @author Harald Pehl

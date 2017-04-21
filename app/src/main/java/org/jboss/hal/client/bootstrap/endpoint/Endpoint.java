@@ -16,7 +16,7 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;

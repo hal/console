@@ -16,7 +16,7 @@
 package org.jboss.hal.client.accesscontrol;
 
 import org.jboss.hal.config.Role;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 

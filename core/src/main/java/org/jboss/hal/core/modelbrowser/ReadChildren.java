@@ -32,8 +32,8 @@ import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_SINGLETONS;
