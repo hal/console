@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<module rename-to="app">
+<module>
     <inherits name="elemental.Elemental"/>
     <inherits name="com.google.common.collect.Collect"/>
     <inherits name="com.gwtplatform.mvp.MvpWithEntryPoint"/>

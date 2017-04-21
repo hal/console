@@ -14,41 +14,28 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.hal</groupId>
-        <artifactId>hal-parent-with-gwt</artifactId>
+        <artifactId>hal-parent-with-dependencies</artifactId>
         <version>0.6.0</version>
-        <relativePath>../parent-with-gwt/pom.xml</relativePath>
+        <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-theme-parent</artifactId>
-    <name>HAL :: Themes</name>
-    <description>Themes parent POM.</description>
+    <artifactId>hal-parent-with-gwt</artifactId>
+    <name>HAL :: Parent :: GWT</name>
+    <description>Parent POM for all GWT related modules.</description>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>eap</module>
-        <module>hal</module>
-        <module>wildfly</module>
-    </modules>
-
     <dependencies>
+        <!-- Dependencies used by all GWT modules -->
         <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt.inject</groupId>
-            <artifactId>gin</artifactId>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -79,7 +79,6 @@
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <moduleName>org.jboss.hal.theme.HAL</moduleName>
                 </configuration>

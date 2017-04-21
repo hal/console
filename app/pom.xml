@@ -21,9 +21,9 @@
 
     <parent>
         <groupId>org.jboss.hal</groupId>
-        <artifactId>hal-parent-with-dependencies</artifactId>
+        <artifactId>hal-parent-with-gwt</artifactId>
         <version>0.6.0</version>
-        <relativePath>../parent-with-dependencies/pom.xml</relativePath>
+        <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-console</artifactId>
@@ -98,10 +98,6 @@
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -310,24 +306,15 @@
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
-                        <!--<devmodeArg>-incremental</devmodeArg>-->
                     </devmodeArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
                     <logLevel>${gwt.logLevel}</logLevel>
-                    <moduleName>${gwt.module}</moduleName>
-                    <moduleShortName>${gwt.shortName}</moduleShortName>
+                    <moduleName>org.jboss.hal.Console</moduleName>
+                    <moduleShortName>hal</moduleShortName>
                     <optimize>${gwt.optimize}</optimize>
                     <sourceLevel>1.8</sourceLevel>
                     <style>${gwt.style}</style>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <message/>
                 </configuration>
             </plugin>
         </plugins>

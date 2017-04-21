@@ -21,9 +21,9 @@
 
     <parent>
         <groupId>org.jboss.hal</groupId>
-        <artifactId>hal-parent-with-dependencies</artifactId>
+        <artifactId>hal-parent-with-gwt</artifactId>
         <version>0.6.0</version>
-        <relativePath>../parent-with-dependencies/pom.xml</relativePath>
+        <relativePath>../parent-with-gwt/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-ballroom</artifactId>
@@ -61,10 +61,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-gwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -107,17 +103,8 @@
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <moduleName>org.jboss.hal.Ballroom</moduleName>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <message/>
                 </configuration>
             </plugin>
         </plugins>

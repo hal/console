@@ -62,19 +62,8 @@
         <wildfly-swarm.version>2017.1.1</wildfly-swarm.version>
     </properties>
 
-    <!-- Do not declare any relevant build settings here! Declare them in hal-parent. -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <message/>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <!-- Do not declare any build settings here! Declare them in hal-parent. -->
+    <build/>
 
     <dependencyManagement>
         <dependencies>
