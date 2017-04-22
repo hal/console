@@ -23,7 +23,6 @@ import jsinterop.annotations.JsFunction;
  * @author Harald Pehl
  */
 @JsFunction
-@FunctionalInterface
 public interface JsCallback {
 
     void execute();

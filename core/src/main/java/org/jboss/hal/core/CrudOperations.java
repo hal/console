@@ -33,6 +33,7 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -1313,13 +1314,6 @@ public class CrudOperations {
 
 
     // ------------------------------------------------------ JS methods
-
-
-    @JsFunction
-    public interface JsCallback {
-
-        void execute();
-    }
 
 
     @JsFunction
