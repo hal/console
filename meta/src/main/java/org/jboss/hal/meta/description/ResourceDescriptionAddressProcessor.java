@@ -18,7 +18,7 @@ package org.jboss.hal.meta.description;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static java.util.stream.Collectors.toList;
 

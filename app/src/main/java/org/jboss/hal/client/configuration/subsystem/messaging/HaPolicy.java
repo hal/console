@@ -25,10 +25,10 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -171,10 +171,10 @@ public enum HaPolicy {
      */
     void add(Dispatcher dispatcher, StatementContext statementContext, Callback callback) {
         List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation.Builder(ADD, singleton().resolve(statementContext)).build());
+        operations.add(new Operation.Builder(singleton().resolve(statementContext), ADD).build());
         if (!children().isEmpty()) {
             children().forEach(child -> operations.add(
-                    new Operation.Builder(ADD, child.singleton().resolve(statementContext)).build()));
+                    new Operation.Builder(child.singleton().resolve(statementContext), ADD).build()));
         }
         dispatcher.execute(new Composite(operations), (CompositeResult result) -> callback.execute());
     }
@@ -210,11 +210,11 @@ public enum HaPolicy {
                     List<Operation> operations = new ArrayList<>();
                     if (children().isEmpty()) {
                         children().forEach(child ->
-                                operations.add(new Operation.Builder(REMOVE,
-                                        child.singleton().resolve(statementContext)).build()));
+                                operations.add(new Operation.Builder(child.singleton().resolve(statementContext), REMOVE
+                                ).build()));
                     }
-                    operations.add(new Operation.Builder(REMOVE,
-                            singleton().resolve(statementContext)).build());
+                    operations.add(new Operation.Builder(singleton().resolve(statementContext), REMOVE
+                    ).build());
                     dispatcher.execute(new Composite(operations), (CompositeResult result) -> callback.execute());
                 });
     }

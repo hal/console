@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;

@@ -29,7 +29,7 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.mvp.SupportsExternalMode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;

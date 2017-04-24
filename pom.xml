@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <url>http://hal.github.io/</url>
@@ -78,8 +78,6 @@
     </issueManagement>
 
     <properties>
-        <gwt.module>org.jboss.hal.Console</gwt.module>
-        <gwt.shortName>hal</gwt.shortName>
         <hal.version>${project.version}</hal.version>
 
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -88,7 +86,6 @@
         <plugin.docker.version>0.17.1</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
         <plugin.frontend.version>1.2</plugin.frontend.version>
-        <plugin.github.version>0.12</plugin.github.version>
         <plugin.gwt.version>1.0-rc-6</plugin.gwt.version>
         <plugin.processor.version>3.2.0</plugin.processor.version>
         <plugin.swarm.version>40</plugin.swarm.version>
@@ -108,6 +105,7 @@
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
+        <module>parent-with-gwt</module>
         <module>processors</module>
         <module>resources</module>
         <module>spi</module>
@@ -133,11 +131,6 @@
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>${plugin.frontend.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>${plugin.github.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>net.ltgt.gwt.maven</groupId>
@@ -171,67 +164,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <server>github</server>
-                    <branch>refs/heads/site</branch>
-                    <message>Creating site for ${project.name} ${project.version}</message>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <detectLinks>true</detectLinks>
-                    <doctitle>HAL ${project.version} API</doctitle>
-                    <excludePackageNames>org.jboss.hal.client.rhcp</excludePackageNames>
-                    <sourceFileExcludes>
-                        <exclude>**/Mbui_*.java</exclude>
-                        <exclude>**/Templated_*.java</exclude>
-                    </sourceFileExcludes>
-                    <header>HAL ${project.version}</header>
-                    <links>
-                        <link>http://www.gwtproject.org/javadoc/latest/</link>
-                    </links>
-                    <windowtitle>HAL ${project.version} API</windowtitle>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <profiles>
         <profile>

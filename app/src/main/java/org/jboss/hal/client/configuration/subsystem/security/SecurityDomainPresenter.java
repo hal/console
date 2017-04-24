@@ -41,11 +41,11 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.dmr.model.ResourceCheck;
-import org.jboss.hal.dmr.model.SuccessfulOutcome;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.ResourceCheck;
+import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -166,8 +166,10 @@ public class SecurityDomainPresenter
     void addClassicAuthenticationModule() {
         // Check if there's already a 'authentication=jaspi' singleton node.
         // Either 'authentication=classic' or 'authentication=jaspi' is allowed not both!
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext))
+        Operation operation = new Operation.Builder(
+                SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext),
+                READ_RESOURCE_OPERATION
+        )
                 .build();
         dispatcher.execute(operation,
                 result -> {
@@ -191,7 +193,7 @@ public class SecurityDomainPresenter
                     if (status == 200) {
                         control.proceed();
                     } else {
-                        Operation operation = new Operation.Builder(ADD, singletonTemplate.resolve(statementContext))
+                        Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
                                 .build();
                         dispatcher.execute(operation, result -> control.proceed());
                     }

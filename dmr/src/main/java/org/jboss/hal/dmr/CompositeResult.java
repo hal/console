@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class CompositeResult implements Iterable<ModelNode> {
 
     private final LinkedHashMap<String, ModelNode> steps;
 
+    @JsIgnore
     public CompositeResult(ModelNode steps) {
         this.steps = new LinkedHashMap<>();
         if (steps.isDefined()) {
@@ -41,14 +45,17 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     /**
      * @param index zero-based!
+     *
      * @return the related step result
      */
+    @JsIgnore
     public ModelNode step(int index) {
         return step("step-" + (index + 1)); //NON-NLS
     }
 
     /**
      * @param step Step as "step-n" (one-based!)
+     *
      * @return the related step result
      */
     public ModelNode step(String step) {
@@ -59,15 +66,31 @@ public class CompositeResult implements Iterable<ModelNode> {
     }
 
     @Override
+    @JsIgnore
     public Iterator<ModelNode> iterator() {
         return steps.values().iterator();
     }
 
+    @JsProperty(name = "size")
     public int size() {return steps.size();}
 
+    @JsProperty
     public boolean isEmpty() {return steps.isEmpty();}
 
+    @JsIgnore
     public Stream<ModelNode> stream() {
         return StreamSupport.stream(spliterator(), false);
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "steps")
+    public JsArrayOf<ModelNode> jsSteps() {
+        JsArrayOf<ModelNode> array = JsArrayOf.create();
+        for (ModelNode modelNode : steps.values()) {
+            array.push(modelNode);
+        }
+        return array;
     }
 }

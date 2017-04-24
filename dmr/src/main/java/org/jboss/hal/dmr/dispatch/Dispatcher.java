@@ -27,14 +27,22 @@ import elemental.html.File;
 import elemental.html.FormData;
 import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
 import org.jboss.hal.dmr.macro.Action;
 import org.jboss.hal.dmr.macro.Macro;
@@ -44,10 +52,6 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -72,6 +76,7 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
  *
  * @author Harald Pehl
  */
+@JsType
 public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface
@@ -125,6 +130,7 @@ public class Dispatcher implements RecordingHandler {
 
     private static boolean pendingLifecycleAction = false;
 
+    @JsIgnore
     public static void setPendingLifecycleAction(final boolean value) {
         pendingLifecycleAction = value;
         logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
@@ -141,6 +147,7 @@ public class Dispatcher implements RecordingHandler {
     private final ExceptionCallback exceptionCallback;
 
     @Inject
+    @JsIgnore
     public Dispatcher(final Environment environment, final Endpoints endpoints, final Settings settings,
             final EventBus eventBus, final ResponseHeadersProcessors responseHeadersProcessors,
             final Macros macros, final Resources resources) {
@@ -171,26 +178,31 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ execute composite
 
+    @JsIgnore
     public void execute(final Composite composite, final CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Composite composite, final CompositeCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
                 new ExceptionalFunctionCallback<>(control));
     }
 
+    @JsIgnore
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback, FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
@@ -200,42 +212,50 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ execute operation
 
+    @JsIgnore
     public void execute(final Operation operation, final OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
             final OperationCallback callback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
             final OperationCallback callback, final FailedCallback failedCallback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
             final OperationCallback callback, final FailedCallback failedCallback,
             final ExceptionCallback exceptionCallback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
                 new ExceptionalFunctionCallback<>(control));
     }
 
+    @JsIgnore
     public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback, FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
@@ -275,15 +295,18 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ upload
 
+    @JsIgnore
     public void upload(final File file, final Operation operation, final OperationCallback callback) {
         upload(file, operation, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void upload(final File file, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
         upload(file, operation, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void upload(final File file, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         Operation uploadOperation = runAs(operation);
@@ -298,15 +321,18 @@ public class Dispatcher implements RecordingHandler {
         return formData;
     }-*/;
 
+    @JsIgnore
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
+    @JsIgnore
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         Operation uploadOperation = runAs(operation);
@@ -332,6 +358,7 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ download
 
+    @JsIgnore
     public void download(final Operation operation, final SuccessCallback<String> successCallback) {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
@@ -354,6 +381,7 @@ public class Dispatcher implements RecordingHandler {
         // Downloads are not supported in macros!
     }
 
+    @JsIgnore
     public String downloadUrl(final Operation operation) {
         return operationUrl(operation) + "&useStreamAsResponse"; //NON-NLS
     }
@@ -535,6 +563,7 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ macro recording
 
     @Override
+    @JsIgnore
     public void onRecording(final RecordingEvent event) {
         if (event.getAction() == Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
@@ -577,5 +606,34 @@ public class Dispatcher implements RecordingHandler {
         } else {
             return operation.getName().startsWith("read") || operation.getName().equals(QUERY);
         }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+
+    @JsFunction
+    public interface JsOperationCallback {
+
+        void onSuccess(ModelNode result);
+    }
+
+
+    @JsFunction
+    public interface JsCompositeCallback {
+
+        void onSuccess(CompositeResult result);
+    }
+
+    @JsMethod(name = "executeComposite")
+    public void jsExecuteComposite(final Composite composite, final JsCompositeCallback callback) {
+        CompositeCallback cc = callback::onSuccess;
+        dmr(composite, payload -> payload.get(RESULT), cc, failedCallback, exceptionCallback);
+    }
+
+    @JsMethod(name = "execute")
+    public void jsExecute(final Operation operation, final JsOperationCallback callback) {
+        OperationCallback oc = callback::onSuccess;
+        dmr(operation, payload -> payload.get(RESULT), oc, failedCallback, exceptionCallback);
     }
 }

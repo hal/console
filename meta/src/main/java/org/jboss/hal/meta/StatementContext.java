@@ -15,8 +15,13 @@
  */
 package org.jboss.hal.meta;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
+@JsType
 public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -110,22 +115,30 @@ public interface StatementContext {
     /**
      * Resolves a single value.
      */
+    @JsIgnore
     String resolve(String placeholder);
 
     /**
      * Resolves a tuple.
      */
+    @JsIgnore
     String[] resolveTuple(String placeholder);
 
+    @JsProperty(name = "domainController")
     String domainController();
 
+    @JsProperty(name = "selectedProfile")
     String selectedProfile();
 
+    @JsProperty(name = "selectedServerGroup")
     String selectedServerGroup();
 
+    @JsProperty(name = "selectedHost")
     String selectedHost();
 
+    @JsProperty(name = "selectedServerConfig")
     String selectedServerConfig();
 
+    @JsProperty(name = "selectedServer")
     String selectedServer();
 }

@@ -46,9 +46,9 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.dmr.model.SuccessfulOutcome;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -194,7 +194,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                         item.getRole().getName(), item.isInclude() ? INCLUDE_TEMPLATE : EXCLUDE_TEMPLATE,
                         itm -> {
                             ResourceAddress address = AddressTemplates.assignment(itm);
-                            Operation operation = new Operation.Builder(REMOVE, address).build();
+                            Operation operation = new Operation.Builder(address, REMOVE).build();
                             dispatcher.execute(operation, result -> {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .removeResourceSuccess(resources.constants().assignment(),

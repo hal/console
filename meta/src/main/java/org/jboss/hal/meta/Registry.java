@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.meta;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * A registry for meta data such as resource descriptions or security context information. The registry has the

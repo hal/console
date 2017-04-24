@@ -32,10 +32,10 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -127,11 +127,11 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFileName != null) {
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
-            Operation logFileOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             //noinspection HardCodedStringLiteral
-            Operation contentOp = new Operation.Builder("read-log-file", address)
+            Operation contentOp = new Operation.Builder(address, "read-log-file")
                     .param("lines", LogFiles.LINES)
                     .param("tail", true)
                     .build();
@@ -165,7 +165,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             //noinspection HardCodedStringLiteral
-            Operation operation = new Operation.Builder("read-log-file", address)
+            Operation operation = new Operation.Builder(address, "read-log-file")
                     .param("lines", linesToRead)
                     .param("tail", true)
                     .build();

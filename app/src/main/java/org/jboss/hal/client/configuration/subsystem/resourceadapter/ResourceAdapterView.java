@@ -30,10 +30,10 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.resources.Ids;
@@ -121,7 +121,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         FormItem<Map<String, String>> formItem = form.getFormItem(attribute);
         if (formItem != null && formItem.isModified()) {
             if (formItem.getValue().isEmpty()) {
-                operation = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+                operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                         .param(NAME, attribute)
                         .build();
             } else {
@@ -132,7 +132,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
                     mapping.get(TO).set(value);
                     mappings.add(mapping);
                 });
-                operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                         .param(NAME, attribute)
                         .param(VALUE, mappings)
                         .build();

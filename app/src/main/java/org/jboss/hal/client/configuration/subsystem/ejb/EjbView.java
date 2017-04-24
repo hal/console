@@ -29,7 +29,7 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -160,19 +160,19 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     public void update(final ModelNode payload) {
         configurationForm.view(payload);
 
-        threadPoolTable.update(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastKey())));
+        threadPoolTable.update(asNamedNodes(failSafePropertyList(payload, THREAD_POOL_TEMPLATE.lastName())));
         threadPoolForm.clear();
 
-        remotingProfileTable.update(asNamedNodes(failSafePropertyList(payload, REMOTING_PROFILE_TEMPLATE.lastKey())));
+        remotingProfileTable.update(asNamedNodes(failSafePropertyList(payload, REMOTING_PROFILE_TEMPLATE.lastName())));
         remotingProfileForm.clear();
 
-        beanPoolTable.update(asNamedNodes(failSafePropertyList(payload, BEAN_POOL_TEMPLATE.lastKey())));
+        beanPoolTable.update(asNamedNodes(failSafePropertyList(payload, BEAN_POOL_TEMPLATE.lastName())));
         beanPoolForm.clear();
 
-        cacheTable.update(asNamedNodes(failSafePropertyList(payload, CACHE_TEMPLATE.lastKey())));
+        cacheTable.update(asNamedNodes(failSafePropertyList(payload, CACHE_TEMPLATE.lastName())));
         cacheForm.clear();
 
-        passivationTable.update(asNamedNodes(failSafePropertyList(payload, PASSIVATION_TEMPLATE.lastKey())));
+        passivationTable.update(asNamedNodes(failSafePropertyList(payload, PASSIVATION_TEMPLATE.lastName())));
         passivationForm.clear();
 
         serviceAsyncForm.view(payload.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
@@ -181,12 +181,12 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         serviceTimerForm.view(payload.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));
 
         mdbDeliveryGroupTable.update(
-                asNamedNodes(failSafePropertyList(payload, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())));
+                asNamedNodes(failSafePropertyList(payload, MDB_DELIVERY_GROUP_TEMPLATE.lastName())));
         mdbDeliveryGroupForm.clear();
 
         if (ManagementModel.supportsEjbApplicationSecurityDomain(environment().getManagementVersion())) {
             appSecurityDomainTable.update(
-                    asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastKey())));
+                    asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastName())));
             appSecurityDomainForm.clear();
         }
     }

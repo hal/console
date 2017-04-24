@@ -20,8 +20,8 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.Constraint;
@@ -52,7 +52,8 @@ final class Mbui_FailSafeView extends FailSafeView {
 
         form = new ModelNodeForm.Builder<org.jboss.hal.dmr.ModelNode>("form", metadata0)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION, metadata0Template.resolve(mbuiContext.statementContext())).build(),
+                        () -> new Operation.Builder(metadata0Template.resolve(mbuiContext.statementContext()),
+                                READ_RESOURCE_OPERATION).build(),
                         () -> addSingleton("form", "Form", metadata0Template))
                 .prepareRemove(form -> removeSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), form))
                 .onSave((form, changedValues) -> saveSingletonForm("Form", metadata0Template.resolve(mbuiContext.statementContext()), changedValues))

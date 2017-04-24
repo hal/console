@@ -6,19 +6,15 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,8 +37,7 @@ public class ModelNodeFormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        Core.INSTANCE = new Core(mock(Environment.class), mock(Dispatcher.class), mock(StatementContext.class),
-                mock(EventBus.class));
+        Core.INSTANCE = mock(Core.class);
         attributes = new ResourceDescriptionBuilder().attributes("foo", "bar", "baz", "qux");
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));

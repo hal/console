@@ -34,10 +34,10 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
@@ -117,8 +117,8 @@ public class StandaloneDeploymentPresenter extends
         boolean supportsBrowseContent = ManagementModel.supportsReadContentFromDeployment(
                 environment.getManagementVersion());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
-        Operation browseContent = new Operation.Builder(BROWSE_CONTENT, address).build();
-        Operation readDeployment = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        Operation browseContent = new Operation.Builder(address, BROWSE_CONTENT).build();
+        Operation readDeployment = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         Composite composite = new Composite(readDeployment);
@@ -137,7 +137,7 @@ public class StandaloneDeploymentPresenter extends
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();
-        Operation operation = new Operation.Builder(DEPLOY, address).build();
+        Operation operation = new Operation.Builder(address, DEPLOY).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
             reload(1); // stay on model browser tab

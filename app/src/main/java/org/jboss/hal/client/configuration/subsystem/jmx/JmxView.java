@@ -36,7 +36,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -126,8 +126,9 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         Metadata alMetadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
         this.alForm = new ModelNodeForm.Builder<>(Ids.JMX_AUDIT_LOG_FORM, alMetadata)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                AUDIT_LOG_TEMPLATE.resolve(statementContext)).build(),
+                        () -> new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
+                                READ_RESOURCE_OPERATION
+                        ).build(),
                         () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, address -> presenter.reload()))
                 .unboundFormItem(handlerItem, Integer.MAX_VALUE, handlerDescription)
                 .onSave((form, changedValues) -> presenter
@@ -163,12 +164,13 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
         // ------------------------------------------------------ remoting connector
 
-        String type = labelBuilder.label(REMOTING_CONNECTOR_TEMPLATE.lastKey());
+        String type = labelBuilder.label(REMOTING_CONNECTOR_TEMPLATE.lastName());
         Metadata rcMetadata = metadataRegistry.lookup(REMOTING_CONNECTOR_TEMPLATE);
         this.rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext)).build(),
+                        () -> new Operation.Builder(REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext),
+                                READ_RESOURCE_OPERATION
+                        ).build(),
                         () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, address -> presenter.reload()))
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.reload()))

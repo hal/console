@@ -46,7 +46,7 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
     protected void adminOnly(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertInfo);
-        alertIcon.setClassName(Icons.STOPPED);
+        alertIcon.setClassName(Icons.LOCK);
         alertText.setInnerHTML(message.asString());
     }
 

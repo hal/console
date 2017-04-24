@@ -48,6 +48,7 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -156,12 +157,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().reload())
                             .handler(serverGroupActions::reload)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), RELOAD_SERVERS))
+                            .constraints(constraints(item, RELOAD_SERVERS))
                             .build());
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().restart())
                             .handler(serverGroupActions::restart)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), RESTART_SERVERS))
+                            .constraints(constraints(item, RESTART_SERVERS))
                             .build());
                 }
                 if (item.getServers(Server::isStarted).size() - item.getServers(Server::isSuspended)
@@ -169,28 +170,28 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().suspend())
                             .handler(serverGroupActions::suspend)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), SUSPEND_SERVERS))
+                            .constraints(constraints(item, SUSPEND_SERVERS))
                             .build());
                 }
                 if (item.hasServers(Server::isSuspended)) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().resume())
                             .handler(serverGroupActions::resume)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), RESUME_SERVERS))
+                            .constraints(constraints(item, RESUME_SERVERS))
                             .build());
                 }
                 if (item.hasServers(Server::isStarted)) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().stop())
                             .handler(serverGroupActions::stop)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), STOP_SERVERS))
+                            .constraints(constraints(item, STOP_SERVERS))
                             .build());
                 }
                 if (item.hasServers(server -> server.isStopped() || server.isFailed())) {
                     actions.add(new ItemAction.Builder<ServerGroup>()
                             .title(resources.constants().start())
                             .handler(serverGroupActions::start)
-                            .constraint(Constraint.executable(serverGroupTemplate(item), START_SERVERS))
+                            .constraints(constraints(item, START_SERVERS))
                             .build());
                 }
                 return actions;
@@ -199,6 +200,13 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
         eventBus.addHandler(ServerGroupActionEvent.getType(), this);
         eventBus.addHandler(ServerGroupResultEvent.getType(), this);
+    }
+
+    private Constraints constraints(final ServerGroup serverGroup, String operation) {
+        return Constraints.or(
+                Constraint.executable(AddressTemplate.of("/server-group=*"), operation),
+                Constraint.executable(serverGroupTemplate(serverGroup), operation)
+        );
     }
 
     @Override

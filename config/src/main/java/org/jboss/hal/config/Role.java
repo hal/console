@@ -19,12 +19,17 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class Role {
 
     public static final Role ADMINISTRATOR = new Role("Administrator");
@@ -36,6 +41,7 @@ public class Role {
     public static final Role SUPER_USER = new Role("SuperUser");
 
 
+    @JsType
     public enum Type {
         STANDARD, HOST, SERVER_GROUP
     }
@@ -47,10 +53,12 @@ public class Role {
     private final SortedSet<String> scope;
     private boolean includeAll;
 
+    @JsIgnore
     public Role(@NonNls final String name) {
         this(name, null, Type.STANDARD, Collections.emptySet());
     }
 
+    @JsIgnore
     public Role(@NonNls final String name, final Role baseRole, final Type type,
             final Iterable<String> scope) {
         this.name = name;
@@ -81,6 +89,7 @@ public class Role {
     }
 
     @Override
+    @JsIgnore
     public int hashCode() {
         return name.hashCode();
     }
@@ -94,39 +103,60 @@ public class Role {
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
 
+    @JsProperty
     public String getId() {
         return Ids.role(name);
     }
 
+    @JsProperty
     public boolean isStandard() {
         return type == Type.STANDARD;
     }
 
+    @JsProperty
     public boolean isScoped() {
         return type != Type.STANDARD;
     }
 
+    @JsProperty
     public String getName() {
         return name;
     }
 
+    @JsProperty
     public Role getBaseRole() {
         return baseRole;
     }
 
+    @JsProperty
     public Type getType() {
         return type;
     }
 
+    @JsIgnore
     public SortedSet<String> getScope() {
         return scope;
     }
 
+    @JsProperty
     public boolean isIncludeAll() {
         return includeAll;
     }
 
+    @JsIgnore
     public void setIncludeAll(final boolean includeAll) {
         this.includeAll = includeAll;
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "scope")
+    public JsArrayOf<String> jsScope() {
+        JsArrayOf<String> array = JsArrayOf.create();
+        for (String scope : getScope()) {
+            array.push(scope);
+        }
+        return array;
     }
 }

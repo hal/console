@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.meta.security;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.google.common.base.Splitter;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import org.jboss.hal.meta.AddressTemplate;
@@ -41,24 +37,8 @@ public class Constraint {
         return new Constraint(template, attribute, ATTRIBUTE, Permission.WRITABLE);
     }
 
-    public static Set<Constraint> parseMultiple(String input) {
-        Set<Constraint> constraints = new HashSet<>();
-        if (input != null) {
-            Iterable<String> values = Splitter.on(SEPARATOR)
-                    .omitEmptyStrings()
-                    .trimResults()
-                    .split(input);
-            for (String value : values) {
-                try {
-                    constraints.add(parseSingle(value));
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
-        return constraints;
-    }
-
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    public static Constraint parseSingle(String input) throws IllegalArgumentException {
+    public static Constraint parse(String input) throws IllegalArgumentException {
         if (!CONSTRAINT_REGEX.test(input)) {
             throw new IllegalArgumentException("Invalid constraint: " + input);
         }
@@ -71,9 +51,6 @@ public class Constraint {
     }
 
 
-    // Used when multiple constraints are concatenated into one string.
-    // Must not contain a character from the regular expression
-    private static final String SEPARATOR = "|";
     private static final RegExp CONSTRAINT_REGEX = RegExp.compile(
             "^(readable|writable|executable)\\(([\\w{}=*\\-\\/\\.]+)(:|@)([\\w\\-]+)\\)$"); //NON-NLS
 

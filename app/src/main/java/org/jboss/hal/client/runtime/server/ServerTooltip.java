@@ -86,12 +86,12 @@ class ServerTooltip implements Function<Server, String> {
 
             @Override
             protected void onStopped(final Server server) {
-                tooltip[0] = resources.constants().running();
+                tooltip[0] = resources.constants().stopped();
             }
 
             @Override
             protected void onUnknown(final Server server) {
-                tooltip[0] = resources.constants().stopped();
+                tooltip[0] = resources.constants().unknownState();
             }
         };
         sss.accept(server);

@@ -35,8 +35,8 @@ import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
@@ -112,7 +112,7 @@ class TestStep extends WizardStep<Context, State> {
                 ResourceAddress address = dataSource.isXa()
                         ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
                         : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
-                Operation operation = new Operation.Builder(ADD, address).payload(dataSource).build();
+                Operation operation = new Operation.Builder(address, ADD).payload(dataSource).build();
                 dispatcher.executeInFunction(control, operation,
                         result -> {
                             context.setCreated(true);
@@ -138,7 +138,7 @@ class TestStep extends WizardStep<Context, State> {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
                         .add(DATA_SOURCE, dataSource.getName());
-                Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, address).build();
+                Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
                 dispatcher.executeInFunction(control, operation,
                         result -> control.proceed(),
                         (op, failure) -> {

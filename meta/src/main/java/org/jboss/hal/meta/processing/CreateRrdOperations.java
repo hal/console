@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescriptionStatementContext;
 import org.jboss.hal.meta.security.SecurityContextStatementContext;
@@ -58,19 +58,19 @@ class CreateRrdOperations {
 
                         if (missingMetadata == NOTHING_PRESENT) {
                             address = template.resolve(securityContextStatementContext);
-                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                            builder = new Operation.Builder(address, READ_RESOURCE_DESCRIPTION_OPERATION)
                                     .param(ACCESS_CONTROL, COMBINED_DESCRIPTIONS)
                                     .param(OPERATIONS, true);
 
                         } else if (missingMetadata == RESOURCE_DESCRIPTION_PRESENT) {
                             address = template.resolve(securityContextStatementContext);
-                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                            builder = new Operation.Builder(address, READ_RESOURCE_DESCRIPTION_OPERATION)
                                     .param(ACCESS_CONTROL, TRIM_DESCRIPTIONS)
                                     .param(OPERATIONS, true);
 
                         } else if (missingMetadata == SECURITY_CONTEXT_PRESENT) {
                             address = template.resolve(resourceDescriptionStatementContext);
-                            builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                            builder = new Operation.Builder(address, READ_RESOURCE_DESCRIPTION_OPERATION)
                                     .param(OPERATIONS, true);
                         }
 

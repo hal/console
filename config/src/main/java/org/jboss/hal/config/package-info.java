@@ -13,27 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
-
-import org.jboss.hal.dmr.ModelNode;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REASON;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SINCE;
-
-/**
- * @author Harald Pehl
- */
-public class Deprecation extends ModelNode {
-
-    public Deprecation(ModelNode modelNode) {
-        set(modelNode);
-    }
-
-    public String getSince() {
-        return hasDefined(SINCE) ? get(SINCE).asString() : null;
-    }
-
-    public String getReason() {
-        return hasDefined(REASON) ? get(REASON).asString() : null;
-    }
-}
+@jsinterop.annotations.JsPackage(namespace = "hal.config")
+package org.jboss.hal.config;

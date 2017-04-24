@@ -49,8 +49,8 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -428,8 +428,8 @@ public class ModelBrowser implements HasElements {
                         .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
 
                         .onFinish((wzrd, context) -> {
-                            Operation.Builder builder = new Operation.Builder(ADD,
-                                    fqAddress(parent, context.singleton));
+                            Operation.Builder builder = new Operation.Builder(fqAddress(parent, context.singleton), ADD
+                            );
                             if (context.modelNode != null) {
                                 builder.payload(context.modelNode);
                             }
@@ -535,7 +535,7 @@ public class ModelBrowser implements HasElements {
         // TODO Removing a filter in a scoped model browser does not work
         Elements.setVisible(filter, root.equals(ResourceAddress.root()));
 
-        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
+        Operation ping = new Operation.Builder(root, READ_RESOURCE_OPERATION).build();
         dispatcher.execute(ping,
                 result -> {
                     initTree(root, resource);

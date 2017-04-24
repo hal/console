@@ -43,8 +43,8 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -128,7 +128,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                     String driverName = modelNode.get(DRIVER_NAME).asString();
                                     ResourceAddress address = JDBC_DRIVER_TEMPLATE
                                             .resolve(statementContext, driverName);
-                                    Operation operation = new Operation.Builder(ADD, address)
+                                    Operation operation = new Operation.Builder(address, ADD)
                                             .payload(modelNode)
                                             .build();
                                     dispatcher.execute(operation, result -> {

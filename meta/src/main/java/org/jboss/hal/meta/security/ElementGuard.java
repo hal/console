@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.meta.security;
 
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -72,7 +71,7 @@ public class ElementGuard {
         public void accept(final Element element) {
             String data = String.valueOf(element.getDataset().at(UIConstants.CONSTRAINT));
             if (data != null) {
-                Set<Constraint> constraints = Constraint.parseMultiple(data);
+                Constraints constraints = Constraints.parse(data);
                 Elements.toggle(element, rbacHidden, !authorisationDecision.isAllowed(constraints));
             }
         }

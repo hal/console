@@ -40,8 +40,8 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -87,7 +87,7 @@ public class ServerActions {
             // TODO Check for server boot errors
             if (Action.isStarting(action)) {
                 ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
-                Operation operation = new Operation.Builder(READ_BOOT_ERRORS, address).build();
+                Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
                 dispatcher.execute(operation, result -> {
                     if (!result.asList().isEmpty()) {
                         finish(server, Result.ERROR,
@@ -181,7 +181,7 @@ public class ServerActions {
 
     public void reload(Server server) {
         reloadRestart(server,
-                new Operation.Builder(RELOAD, server.getServerConfigAddress()).param(BLOCKING, false).build(),
+                new Operation.Builder(server.getServerConfigAddress(), RELOAD).param(BLOCKING, false).build(),
                 Action.RELOAD, SERVER_RELOAD_TIMEOUT,
                 resources.messages().reload(server.getName()),
                 resources.messages().reloadServerQuestion(server.getName()),
@@ -194,7 +194,7 @@ public class ServerActions {
             restartStandalone(server);
         } else {
             reloadRestart(server,
-                    new Operation.Builder(RESTART, server.getServerConfigAddress()).param(BLOCKING, false).build(),
+                    new Operation.Builder(server.getServerConfigAddress(), RESTART).param(BLOCKING, false).build(),
                     Action.RESTART, SERVER_RESTART_TIMEOUT,
                     resources.messages().restart(server.getName()),
                     resources.messages().restartServerQuestion(server.getName()),
@@ -216,10 +216,10 @@ public class ServerActions {
                                 .buildLongRunning(title,
                                         resources.messages().restartStandalonePending(server.getName()));
                         pendingDialog.show();
-                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.root())
+                        Operation operation = new Operation.Builder(ResourceAddress.root(), SHUTDOWN)
                                 .param(RESTART, true)
                                 .build();
-                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root()).build();
+                        Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
                         dispatcher.execute(operation,
 
                                 result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
@@ -295,8 +295,8 @@ public class ServerActions {
                                     int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
                                     prepare(server, Action.SUSPEND);
-                                    Operation operation = new Operation.Builder(SUSPEND,
-                                            server.getServerConfigAddress())
+                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), SUSPEND
+                                    )
                                             .param(TIMEOUT, timeout)
                                             .build();
                                     dispatcher.execute(operation,
@@ -337,7 +337,7 @@ public class ServerActions {
 
         prepare(server, Action.RESUME);
         ResourceAddress address = server.isStandalone() ? server.getServerAddress() : server.getServerConfigAddress();
-        Operation operation = new Operation.Builder(RESUME, address).build();
+        Operation operation = new Operation.Builder(address, RESUME).build();
         dispatcher.execute(operation,
                 result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
                         server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
@@ -369,7 +369,7 @@ public class ServerActions {
                                     int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
                                     prepare(server, Action.STOP);
-                                    Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
+                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
                                             .param(TIMEOUT, timeout)
                                             .param(BLOCKING, false)
                                             .build();
@@ -407,7 +407,7 @@ public class ServerActions {
                 resources.messages().killServerQuestion(server.getName()),
                 () -> {
                     prepare(server, Action.KILL);
-                    Operation operation = new Operation.Builder(KILL, server.getServerConfigAddress()).build();
+                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), KILL).build();
                     dispatcher.execute(operation,
                             result -> new TimeoutHandler(dispatcher, SERVER_KILL_TIMEOUT).execute(
                                     readServerConfigStatus(server),
@@ -423,7 +423,7 @@ public class ServerActions {
 
     public void start(Server server) {
         prepare(server, Action.START);
-        Operation operation = new Operation.Builder(START, server.getServerConfigAddress())
+        Operation operation = new Operation.Builder(server.getServerConfigAddress(), START)
                 .param(BLOCKING, false)
                 .build();
         dispatcher.execute(operation,
@@ -464,13 +464,13 @@ public class ServerActions {
     }
 
     private Operation readServerConfigStatus(Server server) {
-        return new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerConfigAddress())
+        return new Operation.Builder(server.getServerConfigAddress(), READ_ATTRIBUTE_OPERATION)
                 .param(NAME, STATUS)
                 .build();
     }
 
     private Operation readServerState(Server server) {
-        return new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerAddress())
+        return new Operation.Builder(server.getServerAddress(), READ_ATTRIBUTE_OPERATION)
                 .param(NAME, SERVER_STATE)
                 .build();
     }
@@ -491,7 +491,7 @@ public class ServerActions {
     }
 
     private Operation readSuspendState(Server server) {
-        return new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerAddress())
+        return new Operation.Builder(server.getServerAddress(), READ_ATTRIBUTE_OPERATION)
                 .param(NAME, SUSPEND_STATE)
                 .build();
     }

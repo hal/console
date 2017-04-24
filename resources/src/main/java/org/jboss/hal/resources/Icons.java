@@ -30,9 +30,10 @@ public interface Icons {
     // ------------------------------------------------------ icon css classes
 
     String CHECK = fontAwesome("check");
-    String DISABLED = pfIcon(disabledCircleO);
+    String DISABLED = fontAwesome("ban");
     String ERROR = pfIcon(errorCircleO);
     String INFO = pfIcon(info);
+    String LOCK = fontAwesome("lock");
     String NOT = fontAwesome("times");
     String OK = pfIcon(ok);
     String PAUSE = fontAwesome(pauseCircle) + " " + blue;
@@ -62,6 +63,12 @@ public interface Icons {
     static Element info() {
         Element icon = Browser.getDocument().createSpanElement();
         icon.setClassName(INFO);
+        return icon;
+    }
+
+    static Element lock() {
+        Element icon = Browser.getDocument().createSpanElement();
+        icon.setClassName(LOCK);
         return icon;
     }
 

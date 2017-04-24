@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 
 /**
  * @author Harald Pehl

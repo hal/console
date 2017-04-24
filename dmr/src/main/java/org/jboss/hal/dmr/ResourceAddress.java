@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation.
  *
  * @author Harald Pehl
  */
+@JsType
 public class ResourceAddress extends ModelNode {
 
     public static ResourceAddress root() {
@@ -34,19 +37,23 @@ public class ResourceAddress extends ModelNode {
         return new ResourceAddress();
     }
 
+    @JsIgnore
     public ResourceAddress() {
         setEmptyList();
     }
 
+    @JsIgnore
     public ResourceAddress(ModelNode address) {
         set(address);
     }
 
+    @JsMethod(name = "addSegment")
     public ResourceAddress add(final String propertyName, final String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
     }
 
+    @JsMethod(name = "addAddress")
     public ResourceAddress add(ResourceAddress address) {
         if (address != null) {
             for (Property property : address.asPropertyList()) {
@@ -56,6 +63,7 @@ public class ResourceAddress extends ModelNode {
         return this;
     }
 
+    @JsProperty(name = "firstValue")
     public String firstValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -64,6 +72,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty(name = "lastName")
     public String lastName() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -72,6 +81,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty(name = "lastValue")
     public String lastValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -80,6 +90,7 @@ public class ResourceAddress extends ModelNode {
         return null;
     }
 
+    @JsProperty
     public ResourceAddress getParent() {
         if (this.equals(root()) || asList().isEmpty()) {
             return this;
@@ -89,10 +100,12 @@ public class ResourceAddress extends ModelNode {
         return new ResourceAddress(new ModelNode().set(parent));
     }
 
+    @JsProperty(name = "size")
     public int size() {
         return isDefined() ? asList().size() : 0;
     }
 
+    @JsProperty
     public boolean isEmpty() {
         return size() == 0;
     }

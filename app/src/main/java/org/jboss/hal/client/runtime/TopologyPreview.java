@@ -68,10 +68,11 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
@@ -661,7 +662,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Host host) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, securityContextRegistry)
+        return AuthorisationDecision.from(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
     }
 
@@ -724,9 +725,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(ServerGroup serverGroup) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, securityContextRegistry)
-                .isAllowed(Constraint.executable(AddressTemplate.of("/server-group=" + serverGroup.getName()),
-                        RELOAD_SERVERS));
+        Constraints constraints = Constraints.or(
+                Constraint.executable(AddressTemplate.of("/server-group=*"), RELOAD_SERVERS),
+                Constraint.executable(AddressTemplate.of("/server-group=" + serverGroup.getName()), RELOAD_SERVERS));
+        return AuthorisationDecision.from(environment, securityContextRegistry)
+                .isAllowed(constraints);
     }
 
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
@@ -807,7 +810,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isAllowed(Server server) {
         // To keep it simple, we take a all or nothing approach:
         // We check *one* action and assume that the other actions have the same constraints
-        return AuthorisationDecision.strict(environment, securityContextRegistry)
+        return AuthorisationDecision.from(environment, securityContextRegistry)
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + server.getHost() + "/server-config=*"),
                         RELOAD));
     }

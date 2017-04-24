@@ -30,8 +30,8 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -97,8 +97,8 @@ public class IOPresenter
     @Override
     protected void reload() {
         crud.read(IO_SUBSYSTEM_TEMPLATE, 2, result -> {
-            getView().updateBufferPool(asNamedNodes(failSafePropertyList(result, BUFFER_POOL_TEMPLATE.lastKey())));
-            getView().updateWorkers(asNamedNodes(failSafePropertyList(result, WORKER_TEMPLATE.lastKey())));
+            getView().updateBufferPool(asNamedNodes(failSafePropertyList(result, BUFFER_POOL_TEMPLATE.lastName())));
+            getView().updateWorkers(asNamedNodes(failSafePropertyList(result, WORKER_TEMPLATE.lastName())));
         });
     }
 }

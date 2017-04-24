@@ -36,8 +36,8 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -221,7 +221,7 @@ public class ServletContainerPresenter
     Operation pingSettings(final ServletContainerSetting settingType) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        return new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
     }
 
     void addSettingsSingleton(final ServletContainerSetting settingType) {

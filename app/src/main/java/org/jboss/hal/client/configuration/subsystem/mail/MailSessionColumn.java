@@ -32,8 +32,8 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -74,7 +74,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
 
         setItemsProvider((context, callback) -> {
             ResourceAddress mailAddress = MAIL_TEMPLATE.resolve(statementContext);
-            Operation op = new Operation.Builder(READ_RESOURCE_OPERATION, mailAddress)
+            Operation op = new Operation.Builder(mailAddress, READ_RESOURCE_OPERATION)
                     .param(RECURSIVE, true).build();
 
             dispatcher.execute(op, result -> {
@@ -94,7 +94,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                                 if (modelNode != null) {
                                     ResourceAddress address = AddressTemplates.MAIL_SESSION_TEMPLATE
                                             .resolve(statementContext, name);
-                                    Operation operation = new Operation.Builder(ADD, address)
+                                    Operation operation = new Operation.Builder(address, ADD)
                                             .param(MAIL_SESSION, name)
                                             .payload(modelNode)
                                             .build();

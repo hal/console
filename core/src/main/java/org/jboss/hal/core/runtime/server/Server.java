@@ -21,8 +21,8 @@ import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Ids;
 
@@ -69,13 +69,6 @@ public class Server extends NamedNode {
      */
     public String getId() {
         return Ids.hostServer(getHost(), getName());
-    }
-
-    /**
-     * @return {@code <host-name>}-{@code <server-name>}
-     */
-    public String getFqName() {
-        return getHost() + "-" + getName();
     }
 
     public boolean isStandalone() {

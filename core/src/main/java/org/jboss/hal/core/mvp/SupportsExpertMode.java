@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.mvp;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * Interface meant to be implemented by presenters which support switching to an 'expert mode' using the model browser

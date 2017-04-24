@@ -41,11 +41,11 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -146,12 +146,12 @@ public class CacheContainerPresenter
         if (statementContext.selectedProfile() != null) {
             profileAddress.add(PROFILE, statementContext.selectedProfile());
         }
-        Operation subsystems = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, profileAddress)
+        Operation subsystems = new Operation.Builder(profileAddress, READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, SUBSYSTEM)
                 .build();
 
         ResourceAddress address = SELECTED_CACHE_CONTAINER_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_ALIASES, true)
                 .param(RECURSIVE, true)
                 .build();
@@ -239,7 +239,7 @@ public class CacheContainerPresenter
 
     Operation readCacheComponent(final Component component) {
         if (cacheType != null && cacheName != null) {
-            return new Operation.Builder(READ_RESOURCE_OPERATION, cacheComponentAddress(component)).build();
+            return new Operation.Builder(cacheComponentAddress(component), READ_RESOURCE_OPERATION).build();
         } else {
             return null;
         }
@@ -352,7 +352,7 @@ public class CacheContainerPresenter
                     .build();
             AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(store.type), form,
                     (name, model) -> {
-                        Operation operation = new Operation.Builder(ADD, cacheStoreAddress(store))
+                        Operation operation = new Operation.Builder(cacheStoreAddress(store), ADD)
                                 .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
                                 .payload(model)
                                 .build();
@@ -361,7 +361,7 @@ public class CacheContainerPresenter
             dialog.show();
 
         } else {
-            Operation operation = new Operation.Builder(ADD, cacheStoreAddress(store))
+            Operation operation = new Operation.Builder(cacheStoreAddress(store), ADD)
                     .header(ALLOW_RESOURCE_SERVICE_RESTART, true)
                     .build();
             crud.addSingleton(store.type, operation, address -> showCacheStore());
@@ -405,7 +405,7 @@ public class CacheContainerPresenter
         if (newStore != null && newStore != this.store) {
             List<Operation> operations = new ArrayList<>();
             if (this.store != null) {
-                operations.add(new Operation.Builder(REMOVE, cacheStoreAddress(this.store)).build());
+                operations.add(new Operation.Builder(cacheStoreAddress(this.store), REMOVE).build());
             }
 
             if (newStore.addWithDialog) {
@@ -417,7 +417,7 @@ public class CacheContainerPresenter
                         .build();
                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
                         form, (name, model) -> {
-                    operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore))
+                    operations.add(new Operation.Builder(cacheStoreAddress(newStore), ADD)
                             .payload(model)
                             .build());
                     Composite composite = new Composite(operations)
@@ -431,7 +431,7 @@ public class CacheContainerPresenter
                 dialog.show();
 
             } else {
-                operations.add(new Operation.Builder(ADD, cacheStoreAddress(newStore)).build());
+                operations.add(new Operation.Builder(cacheStoreAddress(newStore), ADD).build());
                 Composite composite = new Composite(operations)
                         .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
                 dispatcher.execute(composite, (CompositeResult result) -> {
@@ -488,8 +488,8 @@ public class CacheContainerPresenter
 
     void switchWrite(final Write currentWrite, final Write newWrite) {
         List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation.Builder(REMOVE, writeAddress(currentWrite)).build());
-        operations.add(new Operation.Builder(ADD, writeAddress(newWrite)).build());
+        operations.add(new Operation.Builder(writeAddress(currentWrite), REMOVE).build());
+        operations.add(new Operation.Builder(writeAddress(newWrite), ADD).build());
         dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().addSingleResourceSuccess(newWrite.type)));
@@ -546,7 +546,7 @@ public class CacheContainerPresenter
     }
 
     Operation readThreadPool(final ThreadPool threadPool) {
-        return new Operation.Builder(READ_RESOURCE_OPERATION, threadPoolAddress(threadPool)).build();
+        return new Operation.Builder(threadPoolAddress(threadPool), READ_RESOURCE_OPERATION).build();
     }
 
     void saveThreadPool(final ThreadPool threadPool, final Map<String, Object> changedValues) {

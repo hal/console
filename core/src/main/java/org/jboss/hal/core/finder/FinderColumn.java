@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
@@ -39,6 +40,7 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -48,6 +50,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
@@ -268,20 +271,15 @@ public class FinderColumn<T> implements IsElement {
         // @formatter:on
 
         // column actions
+        List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
         eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
-        if (builder.columnActions.size() == 1) {
-            if (isAllowed(builder.columnActions.get(0))) {
-                eb.add(newColumnButton(builder.columnActions.get(0)));
-            }
+        if (allowedColumnActions.size() == 1) {
+            eb.add(newColumnButton(allowedColumnActions.get(0)));
         } else {
             //noinspection DuplicateStringLiteralInspection
-            if (isAllowed(builder.columnActions)) {
-                eb.css(btnGroup).attr(ROLE, GROUP);
-                for (ColumnAction<T> action : builder.columnActions) {
-                    if (isAllowed(action)) {
-                        eb.add(newColumnButton(action));
-                    }
-                }
+            eb.css(btnGroup).attr(ROLE, GROUP);
+            for (ColumnAction<T> action : allowedColumnActions) {
+                eb.add(newColumnButton(action));
             }
         }
         eb.end().end(); // </columnActions> && </header>
@@ -319,7 +317,7 @@ public class FinderColumn<T> implements IsElement {
         root = eb.build();
         hiddenColumns = eb.referenceFor(HIDDEN_COLUMNS_ELEMENT);
         headerElement = eb.referenceFor(HEADER_ELEMENT);
-        columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
+        this.columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
         ulElement = eb.referenceFor(UL_ELEMENT);
     }
@@ -969,21 +967,41 @@ public class FinderColumn<T> implements IsElement {
 
     // ------------------------------------------------------ rbac / security
 
+    private List<ColumnAction<T>> allowedActions(final List<ColumnAction<T>> actions) {
+        return actions.stream()
+                .filter(action -> {
+                    if (!action.actions.isEmpty()) {
+                        Set<Constraint> collect = new HashSet<>();
+                        Iterables.addAll(collect, action.constraints);
+                        action.actions.forEach(a -> Iterables.addAll(collect, a.constraints));
+                        return AuthorisationDecision.from(finder.environment(),
+                                finder.securityContextRegistry()).isAllowed(Constraints.and(collect));
+                    }
+                    return AuthorisationDecision.from(finder.environment(),
+                            finder.securityContextRegistry()).isAllowed(action.constraints);
+                })
+                .collect(toList());
+    }
+
     private boolean isAllowed(List<ColumnAction<T>> actions) {
-        Set<Constraint> constraints = new HashSet<>();
+        // the action is allowed if all constraints are allowed
+        Set<Constraint> collect = new HashSet<>();
         actions.forEach(a -> {
-            constraints.addAll(a.constraints);
-            a.actions.forEach(innerA -> constraints.addAll(innerA.constraints));
+            Iterables.addAll(collect, a.constraints);
+            a.actions.forEach(innerA -> Iterables.addAll(collect, innerA.constraints));
         });
-        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
-                .isAllowed(constraints);
+
+        return AuthorisationDecision.from(finder.environment(), finder.securityContextRegistry())
+                .isAllowed(Constraints.and(collect));
     }
 
     private boolean isAllowed(ColumnAction<T> action) {
-        Set<Constraint> constraints = new HashSet<>();
-        constraints.addAll(action.constraints);
-        action.actions.forEach(a -> constraints.addAll(a.constraints));
-        return AuthorisationDecision.strict(finder.environment(), finder.securityContextRegistry())
-                .isAllowed(constraints);
+        // the action is allowed if all constraints are allowed
+        Set<Constraint> collect = new HashSet<>();
+        Iterables.addAll(collect, action.constraints);
+        action.actions.forEach(a -> Iterables.addAll(collect, a.constraints));
+
+        return AuthorisationDecision.from(finder.environment(), finder.securityContextRegistry())
+                .isAllowed(Constraints.and(collect));
     }
 }

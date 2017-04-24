@@ -59,11 +59,11 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.dmr.model.SuccessfulOutcome;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -365,7 +365,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                             ResourceAddress resourceAddress = new ResourceAddress()
                                                     .add(SERVER_GROUP, serverGroup)
                                                     .add(DEPLOYMENT, c.getName());
-                                            return new Operation.Builder(ADD, resourceAddress)
+                                            return new Operation.Builder(resourceAddress, ADD)
                                                     .param(RUNTIME_NAME, c.getRuntimeName())
                                                     .param(ENABLED, enable)
                                                     .build();
@@ -427,7 +427,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         ResourceAddress address = new ResourceAddress()
                 .add(SERVER_GROUP, sgd.getServerGroup())
                 .add(DEPLOYMENT, sgd.getName());
-        Operation op = new Operation.Builder(operation, address).build();
+        Operation op = new Operation.Builder(address, operation).build();
         ItemMonitor.startProgress(id);
         dispatcher.execute(op, result -> {
             ItemMonitor.stopProgress(id);

@@ -119,6 +119,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativeError(String alternatives);
     String exactlyOneAlternativesError(String alternatives);
     SafeHtml expressionError(String expression);
+    SafeHtml expressionWarning(String expression);
 
     SafeHtml flushConnectionSuccess();
 

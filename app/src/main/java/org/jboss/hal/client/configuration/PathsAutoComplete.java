@@ -33,8 +33,8 @@ import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -84,8 +84,9 @@ public class PathsAutoComplete extends AutoComplete {
                         public void onSuccess(final FunctionContext context) {
                             List<Server> servers = context.get(TopologyFunctions.RUNNING_SERVERS);
                             if (!servers.isEmpty() && servers.get(0).isStarted()) {
-                                operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION,
-                                        servers.get(0).getServerAddress()).param(CHILD_TYPE, "path").build();
+                                operation = new Operation.Builder(servers.get(0).getServerAddress(),
+                                        READ_CHILDREN_NAMES_OPERATION
+                                ).param(CHILD_TYPE, "path").build();
                             } else {
                                 operation = defaultOperation();
                             }
@@ -97,7 +98,7 @@ public class PathsAutoComplete extends AutoComplete {
     }
 
     private static Operation defaultOperation() {
-        return new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
+        return new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, "path").build();
     }
 

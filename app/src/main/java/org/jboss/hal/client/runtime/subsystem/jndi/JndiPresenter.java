@@ -29,8 +29,8 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -96,7 +96,7 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
     @Override
     protected void reload() {
         ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder("jndi-view", address).build(); //NON-NLS
+        Operation operation = new Operation.Builder(address, "jndi-view").build(); //NON-NLS
         dispatcher.execute(operation, result -> getView().update(result));
     }
 }

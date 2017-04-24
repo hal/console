@@ -49,10 +49,10 @@ import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -84,11 +84,11 @@ public class ReadEnvironment implements BootstrapFunction {
         logStart();
 
         List<Operation> ops = new ArrayList<>();
-        ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+        ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build());
-        ops.add(new Operation.Builder(WHOAMI, ResourceAddress.root()).param(VERBOSE, true).build());
+        ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {

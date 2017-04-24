@@ -32,8 +32,8 @@ import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_SINGLETONS;
@@ -70,7 +70,7 @@ final class ReadChildren implements DataFunction<Context> {
     @Override
     public void load(final Node<Context> node, final ResultCallback<Context> callback) {
         if (node.data.isFullyQualified()) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_TYPES_OPERATION, node.data.getAddress())
+            Operation operation = new Operation.Builder(node.data.getAddress(), READ_CHILDREN_TYPES_OPERATION)
                     .param(INCLUDE_SINGLETONS, true)
                     .build();
             dispatcher.execute(operation, result -> {
@@ -108,7 +108,7 @@ final class ReadChildren implements DataFunction<Context> {
 
         } else {
             ResourceAddress parentAddress = node.data.getAddress().getParent();
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, parentAddress)
+            Operation operation = new Operation.Builder(parentAddress, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, node.text)
                     .build();
             dispatcher.execute(operation, result -> {

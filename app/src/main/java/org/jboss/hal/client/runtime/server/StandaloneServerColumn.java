@@ -39,10 +39,10 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
@@ -79,12 +79,13 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
-                    Operation attributes = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+                    Operation attributes = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .param(ATTRIBUTES_ONLY, true)
                             .build();
-                    Operation bootErrors = new Operation.Builder(READ_BOOT_ERRORS,
-                            ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT)).build();
+                    Operation bootErrors = new Operation.Builder(ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT),
+                            READ_BOOT_ERRORS
+                    ).build();
                     dispatcher.execute(new Composite(attributes, bootErrors), (CompositeResult result) -> {
                         Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
                         Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());

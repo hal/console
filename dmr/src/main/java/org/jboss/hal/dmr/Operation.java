@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.ModelType;
-import org.jboss.hal.dmr.Property;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -32,8 +33,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
+@JsType
 public class Operation extends ModelNode {
 
+    @JsType
     public static class Builder {
 
         private final String name;
@@ -42,7 +45,8 @@ public class Operation extends ModelNode {
         private ModelNode header;
         private Set<String> roles;
 
-        public Builder(final String name, final ResourceAddress address) {
+        @JsIgnore
+        public Builder(final ResourceAddress address, final String name) {
             this.address = address;
             this.name = name;
             this.parameter = new ModelNode();
@@ -50,31 +54,37 @@ public class Operation extends ModelNode {
             this.roles = new HashSet<>();
         }
 
+        @JsIgnore
         public Builder param(String name, boolean value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, int value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, long value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, double value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, @NonNls String value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, @NonNls String[] values) {
             for (String value : values) {
                 parameter.get(name).add(value);
@@ -82,16 +92,19 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        @JsIgnore
         public Builder param(String name, ModelNode value) {
             parameter.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder header(String name, String value) {
             header.get(name).set(value);
             return this;
         }
 
+        @JsIgnore
         public Builder header(String name, boolean value) {
             header.get(name).set(value);
             return this;
@@ -105,6 +118,33 @@ public class Operation extends ModelNode {
         public Operation build() {
             return new Operation(name, address, parameter, header, roles);
         }
+
+
+        // ------------------------------------------------------ JS methods
+
+        @JsMethod(name = "param")
+        public Builder jsParam(final String name, final Object value) {
+            if (value instanceof Boolean) {
+                param(name, ((Boolean) value));
+            } else if (value instanceof Integer) {
+                param(name, ((Integer) value));
+            } else if (value instanceof String) {
+                param(name, ((String) value));
+            } else if (value instanceof ModelNode) {
+                param(name, ((ModelNode) value));
+            }
+            return this;
+        }
+
+        @JsMethod(name = "header")
+        public Builder jsHeader(final String name, final Object value) {
+            if (value instanceof Boolean) {
+                header(name, ((Boolean) value));
+            } else if (value instanceof String) {
+                header(name, ((String) value));
+            }
+            return this;
+        }
     }
 
 
@@ -114,6 +154,7 @@ public class Operation extends ModelNode {
     private final ModelNode header;
     private final Set<String> roles;
 
+    @JsIgnore
     public Operation(ModelNode modelNode) {
         this.name = modelNode.get(OP).asString();
         this.address = new ResourceAddress(modelNode.get(ADDRESS));
@@ -139,7 +180,7 @@ public class Operation extends ModelNode {
         set(modelNode.clone());
     }
 
-    public Operation(final String name, final ResourceAddress address, final ModelNode parameter,
+    Operation(final String name, final ResourceAddress address, final ModelNode parameter,
             final ModelNode header, final Set<String> roles) {
         this.name = name;
         this.address = address;
@@ -168,30 +209,37 @@ public class Operation extends ModelNode {
         }
     }
 
+    @JsProperty
     public String getName() {
         return get(OP).asString();
     }
 
+    @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
 
+    @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
 
+    @JsProperty
     public ModelNode getHeader() {
         return header;
     }
 
+    @JsIgnore
     public boolean hasParameter() {
         return parameter.isDefined() && !parameter.asList().isEmpty();
     }
 
+    @JsIgnore
     public Set<String> getRoles() {
         return roles;
     }
 
+    @JsIgnore
     public Operation runAs(final Set<String> runAs) {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
@@ -230,5 +278,17 @@ public class Operation extends ModelNode {
             builder.append("}");
         }
         return builder.toString();
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "roles")
+    public JsArrayOf<String> jsRoles() {
+        JsArrayOf<String> array = JsArrayOf.create();
+        for (String role : roles) {
+            array.push(role);
+        }
+        return array;
     }
 }

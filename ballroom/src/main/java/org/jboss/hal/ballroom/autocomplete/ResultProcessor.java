@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.autocomplete;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.CompositeResult;
 
 /**
  * @author Harald Pehl

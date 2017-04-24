@@ -25,7 +25,7 @@ import elemental.dom.Element;
 import elemental.html.OptionElement;
 import elemental.html.SelectElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 

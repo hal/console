@@ -35,11 +35,11 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -126,26 +126,26 @@ public class HostPresenter
     @Override
     protected void reload() {
         ResourceAddress hostAddress = new ResourceAddress().add(HOST, statementContext.selectedHost());
-        Operation hostOp = new Operation.Builder(READ_RESOURCE_OPERATION, hostAddress)
+        Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation interfacesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation interfacesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, INTERFACE)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation jvmsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation jvmsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, JVM)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation pathsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation pathsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, PATH)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation socketBindingGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation socketBindingGroupsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation systemPropertiesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation systemPropertiesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SYSTEM_PROPERTY)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

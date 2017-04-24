@@ -16,12 +16,11 @@
 package org.jboss.hal.core.finder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import elemental.dom.Element;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.security.Constraints;
 
 /**
  * @author Harald Pehl
@@ -35,7 +34,8 @@ public class ColumnAction<T> {
         private Element element;
         private ColumnActionHandler<T> handler;
         private List<ColumnAction<T>> actions;
-        private final Set<Constraint> constraints;
+        private Constraint constraint;
+        private Constraints constraints;
 
         public Builder(final String id) {
             this.id = id;
@@ -43,7 +43,6 @@ public class ColumnAction<T> {
             this.element = null;
             this.handler = null;
             this.actions = new ArrayList<>();
-            this.constraints = new HashSet<>();
         }
 
         public Builder<T> title(final String title) {
@@ -72,7 +71,12 @@ public class ColumnAction<T> {
         }
 
         public Builder<T> constraint(final Constraint constraint) {
-            this.constraints.add(constraint);
+            this.constraint = constraint;
+            return this;
+        }
+
+        public Builder<T> constraints(final Constraints constraints) {
+            this.constraints = constraints;
             return this;
         }
 
@@ -87,7 +91,7 @@ public class ColumnAction<T> {
     final Element element;
     final List<ColumnAction<T>> actions;
     final ColumnActionHandler<T> handler;
-    final Set<Constraint> constraints;
+    final Constraints constraints;
 
     private ColumnAction(final Builder<T> builder) {
         this.id = builder.id;
@@ -95,6 +99,12 @@ public class ColumnAction<T> {
         this.element = builder.element;
         this.handler = builder.handler;
         this.actions = builder.actions;
-        this.constraints = builder.constraints;
+        if (builder.constraints != null) {
+            this.constraints = builder.constraints;
+        } else if (builder.constraint != null) {
+            this.constraints = Constraints.single(builder.constraint);
+        } else {
+            this.constraints = Constraints.empty();
+        }
     }
 }

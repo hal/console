@@ -45,11 +45,11 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -185,7 +185,7 @@ public class JcaPresenter
     // ------------------------------------------------------ tracer
 
     void addTracer() {
-        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, address -> reload());
+        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastName()), TRACER_TEMPLATE, address -> reload());
     }
 
 
@@ -234,10 +234,10 @@ public class JcaPresenter
                         (name, modelNode) -> {
                             String type = typeItem.getValue();
                             AddressTemplate tpTemplate = Names.LONG_RUNNING.equals(type)
-                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + name)
-                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + name);
+                                    ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + "=" + name)
+                                    : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + "=" + name);
                             ResourceAddress address = tpTemplate.resolve(statementContext, workmanager);
-                            Operation operation = new Operation.Builder(ADD, address)
+                            Operation operation = new Operation.Builder(address, ADD)
                                     .param(NAME, name)
                                     .payload(modelNode)
                                     .build();
@@ -290,13 +290,15 @@ public class JcaPresenter
     }
 
     private Composite threadPoolsOperation(final AddressTemplate template, final String name) {
-        Operation lrtOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                template.resolve(statementContext, name))
-                .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastKey())
+        Operation lrtOp = new Operation.Builder(template.resolve(statementContext, name),
+                READ_CHILDREN_RESOURCES_OPERATION
+        )
+                .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastName())
                 .build();
-        Operation srtOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                template.resolve(statementContext, name))
-                .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastKey())
+        Operation srtOp = new Operation.Builder(template.resolve(statementContext, name),
+                READ_CHILDREN_RESOURCES_OPERATION
+        )
+                .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastName())
                 .build();
         return new Composite(lrtOp, srtOp);
     }
@@ -304,8 +306,8 @@ public class JcaPresenter
     private ResourceAddress threadPoolAddress(AddressTemplate workmanagerTemplate, String workmanager,
             ThreadPool threadPool) {
         AddressTemplate template = threadPool.isLongRunning()
-                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + threadPool.getName())
-                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + threadPool.getName());
+                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastName() + "=" + threadPool.getName())
+                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastName() + "=" + threadPool.getName());
         return template.resolve(statementContext, workmanager);
     }
 }

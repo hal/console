@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +21,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jboss.hal.dmr.ModelNode;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
@@ -32,14 +36,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 /**
  * @author Harald Pehl
  */
+@JsType
 public class Composite extends Operation implements Iterable<Operation> {
 
     private List<Operation> operations;
 
-    public Composite(Operation first, Operation... rest) {
+    public Composite() {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
+    }
 
+    @JsIgnore
+    public Composite(Operation first, Operation... rest) {
+        this(); // required by JsInterop
         add(first);
         if (rest != null) {
             for (Operation operation : rest) {
@@ -48,38 +57,44 @@ public class Composite extends Operation implements Iterable<Operation> {
         }
     }
 
+    @JsIgnore
     public Composite(List<Operation> operations) {
-        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
-        this.operations = new ArrayList<>();
-
+        this();
         operations.forEach(this::add);
     }
 
+    @JsMethod(name = "addOperation")
     public Composite add(Operation operation) {
         operations.add(operation);
         get(STEPS).add(operation);
         return this;
     }
 
+    @JsIgnore
     public Composite addHeader(String name, String value) {
         get(OPERATION_HEADERS).get(name).set(value);
         return this;
     }
 
+    @JsIgnore
     public Composite addHeader(String name, boolean value) {
         get(OPERATION_HEADERS).get(name).set(value);
         return this;
     }
 
     @Override
+    @JsIgnore
     public Iterator<Operation> iterator() {
         return operations.iterator();
     }
 
+    @JsProperty
     public boolean isEmpty() {return operations.isEmpty();}
 
+    @JsProperty(name = "size")
     public int size() {return operations.size();}
 
+    @JsIgnore
     public Composite runAs(final Set<String> runAs) {
         List<Operation> runAsOperations = operations.stream()
                 .map(operation -> operation.runAs(runAs))
@@ -94,5 +109,17 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     public String asCli() {
         return operations.stream().map(Operation::asCli).collect(joining("\n"));
+    }
+
+
+    // ------------------------------------------------------ JS Methods
+
+    @JsProperty(name = "operations")
+    public JsArrayOf<Operation> jsOperations() {
+        JsArrayOf<Operation> array = JsArrayOf.create();
+        for (Operation operation : operations) {
+            array.push(operation);
+        }
+        return array;
     }
 }

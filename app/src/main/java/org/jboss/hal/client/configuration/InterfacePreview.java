@@ -28,9 +28,9 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -64,7 +64,7 @@ class InterfacePreview extends PreviewContent<NamedNode> {
 
     @Override
     public void update(final NamedNode item) {
-        Operation operation = new Operation.Builder(QUERY, new ResourceAddress().add(SOCKET_BINDING_GROUP, "*"))
+        Operation operation = new Operation.Builder(new ResourceAddress().add(SOCKET_BINDING_GROUP, "*"), QUERY)
                 .param(SELECT, new ModelNode().add(NAME))
                 .param(WHERE, new ModelNode().set(DEFAULT_INTERFACE, item.getName()))
                 .build();

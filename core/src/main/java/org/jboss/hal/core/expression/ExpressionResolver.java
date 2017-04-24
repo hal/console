@@ -29,8 +29,8 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -73,16 +73,15 @@ public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpress
     void resolve(final Expression expression, final AsyncCallback<Map<String, String>> callback) {
         logger.debug("Resolving {}", expression);
         if (environment.isStandalone()) {
-            Operation operation = new Operation.Builder(RESOLVE_EXPRESSION, ResourceAddress.root())
+            Operation operation = new Operation.Builder(ResourceAddress.root(), RESOLVE_EXPRESSION)
                     .param(EXPRESSION, expression.toString())
                     .build();
             dispatcher.execute(operation,
-                    (result) ->
-                            callback.onSuccess(ImmutableMap.of(Server.STANDALONE.getName(), result.asString())),
+                    (result) -> callback.onSuccess(ImmutableMap.of(Server.STANDALONE.getName(), result.asString())),
                     (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
                     (op2, exception) -> callback.onFailure(exception));
         } else {
-            Operation operation = new Operation.Builder(RESOLVE_EXPRESSION_ON_DOMAIN, ResourceAddress.root())
+            Operation operation = new Operation.Builder(ResourceAddress.root(), RESOLVE_EXPRESSION_ON_DOMAIN)
                     .param(EXPRESSION, expression.toString())
                     .build();
             dispatcher.execute(operation, payload -> payload.get(SERVER_GROUPS),

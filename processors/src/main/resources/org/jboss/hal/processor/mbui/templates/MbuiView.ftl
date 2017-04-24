@@ -24,8 +24,8 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.Constraint;
@@ -101,7 +101,7 @@ final class ${context.subclass} extends ${context.base} {
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 <#if form.singleton>
             .singleton(
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                () -> new Operation.Builder(${form.metadata.name}Template.resolve(mbuiContext.statementContext()), READ_RESOURCE_OPERATION).build(),
                 () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template))
             .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form))
                 </#if>
@@ -273,7 +273,7 @@ final class ${context.subclass} extends ${context.base} {
                             <#break>
                     </#switch>
                 <#else>
-            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parseSingle("${action.constraint}"), </#if>(event, api) -> ${action.handler})
+            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parse("${action.constraint}"), </#if>(event, api) -> ${action.handler})
                 </#if>
             </#list>
             <#if table.onlySimpleColumns>

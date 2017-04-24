@@ -17,7 +17,7 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 
 /**
  * @author Harald Pehl

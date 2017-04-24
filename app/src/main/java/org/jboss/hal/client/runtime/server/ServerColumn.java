@@ -62,8 +62,8 @@ import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
@@ -178,7 +178,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 processAddColumnAction(statementContext.selectedHost());
                 serverConfigsFn = control -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -195,7 +195,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 serverConfigsFn = control -> {
                     ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
-                    Operation operation = new Operation.Builder(QUERY, serverConfigAddress)
+                    Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
                             .build();
                     dispatcher.executeInFunction(control, operation, result -> {
@@ -336,7 +336,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().copy())
                             .handler(itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext())))
-                            .constraint(Constraint.executable(serverConfigTemplate(item), COPY))
+                            .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
                             .build());
                     if (item.isStarted()) {
                         // Order is: reload, restart, (resume | suspend), stop
@@ -414,7 +414,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void processAddColumnAction(String host) {
-        AuthorisationDecision ad = AuthorisationDecision.strict(environment, c -> {
+        AuthorisationDecision ad = AuthorisationDecision.from(environment, c -> {
             if (securityContextRegistry.contains(c.getTemplate())) {
                 return Optional.of(securityContextRegistry.lookup(c.getTemplate()));
             }
@@ -427,6 +427,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
+            // remember current selection for onServerResult()
             refreshPath = finder.getContext().getPath().copy();
             ItemMonitor.startProgress(event.getServer().getId());
             refresh(RESTORE_SELECTION);
