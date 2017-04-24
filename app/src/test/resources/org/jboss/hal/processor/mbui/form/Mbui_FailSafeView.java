@@ -1,18 +1,36 @@
 package org.jboss.hal.processor.mbui.form;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /*

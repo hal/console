@@ -52,6 +52,7 @@ public class MetadataRegistry implements Registry<Metadata> {
     }
 
     @Override
+    @JsIgnore
     public Metadata lookup(final AddressTemplate template) throws MissingMetadataException {
         ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
         return new Metadata(template, () -> securityContextRegistry.lookup(template), resourceDescription,
