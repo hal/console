@@ -89,7 +89,7 @@ public class AccessControl {
     }
 
     void switchProvider() {
-        Operation.Builder builder = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, AddressTemplates.root())
+        Operation.Builder builder = new Operation.Builder(AddressTemplates.root(), WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, PROVIDER);
         if (environment.getAccessControlProvider() == SIMPLE) {
             DialogFactory.showConfirmation(resources.constants().switchProvider(),
@@ -119,21 +119,21 @@ public class AccessControl {
         reset();
 
         List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, AddressTemplates.root())
+        operations.add(new Operation.Builder(AddressTemplates.root(), READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(ATTRIBUTES_ONLY, true)
                 .build());
         if (!environment.isStandalone()) {
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+            operations.add(new Operation.Builder(AddressTemplates.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, HOST_SCOPED_ROLE)
                     .param(RECURSIVE, true)
                     .build());
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+            operations.add(new Operation.Builder(AddressTemplates.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER_GROUP_SCOPED_ROLE)
                     .param(RECURSIVE, true)
                     .build());
         }
-        operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+        operations.add(new Operation.Builder(AddressTemplates.root(), READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, ROLE_MAPPING)
                 .param(RECURSIVE, true)
                 .build());

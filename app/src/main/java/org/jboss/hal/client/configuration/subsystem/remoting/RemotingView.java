@@ -103,8 +103,10 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 connectorSecurityMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(presenter.selectedConnectorContext))
+                        () -> new Operation.Builder(
+                                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(presenter.selectedConnectorContext),
+                                READ_RESOURCE_OPERATION
+                        )
                                 .build(),
                         () -> presenter.createConnectorSecurity())
                 .onSave((form, changedValues) -> presenter.saveConnectorSecurity(form, changedValues))
@@ -119,8 +121,8 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         connectorSecurityPolicyForm = new ModelNodeForm.Builder<>(Ids.REMOTING_CONNECTOR_SECURITY_POLICY_FORM,
                 connectorSecurityPolicyMetadata)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE
-                                .resolve(presenter.selectedHttpConnectorContext))
+                        () -> new Operation.Builder(SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE
+                                .resolve(presenter.selectedHttpConnectorContext), READ_RESOURCE_OPERATION)
                                 .build(),
                         () -> presenter.createConnectorSecurityPolicy()
                 )
@@ -157,8 +159,8 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 httpConnectorSecurityMetadata)
                 .unboundFormItem(new PropertiesItem(PROPERTY), 2)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE
-                                .resolve(presenter.selectedHttpConnectorContext))
+                        () -> new Operation.Builder(SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE
+                                .resolve(presenter.selectedHttpConnectorContext), READ_RESOURCE_OPERATION)
                                 .build(),
                         () -> presenter.createHttpConnectorSecurity()
                 )
@@ -174,8 +176,8 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         httpConnectorSecurityPolicyForm = new ModelNodeForm.Builder<>(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_FORM,
                 httpConnectorSecurityPolicyMetadata)
                 .singleton(
-                        () -> new Operation.Builder(READ_RESOURCE_OPERATION, SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE
-                                .resolve(presenter.selectedHttpConnectorContext))
+                        () -> new Operation.Builder(SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE
+                                .resolve(presenter.selectedHttpConnectorContext), READ_RESOURCE_OPERATION)
                                 .build(),
                         () -> presenter.createHttpConnectorSecurityPolicy()
                 )
@@ -223,26 +225,26 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         connectorSecurityForm.clear();
         connectorSecurityForm.getFormItem(PROPERTY).clearValue();
         connectorSecurityPolicyForm.clear();
-        connectorTable.update(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastKey())));
+        connectorTable.update(asNamedNodes(failSafePropertyList(payload, CONNECTOR_TEMPLATE.lastName())));
 
         httpConnectorForm.clear();
         httpConnectorForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityForm.clear();
         httpConnectorSecurityForm.getFormItem(PROPERTY).clearValue();
         httpConnectorSecurityPolicyForm.clear();
-        httpConnectorTable.update(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastKey())));
+        httpConnectorTable.update(asNamedNodes(failSafePropertyList(payload, HTTP_CONNECTOR_TEMPLATE.lastName())));
 
         localOutboundForm.clear();
         localOutboundForm.getFormItem(PROPERTY).clearValue();
-        localOutboundTable.update(asNamedNodes(failSafePropertyList(payload, LOCAL_OUTBOUND_TEMPLATE.lastKey())));
+        localOutboundTable.update(asNamedNodes(failSafePropertyList(payload, LOCAL_OUTBOUND_TEMPLATE.lastName())));
 
         outboundForm.clear();
         outboundForm.getFormItem(PROPERTY).clearValue();
-        outboundTable.update(asNamedNodes(failSafePropertyList(payload, OUTBOUND_TEMPLATE.lastKey())));
+        outboundTable.update(asNamedNodes(failSafePropertyList(payload, OUTBOUND_TEMPLATE.lastName())));
 
         remoteOutboundForm.clear();
         remoteOutboundForm.getFormItem(PROPERTY).clearValue();
-        remoteOutboundTable.update(asNamedNodes(failSafePropertyList(payload, REMOTE_OUTBOUND_TEMPLATE.lastKey())));
+        remoteOutboundTable.update(asNamedNodes(failSafePropertyList(payload, REMOTE_OUTBOUND_TEMPLATE.lastName())));
     }
 
     @Override

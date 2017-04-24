@@ -179,7 +179,7 @@ public class FilterPresenter
                 resources.messages().removeConfirmationTitle(Names.RESPONSE_HEADER),
                 resources.messages().removeConfirmationQuestion(name),
                 () -> {
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    Operation operation = new Operation.Builder(address, REMOVE).build();
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(getEventBus(), Message.success(
                                 resources.messages().removeResourceSuccess(Names.RESPONSE_HEADER, name)));

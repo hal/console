@@ -167,20 +167,20 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         List<Operation> operations = new ArrayList<>();
 
         if (environment.isStandalone()) {
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+            operations.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .build());
         } else {
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .build());
         }
         if (ds == null) {
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, dataSourceAddress)
+            operations.add(new Operation.Builder(dataSourceAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());

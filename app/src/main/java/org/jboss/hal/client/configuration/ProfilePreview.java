@@ -77,7 +77,7 @@ class ProfilePreview extends PreviewContent<NamedNode> {
             Elements.setVisible(includesElement, false);
         }
 
-        Operation operation = new Operation.Builder(QUERY, new ResourceAddress().add(SERVER_GROUP, "*"))
+        Operation operation = new Operation.Builder(new ResourceAddress().add(SERVER_GROUP, "*"), QUERY)
                 .param(WHERE, new ModelNode().set(PROFILE, item.getName()))
                 .build();
         dispatcher.execute(operation, result -> {

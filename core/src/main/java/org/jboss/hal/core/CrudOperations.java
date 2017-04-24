@@ -187,7 +187,7 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param template the address template which is resolved against the current statement context to get the resource
      *                 address for the add operation
-     * @param callback the callback executed after adding the resource
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String id, final String type, final AddressTemplate template, final AddCallback callback) {
@@ -205,7 +205,7 @@ public class CrudOperations {
      * @param template   the address template which is resolved against the current statement context to get the
      *                   resource address for the add operation
      * @param attributes additional attributes which should be part of the add resource dialog
-     * @param callback   the callback executed after adding the resource
+     * @param callback   the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String id, final String type, final AddressTemplate template,
@@ -232,7 +232,7 @@ public class CrudOperations {
      * @param template the address template which is resolved against the current statement context and the resource
      *                 name to get the resource address for the add operation
      * @param payload  the optional payload of the add operation (may be null or undefined)
-     * @param callback the callback executed after adding the resource
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String type, final String name, final AddressTemplate template,
@@ -250,7 +250,7 @@ public class CrudOperations {
      *                       resource name to get the resource address for the add operation
      * @param payload        the optional payload of the add operation (may be null or undefined)
      * @param successMessage the success message fired after adding the resource
-     * @param callback       the callback executed after adding the resource
+     * @param callback       the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String name, final AddressTemplate template, @Nullable final ModelNode payload,
@@ -266,7 +266,7 @@ public class CrudOperations {
      * @param name     the resource name which is part of the add operation
      * @param address  the fq address for the add operation
      * @param payload  the optional payload of the add operation (may be null or undefined)
-     * @param callback the callback executed after adding the resource
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String type, final String name, final ResourceAddress address,
@@ -282,12 +282,12 @@ public class CrudOperations {
      * @param address        the fq address for the add operation
      * @param payload        the optional payload of the add operation (may be null or undefined)
      * @param successMessage the success message fired after adding the resource
-     * @param callback       the callback executed after adding the resource
+     * @param callback       the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(final String name, final ResourceAddress address, @Nullable final ModelNode payload,
             final SafeHtml successMessage, final AddCallback callback) {
-        Operation operation = new Operation.Builder(ADD, address)
+        Operation operation = new Operation.Builder(address, ADD)
                 .payload(payload)
                 .build();
         dispatcher.execute(operation, result -> {
@@ -308,7 +308,7 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param template the address template which is resolved against the current statement context to get the
      *                 singleton resource address for the add operation
-     * @param callback the callback executed after adding the singleton resource
+     * @param callback the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String id, final String type, final AddressTemplate template,
@@ -327,7 +327,7 @@ public class CrudOperations {
      * @param template   the address template which is resolved against the current statement context to get the
      *                   singleton resource address for the add operation
      * @param attributes additional attributes which should be part of the add resource dialog
-     * @param callback   the callback executed after adding the singleton resource
+     * @param callback   the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String id, final String type, final AddressTemplate template,
@@ -365,7 +365,7 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param template the address template which is resolved against the current statement context to get the
      *                 singleton resource address for the add operation
-     * @param callback the callback executed after adding the singleton resource
+     * @param callback the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String type, final AddressTemplate template, final AddSingletonCallback callback) {
@@ -380,7 +380,7 @@ public class CrudOperations {
      * @param template the address template which is resolved against the current statement context to get the
      *                 singleton resource address for the add operation
      * @param payload  the optional payload of the add operation (may be null or undefined)
-     * @param callback the callback executed after adding the singleton resource
+     * @param callback the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String type, final AddressTemplate template, @Nullable final ModelNode payload,
@@ -395,12 +395,12 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the dialog header and success message
      * @param address  the fq address for the add operation
      * @param payload  the optional payload of the add operation (may be null or undefined)
-     * @param callback the callback executed after adding the singleton resource
+     * @param callback the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String type, final ResourceAddress address, @Nullable final ModelNode payload,
             final AddSingletonCallback callback) {
-        Operation.Builder builder = new Operation.Builder(ADD, address);
+        Operation.Builder builder = new Operation.Builder(address, ADD);
         if (payload != null && payload.isDefined()) {
             builder.payload(payload);
         }
@@ -413,7 +413,7 @@ public class CrudOperations {
      *
      * @param operation the add operation with the address and payload
      * @param type      the human readable resource type used in the dialog header and success message
-     * @param callback  the callback executed after adding the singleton resource
+     * @param callback  the callback executed after the singleton resource has been added
      */
     @JsIgnore
     public void addSingleton(final String type, final Operation operation, final AddSingletonCallback callback) {
@@ -496,7 +496,7 @@ public class CrudOperations {
     @JsIgnore
     public void readChildren(final AddressTemplate template, final String resource, final int depth,
             final ReadChildrenCallback callback) {
-        readChildren(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, template.resolve(statementContext))
+        readChildren(new Operation.Builder(template.resolve(statementContext), READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .param(RECURSIVE_DEPTH, depth)
                         .build(),
@@ -515,7 +515,7 @@ public class CrudOperations {
      */
     @JsIgnore
     public void read(final ResourceAddress address, final ReadCallback callback) {
-        read(new Operation.Builder(READ_RESOURCE_OPERATION, address).param(INCLUDE_ALIASES, true).build(), callback);
+        read(new Operation.Builder(address, READ_RESOURCE_OPERATION).param(INCLUDE_ALIASES, true).build(), callback);
     }
 
     /**
@@ -528,7 +528,7 @@ public class CrudOperations {
      */
     @JsIgnore
     public void read(final ResourceAddress address, final int depth, final ReadCallback callback) {
-        read(new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        read(new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_ALIASES, true)
                         .param(RECURSIVE_DEPTH, depth)
                         .build(),
@@ -544,7 +544,7 @@ public class CrudOperations {
      */
     @JsIgnore
     public void readRecursive(final ResourceAddress address, final ReadCallback callback) {
-        read(new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        read(new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_ALIASES, true)
                         .param(RECURSIVE, true)
                         .build(),
@@ -563,7 +563,7 @@ public class CrudOperations {
     @JsIgnore
     public void readChildren(final ResourceAddress address, final String resource,
             final ReadChildrenCallback callback) {
-        readChildren(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+        readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .build(),
                 callback);
@@ -582,7 +582,7 @@ public class CrudOperations {
     @JsIgnore
     public void readChildren(final ResourceAddress address, final String resource, final int depth,
             final ReadChildrenCallback callback) {
-        readChildren(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+        readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .param(RECURSIVE_DEPTH, depth)
                         .build(),
@@ -612,7 +612,7 @@ public class CrudOperations {
     public void readChildren(final ResourceAddress address, final Iterable<String> resources,
             final ReadCompositeCallback callback) {
         List<Operation> operations = stream(resources.spliterator(), false)
-                .map(resource -> new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                .map(resource -> new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .build())
                 .collect(toList());
@@ -632,7 +632,7 @@ public class CrudOperations {
     public void readChildren(final ResourceAddress address, final Iterable<String> resources, final int depth,
             final ReadCompositeCallback callback) {
         List<Operation> operations = stream(resources.spliterator(), false)
-                .map(resource -> new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                .map(resource -> new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .param(RECURSIVE_DEPTH, depth)
                         .build())
@@ -654,7 +654,7 @@ public class CrudOperations {
      * @param template      the address template which is resolved against the current statement context and the
      *                      resource name to get the resource address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param callback      the callback executed after saving the resource
+     * @param callback      the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final String type, final String name, final AddressTemplate template,
@@ -680,7 +680,7 @@ public class CrudOperations {
      *                       resource name to get the resource address for the operation
      * @param changedValues  the changed values / payload for the operation
      * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the resource
+     * @param callback       the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final String name, final AddressTemplate template, final Map<String, Object> changedValues,
@@ -709,7 +709,7 @@ public class CrudOperations {
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
      * @param metadata      the metadata of the attributes in the change set
-     * @param callback      the callback executed after saving the resource
+     * @param callback      the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final String type, final String name, final ResourceAddress address,
@@ -728,7 +728,7 @@ public class CrudOperations {
      * @param changedValues  the changed values / payload for the operation
      * @param metadata       the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the resource
+     * @param callback       the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final ResourceAddress address, final Map<String, Object> changedValues,
@@ -749,7 +749,7 @@ public class CrudOperations {
      * @param type       the human readable resource type used in the success message
      * @param name       the resource name
      * @param operations the composite operation to persist the changed values
-     * @param callback   the callback executed after saving the resource
+     * @param callback   the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final String type, final String name, final Composite operations, final Callback callback) {
@@ -765,7 +765,7 @@ public class CrudOperations {
      *
      * @param operations     the composite operation to persist the changed values
      * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the resource
+     * @param callback       the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(final Composite operations, final SafeHtml successMessage, final Callback callback) {
@@ -791,7 +791,7 @@ public class CrudOperations {
      * @param template      the address template which is resolved against the current statement context to get the
      *                      resource address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param callback      the callback executed after saving the singleton resource
+     * @param callback      the callback executed after the resource has been saved
      */
     @JsIgnore
     public void saveSingleton(final String type, final AddressTemplate template,
@@ -813,7 +813,7 @@ public class CrudOperations {
      *                       resource address for the operation
      * @param changedValues  the changed values / payload for the operation
      * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the singleton resource
+     * @param callback       the callback executed after the resource has been saved
      */
     @JsIgnore
     public void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
@@ -837,7 +837,7 @@ public class CrudOperations {
      * @param address       the fq address for the operation
      * @param changedValues the changed values / payload for the operation
      * @param metadata      the metadata of the attributes in the change set
-     * @param callback      the callback executed after saving the singleton resource
+     * @param callback      the callback executed after the resource has been saved
      */
     @JsIgnore
     public void saveSingleton(final String type, final ResourceAddress address, final Map<String, Object> changedValues,
@@ -854,7 +854,7 @@ public class CrudOperations {
      * @param changedValues  the changed values / payload for the operation
      * @param metadata       the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
-     * @param callback       the callback executed after saving the singleton resource
+     * @param callback       the callback executed after the resource has been saved
      */
     @JsIgnore
     public void saveSingleton(final ResourceAddress address, final Map<String, Object> changedValues,
@@ -1247,7 +1247,7 @@ public class CrudOperations {
      * @param name     the resource name
      * @param template the address template which is resolved against the current statement context and the resource
      *                 name to get the resource address for the {@code remove} operation
-     * @param callback the callback executed after removing the resource
+     * @param callback the callback executed after the resource has been removed
      */
     @JsIgnore
     public void remove(final String type, final String name, final AddressTemplate template, final Callback callback) {
@@ -1261,7 +1261,7 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the success message
      * @param template the address template which is resolved against the current statement context to get the resource
      *                 address for the {@code remove} operation
-     * @param callback the callback executed after removing the resource
+     * @param callback the callback executed after the resource has been removed
      */
     @JsIgnore
     public void removeSingleton(final String type, final AddressTemplate template, final Callback callback) {
@@ -1278,7 +1278,7 @@ public class CrudOperations {
      * @param type     the human readable resource type used in the success message
      * @param name     the resource name
      * @param address  the fq address for the {@code remove} operation
-     * @param callback the callback executed after removing the resource
+     * @param callback the callback executed after the resource has been removed
      */
     @JsIgnore
     public void remove(final String type, final String name, final ResourceAddress address, final Callback callback) {
@@ -1291,7 +1291,7 @@ public class CrudOperations {
                 : resources.messages().removeResourceSuccess(type, name);
 
         DialogFactory.showConfirmation(title, question, () -> {
-            Operation operation = new Operation.Builder(REMOVE, address).build();
+            Operation operation = new Operation.Builder(address, REMOVE).build();
             dispatcher.execute(operation, result -> {
                 MessageEvent.fire(eventBus, Message.success(success));
                 callback.execute();
@@ -1305,7 +1305,7 @@ public class CrudOperations {
      *
      * @param type     the human readable resource type used in the success message
      * @param address  the fq address for the {@code remove} operation
-     * @param callback the callback executed after removing the resource
+     * @param callback the callback executed after the resource has been removed
      */
     @JsIgnore
     public void removeSingleton(final String type, final ResourceAddress address, final Callback callback) {
@@ -1333,6 +1333,13 @@ public class CrudOperations {
             } else {
                 add(id, type, ((AddressTemplate) address), callback);
             }
+        } else if (address instanceof ResourceAddress) {
+            AddressTemplate template = AddressTemplate.of(((ResourceAddress) address));
+            if (attributes != null) {
+                add(id, type, template, JsHelper.asList(attributes), callback);
+            } else {
+                add(id, type, template, callback);
+            }
         } else if (address instanceof String) {
             if (attributes != null) {
                 add(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
@@ -1343,13 +1350,14 @@ public class CrudOperations {
     }
 
     @JsMethod(name = "add")
-    public void jsAdd(final String type, final String name, final Object address, final AddCallback callback) {
+    public void jsAdd(final String type, final String name, final Object address, final ModelNode payload,
+            final AddCallback callback) {
         if (address instanceof AddressTemplate) {
-            add(type, name, ((AddressTemplate) address), callback);
+            add(type, name, ((AddressTemplate) address).resolve(statementContext), payload, callback);
         } else if (address instanceof ResourceAddress) {
-            add(type, name, ((ResourceAddress) address), null, callback);
+            add(type, name, ((ResourceAddress) address), payload, callback);
         } else if (address instanceof String) {
-            add(type, name, AddressTemplate.of(((String) address)), callback);
+            add(type, name, AddressTemplate.of(((String) address)).resolve(statementContext), payload, callback);
         }
     }
 
@@ -1363,6 +1371,13 @@ public class CrudOperations {
             } else {
                 addSingleton(id, type, ((AddressTemplate) address), callback);
             }
+        } else if (address instanceof ResourceAddress) {
+            AddressTemplate template = AddressTemplate.of(((ResourceAddress) address));
+            if (attributes != null) {
+                addSingleton(id, type, template, JsHelper.asList(attributes), callback);
+            } else {
+                addSingleton(id, type, template, callback);
+            }
         } else if (address instanceof String) {
             if (attributes != null) {
                 addSingleton(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
@@ -1373,13 +1388,14 @@ public class CrudOperations {
     }
 
     @JsMethod(name = "addSingleton")
-    public void jsAddSingleton(final String type, final Object address, final AddSingletonCallback callback) {
+    public void jsAddSingleton(final String type, final Object address, final ModelNode payload,
+            final AddSingletonCallback callback) {
         if (address instanceof AddressTemplate) {
-            addSingleton(type, ((AddressTemplate) address), callback);
+            addSingleton(type, ((AddressTemplate) address).resolve(statementContext), payload, callback);
         } else if (address instanceof ResourceAddress) {
-            addSingleton(type, ((ResourceAddress) address), null, callback);
+            addSingleton(type, ((ResourceAddress) address), payload, callback);
         } else if (address instanceof String) {
-            addSingleton(type, AddressTemplate.of(((String) address)), callback);
+            addSingleton(type, AddressTemplate.of(((String) address)).resolve(statementContext), payload, callback);
         }
     }
 

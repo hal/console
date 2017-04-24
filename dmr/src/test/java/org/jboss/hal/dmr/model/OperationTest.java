@@ -52,7 +52,7 @@ public class OperationTest {
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");
 
-        Operation operation = new Operation.Builder(ADD, address)
+        Operation operation = new Operation.Builder(address, ADD)
                 .param(JNDI_NAME, "java:/bar")
                 .header("header1", "value1")
                 .build();
@@ -66,7 +66,7 @@ public class OperationTest {
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");
 
-        Operation operation = new Operation.Builder(ADD, address)
+        Operation operation = new Operation.Builder(address, ADD)
                 .param(JNDI_NAME, "java:/bar")
                 .header("header1", "value1")
                 .build();

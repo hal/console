@@ -96,7 +96,7 @@ public class BrowseContentPresenter
     protected void reload() {
         if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-            Operation operation = new Operation.Builder(BROWSE_CONTENT, address).build();
+            Operation operation = new Operation.Builder(address, BROWSE_CONTENT).build();
             dispatcher.execute(operation, result -> getView().setContent(content, result));
         }
         // TODO Fallback when browse-content is not supported

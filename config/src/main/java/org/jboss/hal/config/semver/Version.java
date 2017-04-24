@@ -472,7 +472,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the major version number
      */
-    @JsProperty
+    @JsProperty(name = "major")
     public int getMajorVersion() {
         return normal.getMajor();
     }
@@ -482,7 +482,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the minor version number
      */
-    @JsProperty
+    @JsProperty(name = "minor")
     public int getMinorVersion() {
         return normal.getMinor();
     }
@@ -492,7 +492,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the patch version number
      */
-    @JsProperty
+    @JsProperty(name = "micro")
     public int getPatchVersion() {
         return normal.getPatch();
     }
@@ -502,7 +502,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the normal version
      */
-    @JsProperty
+    @JsIgnore
     public String getNormalVersion() {
         return normal.toString();
     }
@@ -512,7 +512,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the pre-release version
      */
-    @JsProperty
+    @JsIgnore
     public String getPreReleaseVersion() {
         return preRelease.toString();
     }
@@ -522,7 +522,7 @@ public class Version implements Comparable<Version> {
      *
      * @return the string representation of the build metadata
      */
-    @JsProperty
+    @JsIgnore
     public String getBuildMetadata() {
         return build.toString();
     }
@@ -537,6 +537,7 @@ public class Version implements Comparable<Version> {
      *
      * @see #compareTo(Version other)
      */
+    @JsIgnore
     public boolean greaterThan(Version other) {
         return compareTo(other) > 0;
     }
@@ -551,6 +552,7 @@ public class Version implements Comparable<Version> {
      *
      * @see #compareTo(Version other)
      */
+    @JsIgnore
     public boolean greaterThanOrEqualTo(Version other) {
         return compareTo(other) >= 0;
     }
@@ -565,6 +567,7 @@ public class Version implements Comparable<Version> {
      *
      * @see #compareTo(Version other)
      */
+    @JsIgnore
     public boolean lessThan(Version other) {
         return compareTo(other) < 0;
     }
@@ -579,6 +582,7 @@ public class Version implements Comparable<Version> {
      *
      * @see #compareTo(Version other)
      */
+    @JsIgnore
     public boolean lessThanOrEqualTo(Version other) {
         return compareTo(other) <= 0;
     }
@@ -650,6 +654,7 @@ public class Version implements Comparable<Version> {
      * @see #compareWithBuildsTo(Version other)
      */
     @Override
+    @JsIgnore
     public int compareTo(Version other) {
         int result = normal.compareTo(other.normal);
         if (result == 0) {

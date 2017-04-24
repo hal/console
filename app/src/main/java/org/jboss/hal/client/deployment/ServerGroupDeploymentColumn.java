@@ -365,7 +365,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                             ResourceAddress resourceAddress = new ResourceAddress()
                                                     .add(SERVER_GROUP, serverGroup)
                                                     .add(DEPLOYMENT, c.getName());
-                                            return new Operation.Builder(ADD, resourceAddress)
+                                            return new Operation.Builder(resourceAddress, ADD)
                                                     .param(RUNTIME_NAME, c.getRuntimeName())
                                                     .param(ENABLED, enable)
                                                     .build();
@@ -427,7 +427,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         ResourceAddress address = new ResourceAddress()
                 .add(SERVER_GROUP, sgd.getServerGroup())
                 .add(DEPLOYMENT, sgd.getName());
-        Operation op = new Operation.Builder(operation, address).build();
+        Operation op = new Operation.Builder(address, operation).build();
         ItemMonitor.startProgress(id);
         dispatcher.execute(op, result -> {
             ItemMonitor.stopProgress(id);

@@ -86,7 +86,7 @@ public class ServerBootErrorsPresenter
     @Override
     protected void reload() {
         ResourceAddress address = AddressTemplate.of(MANAGEMENT_ADDRESS).resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_BOOT_ERRORS, address).build();
+        Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
         dispatcher.execute(operation, result -> getView().update(result.asList()));
     }
 }

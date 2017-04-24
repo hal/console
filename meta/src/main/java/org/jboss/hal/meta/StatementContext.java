@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta;
 
+import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
@@ -114,11 +115,13 @@ public interface StatementContext {
     /**
      * Resolves a single value.
      */
+    @JsIgnore
     String resolve(String placeholder);
 
     /**
      * Resolves a tuple.
      */
+    @JsIgnore
     String[] resolveTuple(String placeholder);
 
     @JsProperty(name = "domainController")

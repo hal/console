@@ -265,24 +265,24 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), metadata, options);
         registerAttachable(table);
-        tables.put(template.lastKey(), table);
+        tables.put(template.lastName(), table);
 
         ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM_SUFFIX),
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
                     presenter.save(fullyQualified, changedValues, metadata,
-                            resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
                 })
                 .prepareReset(f -> {
                     String name = table.api().selectedRow().getName();
                     AddressTemplate fullyQualified = template.replaceWildcards(name);
                     presenter.reset(type, name, fullyQualified, f, metadata,
-                            resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
                 })
                 .build();
 
-        forms.put(template.lastKey(), form);
+        forms.put(template.lastName(), form);
         registerAttachable(form);
 
         return new Elements.Builder()

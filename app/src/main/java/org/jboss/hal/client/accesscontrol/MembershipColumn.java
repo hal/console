@@ -196,7 +196,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                         item.getPrincipal().getName(), item.isInclude() ? INCLUDE_TEMPLATE : EXCLUDE_TEMPLATE,
                         itm -> {
                             ResourceAddress address = AddressTemplates.assignment(itm);
-                            Operation operation = new Operation.Builder(REMOVE, address).build();
+                            Operation operation = new Operation.Builder(address, REMOVE).build();
                             dispatcher.execute(operation, result -> {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .removeResourceSuccess(resources.constants().membership(),

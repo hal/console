@@ -79,7 +79,7 @@ final class AccessControlFunctions {
             } else {
                 Integer status = control.getContext().pop();
                 if (predicate.test(status)) {
-                    Operation operation = new Operation.Builder(ADD, AddressTemplates.roleMapping(role)).build();
+                    Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), ADD).build();
                     dispatcher.executeInFunction(control, operation, result -> control.proceed());
                 } else {
                     control.proceed();
@@ -107,7 +107,7 @@ final class AccessControlFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, AddressTemplates.roleMapping(role))
+            Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
                     .build();
@@ -140,7 +140,7 @@ final class AccessControlFunctions {
             } else {
                 Integer status = control.getContext().pop();
                 if (predicate.test(status)) {
-                    Operation operation = new Operation.Builder(REMOVE, AddressTemplates.roleMapping(role)).build();
+                    Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), REMOVE).build();
                     dispatcher.executeInFunction(control, operation, result -> control.proceed());
                 } else {
                     control.proceed();
@@ -172,7 +172,7 @@ final class AccessControlFunctions {
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
-            Operation.Builder builder = new Operation.Builder(ADD, address)
+            Operation.Builder builder = new Operation.Builder(address, ADD)
                     .param(NAME, principal.getName())
                     .param(TYPE, principal.getType().name());
             if (principal.getRealm() != null) {
@@ -204,13 +204,13 @@ final class AccessControlFunctions {
             } else if (assignments.size() == 1) {
                 Assignment assignment = assignments.get(0);
                 ResourceAddress address = AddressTemplates.assignment(assignment);
-                Operation operation = new Operation.Builder(REMOVE, address).build();
+                Operation operation = new Operation.Builder(address, REMOVE).build();
                 dispatcher.execute(operation, result -> control.proceed());
             } else {
                 List<Operation> operations = assignments.stream()
                         .map(assignment -> {
                             ResourceAddress address = AddressTemplates.assignment(assignment);
-                            return new Operation.Builder(REMOVE, address).build();
+                            return new Operation.Builder(address, REMOVE).build();
                         })
                         .collect(toList());
                 dispatcher.execute(new Composite(operations), (CompositeResult result) -> control.proceed());
@@ -239,7 +239,7 @@ final class AccessControlFunctions {
         @Override
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
-            Operation operation = new Operation.Builder(ADD, address)
+            Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> control.proceed());
@@ -290,7 +290,7 @@ final class AccessControlFunctions {
         @Override
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
-            Operation operation = new Operation.Builder(REMOVE, address).build();
+            Operation operation = new Operation.Builder(address, REMOVE).build();
             dispatcher.executeInFunction(control, operation, result -> control.proceed());
         }
     }
@@ -299,7 +299,7 @@ final class AccessControlFunctions {
     static Operation addAssignmentOperation(final Role role, final Principal principal, boolean include) {
         ResourceAddress address = AddressTemplates.roleMapping(role)
                 .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
-        Operation.Builder builder = new Operation.Builder(ADD, address)
+        Operation.Builder builder = new Operation.Builder(address, ADD)
                 .param(NAME, principal.getName())
                 .param(TYPE, principal.getType().name());
         if (principal.getRealm() != null) {

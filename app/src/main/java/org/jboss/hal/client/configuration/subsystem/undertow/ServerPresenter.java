@@ -230,7 +230,7 @@ public class ServerPresenter
 
     Operation hostSettingOperation(final HostSetting hostSetting) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        return new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
     }
 
     void addHostSetting(final HostSetting hostSetting) {

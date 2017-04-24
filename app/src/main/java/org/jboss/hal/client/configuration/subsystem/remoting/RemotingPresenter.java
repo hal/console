@@ -164,7 +164,7 @@ public class RemotingPresenter
     void selectConnector(String connector) {
         this.connector = connector;
         NamedNode namedNode = connector == null ? null : new NamedNode(connector, failSafeGet(payload,
-                CONNECTOR_TEMPLATE.lastKey() + "/" + connector));
+                CONNECTOR_TEMPLATE.lastName() + "/" + connector));
         getView().updateConnector(namedNode);
     }
 
@@ -189,8 +189,9 @@ public class RemotingPresenter
     }
 
     void createConnectorSecurity() {
-        Operation operation = new Operation.Builder(ADD,
-                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext)).build();
+        Operation operation = new Operation.Builder(
+                SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext), ADD
+        ).build();
         dispatcher.execute(operation, result -> reload());
     }
 
@@ -263,7 +264,7 @@ public class RemotingPresenter
     void selectHttpConnector(@Nullable String httpConnector) {
         this.httpConnector = httpConnector;
         NamedNode namedNode = httpConnector == null ? null : new NamedNode(httpConnector, failSafeGet(payload,
-                HTTP_CONNECTOR_TEMPLATE.lastKey() + "/" + httpConnector));
+                HTTP_CONNECTOR_TEMPLATE.lastName() + "/" + httpConnector));
         getView().updateHttpConnector(namedNode);
     }
 
@@ -288,8 +289,9 @@ public class RemotingPresenter
     }
 
     void createHttpConnectorSecurity() {
-        Operation operation = new Operation.Builder(ADD,
-                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext)).build();
+        Operation operation = new Operation.Builder(
+                SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext), ADD
+        ).build();
         dispatcher.execute(operation, result -> reload());
     }
 
@@ -361,7 +363,7 @@ public class RemotingPresenter
 
     void selectLocalOutbound(@Nullable String localOutbound) {
         NamedNode namedNode = localOutbound == null ? null : new NamedNode(localOutbound, failSafeGet(payload,
-                LOCAL_OUTBOUND_TEMPLATE.lastKey() + "/" + localOutbound));
+                LOCAL_OUTBOUND_TEMPLATE.lastName() + "/" + localOutbound));
         getView().updateLocalOutbound(namedNode);
     }
 
@@ -387,7 +389,7 @@ public class RemotingPresenter
 
     void selectOutbound(@Nullable String outbound) {
         NamedNode namedNode = outbound == null ? null : new NamedNode(outbound, failSafeGet(payload,
-                OUTBOUND_TEMPLATE.lastKey() + "/" + outbound));
+                OUTBOUND_TEMPLATE.lastName() + "/" + outbound));
         getView().updateOutbound(namedNode);
     }
 
@@ -412,7 +414,7 @@ public class RemotingPresenter
 
     void selectRemoteOutbound(@Nullable String remoteOutbound) {
         NamedNode namedNode = remoteOutbound == null ? null : new NamedNode(remoteOutbound, failSafeGet(payload,
-                REMOTE_OUTBOUND_TEMPLATE.lastKey() + "/" + remoteOutbound));
+                REMOTE_OUTBOUND_TEMPLATE.lastName() + "/" + remoteOutbound));
         getView().updateRemoteOutbound(namedNode);
     }
 
@@ -450,13 +452,13 @@ public class RemotingPresenter
                     if (status == 200) {
                         control.proceed();
                     } else {
-                        Operation operation = new Operation.Builder(ADD, securityTemplate.resolve(statementContext))
+                        Operation operation = new Operation.Builder(securityTemplate.resolve(statementContext), ADD)
                                 .build();
                         dispatcher.execute(operation, result -> control.proceed());
                     }
                 },
                 (Function<FunctionContext>) control -> {
-                    Operation operation = new Operation.Builder(ADD, policyTemplate.resolve(statementContext)).build();
+                    Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
                     dispatcher.execute(operation, result -> control.proceed());
                 }
         };

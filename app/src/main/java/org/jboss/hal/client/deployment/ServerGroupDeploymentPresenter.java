@@ -171,7 +171,7 @@ public class ServerGroupDeploymentPresenter extends
         ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();
-        Operation operation = new Operation.Builder(DEPLOY, address).build();
+        Operation operation = new Operation.Builder(address, DEPLOY).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
             reload();

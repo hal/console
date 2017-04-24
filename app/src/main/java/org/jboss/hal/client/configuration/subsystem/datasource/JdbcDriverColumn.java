@@ -128,7 +128,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                     String driverName = modelNode.get(DRIVER_NAME).asString();
                                     ResourceAddress address = JDBC_DRIVER_TEMPLATE
                                             .resolve(statementContext, driverName);
-                                    Operation operation = new Operation.Builder(ADD, address)
+                                    Operation operation = new Operation.Builder(address, ADD)
                                             .payload(modelNode)
                                             .build();
                                     dispatcher.execute(operation, result -> {

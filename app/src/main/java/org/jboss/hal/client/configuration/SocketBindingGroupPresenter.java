@@ -242,7 +242,7 @@ public class SocketBindingGroupPresenter
                 form, (name, modelNode) -> {
             ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
                     .resolve(statementContext, inbound);
-            Operation operation = new Operation.Builder(LIST_ADD, address)
+            Operation operation = new Operation.Builder(address, LIST_ADD)
                     .param(NAME, CLIENT_MAPPINGS)
                     .param(VALUE, modelNode)
                     .build();
@@ -288,7 +288,7 @@ public class SocketBindingGroupPresenter
                 resources.messages().removeSingletonConfirmationQuestion(), () -> {
                     ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
                             .resolve(statementContext, inbound);
-                    Operation operation = new Operation.Builder(LIST_REMOVE, address)
+                    Operation operation = new Operation.Builder(address, LIST_REMOVE)
                             .param(NAME, CLIENT_MAPPINGS)
                             .param(INDEX, index)
                             .build();

@@ -74,7 +74,7 @@ public class LogFiles {
 
     String downloadUrl(String name) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
-        Operation operation = new Operation.Builder(READ_ATTRIBUTE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, STREAM)
                 .build();
         return dispatcher.downloadUrl(operation);
@@ -97,7 +97,7 @@ public class LogFiles {
 
     public void tail(String name, int lines, AsyncCallback<String> callback) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
-        Operation operation = new Operation.Builder(READ_LOG_FILE, address)
+        Operation operation = new Operation.Builder(address, READ_LOG_FILE)
                 .param(ModelDescriptionConstants.LINES, lines)
                 .param(TAIL, true)
                 .build();

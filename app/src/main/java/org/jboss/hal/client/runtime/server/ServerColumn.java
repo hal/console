@@ -178,7 +178,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 processAddColumnAction(statementContext.selectedHost());
                 serverConfigsFn = control -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -195,7 +195,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 serverConfigsFn = control -> {
                     ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
-                    Operation operation = new Operation.Builder(QUERY, serverConfigAddress)
+                    Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
                             .build();
                     dispatcher.executeInFunction(control, operation, result -> {

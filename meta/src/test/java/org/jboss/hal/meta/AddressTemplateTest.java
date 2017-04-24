@@ -72,13 +72,13 @@ public class AddressTemplateTest {
     @Test
     public void firstKey() {
         AddressTemplate at = AddressTemplate.ROOT;
-        assertNull(at.firstKey());
+        assertNull(at.firstName());
 
         at = AddressTemplate.of("a=b");
-        assertEquals("a", at.firstKey());
+        assertEquals("a", at.firstName());
 
         at = AddressTemplate.of("a=b/{c}");
-        assertEquals("a", at.firstKey());
+        assertEquals("a", at.firstName());
     }
 
     @Test
@@ -96,16 +96,16 @@ public class AddressTemplateTest {
     @Test
     public void lastKey() {
         AddressTemplate at = AddressTemplate.ROOT;
-        assertNull(at.lastKey());
+        assertNull(at.lastName());
 
         at = AddressTemplate.of("a=b");
-        assertEquals("a", at.lastKey());
+        assertEquals("a", at.lastName());
 
         at = AddressTemplate.of("a=b/{c}");
-        assertNull(at.lastKey());
+        assertNull(at.lastName());
 
         at = AddressTemplate.of("{a}/b={c}");
-        assertEquals("b", at.lastKey());
+        assertEquals("b", at.lastName());
     }
 
     @Test

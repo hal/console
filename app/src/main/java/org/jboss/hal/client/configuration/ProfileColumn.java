@@ -171,7 +171,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
                 .unboundFormItem(new NameItem())
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().cloneProfile(), form, (to, model) -> {
-            Operation operation = new Operation.Builder(CLONE, new ResourceAddress().add(PROFILE, from))
+            Operation operation = new Operation.Builder(new ResourceAddress().add(PROFILE, from), CLONE)
                     .param(TO_PROFILE, to)
                     .build();
             dispatcher.execute(operation, result -> {

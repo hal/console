@@ -191,8 +191,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
                                         resources.messages().removeConfirmationTitle(title), question,
                                         () -> {
                                             List<Operation> operations = accessControl.assignments().byPrincipal(item)
-                                                    .map(assignment -> new Operation.Builder(REMOVE,
-                                                            AddressTemplates.assignment(assignment)).build())
+                                                    .map(assignment -> new Operation.Builder(
+                                                            AddressTemplates.assignment(assignment), REMOVE
+                                                    ).build())
                                                     .collect(toList());
                                             dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
                                                 MessageEvent.fire(eventBus, Message.success(success));

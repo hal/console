@@ -164,7 +164,7 @@ public class MailSessionPresenter
                 IMAP.toUpperCase(), POP3.toUpperCase()));
         ResourceAddress selectedSessionAddress = SELECTED_MAIL_SESSION_TEMPLATE
                 .resolve(statementContext);
-        Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
+        Operation serverNamesOp = new Operation.Builder(selectedSessionAddress, READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, SERVER)
                 .build();
         dispatcher.execute(serverNamesOp, serversResult -> {
@@ -205,7 +205,7 @@ public class MailSessionPresenter
                             ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
                                     .append(SERVER + "=" + serverType)
                                     .resolve(statementContext);
-                            Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
+                            Operation operation = new Operation.Builder(address, ModelDescriptionConstants.ADD)
                                     .payload(modelNode)
                                     .param(SERVER, name)
                                     .build();

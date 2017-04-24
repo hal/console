@@ -100,11 +100,6 @@ public class Core {
         return statementContext;
     }
 
-    @JsProperty(name = "user")
-    public User user() {
-        return user;
-    }
-
 
     // ------------------------------------------------------ JS methods
 
@@ -114,8 +109,8 @@ public class Core {
     }
 
     @JsMethod(name = "operation")
-    public Operation.Builder jsOperation(final String name, final String address) {
+    public Operation.Builder jsOperation(final String address, final String name) {
         AddressTemplate template = AddressTemplate.of(address);
-        return new Operation.Builder(name, template.resolve(statementContext));
+        return new Operation.Builder(template.resolve(statementContext), name);
     }
 }

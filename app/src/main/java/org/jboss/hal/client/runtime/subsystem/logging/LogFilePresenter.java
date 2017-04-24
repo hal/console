@@ -127,11 +127,11 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFileName != null) {
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
-            Operation logFileOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             //noinspection HardCodedStringLiteral
-            Operation contentOp = new Operation.Builder("read-log-file", address)
+            Operation contentOp = new Operation.Builder(address, "read-log-file")
                     .param("lines", LogFiles.LINES)
                     .param("tail", true)
                     .build();
@@ -165,7 +165,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             //noinspection HardCodedStringLiteral
-            Operation operation = new Operation.Builder("read-log-file", address)
+            Operation operation = new Operation.Builder(address, "read-log-file")
                     .param("lines", linesToRead)
                     .param("tail", true)
                     .build();

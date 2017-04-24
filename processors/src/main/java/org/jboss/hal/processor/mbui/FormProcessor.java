@@ -57,7 +57,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
 
         } else if (autoSave) {
             if (title == null) {
-                title = new LabelBuilder().label(template.lastKey());
+                title = new LabelBuilder().label(template.lastName());
             }
             if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
                 processor.error(field, "Name resolver in form#%s has to be an expression.", selector);

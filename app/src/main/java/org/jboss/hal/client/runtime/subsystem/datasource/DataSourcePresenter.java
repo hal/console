@@ -116,7 +116,7 @@ public class DataSourcePresenter
     protected void reload() {
         ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
                 .resolve(statementContext, name);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();

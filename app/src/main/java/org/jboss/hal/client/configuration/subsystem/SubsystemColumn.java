@@ -123,7 +123,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         return new PreviewContent<>(item.getTitle(), item.getExternalTextResource());
                     } else {
                         ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                        Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                        Operation operation = new Operation.Builder(address, READ_RESOURCE_DESCRIPTION_OPERATION)
                                 .build();
                         return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
                     }
@@ -137,7 +137,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext).getParent();
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, SUBSYSTEM).build();
             dispatcher.execute(operation, result -> {
 

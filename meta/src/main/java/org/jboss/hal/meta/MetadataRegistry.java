@@ -18,6 +18,7 @@ package org.jboss.hal.meta;
 import javax.inject.Inject;
 
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -58,6 +59,7 @@ public class MetadataRegistry implements Registry<Metadata> {
     }
 
     @Override
+    @JsIgnore
     public boolean contains(final AddressTemplate template) {
         return securityContextRegistry.contains(template) && resourceDescriptionRegistry.contains(template);
     }
@@ -66,5 +68,28 @@ public class MetadataRegistry implements Registry<Metadata> {
     @JsIgnore
     public void add(final ResourceAddress address, final Metadata metadata) {
         // noop
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "contains")
+    public boolean jsContains(Object template) {
+        if (template instanceof String) {
+            return contains(AddressTemplate.of(((String) template)));
+        } else if (template instanceof AddressTemplate) {
+            return contains(((AddressTemplate) template));
+        }
+        return false;
+    }
+
+    @JsMethod(name = "lookup")
+    public Metadata jsLookup(Object template) throws MissingMetadataException {
+        if (template instanceof String) {
+            return lookup(AddressTemplate.of(((String) template)));
+        } else if (template instanceof AddressTemplate) {
+            return lookup(((AddressTemplate) template));
+        }
+        throw new IllegalArgumentException("Please use MetadataRegistry.lookup(String|AddressTemplate)");
     }
 }

@@ -100,7 +100,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     @Override
     public void update(final JpaStatistic item) {
         if (item == null) {
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build();

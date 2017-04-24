@@ -71,8 +71,9 @@ public class CompositeRrdParserTest {
     @Test
     public void parseFlat() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
-                .map(template -> new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION,
-                        AddressTemplate.of(template).resolve(StatementContext.NOOP)).build())
+                .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
+                        READ_RESOURCE_DESCRIPTION_OPERATION
+                ).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 
@@ -86,8 +87,9 @@ public class CompositeRrdParserTest {
     @Test
     public void parseRecursive() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
-                .map(template -> new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION,
-                        AddressTemplate.of(template).resolve(StatementContext.NOOP)).param(RECURSIVE, true).build())
+                .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
+                        READ_RESOURCE_DESCRIPTION_OPERATION
+                ).param(RECURSIVE, true).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 

@@ -100,6 +100,6 @@ public class DeploymentScannerPresenter
     protected void reload() {
         crud.read(DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE, 2, result ->
                 getView().updateScanners(
-                        asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey()))));
+                        asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastName()))));
     }
 }

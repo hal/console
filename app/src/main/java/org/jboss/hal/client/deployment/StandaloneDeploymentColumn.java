@@ -112,8 +112,9 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            ResourceAddress.root())
+                    Operation operation = new Operation.Builder(ResourceAddress.root(),
+                            READ_CHILDREN_RESOURCES_OPERATION
+                    )
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE_DEPTH, 2)
@@ -302,7 +303,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void enableDisable(Deployment deployment, String operation, SafeHtml message) {
         String id = Ids.deployment(deployment.getName());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
-        Operation op = new Operation.Builder(operation, address).build();
+        Operation op = new Operation.Builder(address, operation).build();
         ItemMonitor.startProgress(id);
         dispatcher.execute(op, result -> {
             ItemMonitor.stopProgress(id);
@@ -313,7 +314,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     private void explode(Deployment deployment) {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
-        Operation operation = new Operation.Builder(EXPLODE, address).build();
+        Operation operation = new Operation.Builder(address, EXPLODE).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent

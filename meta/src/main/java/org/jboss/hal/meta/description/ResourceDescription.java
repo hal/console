@@ -90,6 +90,7 @@ public class ResourceDescription extends ModelNode {
         return hasDefined(OPERATIONS) ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
     }
 
+    @JsIgnore
     public Property findAttribute(final String path, final String name) {
         for (Property property : getAttributes(path)) {
             if (name.equals(property.getName())) {
@@ -165,8 +166,8 @@ public class ResourceDescription extends ModelNode {
     // ------------------------------------------------------ JS methods
 
     @JsMethod(name = "getAttributes")
-    public JsArrayOf<Property> jsGetAttributes(final String path) {
-        List<Property> attributes = getAttributes(path);
+    public JsArrayOf<Property> jsGetAttributes() {
+        List<Property> attributes = getAttributes(ATTRIBUTES);
         JsArrayOf<Property> array = JsArrayOf.create();
         for (Property t : attributes) {
             array.push(t);
@@ -174,9 +175,9 @@ public class ResourceDescription extends ModelNode {
         return array;
     }
 
-    @JsMethod(name = "getRequiredAttributes")
-    public JsArrayOf<Property> jsGetRequiredAttributes(final String path) {
-        List<Property> attributes = getRequiredAttributes(path);
+    @JsMethod(name = "getRequestProperties")
+    public JsArrayOf<Property> jsGetRequestProperties() {
+        List<Property> attributes = getAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES);
         JsArrayOf<Property> array = JsArrayOf.create();
         for (Property t : attributes) {
             array.push(t);

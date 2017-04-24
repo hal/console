@@ -247,7 +247,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 }
                 if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
-                    Operation operation = new Operation.Builder(READ_CONTENT, address).build();
+                    Operation operation = new Operation.Builder(address, READ_CONTENT).build();
                     actions.add(new ItemAction.Builder<Content>()
                             .title(resources.constants().download())
                             .href(dispatcher.downloadUrl(operation))
@@ -381,7 +381,7 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     private void explode(Content content) {
-        Operation operation = new Operation.Builder(EXPLODE, contentAddress(content)).build();
+        Operation operation = new Operation.Builder(contentAddress(content), EXPLODE).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent
@@ -390,7 +390,7 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     void deploy(Content content) {
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
+        Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, SERVER_GROUP)
                 .build();
         dispatcher.execute(operation, result -> {
@@ -414,7 +414,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                         ResourceAddress resourceAddress = new ResourceAddress()
                                                 .add(SERVER_GROUP, serverGroup)
                                                 .add(DEPLOYMENT, content.getName());
-                                        return new Operation.Builder(ADD, resourceAddress)
+                                        return new Operation.Builder(resourceAddress, ADD)
                                                 .param(RUNTIME_NAME, content.getRuntimeName())
                                                 .param(ENABLED, enable)
                                                 .build();
@@ -447,7 +447,7 @@ public class ContentColumn extends FinderColumn<Content> {
                             ResourceAddress resourceAddress = new ResourceAddress()
                                     .add(SERVER_GROUP, serverGroup)
                                     .add(DEPLOYMENT, content.getName());
-                            return new Operation.Builder(REMOVE, resourceAddress).build();
+                            return new Operation.Builder(resourceAddress, REMOVE).build();
                         })
                         .collect(toList());
                 dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
@@ -465,7 +465,7 @@ public class ContentColumn extends FinderColumn<Content> {
     void undeploy(Content content, String serverGroup) {
         ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup)
                 .add(DEPLOYMENT, content.getName());
-        Operation operation = new Operation.Builder(REMOVE, address).build();
+        Operation operation = new Operation.Builder(address, REMOVE).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             fire(eventBus, Message.success(
@@ -479,7 +479,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 resources.messages().removeConfirmationQuestion(content.getName()),
                 () -> {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    Operation operation = new Operation.Builder(address, REMOVE).build();
                     dispatcher.execute(operation, result -> {
                         fire(eventBus, Message.success(resources.messages()
                                 .removeResourceSuccess(resources.constants().content(),

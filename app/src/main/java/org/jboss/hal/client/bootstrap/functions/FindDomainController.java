@@ -56,7 +56,7 @@ public class FindDomainController implements BootstrapFunction {
             control.proceed();
 
         } else {
-            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
+            Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, HOST)
                     .build();
             dispatcher.execute(operation, result -> {

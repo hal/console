@@ -65,8 +65,10 @@ public class LogFileColumn extends FinderColumn<LogFile> {
 
                 .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder("list-log-files", //NON-NLS
-                            AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext)).build();
+                    Operation operation = new Operation.Builder(
+                            AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext), "list-log-files"
+                            //NON-NLS
+                    ).build();
                     dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
                             .map(LogFile::new)
                             .sorted(comparing(LogFile::getFilename))

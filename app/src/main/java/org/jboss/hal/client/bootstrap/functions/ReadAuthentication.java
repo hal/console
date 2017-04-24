@@ -85,7 +85,7 @@ public class ReadAuthentication implements BootstrapFunction {
         logStart();
 
         ResourceAddress address = AUTHENTICATION_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE_DEPTH, 1)
                 .build();

@@ -490,7 +490,7 @@ class BrowseContentElement implements IsElement, Attachable {
     private void loadContent(ContentEntry contentEntry, Dispatcher.SuccessCallback<String> successCallback) {
         if (!contentEntry.directory) {
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-            Operation operation = new Operation.Builder(READ_CONTENT, address)
+            Operation operation = new Operation.Builder(address, READ_CONTENT)
                     .param(PATH, contentEntry.path)
                     .build();
             dispatcher.download(operation, successCallback);
@@ -502,7 +502,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
     private String downloadUrl(ContentEntry contentEntry) {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
-        Operation.Builder builder = new Operation.Builder(READ_CONTENT, address);
+        Operation.Builder builder = new Operation.Builder(address, READ_CONTENT);
         if (contentEntry != null) {
             builder.param(PATH, contentEntry.path);
         }

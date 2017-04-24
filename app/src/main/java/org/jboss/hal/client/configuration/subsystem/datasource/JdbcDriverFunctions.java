@@ -97,7 +97,7 @@ class JdbcDriverFunctions {
         public void execute(final Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
-                Operation operation = new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                Operation operation = new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                 dispatcher.executeInFunction(control, operation, result -> {
                     List<JdbcDriver> drivers = result.asList().stream()
                             .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
@@ -112,7 +112,7 @@ class JdbcDriverFunctions {
                     List<Operation> operations = servers.stream()
                             .map(server -> {
                                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES);
-                                return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                                return new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                             })
                             .collect(toList());
                     dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {

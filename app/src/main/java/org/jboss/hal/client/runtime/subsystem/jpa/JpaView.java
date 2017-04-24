@@ -196,7 +196,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     }
 
     private Element buildChildPanel(String baseId, AddressTemplate template, String title) {
-        String resource = template.lastKey();
+        String resource = template.lastName();
         Metadata metadata = metadataRegistry.lookup(template);
 
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)

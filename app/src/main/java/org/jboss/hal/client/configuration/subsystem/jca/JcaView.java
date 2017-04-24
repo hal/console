@@ -147,11 +147,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         // ------------------------------------------------------ tracer
 
-        String tracerType = labelBuilder.label(TRACER_TEMPLATE.lastKey());
+        String tracerType = labelBuilder.label(TRACER_TEMPLATE.lastName());
         Metadata tracerMetadata = metadataRegistry.lookup(TRACER_TEMPLATE);
         tracerForm = new ModelNodeForm.Builder<>(Ids.JCA_TRACER_FORM, tracerMetadata)
-                .singleton(() -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                TRACER_TEMPLATE.resolve(statementContext)).build(),
+                .singleton(() -> new Operation.Builder(TRACER_TEMPLATE.resolve(statementContext),
+                                READ_RESOURCE_OPERATION
+                        ).build(),
                         () -> presenter.addTracer())
                 .onSave((form, changedValues) -> presenter.saveSingleton(TRACER_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(tracerType)))
@@ -175,7 +176,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         // ------------------------------------------------------ bootstrap context (bc)
 
-        String bcType = labelBuilder.label(BOOTSTRAP_CONTEXT_TEMPLATE.lastKey());
+        String bcType = labelBuilder.label(BOOTSTRAP_CONTEXT_TEMPLATE.lastName());
         Metadata bcMetadata = metadataRegistry.lookup(BOOTSTRAP_CONTEXT_TEMPLATE);
 
         Form<ModelNode> bcAddForm = new ModelNodeForm.Builder<>(Ids.JCA_BOOTSTRAP_CONTEXT_ADD, bcMetadata)
@@ -227,7 +228,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         // ------------------------------------------------------ workmanager
 
-        String wmType = labelBuilder.label(WORKMANAGER_TEMPLATE.lastKey());
+        String wmType = labelBuilder.label(WORKMANAGER_TEMPLATE.lastName());
         Metadata wmMetadata = metadataRegistry.lookup(WORKMANAGER_TEMPLATE);
 
         Form<ModelNode> wmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_WORKMANAGER_ADD, wmMetadata)
@@ -270,7 +271,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         // ------------------------------------------------------ distributed workmanager
 
-        String dwmType = labelBuilder.label(DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey());
+        String dwmType = labelBuilder.label(DISTRIBUTED_WORKMANAGER_TEMPLATE.lastName());
         Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
 
         Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, wmMetadata)
@@ -369,9 +370,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         dwmForm.clear();
         dwmForm.clear();
 
-        bcTable.update(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastKey())));
-        wmTable.update(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())));
-        dwmTable.update(asNamedNodes(failSafePropertyList(payload, DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey())));
+        bcTable.update(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastName())));
+        wmTable.update(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastName())));
+        dwmTable.update(asNamedNodes(failSafePropertyList(payload, DISTRIBUTED_WORKMANAGER_TEMPLATE.lastName())));
     }
 
     @Override
@@ -382,7 +383,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         if (pages != null) {
             pages.showPage(Ids.JCA_THREAD_POOL_PAGE);
         }
-        if (WORKMANAGER.equals(workmanagerTemplate.lastKey())) {
+        if (WORKMANAGER.equals(workmanagerTemplate.lastName())) {
             wmTpEditor.update(workmanagerTemplate, workmanager, lrt, srt);
         } else {
             dwmTpEditor.update(workmanagerTemplate, workmanager, lrt, srt);

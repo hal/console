@@ -97,8 +97,8 @@ public class IOPresenter
     @Override
     protected void reload() {
         crud.read(IO_SUBSYSTEM_TEMPLATE, 2, result -> {
-            getView().updateBufferPool(asNamedNodes(failSafePropertyList(result, BUFFER_POOL_TEMPLATE.lastKey())));
-            getView().updateWorkers(asNamedNodes(failSafePropertyList(result, WORKER_TEMPLATE.lastKey())));
+            getView().updateBufferPool(asNamedNodes(failSafePropertyList(result, BUFFER_POOL_TEMPLATE.lastName())));
+            getView().updateWorkers(asNamedNodes(failSafePropertyList(result, WORKER_TEMPLATE.lastName())));
         });
     }
 }

@@ -119,12 +119,12 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
             if (api.hasSelection()) {
                 ResourceAddress filterRefAddress = HOST_TEMPLATE.append(FILTER_REF + "=" + api.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
-                Operation filterRefOp = new Operation.Builder(READ_RESOURCE_OPERATION, filterRefAddress).build();
+                Operation filterRefOp = new Operation.Builder(filterRefAddress, READ_RESOURCE_OPERATION).build();
                 ResourceAddress locationFilterRefAddress = HOST_TEMPLATE
                         .append(LOCATION + "=*")
                         .append(FILTER_REF + "=" + api.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
-                Operation locationFilterRefOp = new Operation.Builder(READ_RESOURCE_OPERATION, locationFilterRefAddress)
+                Operation locationFilterRefOp = new Operation.Builder(locationFilterRefAddress, READ_RESOURCE_OPERATION)
                         .build();
 
                 mbuiContext.dispatcher().execute(new Composite(filterRefOp, locationFilterRefOp),

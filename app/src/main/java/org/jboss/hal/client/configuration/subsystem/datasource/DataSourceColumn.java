@@ -136,10 +136,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         setItemsProvider((context, callback) -> {
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation dataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
+            Operation dataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DATA_SOURCE).build();
-            Operation xaDataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                    dataSourceAddress)
+            Operation xaDataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
+            )
                     .param(CHILD_TYPE, XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
@@ -286,7 +286,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void setEnabled(ResourceAddress address, boolean enabled, SafeHtml message) {
-        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, ENABLED)
                 .param(VALUE, enabled)
                 .build();
@@ -301,7 +301,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             ResourceAddress address = new ResourceAddress()
                     .add(SUBSYSTEM, DATASOURCES)
                     .add(DATA_SOURCE, dataSource.getName());
-            Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, address).build();
+            Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
             dispatcher.execute(operation,
                     result -> MessageEvent.fire(eventBus,
                             Message.success(resources.messages().testConnectionSuccess(dataSource.getName()))),

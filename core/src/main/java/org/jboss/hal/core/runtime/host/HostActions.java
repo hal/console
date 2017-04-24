@@ -160,7 +160,7 @@ public class HostActions {
                             boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
                             prepare(host, restartServers ? host.getServers(Server::isStarted) : emptyList(),
                                     Action.RELOAD);
-                            Operation operation = new Operation.Builder(RELOAD, host.getAddress())
+                            Operation operation = new Operation.Builder(host.getAddress(), RELOAD)
                                     .param(RESTART_SERVERS, restartServers)
                                     .build();
 
@@ -215,7 +215,7 @@ public class HostActions {
             Browser.getWindow().setTimeout(() -> {
 
                 prepare(host, host.getServers(), Action.RESTART);
-                Operation operation = new Operation.Builder(SHUTDOWN, host.getAddress())
+                Operation operation = new Operation.Builder(host.getAddress(), SHUTDOWN)
                         .param(RESTART, true)
                         .build();
                 if (host.isDomainController()) {
@@ -327,18 +327,18 @@ public class HostActions {
     private Operation ping(Host host) {
         ResourceAddress address = new ResourceAddress()
                 .add(HOST, host.getName()); // do not use host.getAddressName() here!
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
 
         if (host.hasServers(Server::isStarted)) {
             List<Operation> pingServer = host.getServers(Server::isStarted).stream()
                     .map(server -> {
                         ResourceAddress serverAddress = host.getAddress().add(SERVER, server.getName());
-                        return new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress).build();
+                        return new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION).build();
                     })
                     .collect(toList());
             operation = new Composite(operation, pingServer.toArray(new Operation[pingServer.size()]));
         } else {
-            operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+            operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         }
         return operation;
     }

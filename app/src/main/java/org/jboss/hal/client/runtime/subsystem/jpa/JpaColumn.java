@@ -114,7 +114,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
 
         ItemsProvider<JpaStatistic> itemsProvider = (context, callback) -> {
             ResourceAddress address = JPA_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build();

@@ -84,11 +84,11 @@ public class ReadEnvironment implements BootstrapFunction {
         logStart();
 
         List<Operation> ops = new ArrayList<>();
-        ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+        ops.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build());
-        ops.add(new Operation.Builder(WHOAMI, ResourceAddress.root()).param(VERBOSE, true).build());
+        ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {

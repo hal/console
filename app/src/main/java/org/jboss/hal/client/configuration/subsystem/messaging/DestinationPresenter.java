@@ -181,8 +181,8 @@ public class DestinationPresenter
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
             Function<FunctionContext> add = control -> {
-                Operation addSecuritySetting = new Operation.Builder(ADD, securitySettingAddress).build();
-                Operation addRole = new Operation.Builder(ADD, roleAddress).payload(model).build();
+                Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
+                Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
 
                 int status = control.getContext().pop();
                 if (status == 404) {
@@ -256,7 +256,7 @@ public class DestinationPresenter
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .append(ROLE + "=" + roleName)
                                     .resolve(statementContext);
-                            Operation operation = new Operation.Builder(REMOVE, address).build();
+                            Operation operation = new Operation.Builder(address, REMOVE).build();
                             dispatcher.executeInFunction(control, operation, result -> control.proceed());
                         };
 
@@ -264,7 +264,7 @@ public class DestinationPresenter
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .resolve(statementContext);
-                            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
                             dispatcher.executeInFunction(control, operation, result -> {
@@ -279,7 +279,7 @@ public class DestinationPresenter
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                         .append(SECURITY_SETTING + "=" + securitySetting)
                                         .resolve(statementContext);
-                                Operation operation = new Operation.Builder(REMOVE, address).build();
+                                Operation operation = new Operation.Builder(address, REMOVE).build();
                                 dispatcher.executeInFunction(control, operation, result -> control.proceed());
                             } else {
                                 control.proceed();

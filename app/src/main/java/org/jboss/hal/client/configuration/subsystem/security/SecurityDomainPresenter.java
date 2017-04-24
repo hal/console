@@ -166,8 +166,10 @@ public class SecurityDomainPresenter
     void addClassicAuthenticationModule() {
         // Check if there's already a 'authentication=jaspi' singleton node.
         // Either 'authentication=classic' or 'authentication=jaspi' is allowed not both!
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext))
+        Operation operation = new Operation.Builder(
+                SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext),
+                READ_RESOURCE_OPERATION
+        )
                 .build();
         dispatcher.execute(operation,
                 result -> {
@@ -191,7 +193,7 @@ public class SecurityDomainPresenter
                     if (status == 200) {
                         control.proceed();
                     } else {
-                        Operation operation = new Operation.Builder(ADD, singletonTemplate.resolve(statementContext))
+                        Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
                                 .build();
                         dispatcher.execute(operation, result -> control.proceed());
                     }

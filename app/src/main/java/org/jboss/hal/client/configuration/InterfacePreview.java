@@ -64,7 +64,7 @@ class InterfacePreview extends PreviewContent<NamedNode> {
 
     @Override
     public void update(final NamedNode item) {
-        Operation operation = new Operation.Builder(QUERY, new ResourceAddress().add(SOCKET_BINDING_GROUP, "*"))
+        Operation operation = new Operation.Builder(new ResourceAddress().add(SOCKET_BINDING_GROUP, "*"), QUERY)
                 .param(SELECT, new ModelNode().add(NAME))
                 .param(WHERE, new ModelNode().set(DEFAULT_INTERFACE, item.getName()))
                 .build();

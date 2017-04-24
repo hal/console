@@ -221,7 +221,7 @@ public class ServletContainerPresenter
     Operation pingSettings(final ServletContainerSetting settingType) {
         ResourceAddress address = SELECTED_SERVLET_CONTAINER_TEMPLATE.append(settingType.templateSuffix())
                 .resolve(statementContext);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        return new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
     }
 
     void addSettingsSingleton(final ServletContainerSetting settingType) {

@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.google.common.collect.Lists;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -82,7 +81,6 @@ import static java.util.stream.Collectors.toList;
 @JsType
 public final class AddressTemplate implements Iterable<String> {
 
-    @JsFunction
     @FunctionalInterface
     public interface Unresolver {
 
@@ -141,7 +139,7 @@ public final class AddressTemplate implements Iterable<String> {
      * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
      * String...)}.
      */
-    @JsMethod(name = "ofAddress")
+    @JsIgnore
     public static AddressTemplate of(ResourceAddress address) {
         return of(address, null);
     }
@@ -151,7 +149,7 @@ public final class AddressTemplate implements Iterable<String> {
      * String...)}. Use the {@link Unresolver} function to specify how the segments of the resource address are
      * "unresolved". It is called for each segment of the specified resource address.
      */
-    @JsMethod(name = "reverse")
+    @JsIgnore
     public static AddressTemplate of(ResourceAddress address, Unresolver unresolver) {
         int index = 0;
         boolean first = true;
@@ -269,6 +267,7 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return {@code true} if this template contains no tokens, {@code false} otherwise
      */
+    @JsProperty
     public boolean isEmpty() {return tokens.isEmpty();}
 
     /**
@@ -293,12 +292,13 @@ public final class AddressTemplate implements Iterable<String> {
      *
      * @return a new template
      */
+    @JsIgnore
     public AddressTemplate append(@NonNls String template) {
         String slashTemplate = template.startsWith("/") ? template : "/" + template;
         return AddressTemplate.of(this.template + slashTemplate);
     }
 
-    @JsMethod(name = "appendTemplate")
+    @JsIgnore
     public AddressTemplate append(AddressTemplate template) {
         return append(template.toString());
     }
@@ -315,6 +315,7 @@ public final class AddressTemplate implements Iterable<String> {
      *                                   (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
      *                                   fromIndex &gt; toIndex</tt>)
      */
+    @JsIgnore
     public AddressTemplate subTemplate(int fromIndex, int toIndex) {
         LinkedList<Token> subTokens = new LinkedList<>();
         subTokens.addAll(this.tokens.subList(fromIndex, toIndex));
@@ -332,6 +333,7 @@ public final class AddressTemplate implements Iterable<String> {
      *
      * @return a new (still unresolved) address template with the wildcards replaced by the specified values.
      */
+    @JsIgnore
     public AddressTemplate replaceWildcards(String wildcard, String... wildcards) {
         List<String> allWildcards = new ArrayList<>();
         allWildcards.add(wildcard);
@@ -351,8 +353,8 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(join(this.optional, replacedTokens));
     }
 
-    @JsProperty(name = "firstKey")
-    public String firstKey() {
+    @JsProperty(name = "firstName")
+    public String firstName() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
             return tokens.getFirst().getKey();
         }
@@ -367,8 +369,8 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
-    @JsProperty(name = "lastKey")
-    public String lastKey() {
+    @JsProperty(name = "lastName")
+    public String lastName() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getKey();
         }
@@ -383,7 +385,7 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
-    @JsProperty
+    @JsIgnore
     public boolean isOptional() {
         return optional;
     }
@@ -591,5 +593,19 @@ public final class AddressTemplate implements Iterable<String> {
             }
             return result;
         }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "append")
+    public AddressTemplate jsAppend(Object address) {
+        if (address instanceof String) {
+            return append(((String) address));
+        }
+        else if (address instanceof AddressTemplate) {
+            return append(((AddressTemplate) address));
+        }
+        return this;
     }
 }

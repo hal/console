@@ -82,7 +82,7 @@ public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
         if (formItem != null) {
             if (api.hasSelection()) {
                 ResourceAddress address = HOST_TEMPLATE.append(LOCATION + "=*").resolve(mbuiContext.statementContext());
-                Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+                Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
                 mbuiContext.dispatcher().execute(operation,
                         result -> {
                             String hosts = result.asList()

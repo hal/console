@@ -74,13 +74,15 @@ public class TopologyFunctions {
     private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER, "*");
-    private static final Operation HOSTS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-            ResourceAddress.root())
+    private static final Operation HOSTS_OPERATION = new Operation.Builder(ResourceAddress.root(),
+            READ_CHILDREN_RESOURCES_OPERATION
+    )
             .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
             .param(INCLUDE_RUNTIME, true)
             .build();
-    private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-            ResourceAddress.root())
+    private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(ResourceAddress.root(),
+            READ_CHILDREN_RESOURCES_OPERATION
+    )
             .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
             .param(INCLUDE_RUNTIME, true)
             .build();
@@ -303,11 +305,11 @@ public class TopologyFunctions {
         @Override
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
-            Operation hostOp = new Operation.Builder(READ_RESOURCE_OPERATION, hostAddress)
+            Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            Operation serverConfigsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+            Operation serverConfigsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER_CONFIG)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
@@ -472,7 +474,7 @@ public class TopologyFunctions {
         public void execute(final Control<FunctionContext> control) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
-            Operation serverGroupOp = new Operation.Builder(READ_RESOURCE_OPERATION, serverGroupAddress)
+            Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
@@ -554,7 +556,7 @@ public class TopologyFunctions {
                 // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
                 // The query operation won't fail, instead the unsupported attributes just won't be
                 // part of the response payload (kudos to the guy who implemented the query operation!)
-                Operation operation = new Operation.Builder(QUERY, ALL_SERVERS)
+                Operation operation = new Operation.Builder(ALL_SERVERS, QUERY)
                         .param(SELECT, new ModelNode()
                                 .add(ModelDescriptionConstants.HOST)
                                 .add(LAUNCH_TYPE)
@@ -594,7 +596,7 @@ public class TopologyFunctions {
                 select.add(attribute);
             }
         }
-        return new Operation.Builder(QUERY, ALL_SERVER_CONFIGS)
+        return new Operation.Builder(ALL_SERVER_CONFIGS, QUERY)
                 .param(SELECT, select);
     }
 
@@ -680,12 +682,13 @@ public class TopologyFunctions {
         List<Operation> operations = new ArrayList<>();
         for (Server server : servers) {
             if (server.isStarted()) {
-                operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerAddress())
+                operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
                         .param(ATTRIBUTES_ONLY, true)
                         .param(INCLUDE_RUNTIME, true)
                         .build());
-                operations.add(new Operation.Builder(READ_BOOT_ERRORS,
-                        server.getServerAddress().add(CORE_SERVICE, MANAGEMENT)).build());
+                operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
+                        READ_BOOT_ERRORS
+                ).build());
             }
         }
         return new Composite(operations);

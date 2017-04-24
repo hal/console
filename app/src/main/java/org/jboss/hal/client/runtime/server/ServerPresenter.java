@@ -111,22 +111,22 @@ public class ServerPresenter
     @Override
     protected void reload() {
         ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
-        Operation serverOp = new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
+        Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation interfacesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverAddress)
+        Operation interfacesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, INTERFACE)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation jvmsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverAddress)
+        Operation jvmsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, JVM)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation pathsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverAddress)
+        Operation pathsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, PATH)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation systemPropertiesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverAddress)
+        Operation systemPropertiesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SYSTEM_PROPERTY)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

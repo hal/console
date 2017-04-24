@@ -214,7 +214,7 @@ public class OperationFactory {
                             case INT:
                             case LONG:
                                 if (hasDefault) {
-                                    operations.add(new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                                    operations.add(new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                                             .param(NAME, attributeName(property.getName()))
                                             .param(VALUE, attributeDescription.get(DEFAULT))
                                             .build());
@@ -225,7 +225,7 @@ public class OperationFactory {
                             case OBJECT:
                             case PROPERTY:
                             case STRING:
-                                operations.add(new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+                                operations.add(new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                                         .param(NAME, attributeName(property.getName()))
                                         .build());
                                 break;
@@ -246,7 +246,7 @@ public class OperationFactory {
     }
 
     private Operation undefineAttribute(ResourceAddress address, String name) {
-        return new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+        return new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, attributeName(name))
                 .build();
     }
@@ -259,7 +259,7 @@ public class OperationFactory {
         } else {
             ModelNode valueNode = asValueNode(name, value, resourceDescription);
             if (valueNode != null) {
-                return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                return new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                         .param(NAME, attributeName(name))
                         .param(VALUE, valueNode)
                         .build();

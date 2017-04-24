@@ -118,7 +118,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .appendHtmlConstant("</code>");
         header.setInnerHTML(safeHtml.toSafeHtml().asString());
 
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address.getParent())
+        Operation operation = new Operation.Builder(address.getParent(), READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, node.text)
                 .build();
         dispatcher.execute(operation, result -> {

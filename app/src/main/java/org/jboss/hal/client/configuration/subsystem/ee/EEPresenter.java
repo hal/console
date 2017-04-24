@@ -178,7 +178,7 @@ public class EEPresenter
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.GLOBAL_MODULES),
                 form, (name, globalModule) -> {
             ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(LIST_ADD, address)
+            Operation operation = new Operation.Builder(address, LIST_ADD)
                     .param(NAME, GLOBAL_MODULES)
                     .param(VALUE, globalModule)
                     .build();
@@ -199,7 +199,7 @@ public class EEPresenter
                 resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-                    Operation operation = new Operation.Builder(LIST_REMOVE, address)
+                    Operation operation = new Operation.Builder(address, LIST_REMOVE)
                             .param(NAME, GLOBAL_MODULES)
                             .param(VALUE, globalModule)
                             .build();

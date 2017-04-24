@@ -46,7 +46,7 @@ public class Operation extends ModelNode {
         private Set<String> roles;
 
         @JsIgnore
-        public Builder(final String name, final ResourceAddress address) {
+        public Builder(final ResourceAddress address, final String name) {
             this.address = address;
             this.name = name;
             this.parameter = new ModelNode();
@@ -54,13 +54,13 @@ public class Operation extends ModelNode {
             this.roles = new HashSet<>();
         }
 
-        @JsMethod(name = "booleanParam")
+        @JsIgnore
         public Builder param(String name, boolean value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsMethod(name = "intParam")
+        @JsIgnore
         public Builder param(String name, int value) {
             parameter.get(name).set(value);
             return this;
@@ -78,7 +78,7 @@ public class Operation extends ModelNode {
             return this;
         }
 
-        @JsMethod(name = "stringParam")
+        @JsIgnore
         public Builder param(String name, @NonNls String value) {
             parameter.get(name).set(value);
             return this;
@@ -92,7 +92,7 @@ public class Operation extends ModelNode {
             return this;
         }
 
-        @JsMethod(name = "nodeParam")
+        @JsIgnore
         public Builder param(String name, ModelNode value) {
             parameter.get(name).set(value);
             return this;
@@ -117,6 +117,33 @@ public class Operation extends ModelNode {
 
         public Operation build() {
             return new Operation(name, address, parameter, header, roles);
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+        @JsMethod(name = "param")
+        public Builder jsParam(final String name, final Object value) {
+            if (value instanceof Boolean) {
+                param(name, ((Boolean) value));
+            } else if (value instanceof Integer) {
+                param(name, ((Integer) value));
+            } else if (value instanceof String) {
+                param(name, ((String) value));
+            } else if (value instanceof ModelNode) {
+                param(name, ((ModelNode) value));
+            }
+            return this;
+        }
+
+        @JsMethod(name = "header")
+        public Builder jsHeader(final String name, final Object value) {
+            if (value instanceof Boolean) {
+                header(name, ((Boolean) value));
+            } else if (value instanceof String) {
+                header(name, ((String) value));
+            }
+            return this;
         }
     }
 
@@ -197,11 +224,12 @@ public class Operation extends ModelNode {
         return parameter;
     }
 
-    @JsIgnore
+    @JsProperty
     public ModelNode getHeader() {
         return header;
     }
 
+    @JsIgnore
     public boolean hasParameter() {
         return parameter.isDefined() && !parameter.asList().isEmpty();
     }

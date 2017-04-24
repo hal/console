@@ -50,6 +50,7 @@ import elemental.client.Browser;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
@@ -404,6 +405,7 @@ public class ModelNode implements Cloneable {
      *
      * @return {@code true} if this node's value is defined
      */
+    @JsProperty
     public boolean isDefined() {
         return getType() != ModelType.UNDEFINED;
     }
@@ -1404,6 +1406,7 @@ public class ModelNode implements Cloneable {
     }
 
     @SuppressWarnings("unused")
+    @JsIgnore
     public String toJSONString() {
         return value.toJSONString(false);
     }
@@ -1593,10 +1596,12 @@ public class ModelNode implements Cloneable {
         }
     }
 
+    @JsProperty
     public boolean isFailure() {
         return hasDefined(OUTCOME) && !get(OUTCOME).asString().equals(SUCCESS);
     }
 
+    @JsProperty
     public String getFailureDescription() {
         return hasDefined(FAILURE_DESCRIPTION)
                 ? get(FAILURE_DESCRIPTION).asString()
@@ -1618,6 +1623,11 @@ public class ModelNode implements Cloneable {
 
 
     // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "getJSONString")
+    public String jsGetJSONString() {
+        return toJSONString(true);
+    }
 
     @JsMethod(name = "asProperties")
     public JsArrayOf<Property> jsAsProperties() {

@@ -170,7 +170,7 @@ public class ServerGroupActions {
 
     public void reload(ServerGroup serverGroup) {
         reloadRestart(serverGroup,
-                new Operation.Builder(RELOAD_SERVERS, serverGroup.getAddress()).param(BLOCKING, false).build(),
+                new Operation.Builder(serverGroup.getAddress(), RELOAD_SERVERS).param(BLOCKING, false).build(),
                 Action.RELOAD,
                 resources.messages().reload(serverGroup.getName()),
                 resources.messages().reloadServerGroupQuestion(serverGroup.getName()),
@@ -180,7 +180,7 @@ public class ServerGroupActions {
 
     public void restart(ServerGroup serverGroup) {
         reloadRestart(serverGroup,
-                new Operation.Builder(RESTART_SERVERS, serverGroup.getAddress()).param(BLOCKING, false).build(),
+                new Operation.Builder(serverGroup.getAddress(), RESTART_SERVERS).param(BLOCKING, false).build(),
                 Action.RESTART,
                 resources.messages().restart(serverGroup.getName()),
                 resources.messages().restartServerGroupQuestion(serverGroup.getName()),
@@ -231,8 +231,8 @@ public class ServerGroupActions {
                                 int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
 
                                 prepare(serverGroup, startedServers, Action.SUSPEND);
-                                Operation operation = new Operation.Builder(SUSPEND_SERVERS,
-                                        serverGroup.getAddress())
+                                Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS
+                                )
                                         .param(TIMEOUT, timeout)
                                         .build();
                                 dispatcher.execute(operation,
@@ -272,7 +272,7 @@ public class ServerGroupActions {
         List<Server> suspendedServers = serverGroup.getServers(Server::isSuspended);
         if (!suspendedServers.isEmpty()) {
             prepare(serverGroup, suspendedServers, Action.RESUME);
-            Operation operation = new Operation.Builder(RESUME_SERVERS, serverGroup.getAddress()).build();
+            Operation operation = new Operation.Builder(serverGroup.getAddress(), RESUME_SERVERS).build();
             dispatcher.execute(operation,
                     result -> new TimeoutHandler(dispatcher, timeout(serverGroup, Action.RESUME)).execute(
                             readSuspendState(suspendedServers),
@@ -312,8 +312,8 @@ public class ServerGroupActions {
                                 int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
 
                                 prepare(serverGroup, startedServers, Action.STOP);
-                                Operation operation = new Operation.Builder(STOP_SERVERS,
-                                        serverGroup.getAddress())
+                                Operation operation = new Operation.Builder(serverGroup.getAddress(), STOP_SERVERS
+                                )
                                         .param(TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
@@ -355,7 +355,7 @@ public class ServerGroupActions {
         List<Server> downServers = serverGroup.getServers(server -> server.isStopped() || server.isFailed());
         if (!downServers.isEmpty()) {
             prepare(serverGroup, downServers, Action.START);
-            Operation operation = new Operation.Builder(START_SERVERS, serverGroup.getAddress())
+            Operation operation = new Operation.Builder(serverGroup.getAddress(), START_SERVERS)
                     .param(BLOCKING, false)
                     .build();
             dispatcher.execute(operation,
@@ -444,7 +444,7 @@ public class ServerGroupActions {
 
     private Composite readServerConfigStatus(List<Server> servers) {
         return new Composite(servers.stream()
-                .map(server -> new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerConfigAddress())
+                .map(server -> new Operation.Builder(server.getServerConfigAddress(), READ_ATTRIBUTE_OPERATION)
                         .param(NAME, STATUS)
                         .build())
                 .collect(toList()));
@@ -463,7 +463,7 @@ public class ServerGroupActions {
 
     private Composite readSuspendState(List<Server> servers) {
         return new Composite(servers.stream()
-                .map(server -> new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerAddress())
+                .map(server -> new Operation.Builder(server.getServerAddress(), READ_ATTRIBUTE_OPERATION)
                         .param(NAME, SUSPEND_STATE)
                         .build())
                 .collect(toList()));

@@ -126,26 +126,26 @@ public class HostPresenter
     @Override
     protected void reload() {
         ResourceAddress hostAddress = new ResourceAddress().add(HOST, statementContext.selectedHost());
-        Operation hostOp = new Operation.Builder(READ_RESOURCE_OPERATION, hostAddress)
+        Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation interfacesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation interfacesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, INTERFACE)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation jvmsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation jvmsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, JVM)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation pathsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation pathsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, PATH)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation socketBindingGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation socketBindingGroupsOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation systemPropertiesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+        Operation systemPropertiesOp = new Operation.Builder(hostAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SYSTEM_PROPERTY)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

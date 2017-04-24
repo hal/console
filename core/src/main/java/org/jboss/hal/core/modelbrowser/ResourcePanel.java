@@ -104,7 +104,7 @@ class ResourcePanel implements HasElements {
         Elements.setVisible(empty, !description.hasAttributes());
 
         if (description.hasAttributes()) {
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(operation, result -> {

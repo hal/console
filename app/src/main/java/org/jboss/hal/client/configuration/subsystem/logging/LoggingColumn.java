@@ -67,8 +67,9 @@ public class LoggingColumn extends StaticItemColumn {
                         )
                         .onPreview(new LoggingPreview<StaticItem>(dispatcher, resources, Names.CONFIGURATION,
                                 resources.previews().configurationLoggingConfiguration(),
-                                new Operation.Builder(READ_RESOURCE_OPERATION,
-                                        ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build()))
+                                new Operation.Builder(ROOT_LOGGER_TEMPLATE.resolve(statementContext),
+                                        READ_RESOURCE_OPERATION
+                                ).build()))
                         .build(),
 
                 new StaticItem.Builder(Names.LOGGING_PROFILES)

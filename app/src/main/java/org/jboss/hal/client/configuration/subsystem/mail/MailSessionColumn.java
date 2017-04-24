@@ -74,7 +74,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
 
         setItemsProvider((context, callback) -> {
             ResourceAddress mailAddress = MAIL_TEMPLATE.resolve(statementContext);
-            Operation op = new Operation.Builder(READ_RESOURCE_OPERATION, mailAddress)
+            Operation op = new Operation.Builder(mailAddress, READ_RESOURCE_OPERATION)
                     .param(RECURSIVE, true).build();
 
             dispatcher.execute(op, result -> {
@@ -94,7 +94,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                                 if (modelNode != null) {
                                     ResourceAddress address = AddressTemplates.MAIL_SESSION_TEMPLATE
                                             .resolve(statementContext, name);
-                                    Operation operation = new Operation.Builder(ADD, address)
+                                    Operation operation = new Operation.Builder(address, ADD)
                                             .param(MAIL_SESSION, name)
                                             .payload(modelNode)
                                             .build();

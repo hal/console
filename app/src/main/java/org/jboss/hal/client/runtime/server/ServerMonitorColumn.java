@@ -85,7 +85,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
 
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
                     .build();
             dispatcher.execute(operation, result -> {

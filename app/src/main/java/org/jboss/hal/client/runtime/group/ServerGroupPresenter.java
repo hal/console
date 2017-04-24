@@ -107,14 +107,14 @@ public class ServerGroupPresenter
     @Override
     protected void reload() {
         ResourceAddress serverGroupAddress = AddressTemplate.of(SERVER_GROUP_ADDRESS).resolve(statementContext);
-        Operation serverGroupOp = new Operation.Builder(READ_RESOURCE_OPERATION, serverGroupAddress)
+        Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation jvmsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverGroupAddress)
+        Operation jvmsOp = new Operation.Builder(serverGroupAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, JVM)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation systemPropertiesOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, serverGroupAddress)
+        Operation systemPropertiesOp = new Operation.Builder(serverGroupAddress, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SYSTEM_PROPERTY)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

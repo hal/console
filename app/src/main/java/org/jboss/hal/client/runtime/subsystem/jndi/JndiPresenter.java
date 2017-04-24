@@ -96,7 +96,7 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
     @Override
     protected void reload() {
         ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder("jndi-view", address).build(); //NON-NLS
+        Operation operation = new Operation.Builder(address, "jndi-view").build(); //NON-NLS
         dispatcher.execute(operation, result -> getView().update(result));
     }
 }

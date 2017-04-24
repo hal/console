@@ -145,8 +145,9 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         AddResourceDialog dialog = new AddResourceDialog(
                 mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
                 (name, model) -> {
-                    Operation operation = new Operation.Builder(ADD,
-                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()))
+                    Operation operation = new Operation.Builder(
+                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()), ADD
+                    )
                             .payload(model)
                             .build();
                     mbuiContext.dispatcher().execute(operation, result -> {

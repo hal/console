@@ -101,12 +101,13 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
         });
 
         setItemsProvider((context, callback) -> {
-            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
+            Operation serverGroupsOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER_GROUP)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            Operation deploymentsOp = new Operation.Builder(READ_RESOURCE_OPERATION,
-                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"))
+            Operation deploymentsOp = new Operation.Builder(
+                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION
+            )
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp), (CompositeResult result) -> {

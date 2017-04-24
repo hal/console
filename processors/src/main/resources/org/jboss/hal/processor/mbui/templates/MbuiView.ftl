@@ -101,7 +101,7 @@ final class ${context.subclass} extends ${context.base} {
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter.type}>("${form.selector}", ${form.metadata.name})
                 <#if form.singleton>
             .singleton(
-                () -> new Operation.Builder(READ_RESOURCE_OPERATION, ${form.metadata.name}Template.resolve(mbuiContext.statementContext())).build(),
+                () -> new Operation.Builder(${form.metadata.name}Template.resolve(mbuiContext.statementContext()), READ_RESOURCE_OPERATION).build(),
                 () -> add<#if form.metadata.singleton>Singleton</#if>("${form.selector}", ${form.title}, ${form.metadata.name}Template))
             .prepareRemove(form -> removeSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), form))
                 </#if>

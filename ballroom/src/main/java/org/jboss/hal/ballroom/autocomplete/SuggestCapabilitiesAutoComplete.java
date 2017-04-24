@@ -43,7 +43,7 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
     public SuggestCapabilitiesAutoComplete(final Dispatcher dispatcher, final StatementContext statementContext,
             final String capability, final AddressTemplate template) {
 
-        Operation operation = new Operation.Builder(SUGGEST_CAPABILITIES, CAPABILITY_REGISTRY.resolve(statementContext))
+        Operation operation = new Operation.Builder(CAPABILITY_REGISTRY.resolve(statementContext), SUGGEST_CAPABILITIES)
                 .param(NAME, capability)
                 .param(DEPENDENT_ADDRESS, template.resolve(statementContext))
                 .build();

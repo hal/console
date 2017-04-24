@@ -91,7 +91,7 @@ public class PropertiesOperations {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+            Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
             //noinspection Duplicates
@@ -136,7 +136,7 @@ public class PropertiesOperations {
             add.stream()
                     .map(property -> {
                         ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
-                        Operation.Builder builder = new Operation.Builder(ADD, address);
+                        Operation.Builder builder = new Operation.Builder(address, ADD);
                         if (properties.get(property) != null) {
                             builder.param(VALUE, properties.get(property));
                         }
@@ -147,15 +147,16 @@ public class PropertiesOperations {
                     .filter(property -> properties.get(property) != null)
                     .map(property -> {
                         ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
-                        return new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                        return new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                                 .param(NAME, VALUE)
                                 .param(VALUE, properties.get(property))
                                 .build();
                     })
                     .forEach(operations::add);
             remove.stream()
-                    .map(property -> new Operation.Builder(REMOVE,
-                            new ResourceAddress(address).add(propertiesResource, property))
+                    .map(property -> new Operation.Builder(
+                            new ResourceAddress(address).add(propertiesResource, property), REMOVE
+                    )
                             .build())
                     .forEach(operations::add);
 
