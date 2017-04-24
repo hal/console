@@ -31,11 +31,11 @@ import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.ResponseHeader;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
@@ -119,12 +119,12 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
             if (api.hasSelection()) {
                 ResourceAddress filterRefAddress = HOST_TEMPLATE.append(FILTER_REF + "=" + api.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
-                Operation filterRefOp = new Operation.Builder(READ_RESOURCE_OPERATION, filterRefAddress).build();
+                Operation filterRefOp = new Operation.Builder(filterRefAddress, READ_RESOURCE_OPERATION).build();
                 ResourceAddress locationFilterRefAddress = HOST_TEMPLATE
                         .append(LOCATION + "=*")
                         .append(FILTER_REF + "=" + api.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
-                Operation locationFilterRefOp = new Operation.Builder(READ_RESOURCE_OPERATION, locationFilterRefAddress)
+                Operation locationFilterRefOp = new Operation.Builder(locationFilterRefAddress, READ_RESOURCE_OPERATION)
                         .build();
 
                 mbuiContext.dispatcher().execute(new Composite(filterRefOp, locationFilterRefOp),

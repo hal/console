@@ -49,7 +49,7 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
         AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
         String title = element.getAttributeValue(XmlTags.TITLE);
         if (title == null) {
-            title = new LabelBuilder().label(template.lastKey());
+            title = new LabelBuilder().label(template.lastName());
         }
         DataTableInfo tableInfo = new DataTableInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
                 metadata, title);

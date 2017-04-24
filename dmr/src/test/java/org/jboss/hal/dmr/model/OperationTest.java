@@ -18,6 +18,8 @@ package org.jboss.hal.dmr.model;
 import java.util.Collections;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.junit.Test;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -50,7 +52,7 @@ public class OperationTest {
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");
 
-        Operation operation = new Operation.Builder(ADD, address)
+        Operation operation = new Operation.Builder(address, ADD)
                 .param(JNDI_NAME, "java:/bar")
                 .header("header1", "value1")
                 .build();
@@ -64,7 +66,7 @@ public class OperationTest {
                 .add("subsystem", "datasources")
                 .add("data-source", "foo");
 
-        Operation operation = new Operation.Builder(ADD, address)
+        Operation operation = new Operation.Builder(address, ADD)
                 .param(JNDI_NAME, "java:/bar")
                 .header("header1", "value1")
                 .build();

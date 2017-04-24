@@ -27,7 +27,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -65,8 +65,10 @@ public class LogFileColumn extends FinderColumn<LogFile> {
 
                 .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder("list-log-files", //NON-NLS
-                            AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext)).build();
+                    Operation operation = new Operation.Builder(
+                            AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext), "list-log-files"
+                            //NON-NLS
+                    ).build();
                     dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
                             .map(LogFile::new)
                             .sorted(comparing(LogFile::getFilename))

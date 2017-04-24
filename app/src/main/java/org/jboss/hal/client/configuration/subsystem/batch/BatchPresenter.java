@@ -31,8 +31,8 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -102,10 +102,10 @@ public class BatchPresenter
         crud.readRecursive(BATCH_SUBSYSTEM_TEMPLATE, result -> {
             // @formatter:off
             getView().updateConfiguration(result);
-            getView().updateInMemoryJobRepository(asNamedNodes(failSafePropertyList(result, IN_MEMORY_JOB_REPO_TEMPLATE.lastKey())));
-            getView().updateJdbcJobRepository(asNamedNodes(failSafePropertyList(result, JDBC_JOB_REPO_TEMPLATE.lastKey())));
-            getView().updateThreadFactory(asNamedNodes(failSafePropertyList(result, THREAD_FACTORY_TEMPLATE.lastKey())));
-            getView().updateThreadPool(asNamedNodes(failSafePropertyList(result, THREAD_POOL_TEMPLATE.lastKey())));
+            getView().updateInMemoryJobRepository(asNamedNodes(failSafePropertyList(result, IN_MEMORY_JOB_REPO_TEMPLATE.lastName())));
+            getView().updateJdbcJobRepository(asNamedNodes(failSafePropertyList(result, JDBC_JOB_REPO_TEMPLATE.lastName())));
+            getView().updateThreadFactory(asNamedNodes(failSafePropertyList(result, THREAD_FACTORY_TEMPLATE.lastName())));
+            getView().updateThreadPool(asNamedNodes(failSafePropertyList(result, THREAD_POOL_TEMPLATE.lastName())));
             // @formatter:on
         });
     }

@@ -29,8 +29,8 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -77,9 +77,9 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
                 .onPreview(item -> new LoggingPreview<>(dispatcher, resources,
                         item.getName(), resources.previews().configurationLoggingProfiles(),
-                        new Operation.Builder(READ_RESOURCE_OPERATION,
-                                LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
-                                        .resolve(statementContext, item.getName()))
+                        new Operation.Builder(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                                .resolve(statementContext, item.getName()), READ_RESOURCE_OPERATION
+                        )
                                 .build()))
 
                 .useFirstActionAsBreadcrumbHandler()

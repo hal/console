@@ -38,10 +38,10 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -188,7 +188,7 @@ public class TransactionPresenter
 
     private void switchToUuid() {
         ResourceAddress address = TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-        Operation op = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+        Operation op = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, PROCESS_ID_UUID)
                 .param(VALUE, true)
                 .build();
@@ -209,17 +209,17 @@ public class TransactionPresenter
         Composite composite;
         ResourceAddress address = TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext);
 
-        Operation writeSocketBinding = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+        Operation writeSocketBinding = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, PROCESS_ID_SOCKET_BINDING)
                 .param(VALUE, socketBinding)
                 .build();
 
-        Operation undefineUuid = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+        Operation undefineUuid = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, PROCESS_ID_UUID)
                 .build();
 
         if (maxPorts != null) {
-            Operation writeMaxPorts = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+            Operation writeMaxPorts = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, PROCESS_ID_SOCKET_MAX_PORTS)
                     .param(VALUE, maxPorts)
                     .build();

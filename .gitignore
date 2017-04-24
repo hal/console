@@ -11,3 +11,7 @@ gwt-unitCache
 hs_err*
 out
 target
+.gitignore
+js/.DS_Store
+js/mbui/
+js/mvp/

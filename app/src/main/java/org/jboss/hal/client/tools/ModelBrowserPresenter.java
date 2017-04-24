@@ -25,7 +25,7 @@ import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.SupportsExternalMode;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 

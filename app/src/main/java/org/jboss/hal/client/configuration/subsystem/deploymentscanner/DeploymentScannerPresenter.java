@@ -30,8 +30,8 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -100,6 +100,6 @@ public class DeploymentScannerPresenter
     protected void reload() {
         crud.read(DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE, 2, result ->
                 getView().updateScanners(
-                        asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey()))));
+                        asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastName()))));
     }
 }

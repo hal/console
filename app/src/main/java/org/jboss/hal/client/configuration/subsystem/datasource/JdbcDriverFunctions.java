@@ -31,10 +31,10 @@ import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
@@ -97,7 +97,7 @@ class JdbcDriverFunctions {
         public void execute(final Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
-                Operation operation = new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                Operation operation = new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                 dispatcher.executeInFunction(control, operation, result -> {
                     List<JdbcDriver> drivers = result.asList().stream()
                             .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
@@ -112,7 +112,7 @@ class JdbcDriverFunctions {
                     List<Operation> operations = servers.stream()
                             .map(server -> {
                                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES);
-                                return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                                return new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                             })
                             .collect(toList());
                     dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {

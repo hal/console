@@ -35,11 +35,11 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -102,14 +102,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         ItemsProvider<DataSource> itemsProvider = (context, callback) -> {
             List<Operation> operations = new ArrayList<>();
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                    dataSourceAddress)
+            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
+            )
                     .param(CHILD_TYPE, DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                    dataSourceAddress)
+            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
+            )
                     .param(CHILD_TYPE, XA_DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
@@ -117,7 +117,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             if (!environment.isStandalone()) {
                 ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                         .resolve(statementContext);
-                operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
+                operations.add(new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
                         .param(ATTRIBUTES_ONLY, true)
                         .build());
@@ -255,7 +255,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void testConnection(DataSource dataSource) {
-        Operation operation = new Operation.Builder(TEST_CONNECTION_IN_POOL, dataSourceAddress(dataSource)).build();
+        Operation operation = new Operation.Builder(dataSourceAddress(dataSource), TEST_CONNECTION_IN_POOL).build();
         dispatcher.execute(operation,
                 result -> MessageEvent.fire(eventBus,
                         Message.success(resources.messages().testConnectionSuccess(dataSource.getName()))),
@@ -268,7 +268,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void flush(DataSource dataSource, String flushMode) {
-        Operation operation = new Operation.Builder(flushMode, dataSourceAddress(dataSource)).build();
+        Operation operation = new Operation.Builder(dataSourceAddress(dataSource), flushMode).build();
         dispatcher.execute(operation,
                 result -> {
                     refresh(RESTORE_SELECTION);
@@ -305,7 +305,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     void enableDataSource(DataSource dataSource) {
         ResourceAddress address = dataSourceConfigurationAddress(dataSource);
-        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, ENABLED)
                 .param(VALUE, true)
                 .build();
@@ -317,7 +317,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     void enableStatistics(DataSource dataSource) {
         ResourceAddress address = dataSourceConfigurationAddress(dataSource);
-        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)
                 .build();

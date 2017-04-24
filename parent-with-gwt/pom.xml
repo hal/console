@@ -38,4 +38,22 @@
             <artifactId>gwt-user</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.ltgt.gwt.maven</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
+                        <compilerArg>-generateJsInteropExports</compilerArg>
+                    </compilerArgs>
+                    <moduleName/> <!-- need to be overridden in sub modules -->
+                    <sourceLevel>1.8</sourceLevel>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

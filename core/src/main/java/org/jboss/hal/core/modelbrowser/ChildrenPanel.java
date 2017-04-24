@@ -33,8 +33,8 @@ import org.jboss.hal.ballroom.table.SelectorModifierBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -118,7 +118,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .appendHtmlConstant("</code>");
         header.setInnerHTML(safeHtml.toSafeHtml().asString());
 
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address.getParent())
+        Operation operation = new Operation.Builder(address.getParent(), READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, node.text)
                 .build();
         dispatcher.execute(operation, result -> {

@@ -39,9 +39,9 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -178,7 +178,7 @@ public class EEPresenter
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.GLOBAL_MODULES),
                 form, (name, globalModule) -> {
             ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(LIST_ADD, address)
+            Operation operation = new Operation.Builder(address, LIST_ADD)
                     .param(NAME, GLOBAL_MODULES)
                     .param(VALUE, globalModule)
                     .build();
@@ -199,7 +199,7 @@ public class EEPresenter
                 resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-                    Operation operation = new Operation.Builder(LIST_REMOVE, address)
+                    Operation operation = new Operation.Builder(address, LIST_REMOVE)
                             .param(NAME, GLOBAL_MODULES)
                             .param(VALUE, globalModule)
                             .build();

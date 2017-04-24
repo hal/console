@@ -25,8 +25,8 @@ import elemental.client.Browser;
 import elemental.html.Storage;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

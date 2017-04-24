@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.CompositeResult;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;

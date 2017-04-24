@@ -23,9 +23,9 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Names;
@@ -110,19 +110,19 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         AddressTemplate memoryTmpl = mbean.append("type=memory");
         AddressTemplate threadingTmpl = mbean.append("type=threading");
 
-        Operation osOp = new Operation.Builder(READ_RESOURCE_OPERATION, osTmpl.resolve(statementContext))
+        Operation osOp = new Operation.Builder(osTmpl.resolve(statementContext), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation runtimeOp = new Operation.Builder(READ_RESOURCE_OPERATION, runtimeTmpl.resolve(statementContext))
+        Operation runtimeOp = new Operation.Builder(runtimeTmpl.resolve(statementContext), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation memoryOp = new Operation.Builder(READ_RESOURCE_OPERATION, memoryTmpl.resolve(statementContext))
+        Operation memoryOp = new Operation.Builder(memoryTmpl.resolve(statementContext), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        Operation threadingOp = new Operation.Builder(READ_RESOURCE_OPERATION, threadingTmpl.resolve(statementContext))
+        Operation threadingOp = new Operation.Builder(threadingTmpl.resolve(statementContext), READ_RESOURCE_OPERATION)
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

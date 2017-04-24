@@ -17,8 +17,8 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Deprecation;
+import org.jboss.hal.dmr.Deprecation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;

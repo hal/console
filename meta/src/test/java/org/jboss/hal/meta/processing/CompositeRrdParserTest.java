@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Test;
@@ -71,8 +71,9 @@ public class CompositeRrdParserTest {
     @Test
     public void parseFlat() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
-                .map(template -> new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION,
-                        AddressTemplate.of(template).resolve(StatementContext.NOOP)).build())
+                .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
+                        READ_RESOURCE_DESCRIPTION_OPERATION
+                ).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 
@@ -86,8 +87,9 @@ public class CompositeRrdParserTest {
     @Test
     public void parseRecursive() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
-                .map(template -> new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION,
-                        AddressTemplate.of(template).resolve(StatementContext.NOOP)).param(RECURSIVE, true).build())
+                .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
+                        READ_RESOURCE_DESCRIPTION_OPERATION
+                ).param(RECURSIVE, true).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 

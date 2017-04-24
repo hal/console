@@ -39,9 +39,9 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -171,7 +171,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
                 .unboundFormItem(new NameItem())
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.constants().cloneProfile(), form, (to, model) -> {
-            Operation operation = new Operation.Builder(CLONE, new ResourceAddress().add(PROFILE, from))
+            Operation operation = new Operation.Builder(new ResourceAddress().add(PROFILE, from), CLONE)
                     .param(TO_PROFILE, to)
                     .build();
             dispatcher.execute(operation, result -> {

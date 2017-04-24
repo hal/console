@@ -99,7 +99,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         boolean includeRuntime;
         boolean hideDeprecated;
         boolean singleton;
-        Supplier<org.jboss.hal.dmr.model.Operation> ping;
+        Supplier<org.jboss.hal.dmr.Operation> ping;
         EmptyState emptyState;
         String attributePath;
         SaveCallback<T> saveCallback;
@@ -216,7 +216,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
          * which will trigger the specified add action.
          */
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.model.Operation> ping, final Callback addAction) {
+        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping, final Callback addAction) {
             EmptyState emptyState = new EmptyState.Builder(CONSTANTS.noResource())
                     .description(MESSAGES.noResource())
                     .primaryAction(CONSTANTS.add(), addAction, Constraint.executable(metadata.getTemplate(), ADD))
@@ -236,7 +236,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
          * to it.
          */
-        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.model.Operation> ping,
+        public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping,
                 final EmptyState emptyState) {
             this.singleton = true;
             this.ping = ping;
@@ -358,7 +358,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     private final boolean addOnly;
     private final boolean singleton;
-    private final Supplier<org.jboss.hal.dmr.model.Operation> ping;
+    private final Supplier<org.jboss.hal.dmr.Operation> ping;
     private final Map<String, ModelNode> attributeMetadata;
     private final ResourceDescription resourceDescription;
     private final String attributePath;

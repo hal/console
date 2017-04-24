@@ -40,10 +40,10 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -93,13 +93,13 @@ class DeploymentFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation contentOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
+            Operation contentOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             ResourceAddress address = new ResourceAddress()
                     .add(SERVER_GROUP, serverGroup)
                     .add(DEPLOYMENT, "*");
-            Operation deploymentsOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            Operation deploymentsOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
 
@@ -166,7 +166,7 @@ class DeploymentFunctions {
                     // read a single deployment
                     ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup)
                             .add(DEPLOYMENT, deployment);
-                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                    Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.executeInFunction(control, operation, result -> {
@@ -179,7 +179,7 @@ class DeploymentFunctions {
                 } else {
                     // read all deployments
                     ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -227,7 +227,7 @@ class DeploymentFunctions {
                 ResourceAddress address = new ResourceAddress()
                         .add(SERVER_GROUP, serverGroup)
                         .add(DEPLOYMENT, name);
-                Operation operation = new Operation.Builder(ADD, address)
+                Operation operation = new Operation.Builder(address, ADD)
                         .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, false)
                         .build();
@@ -266,8 +266,9 @@ class DeploymentFunctions {
                         !serverGroupDeployments.isEmpty() && !runningServers.isEmpty()) {
 
                     Server referenceServer = runningServers.get(0);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            referenceServer.getServerAddress())
+                    Operation operation = new Operation.Builder(referenceServer.getServerAddress(),
+                            READ_CHILDREN_RESOURCES_OPERATION
+                    )
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE, true)
@@ -306,7 +307,7 @@ class DeploymentFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
+            Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> {
@@ -362,12 +363,12 @@ class DeploymentFunctions {
             }
 
             if (replace) {
-                builder = new Operation.Builder(FULL_REPLACE_DEPLOYMENT, ResourceAddress.root()) //NON-NLS
+                builder = new Operation.Builder(ResourceAddress.root(), FULL_REPLACE_DEPLOYMENT) //NON-NLS
                         .param(NAME, name)
                         .param(RUNTIME_NAME, runtimeName);
                 // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained
             } else {
-                builder = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+                builder = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                         .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, enabled);
             }
@@ -429,7 +430,7 @@ class DeploymentFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+            Operation operation = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                     .payload(payload)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> control.proceed());

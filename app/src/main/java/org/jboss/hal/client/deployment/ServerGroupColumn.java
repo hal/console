@@ -29,10 +29,10 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -101,12 +101,13 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
         });
 
         setItemsProvider((context, callback) -> {
-            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.root())
+            Operation serverGroupsOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER_GROUP)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            Operation deploymentsOp = new Operation.Builder(READ_RESOURCE_OPERATION,
-                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"))
+            Operation deploymentsOp = new Operation.Builder(
+                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION
+            )
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp), (CompositeResult result) -> {

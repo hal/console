@@ -28,10 +28,10 @@ import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -140,7 +140,7 @@ public class DataSourceWizard {
                         ResourceAddress address = dataSource.isXa()
                                 ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
                                 : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
-                        Operation operation = new Operation.Builder(REMOVE, address).build();
+                        Operation operation = new Operation.Builder(address, REMOVE).build();
                         dispatcher.execute(operation,
                                 result -> column.refresh(RESTORE_SELECTION),
                                 (op, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
@@ -154,7 +154,7 @@ public class DataSourceWizard {
                     ResourceAddress address = template.resolve(statementContext, dataSource.getName());
                     Metadata metadata = metadataRegistry.lookup(template);
                     if (!context.isCreated()) {
-                        Operation operation = new Operation.Builder(ADD, address).payload(dataSource).build();
+                        Operation operation = new Operation.Builder(address, ADD).payload(dataSource).build();
                         dispatcher.execute(operation,
                                 result -> success(dataSource),
                                 (op, failure) -> wizard.showError(resources.constants().operationFailed(),

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.meta;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * Abstract registry which uses the specified statement context to resolve the address template.

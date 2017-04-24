@@ -17,7 +17,7 @@ package org.jboss.hal.dmr.macro;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 
 /**
  * @author Harald Pehl

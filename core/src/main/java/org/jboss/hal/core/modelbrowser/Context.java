@@ -17,7 +17,7 @@ package org.jboss.hal.core.modelbrowser;
 
 import java.util.Set;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * @author Harald Pehl

@@ -17,6 +17,9 @@ package org.jboss.hal.config;
 
 import java.util.List;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.config.semver.Version;
 
 /**
@@ -24,13 +27,16 @@ import org.jboss.hal.config.semver.Version;
  * An instance of this interface is generated using deferred binding.
  * Most of the information is updated by the bootstrap code of the console.
  */
+@JsType
 public interface Environment {
 
     /**
      * The HAL version taken form the Maven POM.
      */
+    @JsProperty
     Version getHalVersion();
 
+    @JsIgnore
     Build getHalBuild();
 
     /**
@@ -38,33 +44,47 @@ public interface Environment {
      *
      * @return the list of supported locales
      */
+    @JsIgnore
     List<String> getLocales();
 
+    @JsProperty
     InstanceInfo getInstanceInfo();
 
+    @JsIgnore
     void setInstanceInfo(String productName, String productVersion,
             String releaseName, String releaseVersion,
             String serverName);
 
+    @JsProperty
     OperationMode getOperationMode();
 
+    @JsProperty
     boolean isStandalone();
 
+    @JsIgnore
     void setOperationMode(OperationMode operationMode);
 
+    @JsProperty
     String getDomainController();
 
+    @JsIgnore
     void setDomainController(String domainController);
 
+    @JsProperty
     Version getManagementVersion();
 
+    @JsIgnore
     void setManagementVersion(Version version);
 
+    @JsProperty
     AccessControlProvider getAccessControlProvider();
 
+    @JsIgnore
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
+    @JsProperty
     boolean isSingleSignOn();
 
+    @JsProperty
     Roles getRoles();
 }

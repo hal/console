@@ -40,9 +40,9 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.ResponseHeader;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -179,7 +179,7 @@ public class FilterPresenter
                 resources.messages().removeConfirmationTitle(Names.RESPONSE_HEADER),
                 resources.messages().removeConfirmationQuestion(name),
                 () -> {
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    Operation operation = new Operation.Builder(address, REMOVE).build();
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(getEventBus(), Message.success(
                                 resources.messages().removeResourceSuccess(Names.RESPONSE_HEADER, name)));

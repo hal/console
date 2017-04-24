@@ -43,8 +43,8 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -171,7 +171,7 @@ public class ServerGroupDeploymentPresenter extends
         ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();
-        Operation operation = new Operation.Builder(DEPLOY, address).build();
+        Operation operation = new Operation.Builder(address, DEPLOY).build();
         dispatcher.execute(operation, result -> {
             progress.get().finish();
             reload();

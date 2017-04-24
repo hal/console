@@ -17,7 +17,7 @@ package org.jboss.hal.dmr.macro;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 
 /**
  * @author Harald Pehl

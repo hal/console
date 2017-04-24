@@ -28,9 +28,9 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -85,8 +85,9 @@ class HandlerFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION,
-                    AUDIT_LOG_TEMPLATE.resolve(statementContext))
+            Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
+                    READ_CHILDREN_NAMES_OPERATION
+            )
                     .param(CHILD_TYPE, HANDLER)
                     .build();
             //noinspection Duplicates
@@ -126,12 +127,14 @@ class HandlerFunctions {
 
             List<Operation> operations = new ArrayList<>();
             add.stream()
-                    .map(handler -> new Operation.Builder(ADD,
-                            AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler)).build())
+                    .map(handler -> new Operation.Builder(AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler),
+                            ADD
+                    ).build())
                     .forEach(operations::add);
             remove.stream()
-                    .map(handler -> new Operation.Builder(REMOVE,
-                            AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler)).build())
+                    .map(handler -> new Operation.Builder(AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler),
+                            REMOVE
+                    ).build())
                     .forEach(operations::add);
             Composite composite = new Composite(operations);
             if (composite.isEmpty()) {

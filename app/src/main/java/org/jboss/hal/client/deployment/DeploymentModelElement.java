@@ -23,7 +23,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 

@@ -64,6 +64,6 @@ enum Cache {
     }
 
     String resource() {
-        return template.lastKey();
+        return template.lastName();
     }
 }

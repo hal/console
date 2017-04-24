@@ -42,9 +42,9 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -230,7 +230,7 @@ public class ServerPresenter
 
     Operation hostSettingOperation(final HostSetting hostSetting) {
         ResourceAddress address = SELECTED_HOST_TEMPLATE.append(hostSetting.templateSuffix()).resolve(statementContext);
-        return new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        return new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
     }
 
     void addHostSetting(final HostSetting hostSetting) {

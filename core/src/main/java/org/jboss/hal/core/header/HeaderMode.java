@@ -18,7 +18,7 @@ package org.jboss.hal.core.header;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Optional;
 import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 
 /**
  * Payload for the {@link HeaderModeEvent}. The event is fired by presenters to change the state of the header.

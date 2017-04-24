@@ -13,31 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
+@JsType
 public class NamedNode extends ModelNode {
 
     private final String name;
     private final ModelNode node;
 
+    @JsIgnore
     public NamedNode(final ModelNode node) {
         this(node.hasDefined(NAME) ? node.get(NAME).asString() : ModelDescriptionConstants.UNDEFINED + "_" + System
                 .currentTimeMillis(), node);
     }
 
+    @JsIgnore
     public NamedNode(final Property property) {
         this(property.getName(), property.getValue());
     }
 
+    @JsIgnore
     public NamedNode(final String name, final ModelNode node) {
         this.name = name;
         this.node = node;
@@ -59,6 +64,7 @@ public class NamedNode extends ModelNode {
     }
 
     @Override
+    @JsIgnore
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();
@@ -71,20 +77,32 @@ public class NamedNode extends ModelNode {
         return "NamedNode(" + name + ")";
     }
 
+    @JsProperty
     public String getName() {
         return get(NAME).asString();
     }
 
+    @JsProperty
     public void setName(final String name) {
         get(NAME).set(name);
     }
 
+    @JsProperty(name = "modelNode")
     public ModelNode asModelNode() {
         return node;
     }
 
+    @JsProperty(name = "modelNode")
     public void update(ModelNode node) {
         set(node);
         setName(name); // restore name!
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "create")
+    public static NamedNode jsCreate(final String name, final ModelNode node) {
+        return new NamedNode(name, node);
     }
 }

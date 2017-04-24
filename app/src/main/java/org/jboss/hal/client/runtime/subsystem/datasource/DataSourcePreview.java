@@ -32,10 +32,10 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -167,20 +167,20 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         List<Operation> operations = new ArrayList<>();
 
         if (environment.isStandalone()) {
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
+            operations.add(new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .build());
         } else {
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, address)
+            operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(ATTRIBUTES_ONLY, true)
                     .build());
         }
         if (ds == null) {
-            operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, dataSourceAddress)
+            operations.add(new Operation.Builder(dataSourceAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());

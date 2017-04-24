@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.meta.security;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -24,6 +27,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
+@JsType
 @SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {
 
@@ -87,15 +91,17 @@ public class SecurityContext extends ModelNode {
         }
     };
 
-
+    @JsIgnore
     public SecurityContext(final ModelNode payload) {
         set(payload);
     }
 
+    @JsProperty
     public boolean isReadable() {
         return get(READ).asBoolean();
     }
 
+    @JsProperty
     public boolean isWritable() {
         return get(WRITE).asBoolean();
     }

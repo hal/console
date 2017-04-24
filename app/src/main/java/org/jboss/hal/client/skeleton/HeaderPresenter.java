@@ -63,7 +63,7 @@ import org.jboss.hal.dmr.dispatch.ProcessStateEvent;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent.ProcessStateHandler;
 import org.jboss.hal.dmr.dispatch.ServerState;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;

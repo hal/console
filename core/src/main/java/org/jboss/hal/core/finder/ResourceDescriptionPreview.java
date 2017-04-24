@@ -20,7 +20,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 

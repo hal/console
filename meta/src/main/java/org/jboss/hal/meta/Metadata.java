@@ -18,11 +18,17 @@ package org.jboss.hal.meta;
 import java.util.function.Supplier;
 
 import com.google.gwt.resources.client.TextResource;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
@@ -32,20 +38,25 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
  *
  * @author Harald Pehl
  */
+@JsType
 public class Metadata {
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Metadata.class);
+
+    @JsIgnore
     public static Metadata empty() {
         return new Metadata(ROOT, () -> RWX, new ResourceDescription(new ModelNode()),
                 new Capabilities(null));
     }
 
+    @JsIgnore
     public static Metadata staticDescription(TextResource description) {
         return Metadata.staticDescription(StaticResourceDescription.from(description));
     }
 
+    @JsIgnore
     public static Metadata staticDescription(ResourceDescription description) {
-        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description),
-                new Capabilities(null));
+        return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(null));
     }
 
     private final AddressTemplate template;
@@ -53,6 +64,7 @@ public class Metadata {
     private final ResourceDescription description;
     private final Capabilities capabilities;
 
+    @JsIgnore
     public Metadata(final AddressTemplate template, final Supplier<SecurityContext> securityContext,
             final ResourceDescription description, final Capabilities capabilities) {
         this.template = template;
@@ -61,22 +73,32 @@ public class Metadata {
         this.capabilities = capabilities;
     }
 
+    @JsIgnore
     public Metadata customResourceDescription(ResourceDescription resourceDescription) {
         return new Metadata(template, securityContext, resourceDescription, capabilities);
     }
 
+    @JsProperty
     public AddressTemplate getTemplate() {
         return template;
     }
 
+    @JsProperty
     public SecurityContext getSecurityContext() {
-        return securityContext.get(); // TODO Surround with try/catch?
+        if (securityContext != null && securityContext.get() != null) {
+            return securityContext.get();
+        } else {
+            logger.error("No security context found for {}. Return SecurityContext.READ_ONLY", template);
+            return SecurityContext.READ_ONLY;
+        }
     }
 
+    @JsProperty
     public ResourceDescription getDescription() {
         return description;
     }
 
+    @JsIgnore
     public Capabilities getCapabilities() {
         return capabilities;
     }

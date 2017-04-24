@@ -35,7 +35,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -196,7 +196,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     }
 
     private Element buildChildPanel(String baseId, AddressTemplate template, String title) {
-        String resource = template.lastKey();
+        String resource = template.lastName();
         Metadata metadata = metadataRegistry.lookup(template);
 
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)

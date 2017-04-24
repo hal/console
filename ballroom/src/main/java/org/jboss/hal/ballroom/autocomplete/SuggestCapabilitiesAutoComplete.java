@@ -21,7 +21,7 @@ import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
@@ -43,7 +43,7 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
     public SuggestCapabilitiesAutoComplete(final Dispatcher dispatcher, final StatementContext statementContext,
             final String capability, final AddressTemplate template) {
 
-        Operation operation = new Operation.Builder(SUGGEST_CAPABILITIES, CAPABILITY_REGISTRY.resolve(statementContext))
+        Operation operation = new Operation.Builder(CAPABILITY_REGISTRY.resolve(statementContext), SUGGEST_CAPABILITIES)
                 .param(NAME, capability)
                 .param(DEPENDENT_ADDRESS, template.resolve(statementContext))
                 .build();

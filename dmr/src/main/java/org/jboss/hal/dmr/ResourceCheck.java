@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.model;
+package org.jboss.hal.dmr;
 
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
@@ -40,7 +40,7 @@ public class ResourceCheck implements Function<FunctionContext> {
 
     @Override
     public void execute(final Control<FunctionContext> control) {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         dispatcher.executeInFunction(control, operation,
                 result -> {
                     control.getContext().push(200);
