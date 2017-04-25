@@ -24,6 +24,7 @@ import elemental.html.TableElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
@@ -126,12 +127,16 @@ public class DataTable<T> implements Table<T> {
      *
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
-    protected Api<T> api() {
+    Api<T> api() {
         if (api == null) {
             throw new IllegalStateException(
                     "DataTable('" + id + "') is not attached. Call DataTable.attach() before using any of the API methods!");
         }
         return api;
+    }
+
+    protected JQuery buttonElement(int index) {
+        return api().button(index).node();
     }
 
 

@@ -39,7 +39,7 @@ import static org.jboss.hal.resources.CSS.columnAction;
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
-public class Api<T> {
+class Api<T> {
 
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
@@ -63,23 +63,23 @@ public class Api<T> {
 
     // ------------------------------------------------------ API a-z
 
-    public native Api<T> button(int index);
+    native Api<T> button(int index);
 
-    public native Api<T> data();
+    native Api<T> data();
 
-    public native Api<T> draw(String paging);
+    native Api<T> draw(String paging);
 
     /**
      * Disables or enables the button selected with {@link #button(int)}
      */
-    public native Api<T> enable(boolean enable);
+    native Api<T> enable(boolean enable);
 
-    public native Options<T> init();
+    native Options<T> init();
 
     /**
      * Returns the jQuery object for the button selected with {@link #button(int)}
      */
-    public native JQuery node();
+    native JQuery node();
 
     /**
      * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
@@ -87,39 +87,39 @@ public class Api<T> {
      * @param event    must be "select" or "deselect"
      * @param callback the select callback
      */
-    public native Api<T> on(String event, SelectCallback callback);
+    native Api<T> on(String event, SelectCallback callback);
 
-    public native Api<T> off(String event);
+    native Api<T> off(String event);
 
     /**
      * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
      * to get the actual data.
      */
-    public native Api<T> rows(SelectorModifier selectorModifier);
+    native Api<T> rows(SelectorModifier selectorModifier);
 
     /**
      * Select rows by tr element. Chain the {@link #data()} to get the actual data.
      */
-    public native Api<T> rows(Element tr);
+    native Api<T> rows(Element tr);
 
     /**
      * Select rows by using a function. Chain the {@link #data()} to get the actual data.
      */
-    public native Api<T> rows(RowSelection<T> selection);
+    native Api<T> rows(RowSelection<T> selection);
 
     /**
      * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(Element)} or {@link
      * #rows(SelectorModifier)} selector methods.
      */
-    public native Api<T> select();
+    native Api<T> select();
 
-    public native JsArrayOf<T> toArray();
+    native JsArrayOf<T> toArray();
 
 
     // ------------------------------------------------------ overlay methods
 
     @JsOverlay
-    public final Api<T> refresh(RefreshMode mode) {
+    final Api<T> refresh(RefreshMode mode) {
         Api<T> api = draw(mode.mode());
         Options<T> options = api.init();
         ColumnActions<T> columnActions = options.columnActions;
@@ -150,7 +150,7 @@ public class Api<T> {
     }
 
     @JsOverlay
-    public final T selectedRow() {
+    final T selectedRow() {
         List<T> rows = selectedRows();
         if (rows.isEmpty()) {
             return null;
@@ -159,7 +159,7 @@ public class Api<T> {
     }
 
     @JsOverlay
-    public final List<T> selectedRows() {
+    final List<T> selectedRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
         JsArrayOf<T> selection = rows(selectorModifier).data().toArray();
         if (selection == null || selection.isEmpty()) {

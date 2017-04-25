@@ -119,7 +119,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         if (options.buttons.buttons != null) {
             for (int i = 0; i < options.buttons.buttons.length; i++) {
                 if (options.buttons.buttons[i].constraint != null) {
-                    api().button(i).node().attr(data(UIConstants.CONSTRAINT), options.buttons.buttons[i].constraint);
+                    buttonElement(i).attr(data(UIConstants.CONSTRAINT), options.buttons.buttons[i].constraint);
                 }
             }
         }

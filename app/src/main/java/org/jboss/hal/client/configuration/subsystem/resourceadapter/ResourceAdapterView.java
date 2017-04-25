@@ -22,7 +22,6 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.mbui.MbuiContext;
