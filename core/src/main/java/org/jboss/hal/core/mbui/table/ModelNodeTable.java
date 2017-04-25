@@ -36,7 +36,6 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.RefreshMode;
-import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
@@ -127,9 +126,9 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
 
         @JsFunction
-        public interface NameFunction<T> {
+        public interface NameProvider {
 
-            String name(Table<T> table);
+            String name();
         }
 
 
@@ -144,11 +143,11 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         @JsMethod(name = "remove")
-        public Builder<T> jsRemove(final String type, final Object template, final NameFunction<T> nameFunction,
+        public Builder<T> jsRemove(final String type, final Object template, final NameProvider nameProvider,
                 final JsCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
-            Button<T> button = buttonFactory.remove(type, jsTemplate("remove", template), nameFunction::name,
-                    callback::execute);
+            Button<T> button = buttonFactory.remove(type, jsTemplate("remove", template),
+                    table -> nameProvider.name(), callback::execute);
             return button(button);
         }
 
@@ -260,5 +259,20 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     @JsProperty(name = "element")
     public JsElement jsElement() {
         return (JsElement) asElement();
+    }
+
+    @JsProperty(name = "rows")
+    public JsArrayOf<T> jsRows() {
+        return JsHelper.asJsArray(getRows());
+    }
+
+    @JsProperty(name = "selectedRows")
+    public JsArrayOf<T> jsSelectedRows() {
+        return JsHelper.asJsArray(selectedRows());
+    }
+
+    @JsMethod(name = "update")
+    public void jsUpdate(JsArrayOf<T> rows) {
+        update(JsHelper.asList(rows));
     }
 }

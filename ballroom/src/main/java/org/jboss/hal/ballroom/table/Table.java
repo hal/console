@@ -63,6 +63,7 @@ public interface Table<T> extends IsElement, Attachable {
 
     void clear();
 
+    @JsIgnore
     List<T> getRows();
 
     void onSelectionChange(SelectionChangeHandler<T> handler);
@@ -82,6 +83,7 @@ public interface Table<T> extends IsElement, Attachable {
     @JsIgnore
     void select(final T data, final Function<T, String> identifier);
 
+    @JsIgnore
     void update(final Iterable<T> data);
 
     @JsIgnore
