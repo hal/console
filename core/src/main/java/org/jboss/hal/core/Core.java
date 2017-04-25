@@ -23,8 +23,9 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.User;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -56,7 +57,7 @@ public class Core {
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
-    private final User user;
+    private final TableButtonFactory tableButtonFactory;
 
     @Inject
     @JsIgnore
@@ -66,14 +67,14 @@ public class Core {
             final EventBus eventBus,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final User user) {
+            final TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.eventBus = eventBus;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
-        this.user = user;
+        this.tableButtonFactory = tableButtonFactory;
     }
 
     @JsProperty(name = "crud")
@@ -106,6 +107,11 @@ public class Core {
         return statementContext;
     }
 
+    @JsIgnore
+    public TableButtonFactory tableButtonFactory() {
+        return tableButtonFactory;
+    }
+
 
     // ------------------------------------------------------ JS methods
 
@@ -130,8 +136,15 @@ public class Core {
         return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
     }
 
-    // @JsMethod(name = "table")
-    // public
+    @JsMethod(name = "table")
+    public ModelNodeTable.Builder<ModelNode> jsTable(final Object meta) {
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB_SUFFIX), jsMetadata("table", meta));
+    }
+
+    @JsMethod(name = "namedTable")
+    public ModelNodeTable.Builder<NamedNode> jsNamedTable(final Object meta) {
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
+    }
 
     private Metadata jsMetadata(@NonNls String method, Object meta) {
         if (meta instanceof String) {

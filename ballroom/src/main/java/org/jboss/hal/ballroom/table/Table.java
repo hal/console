@@ -18,6 +18,10 @@ package org.jboss.hal.ballroom.table;
 import java.util.List;
 import java.util.function.Function;
 
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -25,6 +29,7 @@ import org.jboss.hal.ballroom.form.Form;
 /**
  * @author Harald Pehl
  */
+@JsType(namespace = "ui")
 public interface Table<T> extends IsElement, Attachable {
 
     /**
@@ -32,6 +37,7 @@ public interface Table<T> extends IsElement, Attachable {
      *
      * @param <T> the row type
      */
+    @JsFunction
     @FunctionalInterface
     interface SelectionChangeHandler<T> {
 
@@ -52,6 +58,7 @@ public interface Table<T> extends IsElement, Attachable {
 
     void bindForm(final Form<T> form);
 
+    @JsIgnore
     void bindForms(final Iterable<Form<T>> forms);
 
     void clear();
@@ -64,19 +71,25 @@ public interface Table<T> extends IsElement, Attachable {
         return !selectedRows().isEmpty();
     }
 
+    @JsProperty(name = "selectedRow")
     T selectedRow();
 
+    @JsIgnore
     List<T> selectedRows();
 
     void select(final T data);
 
+    @JsIgnore
     void select(final T data, final Function<T, String> identifier);
 
     void update(final Iterable<T> data);
 
+    @JsIgnore
     void update(final Iterable<T> data, final RefreshMode mode);
 
+    @JsIgnore
     void update(final Iterable<T> data, final Function<T, String> identifier);
 
+    @JsIgnore
     void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier);
 }

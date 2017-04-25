@@ -42,7 +42,7 @@ public final class JsHelper {
             }
             return list;
         }
-        return new ArrayList<>();
+        return new ArrayList<>(); // Do not replace with Collections.emptyList()!
     }
 
     public static <T> JsArrayOf<T> asJsArray(List<T> list) {

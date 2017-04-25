@@ -37,6 +37,15 @@ public class Button<T> {
     public enum Scope {
         SELECTED("selected"), SELECTED_SINGLE("selectedSingle");
 
+        public static Scope fromScope(final String scope) {
+            if (SELECTED.selector().equals(scope)) {
+                return SELECTED;
+            } else if (SELECTED_SINGLE.selector().equals(scope)) {
+                return SELECTED_SINGLE;
+            }
+            throw new IllegalArgumentException("Invalid scope: " + scope);
+        }
+
         private final String selector;
 
         Scope(final String selector) {

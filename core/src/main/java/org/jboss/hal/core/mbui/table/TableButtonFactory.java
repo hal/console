@@ -23,6 +23,7 @@ import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Button.ActionHandler;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
@@ -55,13 +56,12 @@ public class TableButtonFactory {
         return button;
     }
 
-    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            CrudOperations.AddCallback callback) {
+    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template, AddCallback callback) {
         return add(id, type, template, Collections.emptyList(), callback);
     }
 
     public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            Iterable<String> attributes, CrudOperations.AddCallback callback) {
+            Iterable<String> attributes, AddCallback callback) {
         Button<T> button = new Button<>();
         button.text = resources.constants().add();
         button.action = (event, table) -> crud.add(id, type, template, attributes, callback);
