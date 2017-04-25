@@ -26,17 +26,14 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -59,12 +56,12 @@ import static org.jboss.hal.resources.CSS.columnAction;
 class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final Cache cache;
-    private final NamedNodeTable<NamedNode> table;
+    private final org.jboss.hal.ballroom.table.Table<NamedNode> table;
     private final Form<NamedNode> form;
     private final Map<Component, Form<ModelNode>> components;
     private final StoreElement storeElement;
     private final Pages pages;
-    private NamedNodeTable<NamedNode> backupTable;
+    private org.jboss.hal.ballroom.table.Table<NamedNode> backupTable;
     private Form<NamedNode> backupForm;
     private CacheContainerPresenter presenter;
 
@@ -74,10 +71,11 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         this.cache = cache;
 
         Metadata metadata = metadataRegistry.lookup(cache.template);
-        ModelNodeTable.Builder<NamedNode> builder = new NamedNodeTable.Builder<>(metadata)
-                .button(tableButtonFactory.add(cache.template, (event, api) -> presenter.addCache(cache)))
+        ModelNodeTable.Builder<NamedNode> builder = new ModelNodeTable.Builder<NamedNode>(
+                Ids.build(cache.baseId, Ids.TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(cache.template, (event, table) -> presenter.addCache(cache)))
                 .button(tableButtonFactory.remove(cache.template,
-                        (event, api) -> presenter.removeCache(cache, api.selectedRow().getName())))
+                        (event, table) -> presenter.removeCache(cache, table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName());
         if (cache != LOCAL) {
             builder.column(MODE);
@@ -115,7 +113,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 presenter.showCacheStore();
             });
         }
-        table = new NamedNodeTable<>(Ids.build(cache.baseId, Ids.TABLE_SUFFIX), metadata, builder.build());
+        table = builder.build();
 
         Tabs tabs = new Tabs();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, Ids.FORM_SUFFIX), metadata)
@@ -162,14 +160,12 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             AddressTemplate backupTemplate = cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*");
             Metadata backupMeta = metadataRegistry.lookup(backupTemplate);
 
-            Options<NamedNode> backupOptions = new NamedNodeTable.Builder<>(backupMeta)
-                    .button(tableButtonFactory.add(backupTemplate, (event, api) -> presenter.addCacheBackup()))
+            backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX), backupMeta)
+                    .button(tableButtonFactory.add(backupTemplate, (event, table) -> presenter.addCacheBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
-                            (event, api) -> presenter.removeCacheBackup(api.selectedRow().getName())))
+                            (event, table) -> presenter.removeCacheBackup(table.selectedRow().getName())))
                     .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                     .build();
-            backupTable = new NamedNodeTable<>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),
-                    backupMeta, backupOptions);
 
             backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.FORM_SUFFIX),
                     backupMeta)
@@ -212,9 +208,9 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             backupTable.bindForm(backupForm);
         }
 
-        table.api().onSelectionChange((Api<NamedNode> api) -> {
-            if (api.hasSelection()) {
-                NamedNode selectedCache = api.selectedRow();
+        table.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                NamedNode selectedCache = t.selectedRow();
                 presenter.selectCache(cache, selectedCache.getName());
                 form.view(selectedCache);
                 components.forEach((component, form) -> {

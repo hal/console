@@ -28,9 +28,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 
 import static org.jboss.hal.ballroom.JsHelper.asList;
-import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
-import static org.jboss.hal.ballroom.table.DataTable.ROW;
-import static org.jboss.hal.ballroom.table.DataTable.SELECT;
 import static org.jboss.hal.resources.CSS.columnAction;
 
 /**
@@ -120,47 +117,6 @@ public class Api<T> {
 
 
     // ------------------------------------------------------ overlay methods
-
-    @JsOverlay
-    public final boolean hasSelection() {
-        return !selectedRows().isEmpty();
-    }
-
-    @JsOverlay
-    @SuppressWarnings("Convert2Lambda")
-    public final Api<T> onSelect(SelectionHandler<T> handler) {
-        on(SELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelect(api, api.selectedRow());
-                }
-            }
-        });
-        return this;
-    }
-
-    @JsOverlay
-    @SuppressWarnings("Convert2Lambda")
-    public final Api<T> onSelectionChange(SelectionChangeHandler<T> handler) {
-        on(SELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelectionChanged(api);
-                }
-            }
-        });
-        on(DESELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelectionChanged(api);
-                }
-            }
-        });
-        return this;
-    }
 
     @JsOverlay
     public final Api<T> refresh(RefreshMode mode) {

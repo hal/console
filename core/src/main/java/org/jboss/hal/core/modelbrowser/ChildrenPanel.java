@@ -23,24 +23,21 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
-import org.jboss.hal.ballroom.table.SelectorModifier;
-import org.jboss.hal.ballroom.table.SelectorModifierBuilder;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.table.SelectorModifier.Page.all;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -53,17 +50,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 class ChildrenPanel implements HasElements, Attachable {
 
     private static final String HEADER_ELEMENT = "headerElement";
-    private static final String VIEW_RESOURCE_DATA = "resource";
 
-    private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
     private final Elements.Builder builder;
     private final Element header;
-    private final DataTable<String> table;
+    private final Table<String> table;
     private Node<Context> parent;
 
     ChildrenPanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
-        this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
 
         //noinspection HardCodedStringLiteral
@@ -71,20 +65,17 @@ class ChildrenPanel implements HasElements, Attachable {
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
                 .column(resources.constants().view(), row -> modelBrowser.tree.api().openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false)))
-                .button(resources.constants().add(), (event, api) -> {
-                    SelectorModifier selectorModifier = new SelectorModifierBuilder().page(all).build();
-                    modelBrowser.add(parent, JsHelper.asList(api.rows(selectorModifier).data().toArray()));
-                })
+                .button(resources.constants().add(), (event, table) -> modelBrowser.add(parent, table.getRows()))
 
                 .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, api) -> {
+                        (event, table) -> {
                             ResourceAddress fq = parent.data.getAddress()
                                     .getParent()
-                                    .add(parent.text, api.selectedRow());
+                                    .add(parent.text, table.selectedRow());
                             modelBrowser.remove(fq);
                         })
                 .paging(false)
-                .build();
+                .options();
 
         table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE_SUFFIX), options);
 

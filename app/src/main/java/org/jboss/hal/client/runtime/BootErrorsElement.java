@@ -26,8 +26,7 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PreListItem;
 import org.jboss.hal.ballroom.form.PreTextItem;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
@@ -56,7 +55,7 @@ public class BootErrorsElement implements IsElement, Attachable {
     private static final String BOOT_ERRORS_SECTION = "bootErrorsSection";
 
     private final Element bootErrorsSection;
-    private final DataTable<ModelNode> table;
+    private final Table<ModelNode> table;
     private final Form<ModelNode> form;
     private final EmptyState noBootErrors;
     private final Element root;
@@ -77,7 +76,7 @@ public class BootErrorsElement implements IsElement, Attachable {
         ResourceDescription resourceDescription = new ResourceDescription(modelNode);
         Metadata metadata = new Metadata(template, () -> SecurityContext.READ_ONLY, resourceDescription, capabilities);
 
-        Options<ModelNode> options = new ModelNodeTable.Builder<>(metadata)
+        table = new ModelNodeTable.Builder<>(Ids.BOOT_ERRORS_TABLE, metadata)
                 .column(Ids.BOOT_ERRORS_ADDRESS_COLUMN, resources.constants().address(),
                         (cell, type, row, meta) -> {
                             ResourceAddress address = new ResourceAddress(ModelNodeHelper.failSafeGet(row,
@@ -91,7 +90,6 @@ public class BootErrorsElement implements IsElement, Attachable {
                             return operation.isDefined() ? operation.asString() : Names.NOT_AVAILABLE;
                         })
                 .build();
-        table = new ModelNodeTable<>(Ids.BOOT_ERRORS_TABLE, metadata, options);
 
         form = new ModelNodeForm.Builder<>(Ids.BOOT_ERRORS_FORM, metadata)
                 .readOnly()
@@ -139,9 +137,9 @@ public class BootErrorsElement implements IsElement, Attachable {
         table.attach();
         form.attach();
 
-        table.api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
-                ModelNode row = api.selectedRow();
+        table.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                ModelNode row = t.selectedRow();
                 form.view(row);
 
                 // Depends on WFCORE-2530 to be fixed

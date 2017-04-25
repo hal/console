@@ -21,6 +21,7 @@ import org.jboss.hal.processor.mbui.MbuiTestPresenter;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
+@SuppressWarnings("unused")
 public abstract class HandlebarsView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static HandlebarsView create(final MbuiContext mbuiContext) {

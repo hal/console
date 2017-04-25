@@ -29,11 +29,9 @@ import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -115,7 +113,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final List<Form<JpaStatistic>> mainForms;
-    private final Map<String, NamedNodeTable<NamedNode>> childTables;
+    private final Map<String, Table<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
     private final Element headerElement;
     private final Element leadElement;
@@ -199,11 +197,10 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         String resource = template.lastName();
         Metadata metadata = metadataRegistry.lookup(template);
 
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
+        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
+                Ids.build(baseId, resource, Ids.TABLE_SUFFIX), metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, resource, Ids.TABLE_SUFFIX), metadata,
-                options);
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM_SUFFIX),
                 metadata)
@@ -244,7 +241,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     }
 
     private void bindFormToTable(String resource) {
-        DataTable<NamedNode> table = childTables.get(resource);
+        Table<NamedNode> table = childTables.get(resource);
         table.bindForm(childForms.get(resource));
     }
 
@@ -270,7 +267,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         if (statistic.hasDefined(childResource)) {
             List<NamedNode> childResources = asNamedNodes(statistic.get(childResource).asPropertyList());
             Form<NamedNode> form = childForms.get(childResource);
-            NamedNodeTable<NamedNode> table = childTables.get(childResource);
+            Table<NamedNode> table = childTables.get(childResource);
             form.clear();
             table.update(childResources);
         }

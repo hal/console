@@ -30,7 +30,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
-import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -40,12 +40,12 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -255,9 +255,9 @@ public class SecurityDomainPresenter
                 });
     }
 
-    void removeModule(Api<NamedNode> api, Module module) {
+    void removeModule(Table<NamedNode> table, Module module) {
         //noinspection ConstantConditions
-        String name = api.selectedRow().getName();
+        String name = table.selectedRow().getName();
         crud.remove(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
                         .append(module.singleton)

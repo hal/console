@@ -23,14 +23,13 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -58,7 +57,7 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
 
     private final Element root;
     private final List<Attachable> attachables;
-    private final NamedNodeTable<ThreadPool> table;
+    private final Table<ThreadPool> table;
     private final ModelNodeForm<ThreadPool> attributesForm;
     private final ModelNodeForm<ThreadPool> sizingForm;
 
@@ -72,17 +71,16 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
-        Options<ThreadPool> options = new ModelNodeTable.Builder<ThreadPool>(metadata)
+        table = new ModelNodeTable.Builder<ThreadPool>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), metadata)
                 .button(tableButtonFactory.add(WORKMANAGER_LRT_TEMPLATE,
-                        (event, api) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager)))
+                        (event, table) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager)))
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
-                        (event, api) -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
-                                api.selectedRow())))
+                        (event, table) -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
+                                table.selectedRow())))
                 .column(NAME)
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();
-        table = new NamedNodeTable<>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), metadata, options);
         attachables.add(table);
 
         attributesForm = new ModelNodeForm.Builder<ThreadPool>(
@@ -164,6 +162,6 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
         attributesForm.clear();
         sizingForm.clear();
         table.update(threadPools, ThreadPool::id);
-        table.api().button(0).enable(threadPools.size() < 2);
+        table.enableButton(0, threadPools.size() < 2);
     }
 }

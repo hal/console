@@ -25,17 +25,16 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.ResponseHeader;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.ResponseHeader;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
@@ -49,7 +48,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
         implements FilterPresenter.MyView {
 
@@ -58,21 +57,21 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
     }
 
     @MbuiElement("undertow-filter-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("undertow-custom-filter-table") NamedNodeTable<NamedNode> customFilterTable;
+    @MbuiElement("undertow-custom-filter-table") Table<NamedNode> customFilterTable;
     @MbuiElement("undertow-custom-filter-form") Form<NamedNode> customFilterForm;
-    @MbuiElement("undertow-error-page-table") NamedNodeTable<NamedNode> errorPageTable;
+    @MbuiElement("undertow-error-page-table") Table<NamedNode> errorPageTable;
     @MbuiElement("undertow-error-page-form") Form<NamedNode> errorPageForm;
-    @MbuiElement("undertow-expression-filter-table") NamedNodeTable<NamedNode> expressionFilterTable;
+    @MbuiElement("undertow-expression-filter-table") Table<NamedNode> expressionFilterTable;
     @MbuiElement("undertow-expression-filter-form") Form<NamedNode> expressionFilterForm;
-    @MbuiElement("undertow-gzip-table") NamedNodeTable<NamedNode> gzipTable;
+    @MbuiElement("undertow-gzip-table") Table<NamedNode> gzipTable;
     @MbuiElement("undertow-gzip-form") Form<NamedNode> gzipForm;
-    @MbuiElement("undertow-mod-cluster-table") NamedNodeTable<NamedNode> modClusterTable;
+    @MbuiElement("undertow-mod-cluster-table") Table<NamedNode> modClusterTable;
     @MbuiElement("undertow-mod-cluster-form") Form<NamedNode> modClusterForm;
-    @MbuiElement("undertow-request-limit-table") NamedNodeTable<NamedNode> requestLimitTable;
+    @MbuiElement("undertow-request-limit-table") Table<NamedNode> requestLimitTable;
     @MbuiElement("undertow-request-limit-form") Form<NamedNode> requestLimitForm;
-    @MbuiElement("undertow-response-header-table") NamedNodeTable<NamedNode> responseHeaderTable;
+    @MbuiElement("undertow-response-header-table") Table<NamedNode> responseHeaderTable;
     @MbuiElement("undertow-response-header-form") Form<NamedNode> responseHeaderForm;
-    @MbuiElement("undertow-rewrite-table") NamedNodeTable<NamedNode> rewriteTable;
+    @MbuiElement("undertow-rewrite-table") Table<NamedNode> rewriteTable;
     @MbuiElement("undertow-rewrite-form") Form<NamedNode> rewriteForm;
 
     FilterView(final MbuiContext mbuiContext) {
@@ -102,27 +101,27 @@ public abstract class FilterView extends MbuiViewImpl<FilterPresenter>
     @Override
     public void attach() {
         super.attach();
-        customFilterTable.api().onSelectionChange(api -> updateHostRefs(api, customFilterForm));
-        errorPageTable.api().onSelectionChange(api -> updateHostRefs(api, errorPageForm));
-        expressionFilterTable.api().onSelectionChange(api -> updateHostRefs(api, expressionFilterForm));
-        gzipTable.api().onSelectionChange(api -> updateHostRefs(api, gzipForm));
-        modClusterTable.api().onSelectionChange(api -> updateHostRefs(api, modClusterForm));
-        requestLimitTable.api().onSelectionChange(api -> updateHostRefs(api, requestLimitForm));
-        responseHeaderTable.api().onSelectionChange(api -> updateHostRefs(api, responseHeaderForm));
-        rewriteTable.api().onSelectionChange(api -> updateHostRefs(api, rewriteForm));
+        customFilterTable.onSelectionChange(t -> updateHostRefs(t, customFilterForm));
+        errorPageTable.onSelectionChange(t -> updateHostRefs(t, errorPageForm));
+        expressionFilterTable.onSelectionChange(t -> updateHostRefs(t, expressionFilterForm));
+        gzipTable.onSelectionChange(t -> updateHostRefs(t, gzipForm));
+        modClusterTable.onSelectionChange(t -> updateHostRefs(t, modClusterForm));
+        requestLimitTable.onSelectionChange(t -> updateHostRefs(t, requestLimitForm));
+        responseHeaderTable.onSelectionChange(t -> updateHostRefs(t, responseHeaderForm));
+        rewriteTable.onSelectionChange(t -> updateHostRefs(t, rewriteForm));
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void updateHostRefs(final Api<NamedNode> api, final Form<NamedNode> form) {
+    private void updateHostRefs(final Table<NamedNode> table, final Form<NamedNode> form) {
         FormItem<String> formItem = form.getFormItem(HOSTS);
         if (formItem != null) {
-            if (api.hasSelection()) {
-                ResourceAddress filterRefAddress = HOST_TEMPLATE.append(FILTER_REF + "=" + api.selectedRow().getName())
+            if (table.hasSelection()) {
+                ResourceAddress filterRefAddress = HOST_TEMPLATE.append(FILTER_REF + "=" + table.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
                 Operation filterRefOp = new Operation.Builder(filterRefAddress, READ_RESOURCE_OPERATION).build();
                 ResourceAddress locationFilterRefAddress = HOST_TEMPLATE
                         .append(LOCATION + "=*")
-                        .append(FILTER_REF + "=" + api.selectedRow().getName())
+                        .append(FILTER_REF + "=" + table.selectedRow().getName())
                         .resolve(mbuiContext.statementContext());
                 Operation locationFilterRefOp = new Operation.Builder(locationFilterRefAddress, READ_RESOURCE_OPERATION)
                         .build();

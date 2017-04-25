@@ -24,6 +24,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
+@SuppressWarnings("unused")
 public abstract class AttributesView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static AttributesView create(final MbuiContext mbuiContext) {

@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -78,7 +79,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
     private final Form<ModelNode> mainAttributes;
     private final Form<ModelNode> bootstrapAttributes;
-    private final DataTable<Property> systemProperties;
+    private final Table<Property> systemProperties;
     private final Element headerElement;
 
     @Inject
@@ -112,7 +113,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                         .searchable(false)
                         .orderable(false)
                         .build())
-                .build();
+                .options();
         systemProperties = new DataTable<>(Ids.SERVER_STATUS_SYSTEM_PROPERTIES_TABLE, options);
 
         registerAttachable(mainAttributes, bootstrapAttributes, systemProperties);

@@ -18,9 +18,9 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -38,7 +38,7 @@ public abstract class PathsView extends MbuiViewImpl<PathsPresenter> implements 
         return new Mbui_PathsView(mbuiContext);
     }
 
-    @MbuiElement("path-table") NamedNodeTable<NamedNode> table;
+    @MbuiElement("path-table") Table<NamedNode> table;
     @MbuiElement("path-form") Form<NamedNode> form;
 
     PathsView(final MbuiContext mbuiContext) {

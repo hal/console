@@ -48,7 +48,7 @@
                     <actions>
                         <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addLogger()}}"
                                 constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}" handler="{{removeLogger(api)}}"
+                        <action title="{{mbuiContext.resources().constants().remove()}}" handler="{{removeLogger(table)}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -83,7 +83,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addConsoleHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeConsoleHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeConsoleHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -130,7 +130,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addFileHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeFileHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeFileHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -179,7 +179,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addPeriodicHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePeriodicHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removePeriodicHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -230,7 +230,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addPeriodicSizeHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePeriodicSizeHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removePeriodicSizeHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -284,7 +284,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addSizeHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeSizeHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeSizeHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -335,7 +335,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addAsyncHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeAsyncHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeAsyncHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -382,7 +382,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addCustomHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeCustomHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeCustomHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -428,7 +428,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addSyslogHandler()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeSyslogHandler(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeSyslogHandler(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- syslog handlers don't have a name attribute,
@@ -469,7 +469,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addPatternFormatter()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removePatternFormatter(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removePatternFormatter(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- log formatter don't have a name attribute,
@@ -502,7 +502,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{addCustomFormatter()}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{removeCustomFormatter(api)}}" scope="selected" constraint="remove"/>
+                                    handler="{{removeCustomFormatter(table)}}" scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
                             <!-- custom formatter don't have a name attribute,

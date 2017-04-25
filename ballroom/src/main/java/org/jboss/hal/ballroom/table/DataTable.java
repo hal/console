@@ -24,13 +24,13 @@ import elemental.html.TableElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.SelectorModifier.Page.all;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -66,7 +66,7 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  * @see <a href="https://datatables.net/">https://datatables.net/</a>
  */
-public class DataTable<T> implements IsElement, Attachable {
+public class DataTable<T> implements Table<T> {
 
     @JsType(isNative = true)
     static class Bridge<T> {
@@ -81,9 +81,9 @@ public class DataTable<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ instance & lifecycle
 
-    static final String DESELECT = "deselect";
-    static final String ROW = "row";
-    static final String SELECT = "select";
+    private static final String DESELECT = "deselect";
+    private static final String ROW = "row";
+    private static final String SELECT = "select";
     private static final String WRAPPER_SUFFIX = "_wrapper";
 
     private final String id;
@@ -98,6 +98,7 @@ public class DataTable<T> implements IsElement, Attachable {
                 .start("table").id(id).css(dataTable, table, tableStriped, tableBordered, hover).end().build();
     }
 
+    @Override
     public Element asElement() {
         return api == null ? tableElement : Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
     }
@@ -125,7 +126,7 @@ public class DataTable<T> implements IsElement, Attachable {
      *
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
-    public Api<T> api() {
+    protected Api<T> api() {
         if (api == null) {
             throw new IllegalStateException(
                     "DataTable('" + id + "') is not attached. Call DataTable.attach() before using any of the API methods!");
@@ -136,33 +137,42 @@ public class DataTable<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ 'higher' level API
 
+    @Override
     public void show() {
         Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, true);
     }
 
+    @Override
     public void hide() {
         Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, false);
     }
 
+    @Override
+    public void enableButton(final int index, final boolean enable) {
+        api().button(index).enable(enable);
+    }
+
     /**
      * Binds a form to the table and takes care to view or clear the form upon selection changes
      */
+    @Override
     public void bindForm(final Form<T> form) {
-        api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
-                form.view(api.selectedRow());
+        onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                form.view(table.selectedRow());
             } else {
                 form.clear();
             }
         });
     }
 
+    @Override
     public void bindForms(final Iterable<Form<T>> forms) {
-        api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
-                T selectedRow = api.selectedRow();
+        onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                T selectedRow = table.selectedRow();
                 for (Form<T> form : forms) {
                     form.view(selectedRow);
                 }
@@ -174,23 +184,83 @@ public class DataTable<T> implements IsElement, Attachable {
         });
     }
 
+    @Override
     public void clear() {
         api().clear();
+    }
+
+    @Override
+    public List<T> getRows() {
+        SelectorModifier selectorModifier = new SelectorModifierBuilder().page(all).build();
+        return JsHelper.asList(api().rows(selectorModifier).data().toArray());
+    }
+
+    @Override
+    public void onSelectionChange(final SelectionChangeHandler<T> handler) {
+        api().on(SELECT, (event, api, type) -> {
+            if (ROW.equals(type)) {
+                handler.onSelectionChanged(this);
+            }
+        });
+        api().on(DESELECT, (event, api, type) -> {
+            if (ROW.equals(type)) {
+                handler.onSelectionChanged(this);
+            }
+        });
+    }
+
+    @Override
+    public T selectedRow() {
+        return api().selectedRow();
+    }
+
+    @Override
+    public List<T> selectedRows() {
+        return api().selectedRows();
+    }
+
+    @Override
+    public void select(final T data) {
+        select(data, null);
+    }
+
+    /**
+     * Selects the row with the specified data.
+     *
+     * @param data       the data
+     * @param identifier a function which must return an unique identifier for a given row.
+     */
+    @Override
+    public void select(final T data, final Function<T, String> identifier) {
+        if (data != null && identifier != null) {
+            String id1 = identifier.apply(data);
+            RowSelection<T> rows = (idx, d, tr) -> {
+                if (d != null) {
+                    String id2 = identifier.apply(d);
+                    return (id1 != null && id2 != null) && id1.equals(id2);
+                }
+                return false;
+            };
+            api().rows(rows).select();
+        }
     }
 
     /**
      * Replaces the existing data with the new one.
      *
-     * @param data       the new data
+     * @param data the new data
      */
+    @Override
     public void update(final Iterable<T> data) {
         update(data, RESET, null);
     }
 
+    @Override
     public void update(final Iterable<T> data, final RefreshMode mode) {
         update(data, mode, null);
     }
 
+    @Override
     public void update(final Iterable<T> data, final Function<T, String> identifier) {
         update(data, RESET, identifier);
     }
@@ -203,6 +273,7 @@ public class DataTable<T> implements IsElement, Attachable {
      * @param identifier a function which must return an unique identifier for a given row. Used to restore the
      *                   selection after replacing the data.
      */
+    @Override
     public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
         List<T> selection = api().selectedRows();
         api().clear().add(data).refresh(mode);
@@ -214,7 +285,7 @@ public class DataTable<T> implements IsElement, Attachable {
                         return selection.stream().anyMatch(d2 -> {
                             if (d2 != null) {
                                 String id2 = identifier.apply(d2);
-                                return id1.equals(id2);
+                                return (id1 != null && id2 != null) && id1.equals(id2);
                             }
                             return false;
                         });
@@ -223,26 +294,6 @@ public class DataTable<T> implements IsElement, Attachable {
                 };
                 api().rows(rows).select();
             }
-        }
-    }
-
-    /**
-     * Selects the row with the specified data.
-     *
-     * @param data       the data
-     * @param identifier a function which must return an unique identifier for a given row.
-     */
-    public void select(final T data, final Function<T, String> identifier) {
-        if (data != null) {
-            String id1 = identifier.apply(data);
-            RowSelection<T> rows = (idx, d, tr) -> {
-                if (d != null) {
-                    String id2 = identifier.apply(d);
-                    return id1.equals(id2);
-                }
-                return false;
-            };
-            api().rows(rows).select();
         }
     }
 }

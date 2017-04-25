@@ -18,6 +18,7 @@ package org.jboss.hal.core.mbui.table;
 import java.util.List;
 import java.util.function.Function;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -35,7 +36,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.UIConstants.data;
 
 /**
@@ -45,10 +48,12 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
+        private final String id;
         private final Metadata metadata;
         private final ColumnFactory columnFactory;
 
-        public Builder(final Metadata metadata) {
+        public Builder(@NonNls final String id, final Metadata metadata) {
+            this.id = id;
             this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
         }
@@ -86,18 +91,26 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                         "No attributes found in resource description\n" + metadata.getDescription());
             }
         }
+
+        public ModelNodeTable<T> build() {
+            return new ModelNodeTable<>(this);
+        }
     }
 
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    private Metadata metadata;
+    private final Metadata metadata;
     private final Options<T> options;
+    private Function<T, String> identifier;
+    private boolean identifierChecked;
 
-    public ModelNodeTable(@NonNls final String id, final Metadata metadata, Options<T> options) {
-        super(id, options);
-        this.metadata = metadata;
-        this.options = options;
+    private ModelNodeTable(Builder<T> builder) {
+        super(builder.id, builder.options());
+        this.options = builder.options();
+        this.metadata = builder.metadata;
+        this.identifier = null;
+        this.identifierChecked = false;
     }
 
     @Override
@@ -113,10 +126,46 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         applySecurity();
     }
 
+    /**
+     * Shortcut for {@code super.select(data, NamedNode::getName)}
+     */
+    public void select(T data) {
+        if (!identifierChecked) {
+            checkIdentifier(data);
+        }
+        select(data, identifier);
+    }
+
+    @Override
+    public void select(final T data, final Function<T, String> identifier) {
+        super.select(data, identifier);
+        applySecurity();
+    }
+
+    /**
+     * Shortcut for {@code super.update(data, NamedNode::getName)}
+     */
+    public void update(final Iterable<T> data) {
+        if (!identifierChecked) {
+            checkIdentifier(Iterables.isEmpty(data) ? null : data.iterator().next());
+        }
+        update(data, RESET, identifier);
+    }
+
     @Override
     public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
+
         super.update(data, mode, identifier);
         applySecurity();
+    }
+
+    private void checkIdentifier(T data) {
+        if (data != null) {
+            if (data.hasDefined(NAME)) {
+                identifier = model -> model.get(NAME).asString();
+            }
+            identifierChecked = true;
+        }
     }
 
     private void applySecurity() {

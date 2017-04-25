@@ -38,7 +38,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addClassicAuthenticationModule()}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUTHENTICATION)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.AUTHENTICATION)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
@@ -62,7 +62,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.AUTHORIZATION)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUTHORIZATION)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.AUTHORIZATION)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
@@ -86,7 +86,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.AUDIT)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.AUDIT)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.AUDIT)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
@@ -109,7 +109,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.ACL)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.ACL)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.ACL)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
@@ -133,7 +133,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.MAPPING)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.MAPPING)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.MAPPING)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>
@@ -157,7 +157,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addModule(Module.TRUST)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeModule(api, Module.TRUST)}}" scope="selected"
+                                handler="{{presenter.removeModule(table, Module.TRUST)}}" scope="selected"
                                 constraint="remove"/>
                     </actions>
                     <columns>

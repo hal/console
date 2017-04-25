@@ -23,10 +23,9 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.NamedNode;
@@ -53,7 +52,7 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
     private static final String FORK_ID = Ids.build(Ids.JGROUPS_RELAY, Ids.PAGE_SUFFIX);
 
     private final Pages innerPages;
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
     private String selectedChannel;
@@ -66,12 +65,12 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
             final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), metadata)
                 .button(tableButtonFactory.add(CHANNEL_TEMPLATE,
-                        (event, api) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
+                        (event, table) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
                                 Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL)))
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
-                        (event, api) -> presenter.removeResource(CHANNEL_TEMPLATE, api.selectedRow().getName(),
+                        (event, table) -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Forks", row -> {
@@ -80,13 +79,12 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
                     presenter.showChannelInnerPage(FORK_ID);
                 })
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), metadata, options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter
-                        .saveResource(CHANNEL_TEMPLATE, table.api().selectedRow().getName(), changedValues, metadata,
+                        .saveResource(CHANNEL_TEMPLATE, table.selectedRow().getName(), changedValues, metadata,
                                 resources.messages().modifySingleResourceSuccess(Names.CHANNEL)))
                 .prepareReset(form -> presenter.resetResource(CHANNEL_TEMPLATE, Names.CHANNEL,
-                        table.api().selectedRow().getName(), form, metadata))
+                        table.selectedRow().getName(), form, metadata))
                 .build();
 
         // @formatter:off

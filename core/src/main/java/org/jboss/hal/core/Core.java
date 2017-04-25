@@ -130,6 +130,9 @@ public class Core {
         return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
     }
 
+    // @JsMethod(name = "table")
+    // public
+
     private Metadata jsMetadata(@NonNls String method, Object meta) {
         if (meta instanceof String) {
             AddressTemplate t = AddressTemplate.of(((String) meta));

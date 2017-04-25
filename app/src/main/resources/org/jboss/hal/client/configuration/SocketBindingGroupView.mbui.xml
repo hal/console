@@ -44,7 +44,7 @@
                                 handler="{{presenter.addSocketBinding(SocketBinding.OUTBOUND_LOCAL)}}"
                                 constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_LOCAL, api.selectedRow().getName())}}"
+                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_LOCAL, table.selectedRow().getName())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -81,7 +81,7 @@
                                 handler="{{presenter.addSocketBinding(SocketBinding.OUTBOUND_REMOTE)}}"
                                 constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_REMOTE, api.selectedRow().getName())}}"
+                                handler="{{presenter.removeSocketBinding(SocketBinding.OUTBOUND_REMOTE, table.selectedRow().getName())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>

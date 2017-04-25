@@ -64,9 +64,9 @@ public class Button<T> {
          * Action handler callback
          *
          * @param event the object which triggered the action
-         * @param api   the data tables API
+         * @param table the data table
          */
-        void action(Object event, Api<T> api);
+        void action(Object event, Table<T> table);
     }
 
 

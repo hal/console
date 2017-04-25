@@ -22,10 +22,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.NamedNode;
@@ -48,7 +47,7 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
 
     private final Element root;
     private final Element header;
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private WebservicePresenter presenter;
 
@@ -56,16 +55,15 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
     HandlerChainElement(final Config configType, final MetadataRegistry metadataRegistry,
             final TableButtonFactory tableButtonFactory) {
 
+        String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE_SUFFIX);
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, (event, api) -> presenter.addHandlerChain()))
+        table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
+                .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, (event, table) -> presenter.addHandlerChain()))
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
-                        (event, api) -> presenter.removeHandlerChain(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeHandlerChain(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(Names.HANDLER, row -> presenter.showHandlers(row))
                 .build();
-        String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE_SUFFIX);
-        table = new NamedNodeTable<>(tableId, metadata, options);
 
         String formId = Ids.build(configType.baseId, "handler-chain", Ids.FORM_SUFFIX);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)

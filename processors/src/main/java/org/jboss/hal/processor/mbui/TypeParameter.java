@@ -21,18 +21,12 @@ package org.jboss.hal.processor.mbui;
 public class TypeParameter {
 
     private final String type;
-    private final boolean named;
 
-    TypeParameter(final String type, final boolean named) {
+    TypeParameter(final String type) {
         this.type = type;
-        this.named = named;
     }
 
     public String getType() {
         return type;
-    }
-
-    public boolean isNamed() {
-        return named;
     }
 }

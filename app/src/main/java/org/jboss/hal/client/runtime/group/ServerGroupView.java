@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -31,7 +31,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implements ServerGroupPresenter.MyView {
 
     public static ServerGroupView create(final MbuiContext mbuiContext) {
@@ -40,9 +40,9 @@ public abstract class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter>
 
     @MbuiElement("server-group-navigation") VerticalNavigation navigation;
     @MbuiElement("server-group-configuration-form") Form<ServerGroup> serverGroupConfigurationForm;
-    @MbuiElement("server-group-jvm-table") NamedNodeTable<NamedNode> serverGroupJvmTable;
+    @MbuiElement("server-group-jvm-table") Table<NamedNode> serverGroupJvmTable;
     @MbuiElement("server-group-jvm-form") Form<NamedNode> serverGroupJvmForm;
-    @MbuiElement("server-group-system-property-table") NamedNodeTable<NamedNode> serverGroupSystemPropertyTable;
+    @MbuiElement("server-group-system-property-table") Table<NamedNode> serverGroupSystemPropertyTable;
     @MbuiElement("server-group-system-property-form") Form<NamedNode> serverGroupSystemPropertyForm;
 
     ServerGroupView(final MbuiContext mbuiContext) {

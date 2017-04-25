@@ -26,6 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class MessagingSubsystemView extends MbuiViewImpl<MessagingSubsystemPresenter>
         implements MessagingSubsystemPresenter.MyView {
 

@@ -36,7 +36,7 @@
                             </attributes>
                         </action>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                                name-resolver="{{table.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
                         <!-- custom formatter do not have a name attribute,
@@ -72,7 +72,7 @@
                             </attributes>
                         </action>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                                name-resolver="{{table.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
                         <!-- custom formatter do not have a name attribute,

@@ -30,18 +30,17 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -73,11 +72,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final Form<ModelNode> avForm;
     private final Form<ModelNode> bvForm;
     private final Form<ModelNode> tracerForm;
-    private final NamedNodeTable<NamedNode> bcTable;
+    private final Table<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
-    private final NamedNodeTable<NamedNode> wmTable;
+    private final Table<NamedNode> wmTable;
     private final ThreadPoolsEditor wmTpEditor;
-    private final NamedNodeTable<NamedNode> dwmTable;
+    private final Table<NamedNode> dwmTable;
     private final Form<NamedNode> dwmForm;
     private final ThreadPoolsEditor dwmTpEditor;
 
@@ -189,13 +188,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         AddResourceDialog bcAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(bcType), bcAddForm,
                 (name, model) -> presenter.add(bcType, name, BOOTSTRAP_CONTEXT_TEMPLATE, model));
 
-        Options<NamedNode> bcTableOptions = new ModelNodeTable.Builder<NamedNode>(bcMetadata)
-                .button(tableButtonFactory.add(BOOTSTRAP_CONTEXT_TEMPLATE, (event, api) -> bcAddDialog.show()))
+        bcTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcMetadata)
+                .button(tableButtonFactory.add(BOOTSTRAP_CONTEXT_TEMPLATE, (event, table) -> bcAddDialog.show()))
                 .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
                 .build();
-        bcTable = new NamedNodeTable<>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcMetadata, bcTableOptions);
 
         bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM, bcMetadata)
                 .onSave((form, changedValues) -> {
@@ -238,14 +236,13 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         AddResourceDialog wmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(wmType), wmAddForm,
                 (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
 
-        Options<NamedNode> wmOptions = new ModelNodeTable.Builder<NamedNode>(wmMetadata)
-                .button(tableButtonFactory.add(WORKMANAGER_TEMPLATE, (event, api) -> wmAddDialog.show()))
+        wmTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_WORKMANAGER_TABLE, wmMetadata)
+                .button(tableButtonFactory.add(WORKMANAGER_TEMPLATE, (event, table) -> wmAddDialog.show()))
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.reload()))
                 .column(NAME)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        wmTable = new NamedNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmMetadata, wmOptions);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -281,8 +278,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
 
-        Options<NamedNode> dwmOptions = new ModelNodeTable.Builder<NamedNode>(dwmMetadata)
-                .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, (event, api) -> dwmAddDialog.show()))
+        dwmTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmMetadata)
+                .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, (event, table) -> dwmAddDialog.show()))
                 .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
@@ -290,7 +287,6 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .column(SELECTOR)
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
-        dwmTable = new NamedNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmMetadata, dwmOptions);
 
         dwmForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
                 .onSave((form, changedValues) -> {

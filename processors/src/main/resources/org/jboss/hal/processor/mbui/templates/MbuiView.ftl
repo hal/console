@@ -12,7 +12,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 <#if context.verticalNavigation??>
@@ -22,7 +21,6 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -175,18 +173,14 @@ final class ${context.subclass} extends ${context.base} {
         </#list>
 
         <#list context.dataTables as table>
-            <#if table.typeParameter.named>
-        Options<${table.typeParameter.type}> ${table.name}Options = new NamedNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
-            <#else>
-        Options<${table.typeParameter.type}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter.type}>(${table.metadata.name})
-            </#if>
+        ${table.name} = new ModelNodeTable.Builder<${table.typeParameter.type}>("${table.selector}", ${table.metadata.name})
             <#list table.actions as action>
                 <#if action.knownHandler>
                     <#switch action.handlerRef>
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
-            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, api) -> {
+            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, table) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
                     .fromRequestProperties()
@@ -228,7 +222,7 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             }))
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
-            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, api) -> {
+            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, table) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
@@ -268,12 +262,12 @@ final class ${context.subclass} extends ${context.base} {
                             <#break>
                         <#case "REMOVE_RESOURCE">
             .button(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
-                (api) -> ${action.nameResolver},
+                (table) -> ${action.nameResolver},
                 () -> presenter.reload()))
                             <#break>
                     </#switch>
                 <#else>
-            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parse("${action.constraint}"), </#if>(event, api) -> ${action.handler})
+            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parse("${action.constraint}"), </#if>(event, table) -> ${action.handler})
                 </#if>
             </#list>
             <#if table.onlySimpleColumns>
@@ -288,11 +282,6 @@ final class ${context.subclass} extends ${context.base} {
                 </#list>
             </#if>
             .build();
-            <#if table.typeParameter.named>
-        ${table.name} = new NamedNodeTable<>("${table.selector}", ${table.metadata.name}, ${table.name}Options);
-            <#else>
-        ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.metadata.name}, ${table.name}Options);
-            </#if>
         </#list>
 
         <#if context.verticalNavigation??>

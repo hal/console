@@ -32,7 +32,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.WEBSERVICES_TEMPLATE;
@@ -54,8 +53,7 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
     private WebservicePresenter presenter;
 
     @Inject
-    public WebserviceView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public WebserviceView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory) {
 
         Metadata metadata = metadataRegistry.lookup(WEBSERVICES_TEMPLATE);
         webservicesForm = new ModelNodeForm.Builder<>(Ids.WEBSERVICES_FORM, metadata)
@@ -72,8 +70,8 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
         .build();
         // @formatter:on
 
-        clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, tableButtonFactory, resources);
-        endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory, resources);
+        clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, tableButtonFactory);
+        endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory);
 
         VerticalNavigation navigation = new VerticalNavigation();
         navigation.addPrimary(Ids.WEBSERVICES_ENTRY, Names.CONFIGURATION, pfIcon("settings"), webservicesSection);

@@ -24,6 +24,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
+@SuppressWarnings("unused")
 public abstract class SaveHandlerView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static SaveHandlerView create(final MbuiContext mbuiContext) {

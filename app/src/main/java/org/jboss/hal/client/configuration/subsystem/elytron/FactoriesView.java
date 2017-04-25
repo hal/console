@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -30,7 +30,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class FactoriesView extends MbuiViewImpl<FactoriesPresenter>
         implements FactoriesPresenter.MyView {
 
@@ -40,44 +40,44 @@ public abstract class FactoriesView extends MbuiViewImpl<FactoriesPresenter>
 
     // @formatter:off
     @MbuiElement("factories-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("factories-aggregate-http-server-mechanism-table") NamedNodeTable<NamedNode> aggregateHttpServerMechanismTable;
+    @MbuiElement("factories-aggregate-http-server-mechanism-table") Table<NamedNode> aggregateHttpServerMechanismTable;
     @MbuiElement("factories-aggregate-http-server-mechanism-form") Form<NamedNode> aggregateHttpServerMechanismForm;
-    @MbuiElement("factories-aggregate-sasl-server-table") NamedNodeTable<NamedNode> aggregateSaslServerTable;
+    @MbuiElement("factories-aggregate-sasl-server-table") Table<NamedNode> aggregateSaslServerTable;
     @MbuiElement("factories-aggregate-sasl-server-form") Form<NamedNode> aggregateSaslServerForm;
-    @MbuiElement("factories-configurable-http-server-mechanism-table") NamedNodeTable<NamedNode> configurableHttpServerMechanismTable;
+    @MbuiElement("factories-configurable-http-server-mechanism-table") Table<NamedNode> configurableHttpServerMechanismTable;
     @MbuiElement("factories-configurable-http-server-mechanism-form") Form<NamedNode> configurableHttpServerMechanismForm;
-    @MbuiElement("factories-configurable-sasl-server-table") NamedNodeTable<NamedNode> configurableSaslServerTable;
+    @MbuiElement("factories-configurable-sasl-server-table") Table<NamedNode> configurableSaslServerTable;
     @MbuiElement("factories-configurable-sasl-server-form") Form<NamedNode> configurableSaslServerForm;
-    @MbuiElement("factories-custom-credential-security-table") NamedNodeTable<NamedNode> customCredentialSecurityTable;
+    @MbuiElement("factories-custom-credential-security-table") Table<NamedNode> customCredentialSecurityTable;
     @MbuiElement("factories-custom-credential-security-form") Form<NamedNode> customCredentialSecurityForm;
-    @MbuiElement("factories-http-authentication-table") NamedNodeTable<NamedNode> httpAuthenticationTable;
+    @MbuiElement("factories-http-authentication-table") Table<NamedNode> httpAuthenticationTable;
     @MbuiElement("factories-http-authentication-form") Form<NamedNode> httpAuthenticationForm;
-    @MbuiElement("factories-kerberos-security-table") NamedNodeTable<NamedNode> kerberosSecurityTable;
+    @MbuiElement("factories-kerberos-security-table") Table<NamedNode> kerberosSecurityTable;
     @MbuiElement("factories-kerberos-security-form") Form<NamedNode> kerberosSecurityForm;
-    @MbuiElement("factories-mechanism-provider-filtering-sasl-server-table") NamedNodeTable<NamedNode> mechanismProviderFilteringSaslServerTable;
+    @MbuiElement("factories-mechanism-provider-filtering-sasl-server-table") Table<NamedNode> mechanismProviderFilteringSaslServerTable;
     @MbuiElement("factories-mechanism-provider-filtering-sasl-server-form") Form<NamedNode> mechanismProviderFilteringSaslServerForm;
-    @MbuiElement("factories-provider-http-server-mechanism-table") NamedNodeTable<NamedNode> providerHttpServerMechanismTable;
+    @MbuiElement("factories-provider-http-server-mechanism-table") Table<NamedNode> providerHttpServerMechanismTable;
     @MbuiElement("factories-provider-http-server-mechanism-form") Form<NamedNode> providerHttpServerMechanismForm;
-    @MbuiElement("factories-provider-sasl-server-table") NamedNodeTable<NamedNode> providerSaslServerTable;
+    @MbuiElement("factories-provider-sasl-server-table") Table<NamedNode> providerSaslServerTable;
     @MbuiElement("factories-provider-sasl-server-form") Form<NamedNode> providerSaslServerForm;
-    @MbuiElement("factories-sasl-authentication-table") NamedNodeTable<NamedNode> saslAuthenticationTable;
+    @MbuiElement("factories-sasl-authentication-table") Table<NamedNode> saslAuthenticationTable;
     @MbuiElement("factories-sasl-authentication-form") Form<NamedNode> saslAuthenticationForm;
-    @MbuiElement("factories-service-loader-http-server-mechanism-table") NamedNodeTable<NamedNode> serviceLoaderHttpServerMechanismTable;
+    @MbuiElement("factories-service-loader-http-server-mechanism-table") Table<NamedNode> serviceLoaderHttpServerMechanismTable;
     @MbuiElement("factories-service-loader-http-server-mechanism-form") Form<NamedNode> serviceLoaderHttpServerMechanismForm;
-    @MbuiElement("factories-service-loader-sasl-server-table") NamedNodeTable<NamedNode> serviceLoaderSaslServerTable;
+    @MbuiElement("factories-service-loader-sasl-server-table") Table<NamedNode> serviceLoaderSaslServerTable;
     @MbuiElement("factories-service-loader-sasl-server-form") Form<NamedNode> serviceLoaderSaslServerForm;
 
-    @MbuiElement("transformers-aggregate-table") NamedNodeTable<NamedNode> aggregatePrincipalTransformerTable;
+    @MbuiElement("transformers-aggregate-table") Table<NamedNode> aggregatePrincipalTransformerTable;
     @MbuiElement("transformers-aggregate-form") Form<NamedNode> aggregatePrincipalTransformerForm;
-    @MbuiElement("transformers-chained-table") NamedNodeTable<NamedNode> chainedPrincipalTransformerTable;
+    @MbuiElement("transformers-chained-table") Table<NamedNode> chainedPrincipalTransformerTable;
     @MbuiElement("transformers-chained-form") Form<NamedNode> chainedPrincipalTransformerForm;
-    @MbuiElement("transformers-constant-table") NamedNodeTable<NamedNode> constantPrincipalTransformerTable;
+    @MbuiElement("transformers-constant-table") Table<NamedNode> constantPrincipalTransformerTable;
     @MbuiElement("transformers-constant-form") Form<NamedNode> constantPrincipalTransformerForm;
-    @MbuiElement("transformers-custom-table") NamedNodeTable<NamedNode> customPrincipalTransformerTable;
+    @MbuiElement("transformers-custom-table") Table<NamedNode> customPrincipalTransformerTable;
     @MbuiElement("transformers-custom-form") Form<NamedNode> customPrincipalTransformerForm;
-    @MbuiElement("transformers-regex-table") NamedNodeTable<NamedNode> regexPrincipalTransformerTable;
+    @MbuiElement("transformers-regex-table") Table<NamedNode> regexPrincipalTransformerTable;
     @MbuiElement("transformers-regex-form") Form<NamedNode> regexPrincipalTransformerForm;
-    @MbuiElement("transformers-regex-validating-table") NamedNodeTable<NamedNode> regexValidatingPrincipalTransformerTable;
+    @MbuiElement("transformers-regex-validating-table") Table<NamedNode> regexValidatingPrincipalTransformerTable;
     @MbuiElement("transformers-regex-validating-form") Form<NamedNode> regexValidatingPrincipalTransformerForm;
     // @formatter:on
 

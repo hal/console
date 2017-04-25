@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -30,7 +30,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         implements MapperDecoderPresenter.MyView {
 
@@ -41,39 +41,39 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     // @formatter:off
     @MbuiElement("mappers-decoders-vertical-navigation") VerticalNavigation navigation;
 
-    @MbuiElement("mappers-decoders-add-prefix-role-mapper-table") NamedNodeTable<NamedNode> addPrefixRoleMapperTable;
+    @MbuiElement("mappers-decoders-add-prefix-role-mapper-table") Table<NamedNode> addPrefixRoleMapperTable;
     @MbuiElement("mappers-decoders-add-prefix-role-mapper-form") Form<NamedNode> addPrefixRoleMapperForm;
-    @MbuiElement("mappers-decoders-add-suffix-role-mapper-table") NamedNodeTable<NamedNode> addSuffixRoleMapperTable;
+    @MbuiElement("mappers-decoders-add-suffix-role-mapper-table") Table<NamedNode> addSuffixRoleMapperTable;
     @MbuiElement("mappers-decoders-add-suffix-role-mapper-form") Form<NamedNode> addSuffixRoleMapperForm;
-    @MbuiElement("mappers-decoders-aggregate-principal-decoder-table") NamedNodeTable<NamedNode> aggregatePrincipalDecoderTable;
+    @MbuiElement("mappers-decoders-aggregate-principal-decoder-table") Table<NamedNode> aggregatePrincipalDecoderTable;
     @MbuiElement("mappers-decoders-aggregate-principal-decoder-form") Form<NamedNode> aggregatePrincipalDecoderForm;
-    @MbuiElement("mappers-decoders-aggregate-role-mapper-table") NamedNodeTable<NamedNode> aggregateRoleMapperTable;
+    @MbuiElement("mappers-decoders-aggregate-role-mapper-table") Table<NamedNode> aggregateRoleMapperTable;
     @MbuiElement("mappers-decoders-aggregate-role-mapper-form") Form<NamedNode> aggregateRoleMapperForm;
-    @MbuiElement("mappers-decoders-concatenating-principal-decoder-table") NamedNodeTable<NamedNode> concatenatingPrincipalDecoderTable;
+    @MbuiElement("mappers-decoders-concatenating-principal-decoder-table") Table<NamedNode> concatenatingPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-concatenating-principal-decoder-form") Form<NamedNode> concatenatingPrincipalDecoderForm;
-    @MbuiElement("mappers-decoders-constant-permission-mapper-table") NamedNodeTable<NamedNode> constantPermissionMapperTable;
+    @MbuiElement("mappers-decoders-constant-permission-mapper-table") Table<NamedNode> constantPermissionMapperTable;
     @MbuiElement("mappers-decoders-constant-permission-mapper-form") Form<NamedNode> constantPermissionMapperForm;
-    @MbuiElement("mappers-decoders-constant-principal-decoder-table") NamedNodeTable<NamedNode> constantPrincipalDecoderTable;
+    @MbuiElement("mappers-decoders-constant-principal-decoder-table") Table<NamedNode> constantPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-constant-principal-decoder-form") Form<NamedNode> constantPrincipalDecoderForm;
-    @MbuiElement("mappers-decoders-constant-role-mapper-table") NamedNodeTable<NamedNode> constantRoleMapperTable;
+    @MbuiElement("mappers-decoders-constant-role-mapper-table") Table<NamedNode> constantRoleMapperTable;
     @MbuiElement("mappers-decoders-constant-role-mapper-form") Form<NamedNode> constantRoleMapperForm;
-    @MbuiElement("mappers-decoders-custom-permission-mapper-table") NamedNodeTable<NamedNode> customPermissionMapperTable;
+    @MbuiElement("mappers-decoders-custom-permission-mapper-table") Table<NamedNode> customPermissionMapperTable;
     @MbuiElement("mappers-decoders-custom-permission-mapper-form") Form<NamedNode> customPermissionMapperForm;
-    @MbuiElement("mappers-decoders-custom-principal-decoder-table") NamedNodeTable<NamedNode> customPrincipalDecoderTable;
+    @MbuiElement("mappers-decoders-custom-principal-decoder-table") Table<NamedNode> customPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-custom-principal-decoder-form") Form<NamedNode> customPrincipalDecoderForm;
-    @MbuiElement("mappers-decoders-custom-role-decoder-table") NamedNodeTable<NamedNode> customRoleDecoderTable;
+    @MbuiElement("mappers-decoders-custom-role-decoder-table") Table<NamedNode> customRoleDecoderTable;
     @MbuiElement("mappers-decoders-custom-role-decoder-form") Form<NamedNode> customRoleDecoderForm;
-    @MbuiElement("mappers-decoders-custom-role-mapper-table") NamedNodeTable<NamedNode> customRoleMapperTable;
+    @MbuiElement("mappers-decoders-custom-role-mapper-table") Table<NamedNode> customRoleMapperTable;
     @MbuiElement("mappers-decoders-custom-role-mapper-form") Form<NamedNode> customRoleMapperForm;
-    @MbuiElement("mappers-decoders-logical-permission-mapper-table") NamedNodeTable<NamedNode> logicalPermissionMapperTable;
+    @MbuiElement("mappers-decoders-logical-permission-mapper-table") Table<NamedNode> logicalPermissionMapperTable;
     @MbuiElement("mappers-decoders-logical-permission-mapper-form") Form<NamedNode> logicalPermissionMapperForm;
-    @MbuiElement("mappers-decoders-logical-role-mapper-table") NamedNodeTable<NamedNode> logicalRoleMapperTable;
+    @MbuiElement("mappers-decoders-logical-role-mapper-table") Table<NamedNode> logicalRoleMapperTable;
     @MbuiElement("mappers-decoders-logical-role-mapper-form") Form<NamedNode> logicalRoleMapperForm;
-    @MbuiElement("mappers-decoders-simple-permission-mapper-table") NamedNodeTable<NamedNode> simplePermissionMapperTable;
+    @MbuiElement("mappers-decoders-simple-permission-mapper-table") Table<NamedNode> simplePermissionMapperTable;
     @MbuiElement("mappers-decoders-simple-permission-mapper-form") Form<NamedNode> simplePermissionMapperForm;
-    @MbuiElement("mappers-decoders-simple-role-decoder-table") NamedNodeTable<NamedNode> simpleRoleDecoderTable;
+    @MbuiElement("mappers-decoders-simple-role-decoder-table") Table<NamedNode> simpleRoleDecoderTable;
     @MbuiElement("mappers-decoders-simple-role-decoder-form") Form<NamedNode> simpleRoleDecoderForm;
-    @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-table") NamedNodeTable<NamedNode> x500AttributePrincipalDecoderTable;
+    @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-table") Table<NamedNode> x500AttributePrincipalDecoderTable;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
 
 

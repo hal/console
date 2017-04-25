@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.client.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
@@ -38,7 +39,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
-import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
@@ -80,7 +80,7 @@ public class DeployContentDialog1 {
     private final DeployCallback deployCallback;
     private final UndeployCallback undeployCallback;
     private final Alert noServerGroupSelected;
-    private final DataTable<ServerGroup> table;
+    private final Table<ServerGroup> table;
     private final Element enableContainer;
     private final InputElement enable;
     private final Dialog dialog;
@@ -115,7 +115,7 @@ public class DeployContentDialog1 {
                 .paging(false)
                 .searching(false)
                 .multiselect()
-                .build();
+                .options();
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
         SafeHtml description = deployCallback != null ? resources.messages()
@@ -151,10 +151,10 @@ public class DeployContentDialog1 {
     }
 
     private boolean finish() {
-        boolean hasSelection = table.api().hasSelection();
+        boolean hasSelection = table.hasSelection();
         Elements.setVisible(noServerGroupSelected.asElement(), !hasSelection);
         if (hasSelection) {
-            List<String> serverGroups = table.api().selectedRows().stream()
+            List<String> serverGroups = table.selectedRows().stream()
                     .map(usg -> usg.serverGroup)
                     .collect(toList());
             if (deployCallback != null) {

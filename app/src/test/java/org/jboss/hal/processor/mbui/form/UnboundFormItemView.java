@@ -27,6 +27,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("unused")
 public abstract class UnboundFormItemView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static UnboundFormItemView create(final MbuiContext mbuiContext) {

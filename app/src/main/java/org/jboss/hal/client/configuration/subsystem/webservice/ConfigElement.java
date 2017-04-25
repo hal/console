@@ -27,20 +27,18 @@ import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerChain.POST_HANDLER_CHAIN;
@@ -60,7 +58,7 @@ import static org.jboss.hal.resources.CSS.columnAction;
 class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePresenter> {
 
     private final Pages pages;
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private final PropertiesItem propertiesItem;
     private final HandlerChainElement handlerChain;
@@ -69,13 +67,13 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     ConfigElement(final Config configType, final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+            final TableButtonFactory tableButtonFactory) {
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(tableButtonFactory.add(configType.template, (event, api) -> presenter.addConfig()))
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(configType.template, (event, table) -> presenter.addConfig()))
                 .button(tableButtonFactory.remove(configType.template,
-                        (event, api) -> presenter.removeConfig(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeConfig(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.WEBSERVICES_HANDLER_CHAIN_COLUMN,
                         Names.HANDLER_CHAIN,
@@ -92,7 +90,6 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
                         .width("12em")
                         .build())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), metadata, options);
 
         ModelNode propertyDescription = failSafeGet(metadata.getDescription(), "children/property/description");
         propertiesItem = new PropertiesItem(PROPERTY);
@@ -148,9 +145,9 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
         form.attach();
         table.bindForm(form);
 
-        table.api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
-                Map<String, String> properties = failSafePropertyList(api.selectedRow(), PROPERTY).stream()
+        table.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                Map<String, String> properties = failSafePropertyList(t.selectedRow(), PROPERTY).stream()
                         .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
                 propertiesItem.setValue(properties);
             } else {

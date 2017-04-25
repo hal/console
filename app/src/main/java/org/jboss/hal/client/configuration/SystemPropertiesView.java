@@ -18,9 +18,9 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -28,6 +28,7 @@ import org.jboss.hal.spi.MbuiView;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("DuplicateStringLiteralInspection")
 @MbuiView
 public abstract class SystemPropertiesView extends MbuiViewImpl<SystemPropertiesPresenter>
         implements SystemPropertiesPresenter.MyView {
@@ -36,7 +37,7 @@ public abstract class SystemPropertiesView extends MbuiViewImpl<SystemProperties
         return new Mbui_SystemPropertiesView(mbuiContext);
     }
 
-    @MbuiElement("system-property-table") NamedNodeTable<NamedNode> systemPropertyTable;
+    @MbuiElement("system-property-table") Table<NamedNode> systemPropertyTable;
     @MbuiElement("system-property-form") Form<NamedNode> systemPropertyForm;
 
     SystemPropertiesView(final MbuiContext mbuiContext) {

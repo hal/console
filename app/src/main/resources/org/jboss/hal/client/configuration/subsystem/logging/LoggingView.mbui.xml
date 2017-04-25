@@ -94,7 +94,7 @@
                             </attributes>
                         </action>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                                name-resolver="{{table.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
                         <column name="category"/>
@@ -148,7 +148,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -197,7 +197,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -249,7 +249,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -304,7 +304,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -362,7 +362,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -431,7 +431,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -484,7 +484,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -537,7 +537,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- syslog handlers do not have a name attribute,
@@ -576,7 +576,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- log formatter resources do not have a name attribute,
@@ -607,7 +607,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- custom formatter do not have a name attribute,

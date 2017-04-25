@@ -27,7 +27,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.BROADCAST_GROUP)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.BROADCAST_GROUP, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.BROADCAST_GROUP, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -64,7 +64,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.DISCOVERY_GROUP)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.DISCOVERY_GROUP, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.DISCOVERY_GROUP, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -102,7 +102,7 @@
                                 handler="{{presenter.addClusterConnection(ServerSubResource.CLUSTER_CONNECTION)}}"
                                 constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.CLUSTER_CONNECTION, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -125,7 +125,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.GROUPING_HANDLER)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.GROUPING_HANDLER, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.GROUPING_HANDLER, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -147,7 +147,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.BRIDGE, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.BRIDGE, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>

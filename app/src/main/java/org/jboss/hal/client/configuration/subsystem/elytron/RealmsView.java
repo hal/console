@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -30,7 +30,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess", "unused"})
 public class RealmsView extends MbuiViewImpl<RealmsPresenter>
         implements RealmsPresenter.MyView {
 
@@ -41,35 +41,35 @@ public class RealmsView extends MbuiViewImpl<RealmsPresenter>
     // @formatter:off
     @MbuiElement("realms-vertical-navigation") VerticalNavigation navigation;
 
-    @MbuiElement("realms-aggregate-realm-table") NamedNodeTable<NamedNode> aggregateRealmTable;
+    @MbuiElement("realms-aggregate-realm-table") Table<NamedNode> aggregateRealmTable;
     @MbuiElement("realms-aggregate-realm-form") Form<NamedNode> aggregateRealmForm;
-    @MbuiElement("realms-caching-realm-table") NamedNodeTable<NamedNode> cachingRealmTable;
+    @MbuiElement("realms-caching-realm-table") Table<NamedNode> cachingRealmTable;
     @MbuiElement("realms-caching-realm-form") Form<NamedNode> cachingRealmForm;
-    @MbuiElement("realms-custom-modifiable-realm-table") NamedNodeTable<NamedNode> customModifiableRealmTable;
+    @MbuiElement("realms-custom-modifiable-realm-table") Table<NamedNode> customModifiableRealmTable;
     @MbuiElement("realms-custom-modifiable-realm-form") Form<NamedNode> customModifiableRealmForm;
-    @MbuiElement("realms-custom-realm-table") NamedNodeTable<NamedNode> customRealmTable;
+    @MbuiElement("realms-custom-realm-table") Table<NamedNode> customRealmTable;
     @MbuiElement("realms-custom-realm-form") Form<NamedNode> customRealmForm;
-    @MbuiElement("realms-filesystem-realm-table") NamedNodeTable<NamedNode> filesystemRealmTable;
+    @MbuiElement("realms-filesystem-realm-table") Table<NamedNode> filesystemRealmTable;
     @MbuiElement("realms-filesystem-realm-form") Form<NamedNode> filesystemRealmForm;
-    @MbuiElement("realms-identity-realm-table") NamedNodeTable<NamedNode> identityRealmTable;
+    @MbuiElement("realms-identity-realm-table") Table<NamedNode> identityRealmTable;
     @MbuiElement("realms-identity-realm-form") Form<NamedNode> identityRealmForm;
-    @MbuiElement("realms-jdbc-realm-table") NamedNodeTable<NamedNode> jdbcRealmTable;
+    @MbuiElement("realms-jdbc-realm-table") Table<NamedNode> jdbcRealmTable;
     @MbuiElement("realms-jdbc-realm-form") Form<NamedNode> jdbcRealmForm;
-    @MbuiElement("realms-key-store-realm-table") NamedNodeTable<NamedNode> keyStoreRealmTable;
+    @MbuiElement("realms-key-store-realm-table") Table<NamedNode> keyStoreRealmTable;
     @MbuiElement("realms-key-store-realm-form") Form<NamedNode> keyStoreRealmForm;
-    @MbuiElement("realms-ldap-realm-table") NamedNodeTable<NamedNode> ldapRealmTable;
+    @MbuiElement("realms-ldap-realm-table") Table<NamedNode> ldapRealmTable;
     @MbuiElement("realms-ldap-realm-form") Form<NamedNode> ldapRealmForm;
-    @MbuiElement("realms-properties-realm-table") NamedNodeTable<NamedNode> propertiesRealmTable;
+    @MbuiElement("realms-properties-realm-table") Table<NamedNode> propertiesRealmTable;
     @MbuiElement("realms-properties-realm-form") Form<NamedNode> propertiesRealmForm;
-    @MbuiElement("realms-token-realm-table") NamedNodeTable<NamedNode> tokenRealmTable;
+    @MbuiElement("realms-token-realm-table") Table<NamedNode> tokenRealmTable;
     @MbuiElement("realms-token-realm-form") Form<NamedNode> tokenRealmForm;
-    @MbuiElement("realms-constant-realm-mapper-table") NamedNodeTable<NamedNode> constantRealmMapperTable;
+    @MbuiElement("realms-constant-realm-mapper-table") Table<NamedNode> constantRealmMapperTable;
     @MbuiElement("realms-constant-realm-mapper-form") Form<NamedNode> constantRealmMapperForm;
-    @MbuiElement("realms-custom-realm-mapper-table") NamedNodeTable<NamedNode> customRealmMapperTable;
+    @MbuiElement("realms-custom-realm-mapper-table") Table<NamedNode> customRealmMapperTable;
     @MbuiElement("realms-custom-realm-mapper-form") Form<NamedNode> customRealmMapperForm;
-    @MbuiElement("realms-mapped-regex-realm-mapper-table") NamedNodeTable<NamedNode> mappedRegexRealmMapperTable;
+    @MbuiElement("realms-mapped-regex-realm-mapper-table") Table<NamedNode> mappedRegexRealmMapperTable;
     @MbuiElement("realms-mapped-regex-realm-mapper-form") Form<NamedNode> mappedRegexRealmMapperForm;
-    @MbuiElement("realms-simple-regex-realm-mapper-table") NamedNodeTable<NamedNode> simpleRegexRealmMapperTable;
+    @MbuiElement("realms-simple-regex-realm-mapper-table") Table<NamedNode> simpleRegexRealmMapperTable;
     @MbuiElement("realms-simple-regex-realm-mapper-form") Form<NamedNode> simpleRegexRealmMapperForm;
 
 

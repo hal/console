@@ -11,14 +11,12 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -50,12 +48,11 @@ final class Mbui_AddWithAttributesView extends AddWithAttributesView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        Options<org.jboss.hal.dmr.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>(metadata0)
+        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Foo",
                         metadata0Template, asList("foo"), (name, address) -> presenter.reload()))
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

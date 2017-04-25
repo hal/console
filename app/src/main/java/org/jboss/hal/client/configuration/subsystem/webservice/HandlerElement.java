@@ -22,10 +22,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.NamedNode;
@@ -45,7 +44,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePresenter> {
 
     private final Element root;
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private WebservicePresenter presenter;
 
@@ -53,15 +52,14 @@ class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePr
     HandlerElement(final Config configType, final MetadataRegistry metadataRegistry,
             final TableButtonFactory tableButtonFactory) {
 
+        String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE_SUFFIX);
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(tableButtonFactory.add(HANDLER_TEMPLATE, (event, api) -> presenter.addHandler()))
+        table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
+                .button(tableButtonFactory.add(HANDLER_TEMPLATE, (event, table) -> presenter.addHandler()))
                 .button(tableButtonFactory.remove(HANDLER_TEMPLATE,
-                        (event, api) -> presenter.removeHandler(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeHandler(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
-        String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE_SUFFIX);
-        table = new NamedNodeTable<>(tableId, metadata, options);
 
         String formId = Ids.build(configType.baseId, "handler", Ids.FORM_SUFFIX);
         form = new ModelNodeForm.Builder<NamedNode>(formId, metadata)

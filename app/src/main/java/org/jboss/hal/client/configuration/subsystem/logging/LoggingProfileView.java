@@ -27,14 +27,13 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -75,27 +74,27 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     final SuggestHandler suggestHandlers;
     @MbuiElement("logging-profile-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-profile-root-logger-form") Form<ModelNode> rootLoggerForm;
-    @MbuiElement("logging-profile-categories-table") NamedNodeTable<NamedNode> loggerTable;
+    @MbuiElement("logging-profile-categories-table") Table<NamedNode> loggerTable;
     @MbuiElement("logging-profile-categories-form") Form<NamedNode> loggerForm;
-    @MbuiElement("logging-profile-handler-console-table") NamedNodeTable<NamedNode> consoleHandlerTable;
+    @MbuiElement("logging-profile-handler-console-table") Table<NamedNode> consoleHandlerTable;
     @MbuiElement("logging-profile-handler-console-form") Form<NamedNode> consoleHandlerForm;
-    @MbuiElement("logging-profile-handler-file-table") NamedNodeTable<NamedNode> fileHandlerTable;
+    @MbuiElement("logging-profile-handler-file-table") Table<NamedNode> fileHandlerTable;
     @MbuiElement("logging-profile-handler-file-form") Form<NamedNode> fileHandlerForm;
-    @MbuiElement("logging-profile-handler-periodic-rotating-file-table") NamedNodeTable<NamedNode> periodicHandlerTable;
+    @MbuiElement("logging-profile-handler-periodic-rotating-file-table") Table<NamedNode> periodicHandlerTable;
     @MbuiElement("logging-profile-handler-periodic-rotating-file-form") Form<NamedNode> periodicHandlerForm;
-    @MbuiElement("logging-profile-handler-periodic-size-rotating-file-table") NamedNodeTable<NamedNode> periodicSizeHandlerTable;
+    @MbuiElement("logging-profile-handler-periodic-size-rotating-file-table") Table<NamedNode> periodicSizeHandlerTable;
     @MbuiElement("logging-profile-handler-periodic-size-rotating-file-form") Form<NamedNode> periodicSizeHandlerForm;
-    @MbuiElement("logging-profile-handler-size-rotating-file-table") NamedNodeTable<NamedNode> sizeHandlerTable;
+    @MbuiElement("logging-profile-handler-size-rotating-file-table") Table<NamedNode> sizeHandlerTable;
     @MbuiElement("logging-profile-handler-size-rotating-file-form") Form<NamedNode> sizeHandlerForm;
-    @MbuiElement("logging-profile-handler-async-table") NamedNodeTable<NamedNode> asyncHandlerTable;
+    @MbuiElement("logging-profile-handler-async-table") Table<NamedNode> asyncHandlerTable;
     @MbuiElement("logging-profile-handler-async-form") Form<NamedNode> asyncHandlerForm;
-    @MbuiElement("logging-profile-handler-custom-table") NamedNodeTable<NamedNode> customHandlerTable;
+    @MbuiElement("logging-profile-handler-custom-table") Table<NamedNode> customHandlerTable;
     @MbuiElement("logging-profile-handler-custom-form") Form<NamedNode> customHandlerForm;
-    @MbuiElement("logging-profile-handler-syslog-table") NamedNodeTable<NamedNode> syslogHandlerTable;
+    @MbuiElement("logging-profile-handler-syslog-table") Table<NamedNode> syslogHandlerTable;
     @MbuiElement("logging-profile-handler-syslog-form") Form<NamedNode> syslogHandlerForm;
-    @MbuiElement("logging-profile-formatter-custom-table") NamedNodeTable<NamedNode> customFormatterTable;
+    @MbuiElement("logging-profile-formatter-custom-table") Table<NamedNode> customFormatterTable;
     @MbuiElement("logging-profile-formatter-custom-form") Form<NamedNode> customFormatterForm;
-    @MbuiElement("logging-profile-formatter-pattern-table") NamedNodeTable<NamedNode> patternFormatterTable;
+    @MbuiElement("logging-profile-formatter-pattern-table") Table<NamedNode> patternFormatterTable;
     @MbuiElement("logging-profile-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
     EmptyState noRootLogger;
 
@@ -195,8 +194,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "level", "handlers", "use-parent-handlers");
     }
 
-    void removeLogger(Api<NamedNode> api) {
-        removeResource(api, "logger=*", "Category");
+    void removeLogger(Table<NamedNode> table) {
+        removeResource(table, "logger=*", "Category");
     }
 
     void saveLogger(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -227,8 +226,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Console Handler", "level", "target", "formatter");
     }
 
-    void removeConsoleHandler(Api<NamedNode> api) {
-        removeResource(api, "console-handler=*", "Console Handler");
+    void removeConsoleHandler(Table<NamedNode> table) {
+        removeResource(table, "console-handler=*", "Console Handler");
     }
 
     void saveConsoleHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -260,8 +259,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "File Handler", "level", "formatter");
     }
 
-    void removeFileHandler(Api<NamedNode> api) {
-        removeResource(api, "file-handler=*", "File Handler");
+    void removeFileHandler(Table<NamedNode> table) {
+        removeResource(table, "file-handler=*", "File Handler");
     }
 
     void saveFileHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -294,8 +293,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Periodic Handler", "suffix", "level", "formatter");
     }
 
-    void removePeriodicHandler(Api<NamedNode> api) {
-        removeResource(api, "periodic-rotating-file-handler=*", "Periodic Handler");
+    void removePeriodicHandler(Table<NamedNode> table) {
+        removeResource(table, "periodic-rotating-file-handler=*", "Periodic Handler");
     }
 
     void savePeriodicHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -330,8 +329,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Periodic Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
-    void removePeriodicSizeHandler(Api<NamedNode> api) {
-        removeResource(api, "periodic-size-rotating-file-handler=*", "Periodic Size Handler");
+    void removePeriodicSizeHandler(Table<NamedNode> table) {
+        removeResource(table, "periodic-size-rotating-file-handler=*", "Periodic Size Handler");
     }
 
     void savePeriodicSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -368,8 +367,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
-    void removeSizeHandler(Api<NamedNode> api) {
-        removeResource(api, "size-rotating-file-handler=*", "Size Handler");
+    void removeSizeHandler(Table<NamedNode> table) {
+        removeResource(table, "size-rotating-file-handler=*", "Size Handler");
     }
 
     void saveSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -423,8 +422,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         dialog.show();
     }
 
-    void removeAsyncHandler(Api<NamedNode> api) {
-        removeResource(api, "async-handler=*", "Async Handler");
+    void removeAsyncHandler(Table<NamedNode> table) {
+        removeResource(table, "async-handler=*", "Async Handler");
     }
 
     void saveAsyncHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -456,8 +455,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Custom Handler", "level", "module", "class", "formatter");
     }
 
-    void removeCustomHandler(Api<NamedNode> api) {
-        removeResource(api, "custom-handler=*", "Custom Handler");
+    void removeCustomHandler(Table<NamedNode> table) {
+        removeResource(table, "custom-handler=*", "Custom Handler");
     }
 
     void saveCustomHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -490,8 +489,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "facility");
     }
 
-    void removeSyslogHandler(Api<NamedNode> api) {
-        removeResource(api, "syslog-handler=*", "Syslog Handler");
+    void removeSyslogHandler(Table<NamedNode> table) {
+        removeResource(table, "syslog-handler=*", "Syslog Handler");
     }
 
     void saveSyslogHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -523,8 +522,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Custom Formatter");
     }
 
-    void removeCustomFormatter(Api<NamedNode> api) {
-        removeResource(api, "custom-formatter=*", "Custom Formatter");
+    void removeCustomFormatter(Table<NamedNode> table) {
+        removeResource(table, "custom-formatter=*", "Custom Formatter");
     }
 
     void saveCustomFormatter(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -558,8 +557,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 "Pattern Formatter");
     }
 
-    void removePatternFormatter(Api<NamedNode> api) {
-        removeResource(api, "pattern-formatter=*", "Pattern Formatter");
+    void removePatternFormatter(Table<NamedNode> table) {
+        removeResource(table, "pattern-formatter=*", "Pattern Formatter");
     }
 
     void savePatternFormatter(Form<NamedNode> form, Map<String, Object> changedValues) {
@@ -629,9 +628,9 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         dialog.show();
     }
 
-    private void removeResource(Api<NamedNode> api, String templateSuffix, String type) {
+    private void removeResource(Table<NamedNode> table, String templateSuffix, String type) {
         //noinspection ConstantConditions
-        String name = api.selectedRow().getName();
+        String name = table.selectedRow().getName();
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
         ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
         crud().remove(type, name, address, () -> presenter.reload());

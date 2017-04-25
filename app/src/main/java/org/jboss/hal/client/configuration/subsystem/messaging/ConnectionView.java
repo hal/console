@@ -20,9 +20,9 @@ import java.util.List;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.spi.MbuiElement;
@@ -30,17 +30,13 @@ import org.jboss.hal.spi.MbuiView;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTOR;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTORS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_CONNECTOR;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.IN_VM_CONNECTOR;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
         implements ConnectionPresenter.MyView {
 
@@ -49,27 +45,27 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     }
 
     @MbuiElement("messaging-connection-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("messaging-acceptor-table") NamedNodeTable<NamedNode> acceptorTable;
+    @MbuiElement("messaging-acceptor-table") Table<NamedNode> acceptorTable;
     @MbuiElement("messaging-acceptor-form") Form<NamedNode> acceptorForm;
-    @MbuiElement("messaging-in-vm-acceptor-table") NamedNodeTable<NamedNode> inVmAcceptorTable;
+    @MbuiElement("messaging-in-vm-acceptor-table") Table<NamedNode> inVmAcceptorTable;
     @MbuiElement("messaging-in-vm-acceptor-form") Form<NamedNode> inVmAcceptorForm;
-    @MbuiElement("messaging-http-acceptor-table") NamedNodeTable<NamedNode> httpAcceptorTable;
+    @MbuiElement("messaging-http-acceptor-table") Table<NamedNode> httpAcceptorTable;
     @MbuiElement("messaging-http-acceptor-form") Form<NamedNode> httpAcceptorForm;
-    @MbuiElement("messaging-remote-acceptor-table") NamedNodeTable<NamedNode> remoteAcceptorTable;
+    @MbuiElement("messaging-remote-acceptor-table") Table<NamedNode> remoteAcceptorTable;
     @MbuiElement("messaging-remote-acceptor-form") Form<NamedNode> remoteAcceptorForm;
-    @MbuiElement("messaging-connector-table") NamedNodeTable<NamedNode> connectorTable;
+    @MbuiElement("messaging-connector-table") Table<NamedNode> connectorTable;
     @MbuiElement("messaging-connector-form") Form<NamedNode> connectorForm;
-    @MbuiElement("messaging-in-vm-connector-table") NamedNodeTable<NamedNode> inVmConnectorTable;
+    @MbuiElement("messaging-in-vm-connector-table") Table<NamedNode> inVmConnectorTable;
     @MbuiElement("messaging-in-vm-connector-form") Form<NamedNode> inVmConnectorForm;
-    @MbuiElement("messaging-http-connector-table") NamedNodeTable<NamedNode> httpConnectorTable;
+    @MbuiElement("messaging-http-connector-table") Table<NamedNode> httpConnectorTable;
     @MbuiElement("messaging-http-connector-form") Form<NamedNode> httpConnectorForm;
-    @MbuiElement("messaging-remote-connector-table") NamedNodeTable<NamedNode> remoteConnectorTable;
+    @MbuiElement("messaging-remote-connector-table") Table<NamedNode> remoteConnectorTable;
     @MbuiElement("messaging-remote-connector-form") Form<NamedNode> remoteConnectorForm;
-    @MbuiElement("messaging-connector-service-table") NamedNodeTable<NamedNode> connectorServiceTable;
+    @MbuiElement("messaging-connector-service-table") Table<NamedNode> connectorServiceTable;
     @MbuiElement("messaging-connector-service-form") Form<NamedNode> connectorServiceForm;
-    @MbuiElement("messaging-connection-factory-table") NamedNodeTable<NamedNode> connectionFactoryTable;
+    @MbuiElement("messaging-connection-factory-table") Table<NamedNode> connectionFactoryTable;
     @MbuiElement("messaging-connection-factory-form") Form<NamedNode> connectionFactoryForm;
-    @MbuiElement("messaging-pooled-connection-factory-table") NamedNodeTable<NamedNode> pooledConnectionFactoryTable;
+    @MbuiElement("messaging-pooled-connection-factory-table") Table<NamedNode> pooledConnectionFactoryTable;
     @MbuiElement("messaging-pooled-connection-factory-form") Form<NamedNode> pooledConnectionFactoryForm;
 
     ConnectionView(final MbuiContext mbuiContext) {

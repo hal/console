@@ -19,8 +19,9 @@ import java.util.Collections;
 import java.util.function.Function;
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Button.ActionHandler;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -46,7 +47,7 @@ public class TableButtonFactory {
         this.resources = resources;
     }
 
-    public <T extends ModelNode> Button<T> add(AddressTemplate template, Button.ActionHandler<T> action) {
+    public <T extends ModelNode> Button<T> add(AddressTemplate template, ActionHandler<T> action) {
         Button<T> button = new Button<>();
         button.text = resources.constants().add();
         button.action = action;
@@ -63,12 +64,12 @@ public class TableButtonFactory {
             Iterable<String> attributes, CrudOperations.AddCallback callback) {
         Button<T> button = new Button<>();
         button.text = resources.constants().add();
-        button.action = (event, api) -> crud.add(id, type, template, attributes, callback);
+        button.action = (event, table) -> crud.add(id, type, template, attributes, callback);
         button.constraint = Constraint.executable(template, ADD).data();
         return button;
     }
 
-    public <T extends ModelNode> Button<T> remove(AddressTemplate template, Button.ActionHandler<T> action) {
+    public <T extends ModelNode> Button<T> remove(AddressTemplate template, ActionHandler<T> action) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();
         button.action = action;
@@ -76,12 +77,12 @@ public class TableButtonFactory {
         return button;
     }
 
-    public <T> Button<T> remove(String type, AddressTemplate template, Function<Api<T>, String> nameFunction,
+    public <T> Button<T> remove(String type, AddressTemplate template, Function<Table<T>, String> nameFunction,
             Callback callback) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();
         button.extend = SELECTED_SINGLE.selector();
-        button.action = (event, api) -> crud.remove(type, nameFunction.apply(api), template, callback);
+        button.action = (event, table) -> crud.remove(type, nameFunction.apply(table), template, callback);
         button.constraint = Constraint.executable(template, REMOVE).data();
         return button;
     }

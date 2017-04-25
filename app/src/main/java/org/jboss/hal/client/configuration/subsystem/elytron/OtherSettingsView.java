@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -30,7 +30,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class OtherSettingsView extends MbuiViewImpl<OtherSettingsPresenter>
         implements OtherSettingsPresenter.MyView {
 
@@ -41,35 +41,35 @@ public abstract class OtherSettingsView extends MbuiViewImpl<OtherSettingsPresen
     // @formatter:off
     @MbuiElement("other-vertical-navigation") VerticalNavigation navigation;
 
-    @MbuiElement("other-key-store-table") NamedNodeTable<NamedNode> keyStoreTable;
+    @MbuiElement("other-key-store-table") Table<NamedNode> keyStoreTable;
     @MbuiElement("other-key-store-form") Form<NamedNode> keyStoreForm;
-    @MbuiElement("other-key-managers-table") NamedNodeTable<NamedNode> keyManagersTable;
+    @MbuiElement("other-key-managers-table") Table<NamedNode> keyManagersTable;
     @MbuiElement("other-key-managers-form") Form<NamedNode> keyManagersForm;
-    @MbuiElement("other-server-ssl-context-table") NamedNodeTable<NamedNode> serverSslContextTable;
+    @MbuiElement("other-server-ssl-context-table") Table<NamedNode> serverSslContextTable;
     @MbuiElement("other-server-ssl-context-form") Form<NamedNode> serverSslContextForm;
-    @MbuiElement("other-client-ssl-context-table") NamedNodeTable<NamedNode> clientSslContextTable;
+    @MbuiElement("other-client-ssl-context-table") Table<NamedNode> clientSslContextTable;
     @MbuiElement("other-client-ssl-context-form") Form<NamedNode> clientSslContextForm;
-    @MbuiElement("other-trust-managers-table") NamedNodeTable<NamedNode> trustManagersTable;
+    @MbuiElement("other-trust-managers-table") Table<NamedNode> trustManagersTable;
     @MbuiElement("other-trust-managers-form") Form<NamedNode> trustManagersForm;
-    @MbuiElement("other-credential-store-table") NamedNodeTable<NamedNode> credentialStoreTable;
+    @MbuiElement("other-credential-store-table") Table<NamedNode> credentialStoreTable;
     @MbuiElement("other-credential-store-form") Form<NamedNode> credentialStoreForm;
-    @MbuiElement("other-filtering-key-store-table") NamedNodeTable<NamedNode> filteringKeyStoreTable;
+    @MbuiElement("other-filtering-key-store-table") Table<NamedNode> filteringKeyStoreTable;
     @MbuiElement("other-filtering-key-store-form") Form<NamedNode> filteringKeyStoreForm;
-    @MbuiElement("other-ldap-key-store-table") NamedNodeTable<NamedNode> ldapKeyStoreTable;
+    @MbuiElement("other-ldap-key-store-table") Table<NamedNode> ldapKeyStoreTable;
     @MbuiElement("other-ldap-key-store-form") Form<NamedNode> ldapKeyStoreForm;
-    @MbuiElement("other-provider-loader-table") NamedNodeTable<NamedNode> providerLoaderTable;
+    @MbuiElement("other-provider-loader-table") Table<NamedNode> providerLoaderTable;
     @MbuiElement("other-provider-loader-form") Form<NamedNode> providerLoaderForm;
-    @MbuiElement("other-aggregate-providers-table") NamedNodeTable<NamedNode> aggregateProvidersTable;
+    @MbuiElement("other-aggregate-providers-table") Table<NamedNode> aggregateProvidersTable;
     @MbuiElement("other-aggregate-providers-form") Form<NamedNode> aggregateProvidersForm;
-    @MbuiElement("other-security-domain-table") NamedNodeTable<NamedNode> securityDomainTable;
+    @MbuiElement("other-security-domain-table") Table<NamedNode> securityDomainTable;
     @MbuiElement("other-security-domain-form") Form<NamedNode> securityDomainForm;
-    @MbuiElement("other-security-property-table") NamedNodeTable<NamedNode> securityPropertyTable;
+    @MbuiElement("other-security-property-table") Table<NamedNode> securityPropertyTable;
     @MbuiElement("other-security-property-form") Form<NamedNode> securityPropertyForm;
-    @MbuiElement("other-dir-context-table") NamedNodeTable<NamedNode> dirContextTable;
+    @MbuiElement("other-dir-context-table") Table<NamedNode> dirContextTable;
     @MbuiElement("other-dir-context-form") Form<NamedNode> dirContextForm;
-    @MbuiElement("other-authentication-context-table") NamedNodeTable<NamedNode> authenticationContextTable;
+    @MbuiElement("other-authentication-context-table") Table<NamedNode> authenticationContextTable;
     @MbuiElement("other-authentication-context-form") Form<NamedNode> authenticationContextForm;
-    @MbuiElement("other-authentication-configuration-table") NamedNodeTable<NamedNode> authenticationConfigurationTable;
+    @MbuiElement("other-authentication-configuration-table") Table<NamedNode> authenticationConfigurationTable;
     @MbuiElement("other-authentication-configuration-form") Form<NamedNode> authenticationConfigurationForm;
 
     // @formatter:on

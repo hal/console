@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableMap;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
@@ -61,8 +61,8 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import static org.jboss.hal.processor.mbui.ElementType.DataTable;
 import static org.jboss.hal.processor.mbui.ElementType.Form;
+import static org.jboss.hal.processor.mbui.ElementType.Table;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
@@ -320,7 +320,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
                                 elementProcessor = new VerticalNavigationProcessor(this, typeUtils, elementUtils,
                                         xPathFactory);
                                 break;
-                            case DataTable:
+                            case Table:
                                 elementProcessor = new DataTableProcessor(this, typeUtils, elementUtils, xPathFactory);
                                 break;
                             case Form:
@@ -366,8 +366,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private ElementType getMbuiElementType(TypeMirror dataElementType) {
         if (isAssignable(dataElementType, VerticalNavigation.class)) {
             return VerticalNavigation;
-        } else if (isAssignable(dataElementType, DataTable.class)) {
-            return DataTable;
+        } else if (isAssignable(dataElementType, Table.class)) {
+            return Table;
         } else if (isAssignable(dataElementType, Form.class)) {
             return Form;
         } else {

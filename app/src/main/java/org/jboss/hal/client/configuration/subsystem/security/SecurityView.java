@@ -17,9 +17,9 @@ package org.jboss.hal.client.configuration.subsystem.security;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -42,15 +42,15 @@ public abstract class SecurityView extends MbuiViewImpl<SecurityPresenter> imple
 
     @MbuiElement("security-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("security-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("security-elytron-key-manager-table") NamedNodeTable<NamedNode> keyManagerTable;
+    @MbuiElement("security-elytron-key-manager-table") Table<NamedNode> keyManagerTable;
     @MbuiElement("security-elytron-key-manager-form") Form<NamedNode> keyManagerForm;
-    @MbuiElement("security-elytron-key-store-table") NamedNodeTable<NamedNode> keyStoreTable;
+    @MbuiElement("security-elytron-key-store-table") Table<NamedNode> keyStoreTable;
     @MbuiElement("security-elytron-key-store-form") Form<NamedNode> keyStoreForm;
-    @MbuiElement("security-elytron-realm-table") NamedNodeTable<NamedNode> realmTable;
+    @MbuiElement("security-elytron-realm-table") Table<NamedNode> realmTable;
     @MbuiElement("security-elytron-realm-form") Form<NamedNode> realmForm;
-    @MbuiElement("security-elytron-trust-manager-table") NamedNodeTable<NamedNode> trustManagerTable;
+    @MbuiElement("security-elytron-trust-manager-table") Table<NamedNode> trustManagerTable;
     @MbuiElement("security-elytron-trust-manager-form") Form<NamedNode> trustManagerForm;
-    @MbuiElement("security-elytron-trust-store-table") NamedNodeTable<NamedNode> trustStoreTable;
+    @MbuiElement("security-elytron-trust-store-table") Table<NamedNode> trustStoreTable;
     @MbuiElement("security-elytron-trust-store-form") Form<NamedNode> trustStoreForm;
     @MbuiElement("security-vault-form") Form<ModelNode> vaultForm;
 

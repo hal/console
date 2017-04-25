@@ -29,14 +29,14 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
@@ -63,14 +63,14 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     private final Dispatcher dispatcher;
     private final MetadataRegistry metadataRegistry;
     private final Form<ModelNode> configurationForm;
-    private final NamedNodeTable<NamedNode> hostTable;
+    private final Table<NamedNode> hostTable;
     private final Form<NamedNode> hostForm;
     private final Map<HostSetting, Form<ModelNode>> hostSettingForms;
-    private final NamedNodeTable<NamedNode> filterRefTable;
+    private final Table<NamedNode> filterRefTable;
     private final Form<NamedNode> filterRefForm;
-    private final NamedNodeTable<NamedNode> locationTable;
+    private final Table<NamedNode> locationTable;
     private final Form<NamedNode> locationForm;
-    private final NamedNodeTable<NamedNode> locationFilterRefTable;
+    private final Table<NamedNode> locationFilterRefTable;
     private final Form<NamedNode> locationFilterRefForm;
     private final Pages hostPages;
     private final Map<Listener, ListenerElement> listener;
@@ -105,10 +105,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         // ------------------------------------------------------ hosts
 
         Metadata hostMetadata = metadataRegistry.lookup(HOST_TEMPLATE);
-        Options<NamedNode> hostOptions = new NamedNodeTable.Builder<>(hostMetadata)
-                .button(tableButtonFactory.add(HOST_TEMPLATE, (event, api) -> presenter.addHost()))
+        hostTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_TABLE, hostMetadata)
+                .button(tableButtonFactory.add(HOST_TEMPLATE, (event, table) -> presenter.addHost()))
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
-                        (event, api) -> presenter.removeHost(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeHost(table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.UNDERTOW_HOST_ACTION_COLUMN,
                         resources.constants().references(),
@@ -125,7 +125,6 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         .width("13em")
                         .build())
                 .build();
-        hostTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_TABLE, hostMetadata, hostOptions);
 
         hostForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_ATTRIBUTES_FORM, hostMetadata)
                 .onSave((form, changedValues) -> presenter.saveHost(form.getModel().getName(), changedValues))
@@ -158,14 +157,13 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         // ------------------------------------------------------ host filter refs
 
         Metadata filterRefMetadata = metadataRegistry.lookup(FILTER_REF_TEMPLATE);
-        Options<NamedNode> filterRefOptions = new NamedNodeTable.Builder<>(filterRefMetadata)
-                .button(tableButtonFactory.add(FILTER_REF_TEMPLATE, (event, api) -> presenter.addFilterRef()))
+        filterRefTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_FILTER_REF_TABLE, filterRefMetadata)
+                .button(tableButtonFactory.add(FILTER_REF_TEMPLATE, (event, table) -> presenter.addFilterRef()))
                 .button(tableButtonFactory.remove(FILTER_REF_TEMPLATE,
-                        (event, api) -> presenter.removeFilterRef(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeFilterRef(table.selectedRow().getName())))
                 .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
-        filterRefTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_FILTER_REF_TABLE, filterRefMetadata, filterRefOptions);
 
         filterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_FILTER_REF_FORM, filterRefMetadata)
                 .onSave((form, changedValues) -> presenter.saveFilterRef(form, changedValues))
@@ -186,15 +184,14 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         // ------------------------------------------------------ host locations
 
         Metadata locationMetadata = metadataRegistry.lookup(LOCATION_TEMPLATE);
-        Options<NamedNode> locationOptions = new NamedNodeTable.Builder<>(locationMetadata)
-                .button(tableButtonFactory.add(LOCATION_TEMPLATE, (event, api) -> presenter.addLocation()))
+        locationTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_TABLE, locationMetadata)
+                .button(tableButtonFactory.add(LOCATION_TEMPLATE, (event, table) -> presenter.addLocation()))
                 .button(tableButtonFactory.remove(LOCATION_TEMPLATE,
-                        (event, api) -> presenter.removeLocation(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeLocation(table.selectedRow().getName())))
                 .column(LOCATION, Names.LOCATION, (cell, type, row, meta) -> row.getName())
                 .column(HANDLER)
                 .column(Names.FILTERS, row -> presenter.showLocationFilterRef(row))
                 .build();
-        locationTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_LOCATION_TABLE, locationMetadata, locationOptions);
 
         locationForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FORM, locationMetadata)
                 .onSave((form, changedValues) -> presenter.saveLocation(form, changedValues))
@@ -215,16 +212,15 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         // ------------------------------------------------------ host location filter refs
 
         Metadata locationFilterRefMetadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
-        Options<NamedNode> locationFilterRefOptions = new NamedNodeTable.Builder<>(locationFilterRefMetadata)
+        locationFilterRefTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_TABLE,
+                locationFilterRefMetadata)
                 .button(tableButtonFactory.add(LOCATION_FILTER_REF_TEMPLATE,
-                        (event, api) -> presenter.addLocationFilterRef()))
+                        (event, table) -> presenter.addLocationFilterRef()))
                 .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
-                        (event, api) -> presenter.removeLocationFilterRef(api.selectedRow().getName())))
+                        (event, table) -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
                 .column(FILTER_REF, Names.FILTER, (cell, type, row, meta) -> row.getName())
                 .column(PRIORITY)
                 .build();
-        locationFilterRefTable = new NamedNodeTable<>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_TABLE,
-                locationFilterRefMetadata, locationFilterRefOptions);
 
         locationFilterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_FORM,
                 locationFilterRefMetadata)
@@ -305,11 +301,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     public void attach() {
         super.attach();
         hostTable.bindForm(hostForm);
-        hostTable.api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
-                presenter.selectHost(api.selectedRow().getName());
+        hostTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                presenter.selectHost(t.selectedRow().getName());
                 for (HostSetting setting : HostSetting.values()) {
-                    hostSettingForms.get(setting).view(failSafeGet(api.selectedRow(), setting.path()));
+                    hostSettingForms.get(setting).view(failSafeGet(t.selectedRow(), setting.path()));
                 }
             } else {
                 presenter.selectHost(null);

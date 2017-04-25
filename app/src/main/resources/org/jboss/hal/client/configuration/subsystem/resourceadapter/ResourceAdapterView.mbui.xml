@@ -65,7 +65,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{addConnectionDefinition()}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeConnectionDefinition(api)}}" scope="selected" constraint="remove"/>
+                                handler="{{removeConnectionDefinition(table)}}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>
@@ -141,7 +141,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addAdminObject()}}"
                                 constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{removeAdminObject(api)}}" scope="selected" constraint="remove"/>
+                                handler="{{removeAdminObject(table)}}" scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
                         <column name="name" value="{{row.getName()}}"/>

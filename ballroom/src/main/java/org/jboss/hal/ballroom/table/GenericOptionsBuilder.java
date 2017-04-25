@@ -52,6 +52,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     private ColumnActions<T> columnActions;
     private int pageLength;
     private boolean paging;
+    private Options<T> options;
 
     protected GenericOptionsBuilder() {
         this.buttons = new ArrayList<>();
@@ -75,6 +76,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      * @throws IllegalStateException if the builder's internal state is not valid
      */
     protected void validate() {
+        assertNoOptions();
         if (columns.isEmpty()) {
             throw new IllegalStateException("Empty columns in data table builder!");
         }
@@ -93,6 +95,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B button(String text, Scope scope, Constraint constraint, ActionHandler<T> action) {
+        assertNoOptions();
+
         Button<T> button = new Button<>();
         button.text = text;
         button.action = action;
@@ -106,6 +110,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B button(Button<T> button) {
+        assertNoOptions();
+
         buttons.add(button);
         return that();
     }
@@ -119,6 +125,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(Column<T> column) {
+        assertNoOptions();
+
         this.columns.add(column);
         return that();
     }
@@ -131,6 +139,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public B column(String link, ColumnAction<T> columnAction) {
+        assertNoOptions();
+
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
                 (cell, type, row, meta) -> {
                     String id = Ids.uniqueId();
@@ -146,11 +156,15 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(Function<ColumnActions<T>, Column<T>> actionColumn) {
+        assertNoOptions();
+
         this.columns.add(actionColumn.apply(columnActions));
         return that();
     }
 
     public B checkboxColumn() {
+        assertNoOptions();
+
         Column<T> checkboxColumn = new Column<>();
         checkboxColumn.orderable = false;
         checkboxColumn.className = selectCheckbox;
@@ -160,29 +174,41 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B multiselect() {
+        assertNoOptions();
+
         this.select = Select.build(true);
         return that();
     }
 
     public B keys(boolean keys) {
+        assertNoOptions();
+
         this.keys = keys;
         return that();
     }
 
     public B paging(boolean paging) {
+        assertNoOptions();
+
         this.paging = paging;
         return that();
     }
 
     public B searching(boolean searching) {
+        assertNoOptions();
+
         this.searching = searching;
         return that();
     }
 
     @SuppressWarnings({"HardCodedStringLiteral", "unchecked"})
-    public Options<T> build() {
+    public Options<T> options() {
+        if (options != null) {
+            return options;
+        }
+
         validate();
-        Options<T> options = new Options<>();
+        options = new Options<>();
         if (!buttons.isEmpty()) {
             // override defaults from patternfly.js:77
             options.dom = "<'dataTables_header' f B i>" +
@@ -208,5 +234,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         // custom options
         options.columnActions = columnActions;
         return options;
+    }
+
+    private void assertNoOptions() {
+        if (options != null) {
+            throw new IllegalStateException("OptionsBuilder.options() already called");
+        }
     }
 }

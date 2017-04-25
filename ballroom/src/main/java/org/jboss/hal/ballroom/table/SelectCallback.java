@@ -26,7 +26,6 @@ import jsinterop.annotations.JsFunction;
  * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
  */
 @JsFunction
-@FunctionalInterface
 interface SelectCallback<T> {
 
     void onSelect(Object event, Api<T> api, String type);

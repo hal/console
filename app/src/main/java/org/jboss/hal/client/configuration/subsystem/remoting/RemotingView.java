@@ -24,14 +24,14 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.MbuiElement;
@@ -54,7 +54,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection", "unused"})
 public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> implements RemotingPresenter.MyView {
 
     public static RemotingView create(final MbuiContext mbuiContext) {
@@ -64,14 +64,14 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     @MbuiElement("remoting-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("remoting-endpoint-configuration") Form<ModelNode> endpointConfigurationForm;
 
-    @MbuiElement("remoting-connector-table") NamedNodeTable<NamedNode> connectorTable;
-    @MbuiElement("remoting-http-connector-table") NamedNodeTable<NamedNode> httpConnectorTable;
+    @MbuiElement("remoting-connector-table") Table<NamedNode> connectorTable;
+    @MbuiElement("remoting-http-connector-table") Table<NamedNode> httpConnectorTable;
 
-    @MbuiElement("remoting-local-outbound-table") NamedNodeTable<NamedNode> localOutboundTable;
+    @MbuiElement("remoting-local-outbound-table") Table<NamedNode> localOutboundTable;
     @MbuiElement("remoting-local-outbound-form") Form<NamedNode> localOutboundForm;
-    @MbuiElement("remoting-outbound-table") NamedNodeTable<NamedNode> outboundTable;
+    @MbuiElement("remoting-outbound-table") Table<NamedNode> outboundTable;
     @MbuiElement("remoting-outbound-form") Form<NamedNode> outboundForm;
-    @MbuiElement("remoting-remote-outbound-table") NamedNodeTable<NamedNode> remoteOutboundTable;
+    @MbuiElement("remoting-remote-outbound-table") Table<NamedNode> remoteOutboundTable;
     @MbuiElement("remoting-remote-outbound-form") Form<NamedNode> remoteOutboundForm;
 
     private Form<NamedNode> connectorForm;
@@ -203,17 +203,17 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     @SuppressWarnings("ConstantConditions")
     public void attach() {
         super.attach();
-        connectorTable.api().onSelectionChange(
-                api -> presenter.selectConnector(api.hasSelection() ? api.selectedRow().getName() : null));
-        httpConnectorTable.api().onSelectionChange(
-                api -> presenter.selectHttpConnector(api.hasSelection() ? api.selectedRow().getName() : null));
+        connectorTable.onSelectionChange(
+                t -> presenter.selectConnector(t.hasSelection() ? t.selectedRow().getName() : null));
+        httpConnectorTable.onSelectionChange(
+                t -> presenter.selectHttpConnector(t.hasSelection() ? t.selectedRow().getName() : null));
 
-        localOutboundTable.api().onSelectionChange(
-                api -> presenter.selectLocalOutbound(api.hasSelection() ? api.selectedRow().getName() : null));
-        outboundTable.api().onSelectionChange(
-                api -> presenter.selectOutbound(api.hasSelection() ? api.selectedRow().getName() : null));
-        remoteOutboundTable.api().onSelectionChange(
-                api -> presenter.selectRemoteOutbound(api.hasSelection() ? api.selectedRow().getName() : null));
+        localOutboundTable.onSelectionChange(
+                t -> presenter.selectLocalOutbound(t.hasSelection() ? t.selectedRow().getName() : null));
+        outboundTable.onSelectionChange(
+                t -> presenter.selectOutbound(t.hasSelection() ? t.selectedRow().getName() : null));
+        remoteOutboundTable.onSelectionChange(
+                t -> presenter.selectRemoteOutbound(t.hasSelection() ? t.selectedRow().getName() : null));
     }
 
     @Override

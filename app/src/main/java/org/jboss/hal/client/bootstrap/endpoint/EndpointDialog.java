@@ -27,11 +27,10 @@ import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Button.Scope;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
@@ -70,7 +69,7 @@ class EndpointDialog {
     private final Form<Endpoint> form;
 
     private Mode mode;
-    private NamedNodeTable<Endpoint> table;
+    private Table<Endpoint> table;
     private Dialog dialog;
 
     EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
@@ -78,17 +77,16 @@ class EndpointDialog {
         this.storage = storage;
         Metadata metadata = Metadata.staticDescription(RESOURCES.endpoint());
 
-        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(metadata)
-                .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
-                .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
-                    storage.remove(api.selectedRow());
-                    table.update(storage.list(), HOLD);
-                    dialog.getButton(PRIMARY_POSITION).setDisabled(!table.api().hasSelection());
+        table = new ModelNodeTable.Builder<Endpoint>(Ids.ENDPOINT_SELECT, metadata)
+                .button(CONSTANTS.add(), (event, table) -> switchTo(ADD))
+                .button(CONSTANTS.remove(), Scope.SELECTED, (event, table) -> {
+                    storage.remove(table.selectedRow());
+                    this.table.update(storage.list(), HOLD);
+                    dialog.getButton(PRIMARY_POSITION).setDisabled(!this.table.hasSelection());
                 })
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-        table = new NamedNodeTable<>(Ids.ENDPOINT_SELECT, metadata, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()
@@ -185,7 +183,7 @@ class EndpointDialog {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
             table.update(storage.list(), HOLD);
             primaryButton.setInnerText(CONSTANTS.endpointConnect());
-            primaryButton.setDisabled(!table.api().hasSelection());
+            primaryButton.setDisabled(!table.hasSelection());
             Elements.setVisible(addPage, false);
             Elements.setVisible(selectPage, true);
 
@@ -203,7 +201,7 @@ class EndpointDialog {
 
     private boolean onPrimary() {
         if (mode == SELECT) {
-            manager.onConnect(table.api().selectedRow());
+            manager.onConnect(table.selectedRow());
             return true;
         } else if (mode == ADD) {
             form.save();
@@ -225,7 +223,7 @@ class EndpointDialog {
     void show() {
         dialog.show();
 
-        table.api().onSelectionChange(api -> dialog.getButton(PRIMARY_POSITION).setDisabled(!api.hasSelection()));
+        table.onSelectionChange(t -> dialog.getButton(PRIMARY_POSITION).setDisabled(!t.hasSelection()));
         table.update(storage.list());
 
         switchTo(SELECT);
