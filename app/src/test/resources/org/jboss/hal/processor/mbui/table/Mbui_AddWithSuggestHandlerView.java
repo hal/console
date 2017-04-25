@@ -48,7 +48,7 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button(mbuiContext.tableButtonFactory().add(metadata0Template, (event, table) -> {
                     AddResourceDialog dialog = new AddResourceDialog(
                             Ids.build("table", Ids.ADD_SUFFIX),

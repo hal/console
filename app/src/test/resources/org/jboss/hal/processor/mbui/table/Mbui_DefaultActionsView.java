@@ -48,7 +48,7 @@ final class Mbui_DefaultActionsView extends DefaultActionsView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
                         metadata0Template, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,

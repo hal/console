@@ -48,7 +48,7 @@ final class Mbui_RemoveConstraintActionView extends RemoveConstraintActionView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .button("Foo", Constraint.parse("executable(subsystem=foo:remove)"), (event, api) -> presenter.reload())
                 .columns("name")
                 .build();

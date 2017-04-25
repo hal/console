@@ -59,7 +59,7 @@ final class Mbui_SimpleView extends SimpleView {
                 })
                 .build();
 
-        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .columns("name")
                 .build();
 

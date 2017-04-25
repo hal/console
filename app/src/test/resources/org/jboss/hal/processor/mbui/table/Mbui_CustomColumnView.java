@@ -48,7 +48,7 @@ final class Mbui_CustomColumnView extends CustomColumnView {
         this.metadata0 = mbuiContext.metadataRegistry().lookup(metadata0Template);
         this.handlebarElements = new HashMap<>();
 
-        table = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .column("name")
                 .column("foo", (cell, type, row, meta) -> "foo")
                 .build();
