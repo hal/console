@@ -24,11 +24,17 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
@@ -112,5 +118,28 @@ public class Core {
     public Operation.Builder jsOperation(final String address, final String name) {
         AddressTemplate template = AddressTemplate.of(address);
         return new Operation.Builder(template.resolve(statementContext), name);
+    }
+
+    @JsMethod(name = "form")
+    public ModelNodeForm.Builder<ModelNode> jsForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
+    }
+
+    @JsMethod(name = "namedForm")
+    public ModelNodeForm.Builder<NamedNode> jsNamedForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
+    }
+
+    private Metadata jsMetadata(@NonNls String method, Object meta) {
+        if (meta instanceof String) {
+            AddressTemplate t = AddressTemplate.of(((String) meta));
+            return metadataRegistry.lookup(t);
+        } else if (meta instanceof AddressTemplate) {
+            return metadataRegistry.lookup(((AddressTemplate) meta));
+        } else if (meta instanceof Metadata) {
+            return (Metadata) meta;
+        } else {
+            throw new IllegalArgumentException("Use Core." + method + "(String|AddressTemplate|Metadata)");
+        }
     }
 }
