@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.dmr;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -23,6 +24,10 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -33,14 +38,17 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Harald Pehl
  */
+@JsType
 public final class ModelNodeHelper {
 
     private static final String ENCODED_SLASH = "%2F";
 
+    @JsIgnore
     public static String encodeValue(String value) {
         return value.replace("/", ENCODED_SLASH);
     }
 
+    @JsIgnore
     public static String decodeValue(String value) {
         return value.replace(ENCODED_SLASH, "/");
     }
@@ -82,11 +90,13 @@ public final class ModelNodeHelper {
         return attribute.isDefined() && attribute.asBoolean();
     }
 
+    @JsIgnore
     public static List<ModelNode> failSafeList(final ModelNode modelNode, final String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asList() : Collections.emptyList();
     }
 
+    @JsIgnore
     public static List<Property> failSafePropertyList(final ModelNode modelNode, final String path) {
         ModelNode result = failSafeGet(modelNode, path);
         return result.isDefined() ? result.asPropertyList() : Collections.emptyList();
@@ -96,10 +106,12 @@ public final class ModelNodeHelper {
      * Turns a list of properties into a list of named model nodes which contains a {@link
      * ModelDescriptionConstants#NAME} key with the properties name.
      */
+    @JsIgnore
     public static List<NamedNode> asNamedNodes(List<Property> properties) {
         return properties.stream().map(NamedNode::new).collect(toList());
     }
 
+    @JsIgnore
     public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Provider<T> provider,
             T defaultValue) {
         T result = defaultValue;
@@ -117,6 +129,7 @@ public final class ModelNodeHelper {
      * Looks for the specified attribute and tries to convert it to an enum constant using
      * {@code LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString())}.
      */
+    @JsIgnore
     public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
             final Function<String, E> valueOf, final E defaultValue) {
         if (modelNode.hasDefined(attribute)) {
@@ -125,6 +138,7 @@ public final class ModelNodeHelper {
         return defaultValue;
     }
 
+    @JsIgnore
     public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final Function<String, E> valueOf,
             final E defaultValue) {
         E value = defaultValue;
@@ -138,10 +152,49 @@ public final class ModelNodeHelper {
     /**
      * The reverse operation to {@link #asEnumValue(ModelNode, String, Function, Enum)}.
      */
+    @JsIgnore
     public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
         return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
 
 
     private ModelNodeHelper() {}
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "failSafeList")
+    public static JsArrayOf<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
+        return asJsArray(failSafeList(modelNode, path));
+    }
+
+    @JsMethod(name = "failSafePropertyList")
+    public static JsArrayOf<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
+        return asJsArray(failSafePropertyList(modelNode, path));
+    }
+
+    @JsMethod(name = "asNamedNodes")
+    public static JsArrayOf<NamedNode> jsAsNamedNodes(JsArrayOf<Property> properties) {
+        return asJsArray(asNamedNodes(asList(properties)));
+    }
+
+    private static <T> JsArrayOf<T> asJsArray(List<T> list) {
+        JsArrayOf<T> array = JsArrayOf.create();
+        for (T t : list) {
+            array.push(t);
+        }
+        return array;
+    }
+
+    @SuppressWarnings("Duplicates")
+    private static <T> List<T> asList(JsArrayOf<T> array) {
+        if (array != null) {
+            List<T> list = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.get(i));
+            }
+            return list;
+        }
+        return new ArrayList<>(); // Do not replace with Collections.emptyList()!
+    }
 }

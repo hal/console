@@ -34,6 +34,7 @@ import static org.jboss.hal.resources.CSS.ondrag;
  */
 public final class JsHelper {
 
+    @SuppressWarnings("Duplicates")
     public static <T> List<T> asList(JsArrayOf<T> array) {
         if (array != null) {
             List<T> list = new ArrayList<>(array.length());

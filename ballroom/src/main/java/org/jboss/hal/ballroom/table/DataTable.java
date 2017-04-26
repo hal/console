@@ -206,12 +206,12 @@ public class DataTable<T> implements Table<T> {
     public void onSelectionChange(final SelectionChangeHandler<T> handler) {
         api().on(SELECT, (event, api, type) -> {
             if (ROW.equals(type)) {
-                handler.onSelectionChanged(this);
+                handler.onSelectionChanged(DataTable.this);
             }
         });
         api().on(DESELECT, (event, api, type) -> {
             if (ROW.equals(type)) {
-                handler.onSelectionChanged(this);
+                handler.onSelectionChanged(DataTable.this);
             }
         });
     }
