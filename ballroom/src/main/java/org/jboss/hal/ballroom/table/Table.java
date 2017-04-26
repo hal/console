@@ -49,9 +49,10 @@ public interface Table<T> extends IsElement, Attachable {
         void onSelectionChanged(Table<T> table);
     }
 
-
+    @JsIgnore
     void show();
 
+    @JsIgnore
     void hide();
 
     void enableButton(final int index, final boolean enable);
@@ -68,6 +69,7 @@ public interface Table<T> extends IsElement, Attachable {
 
     void onSelectionChange(SelectionChangeHandler<T> handler);
 
+    @JsIgnore
     default boolean hasSelection() {
         return !selectedRows().isEmpty();
     }
@@ -78,6 +80,7 @@ public interface Table<T> extends IsElement, Attachable {
     @JsIgnore
     List<T> selectedRows();
 
+    @JsIgnore
     void select(final T data);
 
     @JsIgnore

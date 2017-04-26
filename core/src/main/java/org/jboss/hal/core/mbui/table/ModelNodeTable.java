@@ -22,18 +22,21 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import elemental.js.dom.JsElement;
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.ballroom.table.ButtonHandler;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.RefreshMode;
 import org.jboss.hal.ballroom.table.Scope;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
@@ -122,6 +125,13 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
         // ------------------------------------------------------ JS methods
 
+
+        @JsFunction
+        public interface JsNameFunction<T> {
+
+            String getName(Table<T> table);
+        }
+
         @JsMethod(name = "add")
         public Builder<T> jsAdd(final String type, final Object template, final JsArrayOf<String> attributes,
                 final AddCallback callback) {
@@ -132,14 +142,15 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         @JsMethod(name = "remove")
-        public Builder<T> jsRemove(final String type, final Object template, final JsCallback callback) {
+        public Builder<T> jsRemove(final String type, final Object template, JsNameFunction<T> name,
+                final JsCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
-            return button(buttonFactory.remove(type, jsTemplate("remove", template), callback::execute));
+            return button(buttonFactory.remove(type, jsTemplate("remove", template), name::getName, callback::execute));
         }
 
         @JsMethod(name = "button")
-        public Builder<T> jsButton(final String text, final String scope, final JsCallback callback) {
-            return button(text, table -> callback.execute(), Scope.fromSelector(scope));
+        public Builder<T> jsButton(final String text, final String scope, final ButtonHandler<T> handler) {
+            return button(text, handler, Scope.fromSelector(scope));
         }
 
         @JsMethod(name = "columns")

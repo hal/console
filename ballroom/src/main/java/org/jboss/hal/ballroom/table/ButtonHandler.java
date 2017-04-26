@@ -15,9 +15,13 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import jsinterop.annotations.JsFunction;
+
 /**
  * @author Harald Pehl
  */
+@JsFunction
+@FunctionalInterface
 public interface ButtonHandler<T> {
 
     void execute(Table<T> table);
