@@ -28,7 +28,7 @@ package org.jboss.hal.ballroom.table;
  *     .button("Click Me", (table) -> Window.alert("Hello"))
  *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
  *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
- *     .build();
+ *     .options();
  * </pre>
  *
  * @param <T> the row type

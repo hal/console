@@ -41,7 +41,7 @@ public class Options<T> {
     public boolean paging;
     public int pageLength;
     public boolean searching;
-    public Select select;
+    public Api.Select select;
     // not part of the DataTables API, but used internally
     String id;
     ColumnActions<T> columnActions;

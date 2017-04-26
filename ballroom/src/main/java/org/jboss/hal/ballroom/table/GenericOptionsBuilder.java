@@ -47,7 +47,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     protected List<Column<T>> columns;
     protected boolean keys;
     protected boolean searching;
-    protected Select select;
+    protected Api.Select select;
     private ColumnActions<T> columnActions;
     private int pageLength;
     private boolean paging;
@@ -61,7 +61,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         this.keys = true;
         this.paging = true;
         this.searching = true;
-        this.select = Select.build(false);
+        this.select = Api.Select.build(false);
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     public B multiselect() {
         assertNoOptions();
 
-        this.select = Select.build(true);
+        this.select = Api.Select.build(true);
         return that();
     }
 

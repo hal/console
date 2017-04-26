@@ -36,17 +36,18 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * Subset of the DataTables API.
  * <p>
- * Every member of this class is considered to be an internal API and should not be used outside of package {@code
- * org.jboss.hal.ballroom.table}.
+ * This class and every member of this class is considered to be an internal API and should not be used outside of
+ * package {@code org.jboss.hal.ballroom.table}.
  *
  * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 class Api<T> {
 
     // ------------------------------------------------------ button(s)
+
 
     /**
      * Custom data tables button.
@@ -112,27 +113,79 @@ class Api<T> {
     }
 
 
-    // ------------------------------------------------------ selection
+    // ------------------------------------------------------ rows
+
 
     /**
-     * Options for how the row, column and cell selector should operate on rows.
+     * Represents the {@code row} property in a data table.
+     *
+     * @param <T> the row type
      *
      * @author Harald Pehl
-     * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
+     */
+    @JsType(isNative = true)
+    static class Row<T> {
+
+        /**
+         * Adds a new row to the table.
+         */
+        native Api<T> add(T data);
+    }
+
+
+    /**
+     * Function to be used as a row selector in {@link Api#rows(RowSelection)}.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
+     */
+    @JsFunction
+    interface RowSelection<T> {
+
+        boolean select(int index, T data, Element tr);
+    }
+
+
+    // ------------------------------------------------------ selection
+
+
+    /**
+     * Select options.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#select">https://datatables.net/reference/option/#select</a>
      */
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class SelectorModifier {
+    static class Select {
 
-        // @formatter:off
-        enum Order {current, index}
-        enum Page {all, current}
-        enum Search {none, applied, removed}
-        // @formatter:on
+        @JsOverlay
+        @SuppressWarnings("HardCodedStringLiteral")
+        static Select build(boolean multiselect) {
+            Select select = new Select();
+            select.info = false;
+            select.items = "row";
+            select.style = multiselect ? "multi" : "single";
+            return select;
+        }
 
-        String order;
-        String page;
-        String search;
-        Boolean selected;
+        boolean info;
+        String items;
+        String style;
+    }
+
+
+    /**
+     * Callback used for all kind of "select" and "deselect" events.
+     *
+     * @param <T> the row type
+     *
+     * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
+     * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
+     */
+    @JsFunction
+    interface SelectCallback<T> {
+
+        void onSelect(Object event, Api<T> api, String type);
     }
 
 

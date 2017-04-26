@@ -55,6 +55,7 @@ public interface Table<T> extends IsElement, Attachable {
     @JsIgnore
     void hide();
 
+    @JsIgnore
     void enableButton(final int index, final boolean enable);
 
     void bindForm(final Form<T> form);

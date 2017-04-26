@@ -15,12 +15,12 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import org.jboss.hal.ballroom.table.Api.SelectorModifier.Order;
-import org.jboss.hal.ballroom.table.Api.SelectorModifier.Page;
-import org.jboss.hal.ballroom.table.Api.SelectorModifier.Search;
+import org.jboss.hal.ballroom.table.SelectorModifier.Order;
+import org.jboss.hal.ballroom.table.SelectorModifier.Page;
+import org.jboss.hal.ballroom.table.SelectorModifier.Search;
 
 /**
- * Builder for a {@link Api.SelectorModifier}.
+ * Builder for a {@link SelectorModifier}.
  *
  * @author Harald Pehl
  */
@@ -63,8 +63,8 @@ class SelectorModifierBuilder {
         return this;
     }
 
-    Api.SelectorModifier build() {
-        Api.SelectorModifier selectorModifier = new Api.SelectorModifier();
+    SelectorModifier build() {
+        SelectorModifier selectorModifier = new SelectorModifier();
         selectorModifier.order = order.name();
         selectorModifier.page = page.name();
         selectorModifier.search = search.name();

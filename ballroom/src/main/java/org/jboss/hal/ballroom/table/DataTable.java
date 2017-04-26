@@ -37,8 +37,8 @@ import static org.jboss.hal.resources.CSS.*;
  * Table element which implements the DataTables plugin for jQuery. Using the data table consists of multiple steps:
  * <ol>
  * <li>Create an instance passing an id and an {@linkplain Options options} instance</li>
- * <li>Call {@link #attach()} <strong>after</strong> the data table element was attached to the DOM</li>
- * <li>Call any of the API methods using the {@link #api()} getter</li>
+ * <li>Call {@link #attach()} <strong>after</strong> the data table element was added to the DOM</li>
+ * <li>Call any of the {@link Table} methods</li>
  * </ol>
  * <p>
  * Sample which uses a {@code FooBar} as row type:
@@ -57,7 +57,7 @@ import static org.jboss.hal.resources.CSS.*;
  *     .button("Add Row", (event, api) -> api.row.add(new FooBar()).draw("full-reset"))
  *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
  *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
- *     .build();
+ *     .options();
  * DataTable&lt;FooBar&gt; dataTable = new DataTable&lt;&gt;("sample", SecurityContext.RWX, options);
  * </pre>
  *
@@ -129,7 +129,7 @@ public class DataTable<T> implements Table<T> {
      *
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
-    Api<T> api() {
+    private Api<T> api() {
         if (api == null) {
             throw new IllegalStateException(
                     "DataTable('" + id + "') is not attached. Call DataTable.attach() before using any of the API methods!");
@@ -198,7 +198,7 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public List<T> getRows() {
-        Api.SelectorModifier selectorModifier = new SelectorModifierBuilder().page(Api.SelectorModifier.Page.all).build();
+        SelectorModifier selectorModifier = new SelectorModifierBuilder().page(SelectorModifier.Page.all).build();
         return JsHelper.asList(api().rows(selectorModifier).data().toArray());
     }
 
@@ -241,7 +241,7 @@ public class DataTable<T> implements Table<T> {
     public void select(final T data, final Function<T, String> identifier) {
         if (data != null && identifier != null) {
             String id1 = identifier.apply(data);
-            RowSelection<T> rows = (idx, d, tr) -> {
+            Api.RowSelection<T> rows = (idx, d, tr) -> {
                 if (d != null) {
                     String id2 = identifier.apply(d);
                     return (id1 != null && id2 != null) && id1.equals(id2);
@@ -286,7 +286,7 @@ public class DataTable<T> implements Table<T> {
         api().clear().add(data).refresh(mode);
         if (identifier != null) {
             if (!selection.isEmpty()) {
-                RowSelection<T> rows = (index, d1, tr) -> {
+                Api.RowSelection<T> rows = (index, d1, tr) -> {
                     if (d1 != null) {
                         String id1 = identifier.apply(d1);
                         return selection.stream().anyMatch(d2 -> {
