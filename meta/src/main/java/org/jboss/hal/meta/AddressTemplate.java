@@ -322,6 +322,15 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(join(this.optional, subTokens));
     }
 
+    @JsProperty
+    public AddressTemplate getParent() {
+        if (isEmpty() || size() == 1) {
+            return AddressTemplate.of("/");
+        } else {
+            return subTemplate(0, size() - 1);
+        }
+    }
+
     /**
      * Replaces one or more wildcards with the specified values starting from left to right and returns a new
      * address template.

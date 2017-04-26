@@ -149,6 +149,12 @@ public class AddressTemplateTest {
     }
 
     @Test
+    public void parentOfRoot() {
+        AddressTemplate at = AddressTemplate.of("/");
+
+    }
+
+    @Test
     public void subTemplate() {
         AddressTemplate at = AddressTemplate.of("{a}/b=c/{d}=e/f=g"); // 4 tokens
 
