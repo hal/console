@@ -97,9 +97,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
 
         //noinspection ConstantConditions
         serverTable = new ModelNodeTable.Builder<NamedNode>(Ids.MAIL_SERVER_TABLE, serverMetadata)
-                .button(tableButtonFactory.add(SERVER_TEMPLATE, (event, table) -> presenter.launchAddServer()))
+                .button(tableButtonFactory.add(SERVER_TEMPLATE, table -> presenter.launchAddServer()))
                 .button(tableButtonFactory.remove(SERVER_TEMPLATE,
-                        (event, table) -> presenter.removeServer(table.selectedRow())))
+                        table -> presenter.removeServer(table.selectedRow())))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
                         (cell, type, row, meta) -> row.getName().toUpperCase()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS

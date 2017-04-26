@@ -56,9 +56,9 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(RELAY_TEMPLATE, (event, table) -> presenter.addRelay()))
+                .button(tableButtonFactory.add(RELAY_TEMPLATE, table -> presenter.addRelay()))
                 .button(tableButtonFactory.remove(RELAY_TEMPLATE,
-                        (event, table) -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
+                        table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Remote Sites", row -> {

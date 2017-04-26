@@ -10,7 +10,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -49,7 +49,7 @@ final class Mbui_CustomConstraintActionView extends CustomConstraintActionView {
         this.handlebarElements = new HashMap<>();
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
-                .button("Foo", Constraint.parse("writable(/subsystem=foo@enabled)"), (event, api) -> presenter.reload())
+                .button("Foo", table -> presenter.reload(), Constraint.parse("writable(/subsystem=foo@enabled)"))
                 .columns("name")
                 .build();
 

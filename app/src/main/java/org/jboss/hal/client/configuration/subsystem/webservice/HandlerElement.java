@@ -55,9 +55,9 @@ class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePr
         String tableId = Ids.build(configType.baseId, "handler", Ids.TABLE_SUFFIX);
         Metadata metadata = metadataRegistry.lookup(HANDLER_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
-                .button(tableButtonFactory.add(HANDLER_TEMPLATE, (event, table) -> presenter.addHandler()))
+                .button(tableButtonFactory.add(HANDLER_TEMPLATE, table -> presenter.addHandler()))
                 .button(tableButtonFactory.remove(HANDLER_TEMPLATE,
-                        (event, table) -> presenter.removeHandler(table.selectedRow().getName())))
+                        table -> presenter.removeHandler(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .build();
 

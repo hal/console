@@ -84,9 +84,9 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
         inboundTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.TABLE_SUFFIX),
                 inboundMetadata)
                 .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                        (event, table) -> presenter.addSocketBinding(INBOUND)))
+                        table -> presenter.addSocketBinding(INBOUND)))
                 .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                        (event, table) -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
+                        table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
                 .column(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row))
@@ -113,9 +113,9 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
         clientMappingTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE, clientMappingsMetadata)
                 .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                        (event, table) -> presenter.addClientMapping(clientMappingsMetadata)))
+                        table -> presenter.addClientMapping(clientMappingsMetadata)))
                 .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                        (event, table) -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
+                        table -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
                 .column(SOURCE_NETWORK)
                 .column(Names.DESTINATION, (cell, type, row, meta) -> {
                     String address = row.get(DESTINATION_ADDRESS).asString();

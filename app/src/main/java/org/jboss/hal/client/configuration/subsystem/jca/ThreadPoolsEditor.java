@@ -73,9 +73,9 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
         table = new ModelNodeTable.Builder<ThreadPool>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), metadata)
                 .button(tableButtonFactory.add(WORKMANAGER_LRT_TEMPLATE,
-                        (event, table) -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager)))
+                        table -> presenter.launchAddThreadPool(workmanagerTemplate, workmanager)))
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
-                        (event, table) -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
+                        table -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
                                 table.selectedRow())))
                 .column(NAME)
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())

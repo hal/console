@@ -23,10 +23,10 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
@@ -65,15 +65,15 @@ class ChildrenPanel implements HasElements, Attachable {
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
                 .column(resources.constants().view(), row -> modelBrowser.tree.api().openNode(parent.id,
                         () -> modelBrowser.select(uniqueId(parent, row), false)))
-                .button(resources.constants().add(), (event, table) -> modelBrowser.add(parent, table.getRows()))
+                .button(resources.constants().add(), table -> modelBrowser.add(parent, table.getRows()))
 
-                .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, table) -> {
-                            ResourceAddress fq = parent.data.getAddress()
-                                    .getParent()
-                                    .add(parent.text, table.selectedRow());
-                            modelBrowser.remove(fq);
-                        })
+                .button(resources.constants().remove(), table -> {
+                    ResourceAddress fq = parent.data.getAddress()
+                            .getParent()
+                            .add(parent.text, table.selectedRow());
+                    modelBrowser.remove(fq);
+                }, Scope.SELECTED
+                )
                 .paging(false)
                 .options();
 

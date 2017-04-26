@@ -26,7 +26,7 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -78,12 +78,12 @@ class EndpointDialog {
         Metadata metadata = Metadata.staticDescription(RESOURCES.endpoint());
 
         table = new ModelNodeTable.Builder<Endpoint>(Ids.ENDPOINT_SELECT, metadata)
-                .button(CONSTANTS.add(), (event, table) -> switchTo(ADD))
-                .button(CONSTANTS.remove(), Scope.SELECTED, (event, table) -> {
+                .button(CONSTANTS.add(), table -> switchTo(ADD))
+                .button(CONSTANTS.remove(), table -> {
                     storage.remove(table.selectedRow());
                     this.table.update(storage.list(), HOLD);
                     dialog.getButton(PRIMARY_POSITION).setDisabled(!this.table.hasSelection());
-                })
+                }, Scope.SELECTED)
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();

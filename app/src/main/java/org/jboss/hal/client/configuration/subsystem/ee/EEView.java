@@ -113,9 +113,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         globalModulesTable = new ModelNodeTable.Builder<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
                 .button(tableButtonFactory.add(EE_SUBSYSTEM_TEMPLATE,
-                        (event, table) -> presenter.launchAddDialogGlobalModule()))
+                        table -> presenter.launchAddDialogGlobalModule()))
                 .button(tableButtonFactory.remove(EE_SUBSYSTEM_TEMPLATE,
-                        (event, table) -> presenter.removeGlobalModule(table.selectedRow())))
+                        table -> presenter.removeGlobalModule(table.selectedRow())))
                 .build();
         registerAttachable(globalModulesTable);
 

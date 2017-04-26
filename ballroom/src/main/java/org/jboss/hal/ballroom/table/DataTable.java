@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
-import static org.jboss.hal.ballroom.table.SelectorModifier.Page.all;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -97,6 +96,9 @@ public class DataTable<T> implements Table<T> {
         this.options = options;
         this.tableElement = new Elements.Builder()
                 .start("table").id(id).css(dataTable, table, tableStriped, tableBordered, hover).end().build();
+        for (Api.Button<T> button : options.buttons.buttons) {
+            button.table = this;
+        }
     }
 
     @Override
@@ -196,7 +198,7 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public List<T> getRows() {
-        SelectorModifier selectorModifier = new SelectorModifierBuilder().page(all).build();
+        Api.SelectorModifier selectorModifier = new SelectorModifierBuilder().page(Api.SelectorModifier.Page.all).build();
         return JsHelper.asList(api().rows(selectorModifier).data().toArray());
     }
 

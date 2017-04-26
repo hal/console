@@ -16,13 +16,12 @@
 package org.jboss.hal.ballroom.table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.table.Button.ActionHandler;
-import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
@@ -44,7 +43,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    protected List<Button<T>> buttons;
+    protected List<Api.Button<T>> buttons;
     protected List<Column<T>> columns;
     protected boolean keys;
     protected boolean searching;
@@ -82,37 +81,36 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         }
     }
 
-    public B button(String text, ActionHandler<T> action) {
-        return button(text, null, null, action);
+    public B button(String text, ButtonHandler<T> handler) {
+        return button(new Button<>(text, handler));
     }
 
-    public B button(String text, Constraint constraint, ActionHandler<T> action) {
-        return button(text, null, constraint, action);
+    public B button(String text, ButtonHandler<T> handler, Scope scope) {
+        return button(new Button<>(text, handler, scope));
     }
 
-    public B button(String text, Scope scope, ActionHandler<T> action) {
-        return button(text, scope, null, action);
+    public B button(String text, ButtonHandler<T> handler, Constraint constraint) {
+        return button(new Button<>(text, handler, constraint));
     }
 
-    public B button(String text, Scope scope, Constraint constraint, ActionHandler<T> action) {
-        assertNoOptions();
-
-        Button<T> button = new Button<>();
-        button.text = text;
-        button.action = action;
-        if (scope != null) {
-            button.extend = scope.selector();
-        }
-        if (constraint != null) {
-            button.constraint = constraint.data();
-        }
-        return button(button);
+    public B button(String text, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
+        return button(new Button<>(text, handler, scope, constraint));
     }
 
     public B button(Button<T> button) {
         assertNoOptions();
 
-        buttons.add(button);
+        Api.Button<T> apiButton = new Api.Button<>();
+        apiButton.text = button.title;
+        apiButton.action = (event, api, node, btn) -> button.handler.execute(btn.table);
+        if (button.scope != null) {
+            apiButton.extend = button.scope.selector();
+        }
+        if (button.constraint != null) {
+            apiButton.constraint = button.constraint.data();
+        }
+
+        buttons.add(apiButton);
         return that();
     }
 
@@ -209,20 +207,27 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
         validate();
         options = new Options<>();
+        options.buttonConstraints = new HashMap<>();
         if (!buttons.isEmpty()) {
             // override defaults from patternfly.js:77
             options.dom = "<'dataTables_header' f B i>" +
                     "<'table-responsive' t>" +
                     "<'dataTables_footer' p>";
-            options.buttons = new Buttons<>();
-            options.buttons.dom = new Buttons.Dom();
-            options.buttons.dom.container = new Buttons.Dom.Factory();
+            options.buttons = new Api.Buttons<>();
+            options.buttons.dom = new Api.Buttons.Dom();
+            options.buttons.dom.container = new Api.Buttons.Dom.Factory();
             options.buttons.dom.container.tag = "div";
             options.buttons.dom.container.className = pullRight + " " + btnGroup;
-            options.buttons.dom.button = new Buttons.Dom.Factory();
+            options.buttons.dom.button = new Api.Buttons.Dom.Factory();
             options.buttons.dom.button.tag = "button";
             options.buttons.dom.button.className = btn + " " + btnDefault;
-            options.buttons.buttons = buttons.toArray(new Button[buttons.size()]);
+            options.buttons.buttons = buttons.toArray(new Api.Button[buttons.size()]);
+
+            for (int i = 0; i < options.buttons.buttons.length; i++) {
+                if (options.buttons.buttons[i].constraint != null) {
+                    options.buttonConstraints.put(i, options.buttons.buttons[i].constraint);
+                }
+            }
         }
         options.columns = columns.toArray(new Column[columns.size()]);
         options.keys = keys;

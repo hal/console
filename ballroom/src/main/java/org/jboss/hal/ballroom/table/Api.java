@@ -21,49 +21,133 @@ import java.util.List;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.resources.CSS.columnAction;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * Subset of the DataTables API.
- *
- * @param <T> the row type
+ * <p>
+ * Every member of this class is considered to be an internal API and should not be used outside of package {@code
+ * org.jboss.hal.ballroom.table}.
  *
  * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
+@SuppressWarnings("UnusedReturnValue")
 class Api<T> {
+
+    // ------------------------------------------------------ button(s)
+
+    /**
+     * Custom data tables button.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
+     */
+    @SuppressWarnings("WeakerAccess")
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Button<T> {
+
+
+        /**
+         * Action handler for a custom button.
+         *
+         * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
+         */
+        @JsFunction
+        interface ActionHandler<T> {
+
+            void action(Object event, Object api, Object node, Button<T> btn);
+        }
+
+
+        String text;
+        ActionHandler<T> action;
+        String extend;
+        String constraint;
+        // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
+        Table<T> table;
+    }
+
+
+    /**
+     * Buttons options.
+     *
+     * @param <T> the row type
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Buttons<T> {
+
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        static class Dom {
+
+            @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+            static class Factory {
+
+                public String tag;
+                public String className;
+            }
+
+
+            Factory container;
+            Factory button;
+        }
+
+
+        Button<T>[] buttons;
+        Dom dom;
+    }
+
+
+    // ------------------------------------------------------ selection
+
+    /**
+     * Options for how the row, column and cell selector should operate on rows.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class SelectorModifier {
+
+        // @formatter:off
+        enum Order {current, index}
+        enum Page {all, current}
+        enum Search {none, applied, removed}
+        // @formatter:on
+
+        String order;
+        String page;
+        String search;
+        Boolean selected;
+    }
+
+
+    // ------------------------------------------------------ properties
 
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
 
 
-    // ------------------------------------------------------ internal API
-
-    @JsOverlay
-    final Api<T> add(Iterable<T> data) {
-        if (data != null) {
-            for (T d : data) {
-                row.add(d);
-            }
-        }
-        return this;
-    }
-
-    native Api<T> clear();
-
-
     // ------------------------------------------------------ API a-z
 
     native Api<T> button(int index);
+
+    native Api<T> clear();
 
     native Api<T> data();
 
@@ -117,6 +201,16 @@ class Api<T> {
 
 
     // ------------------------------------------------------ overlay methods
+
+    @JsOverlay
+    final Api<T> add(Iterable<T> data) {
+        if (data != null) {
+            for (T d : data) {
+                row.add(d);
+            }
+        }
+        return this;
+    }
 
     @JsOverlay
     final Api<T> refresh(RefreshMode mode) {

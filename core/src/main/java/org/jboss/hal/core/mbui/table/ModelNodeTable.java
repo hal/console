@@ -22,20 +22,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import elemental.js.dom.JsElement;
 import elemental.js.util.JsArrayOf;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.JsHelper;
-import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.RefreshMode;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
@@ -124,36 +122,24 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
         // ------------------------------------------------------ JS methods
 
-
-        @JsFunction
-        public interface NameProvider {
-
-            String name();
-        }
-
-
         @JsMethod(name = "add")
         public Builder<T> jsAdd(final String type, final Object template, final JsArrayOf<String> attributes,
                 final AddCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
             String id = Ids.build(Ids.uniqueId(), Ids.ADD_SUFFIX);
-            Button<T> button = buttonFactory.add(id, type, jsTemplate("add", template), JsHelper.asList(attributes),
-                    callback);
-            return button(button);
+            return button(buttonFactory.add(id, type, jsTemplate("add", template), JsHelper.asList(attributes),
+                    callback));
         }
 
         @JsMethod(name = "remove")
-        public Builder<T> jsRemove(final String type, final Object template, final NameProvider nameProvider,
-                final JsCallback callback) {
+        public Builder<T> jsRemove(final String type, final Object template, final JsCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
-            Button<T> button = buttonFactory.remove(type, jsTemplate("remove", template),
-                    table -> nameProvider.name(), callback::execute);
-            return button(button);
+            return button(buttonFactory.remove(type, jsTemplate("remove", template), callback::execute));
         }
 
         @JsMethod(name = "button")
         public Builder<T> jsButton(final String text, final String scope, final JsCallback callback) {
-            return button(text, Scope.fromScope(scope), (event, table) -> callback.execute());
+            return button(text, table -> callback.execute(), Scope.fromSelector(scope));
         }
 
         @JsMethod(name = "columns")
@@ -169,7 +155,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                 t = (AddressTemplate) template;
             } else {
                 throw new IllegalArgumentException(
-                        "Invalid 2nd argument: Use TableBuilder." + method + "(String type, (String|AddressTemplate) template, String[] attributes, function(String name, ResourceAddress address) callback)");
+                        "Invalid 2nd argument: Use TableBuilder." + method + "(String, (String|AddressTemplate), String[], function(String, ResourceAddress))");
             }
             return t;
         }
@@ -195,12 +181,9 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     @JsMethod
     public void attach() {
         super.attach();
-        if (options.buttons.buttons != null) {
-            for (int i = 0; i < options.buttons.buttons.length; i++) {
-                if (options.buttons.buttons[i].constraint != null) {
-                    buttonElement(i).attr(data(UIConstants.CONSTRAINT), options.buttons.buttons[i].constraint);
-                }
-            }
+        if (!options.buttonConstraints.isEmpty()) {
+            options.buttonConstraints.forEach((index, constraint) ->
+                    buttonElement(index).attr(data(UIConstants.CONSTRAINT), constraint));
         }
         applySecurity();
     }

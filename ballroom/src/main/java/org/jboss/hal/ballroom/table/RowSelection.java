@@ -25,8 +25,7 @@ import jsinterop.annotations.JsFunction;
  * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
  */
 @JsFunction
-@FunctionalInterface
-public interface RowSelection<T> {
+interface RowSelection<T> {
 
     boolean select(int index, T data, Element tr);
 }

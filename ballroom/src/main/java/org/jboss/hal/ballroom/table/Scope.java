@@ -15,23 +15,30 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Harald Pehl
  */
-public class ColumnActions<T> {
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+public enum Scope {
+    SELECTED("selected"), SELECTED_SINGLE("selectedSingle");
 
-    private final Map<String, ColumnAction<T>> columnActions;
-
-    ColumnActions() {columnActions = new HashMap<>();}
-
-    public void add(final String id, ColumnAction<T> columnAction) {
-        columnActions.put(id, columnAction);
+    public static Scope fromSelector(String selector) {
+        if (SELECTED.selector().equals(selector)) {
+            return SELECTED;
+        } else if (SELECTED_SINGLE.selector().equals(selector)) {
+            return SELECTED_SINGLE;
+        } else {
+            throw new IllegalArgumentException("Illegal selector: " + selector);
+        }
     }
 
-    public boolean isEmpty() {return columnActions.isEmpty();}
+    private final String selector;
 
-    public ColumnAction<T> get(final String key) {return columnActions.get(key);}
+    Scope(final String selector) {
+        this.selector = selector;
+    }
+
+    public String selector() {
+        return selector;
+    }
 }

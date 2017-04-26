@@ -15,56 +15,56 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import org.jboss.hal.ballroom.table.SelectorModifier.Order;
-import org.jboss.hal.ballroom.table.SelectorModifier.Page;
-import org.jboss.hal.ballroom.table.SelectorModifier.Search;
+import org.jboss.hal.ballroom.table.Api.SelectorModifier.Order;
+import org.jboss.hal.ballroom.table.Api.SelectorModifier.Page;
+import org.jboss.hal.ballroom.table.Api.SelectorModifier.Search;
 
 /**
- * Builder for a {@link SelectorModifier}.
+ * Builder for a {@link Api.SelectorModifier}.
  *
  * @author Harald Pehl
  */
-public class SelectorModifierBuilder {
+class SelectorModifierBuilder {
 
     private Order order;
     private Page page;
     private Search search;
     private Boolean selected;
 
-    public SelectorModifierBuilder() {
+    SelectorModifierBuilder() {
         this.order = Order.current;
         this.page = Page.all;
         this.search = Search.none;
         this.selected = null;
     }
 
-    public SelectorModifierBuilder order(Order order) {
+    SelectorModifierBuilder order(Order order) {
         this.order = order;
         return this;
     }
 
-    public SelectorModifierBuilder page(Page page) {
+    SelectorModifierBuilder page(Page page) {
         this.page = page;
         return this;
     }
 
-    public SelectorModifierBuilder search(Search search) {
+    SelectorModifierBuilder search(Search search) {
         this.search = search;
         return this;
     }
 
-    public SelectorModifierBuilder selected() {
+    SelectorModifierBuilder selected() {
         this.selected = true;
         return this;
     }
 
-    public SelectorModifierBuilder unselected() {
+    SelectorModifierBuilder unselected() {
         this.selected = false;
         return this;
     }
 
-    public SelectorModifier build() {
-        SelectorModifier selectorModifier = new SelectorModifier();
+    Api.SelectorModifier build() {
+        Api.SelectorModifier selectorModifier = new Api.SelectorModifier();
         selectorModifier.order = order.name();
         selectorModifier.page = page.name();
         selectorModifier.search = search.name();

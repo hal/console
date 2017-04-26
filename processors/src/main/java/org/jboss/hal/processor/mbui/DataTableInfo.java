@@ -18,7 +18,7 @@ package org.jboss.hal.processor.mbui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 
 import static java.util.stream.Collectors.toList;
 
@@ -63,7 +63,7 @@ public class DataTableInfo extends MbuiElementInfo {
         private final String handler;
         private final HandlerRef handlerRef;
         private final String title;
-        private final Button.Scope scope;
+        private final Scope scope;
         private final String constraint;
         private final String nameResolver;
         private final List<Attribute> attributes;
@@ -73,7 +73,7 @@ public class DataTableInfo extends MbuiElementInfo {
             this.handler = Handlebars.stripHandlebar(handler);
             this.handlerRef = HandlerRef.referenceFor(handler);
             this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
-            this.scope = scope != null ? Button.Scope.valueOf(scope.toUpperCase()) : null;
+            this.scope = scope != null ? Scope.fromSelector(scope) : null;
             this.constraint = constraint;
             this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
             this.attributes = new ArrayList<>();
@@ -95,7 +95,7 @@ public class DataTableInfo extends MbuiElementInfo {
             return title;
         }
 
-        public Button.Scope getScope() {
+        public Scope getScope() {
             return scope;
         }
 

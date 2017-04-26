@@ -52,9 +52,9 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPrese
         AddressTemplate template = SERVER_TEMPLATE.append(listenerType.resource + "=*");
         Metadata metadata = metadataRegistry.lookup(template);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(template, (event, table) -> presenter.addListener(listenerType)))
+                .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
-                        (event, table) -> presenter.removeListener(listenerType, table.selectedRow().getName())))
+                        table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 

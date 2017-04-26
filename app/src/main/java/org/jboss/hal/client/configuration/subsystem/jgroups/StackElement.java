@@ -67,11 +67,11 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(STACK_TEMPLATE, (event, table) -> presenter.addStack()))
+                .button(tableButtonFactory.add(STACK_TEMPLATE, table -> presenter.addStack()))
                 //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
                 //        Names.STACK))
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
-                        (event, table) -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
+                        table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_STACK_COLUMN,

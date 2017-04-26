@@ -78,9 +78,9 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
         Metadata roleMetadata = mbuiContext.metadataRegistry().lookup(ROLE_TEMPLATE);
         roleTable = new ModelNodeTable.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_TABLE, roleMetadata)
                 .button(mbuiContext.tableButtonFactory().add(ROLE_TEMPLATE,
-                        (event, table) -> presenter.addSecuritySettingRole()))
+                        table -> presenter.addSecuritySettingRole()))
                 .button(mbuiContext.tableButtonFactory().remove(ROLE_TEMPLATE,
-                        (event, table) -> presenter.removeSecuritySettingRole(table.selectedRow())))
+                        table -> presenter.removeSecuritySettingRole(table.selectedRow())))
                 .column(SECURITY_SETTING, mbuiContext.resources().constants().pattern(),
                         (cell, type, row, meta) -> row.get(SECURITY_SETTING).asString())
                 .column(ROLE, mbuiContext.resources().constants().role(),

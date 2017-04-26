@@ -58,9 +58,9 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
         String tableId = Ids.build(configType.baseId, "handler-chain", Ids.TABLE_SUFFIX);
         Metadata metadata = metadataRegistry.lookup(HANDLER_CHAIN_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
-                .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, (event, table) -> presenter.addHandlerChain()))
+                .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, table -> presenter.addHandlerChain()))
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
-                        (event, table) -> presenter.removeHandlerChain(table.selectedRow().getName())))
+                        table -> presenter.removeHandlerChain(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(Names.HANDLER, row -> presenter.showHandlers(row))
                 .build();

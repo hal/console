@@ -73,9 +73,9 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
         Metadata metadata = metadataRegistry.lookup(cache.template);
         ModelNodeTable.Builder<NamedNode> builder = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(cache.baseId, Ids.TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(cache.template, (event, table) -> presenter.addCache(cache)))
+                .button(tableButtonFactory.add(cache.template, table -> presenter.addCache(cache)))
                 .button(tableButtonFactory.remove(cache.template,
-                        (event, table) -> presenter.removeCache(cache, table.selectedRow().getName())))
+                        table -> presenter.removeCache(cache, table.selectedRow().getName())))
                 .column(Names.NAME, (cell, type, row, meta) -> row.getName());
         if (cache != LOCAL) {
             builder.column(MODE);
@@ -161,9 +161,9 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             Metadata backupMeta = metadataRegistry.lookup(backupTemplate);
 
             backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX), backupMeta)
-                    .button(tableButtonFactory.add(backupTemplate, (event, table) -> presenter.addCacheBackup()))
+                    .button(tableButtonFactory.add(backupTemplate, table -> presenter.addCacheBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
-                            (event, table) -> presenter.removeCacheBackup(table.selectedRow().getName())))
+                            table -> presenter.removeCacheBackup(table.selectedRow().getName())))
                     .column(Names.NAME, (cell, type, row, meta) -> row.getName())
                     .build();
 

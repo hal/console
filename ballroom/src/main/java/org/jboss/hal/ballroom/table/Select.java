@@ -40,7 +40,7 @@ class Select {
         return select;
     }
 
-    public boolean info;
-    public String items;
-    public String style;
+    boolean info;
+    String items;
+    String style;
 }

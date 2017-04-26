@@ -71,9 +71,9 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
 
         Metadata metadata = metadataRegistry.lookup(configType.template);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(configType.baseId, Ids.TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(configType.template, (event, table) -> presenter.addConfig()))
+                .button(tableButtonFactory.add(configType.template, table -> presenter.addConfig()))
                 .button(tableButtonFactory.remove(configType.template,
-                        (event, table) -> presenter.removeConfig(table.selectedRow().getName())))
+                        table -> presenter.removeConfig(table.selectedRow().getName())))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.WEBSERVICES_HANDLER_CHAIN_COLUMN,
                         Names.HANDLER_CHAIN,

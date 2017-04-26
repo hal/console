@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.ballroom.table;
 
 /**
- * ActionHandler which will be invoked when selecting one of the items in the breadcrumb dropdown.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface BreadcrumbItemHandler<T> {
+public interface ButtonHandler<T> {
 
-    void execute(T item, FinderContext context);
+    void execute(Table<T> table);
 }

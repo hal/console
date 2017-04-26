@@ -67,10 +67,10 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
         Metadata metadata = metadataRegistry.lookup(CHANNEL_TEMPLATE);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.TABLE_SUFFIX), metadata)
                 .button(tableButtonFactory.add(CHANNEL_TEMPLATE,
-                        (event, table) -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
+                        table -> presenter.addResourceDialog(CHANNEL_TEMPLATE,
                                 Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.ADD_SUFFIX), Names.CHANNEL)))
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
-                        (event, table) -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
+                        table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Forks", row -> {

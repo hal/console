@@ -10,7 +10,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -49,7 +49,7 @@ final class Mbui_AddWithSuggestHandlerView extends AddWithSuggestHandlerView {
         this.handlebarElements = new HashMap<>();
 
         table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
-                .button(mbuiContext.tableButtonFactory().add(metadata0Template, (event, table) -> {
+                .button(mbuiContext.tableButtonFactory().add(metadata0Template, table -> {
                     AddResourceDialog dialog = new AddResourceDialog(
                             Ids.build("table", Ids.ADD_SUFFIX),
                             mbuiContext.resources().messages().addResourceTitle("Foo"),

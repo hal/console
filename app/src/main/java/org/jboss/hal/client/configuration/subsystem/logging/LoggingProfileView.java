@@ -223,24 +223,24 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addConsoleHandler() {
         addResource("console-handler=*", Ids.build("logging-profile-handler-console-table", "add"),
-                "Console Handler", "level", "target", "formatter");
+                "Console ActionHandler", "level", "target", "formatter");
     }
 
     void removeConsoleHandler(Table<NamedNode> table) {
-        removeResource(table, "console-handler=*", "Console Handler");
+        removeResource(table, "console-handler=*", "Console ActionHandler");
     }
 
     void saveConsoleHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("console-handler=*"));
-        saveForm("Console Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
+        saveForm("Console ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetConsoleHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("console-handler=*"));
-        resetForm("Console Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
+        resetForm("Console ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -256,24 +256,24 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addFileHandler() {
         addFileHandlerResource("file-handler=*", Ids.build("logging-profile-handler-file-table", "add"),
-                "File Handler", "level", "formatter");
+                "File ActionHandler", "level", "formatter");
     }
 
     void removeFileHandler(Table<NamedNode> table) {
-        removeResource(table, "file-handler=*", "File Handler");
+        removeResource(table, "file-handler=*", "File ActionHandler");
     }
 
     void saveFileHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("file-handler=*"));
-        saveForm("File Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
+        saveForm("File ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetFileHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("file-handler=*"));
-        resetForm("File Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
+        resetForm("File ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -290,18 +290,18 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     void addPeriodicHandler() {
         addFileHandlerResource("periodic-rotating-file-handler=*",
                 Ids.build("logging-profile-handler-periodic-rotating-file-table", "add"),
-                "Periodic Handler", "suffix", "level", "formatter");
+                "Periodic ActionHandler", "suffix", "level", "formatter");
     }
 
     void removePeriodicHandler(Table<NamedNode> table) {
-        removeResource(table, "periodic-rotating-file-handler=*", "Periodic Handler");
+        removeResource(table, "periodic-rotating-file-handler=*", "Periodic ActionHandler");
     }
 
     void savePeriodicHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
-        saveForm("Periodic Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+        saveForm("Periodic ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
@@ -309,7 +309,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
-        resetForm("Periodic Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+        resetForm("Periodic ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -326,18 +326,18 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     void addPeriodicSizeHandler() {
         addFileHandlerResource("periodic-size-rotating-file-handler=*",
                 Ids.build("logging-profile-handler-periodic-size-rotating-file-table", "add"),
-                "Periodic Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
+                "Periodic Size ActionHandler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
     void removePeriodicSizeHandler(Table<NamedNode> table) {
-        removeResource(table, "periodic-size-rotating-file-handler=*", "Periodic Size Handler");
+        removeResource(table, "periodic-size-rotating-file-handler=*", "Periodic Size ActionHandler");
     }
 
     void savePeriodicSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"));
-        saveForm("Periodic Size Handler", name,
+        saveForm("Periodic Size ActionHandler", name,
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*")
                         .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
@@ -346,7 +346,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"));
-        resetForm("Periodic Size Handler", name,
+        resetForm("Periodic Size ActionHandler", name,
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*")
                         .resolve(selectionAwareStatementContext, name), form, metadata);
     }
@@ -364,18 +364,18 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     void addSizeHandler() {
         addFileHandlerResource("size-rotating-file-handler=*",
                 Ids.build("logging-profile-handler-size-rotating-file-table", "add"),
-                "Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
+                "Size ActionHandler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
     void removeSizeHandler(Table<NamedNode> table) {
-        removeResource(table, "size-rotating-file-handler=*", "Size Handler");
+        removeResource(table, "size-rotating-file-handler=*", "Size ActionHandler");
     }
 
     void saveSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"));
-        saveForm("Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
+        saveForm("Size ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
@@ -383,7 +383,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"));
-        resetForm("Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
+        resetForm("Size ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -403,11 +403,11 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*");
 
         AddResourceDialog dialog = new AddResourceDialog(Ids.build("logging-profile-handler-async-table", "add"),
-                mbuiContext.resources().messages().addResourceTitle("Async Handler"),
+                mbuiContext.resources().messages().addResourceTitle("Async ActionHandler"),
                 metadata, asList("level", "subhandlers", "queue-length", "overflow-action"),
                 (name, modelNode) -> {
                     ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
-                    crud().add("Async Handler", name, address, modelNode, (n, a) -> presenter.reload());
+                    crud().add("Async ActionHandler", name, address, modelNode, (n, a) -> presenter.reload());
                 });
         List<AddressTemplate> templates = asList(
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*"),
@@ -423,20 +423,20 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     void removeAsyncHandler(Table<NamedNode> table) {
-        removeResource(table, "async-handler=*", "Async Handler");
+        removeResource(table, "async-handler=*", "Async ActionHandler");
     }
 
     void saveAsyncHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("async-handler=*"));
-        saveForm("Async Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
+        saveForm("Async ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetAsyncHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("async-handler=*"));
-        resetForm("Async Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
+        resetForm("Async ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -452,24 +452,24 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addCustomHandler() {
         addResource("custom-handler=*", Ids.build("logging-profile-handler-custom-table", "add"),
-                "Custom Handler", "level", "module", "class", "formatter");
+                "Custom ActionHandler", "level", "module", "class", "formatter");
     }
 
     void removeCustomHandler(Table<NamedNode> table) {
-        removeResource(table, "custom-handler=*", "Custom Handler");
+        removeResource(table, "custom-handler=*", "Custom ActionHandler");
     }
 
     void saveCustomHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("custom-handler=*"));
-        saveForm("Custom Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
+        saveForm("Custom ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetCustomHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("custom-handler=*"));
-        resetForm("Custom Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
+        resetForm("Custom ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
@@ -485,25 +485,25 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addSyslogHandler() {
         addResource("syslog-handler=*", Ids.build("logging-profile-handler-syslog-table", "add"),
-                "Syslog Handler", "level", "syslog-format", "hostname", "server-address", "port", "app-name",
+                "Syslog ActionHandler", "level", "syslog-format", "hostname", "server-address", "port", "app-name",
                 "facility");
     }
 
     void removeSyslogHandler(Table<NamedNode> table) {
-        removeResource(table, "syslog-handler=*", "Syslog Handler");
+        removeResource(table, "syslog-handler=*", "Syslog ActionHandler");
     }
 
     void saveSyslogHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
-        saveForm("Syslog Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
+        saveForm("Syslog ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
                 .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetSyslogHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
-        resetForm("Syslog Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
+        resetForm("Syslog ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
                 .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 

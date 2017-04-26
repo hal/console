@@ -189,7 +189,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(bcType, name, BOOTSTRAP_CONTEXT_TEMPLATE, model));
 
         bcTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_TABLE, bcMetadata)
-                .button(tableButtonFactory.add(BOOTSTRAP_CONTEXT_TEMPLATE, (event, table) -> bcAddDialog.show()))
+                .button(tableButtonFactory.add(BOOTSTRAP_CONTEXT_TEMPLATE, table -> bcAddDialog.show()))
                 .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)
@@ -237,7 +237,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
 
         wmTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_WORKMANAGER_TABLE, wmMetadata)
-                .button(tableButtonFactory.add(WORKMANAGER_TEMPLATE, (event, table) -> wmAddDialog.show()))
+                .button(tableButtonFactory.add(WORKMANAGER_TEMPLATE, table -> wmAddDialog.show()))
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.reload()))
                 .column(NAME)
@@ -279,7 +279,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
 
         dwmTable = new ModelNodeTable.Builder<NamedNode>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmMetadata)
-                .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, (event, table) -> dwmAddDialog.show()))
+                .button(tableButtonFactory.add(DISTRIBUTED_WORKMANAGER_TEMPLATE, table -> dwmAddDialog.show()))
                 .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.reload()))
                 .column(NAME)

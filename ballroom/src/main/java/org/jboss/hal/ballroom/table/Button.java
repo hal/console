@@ -15,72 +15,35 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsType;
-
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+import org.jboss.hal.meta.security.Constraint;
 
 /**
- * Custom data tables button.
- *
- * @param <T> the row type
- *
  * @author Harald Pehl
- * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
  */
-@SuppressWarnings("WeakerAccess")
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Button<T> {
 
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public enum Scope {
-        SELECTED("selected"), SELECTED_SINGLE("selectedSingle");
+    final String title;
+    final ButtonHandler<T> handler;
+    final Scope scope;
+    final Constraint constraint;
 
-        public static Scope fromScope(final String scope) {
-            if (SELECTED.selector().equals(scope)) {
-                return SELECTED;
-            } else if (SELECTED_SINGLE.selector().equals(scope)) {
-                return SELECTED_SINGLE;
-            }
-            throw new IllegalArgumentException("Invalid scope: " + scope);
-        }
-
-        private final String selector;
-
-        Scope(final String selector) {
-            this.selector = selector;
-        }
-
-        public String selector() {
-            return selector;
-        }
+    public Button(final String title, final ButtonHandler<T> handler) {
+        this(title, handler, null, null);
     }
 
-
-    /**
-     * Action handler for a custom button.
-     *
-     * @param <T> the row type
-     *
-     * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
-     */
-    @JsFunction
-    @FunctionalInterface
-    public interface ActionHandler<T> {
-
-        /**
-         * Action handler callback
-         *
-         * @param event the object which triggered the action
-         * @param table the data table
-         */
-        void action(Object event, Table<T> table);
+    public Button(final String title, final ButtonHandler<T> handler, final Scope scope) {
+        this(title, handler, scope, null);
     }
 
+    public Button(final String title, final ButtonHandler<T> handler, final Constraint constraint) {
+        this(title, handler, null, constraint);
+    }
 
-    public String text;
-    public ActionHandler<T> action;
-    public String extend;
-    public String constraint;
+    public Button(final String title, final ButtonHandler<T> handler, final Scope scope,
+            final Constraint constraint) {
+        this.title = title;
+        this.scope = scope;
+        this.handler = handler;
+        this.constraint = constraint;
+    }
 }

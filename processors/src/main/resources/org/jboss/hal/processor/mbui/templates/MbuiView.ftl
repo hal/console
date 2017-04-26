@@ -11,7 +11,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 <#if context.verticalNavigation??>
@@ -180,7 +180,7 @@ final class ${context.subclass} extends ${context.base} {
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider || action.hasUnboundAttributes>
-            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, table) -> {
+            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, table -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
                     .fromRequestProperties()
@@ -222,7 +222,7 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             }))
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
-            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, (event, table) -> {
+            .button(mbuiContext.tableButtonFactory().add(${table.metadata.name}Template, table -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
@@ -262,12 +262,12 @@ final class ${context.subclass} extends ${context.base} {
                             <#break>
                         <#case "REMOVE_RESOURCE">
             .button(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
-                (table) -> ${action.nameResolver},
+                table -> ${action.nameResolver},
                 () -> presenter.reload()))
                             <#break>
                     </#switch>
                 <#else>
-            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if><#if action.constraint??>Constraint.parse("${action.constraint}"), </#if>(event, table) -> ${action.handler})
+            .button(${action.title}, table -> ${action.handler}<#if action.scope??>, Scope.${action.scope}</#if><#if action.constraint??>, Constraint.parse("${action.constraint}")</#if>)
                 </#if>
             </#list>
             <#if table.onlySimpleColumns>

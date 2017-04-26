@@ -10,7 +10,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -52,7 +52,7 @@ final class Mbui_DefaultActionsView extends DefaultActionsView {
                 .button(mbuiContext.tableButtonFactory().add(Ids.build("table", Ids.ADD_SUFFIX), "Subsystem",
                         metadata0Template, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove("Subsystem", metadata0Template,
-                        (api) -> api.selectedRow().getName(), () -> presenter.reload()))
+                        table -> table.selectedRow().getName(), () -> presenter.reload()))
                 .columns("name")
                 .build();
 
