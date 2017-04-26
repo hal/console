@@ -1,0 +1,16 @@
+*.iml
+*.bak
+.DS_Store
+.idea
+.settings
+.project
+.classpath
+.wakatime-project
+dependency-reduced-pom.xml
+gwt-unitCache
+hs_err*
+out
+target
+js/.DS_Store
+js/mbui/
+js/mvp/
