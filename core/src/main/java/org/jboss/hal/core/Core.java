@@ -34,13 +34,14 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 
 /**
  * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
  * <p>
- * Besides that this class serves as an entry point for the JS API.
+ * Entry point for the HAL JavaScript API.
  *
  * @author Harald Pehl
  */
@@ -55,6 +56,7 @@ public class Core {
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final EventBus eventBus;
+    private final MetadataProcessor metadataProcessor;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final TableButtonFactory tableButtonFactory;
@@ -65,6 +67,7 @@ public class Core {
             final Dispatcher dispatcher,
             final Environment environment,
             final EventBus eventBus,
+            final MetadataProcessor metadataProcessor,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final TableButtonFactory tableButtonFactory) {
@@ -72,6 +75,7 @@ public class Core {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.eventBus = eventBus;
+        this.metadataProcessor = metadataProcessor;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.tableButtonFactory = tableButtonFactory;
@@ -95,6 +99,11 @@ public class Core {
     @JsIgnore
     public EventBus eventBus() {
         return eventBus;
+    }
+
+    @JsProperty(name = "metadataProcessor")
+    public MetadataProcessor metadataProcessor() {
+        return metadataProcessor;
     }
 
     @JsProperty(name = "metadataRegistry")

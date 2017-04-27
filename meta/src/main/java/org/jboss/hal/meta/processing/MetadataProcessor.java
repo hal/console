@@ -22,15 +22,19 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -53,6 +57,7 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Harald Pehl
  */
+@JsType(namespace = "hal.meta")
 public class MetadataProcessor {
 
     public interface MetadataCallback {
@@ -84,6 +89,7 @@ public class MetadataProcessor {
     private final CreateRrdOperations rrdOps;
 
     @Inject
+    @JsIgnore
     public MetadataProcessor(final Environment environment,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -100,6 +106,7 @@ public class MetadataProcessor {
         this.rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
+    @JsIgnore
     public void process(final String id, final Progress progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
         logger.debug("Process required resources {} for id {}", resources, id);
@@ -113,6 +120,7 @@ public class MetadataProcessor {
         }
     }
 
+    @JsIgnore
     public void lookup(final AddressTemplate template, Progress progress, final MetadataCallback callback) {
         logger.debug("Lookup metadata for {}", template);
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
@@ -186,6 +194,39 @@ public class MetadataProcessor {
                 new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
                         (Function[]) allFunctions.toArray(new RrdFunction[allFunctions.size()]));
             }
+        }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+
+    @JsFunction
+    public interface JsMetadataCallback {
+
+        void onMetadata(Metadata metadata);
+    }
+
+    @JsMethod(name = "lookup")
+    public void jsLookup(Object template, JsMetadataCallback callback) {
+        MetadataCallback mc = new MetadataCallback() {
+            @Override
+            public void onMetadata(final Metadata metadata) {
+                callback.onMetadata(metadata);
+            }
+
+            @Override
+            public void onError(final Throwable error) {
+                logger.error("Unable to lookup metadata for {}: {}", template, error.getMessage());
+            }
+        };
+        if (template instanceof String) {
+            lookup(AddressTemplate.of(((String) template)), Progress.NOOP, mc);
+        } else if (template instanceof AddressTemplate) {
+            lookup((AddressTemplate) template, Progress.NOOP, mc);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 1st argument: Use MetadataProcessor((AddressTemplate|String), function(Metadata))");
         }
     }
 }
