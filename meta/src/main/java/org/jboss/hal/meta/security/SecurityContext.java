@@ -27,7 +27,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.meta")
 @SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {
 

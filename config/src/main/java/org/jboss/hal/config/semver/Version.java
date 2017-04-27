@@ -38,7 +38,7 @@ import jsinterop.annotations.JsType;
  * @author Zafar Khaja <zafarkhaja@gmail.com>
  * @since 0.1.0
  */
-@JsType(namespace = "config")
+@JsType(namespace = "hal.config")
 public class Version implements Comparable<Version> {
 
     @JsIgnore
