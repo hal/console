@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.inject.Provider;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -112,12 +112,12 @@ public final class ModelNodeHelper {
     }
 
     @JsIgnore
-    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Provider<T> provider,
+    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Supplier<T> supplier,
             T defaultValue) {
         T result = defaultValue;
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
-                result = provider.get();
+                result = supplier.get();
             } catch (Throwable t) {
                 result = defaultValue;
             }

@@ -22,6 +22,7 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -54,6 +55,7 @@ public class Core {
 
     private final CrudOperations crud;
     private final Dispatcher dispatcher;
+    private final Endpoints endpoints;
     private final Environment environment;
     private final EventBus eventBus;
     private final MetadataProcessor metadataProcessor;
@@ -65,6 +67,7 @@ public class Core {
     @JsIgnore
     public Core(final CrudOperations crud,
             final Dispatcher dispatcher,
+            final Endpoints endpoints,
             final Environment environment,
             final EventBus eventBus,
             final MetadataProcessor metadataProcessor,
@@ -73,6 +76,7 @@ public class Core {
             final TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.dispatcher = dispatcher;
+        this.endpoints = endpoints;
         this.environment = environment;
         this.eventBus = eventBus;
         this.metadataProcessor = metadataProcessor;
@@ -89,6 +93,11 @@ public class Core {
     @JsProperty(name = "dispatcher")
     public Dispatcher dispatcher() {
         return dispatcher;
+    }
+
+    @JsProperty(name = "endpoints")
+    public Endpoints endpoints() {
+        return endpoints;
     }
 
     @JsProperty(name = "environment")
