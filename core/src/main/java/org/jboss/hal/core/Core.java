@@ -30,6 +30,7 @@ import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -139,9 +140,18 @@ public class Core {
     }
 
     @JsMethod(name = "operation")
-    public Operation.Builder jsOperation(final String address, final String name) {
-        AddressTemplate template = AddressTemplate.of(address);
-        return new Operation.Builder(template.resolve(statementContext), name);
+    public Operation.Builder jsOperation(final Object address, final String name) {
+        ResourceAddress ra;
+        if (address instanceof AddressTemplate) {
+            ra = ((AddressTemplate) address).resolve(statementContext());
+        } else if (address instanceof ResourceAddress) {
+            ra = (ResourceAddress) address;
+        } else if (address instanceof String) {
+            ra = AddressTemplate.of(((String) address)).resolve(statementContext());
+        } else {
+            throw new IllegalArgumentException("Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|String) address, String name)");
+        }
+        return new Operation.Builder(ra, name);
     }
 
     @JsMethod(name = "form")

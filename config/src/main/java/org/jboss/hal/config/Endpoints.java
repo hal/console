@@ -44,6 +44,7 @@ public class Endpoints {
     /**
      * @return the base url w/o a trailing slash
      */
+    @JsIgnore
     public static String getBaseUrl() {
         String hostUrl = GWT.getHostPageBaseURL();
         int schemeIndex = hostUrl.indexOf("://");
