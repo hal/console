@@ -1,0 +1,310 @@
+/*
+ * Generic form classes
+ */
+.form-section {
+  margin-top: @margin-large;
+}
+
+.hal-form-label {
+  .make-lg-column(@hal-form-label-columns);
+  .make-md-column(@hal-form-label-columns);
+  .make-sm-column(@hal-form-label-columns);
+
+  &.deprecated {
+    color: @color-pf-black-500;
+    cursor: help;
+    text-decoration: line-through;
+  }
+}
+
+.hal-form-input {
+  .make-lg-column(@hal-form-input-columns);
+  .make-md-column(@hal-form-input-columns);
+  .make-sm-column(@hal-form-input-columns);
+}
+
+.hal-form-offset {
+  .make-lg-column(@hal-form-input-columns);
+  .make-md-column(@hal-form-input-columns);
+  .make-sm-column(@hal-form-input-columns);
+  .make-lg-column-offset(@hal-form-label-columns);
+  .make-md-column-offset(@hal-form-label-columns);
+  .make-sm-column-offset(@hal-form-label-columns);
+}
+
+.form {
+  .restricted {
+    cursor: not-allowed;
+  }
+
+  &.readonly {
+    .separator {
+      margin-top: -15px;
+      margin-bottom: 5px;
+      border-top: 1px solid @hal-light-gray;
+    }
+
+    .form-control-static {
+      .hint, .fa {
+        margin-left: 5px;
+      }
+      .empty + .hint {
+        margin-left: 0;
+      }
+
+      .default-value, .hint {
+        color: #c7c7cd;
+        font-style: italic;
+      }
+
+      .default-value {
+        cursor: help;
+      }
+    }
+
+    .hal-form-input {
+      pre {
+        margin: 5px 0 10px;
+      }
+    }
+  }
+
+  &.readonly, &.editing {
+    padding-top: 10px;
+  }
+
+  .control-label {
+    .text-overflow();
+  }
+}
+
+fieldset.form-section {
+  legend {
+    font-size: 16px;
+    font-weight: 300;
+  }
+}
+
+.form-links {
+  list-style: none;
+  margin: 0 0 5px;
+  padding: 0;
+  li {
+    display: inline-block;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+    a {
+      cursor: pointer;
+    }
+  }
+  .form-link-label {
+    margin-left: 0.3em;
+  }
+}
+
+.form-help-link {
+  margin-bottom: 3px;
+}
+
+.form-help-content {
+  border: 1px solid @alert-success-border;
+  > div {
+    padding: 10px 10px 10px 0;
+    color: @alert-success-text;
+    background-color: @alert-success-bg;
+    .form-group {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.form-buttons button {
+  margin-right: 10px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.btn-hal {
+  width: 8em;
+  .text-overflow();
+}
+
+.help-block.hint, .readonly .hal-form-input .hint {
+  color: #999;
+  font-size: 11px;
+  margin-bottom: 0;
+}
+
+abbr.req {
+  color: @hal-dark-blue;
+  border: none;
+  font-size: .6em;
+  vertical-align: text-top;
+}
+
+abbr.key {
+  border: none;
+}
+
+/*
+ * Bootstrap Select classes
+ */
+.bootstrap-select.btn-group.disabled .btn:focus {
+  box-shadow: none !important;
+}
+
+.bootstrap-select.btn-group .btn .clear {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 12px;
+  height: 9px;
+  margin-top: -4px;
+  vertical-align: middle;
+  font-family: @icon-font-name-pf;
+  font-size: 10px;
+  font-weight: 400;
+
+  &:before {
+    bottom: 0;
+    content: "\e60b";
+    left: 0;
+    line-height: 12px;
+    position: absolute;
+    text-align: center;
+    top: -1px;
+    right: 0;
+  }
+}
+
+.input-group-btn > .bootstrap-select.btn-group {
+  margin-left: -1px;
+}
+
+/*
+ * Bootstrap Switch
+ */
+.btn.expression-mode-switcher {
+  box-shadow: none;
+  margin-right: -1px;
+  outline: none;
+}
+
+/*
+ * TagManager classes
+ */
+.tag-manager-container {
+  margin: 0;
+  padding: 0;
+}
+
+.tag-manager-tag {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 5px 0 0;
+  padding: 2px 4px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.disabled {
+  input[type=text].form-control.tags {
+    display: none;
+  }
+
+  .input-group.tags {
+    display: none;
+  }
+
+  .help-block.hint {
+    display: none;
+  }
+
+  .tm-tag {
+    color: #999;
+    cursor: not-allowed;
+    margin-top: 0;
+  }
+  .tm-tag-remove {
+    pointer-events: none;
+  }
+}
+
+.has-error {
+  .tm-tag {
+    background-color: #fbe7e7;
+    border-color: #c00;
+  }
+}
+
+/*
+ * PropertiesItem
+ */
+.disabled {
+  input[type=text].form-control.properties {
+    display: none;
+  }
+}
+
+/*
+ * Upload related classes
+ */
+.upload {
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+  padding: 10px;
+}
+
+.upload.upload-advanced {
+
+  &.ondrag {
+    outline: 2px dashed #333;
+  }
+
+  .upload-dragndrop {
+    display: inline;
+  }
+
+  .upload-icon {
+    color: @color-pf-black-500;
+    display: block;
+    margin-bottom: 40px;
+  }
+}
+
+.upload-file {
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 0.1px;
+  z-index: -1;
+}
+
+.upload-file + label {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 125%;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-form {
+  .pull-right;
+  display: inline-flex;
+  align-items: center;
+
+  label {
+    font-weight: normal;
+    margin-bottom: 0;
+    margin-right: 1em;
+  }
+}
