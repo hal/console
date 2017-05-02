@@ -63,7 +63,16 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+            <classifier>webapp</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-theme-${theme.name}</artifactId>
         </dependency>
 
         <!-- GWT -->
@@ -129,47 +138,22 @@
 
         <plugins>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
-                    <nodeVersion>${node.version}</nodeVersion>
-                    <npmVersion>${npm.version}</npmVersion>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public</directory>
+                            <includes>css</includes>
+                            <includes>fonts</includes>
+                            <includes>img</includes>
+                            <includes>js</includes>
+                            <includes>previews</includes>
+                            <includes>*.ico</includes>
+                            <includes>*.png</includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>bower install</id>
-                        <goals>
-                            <goal>bower</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>grunt build</id>
-                        <goals>
-                            <goal>grunt</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>${grunt-task} --theme=${theme.name}</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>
@@ -269,6 +253,31 @@
                         <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
                     </classpathDependencyExcludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-webapp</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.hal</groupId>
+                                    <artifactId>hal-resources</artifactId>
+                                    <classifier>webapp</classifier>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>src/main/resources/org/jboss/hal/public</outputDirectory>
+                            <excludes>META-INF</excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -105,6 +105,22 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>explode-webapp</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                        <configuration>
+                            <webappDirectory>${project.build.directory}/webapp</webappDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -126,8 +142,22 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>webapp</id>
+                        <id>package-webapp</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>webapp</classifier>
+                            <archive>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                                <index>false</index>
+                            </archive>
+                            <classesDirectory>${project.build.directory}/webapp</classesDirectory>
+                            <excludes>
+                                <exclude>WEB-INF/**</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

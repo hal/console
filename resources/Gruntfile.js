@@ -72,7 +72,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: '<%= config.themeDir %>',
-                        src: ['favicon.ico', 'apple-touch-icon.png'],
+                        src: ['apple-touch-icon.png', 'favicon.ico'],
                         dest: '<%= config.webapp %>'
                     }
                 ]

@@ -31,14 +31,6 @@
     <description>Defines the HAL JavaScript API</description>
     <packaging>gwt-app</packaging>
 
-    <properties>
-        <gwt.draftCompile>false</gwt.draftCompile>
-        <gwt.failOnError>true</gwt.failOnError>
-        <gwt.logLevel>INFO</gwt.logLevel>
-        <gwt.optimize>0</gwt.optimize>
-        <gwt.style>PRETTY</gwt.style>
-    </properties>
-
     <dependencies>
         <!-- HAL -->
         <dependency>
@@ -75,7 +67,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-theme-hal</artifactId>
+            <artifactId>hal-theme-${theme.name}</artifactId>
         </dependency>
 
         <!-- GWT and others -->
