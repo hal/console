@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.resources",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "HAL npm resources",
   "license": "Apache-2.0",
   "private": true,
