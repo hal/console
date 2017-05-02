@@ -138,9 +138,6 @@
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
                         </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/previews</directory>
-                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
@@ -219,7 +216,7 @@
                                     <artifactId>hal-resources</artifactId>
                                     <classifier>webapp</classifier>
                                     <overWrite>true</overWrite>
-                                    <excludes>META-INF/**</excludes>
+                                    <excludes>META-INF/**,previews/**</excludes>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>src/main/resources/org/jboss/hal/public</outputDirectory>
