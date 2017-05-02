@@ -144,13 +144,25 @@
                     <filesets>
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public</directory>
-                            <includes>css</includes>
-                            <includes>fonts</includes>
-                            <includes>img</includes>
-                            <includes>js</includes>
-                            <includes>previews</includes>
-                            <includes>*.ico</includes>
-                            <includes>*.png</includes>
+                            <includes>
+                                <include>*.ico</include>
+                                <include>*.png</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/previews</directory>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -240,22 +252,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgument>-proc:none</compilerArgument>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -271,13 +267,29 @@
                                     <artifactId>hal-resources</artifactId>
                                     <classifier>webapp</classifier>
                                     <overWrite>true</overWrite>
+                                    <excludes>META-INF/**</excludes>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>src/main/resources/org/jboss/hal/public</outputDirectory>
-                            <excludes>META-INF</excludes>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

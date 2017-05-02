@@ -60,6 +60,11 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-resources</artifactId>
+            <classifier>webapp</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -67,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-theme-${theme.name}</artifactId>
+            <artifactId>hal-theme-hal</artifactId>
         </dependency>
 
         <!-- GWT and others -->
@@ -109,6 +114,36 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public</directory>
+                            <includes>
+                                <include>*.ico</include>
+                                <include>*.png</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/previews</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -163,6 +198,31 @@
                                 <source>../spi/src/main/java</source>
                                 <source>../themes/hal/src/main/java</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-webapp</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.hal</groupId>
+                                    <artifactId>hal-resources</artifactId>
+                                    <classifier>webapp</classifier>
+                                    <overWrite>true</overWrite>
+                                    <excludes>META-INF/**</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>src/main/resources/org/jboss/hal/public</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
