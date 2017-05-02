@@ -61,7 +61,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(Ids.STANDALONE_SERVER)
-@Requires(MANAGEMENT_ADDRESS)
+@Requires(value = MANAGEMENT_ADDRESS, recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String MANAGEMENT_ADDRESS = "/core-service=management";

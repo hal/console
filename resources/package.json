@@ -1,7 +1,7 @@
 {
-  "name": "org.jboss.hal.npm",
+  "name": "org.jboss.hal.resources",
   "version": "0.7.0",
-  "description": "Node / NPM setup for HAL",
+  "description": "HAL npm resources",
   "license": "Apache-2.0",
   "private": true,
   "devDependencies": {

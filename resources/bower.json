@@ -1,7 +1,7 @@
 {
-  "name": "org.jboss.hal.bower",
+  "name": "org.jboss.hal.resources",
   "version": "0.7.0",
-  "description": "Bower setup for HAL",
+  "description": "HAL bower resources",
   "license": "Apache-2.0",
   "private": true,
   "ignore": [

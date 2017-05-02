@@ -31,14 +31,6 @@
     <description>Parent POM for all GWT related modules.</description>
     <packaging>pom</packaging>
 
-    <properties>
-        <gwt.draftCompile>true</gwt.draftCompile>
-        <gwt.failOnError>false</gwt.failOnError>
-        <gwt.logLevel>INFO</gwt.logLevel>
-        <gwt.optimize>0</gwt.optimize>
-        <gwt.style>PRETTY</gwt.style>
-    </properties>
-
     <dependencies>
         <!-- Dependencies used by all GWT modules -->
         <dependency>
@@ -57,6 +49,8 @@
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                         <compilerArg>-generateJsInteropExports</compilerArg>
+                        <compilerArg>-Xnamespace</compilerArg>
+                        <compilerArg>${gwt.namespace}</compilerArg>
                     </compilerArgs>
                     <moduleName/> <!-- need to be overridden in sub modules -->
                     <sourceLevel>1.8</sourceLevel>

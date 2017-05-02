@@ -31,14 +31,6 @@
     <description>Defines the HAL JavaScript API</description>
     <packaging>gwt-app</packaging>
 
-    <properties>
-        <gwt.draftCompile>false</gwt.draftCompile>
-        <gwt.failOnError>true</gwt.failOnError>
-        <gwt.logLevel>INFO</gwt.logLevel>
-        <gwt.optimize>0</gwt.optimize>
-        <gwt.style>PRETTY</gwt.style>
-    </properties>
-
     <dependencies>
         <!-- HAL -->
         <dependency>
@@ -64,6 +56,11 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-processors</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+            <classifier>webapp</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -117,6 +114,33 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public</directory>
+                            <includes>
+                                <include>*.ico</include>
+                                <include>*.png</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -177,10 +201,53 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-webapp</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.hal</groupId>
+                                    <artifactId>hal-resources</artifactId>
+                                    <classifier>webapp</classifier>
+                                    <overWrite>true</overWrite>
+                                    <excludes>META-INF/**,previews/**</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>src/main/resources/org/jboss/hal/public</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>resource-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>resources</classifier>
+                            <classesDirectory>${project.build.directory}/${project.build.finalName}/hal.api
+                            </classesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>

@@ -1,9 +1,0 @@
-bower_components
-etc
-node
-node_modules
-src/main/webapp/app/
-src/main/gwt-unitCache/
-src/main/webapp/WEB-INF/deploy/app/rpcPolicyManifest/
-src/main/webapp/WEB-INF/classes/
-src/main/webapp/WEB-INF/lib/

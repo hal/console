@@ -1,0 +1,45 @@
+.datatable.hover {
+  tbody tr:hover {
+    background-color: #d1d1d1;
+  }
+  tbody td.dataTables_empty:hover {
+    background-color: #fff;
+  }
+}
+
+.datatable {
+  tr.selected td {
+    background-color: #bee1f4;
+  }
+
+  .focus {
+    outline: 1px dashed #666;
+  }
+
+  .selected .focus {
+    outline: none;
+  }
+
+  td.select-checkbox {
+    position: relative;
+  }
+  td.select-checkbox:before {
+    content: '\f096';
+    font-family: FontAwesome;
+    font-size: 14px;
+    left: 14px;
+    position: absolute;
+    top: 2px;
+  }
+  tr.selected td.select-checkbox:before {
+    content: '\f046';
+  }
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.column-action {
+  cursor: pointer;
+}

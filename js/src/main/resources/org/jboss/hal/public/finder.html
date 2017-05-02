@@ -21,10 +21,117 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet" media="screen">
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/external.js"></script>
+    <link href="css/hal.css" rel="stylesheet" media="screen">
+    <script src="js/external.js"></script>
+    <script src="js/external.js"></script>
+    <script src="hal.api.nocache.js"></script>
 </head>
 <body>
+<nav class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".hal-header-collapse">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand logo clickable">
+            <span class="logo-text logo-text-first">Wild</span><span class="logo-text logo-text-last">Fly</span>
+        </a>
+    </div>
+    <div class="collapse navbar-collapse hal-header-collapse">
+        <ul class="nav navbar-nav navbar-utility">
+            <li>
+                <a class="clickable" data-toggle="tooltip" data-placement="bottom" data-container="body" title="n/a">
+                    <span class="pficon pficon-restart"></span><span>Reload Required</span>
+                </a>
+            </li>
+            <li class="drawer-pf-trigger dropdown">
+                <a class="nav-item-iconic drawer-pf-trigger-icon">
+                    <span class="fa fa-bell-o" style="padding-right: 0"></span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="clickable dropdown-toggle" data-toggle="dropdown" title="Extensions">
+                    <span class="fa fa-th-large"></span><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu user-dropdown">
+                    <li><a class="clickable">Extensions 1</a></li>
+                    <li><a class="clickable">Extensions 2</a></li>
+                    <li><a class="clickable">Extensions 3</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <span class="pficon pficon-user"></span><span>John Doe</span><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu user-dropdown">
+                    <li><a class="clickable">Logout</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <span class="fa fa-globe"></span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="static">Connected to localhost</li>
+                    <li class="divider"></li>
+                    <li><a class="clickable">Connect to different host</a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-primary">
+            <li class="active"><a class="clickable active">Homepage</a></li>
+            <li><a class="clickable">Deployments</a></li>
+            <li><a class="clickable">Configuration</a></li>
+            <li><a class="clickable">Runtime</a></li>
+            <li><a class="clickable">Patching</a></li>
+            <li><a class="clickable">Access Control</a></li>
+        </ul>
+    </div>
+</nav>
+
+<footer class="footer">
+    <nav class="navbar navbar-footer navbar-fixed-bottom">
+        <ul class="nav navbar-nav">
+            <li class="footer-progress"></li>
+        </ul>
+        <ul class="nav navbar-nav footer-tools">
+            <li>
+                <a class="tool clickable">
+                    <span class="pficon pficon-info"></span>
+                    <span>0.8.15</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="tool dropdown-toggle clickable" data-toggle="dropdown" title="Extensions">
+                    <span class="fa fa-th-large"></span><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu dropdown">
+                    <li><a class="clickable">Extensions 1</a></li>
+                    <li><a class="clickable">Extensions 2</a></li>
+                    <li><a class="clickable">Extensions 3</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="tool dropdown-toggle clickable" data-toggle="dropdown">
+                    <span class="fa fa-wrench"></span><span>Tools</span><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu dropdown">
+                    <li><a class="clickable">Model Browser</a></li>
+                    <li><a class="clickable">Expression Resolver</a></li>
+                    <li><a class="clickable">Start Macro</a></li>
+                    <li><a class="clickable">Macro Editor</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="tool clickable">
+                    <span class="fa fa-cogs"></span><span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</footer>
+
 <div class="container-fluid">
     <div class="finder row" style="height: 555px">
 
@@ -243,7 +350,7 @@
                     <span class="item-text">Warning State</span>
                 </li>
                 <li>
-                    <span class="item-icon pficon pficon-disabled-circle-o"></span>
+                    <span class="item-icon fa fa-ban"></span>
                     <span class="item-text">Disabled State</span>
                 </li>
                 <li>

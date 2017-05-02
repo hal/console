@@ -21,24 +21,24 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('../npm/package.json'),
         theme: grunt.option('theme') || 'hal',
         config: {
+            version: '0.7.0',
             bower: 'bower_components',
             less: 'src/main/less',
-            public: 'src/main/resources/org/jboss/hal/public',
+            webapp: 'src/main/webapp',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>'
         },
 
         clean: {
             public: [
-                '<%= config.public %>/css/**',
-                '<%= config.public %>/fonts/**',
-                '<%= config.public %>/img/**',
-                '<%= config.public %>/js/*.js',
-                '<%= config.public %>/js/*.swf',
-                '!<%= config.public %>/js/mode-logfile.js',
-                '!<%= config.public %>/js/theme-logfile.js'
+                '<%= config.webapp %>/css/**',
+                '<%= config.webapp %>/fonts/**',
+                '<%= config.webapp %>/img/**',
+                '<%= config.webapp %>/js/*.js',
+                '<%= config.webapp %>/js/*.swf',
+                '!<%= config.webapp %>/js/mode-logfile.js',
+                '!<%= config.webapp %>/js/theme-logfile.js'
             ]
         },
 
@@ -49,31 +49,31 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= config.bower %>/patternfly/dist/fonts',
                         src: '*',
-                        dest: '<%= config.public %>/fonts'
+                        dest: '<%= config.webapp %>/fonts'
                     },
                     {
                         expand: true,
                         cwd: '<%= config.bower %>/font-awesome/fonts',
                         src: '*',
-                        dest: '<%= config.public %>/fonts'
+                        dest: '<%= config.webapp %>/fonts'
                     },
                     {
                         expand: true,
                         cwd: '<%= config.bower %>/jstree/dist/themes/default',
                         src: ['*.gif', '*.png'],
-                        dest: '<%= config.public %>/img'
+                        dest: '<%= config.webapp %>/img'
                     },
                     {
                         expand: true,
                         cwd: '<%= config.bower %>/zeroclipboard/dist',
                         src: 'ZeroClipboard.swf',
-                        dest: '<%= config.public %>/js'
+                        dest: '<%= config.webapp %>/js'
                     },
                     {
                         expand: true,
                         cwd: '<%= config.themeDir %>',
-                        src: ['favicon.ico', 'apple-touch-icon.png'],
-                        dest: '<%= config.public %>'
+                        src: ['apple-touch-icon.png', 'favicon.ico'],
+                        dest: '<%= config.webapp %>'
                     }
                 ]
             }
@@ -129,12 +129,12 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.js'
                 ],
-                dest: '<%= config.public %>/js/external.js'
+                dest: '<%= config.webapp %>/js/external.js'
             },
             prod: {
                 options: {
                     banner: '/*!\n' +
-                    ' * External JS files for <%= pkg.name %> <%= pkg.version %>\n' +
+                    ' * External JS files for HAL <%= config.version %>\n' +
                     ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                     ' */\n\n',
                     stripBanners: true
@@ -178,7 +178,7 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/zeroclipboard/dist/ZeroClipboard.min.js',
                     '<%= config.bower %>/patternfly/dist/js/patternfly.min.js'
                 ],
-                dest: '<%= config.public %>/js/external.min.js'
+                dest: '<%= config.webapp %>/js/external.min.js'
             }
         },
 
@@ -186,14 +186,14 @@ module.exports = function (grunt) {
             target: {
                 options: {
                     banner: '/*\n' +
-                    ' * Generated CSS file for <%= pkg.name %> <%= pkg.version %>\n' +
+                    ' * Generated CSS file for HAL <%= config.version %>\n' +
                     ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                     ' */\n\n',
                     paths: ['<%= config.less %>', '../themes/<%= theme %>/src/main/less'],
                     strictMath: true
                 },
                 src: '<%= config.less %>/hal.less',
-                dest: '<%= config.public %>/css/hal.css'
+                dest: '<%= config.webapp %>/css/hal.css'
             }
         },
 
@@ -207,9 +207,9 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: '<%= config.public %>/css',
+                    cwd: '<%= config.webapp %>/css',
                     src: 'hal.css',
-                    dest: '<%= config.public %>/css'
+                    dest: '<%= config.webapp %>/css'
                 }]
             }
         },
@@ -218,9 +218,9 @@ module.exports = function (grunt) {
             target: {
                 files: [{
                     expand: true,
-                    cwd: '<%= config.public %>/css',
+                    cwd: '<%= config.webapp %>/css',
                     src: ['*.css', '!*.min.css'],
-                    dest: '<%= config.public %>/css',
+                    dest: '<%= config.webapp %>/css',
                     ext: '.min.css'
                 }]
             }
