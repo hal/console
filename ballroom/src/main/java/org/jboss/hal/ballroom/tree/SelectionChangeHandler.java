@@ -24,7 +24,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * Handler when the selection changes.
+ * ActionHandler when the selection changes.
  */
 @JsFunction
 @FunctionalInterface

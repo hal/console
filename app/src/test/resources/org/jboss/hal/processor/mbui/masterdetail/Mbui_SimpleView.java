@@ -10,15 +10,13 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Button;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -61,10 +59,9 @@ final class Mbui_SimpleView extends SimpleView {
                 })
                 .build();
 
-        Options<org.jboss.hal.dmr.NamedNode> tableOptions = new NamedNodeTable.Builder<org.jboss.hal.dmr.NamedNode>(metadata0)
+        table = new ModelNodeTable.Builder<org.jboss.hal.dmr.NamedNode>("table", metadata0)
                 .columns("name")
                 .build();
-        table = new NamedNodeTable<>("table", metadata0, tableOptions);
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
                 .row()

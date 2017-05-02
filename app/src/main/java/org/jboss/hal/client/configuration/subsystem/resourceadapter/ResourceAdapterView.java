@@ -22,17 +22,16 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -51,7 +50,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection",
+        "unused"})
 public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPresenter>
         implements ResourceAdapterPresenter.MyView {
 
@@ -62,9 +62,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     final SelectionAwareStatementContext selectionAwareStatementContext;
     @MbuiElement("resource-adapter-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("resource-adapter-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("resource-adapter-connection-definition-table") NamedNodeTable<NamedNode> connectionDefinitionsTable;
+    @MbuiElement("resource-adapter-connection-definition-table") Table<NamedNode> connectionDefinitionsTable;
     @MbuiElement("resource-adapter-connection-definition-form") Form<NamedNode> connectionDefinitionsForm;
-    @MbuiElement("resource-adapter-admin-object-table") NamedNodeTable<NamedNode> adminObjectsTable;
+    @MbuiElement("resource-adapter-admin-object-table") Table<NamedNode> adminObjectsTable;
     @MbuiElement("resource-adapter-admin-object-form") Form<NamedNode> adminObjectsForm;
 
     public ResourceAdapterView(final MbuiContext mbuiContext) {
@@ -76,8 +76,8 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     @Override
     public void attach() {
         super.attach();
-        connectionDefinitionsTable.api().onSelectionChange(api -> updateProperties(api, connectionDefinitionsForm));
-        adminObjectsTable.api().onSelectionChange(api -> updateProperties(api, adminObjectsForm));
+        connectionDefinitionsTable.onSelectionChange(t -> updateProperties(t, connectionDefinitionsForm));
+        adminObjectsTable.onSelectionChange(t -> updateProperties(t, adminObjectsForm));
     }
 
     void saveConfiguration(Form<ModelNode> form, Map<String, Object> changedValues) {
@@ -178,9 +178,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
                 });
     }
 
-    void removeConnectionDefinition(Api<NamedNode> api) {
+    void removeConnectionDefinition(Table<NamedNode> table) {
         //noinspection ConstantConditions
-        String name = api.selectedRow().getName();
+        String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.CONNECTION_DEFINITION, name,
                 SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext, name),
                 () -> presenter.reload());
@@ -218,9 +218,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
                 });
     }
 
-    void removeAdminObject(Api<NamedNode> api) {
+    void removeAdminObject(Table<NamedNode> table) {
         //noinspection ConstantConditions
-        String name = api.selectedRow().getName();
+        String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.ADMIN_OBJECT, name,
                 SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name),
                 () -> presenter.reload());
@@ -244,12 +244,12 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         adminObjectsTable.update(asNamedNodes(failSafePropertyList(resourceAdapter, ADMIN_OBJECTS)));
     }
 
-    private void updateProperties(Api<NamedNode> api, Form<NamedNode> form) {
+    private void updateProperties(Table<NamedNode> table, Form<NamedNode> form) {
         FormItem<Map<String, String>> formItem = form.getFormItem(CONFIG_PROPERTIES);
-        if (!api.hasSelection()) {
+        if (!table.hasSelection()) {
             formItem.clearValue();
         } else {
-            Map<String, String> properties = failSafePropertyList(api.selectedRow(), CONFIG_PROPERTIES).stream()
+            Map<String, String> properties = failSafePropertyList(table.selectedRow(), CONFIG_PROPERTIES).stream()
                     .collect(toMap(Property::getName, property -> property.getValue().get(VALUE).asString()));
             formItem.setValue(properties);
         }

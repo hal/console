@@ -21,10 +21,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
@@ -37,7 +37,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class HostView extends MbuiViewImpl<HostPresenter> implements HostPresenter.MyView {
 
     public static HostView create(final MbuiContext mbuiContext) {
@@ -45,17 +45,17 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     }
 
     @MbuiElement("host-navigation") VerticalNavigation navigation;
-    @MbuiElement("host-configuration-form") ModelNodeForm<Host> hostConfigurationForm;
-    @MbuiElement("host-interface-table") NamedNodeTable<NamedNode> hostInterfaceTable;
-    @MbuiElement("host-interface-form") ModelNodeForm<NamedNode> hostInterfaceForm;
-    @MbuiElement("host-jvm-table") NamedNodeTable<NamedNode> hostJvmTable;
-    @MbuiElement("host-jvm-form") ModelNodeForm<NamedNode> hostJvmForm;
-    @MbuiElement("host-path-table") NamedNodeTable<NamedNode> hostPathTable;
-    @MbuiElement("host-path-form") ModelNodeForm<NamedNode> hostPathForm;
-    @MbuiElement("host-socket-binding-group-table") NamedNodeTable<NamedNode> hostSocketBindingGroupTable;
-    @MbuiElement("host-socket-binding-group-form") ModelNodeForm<NamedNode> hostSocketBindingGroupForm;
-    @MbuiElement("host-system-property-table") NamedNodeTable<NamedNode> hostSystemPropertyTable;
-    @MbuiElement("host-system-property-form") ModelNodeForm<NamedNode> hostSystemPropertyForm;
+    @MbuiElement("host-configuration-form") Form<Host> hostConfigurationForm;
+    @MbuiElement("host-interface-table") Table<NamedNode> hostInterfaceTable;
+    @MbuiElement("host-interface-form") Form<NamedNode> hostInterfaceForm;
+    @MbuiElement("host-jvm-table") Table<NamedNode> hostJvmTable;
+    @MbuiElement("host-jvm-form") Form<NamedNode> hostJvmForm;
+    @MbuiElement("host-path-table") Table<NamedNode> hostPathTable;
+    @MbuiElement("host-path-form") Form<NamedNode> hostPathForm;
+    @MbuiElement("host-socket-binding-group-table") Table<NamedNode> hostSocketBindingGroupTable;
+    @MbuiElement("host-socket-binding-group-form") Form<NamedNode> hostSocketBindingGroupForm;
+    @MbuiElement("host-system-property-table") Table<NamedNode> hostSystemPropertyTable;
+    @MbuiElement("host-system-property-form") Form<NamedNode> hostSystemPropertyForm;
 
     HostView(final MbuiContext mbuiContext) {
         super(mbuiContext);

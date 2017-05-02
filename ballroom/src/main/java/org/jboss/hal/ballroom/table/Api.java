@@ -21,35 +21,239 @@ import java.util.List;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.JsHelper.asList;
-import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
-import static org.jboss.hal.ballroom.table.DataTable.ROW;
-import static org.jboss.hal.ballroom.table.DataTable.SELECT;
 import static org.jboss.hal.resources.CSS.columnAction;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * Subset of the DataTables API.
- *
- * @param <T> the row type
+ * <p>
+ * This class and every member of this class is considered to be an internal API and should not be used outside of
+ * package {@code org.jboss.hal.ballroom.table}.
  *
  * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
-public class Api<T> {
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
+class Api<T> {
+
+    // ------------------------------------------------------ button(s)
+
+
+    /**
+     * Custom data tables button.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/extensions/buttons/custom">https://datatables.net/extensions/buttons/custom</a>
+     */
+    @SuppressWarnings("WeakerAccess")
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Button<T> {
+
+
+        /**
+         * Action handler for a custom button.
+         *
+         * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
+         */
+        @JsFunction
+        interface ActionHandler<T> {
+
+            void action(Object event, Object api, Object node, Button<T> btn);
+        }
+
+
+        String text;
+        ActionHandler<T> action;
+        String extend;
+        String constraint;
+        // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
+        Table<T> table;
+    }
+
+
+    /**
+     * Buttons options.
+     *
+     * @param <T> the row type
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Buttons<T> {
+
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        static class Dom {
+
+            @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+            static class Factory {
+
+                public String tag;
+                public String className;
+            }
+
+
+            Factory container;
+            Factory button;
+        }
+
+
+        Button<T>[] buttons;
+        Dom dom;
+    }
+
+
+    // ------------------------------------------------------ rows
+
+
+    /**
+     * Represents the {@code row} property in a data table.
+     *
+     * @param <T> the row type
+     *
+     * @author Harald Pehl
+     */
+    @JsType(isNative = true)
+    static class Row<T> {
+
+        /**
+         * Adds a new row to the table.
+         */
+        native Api<T> add(T data);
+    }
+
+
+    /**
+     * Function to be used as a row selector in {@link Api#rows(RowSelection)}.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
+     */
+    @JsFunction
+    interface RowSelection<T> {
+
+        boolean select(int index, T data, Element tr);
+    }
+
+
+    // ------------------------------------------------------ selection
+
+
+    /**
+     * Select options.
+     *
+     * @author Harald Pehl
+     * @see <a href="https://datatables.net/reference/option/#select">https://datatables.net/reference/option/#select</a>
+     */
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Select {
+
+        @JsOverlay
+        @SuppressWarnings("HardCodedStringLiteral")
+        static Select build(boolean multiselect) {
+            Select select = new Select();
+            select.info = false;
+            select.items = "row";
+            select.style = multiselect ? "multi" : "single";
+            return select;
+        }
+
+        boolean info;
+        String items;
+        String style;
+    }
+
+
+    /**
+     * Callback used for all kind of "select" and "deselect" events.
+     *
+     * @param <T> the row type
+     *
+     * @see <a href="https://datatables.net/reference/event/select">https://datatables.net/reference/event/select</a>
+     * @see <a href="https://datatables.net/reference/event/deselect">https://datatables.net/reference/event/deselect</a>
+     */
+    @JsFunction
+    interface SelectCallback<T> {
+
+        void onSelect(Object event, Api<T> api, String type);
+    }
+
+
+    // ------------------------------------------------------ properties
 
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
 
 
-    // ------------------------------------------------------ internal API
+    // ------------------------------------------------------ API a-z
+
+    native Api<T> button(int index);
+
+    native Api<T> clear();
+
+    native Api<T> data();
+
+    native Api<T> draw(String paging);
+
+    /**
+     * Disables or enables the button selected with {@link #button(int)}
+     */
+    native Api<T> enable(boolean enable);
+
+    native Options<T> init();
+
+    /**
+     * Returns the jQuery object for the button selected with {@link #button(int)}
+     */
+    native JQuery node();
+
+    /**
+     * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
+     *
+     * @param event    must be "select" or "deselect"
+     * @param callback the select callback
+     */
+    native Api<T> on(String event, SelectCallback callback);
+
+    native Api<T> off(String event);
+
+    /**
+     * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
+     * to get the actual data.
+     */
+    native Api<T> rows(SelectorModifier selectorModifier);
+
+    /**
+     * Select rows by tr element. Chain the {@link #data()} to get the actual data.
+     */
+    native Api<T> rows(Element tr);
+
+    /**
+     * Select rows by using a function. Chain the {@link #data()} to get the actual data.
+     */
+    native Api<T> rows(RowSelection<T> selection);
+
+    /**
+     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(Element)} or {@link
+     * #rows(SelectorModifier)} selector methods.
+     */
+    native Api<T> select();
+
+    native JsArrayOf<T> toArray();
+
+
+    // ------------------------------------------------------ overlay methods
 
     @JsOverlay
     final Api<T> add(Iterable<T> data) {
@@ -61,109 +265,8 @@ public class Api<T> {
         return this;
     }
 
-    native Api<T> clear();
-
-
-    // ------------------------------------------------------ API a-z
-
-    public native Api<T> button(int index);
-
-    public native Api<T> data();
-
-    public native Api<T> draw(String paging);
-
-    /**
-     * Disables or enables the button selected with {@link #button(int)}
-     */
-    public native Api<T> enable(boolean enable);
-
-    public native Options<T> init();
-
-    /**
-     * Returns the jQuery object for the button selected with {@link #button(int)}
-     */
-    public native JQuery node();
-
-    /**
-     * Adds a selection callback. Currently restricted to the "select" and "deselect" event.
-     *
-     * @param event    must be "select" or "deselect"
-     * @param callback the select callback
-     */
-    public native Api<T> on(String event, SelectCallback callback);
-
-    public native Api<T> off(String event);
-
-    /**
-     * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
-     * to get the actual data.
-     */
-    public native Api<T> rows(SelectorModifier selectorModifier);
-
-    /**
-     * Select rows by tr element. Chain the {@link #data()} to get the actual data.
-     */
-    public native Api<T> rows(Element tr);
-
-    /**
-     * Select rows by using a function. Chain the {@link #data()} to get the actual data.
-     */
-    public native Api<T> rows(RowSelection<T> selection);
-
-    /**
-     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(Element)} or {@link
-     * #rows(SelectorModifier)} selector methods.
-     */
-    public native Api<T> select();
-
-    public native JsArrayOf<T> toArray();
-
-
-    // ------------------------------------------------------ overlay methods
-
     @JsOverlay
-    public final boolean hasSelection() {
-        return !selectedRows().isEmpty();
-    }
-
-    @JsOverlay
-    @SuppressWarnings("Convert2Lambda")
-    public final Api<T> onSelect(SelectionHandler<T> handler) {
-        on(SELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelect(api, api.selectedRow());
-                }
-            }
-        });
-        return this;
-    }
-
-    @JsOverlay
-    @SuppressWarnings("Convert2Lambda")
-    public final Api<T> onSelectionChange(SelectionChangeHandler<T> handler) {
-        on(SELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelectionChanged(api);
-                }
-            }
-        });
-        on(DESELECT, new SelectCallback<T>() {
-            @Override
-            public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (ROW.equals(type)) {
-                    handler.onSelectionChanged(api);
-                }
-            }
-        });
-        return this;
-    }
-
-    @JsOverlay
-    public final Api<T> refresh(RefreshMode mode) {
+    final Api<T> refresh(RefreshMode mode) {
         Api<T> api = draw(mode.mode());
         Options<T> options = api.init();
         ColumnActions<T> columnActions = options.columnActions;
@@ -194,7 +297,7 @@ public class Api<T> {
     }
 
     @JsOverlay
-    public final T selectedRow() {
+    final T selectedRow() {
         List<T> rows = selectedRows();
         if (rows.isEmpty()) {
             return null;
@@ -203,7 +306,7 @@ public class Api<T> {
     }
 
     @JsOverlay
-    public final List<T> selectedRows() {
+    final List<T> selectedRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
         JsArrayOf<T> selection = rows(selectorModifier).data().toArray();
         if (selection == null || selection.isEmpty()) {

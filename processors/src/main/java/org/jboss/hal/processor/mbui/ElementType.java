@@ -23,5 +23,5 @@ package org.jboss.hal.processor.mbui;
 public enum ElementType {
 
     // Name them after the related type for nicer error messages
-    VerticalNavigation, DataTable, Form
+    VerticalNavigation, Table, Form
 }

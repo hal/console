@@ -17,6 +17,9 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.Map;
 
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.spi.Callback;
@@ -24,13 +27,14 @@ import org.jboss.hal.spi.Callback;
 /**
  * A form bound to a model using well defined states and operations. The form contains a list of form items which are
  * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the
- * attributes of the models (text input, check boxes or select boxes), whereas unbound form items have no relation to
+ * attributes of the model (text input, check boxes or select boxes), whereas unbound form items have no relation to
  * the model (static text or buttons).
  *
  * @param <T> The model for this form
  *
  * @author Harald Pehl
  */
+@JsType(namespace = "ui")
 public interface Form<T> extends IsElement, Attachable {
 
     // ------------------------------------------------------ states and operations
@@ -177,8 +181,10 @@ public interface Form<T> extends IsElement, Attachable {
 
     // ------------------------------------------------------ form API
 
+    @JsProperty
     boolean isUndefined();
 
+    @JsProperty
     boolean isTransient();
 
     /**
@@ -206,6 +212,7 @@ public interface Form<T> extends IsElement, Attachable {
      */
     boolean save();
 
+    @JsIgnore
     void setSaveCallback(SaveCallback<T> saveCallback);
 
     /**
@@ -213,52 +220,63 @@ public interface Form<T> extends IsElement, Attachable {
      */
     void cancel();
 
+    @JsIgnore
     void setCancelCallback(CancelCallback<T> cancelCallback);
 
+    @JsIgnore
     void setPrepareReset(PrepareReset<T> prepareReset);
 
     /**
      * Resets the model.
      */
+    @JsIgnore
     void reset();
 
+    @JsIgnore
     void setPrepareRemove(PrepareRemove<T> removeCallback);
 
     /**
      * Removes the model.
      */
+    @JsIgnore
     void remove();
 
     /**
      * @return an unique identifier for this form.
      */
+    @JsIgnore
     String getId();
 
     /**
      * @return the current model.
      */
+    @JsProperty
     T getModel();
 
     /**
      * @return the state machine which access to the current state.
      */
+    @JsIgnore
     StateMachine getStateMachine();
 
-    @SuppressWarnings("unchecked")
+    @JsIgnore
     <F> FormItem<F> getFormItem(String name);
 
     /**
      * @return return all form items.
      */
+    @JsIgnore
     Iterable<FormItem> getFormItems();
 
     /**
      * @return only those form items which are bound to the model.
      */
+    @JsIgnore
     Iterable<FormItem> getBoundFormItems();
 
     /**
      * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
      */
+    @JsIgnore
     void addFormValidation(FormValidation<T> formValidation);
 }

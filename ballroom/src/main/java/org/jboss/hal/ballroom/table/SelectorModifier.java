@@ -27,16 +27,16 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class SelectorModifier {
+class SelectorModifier {
 
     // @formatter:off
-    public enum Order {current, index}
-    public enum Page {all, current}
-    public enum Search {none, applied, removed}
+    enum Order {current, index}
+    enum Page {all, current}
+    enum Search {none, applied, removed}
     // @formatter:on
 
-    public String order;
-    public String page;
-    public String search;
-    public Boolean selected;
+    String order;
+    String page;
+    String search;
+    Boolean selected;
 }

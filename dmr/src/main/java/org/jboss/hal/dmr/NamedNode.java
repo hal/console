@@ -102,7 +102,7 @@ public class NamedNode extends ModelNode {
     // ------------------------------------------------------ JS methods
 
     @JsMethod(name = "create")
-    public static NamedNode jsCreate(final String name, final ModelNode node) {
-        return new NamedNode(name, node);
+    public static NamedNode jsCreate(final String name) {
+        return new NamedNode(name, new ModelNode());
     }
 }

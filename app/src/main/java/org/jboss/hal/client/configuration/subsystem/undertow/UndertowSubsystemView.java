@@ -26,6 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class UndertowSubsystemView extends MbuiViewImpl<UndertowSubsystemPresenter>
         implements UndertowSubsystemPresenter.MyView {
 

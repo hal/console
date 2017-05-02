@@ -1,0 +1,29 @@
+.macro-list, .macro-editor, .no-macros {
+  margin-top: @margin-large;
+}
+
+.macro-console, .no-macros {
+  margin-bottom: @margin-large;
+}
+
+.macro-list {
+  overflow-y: auto;
+}
+
+.macro-editor {
+  margin-bottom: @margin-large;
+}
+
+.macro-editor {
+  .copy {
+    margin: 5px;
+    outline: none;
+    position: absolute;
+    right: 20px;
+    z-index: 10;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

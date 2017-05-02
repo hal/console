@@ -22,11 +22,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
-import org.jboss.hal.ballroom.table.Column;
-import org.jboss.hal.ballroom.table.Column.RenderCallback;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.client.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
@@ -36,7 +35,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
-import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
@@ -59,7 +57,7 @@ public class DeployContentDialog2 {
     private final List<Content> content;
     private final DeployCallback deployCallback;
     private final Alert noContentSelected;
-    private final DataTable<Content> table;
+    private final Table<Content> table;
     private final InputElement enable;
     private final Dialog dialog;
 
@@ -75,18 +73,12 @@ public class DeployContentDialog2 {
 
         Options<Content> options = new OptionsBuilder<Content>()
                 .checkboxColumn()
-                .column(resources.constants().content(), new RenderCallback<Content, String>() {
-                    @Override
-                    public String render(final String cell, final String type, final Content row,
-                            final Column.Meta meta) {
-                        return row.getName();
-                    }
-                })
+                .column(resources.constants().content(), (cell, type, row, meta) -> row.getName())
                 .keys(false)
                 .paging(false)
                 .searching(false)
                 .multiselect()
-                .build();
+                .options();
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
         // @formatter:off
@@ -115,10 +107,10 @@ public class DeployContentDialog2 {
     }
 
     private boolean finish() {
-        boolean hasSelection = table.api().hasSelection();
+        boolean hasSelection = table.hasSelection();
         Elements.setVisible(noContentSelected.asElement(), !hasSelection);
         if (hasSelection) {
-            List<Content> content = table.api().selectedRows();
+            List<Content> content = table.selectedRows();
             deployCallback.deploy(serverGroup, content, SwitchBridge.Bridge.element(enable).getValue());
         }
         return hasSelection;

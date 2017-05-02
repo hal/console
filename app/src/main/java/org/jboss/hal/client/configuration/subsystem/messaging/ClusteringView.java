@@ -20,9 +20,9 @@ import java.util.List;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.spi.MbuiElement;
@@ -36,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         implements ClusteringPresenter.MyView {
 
@@ -45,15 +45,15 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     }
 
     @MbuiElement("messaging-clustering-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("messaging-broadcast-group-table") NamedNodeTable<NamedNode> broadcastGroupTable;
+    @MbuiElement("messaging-broadcast-group-table") Table<NamedNode> broadcastGroupTable;
     @MbuiElement("messaging-broadcast-group-form") Form<NamedNode> broadcastGroupForm;
-    @MbuiElement("messaging-discovery-group-table") NamedNodeTable<NamedNode> discoveryGroupTable;
+    @MbuiElement("messaging-discovery-group-table") Table<NamedNode> discoveryGroupTable;
     @MbuiElement("messaging-discovery-group-form") Form<NamedNode> discoveryGroupForm;
-    @MbuiElement("messaging-cluster-connection-table") NamedNodeTable<NamedNode> clusterConnectionTable;
+    @MbuiElement("messaging-cluster-connection-table") Table<NamedNode> clusterConnectionTable;
     @MbuiElement("messaging-cluster-connection-form") Form<NamedNode> clusterConnectionForm;
-    @MbuiElement("messaging-grouping-handler-table") NamedNodeTable<NamedNode> groupingHandlerTable;
+    @MbuiElement("messaging-grouping-handler-table") Table<NamedNode> groupingHandlerTable;
     @MbuiElement("messaging-grouping-handler-form") Form<NamedNode> groupingHandlerForm;
-    @MbuiElement("messaging-bridge-table") NamedNodeTable<NamedNode> bridgeTable;
+    @MbuiElement("messaging-bridge-table") Table<NamedNode> bridgeTable;
     @MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
 
     ClusteringView(final MbuiContext mbuiContext) {

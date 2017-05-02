@@ -26,6 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class InterfaceView extends MbuiViewImpl<InterfacePresenter> implements InterfacePresenter.MyView {
 
     public static InterfaceView create(final MbuiContext mbuiContext) {

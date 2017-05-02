@@ -25,7 +25,7 @@ public class ColumnActions<T> {
 
     private final Map<String, ColumnAction<T>> columnActions;
 
-    public ColumnActions() {columnActions = new HashMap<>();}
+    ColumnActions() {columnActions = new HashMap<>();}
 
     public void add(final String id, ColumnAction<T> columnAction) {
         columnActions.put(id, columnAction);
@@ -33,5 +33,5 @@ public class ColumnActions<T> {
 
     public boolean isEmpty() {return columnActions.isEmpty();}
 
-    public ColumnAction<T> get(final Object key) {return columnActions.get(key);}
+    public ColumnAction<T> get(final String key) {return columnActions.get(key);}
 }

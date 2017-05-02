@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import java.util.Map;
+
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -32,15 +34,16 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options<T> {
 
-    public Buttons<T> buttons;
+    public Api.Buttons<T> buttons;
     public Column<T>[] columns;
     public String dom;
     public boolean keys;
     public boolean paging;
     public int pageLength;
     public boolean searching;
-    public Select select;
-    // only used to get the columnActions into the Api instance
+    public Api.Select select;
+    // not part of the DataTables API, but used internally
     String id;
     ColumnActions<T> columnActions;
+    public Map<Integer, String> buttonConstraints;
 }

@@ -91,6 +91,6 @@ public class MetadataRegistry implements Registry<Metadata> {
         } else if (template instanceof AddressTemplate) {
             return lookup(((AddressTemplate) template));
         }
-        throw new IllegalArgumentException("Please use MetadataRegistry.lookup(String|AddressTemplate)");
+        throw new IllegalArgumentException("Use MetadataRegistry.lookup(String|AddressTemplate)");
     }
 }

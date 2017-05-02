@@ -16,13 +16,12 @@
 package org.jboss.hal.ballroom.table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.table.Button.ActionHandler;
-import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.CSS;
@@ -44,14 +43,15 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    protected List<Button<T>> buttons;
+    protected List<Api.Button<T>> buttons;
     protected List<Column<T>> columns;
     protected boolean keys;
     protected boolean searching;
-    protected Select select;
+    protected Api.Select select;
     private ColumnActions<T> columnActions;
     private int pageLength;
     private boolean paging;
+    private Options<T> options;
 
     protected GenericOptionsBuilder() {
         this.buttons = new ArrayList<>();
@@ -61,7 +61,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         this.keys = true;
         this.paging = true;
         this.searching = true;
-        this.select = Select.build(false);
+        this.select = Api.Select.build(false);
     }
 
     /**
@@ -75,38 +75,42 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      * @throws IllegalStateException if the builder's internal state is not valid
      */
     protected void validate() {
+        assertNoOptions();
         if (columns.isEmpty()) {
             throw new IllegalStateException("Empty columns in data table builder!");
         }
     }
 
-    public B button(String text, ActionHandler<T> action) {
-        return button(text, null, null, action);
+    public B button(String text, ButtonHandler<T> handler) {
+        return button(new Button<>(text, handler));
     }
 
-    public B button(String text, Constraint constraint, ActionHandler<T> action) {
-        return button(text, null, constraint, action);
+    public B button(String text, ButtonHandler<T> handler, Scope scope) {
+        return button(new Button<>(text, handler, scope));
     }
 
-    public B button(String text, Scope scope, ActionHandler<T> action) {
-        return button(text, scope, null, action);
+    public B button(String text, ButtonHandler<T> handler, Constraint constraint) {
+        return button(new Button<>(text, handler, constraint));
     }
 
-    public B button(String text, Scope scope, Constraint constraint, ActionHandler<T> action) {
-        Button<T> button = new Button<>();
-        button.text = text;
-        button.action = action;
-        if (scope != null) {
-            button.extend = scope.selector();
-        }
-        if (constraint != null) {
-            button.constraint = constraint.data();
-        }
-        return button(button);
+    public B button(String text, ButtonHandler<T> handler, Scope scope, Constraint constraint) {
+        return button(new Button<>(text, handler, scope, constraint));
     }
 
     public B button(Button<T> button) {
-        buttons.add(button);
+        assertNoOptions();
+
+        Api.Button<T> apiButton = new Api.Button<>();
+        apiButton.text = button.title;
+        apiButton.action = (event, api, node, btn) -> button.handler.execute(btn.table);
+        if (button.scope != null) {
+            apiButton.extend = button.scope.selector();
+        }
+        if (button.constraint != null) {
+            apiButton.constraint = button.constraint.data();
+        }
+
+        buttons.add(apiButton);
         return that();
     }
 
@@ -119,6 +123,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(Column<T> column) {
+        assertNoOptions();
+
         this.columns.add(column);
         return that();
     }
@@ -131,6 +137,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public B column(String link, ColumnAction<T> columnAction) {
+        assertNoOptions();
+
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
                 (cell, type, row, meta) -> {
                     String id = Ids.uniqueId();
@@ -146,11 +154,15 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B column(Function<ColumnActions<T>, Column<T>> actionColumn) {
+        assertNoOptions();
+
         this.columns.add(actionColumn.apply(columnActions));
         return that();
     }
 
     public B checkboxColumn() {
+        assertNoOptions();
+
         Column<T> checkboxColumn = new Column<>();
         checkboxColumn.orderable = false;
         checkboxColumn.className = selectCheckbox;
@@ -160,43 +172,62 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     public B multiselect() {
-        this.select = Select.build(true);
+        assertNoOptions();
+
+        this.select = Api.Select.build(true);
         return that();
     }
 
     public B keys(boolean keys) {
+        assertNoOptions();
+
         this.keys = keys;
         return that();
     }
 
     public B paging(boolean paging) {
+        assertNoOptions();
+
         this.paging = paging;
         return that();
     }
 
     public B searching(boolean searching) {
+        assertNoOptions();
+
         this.searching = searching;
         return that();
     }
 
     @SuppressWarnings({"HardCodedStringLiteral", "unchecked"})
-    public Options<T> build() {
+    public Options<T> options() {
+        if (options != null) {
+            return options;
+        }
+
         validate();
-        Options<T> options = new Options<>();
+        options = new Options<>();
+        options.buttonConstraints = new HashMap<>();
         if (!buttons.isEmpty()) {
             // override defaults from patternfly.js:77
             options.dom = "<'dataTables_header' f B i>" +
                     "<'table-responsive' t>" +
                     "<'dataTables_footer' p>";
-            options.buttons = new Buttons<>();
-            options.buttons.dom = new Buttons.Dom();
-            options.buttons.dom.container = new Buttons.Dom.Factory();
+            options.buttons = new Api.Buttons<>();
+            options.buttons.dom = new Api.Buttons.Dom();
+            options.buttons.dom.container = new Api.Buttons.Dom.Factory();
             options.buttons.dom.container.tag = "div";
             options.buttons.dom.container.className = pullRight + " " + btnGroup;
-            options.buttons.dom.button = new Buttons.Dom.Factory();
+            options.buttons.dom.button = new Api.Buttons.Dom.Factory();
             options.buttons.dom.button.tag = "button";
             options.buttons.dom.button.className = btn + " " + btnDefault;
-            options.buttons.buttons = buttons.toArray(new Button[buttons.size()]);
+            options.buttons.buttons = buttons.toArray(new Api.Button[buttons.size()]);
+
+            for (int i = 0; i < options.buttons.buttons.length; i++) {
+                if (options.buttons.buttons[i].constraint != null) {
+                    options.buttonConstraints.put(i, options.buttons.buttons[i].constraint);
+                }
+            }
         }
         options.columns = columns.toArray(new Column[columns.size()]);
         options.keys = keys;
@@ -208,5 +239,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         // custom options
         options.columnActions = columnActions;
         return options;
+    }
+
+    private void assertNoOptions() {
+        if (options != null) {
+            throw new IllegalStateException("OptionsBuilder.options() already called");
+        }
     }
 }

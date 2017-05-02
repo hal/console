@@ -17,9 +17,9 @@ package org.jboss.hal.client.configuration.subsystem.security;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -33,7 +33,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused"})
 public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPresenter>
         implements SecurityDomainPresenter.MyView {
 
@@ -43,17 +43,17 @@ public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPres
 
     @MbuiElement("security-domain-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("security-domain-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("security-domain-authentication-table") NamedNodeTable<NamedNode> authenticationTable;
+    @MbuiElement("security-domain-authentication-table") Table<NamedNode> authenticationTable;
     @MbuiElement("security-domain-authentication-form") Form<NamedNode> authenticationForm;
-    @MbuiElement("security-domain-authorization-table") NamedNodeTable<NamedNode> authorizationTable;
+    @MbuiElement("security-domain-authorization-table") Table<NamedNode> authorizationTable;
     @MbuiElement("security-domain-authorization-form") Form<NamedNode> authorizationForm;
-    @MbuiElement("security-domain-audit-table") NamedNodeTable<NamedNode> auditTable;
+    @MbuiElement("security-domain-audit-table") Table<NamedNode> auditTable;
     @MbuiElement("security-domain-audit-form") Form<NamedNode> auditForm;
-    @MbuiElement("security-domain-acl-table") NamedNodeTable<NamedNode> aclTable;
+    @MbuiElement("security-domain-acl-table") Table<NamedNode> aclTable;
     @MbuiElement("security-domain-acl-form") Form<NamedNode> aclForm;
-    @MbuiElement("security-domain-trust-table") NamedNodeTable<NamedNode> trustTable;
+    @MbuiElement("security-domain-trust-table") Table<NamedNode> trustTable;
     @MbuiElement("security-domain-trust-form") Form<NamedNode> trustForm;
-    @MbuiElement("security-domain-mapping-table") NamedNodeTable<NamedNode> mappingTable;
+    @MbuiElement("security-domain-mapping-table") Table<NamedNode> mappingTable;
     @MbuiElement("security-domain-mapping-form") Form<NamedNode> mappingForm;
 
     public SecurityDomainView(final MbuiContext mbuiContext) {

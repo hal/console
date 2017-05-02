@@ -30,6 +30,7 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgeCo
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class JmsBridgeView extends MbuiViewImpl<JmsBridgePresenter> implements JmsBridgePresenter.MyView {
 
     public static JmsBridgeView create(final MbuiContext mbuiContext) {

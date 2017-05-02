@@ -21,10 +21,9 @@ import javax.annotation.PostConstruct;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.table.Api;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -41,7 +40,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
         implements HandlerPresenter.MyView {
 
@@ -50,9 +49,9 @@ public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
     }
 
     @MbuiElement("undertow-handler-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("undertow-file-handler-table") NamedNodeTable<NamedNode> fileHandlerTable;
+    @MbuiElement("undertow-file-handler-table") Table<NamedNode> fileHandlerTable;
     @MbuiElement("undertow-file-handler-form") Form<NamedNode> fileHandlerForm;
-    @MbuiElement("undertow-reverse-proxy-table") NamedNodeTable<NamedNode> reverseProxyTable;
+    @MbuiElement("undertow-reverse-proxy-table") Table<NamedNode> reverseProxyTable;
     @MbuiElement("undertow-reverse-proxy-form") Form<NamedNode> reverseProxyForm;
 
     HandlerView(final MbuiContext mbuiContext) {
@@ -72,22 +71,22 @@ public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
     @Override
     public void attach() {
         super.attach();
-        fileHandlerTable.api().onSelectionChange(api -> updateHostRefs(api, fileHandlerForm));
-        reverseProxyTable.api().onSelectionChange(api -> updateHostRefs(api, reverseProxyForm));
+        fileHandlerTable.onSelectionChange(t -> updateHostRefs(t, fileHandlerForm));
+        reverseProxyTable.onSelectionChange(t -> updateHostRefs(t, reverseProxyForm));
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void updateHostRefs(final Api<NamedNode> api, final Form<NamedNode> form) {
+    private void updateHostRefs(final Table<NamedNode> table, final Form<NamedNode> form) {
         FormItem<String> formItem = form.getFormItem(HOSTS);
         if (formItem != null) {
-            if (api.hasSelection()) {
+            if (table.hasSelection()) {
                 ResourceAddress address = HOST_TEMPLATE.append(LOCATION + "=*").resolve(mbuiContext.statementContext());
                 Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
                 mbuiContext.dispatcher().execute(operation,
                         result -> {
                             String hosts = result.asList()
                                     .stream()
-                                    .filter(node -> api.selectedRow().getName().equals(
+                                    .filter(node -> table.selectedRow().getName().equals(
                                             node.get(RESULT).get(HANDLER).asString()))
                                     .map(node -> {
                                         ResourceAddress adr = new ResourceAddress(node.get(ADDRESS));

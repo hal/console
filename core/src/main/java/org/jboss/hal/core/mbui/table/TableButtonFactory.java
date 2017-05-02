@@ -19,16 +19,18 @@ import java.util.Collections;
 import java.util.function.Function;
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Button;
+import org.jboss.hal.ballroom.table.ButtonHandler;
+import org.jboss.hal.ballroom.table.Scope;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
@@ -46,43 +48,33 @@ public class TableButtonFactory {
         this.resources = resources;
     }
 
-    public <T extends ModelNode> Button<T> add(AddressTemplate template, Button.ActionHandler<T> action) {
-        Button<T> button = new Button<>();
-        button.text = resources.constants().add();
-        button.action = action;
-        button.constraint = Constraint.executable(template, ADD).data();
-        return button;
+    public <T extends ModelNode> Button<T> add(AddressTemplate template, ButtonHandler<T> handler) {
+        return new Button<>(resources.constants().add(), handler, Constraint.executable(template, ADD));
     }
 
-    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            CrudOperations.AddCallback callback) {
+    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template, AddCallback callback) {
         return add(id, type, template, Collections.emptyList(), callback);
     }
 
     public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            Iterable<String> attributes, CrudOperations.AddCallback callback) {
-        Button<T> button = new Button<>();
-        button.text = resources.constants().add();
-        button.action = (event, api) -> crud.add(id, type, template, attributes, callback);
-        button.constraint = Constraint.executable(template, ADD).data();
-        return button;
+            Iterable<String> attributes, AddCallback callback) {
+        return new Button<>(resources.constants().add(), table -> crud.add(id, type, template, attributes, callback),
+                Constraint.executable(template, ADD));
     }
 
-    public <T extends ModelNode> Button<T> remove(AddressTemplate template, Button.ActionHandler<T> action) {
-        Button<T> button = new Button<>();
-        button.text = resources.constants().remove();
-        button.action = action;
-        button.constraint = Constraint.executable(template, REMOVE).data();
-        return button;
+    public <T extends ModelNode> Button<T> remove(AddressTemplate template, ButtonHandler<T> handler) {
+        return new Button<>(resources.constants().remove(), handler, Constraint.executable(template, REMOVE));
     }
 
-    public <T> Button<T> remove(String type, AddressTemplate template, Function<Api<T>, String> nameFunction,
+    public <T> Button<T> remove(String type, AddressTemplate template, Callback callback) {
+        return remove(type, template, null, callback);
+    }
+
+    public <T> Button<T> remove(String type, AddressTemplate template, Function<Table<T>, String> nameFunction,
             Callback callback) {
-        Button<T> button = new Button<>();
-        button.text = resources.constants().remove();
-        button.extend = SELECTED_SINGLE.selector();
-        button.action = (event, api) -> crud.remove(type, nameFunction.apply(api), template, callback);
-        button.constraint = Constraint.executable(template, REMOVE).data();
-        return button;
+        return new Button<>(resources.constants().remove(),
+                table -> crud.remove(type, nameFunction != null ? nameFunction.apply(table) : null, template, callback),
+                Scope.SELECTED_SINGLE,
+                Constraint.executable(template, REMOVE));
     }
 }

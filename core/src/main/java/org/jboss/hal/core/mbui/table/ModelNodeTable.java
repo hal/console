@@ -18,24 +18,42 @@ package org.jboss.hal.core.mbui.table;
 import java.util.List;
 import java.util.function.Function;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import elemental.js.dom.JsElement;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.JsCallback;
+import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.ballroom.table.ButtonHandler;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.RefreshMode;
+import org.jboss.hal.ballroom.table.Scope;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.CrudOperations.AddCallback;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.UIConstants.data;
 
 /**
@@ -43,20 +61,33 @@ import static org.jboss.hal.resources.UIConstants.data;
  */
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
+    @JsType(namespace = "ui", name = "TableBuilder")
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
+        private final String id;
         private final Metadata metadata;
         private final ColumnFactory columnFactory;
 
-        public Builder(final Metadata metadata) {
+        @JsIgnore
+        public Builder(@NonNls final String id, final Metadata metadata) {
+            this.id = id;
             this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
         }
 
+        @JsIgnore
         public Builder<T> columns(@NonNls String first, @NonNls String... rest) {
             List<String> columns = Lists.asList(first, rest);
             for (String column : columns) {
                 column(column);
+            }
+            return that();
+        }
+
+        @JsIgnore
+        public Builder<T> columns(Iterable<String> attributes) {
+            if (attributes != null) {
+                attributes.forEach(this::column);
             }
             return that();
         }
@@ -86,42 +117,156 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                         "No attributes found in resource description\n" + metadata.getDescription());
             }
         }
+
+        public ModelNodeTable<T> build() {
+            return new ModelNodeTable<>(this);
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+
+        @JsFunction
+        public interface JsNameFunction<T> {
+
+            String getName(Table<T> table);
+        }
+
+        @JsMethod(name = "add")
+        public Builder<T> jsAdd(final String type, final Object template, final JsArrayOf<String> attributes,
+                final AddCallback callback) {
+            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
+            String id = Ids.build(Ids.uniqueId(), Ids.ADD_SUFFIX);
+            return button(buttonFactory.add(id, type, jsTemplate("add", template), JsHelper.asList(attributes),
+                    callback));
+        }
+
+        @JsMethod(name = "remove")
+        public Builder<T> jsRemove(final String type, final Object template, JsNameFunction<T> name,
+                final JsCallback callback) {
+            TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
+            return button(buttonFactory.remove(type, jsTemplate("remove", template), name::getName, callback::execute));
+        }
+
+        @JsMethod(name = "button")
+        public Builder<T> jsButton(final String text, final String scope, final ButtonHandler<T> handler) {
+            return button(text, handler, Scope.fromSelector(scope));
+        }
+
+        @JsMethod(name = "columns")
+        public Builder<T> jsColumns(final JsArrayOf<String> columns) {
+            return columns(JsHelper.asList(columns));
+        }
+
+        private AddressTemplate jsTemplate(String method, Object template) {
+            AddressTemplate t;
+            if (template instanceof String) {
+                t = AddressTemplate.of(((String) template));
+            } else if (template instanceof AddressTemplate) {
+                t = (AddressTemplate) template;
+            } else {
+                throw new IllegalArgumentException(
+                        "Invalid 2nd argument: Use TableBuilder." + method + "(String, (String|AddressTemplate), String[], function(String, ResourceAddress))");
+            }
+            return t;
+        }
     }
 
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    private Metadata metadata;
+    private final Metadata metadata;
     private final Options<T> options;
+    private Function<T, String> identifier;
+    private boolean identifierChecked;
 
-    public ModelNodeTable(@NonNls final String id, final Metadata metadata, Options<T> options) {
-        super(id, options);
-        this.metadata = metadata;
-        this.options = options;
+    private ModelNodeTable(Builder<T> builder) {
+        super(builder.id, builder.options());
+        this.options = builder.options();
+        this.metadata = builder.metadata;
+        this.identifier = null;
+        this.identifierChecked = false;
     }
 
     @Override
+    @JsMethod
     public void attach() {
         super.attach();
-        if (options.buttons.buttons != null) {
-            for (int i = 0; i < options.buttons.buttons.length; i++) {
-                if (options.buttons.buttons[i].constraint != null) {
-                    api().button(i).node().attr(data(UIConstants.CONSTRAINT), options.buttons.buttons[i].constraint);
-                }
-            }
+        if (!options.buttonConstraints.isEmpty()) {
+            options.buttonConstraints.forEach((index, constraint) ->
+                    buttonElement(index).attr(data(UIConstants.CONSTRAINT), constraint));
         }
         applySecurity();
     }
 
+    /**
+     * Shortcut for {@code super.select(data, NamedNode::getName)}
+     */
+    public void select(T data) {
+        if (!identifierChecked) {
+            checkIdentifier(data);
+        }
+        select(data, identifier);
+    }
+
+    @Override
+    public void select(final T data, final Function<T, String> identifier) {
+        super.select(data, identifier);
+        applySecurity();
+    }
+
+    /**
+     * Shortcut for {@code super.update(data, NamedNode::getName)}
+     */
+    public void update(final Iterable<T> data) {
+        if (!identifierChecked) {
+            checkIdentifier(Iterables.isEmpty(data) ? null : data.iterator().next());
+        }
+        update(data, RESET, identifier);
+    }
+
     @Override
     public void update(final Iterable<T> data, final RefreshMode mode, final Function<T, String> identifier) {
+
         super.update(data, mode, identifier);
         applySecurity();
+    }
+
+    private void checkIdentifier(T data) {
+        if (data != null) {
+            if (data.hasDefined(NAME)) {
+                identifier = model -> model.get(NAME).asString();
+            }
+            identifierChecked = true;
+        }
     }
 
     private void applySecurity() {
         AuthorisationDecision ad = AuthorisationDecision.from(Core.INSTANCE.environment(),
                 metadata.getSecurityContext());
         ElementGuard.processElements(ad, asElement());
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "element")
+    public JsElement jsElement() {
+        return (JsElement) asElement();
+    }
+
+    @JsProperty(name = "rows")
+    public JsArrayOf<T> jsRows() {
+        return JsHelper.asJsArray(getRows());
+    }
+
+    @JsProperty(name = "selectedRows")
+    public JsArrayOf<T> jsSelectedRows() {
+        return JsHelper.asJsArray(selectedRows());
+    }
+
+    @JsMethod(name = "update")
+    public void jsUpdate(JsArrayOf<T> rows) {
+        update(JsHelper.asList(rows));
     }
 }

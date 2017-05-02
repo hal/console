@@ -27,7 +27,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.CORE_QUEUE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.CORE_QUEUE, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.CORE_QUEUE, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -56,7 +56,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.JMS_QUEUE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.JMS_QUEUE, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.JMS_QUEUE, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -85,7 +85,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.JMS_TOPIC)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.JMS_TOPIC, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.JMS_TOPIC, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -112,7 +112,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.ADDRESS_SETTING)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.ADDRESS_SETTING, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.ADDRESS_SETTING, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -134,7 +134,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.DIVERT)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.DIVERT, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.DIVERT, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>

@@ -18,9 +18,9 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -29,7 +29,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings("DuplicateStringLiteralInspection")
+@SuppressWarnings({"DuplicateStringLiteralInspection", "WeakerAccess"})
 public abstract class BufferCacheView extends MbuiViewImpl<BufferCachePresenter> implements BufferCachePresenter.MyView {
 
     // ------------------------------------------------------ initialization
@@ -38,7 +38,7 @@ public abstract class BufferCacheView extends MbuiViewImpl<BufferCachePresenter>
         return new Mbui_BufferCacheView(mbuiContext);
     }
 
-    @MbuiElement("buffer-cache-table") NamedNodeTable<NamedNode> table;
+    @MbuiElement("buffer-cache-table") Table<NamedNode> table;
     @MbuiElement("buffer-cache-form") Form<NamedNode> form;
 
     BufferCacheView(final MbuiContext mbuiContext) {

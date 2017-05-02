@@ -18,6 +18,9 @@ package org.jboss.hal.config;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.resources.Urls.LOGOUT;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
@@ -28,17 +31,20 @@ import static org.jboss.hal.resources.Urls.UPLOAD;
  *
  * @author Harald Pehl
  */
+@JsType
 public class Endpoints {
 
     /**
      * Please use this constant only in cases where no DI is available.
      */
     @Inject
+    @JsIgnore
     public static Endpoints INSTANCE;
 
     /**
      * @return the base url w/o a trailing slash
      */
+    @JsIgnore
     public static String getBaseUrl() {
         String hostUrl = GWT.getHostPageBaseURL();
         int schemeIndex = hostUrl.indexOf("://");
@@ -54,6 +60,7 @@ public class Endpoints {
     private String upload;
     private boolean sameOrigin;
 
+    @JsIgnore
     public Endpoints() {
         useBase(getBaseUrl());
     }
@@ -69,18 +76,22 @@ public class Endpoints {
         sameOrigin = baseUrl.equals(getBaseUrl());
     }
 
+    @JsProperty(name = "dmr")
     public String dmr() {
         return dmr;
     }
 
+    @JsProperty(name = "upload")
     public String upload() {
         return upload;
     }
 
+    @JsIgnore
     public String logout() {
         return logout;
     }
 
+    @JsProperty(name = "sameOrigin")
     public boolean isSameOrigin() {
         return sameOrigin;
     }

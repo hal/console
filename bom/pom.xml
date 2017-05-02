@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.1</version>
     </parent>
 
     <artifactId>hal-bom</artifactId>
@@ -119,6 +119,12 @@
                 <artifactId>hal-resources</artifactId>
                 <version>${project.version}</version>
                 <classifier>testsuite</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-resources</artifactId>
+                <version>${project.version}</version>
+                <classifier>webapp</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>

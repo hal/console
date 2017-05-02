@@ -23,12 +23,11 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
@@ -56,18 +55,18 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     }
 
     @MbuiElement("messaging-destination-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("messaging-core-queue-table") NamedNodeTable<NamedNode> coreQueueTable;
+    @MbuiElement("messaging-core-queue-table") Table<NamedNode> coreQueueTable;
     @MbuiElement("messaging-core-queue-form") Form<NamedNode> coreQueueForm;
-    @MbuiElement("messaging-jms-queue-table") NamedNodeTable<NamedNode> jmsQueueTable;
+    @MbuiElement("messaging-jms-queue-table") Table<NamedNode> jmsQueueTable;
     @MbuiElement("messaging-jms-queue-form") Form<NamedNode> jmsQueueForm;
-    @MbuiElement("messaging-jms-topic-table") NamedNodeTable<NamedNode> jmsTopicTable;
+    @MbuiElement("messaging-jms-topic-table") Table<NamedNode> jmsTopicTable;
     @MbuiElement("messaging-jms-topic-form") Form<NamedNode> jmsTopicForm;
-    @MbuiElement("messaging-address-setting-table") NamedNodeTable<NamedNode> addressSettingTable;
+    @MbuiElement("messaging-address-setting-table") Table<NamedNode> addressSettingTable;
     @MbuiElement("messaging-address-setting-form") Form<NamedNode> addressSettingForm;
-    @MbuiElement("messaging-divert-table") NamedNodeTable<NamedNode> divertTable;
+    @MbuiElement("messaging-divert-table") Table<NamedNode> divertTable;
     @MbuiElement("messaging-divert-form") Form<NamedNode> divertForm;
 
-    private NamedNodeTable<NamedNode> roleTable;
+    private Table<NamedNode> roleTable;
     private Form<NamedNode> roleForm;
 
     DestinationView(final MbuiContext mbuiContext) {
@@ -77,17 +76,16 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     @PostConstruct
     void init() {
         Metadata roleMetadata = mbuiContext.metadataRegistry().lookup(ROLE_TEMPLATE);
-        Options<NamedNode> roleOptions = new ModelNodeTable.Builder<NamedNode>(roleMetadata)
+        roleTable = new ModelNodeTable.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_TABLE, roleMetadata)
                 .button(mbuiContext.tableButtonFactory().add(ROLE_TEMPLATE,
-                        (event, api) -> presenter.addSecuritySettingRole()))
+                        table -> presenter.addSecuritySettingRole()))
                 .button(mbuiContext.tableButtonFactory().remove(ROLE_TEMPLATE,
-                        (event, api) -> presenter.removeSecuritySettingRole(api.selectedRow())))
+                        table -> presenter.removeSecuritySettingRole(table.selectedRow())))
                 .column(SECURITY_SETTING, mbuiContext.resources().constants().pattern(),
                         (cell, type, row, meta) -> row.get(SECURITY_SETTING).asString())
                 .column(ROLE, mbuiContext.resources().constants().role(),
                         (cell, type, row, meta) -> row.getName())
                 .build();
-        roleTable = new NamedNodeTable<>(Ids.MESSAGING_SECURITY_SETTING_ROLE_TABLE, roleMetadata, roleOptions);
 
         roleForm = new ModelNodeForm.Builder<NamedNode>(Ids.MESSAGING_SECURITY_SETTING_ROLE_FORM, roleMetadata)
                 .onSave((form, changedValues) -> presenter.saveSecuritySettingRole(form, changedValues))
@@ -115,11 +113,11 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
     @Override
     public void attach() {
         super.attach();
-        roleTable.api().onSelectionChange(api -> {
-            if (api.hasSelection()) {
+        roleTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
                 //noinspection ConstantConditions
-                presenter.selectSecuritySetting(api.selectedRow().get(SECURITY_SETTING).asString());
-                roleForm.view(api.selectedRow());
+                presenter.selectSecuritySetting(t.selectedRow().get(SECURITY_SETTING).asString());
+                roleForm.view(t.selectedRow());
             } else {
                 presenter.selectSecuritySetting(null);
                 roleForm.clear();

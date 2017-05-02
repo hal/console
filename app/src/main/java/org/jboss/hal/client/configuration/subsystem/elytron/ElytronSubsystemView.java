@@ -26,6 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Claudio Miranda
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class ElytronSubsystemView extends MbuiViewImpl<ElytronSubsystemPresenter>
         implements ElytronSubsystemPresenter.MyView {
 

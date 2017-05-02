@@ -28,7 +28,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.add(ServerSubResource.ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.ACCEPTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.ACCEPTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -62,7 +62,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.add(ServerSubResource.IN_VM_ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.IN_VM_ACCEPTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.IN_VM_ACCEPTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -90,7 +90,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.addHttp(ServerSubResource.HTTP_ACCEPTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.HTTP_ACCEPTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.HTTP_ACCEPTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -126,7 +126,7 @@
                                     handler="{{presenter.addRemote(ServerSubResource.REMOTE_ACCEPTOR)}}"
                                     constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.REMOTE_ACCEPTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.REMOTE_ACCEPTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -161,7 +161,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.add(ServerSubResource.CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.CONNECTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.CONNECTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -195,7 +195,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.add(ServerSubResource.IN_VM_CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.IN_VM_CONNECTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.IN_VM_CONNECTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -223,7 +223,7 @@
                             <action title="{{mbuiContext.resources().constants().add()}}"
                                     handler="{{presenter.addHttp(ServerSubResource.HTTP_CONNECTOR)}}" constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.HTTP_CONNECTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.HTTP_CONNECTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -265,7 +265,7 @@
                                     handler="{{presenter.addRemote(ServerSubResource.REMOTE_CONNECTOR)}}"
                                     constraint="add"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
-                                    handler="{{presenter.remove(ServerSubResource.REMOTE_CONNECTOR, api.selectedRow())}}"
+                                    handler="{{presenter.remove(ServerSubResource.REMOTE_CONNECTOR, table.selectedRow())}}"
                                     scope="selected" constraint="remove"/>
                         </actions>
                         <columns>
@@ -300,7 +300,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.CONNECTOR_SERVICE)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.CONNECTOR_SERVICE, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.CONNECTOR_SERVICE, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -328,7 +328,7 @@
                         <action title="{{mbuiContext.resources().constants().add()}}"
                                 handler="{{presenter.add(ServerSubResource.CONNECTION_FACTORY)}}" constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.CONNECTION_FACTORY, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.CONNECTION_FACTORY, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>
@@ -353,7 +353,7 @@
                                 handler="{{presenter.add(ServerSubResource.POOLED_CONNECTION_FACTORY)}}"
                                 constraint="add"/>
                         <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, api.selectedRow())}}"
+                                handler="{{presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow())}}"
                                 scope="selected" constraint="remove"/>
                     </actions>
                     <columns>

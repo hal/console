@@ -25,14 +25,13 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -58,7 +57,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class MailSessionView extends HalViewImpl implements MailSessionPresenter.MyView {
 
     private final Form<MailSession> mailSessionForm;
-    private final NamedNodeTable<NamedNode> serverTable;
+    private final Table<NamedNode> serverTable;
     private final Form<NamedNode> serverForm;
 
     private MailSessionPresenter presenter;
@@ -97,17 +96,16 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         Metadata serverMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
 
         //noinspection ConstantConditions
-        Options<NamedNode> tableOptions = new ModelNodeTable.Builder<NamedNode>(serverMetadata)
-                .button(tableButtonFactory.add(SERVER_TEMPLATE, (event, api) -> presenter.launchAddServer()))
+        serverTable = new ModelNodeTable.Builder<NamedNode>(Ids.MAIL_SERVER_TABLE, serverMetadata)
+                .button(tableButtonFactory.add(SERVER_TEMPLATE, table -> presenter.launchAddServer()))
                 .button(tableButtonFactory.remove(SERVER_TEMPLATE,
-                        (event, api) -> presenter.removeServer(api.selectedRow())))
+                        table -> presenter.removeServer(table.selectedRow())))
                 .column(new ColumnBuilder<NamedNode>(TYPE, resources.constants().type(),
                         (cell, type, row, meta) -> row.getName().toUpperCase()).build())
                 .column(new ColumnBuilder<NamedNode>(OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding", //NON-NLS
                         (cell, type, row, meta) -> row.get(OUTBOUND_SOCKET_BINDING_REF)
                                 .asString()).build())
                 .build();
-        serverTable = new NamedNodeTable<>(Ids.MAIL_SERVER_TABLE, serverMetadata, tableOptions);
         registerAttachable(serverTable);
 
         serverForm = new ModelNodeForm.Builder<NamedNode>(Ids.MAIL_SERVER_FORM, serverMetadata)
@@ -165,7 +163,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         List<NamedNode> servers = asNamedNodes(failSafePropertyList(mailSession, SERVER));
         serverForm.clear();
         serverTable.update(servers);
-        serverTable.api().button(0).enable(servers.size() != 3);
+        serverTable.enableButton(0,servers.size() != 3);
     }
 
     @Override

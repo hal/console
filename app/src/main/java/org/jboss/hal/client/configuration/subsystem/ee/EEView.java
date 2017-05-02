@@ -25,11 +25,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -67,8 +65,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     private final Resources resources;
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
-    private final DataTable<ModelNode> globalModulesTable;
-    private final Map<String, NamedNodeTable> tables;
+    private final Table<ModelNode> globalModulesTable;
+    private final Map<String, Table<NamedNode>> tables;
 
     private EEPresenter presenter;
 
@@ -112,14 +110,13 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         // global modules
         Metadata globalModulesMetadata = EEPresenter.globalModulesMetadata(metadataRegistry);
 
-        Options<ModelNode> options = new ModelNodeTable.Builder<>(globalModulesMetadata)
+        globalModulesTable = new ModelNodeTable.Builder<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
                 .button(tableButtonFactory.add(EE_SUBSYSTEM_TEMPLATE,
-                        (event, api) -> presenter.launchAddDialogGlobalModule()))
+                        table -> presenter.launchAddDialogGlobalModule()))
                 .button(tableButtonFactory.remove(EE_SUBSYSTEM_TEMPLATE,
-                        (event, api) -> presenter.removeGlobalModule(api.selectedRow())))
+                        table -> presenter.removeGlobalModule(table.selectedRow())))
                 .build();
-        globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, globalModulesMetadata, options);
         registerAttachable(globalModulesTable);
 
         navigationElement = new Elements.Builder()
@@ -242,7 +239,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
             List<NamedNode> models = asNamedNodes(eeData.get(resourceType).asPropertyList());
             Form form = forms.get(resourceType);
             form.clear();
-            NamedNodeTable<NamedNode> table = tables.get(resourceType);
+            Table<NamedNode> table = tables.get(resourceType);
             table.update(models);
             navigation.updateBadge(navigationId, models.size());
         }
@@ -253,7 +250,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
+        Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE_SUFFIX),
+                metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type, template,
@@ -262,20 +260,18 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                         () -> presenter.reload()))
 
                 .build();
-
-        NamedNodeTable<NamedNode> table = new NamedNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), metadata, options);
         registerAttachable(table);
         tables.put(template.lastName(), table);
 
         ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM_SUFFIX),
                 metadata)
                 .onSave((f, changedValues) -> {
-                    AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
+                    AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());
                     presenter.save(fullyQualified, changedValues, metadata,
                             resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
                 })
                 .prepareReset(f -> {
-                    String name = table.api().selectedRow().getName();
+                    String name = table.selectedRow().getName();
                     AddressTemplate fullyQualified = template.replaceWildcards(name);
                     presenter.reset(type, name, fullyQualified, f, metadata,
                             resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));

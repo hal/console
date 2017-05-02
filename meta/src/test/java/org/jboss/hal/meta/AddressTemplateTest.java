@@ -149,6 +149,27 @@ public class AddressTemplateTest {
     }
 
     @Test
+    public void parentOfRoot() {
+        AddressTemplate at = AddressTemplate.of("/");
+        assertEquals(AddressTemplate.of("/"), at.getParent());
+    }
+
+    @Test
+    public void parentOfFirstLevel() {
+        AddressTemplate at = AddressTemplate.of("/a=b");
+        assertEquals(AddressTemplate.of("/"), at.getParent());
+    }
+
+    @Test
+    public void parent() {
+        AddressTemplate at = AddressTemplate.of("{a}/b=c/{d}=e/f=g"); // 4 tokens
+        assertEquals(AddressTemplate.of("{a}/b=c/{d}=e"), at.getParent());
+        assertEquals(AddressTemplate.of("{a}/b=c"), at.getParent().getParent());
+        assertEquals(AddressTemplate.of("{a}"), at.getParent().getParent().getParent());
+        assertEquals(AddressTemplate.of("/"), at.getParent().getParent().getParent().getParent());
+    }
+
+    @Test
     public void subTemplate() {
         AddressTemplate at = AddressTemplate.of("{a}/b=c/{d}=e/f=g"); // 4 tokens
 

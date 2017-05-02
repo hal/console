@@ -23,9 +23,8 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.NamedNode;
@@ -53,7 +52,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     private static final String TRANSPORT_ID = Ids.build(Ids.JGROUPS_TRANSPORT, Ids.PAGE_SUFFIX);
 
     private final Pages innerPages;
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private JGroupsPresenter presenter;
     private String selectedStack;
 
@@ -67,12 +66,12 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
             final Resources resources) {
 
         Metadata metadata = metadataRegistry.lookup(STACK_TEMPLATE);
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(tableButtonFactory.add(STACK_TEMPLATE, (event, api) -> presenter.addStack()))
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(STACK_TEMPLATE, table -> presenter.addStack()))
                 //presenter.addResourceDialog(STACK_TEMPLATE, Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.ADD_SUFFIX),
                 //        Names.STACK))
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
-                        (event, api) -> presenter.removeResource(STACK_TEMPLATE, api.selectedRow().getName(),
+                        table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column(columnActions -> new ColumnBuilder<NamedNode>(Ids.JGROUPS_STACK_COLUMN,
@@ -106,7 +105,6 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
                         .width("18em")
                         .build())
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.TABLE_SUFFIX), metadata, options);
 
         // @formatter:off
         Element section = new Elements.Builder()

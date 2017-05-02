@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -42,12 +42,12 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
 
     @MbuiElement("batch-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("batch-configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("batch-in-memory-job-repo-table") NamedNodeTable<NamedNode> inMemoryJobRepoTable;
-    @MbuiElement("batch-jdbc-job-repo-table") NamedNodeTable<NamedNode> jdbcJobRepoTable;
+    @MbuiElement("batch-in-memory-job-repo-table") Table<NamedNode> inMemoryJobRepoTable;
+    @MbuiElement("batch-jdbc-job-repo-table") Table<NamedNode> jdbcJobRepoTable;
     @MbuiElement("batch-jdbc-job-repo-form") Form<NamedNode> jdbcJobRepoForm;
-    @MbuiElement("batch-thread-factory-table") NamedNodeTable<NamedNode> threadFactoryTable;
+    @MbuiElement("batch-thread-factory-table") Table<NamedNode> threadFactoryTable;
     @MbuiElement("batch-thread-factory-form") Form<NamedNode> threadFactoryForm;
-    @MbuiElement("batch-thread-pool-table") NamedNodeTable<NamedNode> threadPoolTable;
+    @MbuiElement("batch-thread-pool-table") Table<NamedNode> threadPoolTable;
     @MbuiElement("batch-thread-pool-form") Form<NamedNode> threadPoolForm;
 
     BatchView(final MbuiContext mbuiContext) {

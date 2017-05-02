@@ -21,13 +21,12 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -64,19 +63,19 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     @MbuiElement("ejb-configuration-form") Form<ModelNode> configurationForm;
 
-    @MbuiElement("ejb-thread-pool-table") DataTable<NamedNode> threadPoolTable;
+    @MbuiElement("ejb-thread-pool-table") Table<NamedNode> threadPoolTable;
     @MbuiElement("ejb-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    @MbuiElement("ejb-remoting-profile-table") DataTable<NamedNode> remotingProfileTable;
+    @MbuiElement("ejb-remoting-profile-table") Table<NamedNode> remotingProfileTable;
     @MbuiElement("ejb-remoting-profile-form") Form<NamedNode> remotingProfileForm;
 
-    @MbuiElement("ejb-bean-pool-table") DataTable<NamedNode> beanPoolTable;
+    @MbuiElement("ejb-bean-pool-table") Table<NamedNode> beanPoolTable;
     @MbuiElement("ejb-bean-pool-form") Form<NamedNode> beanPoolForm;
 
-    @MbuiElement("ejb-cache-table") DataTable<NamedNode> cacheTable;
+    @MbuiElement("ejb-cache-table") Table<NamedNode> cacheTable;
     @MbuiElement("ejb-cache-form") Form<NamedNode> cacheForm;
 
-    @MbuiElement("ejb-passivation-table") DataTable<NamedNode> passivationTable;
+    @MbuiElement("ejb-passivation-table") Table<NamedNode> passivationTable;
     @MbuiElement("ejb-passivation-form") Form<NamedNode> passivationForm;
 
     @MbuiElement("ejb-service-async-form") Form<ModelNode> serviceAsyncForm;
@@ -84,10 +83,10 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @MbuiElement("ejb-service-remote-form") Form<ModelNode> serviceRemoteForm;
     @MbuiElement("ejb-service-timer-form") Form<ModelNode> serviceTimerForm;
 
-    @MbuiElement("ejb-mdb-delivery-group-table") DataTable<NamedNode> mdbDeliveryGroupTable;
+    @MbuiElement("ejb-mdb-delivery-group-table") Table<NamedNode> mdbDeliveryGroupTable;
     @MbuiElement("ejb-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
 
-    DataTable<NamedNode> appSecurityDomainTable;
+    Table<NamedNode> appSecurityDomainTable;
     Form<NamedNode> appSecurityDomainForm;
 
     EjbView(final MbuiContext mbuiContext) {
@@ -102,7 +101,8 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     "/{selected.profile}/subsystem=ejb3/application-security-domain=*");
             Metadata metadata = mbuiContext.metadataRegistry().lookup(template);
 
-            Options<NamedNode> options = new NamedNodeTable.Builder<>(metadata)
+            appSecurityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE,
+                    metadata)
                     .button(mbuiContext.tableButtonFactory()
                             .add(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
                                     (name, address) -> presenter.reload()))
@@ -110,7 +110,6 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                             (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                     .column(NAME, (cell, type, row, meta) -> row.getName())
                     .build();
-            appSecurityDomainTable = new NamedNodeTable<>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE, metadata, options);
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_FORM,
                     metadata)

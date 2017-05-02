@@ -24,46 +24,46 @@ import org.jboss.hal.ballroom.table.SelectorModifier.Search;
  *
  * @author Harald Pehl
  */
-public class SelectorModifierBuilder {
+class SelectorModifierBuilder {
 
     private Order order;
     private Page page;
     private Search search;
     private Boolean selected;
 
-    public SelectorModifierBuilder() {
+    SelectorModifierBuilder() {
         this.order = Order.current;
         this.page = Page.all;
         this.search = Search.none;
         this.selected = null;
     }
 
-    public SelectorModifierBuilder order(Order order) {
+    SelectorModifierBuilder order(Order order) {
         this.order = order;
         return this;
     }
 
-    public SelectorModifierBuilder page(Page page) {
+    SelectorModifierBuilder page(Page page) {
         this.page = page;
         return this;
     }
 
-    public SelectorModifierBuilder search(Search search) {
+    SelectorModifierBuilder search(Search search) {
         this.search = search;
         return this;
     }
 
-    public SelectorModifierBuilder selected() {
+    SelectorModifierBuilder selected() {
         this.selected = true;
         return this;
     }
 
-    public SelectorModifierBuilder unselected() {
+    SelectorModifierBuilder unselected() {
         this.selected = false;
         return this;
     }
 
-    public SelectorModifier build() {
+    SelectorModifier build() {
         SelectorModifier selectorModifier = new SelectorModifier();
         selectorModifier.order = order.name();
         selectorModifier.page = page.name();

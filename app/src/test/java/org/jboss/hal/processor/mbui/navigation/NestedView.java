@@ -25,6 +25,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
+@SuppressWarnings({"unused", "DuplicateStringLiteralInspection"})
 public abstract class NestedView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static NestedView create(final MbuiContext mbuiContext) {

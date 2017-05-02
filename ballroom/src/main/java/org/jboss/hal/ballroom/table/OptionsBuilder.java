@@ -25,10 +25,10 @@ package org.jboss.hal.ballroom.table;
  * }
  *
  * Options&lt;FooBar&gt; options = new OptionsBuilder&lt;FooBar&gt;()
- *     .button("Click Me", (event, api) -> Window.alert("Hello"))
+ *     .button("Click Me", (table) -> Window.alert("Hello"))
  *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
  *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
- *     .build();
+ *     .options();
  * </pre>
  *
  * @param <T> the row type

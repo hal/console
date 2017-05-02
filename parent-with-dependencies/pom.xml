@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.1</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -41,7 +41,7 @@
         <flow.version>0.1.1</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>20.0</guava.version>
-        <gwt.version>2.8.0</gwt.version>
+        <gwt.version>2.8.1</gwt.version>
         <gwtp.version>1.6</gwtp.version>
         <javax.enterprise.version>1.2</javax.enterprise.version>
         <javax.inject.version>1</javax.inject.version>
@@ -51,7 +51,7 @@
         <jsinterop.version>1.0.0</jsinterop.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.7.10</mockito.version>
-        <node.version>v7.8.0</node.version>
+        <node.version>v7.9.0</node.version>
         <npm.version>4.0.2</npm.version>
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>

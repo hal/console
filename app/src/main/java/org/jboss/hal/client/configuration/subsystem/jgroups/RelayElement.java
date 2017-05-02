@@ -22,10 +22,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.NamedNode;
@@ -45,7 +44,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  */
 public class RelayElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
 
-    private final NamedNodeTable<NamedNode> table;
+    private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
     private Element section;
@@ -56,10 +55,10 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
 
         Metadata metadata = metadataRegistry.lookup(RELAY_TEMPLATE);
 
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .button(tableButtonFactory.add(RELAY_TEMPLATE, (event, api) -> presenter.addRelay()))
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(RELAY_TEMPLATE, table -> presenter.addRelay()))
                 .button(tableButtonFactory.remove(RELAY_TEMPLATE,
-                        (event, api) -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, api.selectedRow().getName(),
+                        table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
                 .column(NAME, (cell, t, row, meta) -> row.getName())
                 .column("Remote Sites", row -> {
@@ -67,7 +66,6 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
                     presenter.showStackInnerPage(REMOTE_SITE_ID);
                 })
                 .build();
-        table = new NamedNodeTable<>(Ids.build(Ids.JGROUPS_RELAY, Ids.TABLE_SUFFIX), metadata, options);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.JGROUPS_RELAY, Ids.FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveSingleton(SELECTED_RELAY_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(Names.RELAY)))
@@ -112,9 +110,7 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
 
     void update(List<NamedNode> models) {
         table.update(models);
-        boolean enableAddRelay = models.isEmpty();
-        table.api().button(0).enable(enableAddRelay);
+        table.enableButton(0, models.isEmpty());
         form.clear();
     }
-
 }

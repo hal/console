@@ -22,18 +22,28 @@ import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.User;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
  * <p>
- * Besides that this class serves as an entry point for the JS API.
+ * Entry point for the HAL JavaScript API.
  *
  * @author Harald Pehl
  */
@@ -46,28 +56,34 @@ public class Core {
 
     private final CrudOperations crud;
     private final Dispatcher dispatcher;
+    private final Endpoints endpoints;
     private final Environment environment;
     private final EventBus eventBus;
+    private final MetadataProcessor metadataProcessor;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
-    private final User user;
+    private final TableButtonFactory tableButtonFactory;
 
     @Inject
     @JsIgnore
     public Core(final CrudOperations crud,
             final Dispatcher dispatcher,
+            final Endpoints endpoints,
             final Environment environment,
             final EventBus eventBus,
+            final MetadataProcessor metadataProcessor,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final User user) {
+            final TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.dispatcher = dispatcher;
+        this.endpoints = endpoints;
         this.environment = environment;
         this.eventBus = eventBus;
+        this.metadataProcessor = metadataProcessor;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
-        this.user = user;
+        this.tableButtonFactory = tableButtonFactory;
     }
 
     @JsProperty(name = "crud")
@@ -80,6 +96,11 @@ public class Core {
         return dispatcher;
     }
 
+    @JsProperty(name = "endpoints")
+    public Endpoints endpoints() {
+        return endpoints;
+    }
+
     @JsProperty(name = "environment")
     public Environment environment() {
         return environment;
@@ -88,6 +109,11 @@ public class Core {
     @JsIgnore
     public EventBus eventBus() {
         return eventBus;
+    }
+
+    @JsProperty(name = "metadataProcessor")
+    public MetadataProcessor metadataProcessor() {
+        return metadataProcessor;
     }
 
     @JsProperty(name = "metadataRegistry")
@@ -100,6 +126,11 @@ public class Core {
         return statementContext;
     }
 
+    @JsIgnore
+    public TableButtonFactory tableButtonFactory() {
+        return tableButtonFactory;
+    }
+
 
     // ------------------------------------------------------ JS methods
 
@@ -109,8 +140,50 @@ public class Core {
     }
 
     @JsMethod(name = "operation")
-    public Operation.Builder jsOperation(final String address, final String name) {
-        AddressTemplate template = AddressTemplate.of(address);
-        return new Operation.Builder(template.resolve(statementContext), name);
+    public Operation.Builder jsOperation(final Object address, final String name) {
+        ResourceAddress ra;
+        if (address instanceof AddressTemplate) {
+            ra = ((AddressTemplate) address).resolve(statementContext());
+        } else if (address instanceof ResourceAddress) {
+            ra = (ResourceAddress) address;
+        } else if (address instanceof String) {
+            ra = AddressTemplate.of(((String) address)).resolve(statementContext());
+        } else {
+            throw new IllegalArgumentException("Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|String) address, String name)");
+        }
+        return new Operation.Builder(ra, name);
+    }
+
+    @JsMethod(name = "form")
+    public ModelNodeForm.Builder<ModelNode> jsForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
+    }
+
+    @JsMethod(name = "namedForm")
+    public ModelNodeForm.Builder<NamedNode> jsNamedForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
+    }
+
+    @JsMethod(name = "table")
+    public ModelNodeTable.Builder<ModelNode> jsTable(final Object meta) {
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB_SUFFIX), jsMetadata("table", meta));
+    }
+
+    @JsMethod(name = "namedTable")
+    public ModelNodeTable.Builder<NamedNode> jsNamedTable(final Object meta) {
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
+    }
+
+    private Metadata jsMetadata(@NonNls String method, Object meta) {
+        if (meta instanceof String) {
+            AddressTemplate t = AddressTemplate.of(((String) meta));
+            return metadataRegistry.lookup(t);
+        } else if (meta instanceof AddressTemplate) {
+            return metadataRegistry.lookup(((AddressTemplate) meta));
+        } else if (meta instanceof Metadata) {
+            return (Metadata) meta;
+        } else {
+            throw new IllegalArgumentException("Use Core." + method + "(String|AddressTemplate|Metadata)");
+        }
     }
 }

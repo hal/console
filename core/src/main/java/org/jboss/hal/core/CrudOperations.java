@@ -470,34 +470,34 @@ public class CrudOperations {
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
      * specified template and passes the result as {@code List<Property>} to the specified callback.
      *
-     * @param template the address template which is resolved against the current statement context to get the
-     *                 resource address for the {@code read-children-resource} operation
-     * @param resource the child resource (not human readable, but the actual child resource name!)
-     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
-     *                 List<Property>}
+     * @param template  the address template which is resolved against the current statement context to get the
+     *                  resource address for the {@code read-children-resource} operation
+     * @param childType the child resource (not human readable, but the actual child resource name!)
+     * @param callback  the callback which gets the result of the {@code read-children-resource} operation as {@code
+     *                  List<Property>}
      */
     @JsIgnore
-    public void readChildren(final AddressTemplate template, final String resource,
+    public void readChildren(final AddressTemplate template, final String childType,
             final ReadChildrenCallback callback) {
-        readChildren(template.resolve(statementContext), resource, callback);
+        readChildren(template.resolve(statementContext), childType, callback);
     }
 
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the
      * specified template and passes the result as {@code List<Property>} to the specified callback.
      *
-     * @param template the address template which is resolved against the current statement context to get the
-     *                 resource address for the {@code read-children-resource} operation
-     * @param resource the child resource (not human readable, but the actual child resource name!)
-     * @param depth    the depth used for the {@code recursive-depth} parameter
-     * @param callback the callback which gets the result of the {@code read-children-resource} operation as {@code
-     *                 List<Property>}
+     * @param template  the address template which is resolved against the current statement context to get the
+     *                  resource address for the {@code read-children-resource} operation
+     * @param childType the child resource (not human readable, but the actual child resource name!)
+     * @param depth     the depth used for the {@code recursive-depth} parameter
+     * @param callback  the callback which gets the result of the {@code read-children-resource} operation as {@code
+     *                  List<Property>}
      */
     @JsIgnore
-    public void readChildren(final AddressTemplate template, final String resource, final int depth,
+    public void readChildren(final AddressTemplate template, final String childType, final int depth,
             final ReadChildrenCallback callback) {
         readChildren(new Operation.Builder(template.resolve(statementContext), READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, resource)
+                        .param(CHILD_TYPE, childType)
                         .param(RECURSIVE_DEPTH, depth)
                         .build(),
                 callback);
@@ -1346,6 +1346,9 @@ public class CrudOperations {
             } else {
                 add(id, type, (AddressTemplate.of((String) address)), callback);
             }
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 2nd argument: Use CrudOperations.addDialog(String type, (AddressTemplate|ResourceAddress|String) address, String[] attributes, function(ResourceAddress address, String name) callback)");
         }
     }
 
@@ -1358,6 +1361,9 @@ public class CrudOperations {
             add(type, name, ((ResourceAddress) address), payload, callback);
         } else if (address instanceof String) {
             add(type, name, AddressTemplate.of(((String) address)).resolve(statementContext), payload, callback);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 3rd argument: Use CrudOperations.add(String type, String name, (AddressTemplate|ResourceAddress|String) address, ModelNode payload, function(ResourceAddress address, String name) callback)");
         }
     }
 
@@ -1384,6 +1390,9 @@ public class CrudOperations {
             } else {
                 addSingleton(id, type, (AddressTemplate.of((String) address)), callback);
             }
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 2nd argument: Use CrudOperations.addSingletonDialog(String type, (AddressTemplate|ResourceAddress|String) address, String[] attributes, function(ResourceAddress address, String name) callback)");
         }
     }
 
@@ -1396,6 +1405,9 @@ public class CrudOperations {
             addSingleton(type, ((ResourceAddress) address), payload, callback);
         } else if (address instanceof String) {
             addSingleton(type, AddressTemplate.of(((String) address)).resolve(statementContext), payload, callback);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 2nd argument: Use CrudOperations.addSingleton(String type, (AddressTemplate|ResourceAddress|String) address, ModelNode payload, function(ResourceAddress address, String name) callback)");
         }
     }
 
@@ -1407,6 +1419,9 @@ public class CrudOperations {
             read((ResourceAddress) address, callback);
         } else if (address instanceof String) {
             read(AddressTemplate.of((String) address), callback);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 1st argument: Use CrudOperations.read((AddressTemplate|ResourceAddress|String) address, function(ModelNode result) callback)");
         }
     }
 
@@ -1418,18 +1433,24 @@ public class CrudOperations {
             readRecursive((ResourceAddress) address, callback);
         } else if (address instanceof String) {
             readRecursive(AddressTemplate.of((String) address), callback);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 1st argument: Use CrudOperations.readRecursive((AddressTemplate|ResourceAddress|String) address, function(ModelNode result) callback)");
         }
     }
 
     @JsMethod(name = "readChildren")
-    public void jsReadChildren(final Object address, final String resource, final JsReadChildrenCallback callback) {
+    public void jsReadChildren(final Object address, final String childType, final JsReadChildrenCallback callback) {
         ReadChildrenCallback rcc = children -> callback.execute(JsHelper.asJsArray(children));
         if (address instanceof AddressTemplate) {
-            readChildren((AddressTemplate) address, resource, rcc);
+            readChildren((AddressTemplate) address, childType, rcc);
         } else if (address instanceof ResourceAddress) {
-            readChildren((ResourceAddress) address, resource, rcc);
+            readChildren((ResourceAddress) address, childType, rcc);
         } else if (address instanceof String) {
-            readChildren(AddressTemplate.of((String) address), resource, rcc);
+            readChildren(AddressTemplate.of((String) address), childType, rcc);
+        } else {
+            throw new IllegalArgumentException(
+                    "Illegal 1st argument: Use CrudOperations.readChildren((AddressTemplate|ResourceAddress|String) address, String childType, function(Property[] children) callback)");
         }
     }
 
@@ -1444,6 +1465,8 @@ public class CrudOperations {
             save(type, name, template, JsHelper.asMap(changeSet), c);
         } else if (address instanceof String) {
             save(type, name, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
+        } else {
+            throw new IllegalArgumentException("Illegal 3rd argument: Use CrudOperations.save(String type, String name, (AddressTemplate|ResourceAddress|String) address, {\"key\": <value>} changeSet, function() callback)");
         }
     }
 
@@ -1455,6 +1478,8 @@ public class CrudOperations {
             saveSingleton(type, ((AddressTemplate) address), JsHelper.asMap(changeSet), c);
         } else if (address instanceof String) {
             saveSingleton(type, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
+        } else {
+            throw new IllegalArgumentException("Illegal 2nd argument: Use CrudOperations.save(String type, (AddressTemplate|ResourceAddress|String) address, {\"key\": <value>} changeSet, function() callback)");
         }
     }
 
@@ -1467,6 +1492,8 @@ public class CrudOperations {
             remove(type, name, ((ResourceAddress) address), c);
         } else if (address instanceof String) {
             remove(type, name, AddressTemplate.of(((String) address)), c);
+        } else {
+            throw new IllegalArgumentException("Illegal 3rd argument: Use CrudOperations.remove(String type, String name, (AddressTemplate|ResourceAddress|String) address, function() callback)");
         }
     }
 
@@ -1479,6 +1506,8 @@ public class CrudOperations {
             removeSingleton(type, ((ResourceAddress) address), c);
         } else if (address instanceof String) {
             removeSingleton(type, AddressTemplate.of(((String) address)), c);
+        } else {
+            throw new IllegalArgumentException("Illegal 2nd argument: Use CrudOperations.removeSingleton(String type, (AddressTemplate|ResourceAddress|String) address, function() callback)");
         }
     }
 }

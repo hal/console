@@ -16,7 +16,7 @@
 package org.jboss.hal.processor.mbui.masterdetail;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.NamedNode;
@@ -25,13 +25,14 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 @MbuiView
+@SuppressWarnings({"DuplicateStringLiteralInspection", "unused"})
 public abstract class SimpleView extends MbuiViewImpl<MbuiTestPresenter> implements MbuiTestPresenter.MyView {
 
     public static SimpleView create(final MbuiContext mbuiContext) {
         return null;
     }
 
-    @MbuiElement("table") DataTable<NamedNode> table;
+    @MbuiElement("table") Table<NamedNode> table;
     @MbuiElement("form") Form<NamedNode> form;
 
     SimpleView(final MbuiContext mbuiContext) {

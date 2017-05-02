@@ -33,15 +33,25 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.js.dom.JsElement;
+import elemental.js.util.JsArrayOf;
+import elemental.js.util.JsMapFromStringTo;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.HelpTextBuilder;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.DataMapping;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
@@ -81,6 +91,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
      * Builder useful to automatically inspect the read-resource-description and associate the
      * attributes (by calling: include, customFormItem). Creates the required form items and help texts.
      */
+    @JsType(namespace = "ui", name = "FormBuilder")
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
@@ -111,6 +122,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // ------------------------------------------------------ configure required and optional settings
 
+        @JsIgnore
         public Builder(@NonNls final String id, final Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
@@ -128,31 +140,37 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.attributePath = ATTRIBUTES;
         }
 
+        @JsIgnore
         public Builder<T> include(final String[] attributes) {
             includes.addAll(Arrays.asList(attributes));
             return this;
         }
 
+        @JsIgnore
         public Builder<T> include(final Iterable<String> attributes) {
             Iterables.addAll(includes, attributes);
             return this;
         }
 
+        @JsIgnore
         public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
 
+        @JsIgnore
         public Builder<T> exclude(final String[] attributes) {
             excludes.addAll(Arrays.asList(attributes));
             return this;
         }
 
+        @JsIgnore
         public Builder<T> exclude(final Iterable<String> attributes) {
             Iterables.addAll(excludes, attributes);
             return this;
         }
 
+        @JsIgnore
         public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
@@ -216,6 +234,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
          * which will trigger the specified add action.
          */
+        @JsIgnore
         public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping, final Callback addAction) {
             EmptyState emptyState = new EmptyState.Builder(CONSTANTS.noResource())
                     .description(MESSAGES.noResource())
@@ -236,6 +255,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
          * to it.
          */
+        @JsIgnore
         public Builder<T> singleton(final Supplier<org.jboss.hal.dmr.Operation> ping,
                 final EmptyState emptyState) {
             this.singleton = true;
@@ -249,20 +269,24 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
+        @JsIgnore
         public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
             includes.add(attribute);
             providers.put(attribute, provider);
             return this;
         }
 
+        @JsIgnore
         public Builder<T> unboundFormItem(final FormItem formItem) {
             return unboundFormItem(formItem, -1, null);
         }
 
+        @JsIgnore
         public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
             return unboundFormItem(formItem, position, null);
         }
 
+        @JsIgnore
         public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
             this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
             return this;
@@ -273,21 +297,25 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
+        @JsIgnore
         public Builder<T> onSave(final SaveCallback<T> saveCallback) {
             this.saveCallback = saveCallback;
             return this;
         }
 
+        @JsIgnore
         public Builder<T> onCancel(final CancelCallback<T> cancelCallback) {
             this.cancelCallback = cancelCallback;
             return this;
         }
 
+        @JsIgnore
         public Builder<T> prepareReset(final PrepareReset<T> prepareReset) {
             this.prepareReset = prepareReset;
             return this;
         }
 
+        @JsIgnore
         public Builder<T> prepareRemove(final PrepareRemove<T> removeCallback) {
             this.prepareRemove = removeCallback;
             return this;
@@ -348,6 +376,33 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         private String formId() {
             return "form(" + id + ")"; //NON-NLS
+        }
+
+
+        // ------------------------------------------------------ JS methods
+
+
+        @JsFunction
+        interface JsSaveCallback<T> {
+
+            void onSave(final Form<T> form, final JsMapFromStringTo<Object> changedValues);
+        }
+
+
+        @JsMethod(name = "include")
+        public Builder<T> jsInclude(JsArrayOf<String> attributes) {
+            return include(JsHelper.asList(attributes));
+        }
+
+        @JsMethod(name = "exclude")
+        public Builder<T> jsExclude(JsArrayOf<String> attributes) {
+            return exclude(JsHelper.asList(attributes));
+        }
+
+        @JsMethod(name = "onSave")
+        public Builder<T> jsOnSave(final JsSaveCallback<T> callback) {
+            this.saveCallback = (form, changedValues) -> callback.onSave(form, JsHelper.asJsMap(changedValues));
+            return this;
         }
     }
 
@@ -506,6 +561,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
+    @JsMethod
     public void attach() {
         super.attach();
         if (Iterables.isEmpty(getFormItems())) {
@@ -602,5 +658,13 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
         }
         return formItem.isEmpty();
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsProperty(name = "element")
+    public JsElement jsElement() {
+        return (JsElement) asElement();
     }
 }

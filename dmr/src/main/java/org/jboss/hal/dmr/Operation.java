@@ -36,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @JsType
 public class Operation extends ModelNode {
 
-    @JsType
+    @JsType(name = "OperationBuilder")
     public static class Builder {
 
         private final String name;

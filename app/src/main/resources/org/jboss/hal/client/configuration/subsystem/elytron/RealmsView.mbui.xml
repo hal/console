@@ -34,7 +34,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -58,7 +58,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -82,7 +82,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -106,7 +106,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -130,7 +130,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -154,7 +154,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -178,7 +178,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -202,7 +202,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -226,7 +226,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -250,7 +250,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -274,7 +274,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -307,7 +307,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -331,7 +331,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -355,7 +355,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>
@@ -379,7 +379,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name" value="{{row.getName()}}"/>

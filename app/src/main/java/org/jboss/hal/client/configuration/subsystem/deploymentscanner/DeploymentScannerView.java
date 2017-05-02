@@ -19,10 +19,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.core.mbui.table.NamedNodeTable;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -43,7 +43,7 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
-    @MbuiElement("deployment-scanner-table") NamedNodeTable<NamedNode> table;
+    @MbuiElement("deployment-scanner-table") Table<NamedNode> table;
     @MbuiElement("deployment-scanner-form") Form<NamedNode> form;
 
     DeploymentScannerView(final MbuiContext mbuiContext) {

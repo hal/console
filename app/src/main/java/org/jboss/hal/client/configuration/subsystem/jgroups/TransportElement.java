@@ -39,7 +39,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class TransportElement extends GenericElement {
+class TransportElement extends GenericElement {
 
     private Form<ModelNode> threadPoolDefaultForm;
     private Form<ModelNode> threadPoolTimerForm;
@@ -58,13 +58,13 @@ public class TransportElement extends GenericElement {
                 threadPoolMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), DEFAULT);
+                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), DEFAULT);
+                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form, threadPoolMetadata);
                 })
                 .build();
@@ -72,13 +72,13 @@ public class TransportElement extends GenericElement {
                 threadPoolMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "timer");
+                            .replaceWildcards(table.selectedRow().getName(), "timer");
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Timer"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "timer");
+                            .replaceWildcards(table.selectedRow().getName(), "timer");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Timer", form, threadPoolMetadata);
                 })
                 .build();
@@ -86,13 +86,13 @@ public class TransportElement extends GenericElement {
                 threadPoolMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "internal");
+                            .replaceWildcards(table.selectedRow().getName(), "internal");
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Internal"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "internal");
+                            .replaceWildcards(table.selectedRow().getName(), "internal");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolMetadata);
                 })
                 .build();
@@ -100,13 +100,13 @@ public class TransportElement extends GenericElement {
                 threadPoolMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "oob");
+                            .replaceWildcards(table.selectedRow().getName(), "oob");
                     presenter.saveSingleton(template1, changedValues,
                             resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " OOB"));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.api().selectedRow().getName(), "oob");
+                            .replaceWildcards(table.selectedRow().getName(), "oob");
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " OOB", form, threadPoolMetadata);
                 })
                 .build();
@@ -134,12 +134,13 @@ public class TransportElement extends GenericElement {
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     void update(final List<NamedNode> models) {
         super.update(models);
         boolean resourcesIsEmpty = models.isEmpty();
         // disable the ADD button if there is already a transport in the list
         // only one transport is allowed per stack
-        table.api().button(0).enable(resourcesIsEmpty);
+        table.enableButton(0, resourcesIsEmpty);
         if (!resourcesIsEmpty) {
             NamedNode transport = models.get(0);
             // the thread-pool are singleton resources

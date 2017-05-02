@@ -26,6 +26,7 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class RequestControllerView extends MbuiViewImpl<RequestControllerPresenter> implements RequestControllerPresenter.MyView {
 
     public static RequestControllerView create(final MbuiContext mbuiContext) {

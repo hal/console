@@ -94,7 +94,7 @@
                             </attributes>
                         </action>
                         <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                                name-resolver="{{table.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
                         <column name="category"/>
@@ -132,7 +132,7 @@
 
         <item id="logging-handler-item" title="Handler" icon="fa fa-cogs">
             <!--
-                Console Handler
+                ConsActionHandlerdler
             -->
             <sub-item id="logging-handler-console-item" title="Console Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/console-handler=*">
@@ -148,7 +148,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -181,7 +181,7 @@
 
 
             <!--
-                File Handler
+                FActionHandlerdler
             -->
             <sub-item id="logging-handler-file-item" title="File Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
@@ -197,7 +197,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -231,7 +231,7 @@
 
 
             <!--
-                Periodic Rotating File Handler
+                Periodic Rotating FActionHandlerdler
             -->
             <sub-item id="logging-handler-periodic-rotating-file-item" title="Periodic Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*">
@@ -249,7 +249,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -284,7 +284,7 @@
 
 
             <!--
-                Periodic Size Rotating File Handler
+                Periodic Size Rotating FActionHandlerdler
             -->
             <sub-item id="logging-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*">
@@ -304,7 +304,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -342,7 +342,7 @@
 
 
             <!--
-                Size Rotating File Handler
+                Size Rotating FActionHandlerdler
             -->
             <sub-item id="logging-handler-size-rotating-file-item" title="Size Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*">
@@ -362,7 +362,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -400,7 +400,7 @@
 
 
             <!--
-                Async Handler
+                AsActionHandlerdler
             -->
             <sub-item id="logging-handler-async-item" title="Async Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/async-handler=*">
@@ -431,7 +431,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -467,7 +467,7 @@
 
 
             <!--
-                Custom Handler
+                CusActionHandlerdler
             -->
             <sub-item id="logging-handler-custom-item" title="Custom Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/custom-handler=*">
@@ -484,7 +484,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -517,7 +517,7 @@
 
 
             <!--
-                Syslog Handler
+                SysActionHandlerdler
             -->
             <sub-item id="logging-handler-syslog-item" title="Syslog Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/syslog-handler=*">
@@ -537,7 +537,7 @@
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- syslog handlers do not have a name attribute,
@@ -576,7 +576,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- log formatter resources do not have a name attribute,
@@ -607,7 +607,7 @@
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                                    name-resolver="{{table.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
                             <!-- custom formatter do not have a name attribute,
