@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.events.Event;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -104,6 +103,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         headerExtensions = Browser.getDocument().getElementById(Ids.HEADER_EXTENSIONS);
         footerExtensions = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS);
 
-        // TODO Load and inject extensions from management model
+        // TODO Load extensions from management model and inject scripts
     }
 }

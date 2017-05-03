@@ -42,8 +42,7 @@ public class Extension {
     final Kind kind;
     final JsCallback entryPoint;
 
-    private Extension(final String id, final String title, final Kind kind,
-            final JsCallback entryPoint) {
+    private Extension(final String id, final String title, final Kind kind, final JsCallback entryPoint) {
         this.id = id;
         this.kind = kind;
         this.title = title;
