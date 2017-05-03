@@ -18,6 +18,9 @@ package org.jboss.hal.core.extension;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import jsinterop.annotations.JsIgnore;
@@ -48,9 +51,13 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     private Element headerExtensions;
     private Element footerExtensions;
 
-    public ExtensionRegistry() {extensions = new HashSet<>();}
+    @Inject
+    public ExtensionRegistry(final EventBus eventBus) {
+        extensions = new HashSet<>();
+        eventBus.addHandler(ApplicationReadyEvent.getType(), this);
+    }
 
-    public void registerExtension(final Extension extension) {
+    public void register(final Extension extension) {
         if (!ready) {
             logger.error("Cannot register extension {}: Application not ready", extension.id);
             return;

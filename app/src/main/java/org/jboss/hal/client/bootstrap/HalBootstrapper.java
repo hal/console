@@ -84,7 +84,6 @@ public class HalBootstrapper implements Bootstrapper {
                 LoadingPanel.get().off();
                 logger.info("Bootstrap finished");
                 placeManager.revealCurrentPlace();
-                eventBus.fireEvent(new ApplicationReadyEvent());
 
                 // reset the uncaught exception handler from HalPreBootstrapper
                 GWT.setUncaughtExceptionHandler(e -> {

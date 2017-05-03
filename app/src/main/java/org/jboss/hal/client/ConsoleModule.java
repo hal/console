@@ -150,6 +150,7 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
+import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.meta.token.NameTokens;
@@ -178,6 +179,7 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
+        bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 
@@ -198,7 +200,7 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 RootPresenter.MyProxy.class);
 
 
-        // ------------------------------------------------------ remaining presenter (A-Z)
+        // ------------------------------------------------------ remaining presenters (A-Z)
 
         bindPresenter(AccessControlPresenter.class,
                 AccessControlPresenter.MyView.class,
