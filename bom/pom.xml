@@ -122,12 +122,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-resources</artifactId>
-                <version>${project.version}</version>
-                <classifier>webapp</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>

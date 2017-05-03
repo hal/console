@@ -43,17 +43,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>hal</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -69,10 +58,42 @@
                                     <artifactId>hal-console</artifactId>
                                     <classifier>resources</classifier>
                                     <version>${project.version}</version>
-                                    <outputDirectory>hal</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/hal</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assemble-hal-api</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>false</attach>
+                            <descriptors>
+                                <descriptor>src/assembly/hal-api.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>assemble-hal-console</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>false</attach>
+                            <descriptors>
+                                <descriptor>src/assembly/hal-console.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
@@ -92,13 +113,27 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>npm publish</id>
+                        <id>publish-hal-api</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
-                            <arguments>publish</arguments>
+                            <arguments>publish
+                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-api
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>publish-hal-console</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <arguments>publish
+                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-console
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

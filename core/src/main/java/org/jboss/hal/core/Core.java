@@ -24,6 +24,7 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -59,6 +60,7 @@ public class Core {
     private final Endpoints endpoints;
     private final Environment environment;
     private final EventBus eventBus;
+    private final ExtensionRegistry extensionRegistry;
     private final MetadataProcessor metadataProcessor;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
@@ -71,6 +73,7 @@ public class Core {
             final Endpoints endpoints,
             final Environment environment,
             final EventBus eventBus,
+            final ExtensionRegistry extensionRegistry,
             final MetadataProcessor metadataProcessor,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
@@ -80,6 +83,7 @@ public class Core {
         this.endpoints = endpoints;
         this.environment = environment;
         this.eventBus = eventBus;
+        this.extensionRegistry = extensionRegistry;
         this.metadataProcessor = metadataProcessor;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
@@ -109,6 +113,11 @@ public class Core {
     @JsIgnore
     public EventBus eventBus() {
         return eventBus;
+    }
+
+    @JsProperty(name = "extensionRegistry")
+    public ExtensionRegistry extensionRegistry() {
+        return extensionRegistry;
     }
 
     @JsProperty(name = "metadataProcessor")

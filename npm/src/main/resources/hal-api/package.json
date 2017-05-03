@@ -1,0 +1,27 @@
+{
+  "name": "hal-api",
+  "version": "${project.version}",
+  "description": "JavaScript API for HAL",
+  "keywords": [
+    "hal",
+    "management",
+    "console",
+    "wildfly",
+    "jboss",
+    "eap",
+    "api"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hal/hal.next.git"
+  },
+  "author": "Harald Pehl <hpehl@redhat.com> (http://hpehl.info)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://issues.jboss.org/browse/HAL"
+  },
+  "homepage": "https://github.com/hal/hal.next/#readme"
+}

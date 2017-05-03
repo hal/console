@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
