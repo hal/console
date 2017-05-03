@@ -104,11 +104,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         headerExtensions = Browser.getDocument().getElementById(Ids.HEADER_EXTENSIONS);
         footerExtensions = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS);
 
-        // to be consumed by extension developers
-        Event e = Browser.getDocument().createEvent("Event");
-        e.initEvent("hal-extension-registry", true, true);
-        Browser.getWindow().dispatchEvent(e);
-
         // TODO Load and inject extensions from management model
     }
 }
