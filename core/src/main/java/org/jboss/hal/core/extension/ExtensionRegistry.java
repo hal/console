@@ -17,12 +17,12 @@ package org.jboss.hal.core.extension;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.events.Event;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -98,9 +98,17 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @Override
     @JsIgnore
+    @SuppressWarnings("HardCodedStringLiteral")
     public void onApplicationReady(final ApplicationReadyEvent event) {
         ready = true;
         headerExtensions = Browser.getDocument().getElementById(Ids.HEADER_EXTENSIONS);
         footerExtensions = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS);
+
+        // to be consumed by extension developers
+        Event e = Browser.getDocument().createEvent("Event");
+        e.initEvent("hal-extension-registry", true, true);
+        Browser.getWindow().dispatchEvent(e);
+
+        // TODO Load and inject extensions from management model
     }
 }
