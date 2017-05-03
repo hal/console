@@ -266,6 +266,7 @@
                                     <groupId>org.jboss.hal</groupId>
                                     <artifactId>hal-resources</artifactId>
                                     <classifier>webapp</classifier>
+                                    <version>${project.version}</version>
                                     <overWrite>true</overWrite>
                                     <excludes>META-INF/**</excludes>
                                 </artifactItem>

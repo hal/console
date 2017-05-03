@@ -1,10 +1,17 @@
 {
-  "name": "hal-next",
+  "name": "hal-console",
   "version": "0.7.1",
-  "description": "The next version of the WildFly management console",
-  "keywords": ["hal", "wildfly", "management", "console"],
+  "description": "Management console for WildFly / JBoss EAP",
+  "keywords": [
+    "hal",
+    "management",
+    "console",
+    "wildfly",
+    "jboss",
+    "eap"
+  ],
   "bin": {
-    "hal-next": "./server.js"
+    "hal-console": "./server.js"
   },
   "main": "server.js",
   "scripts": {
@@ -14,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/hal/hal.next.git"
   },
-  "author": "Harald Pehl <harald.pehl@gmail.com> (http://hpehl.info)",
+  "author": "Harald Pehl <hpehl@redhat.com> (http://hpehl.info)",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://issues.jboss.org/browse/HAL"
