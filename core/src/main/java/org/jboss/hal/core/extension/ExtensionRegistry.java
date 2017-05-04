@@ -22,11 +22,13 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.ScriptElement;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.extension.Extension.Kind;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
@@ -46,13 +48,16 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
     private final Set<String> extensions;
+    private final CrudOperations crud;
     private boolean ready;
     private Element headerExtensions;
     private Element footerExtensions;
 
     @Inject
-    public ExtensionRegistry(final EventBus eventBus) {
-        extensions = new HashSet<>();
+    @JsIgnore
+    public ExtensionRegistry(final EventBus eventBus, final CrudOperations crud) {
+        this.extensions = new HashSet<>();
+        this.crud = crud;
         eventBus.addHandler(ApplicationReadyEvent.getType(), this);
     }
 
@@ -66,6 +71,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
             return;
         }
 
+        extensions.add(extension.id);
         if (extension.kind == Kind.HEADER || extension.kind == Kind.FOOTER) {
             // @formatter:off
             Element li = new Elements.Builder()
@@ -91,8 +97,9 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
             }
             ul.appendChild(li);
             dropdown.getClassList().remove(hidden);
+        } else if (extension.kind == Kind.FINDER_ITEM) {
+            // TODO Handle finder item extensions
         }
-        extensions.add(extension.id);
     }
 
     @Override
@@ -104,5 +111,17 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         footerExtensions = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS);
 
         // TODO Load extensions from management model and inject scripts
+        // crud.readChildren(AddressTemplate.of("/core-service=management/service=console"), "extension",
+        //         extensions -> extensions.forEach(extension ->
+        //                 injectScript(extension.getValue().get("script").asString())));
+    }
+
+    private void injectScript(String script) {
+        // TODO Should there be any checks before we inject the script? Is that even possible?
+        ScriptElement scriptElement = Browser.getDocument().createScriptElement();
+        scriptElement.setType("text/javascript"); //NON-NLS
+        scriptElement.setAsync(true);
+        scriptElement.setSrc(script);
+        Browser.getDocument().getHead().appendChild(scriptElement);
     }
 }
