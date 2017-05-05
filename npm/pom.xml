@@ -71,7 +71,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>assemble-hal-api</id>
+                        <id>assemble-hal-extension</id>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -79,7 +79,7 @@
                         <configuration>
                             <attach>false</attach>
                             <descriptors>
-                                <descriptor>src/assembly/hal-api.xml</descriptor>
+                                <descriptor>src/assembly/hal-extension.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

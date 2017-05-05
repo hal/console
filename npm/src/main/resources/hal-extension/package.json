@@ -1,7 +1,7 @@
 {
-  "name": "hal-api",
+  "name": "hal-extension",
   "version": "${project.version}",
-  "description": "JavaScript API for HAL",
+  "description": "Development package to write HAL extensions",
   "keywords": [
     "hal",
     "management",
@@ -9,10 +9,11 @@
     "wildfly",
     "jboss",
     "eap",
-    "api"
+    "extension"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "mv index.html ../.. && mv extension.js ../.."
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
   "author": "Harald Pehl <hpehl@redhat.com> (http://hpehl.info)",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://issues.jboss.org/browse/HAL"
+    "url": "https://github.com/hal/hal.next/issues"
   },
   "homepage": "https://github.com/hal/hal.next/#readme"
 }

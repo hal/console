@@ -25,8 +25,6 @@ import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
 import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import elemental.client.Browser;
-import elemental.events.Event;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.core.ApplicationReadyEvent;
@@ -79,12 +77,6 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     @SuppressWarnings("HardCodedStringLiteral")
     protected void onReveal() {
         super.onReveal();
-
         getEventBus().fireEvent(new ApplicationReadyEvent());
-
-        // to be consumed by JS code
-        Event event = Browser.getDocument().createEvent("Event");
-        event.initEvent("halReady", true, true);
-        Browser.getWindow().dispatchEvent(event);
     }
 }

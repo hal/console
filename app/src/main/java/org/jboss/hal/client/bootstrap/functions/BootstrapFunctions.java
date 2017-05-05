@@ -31,13 +31,15 @@ public class BootstrapFunctions {
             final ReadAuthentication readAuthentication,
             final FindDomainController findDomainController,
             final RegisterStaticCapabilities registerStaticCapabilities,
-            final LoadSettings loadSettings) {
+            final LoadSettings loadSettings,
+            final ReadExtensions readExtensions) {
         this.functions = new BootstrapFunction[]{
                 readEnvironment,
                 readAuthentication,
                 findDomainController,
                 registerStaticCapabilities,
-                loadSettings
+                loadSettings,
+                // readExtensions
         };
     }
 

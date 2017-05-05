@@ -23,12 +23,16 @@
     <fileSets>
         <fileSet>
             <directory>${basedir}/src/main/resources/hal-console</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory/>
             <filtered>true</filtered>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/hal</directory>
             <outputDirectory>hal</outputDirectory>
+            <excludes>
+                <exclude>META-INF/**</exclude>
+                <exclude>hal.devmode.js</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>

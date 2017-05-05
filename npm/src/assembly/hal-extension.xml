@@ -15,20 +15,25 @@
   -->
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
-    <id>hal-api</id>
+    <id>hal-extension</id>
     <formats>
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${basedir}/src/main/resources/hal-api</directory>
-            <outputDirectory>/</outputDirectory>
+            <directory>${basedir}/src/main/resources/hal-extension</directory>
+            <outputDirectory/>
             <filtered>true</filtered>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/hal</directory>
-            <outputDirectory>hal</outputDirectory>
+            <outputDirectory/>
+            <excludes>
+                <exclude>META-INF/**</exclude>
+                <exclude>hal.devmode.js</exclude>
+                <exclude>*.html</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>

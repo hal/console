@@ -10,11 +10,11 @@ Starts a local web server listening to http://localhost:3000. Please make sure t
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:3000)
         reload --host=master
 
-To install and run HAL.next use
+To install and run HAL use
 
 ```
-npm install -g hal-next
-hal-next
+npm install -g hal-console
+hal-console
 ```
 
 For more details see https://github.com/hal/hal.next.
