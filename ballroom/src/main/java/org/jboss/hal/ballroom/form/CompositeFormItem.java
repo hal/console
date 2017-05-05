@@ -61,7 +61,7 @@ import static org.jboss.hal.resources.CSS.separator;
  *
  * @author Harald Pehl
  */
-public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> {
+public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> implements ModelNodeItem {
 
     private class FormItemChangeHandler implements ValueChangeHandler {
 
