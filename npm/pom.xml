@@ -113,14 +113,14 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>publish-hal-api</id>
+                        <id>publish-hal-extension</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
                             <arguments>publish
-                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-api
+                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-extension
                             </arguments>
                         </configuration>
                     </execution>
