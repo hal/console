@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.7.1</version>
+        <version>0.8.0</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -71,7 +71,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>assemble-hal-extension</id>
+                        <id>assemble-hal-edk</id>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -79,7 +79,7 @@
                         <configuration>
                             <attach>false</attach>
                             <descriptors>
-                                <descriptor>src/assembly/hal-extension.xml</descriptor>
+                                <descriptor>src/assembly/hal-edk.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -113,14 +113,14 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>publish-hal-api</id>
+                        <id>publish-hal-edk</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
                             <arguments>publish
-                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-api
+                                ${project.build.directory}/${project.artifactId}-${project.version}-hal-edk
                             </arguments>
                         </configuration>
                     </execution>
