@@ -31,6 +31,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Use capabilities & requirements to generate combo boxes with type-ahead support
     - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
     - [JavaScript API](https://github.com/hal/hal.next/wiki/JavaScript-API)
+    - [Runtime extensions](https://github.com/hal/hal.next/wiki/Extensions)
     - Remove deprecated APIs 
 
 - Finder
@@ -38,7 +39,6 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
     - Pin frequently used subsystems to stay at the top
     - Filter items by name *and* by properties like 'enabled' in the data sources column or 'stopped' in the servers column
-    - Columns could be provided by extensions
 
 ## Running
 
