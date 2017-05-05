@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.7.1</version>
+        <version>0.8.0</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -99,8 +99,8 @@
                     <verbose>true</verbose>
                     <images>
                         <image>
-                            <alias>hal-next</alias>
-                            <name>hpehl/hal-next</name>
+                            <alias>hal-console</alias>
+                            <name>hpehl/hal-console</name>
                             <build>
                                 <assembly>
                                     <mode>dir</mode>

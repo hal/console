@@ -1,7 +1,8 @@
 css
 fonts
 img
-js
-previews
+js/*
 favicon.ico
 apple-touch-icon.png
+!js/mode-logfile.js
+!js/theme-logfile.js

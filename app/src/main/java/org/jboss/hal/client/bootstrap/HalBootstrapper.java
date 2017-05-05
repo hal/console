@@ -22,6 +22,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.client.Browser;
+import elemental.events.Event;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -69,6 +70,11 @@ public class HalBootstrapper implements Bootstrapper {
 
     @Override
     public void onBootstrap() {
+        // event for users of the JS API
+        Event event = Browser.getDocument().createEvent("Event"); //NON-NLS
+        event.initEvent("halReady", true, true); //NON-NLS
+        Browser.getWindow().dispatchEvent(event);
+
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
@@ -83,7 +89,6 @@ public class HalBootstrapper implements Bootstrapper {
                 LoadingPanel.get().off();
                 logger.info("Bootstrap finished");
                 placeManager.revealCurrentPlace();
-                eventBus.fireEvent(new ApplicationReadyEvent());
 
                 // reset the uncaught exception handler from HalPreBootstrapper
                 GWT.setUncaughtExceptionHandler(e -> {

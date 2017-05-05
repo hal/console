@@ -179,8 +179,6 @@ public interface Ids {
     String EJB_APPLICATION_SECURITY_DOMAIN_TABLE = build(EJB_APPLICATION_SECURITY_DOMAIN, TABLE_SUFFIX);
 
     String ELYTRON = "elytron";
-
-
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
@@ -188,6 +186,8 @@ public interface Ids {
     String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
 
     String FINDER = "hal-finder";
+    String FOOTER_EXTENSIONS = "footer-extensions";
+    String FOOTER_EXTENSIONS_DROPDOWN = build(FOOTER_EXTENSIONS, "dropdown");
 
     String GROUP = "group";
 
@@ -198,6 +198,8 @@ public interface Ids {
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
+    String HEADER_EXTENSIONS = build(HEADER, "extensions");
+    String HEADER_EXTENSIONS_DROPDOWN = build(HEADER_EXTENSIONS, "dropdown");
     String HEADER_USERNAME = build(HEADER, "username");
     String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = build(HOMEPAGE, "access-control-section");

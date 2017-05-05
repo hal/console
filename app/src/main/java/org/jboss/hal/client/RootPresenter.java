@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
+import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.mvp.Slots;
 
@@ -70,5 +71,12 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
             setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
             setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);
         }
+    }
+
+    @Override
+    @SuppressWarnings("HardCodedStringLiteral")
+    protected void onReveal() {
+        super.onReveal();
+        getEventBus().fireEvent(new ApplicationReadyEvent());
     }
 }

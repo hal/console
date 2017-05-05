@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.7.1</version>
+    <version>0.8.0</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <url>http://hal.github.io/</url>
@@ -110,7 +110,6 @@
         <module>config</module>
         <module>dmr</module>
         <module>fraction</module>
-        <module>js</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>

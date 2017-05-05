@@ -71,15 +71,15 @@ The module `hal-npm` provides a npm package which launches a local web server at
   
 1. Add http://localhost:3000 as allowed origin
 1. `mvn clean install -P prod,theme-hal`
-1. `cd npm`
+1. `cd npm/target/hal-npm-<version>-hal-console/`
 1. `npm install`
 1. `node server.js`
 1. Open http://localhost:3000
 
-The npm package is also available on npmjs.com: https://www.npmjs.com/package/hal-next
+The npm package is also available on npmjs.com: https://www.npmjs.com/package/hal-console
  
-1. `npm install -g hal-next`
-1. `hal-next`
+1. `npm install -g hal-console`
+1. `hal-console`
 
 ### WildFly Swarm Fraction
 
@@ -108,13 +108,13 @@ The `docker` module provides a docker image with WildFly 11.x and HAL.next.
 
 1. `cd docker`
 1. `mvn install`
-1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
-1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
+1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
+1. `docker run -p 9990:9990 -it hpehl/hal-console /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
 1. Open http://localhost:9990 and log in with `admin:admin`
 
-The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-next/
+The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-console/
 
-`docker pull hpehl/hal-next`
+`docker pull hpehl/hal-console`
 
 ### GitHub Pages
 
