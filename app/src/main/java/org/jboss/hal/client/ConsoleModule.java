@@ -146,11 +146,13 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
+import org.jboss.hal.client.tools.ExtensionPresenter;
+import org.jboss.hal.client.tools.ExtensionStorage;
+import org.jboss.hal.client.tools.ExtensionView;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
-import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.meta.token.NameTokens;
@@ -179,7 +181,7 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
-        bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler
+        bind(ExtensionStorage.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 
@@ -206,11 +208,6 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 AccessControlPresenter.MyView.class,
                 AccessControlView.class,
                 AccessControlPresenter.MyProxy.class);
-
-        bindPresenter(ServerBootErrorsPresenter.class,
-                ServerBootErrorsPresenter.MyView.class,
-                ServerBootErrorsView.class,
-                ServerBootErrorsPresenter.MyProxy.class);
 
         bindTemplatedPresenter(BatchPresenter.class,
                 BatchPresenter.MyView.class,
@@ -291,6 +288,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 ExpertModePresenter.MyView.class,
                 ExpertModeView.class,
                 ExpertModePresenter.MyProxy.class);
+
+        bindPresenter(ExtensionPresenter.class,
+                ExtensionPresenter.MyView.class,
+                ExtensionView.class,
+                ExtensionPresenter.MyProxy.class);
 
         bindTemplatedPresenter(FactoriesPresenter.class,
                 FactoriesPresenter.MyView.class,
@@ -491,6 +493,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 org.jboss.hal.client.runtime.server.ServerPresenter.MyView.class,
                 Mbui_ServerView_Provider.class,
                 org.jboss.hal.client.runtime.server.ServerPresenter.MyProxy.class);
+
+        bindPresenter(ServerBootErrorsPresenter.class,
+                ServerBootErrorsPresenter.MyView.class,
+                ServerBootErrorsView.class,
+                ServerBootErrorsPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ServerGroupPresenter.class,
                 ServerGroupPresenter.MyView.class,

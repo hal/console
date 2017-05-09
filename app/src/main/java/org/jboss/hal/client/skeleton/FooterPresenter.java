@@ -167,6 +167,10 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         }
     }
 
+    void onExtensions() {
+        placeManager.revealPlace(new PlaceRequest.Builder().nameToken(NameTokens.EXTENSIONS).build());
+    }
+
     void onSettings() {
         new SettingsDialog(environment, settings, resources).show();
     }

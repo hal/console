@@ -184,6 +184,11 @@ public interface Ids {
     String ENDPOINT_PING = build(ENDPOINT, "ping");
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
     String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
+    String EXTENSION = "extension";
+    String EXTENSION_ADD = build(EXTENSION, ADD_SUFFIX);
+    String EXTENSION_FORM = build(EXTENSION, FORM_SUFFIX);
+    String EXTENSION_TABLE = build(EXTENSION, TAB_SUFFIX);
+    String EXTENSION_STORAGE = build(STORAGE_PREFIX, EXTENSION);
 
     String FINDER = "hal-finder";
     String FOOTER_EXTENSIONS = "footer-extensions";

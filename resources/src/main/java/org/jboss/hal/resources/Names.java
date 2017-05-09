@@ -89,6 +89,8 @@ public interface Names {
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
     String EXPIRATION = "Expiration";
+    String EXTENSION = "Extension";
+    String EXTENSIONS = "Extensions";
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";

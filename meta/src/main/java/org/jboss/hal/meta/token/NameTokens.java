@@ -46,6 +46,7 @@ public interface NameTokens {
     String ELYTRON_OTHER = "elytron-other";
     String EJB3 = ModelDescriptionConstants.EJB3;
     String EXPERT_MODE = "expert-mode";
+    String EXTENSIONS = "extensions";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
     String HOST_BOOT_ERRORS = "host-boot-errors";

@@ -17,16 +17,24 @@ package org.jboss.hal.core.extension;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
+import elemental.html.HeadElement;
+import elemental.html.LinkElement;
+import elemental.html.ScriptElement;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Kind;
@@ -69,6 +77,29 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         } else {
             failSafeApply(extension);
         }
+    }
+
+    @JsIgnore
+    public boolean isRegistered(String id) {
+        return extensions.contains(id);
+    }
+
+    @JsIgnore
+    public void inject(String script, List<String> styles) {
+        Document document = Browser.getDocument();
+        HeadElement head = document.getHead();
+
+        if (styles != null && !styles.isEmpty()) {
+            for (String style : styles) {
+                LinkElement linkElement = document.createLinkElement();
+                linkElement.setRel("stylesheet"); //NON-NLS
+                linkElement.setHref(style);
+                head.appendChild(linkElement);
+            }
+        }
+        ScriptElement scriptElement = document.createScriptElement();
+        scriptElement.setSrc(script);
+        head.appendChild(scriptElement);
     }
 
     @Override
@@ -130,5 +161,14 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         } else if (extension.kind == Kind.FINDER_ITEM) {
             // TODO Handle finder item extensions
         }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "inject")
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void jsInject(final String script, JsArrayOf<String> styles) {
+        inject(script, JsHelper.asList(styles));
     }
 }

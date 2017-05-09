@@ -1,0 +1,27 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "An extension for the management console.",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The name of the console extension.",
+            "nillable" => false
+        },
+        "script" => {
+            "type" => STRING,
+            "description" => "The fully qualified URL to the script of the console extension.",
+            "nillable" => false
+        },
+        "styles" => {
+            "type" => LIST,
+            "description" => "List of fully qualified URLs to stylesheets used by the console extension.",
+            "nillable" => true,
+            "value-type" => STRING
+        },
+        "description" => {
+            "type" => STRING,
+            "description" => "A description for the console extension.",
+            "nillable" => true
+        }
+    }
+}

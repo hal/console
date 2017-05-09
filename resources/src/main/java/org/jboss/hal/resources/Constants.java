@@ -131,6 +131,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String exploded();
     String expression();
     String expressionResolver();
+    String extensionDescription();
 
     String failed();
     String filter();
@@ -331,6 +332,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String recovery();
     String references();
     String refresh();
+    String register();
     String releaseName();
     String releaseVersion();
     String reload();
