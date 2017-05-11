@@ -51,7 +51,7 @@ public class ResourceDescriptionAddressProcessor implements Function<ResourceAdd
     public ResourceAddress apply(final ResourceAddress address) {
         ResourceAddress modified = new ResourceAddress();
 
-        if (address != null) {
+        if (address != null && !address.isEmpty()) {
             List<String[]> segments = address.asPropertyList().stream()
                     .map(property -> new String[]{property.getName(), property.getValue().asString()})
                     .collect(toList());

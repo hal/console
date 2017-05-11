@@ -377,6 +377,7 @@ public interface ModelDescriptionConstants {
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
+    String SCRIPT = "script";
     //String SECURITY = "security-elytron";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
@@ -420,6 +421,7 @@ public interface ModelDescriptionConstants {
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
+    String STYLES = "styles";
     String STORAGE = "storage";
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";

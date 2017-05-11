@@ -49,7 +49,6 @@ public interface NameTokens {
     String EXTENSIONS = "extensions";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
-    String HOST_BOOT_ERRORS = "host-boot-errors";
     String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
@@ -66,6 +65,7 @@ public interface NameTokens {
     String LOGGING_PROFILE = "logging-profile";
     String MACRO_EDITOR = "macro-editor";
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
+    String MANAGEMENT = "management";
     String MESSAGING = "messaging";
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";

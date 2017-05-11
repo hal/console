@@ -227,6 +227,12 @@ public interface Previews extends ClientBundleWithLookup {
     ExternalTextResource deploymentsStandalone();
 
 
+    // ------------------------------------------------------ management
+
+    @Source("previews/management/overview.html")
+    ExternalTextResource managementOverview();
+
+
     // ------------------------------------------------------ runtime
 
     @Source("previews/runtime/datasources.html")

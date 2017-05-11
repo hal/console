@@ -120,6 +120,8 @@ import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
 import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
+import org.jboss.hal.client.management.ManagementPresenter;
+import org.jboss.hal.client.management.ManagementView;
 import org.jboss.hal.client.patching.PatchingPresenter;
 import org.jboss.hal.client.patching.PatchingView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
@@ -147,7 +149,6 @@ import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
 import org.jboss.hal.client.tools.ExtensionPresenter;
-import org.jboss.hal.client.tools.ExtensionStorage;
 import org.jboss.hal.client.tools.ExtensionView;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
@@ -181,7 +182,6 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
-        bind(ExtensionStorage.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 
@@ -398,6 +398,11 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 MacroEditorPresenter.MyView.class,
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
+
+        bindPresenter(ManagementPresenter.class,
+                ManagementPresenter.MyView.class,
+                ManagementView.class,
+                ManagementPresenter.MyProxy.class);
 
         bindTemplatedPresenter(MapperDecoderPresenter.class,
                 MapperDecoderPresenter.MyView.class,

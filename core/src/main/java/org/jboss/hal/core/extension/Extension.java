@@ -15,37 +15,32 @@
  */
 package org.jboss.hal.core.extension;
 
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.JsCallback;
+import java.util.Collections;
+import java.util.List;
+
+import org.jboss.hal.dmr.ModelNode;
+
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STYLES;
 
 /**
  * @author Harald Pehl
  */
-@JsType(namespace = "hal.core")
-public class Extension {
+public class Extension extends ModelNode {
 
-    public enum Kind {HEADER, FINDER_ITEM, FOOTER}
-
-    @JsMethod
-    public static Extension header(final String id, final String title, final JsCallback entryPoint) {
-        return new Extension(id, title, Kind.HEADER, entryPoint);
+    public Extension(ModelNode node) {
+        set(node);
     }
 
-    @JsMethod
-    public static Extension footer(final String id, final String title, final JsCallback entryPoint) {
-        return new Extension(id, title, Kind.FOOTER, entryPoint);
+    public String getScript() {
+        return get(SCRIPT).asString();
     }
 
-    final String id;
-    final String title;
-    final Kind kind;
-    final JsCallback entryPoint;
-
-    private Extension(final String id, final String title, final Kind kind, final JsCallback entryPoint) {
-        this.id = id;
-        this.kind = kind;
-        this.title = title;
-        this.entryPoint = entryPoint;
+    public List<String> getStyles() {
+        if (hasDefined(STYLES)) {
+            return get(STYLES).asList().stream().map(ModelNode::asString).collect(toList());
+        }
+        return Collections.emptyList();
     }
 }

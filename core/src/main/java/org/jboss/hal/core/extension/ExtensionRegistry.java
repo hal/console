@@ -17,7 +17,6 @@ package org.jboss.hal.core.extension;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import javax.inject.Inject;
@@ -30,6 +29,7 @@ import elemental.html.HeadElement;
 import elemental.html.LinkElement;
 import elemental.html.ScriptElement;
 import elemental.js.util.JsArrayOf;
+import elemental.xml.XMLHttpRequest;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -37,7 +37,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
-import org.jboss.hal.core.extension.Extension.Kind;
+import org.jboss.hal.core.extension.ExtensionPoint.Kind;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -53,10 +53,17 @@ import static org.jboss.hal.resources.CSS.hidden;
 @JsType
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
+    @FunctionalInterface
+    public interface PingResult {
+
+        void result(int status);
+    }
+
+
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
-    private final Queue<Extension> queue;
-    private final Set<String> extensions;
+    private final Queue<ExtensionPoint> queue;
+    private final Set<String> extensionPoints;
     private boolean ready;
     private Element headerDropdown;
     private Element headerExtensions;
@@ -67,39 +74,37 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @JsIgnore
     public ExtensionRegistry(final EventBus eventBus) {
         this.queue = new LinkedList<>();
-        this.extensions = new HashSet<>();
+        this.extensionPoints = new HashSet<>();
         eventBus.addHandler(ApplicationReadyEvent.getType(), this);
     }
 
-    public void register(final Extension extension) {
+    public void register(final ExtensionPoint extensionPoint) {
         if (!ready) {
-            queue.offer(extension);
+            queue.offer(extensionPoint);
         } else {
-            failSafeApply(extension);
+            failSafeApply(extensionPoint);
         }
     }
 
     @JsIgnore
-    public boolean isRegistered(String id) {
-        return extensions.contains(id);
-    }
-
-    @JsIgnore
-    public void inject(String script, List<String> styles) {
-        Document document = Browser.getDocument();
-        HeadElement head = document.getHead();
-
-        if (styles != null && !styles.isEmpty()) {
-            for (String style : styles) {
-                LinkElement linkElement = document.createLinkElement();
-                linkElement.setRel("stylesheet"); //NON-NLS
-                linkElement.setHref(style);
-                head.appendChild(linkElement);
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void ping(final Extension extension, final PingResult pingResult) {
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                pingResult.result(xhr.getStatus());
             }
-        }
-        ScriptElement scriptElement = document.createScriptElement();
-        scriptElement.setSrc(script);
-        head.appendChild(scriptElement);
+        });
+        xhr.addEventListener("error",  event -> pingResult.result(500), false);
+        xhr.open("GET", extension.getScript(), true);
+        xhr.setWithCredentials(true);
+        xhr.send();
+    }
+
+    @JsIgnore
+    public void inject(final Extension extension) {
+        jsInject(extension.getScript(), JsHelper.asJsArray(extension.getStyles()));
     }
 
     @Override
@@ -117,30 +122,30 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         }
     }
 
-    private void failSafeApply(Extension extension) {
+    private void failSafeApply(ExtensionPoint extensionPoint) {
         if (ready && headerDropdown != null && headerExtensions != null &&
                 footerDropdown != null && footerExtensions != null) {
-            if (extensions.contains(extension.id)) {
-                logger.warn("Extension {} already registered", extension.id);
+            if (extensionPoints.contains(extensionPoint.id)) {
+                logger.warn("Extension {} already registered", extensionPoint.id);
             } else {
-                apply(extension);
+                apply(extensionPoint);
             }
         } else {
-            logger.error("Cannot register extension {}: Console not ready", extension.id);
+            logger.error("Cannot register extension {}: Console not ready", extensionPoint.id);
         }
     }
 
-    private void apply(Extension extension) {
-        extensions.add(extension.id);
-        if (extension.kind == Kind.HEADER || extension.kind == Kind.FOOTER) {
+    private void apply(ExtensionPoint extensionPoint) {
+        extensionPoints.add(extensionPoint.id);
+        if (extensionPoint.kind == Kind.HEADER || extensionPoint.kind == Kind.FOOTER) {
             // @formatter:off
             Element li = new Elements.Builder()
                 .li()
                     .a()
-                        .id(extension.id)
+                        .id(extensionPoint.id)
                         .css(clickable)
-                        .textContent(extension.title)
-                        .on(click, event -> extension.entryPoint.execute())
+                        .textContent(extensionPoint.title)
+                        .on(click, event -> extensionPoint.entryPoint.execute())
                     .end()
                 .end()
             .build();
@@ -148,7 +153,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
             Element ul;
             Element dropdown;
-            if (extension.kind == Kind.HEADER) {
+            if (extensionPoint.kind == Kind.HEADER) {
                 dropdown = headerDropdown;
                 ul = headerExtensions;
             } else {
@@ -158,7 +163,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
             ul.appendChild(li);
             dropdown.getClassList().remove(hidden);
 
-        } else if (extension.kind == Kind.FINDER_ITEM) {
+        } else if (extensionPoint.kind == Kind.FINDER_ITEM) {
             // TODO Handle finder item extensions
         }
     }
@@ -168,7 +173,21 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @JsMethod(name = "inject")
     @SuppressWarnings("HardCodedStringLiteral")
-    public void jsInject(final String script, JsArrayOf<String> styles) {
-        inject(script, JsHelper.asList(styles));
+    public void jsInject(final String script, final JsArrayOf<String> styles) {
+        Document document = Browser.getDocument();
+        HeadElement head = document.getHead();
+
+        if (styles != null && !styles.isEmpty()) {
+            for (int i = 0; i < styles.length(); i++) {
+                LinkElement linkElement = document.createLinkElement();
+                linkElement.setRel("stylesheet"); //NON-NLS
+                linkElement.setHref(styles.get(i));
+                head.appendChild(linkElement);
+            }
+        }
+        ScriptElement scriptElement = document.createScriptElement();
+        scriptElement.setAsync(true);
+        scriptElement.setSrc(script);
+        head.appendChild(scriptElement);
     }
 }

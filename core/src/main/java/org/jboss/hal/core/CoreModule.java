@@ -22,6 +22,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.extension.ExtensionRegistry;
+import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
 import org.jboss.hal.core.finder.Finder;
@@ -52,6 +53,7 @@ public class CoreModule extends AbstractGinModule {
         bind(CrudOperations.class).in(Singleton.class);
         bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler
+        bind(ExtensionStorage.class).in(Singleton.class);
         bind(Finder.class).in(Singleton.class);
         bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);

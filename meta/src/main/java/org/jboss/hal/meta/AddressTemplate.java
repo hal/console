@@ -261,7 +261,7 @@ public final class AddressTemplate implements Iterable<String> {
 
     @Override
     public String toString() {
-        return template;
+        return template.length() == 0 ? "/" : template;
     }
 
     /**
@@ -417,6 +417,9 @@ public final class AddressTemplate implements Iterable<String> {
      * @return a full qualified resource address which might be empty, but which does not contain any tokens
      */
     public ResourceAddress resolve(StatementContext context, String... wildcards) {
+        if (isEmpty()) {
+            return ResourceAddress.root();
+        }
 
         int wildcardCount = 0;
         ModelNode model = new ModelNode();
@@ -611,8 +614,7 @@ public final class AddressTemplate implements Iterable<String> {
     public AddressTemplate jsAppend(Object address) {
         if (address instanceof String) {
             return append(((String) address));
-        }
-        else if (address instanceof AddressTemplate) {
+        } else if (address instanceof AddressTemplate) {
             return append(((AddressTemplate) address));
         }
         return this;

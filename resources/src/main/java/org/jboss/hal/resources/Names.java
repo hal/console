@@ -57,6 +57,7 @@ public interface Names {
     String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
+    String CONFIGURATION_CHANGES = "Configuration Changes";
     String CONNECTION = "Connection";
     String CONNECTION_FACTORY = "Connection Factory";
     String CONNECTION_DEFINITION = "Connection Definition";
@@ -155,6 +156,7 @@ public interface Names {
 
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT = "Management";
+    String MANAGEMENT_INTERFACE = "Management Interface";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPERS_DECODERS = "Mappers / Decoders";

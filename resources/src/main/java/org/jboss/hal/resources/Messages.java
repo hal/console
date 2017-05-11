@@ -42,6 +42,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     //@formatter:off
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
+    SafeHtml addExtensionError();
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
@@ -120,6 +121,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativesError(String alternatives);
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
+    SafeHtml extensionAvailable();
+    SafeHtml extensionNotAvailable();
 
     SafeHtml flushConnectionSuccess();
 
@@ -227,6 +230,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeCurrentUserError();
+    SafeHtml removeExtensionQuestion();
+    SafeHtml removeExtensionSuccess();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
     SafeHtml removeResourceSuccess(String type, String name);

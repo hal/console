@@ -1,4 +1,4 @@
-var myExtension = hal.core.Extension.header("my-extension", "My Extension",
+var myExtension = hal.core.ExtensionPoint.header("my-extension", "My Extension",
     function () {
         alert("Not yet implemented!");
     });

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.core.extension;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,12 +23,12 @@ import java.util.Map;
 import elemental.client.Browser;
 import elemental.html.Storage;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
 
 /**
  * @author Harald Pehl
@@ -38,21 +38,21 @@ public class ExtensionStorage {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);
 
     private final Storage storage;
-    private final Map<String, NamedNode> extensions;
+    private final Map<String, Extension> extensions;
 
     public ExtensionStorage() {
         this.storage = Browser.getWindow().getLocalStorage();
         this.extensions = load();
     }
 
-    private Map<String, NamedNode> load() {
-        Map<String, NamedNode> extensions = new LinkedHashMap<>();
+    private Map<String, Extension> load() {
+        Map<String, Extension> extensions = new LinkedHashMap<>();
         if (storage != null) {
             String payload = storage.getItem(Ids.EXTENSION_STORAGE);
             if (payload != null) {
                 try {
-                    List<Property> properties = ModelNode.fromBase64(payload).asPropertyList();
-                    properties.forEach(property -> extensions.put(property.getName(), new NamedNode(property)));
+                    List<ModelNode> nodes = ModelNode.fromBase64(payload).asList();
+                    nodes.forEach(node -> extensions.put(node.get(SCRIPT).asString(), new Extension(node)));
                 } catch (IllegalArgumentException e) {
                     logger.error("Unable to read extensions from local storage using key '{}': {}",
                             Ids.EXTENSION_STORAGE, e.getMessage());
@@ -70,27 +70,27 @@ public class ExtensionStorage {
 
     private String toBase64() {
         ModelNode nodes = new ModelNode();
-        for (NamedNode extension : extensions.values()) {
-            nodes.add(extension.getName(), extension.asModelNode());
+        for (ModelNode extension : extensions.values()) {
+            nodes.add(extension);
         }
         return nodes.toBase64String();
     }
 
-    public void save(NamedNode extension) {
-        extensions.put(extension.getName(), extension);
+    public void save(Extension extension) {
+        extensions.put(extension.getScript(), extension);
         save();
     }
 
-    public NamedNode get(String name) {
+    public Extension get(String name) {
         return extensions.get(name);
     }
 
-    public void remove(NamedNode extension) {
-        extensions.remove(extension.getName());
+    public void remove(Extension extension) {
+        extensions.remove(extension.getScript());
         save();
     }
 
-    public List<NamedNode> list() {
+    public List<Extension> list() {
         return new ArrayList<>(extensions.values());
     }
 }
