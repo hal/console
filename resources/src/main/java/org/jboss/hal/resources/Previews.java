@@ -232,6 +232,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/management/overview.html")
     ExternalTextResource managementOverview();
 
+    @Source("previews/management/extensions.html")
+    ExternalTextResource managementExtensions();
+
 
     // ------------------------------------------------------ runtime
 

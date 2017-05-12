@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.client.management;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.core.extension.ExtensionRegistry;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
-public interface ExtensionResources extends ClientBundle {
+class ExtensionPreview extends PreviewContent<NamedNode> {
 
-    @Source("extension.base64")
-    TextResource extension();
+    ExtensionPreview(final NamedNode extension, final ExtensionRegistry extensionRegistry,
+            final Resources resources) {
+        super(Names.EXTENSION);
+    }
 }

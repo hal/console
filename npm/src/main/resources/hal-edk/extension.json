@@ -1,0 +1,11 @@
+{
+  "name": "sample-extension",
+  "version": "0.0.1",
+  "description": "Sample Extension",
+  "script": "extension.js",
+  "stylesheets": [],
+  "extension-point": "header",
+  "author": "<name>",
+  "license": "Apache-2.0",
+  "homepage": "<homepage>"
+}

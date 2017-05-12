@@ -47,6 +47,7 @@ public interface Names {
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
+    String BUNDLED_EXTENSION = "Bundled Extension";
 
     String CACHE_CONTAINER = "Cache Container";
     String CHANNEL = "Channel";
@@ -234,11 +235,10 @@ public interface Names {
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
-    String STORES_TRANSFORMERS = "Stores / Transformers";
-    String STRING_JDBC = "String JDBC";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
     String SUBDEPLOYMENTS = "Subdeployments";

@@ -148,8 +148,6 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
-import org.jboss.hal.client.tools.ExtensionPresenter;
-import org.jboss.hal.client.tools.ExtensionView;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
@@ -288,11 +286,6 @@ public class ConsoleModule extends AbstractTemplatedPresenterModule {
                 ExpertModePresenter.MyView.class,
                 ExpertModeView.class,
                 ExpertModePresenter.MyProxy.class);
-
-        bindPresenter(ExtensionPresenter.class,
-                ExtensionPresenter.MyView.class,
-                ExtensionView.class,
-                ExtensionPresenter.MyProxy.class);
 
         bindTemplatedPresenter(FactoriesPresenter.class,
                 FactoriesPresenter.MyView.class,

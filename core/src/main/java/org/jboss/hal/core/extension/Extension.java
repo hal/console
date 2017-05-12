@@ -15,32 +15,50 @@
  */
 package org.jboss.hal.core.extension;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.jboss.hal.dmr.ModelNode;
-
-import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STYLES;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.JsCallback;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Harald Pehl
  */
-public class Extension extends ModelNode {
+@JsType(namespace = "hal.core")
+public class Extension {
 
-    public Extension(ModelNode node) {
-        set(node);
-    }
+    public enum Point {
+        HEADER("Header"), FINDER_ITEM("Finder Item"), FOOTER("Footer"), CUSTOM("Custom"), UNKNOWN("Unknwon");
 
-    public String getScript() {
-        return get(SCRIPT).asString();
-    }
+        private final String title;
 
-    public List<String> getStyles() {
-        if (hasDefined(STYLES)) {
-            return get(STYLES).asList().stream().map(ModelNode::asString).collect(toList());
+        Point(@NonNls final String title) {
+            this.title = title;
         }
-        return Collections.emptyList();
+
+        public String title() {
+            return title;
+        }
+    }
+
+    @JsMethod
+    public static Extension header(final String name, final String title, final JsCallback entryPoint) {
+        return new Extension(name, title, Point.HEADER, entryPoint);
+    }
+
+    @JsMethod
+    public static Extension footer(final String name, final String title, final JsCallback entryPoint) {
+        return new Extension(name, title, Point.FOOTER, entryPoint);
+    }
+
+    final String name;
+    final String title;
+    final Point point;
+    final JsCallback entryPoint;
+
+    private Extension(final String name, final String title, final Point point, final JsCallback entryPoint) {
+        this.name = name;
+        this.point = point;
+        this.title = title;
+        this.entryPoint = entryPoint;
     }
 }

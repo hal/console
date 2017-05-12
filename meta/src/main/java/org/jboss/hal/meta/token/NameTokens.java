@@ -33,6 +33,7 @@ public interface NameTokens {
     String BROWSE_CONTENT = "browse-content";
     String CACHE_CONTAINER = ModelDescriptionConstants.CACHE_CONTAINER;
     String CONFIGURATION = "configuration";
+    String CONFIGURATION_CHANGES = "configuration-changes";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
@@ -46,7 +47,6 @@ public interface NameTokens {
     String ELYTRON_OTHER = "elytron-other";
     String EJB3 = ModelDescriptionConstants.EJB3;
     String EXPERT_MODE = "expert-mode";
-    String EXTENSIONS = "extensions";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
     String HOST_CONFIGURATION = "host-configuration";
@@ -66,6 +66,7 @@ public interface NameTokens {
     String MACRO_EDITOR = "macro-editor";
     String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
     String MANAGEMENT = "management";
+    String MANAGEMENT_INTERFACE = "management-interface";
     String MESSAGING = "messaging";
     String MESSAGING_SERVER = "messaging-server";
     String MESSAGING_SERVER_CONNECTION = "messaging-server-connection";

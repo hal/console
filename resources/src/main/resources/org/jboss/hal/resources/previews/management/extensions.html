@@ -1,0 +1,26 @@
+<p>Extensions are a way to add new features to the management console. They are written in JavaScript and can use the
+    <a href="https://github.com/hal/hal.next/wiki/JavaScript-API">JavaScript API</a> to interact with the console and the management interface. If you want to develop an extension, see
+    <a href="https://github.com/hal/hal.next/wiki/Extensions">https://github.com/hal/hal.next/wiki/Extensions</a> for more information.
+</p>
+
+<div class="alert alert-warning">
+    <span class="pficon pficon-warning-triangle-o"></span>Extensions are written in <strong>JavaScript</strong> and are
+    <strong>injected</strong> into the browser. Please make sure you install only extensions that you trust!
+</div>
+
+<h2>Extension Points</h2>
+<p>The console provides three different extension points which can be used by extensions:</p>
+<ol>
+    <li>Header: Adds a menu item to the "Extensions" dropdown in the header</li>
+    <li>Finder Item: Adds a new item to a specific finder column</li>
+    <li>Footer: Adds a menu item to the "Extensions" dropdown in the footer</li>
+</ol>
+
+<h2>Deployment</h2>
+<p>Extensions consists of one JavaScript file and a list of optional stylesheets. They come in two different flavours:</p>
+
+<h3>Bundled Extensions</h3>
+<p>Bundled extensions are part of the WildFly installation and installed as WildFly modules. The module contains the extension's script and stylesheets. Bundled extensions are read-only in the console.</p>
+
+<h3>Standalone Extensions</h3>
+<p>Standalone extensions are hosted by a public available endpoint which serves the extension's script and stylesheets. You can add and remove standalone extensions using the management console. They're stored in the browser's local storage. As such they're scoped to the browser and URL which runs the management console.</p>

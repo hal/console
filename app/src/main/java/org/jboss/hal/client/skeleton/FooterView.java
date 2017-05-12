@@ -149,11 +149,6 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
         presenter.onMacroEditor();
     }
 
-    @EventHandler(element = "extensions", on = click)
-    void onExtensions() {
-        presenter.onExtensions();
-    }
-
     @EventHandler(element = "settings", on = click)
     void onSettings() {
         presenter.onSettings();

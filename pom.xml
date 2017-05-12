@@ -86,7 +86,6 @@
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>PRETTY</gwt.style>
         <hal.version>${project.version}</hal.version>
-        <theme.name>hal</theme.name>
 
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -100,6 +99,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <theme.name>hal</theme.name>
     </properties>
 
     <modules>
@@ -185,13 +186,13 @@
         <profile>
             <id>prod</id>
             <properties>
-                <gwt.draftCompile>true</gwt.draftCompile>
+                <gwt.draftCompile>false</gwt.draftCompile>
+                <gwt.namespace>PACKAGE</gwt.namespace>
                 <!--
                     Do not optimize: It will wipe out code which actually must not be erased (like the
                     org.jboss.hal.ballroom.dragndrop.DragEvent.dataTransfer parameter of the onDrop event handler)
                     TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
                 -->
-                <gwt.namespace>PACKAGE</gwt.namespace>
                 <gwt.optimize>0</gwt.optimize>
                 <gwt.style>OBFUSCATED</gwt.style>
                 <grunt-task>prod</grunt-task>

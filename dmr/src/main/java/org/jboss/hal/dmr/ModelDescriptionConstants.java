@@ -65,6 +65,7 @@ public interface ModelDescriptionConstants {
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTES_ONLY = "attributes-only";
+    String AUTHOR = "author";
     String AUTO_START = "auto-start";
 
     String BACKUP_FOR = "backup-for";
@@ -83,6 +84,7 @@ public interface ModelDescriptionConstants {
     String BROWSE_CONTENT = "browse-content";
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
+    String BUNDLED = "bundled";
 
     String CACHE_CONTAINER = "cache-container";
     String CACHE_TYPE = "cache-type";
@@ -160,6 +162,7 @@ public interface ModelDescriptionConstants {
     String EXPLODED = "exploded";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
+    String EXTENSION_POINT = "extension-point";
 
     String FAILED = "failed";
     String FAILED_OPERATION = "failed-operation";
@@ -186,6 +189,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
+    String HOMEPAGE = "homepage";
     String HOST = "host";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -233,6 +237,7 @@ public interface ModelDescriptionConstants {
 
     String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
+    String LICENSE = "license";
     String LINES = "lines";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
@@ -421,7 +426,7 @@ public interface ModelDescriptionConstants {
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
-    String STYLES = "styles";
+    String STYLESHEETS = "stylesheets";
     String STORAGE = "storage";
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
@@ -463,6 +468,7 @@ public interface ModelDescriptionConstants {
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
+    String VERSION = "version";
 
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";
