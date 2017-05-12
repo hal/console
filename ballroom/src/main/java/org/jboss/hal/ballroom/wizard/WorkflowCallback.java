@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.management;
-
-import elemental.dom.Element;
-import org.jboss.hal.ballroom.wizard.WizardStep;
+package org.jboss.hal.ballroom.wizard;
 
 /**
  * @author Harald Pehl
  */
-class UrlStep extends WizardStep<AddExtensionWizard.Context, AddExtensionWizard.State> {
+@FunctionalInterface
+public interface WorkflowCallback {
 
-    UrlStep() {
-        super("URL");
-    }
-
-    @Override
-    public Element asElement() {
-        return null;
-    }
+    void proceed();
 }

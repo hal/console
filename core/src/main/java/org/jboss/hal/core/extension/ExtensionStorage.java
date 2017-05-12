@@ -38,21 +38,22 @@ public class ExtensionStorage {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);
 
     private final Storage storage;
-    private final Map<String, NamedNode> extensions;
+    private final Map<String, InstalledExtension> extensions;
 
     public ExtensionStorage() {
         this.storage = Browser.getWindow().getLocalStorage();
         this.extensions = load();
     }
 
-    private Map<String, NamedNode> load() {
-        Map<String, NamedNode> extensions = new LinkedHashMap<>();
+    private Map<String, InstalledExtension> load() {
+        Map<String, InstalledExtension> extensions = new LinkedHashMap<>();
         if (storage != null) {
             String payload = storage.getItem(Ids.EXTENSION_STORAGE);
             if (payload != null) {
                 try {
                     List<Property> properties = ModelNode.fromBase64(payload).asPropertyList();
-                    properties.forEach(property -> extensions.put(property.getName(), new NamedNode(property)));
+                    properties.forEach(property -> extensions.put(property.getName(),
+                            InstalledExtension.fromModelNode(property.getValue())));
                 } catch (IllegalArgumentException e) {
                     logger.error("Unable to read extensions from local storage using key '{}': {}",
                             Ids.EXTENSION_STORAGE, e.getMessage());
@@ -79,20 +80,20 @@ public class ExtensionStorage {
 
     // ------------------------------------------------------ crud
 
-    public void add(NamedNode extension) {
+    public void add(InstalledExtension extension) {
         extensions.put(extension.getName(), extension);
         save();
     }
 
-    public List<NamedNode> list() {
+    public List<InstalledExtension> list() {
         return new ArrayList<>(extensions.values());
     }
 
-    public NamedNode get(String name) {
+    public InstalledExtension get(String name) {
         return extensions.get(name);
     }
 
-    public void remove(NamedNode extension) {
+    public void remove(InstalledExtension extension) {
         extensions.remove(extension.getName());
         save();
     }

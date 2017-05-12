@@ -23,6 +23,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Document;
@@ -61,7 +63,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @FunctionalInterface
     public interface PingResult {
 
-        void result(int status, JsonObject extensionJson);
+        void result(int status, JsonObject json);
     }
 
 
@@ -94,6 +96,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @JsIgnore
     @SuppressWarnings("HardCodedStringLiteral")
     public void ping(final String url, final PingResult pingResult) {
+        SafeUri safeUrl = UriUtils.fromString(url);
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.setOnreadystatechange(event -> {
             int readyState = xhr.getReadyState();
@@ -106,15 +109,15 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
                     try {
                         extensionJson = Json.parse(responseText);
                     } catch (JsonException e) {
-                        logger.error("Unable to parse {} as JSON", url);
+                        logger.error("Unable to parse {} as JSON", safeUrl.asString());
                         pingResult.result(500, null);
                     }
                     pingResult.result(xhr.getStatus(), extensionJson);
                 }
             }
         });
-        xhr.addEventListener("error",  event -> pingResult.result(500, null), false);
-        xhr.open("GET", url, true);
+        xhr.addEventListener("error",  event -> pingResult.result(503, null), false);
+        xhr.open("GET", safeUrl.asString(), true);
         xhr.setWithCredentials(true);
         xhr.send();
     }

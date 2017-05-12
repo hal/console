@@ -21,13 +21,7 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
-
-import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STYLESHEETS;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import org.jboss.hal.core.extension.InstalledExtension;
 
 /**
  * @author Harald Pehl
@@ -46,13 +40,8 @@ public class ReadExtensions implements BootstrapFunction {
     @Override
     public void execute(final Control<FunctionContext> control) {
         // TODO Load server side extensions from /core-service=management/console-extension=*
-        for (NamedNode extension : extensionStorage.list()) {
-            extensionRegistry.inject(
-                    extension.get(SCRIPT).asString(),
-                    failSafeList(extension, STYLESHEETS)
-                            .stream()
-                            .map(ModelNode::asString)
-                            .collect(toList()));
+        for (InstalledExtension extension : extensionStorage.list()) {
+            extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());
         }
         control.proceed();
     }

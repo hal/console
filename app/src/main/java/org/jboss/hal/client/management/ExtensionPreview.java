@@ -16,17 +16,17 @@
 package org.jboss.hal.client.management;
 
 import org.jboss.hal.core.extension.ExtensionRegistry;
+import org.jboss.hal.core.extension.InstalledExtension;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
-class ExtensionPreview extends PreviewContent<NamedNode> {
+class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
-    ExtensionPreview(final NamedNode extension, final ExtensionRegistry extensionRegistry,
+    ExtensionPreview(final InstalledExtension extension, final ExtensionRegistry extensionRegistry,
             final Resources resources) {
         super(Names.EXTENSION);
     }

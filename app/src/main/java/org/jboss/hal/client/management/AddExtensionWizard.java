@@ -16,25 +16,42 @@
 package org.jboss.hal.client.management;
 
 import elemental.dom.Element;
+import elemental.html.InputElement;
 import elemental.json.JsonObject;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.InputType;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.wizard.AsyncStep;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.ballroom.wizard.WizardStep;
+import org.jboss.hal.ballroom.wizard.WorkflowCallback;
+import org.jboss.hal.core.extension.ExtensionRegistry;
+import org.jboss.hal.core.extension.ExtensionStorage;
+import org.jboss.hal.core.extension.InstalledExtension;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.hal.client.management.AddExtensionWizard.State.REVIEW;
 import static org.jboss.hal.client.management.AddExtensionWizard.State.URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
 class AddExtensionWizard {
 
+    // ------------------------------------------------------ context and state
+
+
     static class Context {
 
-        String url;
-        int status;
-        JsonObject extensionJson;
+        String url = "";
+        InstalledExtension extension;
     }
 
 
@@ -43,51 +60,146 @@ class AddExtensionWizard {
     }
 
 
-    static class UrlStep extends WizardStep<Context, State> {
+    // ------------------------------------------------------ steps
 
-        UrlStep() {
-            super("URL");
+
+    static class UrlStep extends WizardStep<Context, State> implements AsyncStep<Context> {
+
+        private static final String URL_INPUT = "urlInput";
+
+        private final ExtensionRegistry extensionRegistry;
+        private final InputElement urlInput;
+        private final Element root;
+
+        UrlStep(ExtensionRegistry extensionRegistry) {
+            super(Names.URL);
+            this.extensionRegistry = extensionRegistry;
+
+            // @formatter:off
+            String id = Ids.uniqueId();
+            Elements.Builder builder = new Elements.Builder()
+                .div().css(form, formHorizontal, editing)
+                    .div().css(formGroup)
+                        .label().css(controlLabel, halFormLabel).attr(UIConstants.FOR, id)
+                            .textContent(Names.URL)
+                        .end()
+                        .div().css(halFormInput)
+                            .input(InputType.url).id(id).rememberAs(URL_INPUT)
+                        .end()
+                    .end()
+                .end();
+            // @formatter:on
+
+            urlInput = builder.referenceFor(URL_INPUT);
+            root = builder.build();
         }
 
         @Override
         public Element asElement() {
-            return null;
+            return root;
+        }
+
+        @Override
+        public void reset(final Context context) {
+            urlInput.setValue("");
+        }
+
+        @Override
+        protected void onShow(final Context context) {
+            urlInput.setValue(context.url);
+        }
+
+        @Override
+        public void onNext(final Context context, final WorkflowCallback callback) {
+            context.url = urlInput.getValue();
+            wizard().showProgress("Processing extension metadata", null);
+
+            extensionRegistry.ping(context.url, (status, json) -> {
+                if (status >= 200 && status < 400) {
+                    if (isValid(json)) {
+                        context.extension = InstalledExtension.fromJson(context.url, json);
+                        callback.proceed();
+                    } else {
+                        wizard().showError("Invalid metadata", null);
+                    }
+
+                } else if (status == 415) {
+                    wizard().showError("No JSON", null);
+
+                } else if (status == 500) {
+                    wizard().showError("Error parsing JSON", null);
+
+                } else if (status == 503) {
+                    wizard().showError("Communication Error", null);
+
+                } else {
+                    wizard().showError("Unknown Error", null);
+                }
+            });
+        }
+
+        private boolean isValid(JsonObject json) {
+            return json.hasKey(NAME) && json.hasKey(SCRIPT);
         }
     }
 
 
     static class ReviewStep extends WizardStep<Context, State> {
 
+        private final Form<InstalledExtension> form;
+
         ReviewStep(final Resources resources) {
             super(resources.constants().review());
+            this.form = new ModelNodeForm.Builder<InstalledExtension>(Ids.EXTENSION_REVIEW_FORM, Metadata.empty())
+                    .include(NAME, VERSION, DESCRIPTION, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, LICENSE,
+                            HOMEPAGE)
+                    .unsorted()
+                    .readOnly()
+                    .build();
         }
 
         @Override
         public Element asElement() {
-            return null;
+            return form.asElement();
+        }
+
+        @Override
+        public void reset(final Context context) {
+            form.clear();
+        }
+
+        @Override
+        protected void onShow(final Context context) {
+            form.view(context.extension);
         }
     }
 
 
+    // ------------------------------------------------------ wizard delegate
+
     private final Wizard<Context, State> wizard;
 
-    public AddExtensionWizard(final Resources resources) {
+    AddExtensionWizard(final ExtensionColumn column,
+            final ExtensionRegistry extensionRegistry,
+            final ExtensionStorage extensionStorage,
+            final Resources resources) {
+
         String title = resources.messages().addResourceTitle(Names.EXTENSION);
         wizard = new Wizard.Builder<Context, State>(title, new Context())
 
-                .addStep(URL, new UrlStep())
+                .addStep(URL, new UrlStep(extensionRegistry))
                 .addStep(REVIEW, new ReviewStep(resources))
 
                 .onBack((context, currentState) -> currentState == REVIEW ? URL : null)
                 .onNext((context, currentState) -> currentState == URL ? REVIEW : null)
 
-                .stayOpenAfterFinish()
-                .onFinish(new Wizard.FinishCallback<Context, State>() {
-                    @Override
-                    public void onFinish(final Wizard<Context, State> wizard, final Context context) {
-
-                    }
+                .onFinish((wzd, context) -> {
+                    extensionStorage.add(context.extension);
+                    extensionRegistry.inject(context.extension.getFqScript(), context.extension.getFqStylesheets());
+                    column.refresh(context.extension.getName());
                 })
                 .build();
     }
+
+    public void show() {wizard.show();}
 }

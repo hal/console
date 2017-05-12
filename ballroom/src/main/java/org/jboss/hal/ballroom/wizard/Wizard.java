@@ -478,19 +478,40 @@ public class Wizard<C, S extends Enum<S>> {
     // ------------------------------------------------------ workflow
 
     private void onCancel() {
-        if (currentStep().onCancel(context)) {
-            cancel();
+        if (currentStep() instanceof AsyncStep) {
+            //noinspection unchecked
+            ((AsyncStep<C>) currentStep()).onCancel(context, this::cancel);
+        } else {
+            if (currentStep().onCancel(context)) {
+                cancel();
+            }
         }
     }
 
+    private void cancel() {
+        if (cancelCallback != null) {
+            cancelCallback.onCancel(context);
+        }
+        close();
+    }
+
     private void onBack() {
-        if (currentStep().onBack(context)) {
-            final S previousState = back.back(context, state);
-            if (previousState != null) {
-                pushState(previousState);
+        if (currentStep() instanceof AsyncStep) {
+            //noinspection unchecked
+            ((AsyncStep<C>) currentStep()).onBack(context, this::back);
+        } else {
+            if (currentStep().onBack(context)) {
+                back();
             }
         }
         finishCanClose = false;
+    }
+
+    private void back() {
+        final S previousState = back.back(context, state);
+        if (previousState != null) {
+            pushState(previousState);
+        }
     }
 
     private void onNext() {
@@ -498,14 +519,23 @@ public class Wizard<C, S extends Enum<S>> {
             // we're on the last step and have either seen a success or error message
             close();
         } else {
-            if (currentStep().onNext(context)) {
-                final S nextState = next.next(context, state);
-                if (nextState != null) {
-                    pushState(nextState);
-                } else {
-                    finish();
+            if (currentStep() instanceof AsyncStep) {
+                //noinspection unchecked
+                ((AsyncStep<C>) currentStep()).onNext(context, this::next);
+            } else {
+                if (currentStep().onNext(context)) {
+                    next();
                 }
             }
+        }
+    }
+
+    private void next() {
+        final S nextState = next.next(context, state);
+        if (nextState != null) {
+            pushState(nextState);
+        } else {
+            finish();
         }
     }
 
@@ -516,16 +546,6 @@ public class Wizard<C, S extends Enum<S>> {
         if (!stayOpenAfterFinish) {
             close();
         }
-    }
-
-    /**
-     * Method which is called when the wizard is canceled.
-     */
-    private void cancel() {
-        if (cancelCallback != null) {
-            cancelCallback.onCancel(context);
-        }
-        close();
     }
 
     /**

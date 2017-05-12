@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.extension.Extension;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
+import org.jboss.hal.core.extension.InstalledExtension;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -52,7 +53,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.EXTENSION)
-public class ExtensionColumn extends FinderColumn<NamedNode> {
+public class ExtensionColumn extends FinderColumn<InstalledExtension> {
 
     private final EventBus eventBus;
     private final ExtensionRegistry extensionRegistry;
@@ -67,12 +68,12 @@ public class ExtensionColumn extends FinderColumn<NamedNode> {
             final ExtensionStorage extensionStorage,
             final Resources resources) {
 
-        super(new Builder<NamedNode>(finder, Ids.EXTENSION, Names.EXTENSION)
+        super(new Builder<InstalledExtension>(finder, Ids.EXTENSION, Names.EXTENSION)
 
                 .itemsProvider((context, callback) -> {
                     // TODO Load bundled extensions from /core-service=management/console-extension=*
                     // TODO and mark them as STANDALONE = false
-                    List<NamedNode> standaloneExtensions = extensionStorage.list();
+                    List<InstalledExtension> standaloneExtensions = extensionStorage.list();
                     for (NamedNode extension : standaloneExtensions) {
                         extension.get(STANDALONE).set(true);
                     }
@@ -88,12 +89,12 @@ public class ExtensionColumn extends FinderColumn<NamedNode> {
         this.extensionStorage = extensionStorage;
         this.resources = resources;
 
-        addColumnAction(new ColumnAction.Builder<NamedNode>(Ids.EXTENSION_ADD)
+        addColumnAction(new ColumnAction.Builder<InstalledExtension>(Ids.EXTENSION_ADD)
                 .element(columnActionFactory.addButton(Names.EXTENSION))
                 .handler(column -> add())
                 .build());
 
-        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
+        setItemRenderer(item -> new ItemDisplay<InstalledExtension>() {
             @Override
             public String getTitle() {
                 return item.getName();
@@ -135,9 +136,9 @@ public class ExtensionColumn extends FinderColumn<NamedNode> {
             }
 
             @Override
-            public List<ItemAction<NamedNode>> actions() {
+            public List<ItemAction<InstalledExtension>> actions() {
                 if (ModelNodeHelper.failSafeBoolean(item, STANDALONE)) {
-                    return singletonList(new ItemAction.Builder<NamedNode>()
+                    return singletonList(new ItemAction.Builder<InstalledExtension>()
                             .title(resources.constants().remove())
                             .handler(itm -> remove(itm))
                             .build());
@@ -148,9 +149,10 @@ public class ExtensionColumn extends FinderColumn<NamedNode> {
     }
 
     private void add() {
+        new AddExtensionWizard(this, extensionRegistry, extensionStorage, resources).show();
     }
 
-    private void remove(NamedNode extension) {
+    private void remove(InstalledExtension extension) {
         DialogFactory.showConfirmation(resources.messages().removeConfirmationTitle(Names.EXTENSION),
                 resources.messages().removeExtensionQuestion(), () -> {
                     extensionStorage.remove(extension);

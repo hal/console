@@ -257,6 +257,7 @@ public interface Names {
 
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
+    String URL = "URL";
 
     String VALUE = "Value";
 
