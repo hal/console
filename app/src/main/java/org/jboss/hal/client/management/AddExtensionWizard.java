@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.management;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import elemental.html.InputElement;
 import elemental.json.JsonObject;
@@ -28,6 +30,7 @@ import org.jboss.hal.ballroom.wizard.WorkflowCallback;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
+import org.jboss.hal.core.extension.InstalledExtensionResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
@@ -84,7 +87,7 @@ class AddExtensionWizard {
                             .textContent(Names.URL)
                         .end()
                         .div().css(halFormInput)
-                            .input(InputType.url).id(id).rememberAs(URL_INPUT)
+                            .input(InputType.url).id(id).css(formControl).rememberAs(URL_INPUT)
                         .end()
                     .end()
                 .end();
@@ -112,7 +115,7 @@ class AddExtensionWizard {
         @Override
         public void onNext(final Context context, final WorkflowCallback callback) {
             context.url = urlInput.getValue();
-            wizard().showProgress("Processing extension metadata", null);
+            wizard().showProgress("Processing extension metadata", SafeHtmlUtils.fromString("Processing..."));
 
             extensionRegistry.ping(context.url, (status, json) -> {
                 if (status >= 200 && status < 400) {
@@ -120,42 +123,45 @@ class AddExtensionWizard {
                         context.extension = InstalledExtension.fromJson(context.url, json);
                         callback.proceed();
                     } else {
-                        wizard().showError("Invalid metadata", null);
+                        wizard().showError("Invalid metadata", SafeHtmlUtils.fromString("Invalid metadata"), false);
                     }
 
                 } else if (status == 415) {
-                    wizard().showError("No JSON", null);
+                    wizard().showError("No JSON", SafeHtmlUtils.fromString("No JSON"), false);
 
                 } else if (status == 500) {
-                    wizard().showError("Error parsing JSON", null);
+                    wizard().showError("Error parsing JSON", SafeHtmlUtils.fromString("Error parsing JSON"), false);
 
                 } else if (status == 503) {
-                    wizard().showError("Communication Error", null);
+                    wizard().showError("Communication Error", SafeHtmlUtils.fromString("Communication Error"), false);
 
                 } else {
-                    wizard().showError("Unknown Error", null);
+                    wizard().showError("Unknown Error", SafeHtmlUtils.fromString("Unknown Error"), false);
                 }
             });
         }
 
         private boolean isValid(JsonObject json) {
-            return json.hasKey(NAME) && json.hasKey(SCRIPT);
+            return json.hasKey(NAME) && json.hasKey(SCRIPT) && json.hasKey(EXTENSION_POINT);
         }
     }
 
 
     static class ReviewStep extends WizardStep<Context, State> {
 
+        private static final InstalledExtensionResources RESOURCES = GWT.create(InstalledExtensionResources.class);
         private final Form<InstalledExtension> form;
 
         ReviewStep(final Resources resources) {
             super(resources.constants().review());
-            this.form = new ModelNodeForm.Builder<InstalledExtension>(Ids.EXTENSION_REVIEW_FORM, Metadata.empty())
+            Metadata metadata = Metadata.staticDescription(RESOURCES.installedExtension());
+            form = new ModelNodeForm.Builder<InstalledExtension>(Ids.EXTENSION_REVIEW_FORM, metadata)
                     .include(NAME, VERSION, DESCRIPTION, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, LICENSE,
                             HOMEPAGE)
                     .unsorted()
                     .readOnly()
                     .build();
+            registerAttachable(form);
         }
 
         @Override

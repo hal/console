@@ -39,10 +39,12 @@ public class ReadExtensions implements BootstrapFunction {
 
     @Override
     public void execute(final Control<FunctionContext> control) {
+        logStart();
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {
             extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());
         }
+        logDone();
         control.proceed();
     }
 

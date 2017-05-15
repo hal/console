@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NonNls;
 public class Extension {
 
     public enum Point {
-        HEADER("Header"), FINDER_ITEM("Finder Item"), FOOTER("Footer"), CUSTOM("Custom"), UNKNOWN("Unknwon");
+        HEADER("Header"), FINDER_ITEM("Finder Item"), FOOTER("Footer"), CUSTOM("Custom");
 
         private final String title;
 

@@ -43,7 +43,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.core.extension.Extension.Point.UNKNOWN;
+import static org.jboss.hal.core.extension.Extension.Point.CUSTOM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BUNDLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXTENSION_POINT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STANDALONE;
@@ -103,14 +103,14 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             @Override
             public Element asElement() {
                 Extension.Point point = ModelNodeHelper.asEnumValue(item, EXTENSION_POINT,
-                        Extension.Point::valueOf, UNKNOWN);
+                        Extension.Point::valueOf, CUSTOM);
                 return ItemDisplay.withSubtitle(item.getName(), point.title());
             }
 
             @Override
             public String getFilterData() {
                 Extension.Point point = ModelNodeHelper.asEnumValue(item, EXTENSION_POINT,
-                        Extension.Point::valueOf, UNKNOWN);
+                        Extension.Point::valueOf, CUSTOM);
                 String deployment = ModelNodeHelper.failSafeBoolean(item, STANDALONE) ? STANDALONE : BUNDLED;
                 return String.join(" ", item.getName(), point.title(), deployment);
             }
