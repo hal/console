@@ -17,6 +17,11 @@
             "description" => "A description of the extension",
             "nillable" => true
         },
+        "url" => {
+            "type" => STRING,
+            "description" => "The URL of the extension",
+            "nillable" => false
+        },
         "script" => {
             "type" => STRING,
             "description" => "The script of the extension",

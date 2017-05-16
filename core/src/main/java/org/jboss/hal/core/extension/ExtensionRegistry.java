@@ -68,13 +68,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     }
 
 
-    @FunctionalInterface
-    public interface ScriptCallback {
-
-        void result(int status);
-    }
-
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
     private final Queue<Extension> queue;
@@ -122,7 +115,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         });
         xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); //NON-NLS
         xhr.open(GET.name(), safeUrl.asString(), true);
-        xhr.setWithCredentials(true);
         xhr.send();
     }
 

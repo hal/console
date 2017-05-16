@@ -43,7 +43,8 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
         Alert scriptError = new Alert(Icons.ERROR, resources.messages().extensionScriptError());
 
         PreviewAttributes<InstalledExtension> attributes = new PreviewAttributes<>(extension,
-                asList(NAME, VERSION, DESCRIPTION, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE, LICENSE))
+                asList(NAME, VERSION, DESCRIPTION, URL, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE,
+                        LICENSE))
                 .end();
 
         previewBuilder()

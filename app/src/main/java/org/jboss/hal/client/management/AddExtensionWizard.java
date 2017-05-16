@@ -109,10 +109,10 @@ class AddExtensionWizard {
         @Override
         public void onNext(final Context context, final WorkflowCallback callback) {
             if (form.save()) {
-                context.url = urlItem.getValue();
                 wizard().showProgress(resources.constants().extensionProcessing(),
                         resources.messages().extensionProcessing());
 
+                context.url = urlItem.getValue();
                 extensionRegistry.verifyMetadata(context.url, (status, json) -> {
                     switch (status) {
                         case 404:
@@ -175,8 +175,8 @@ class AddExtensionWizard {
             super(resources.constants().review());
             Metadata metadata = Metadata.staticDescription(RESOURCES.installedExtension());
             form = new ModelNodeForm.Builder<InstalledExtension>(Ids.EXTENSION_REVIEW_FORM, metadata)
-                    .include(NAME, VERSION, DESCRIPTION, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE,
-                            LICENSE)
+                    .include(NAME, VERSION, DESCRIPTION, ModelDescriptionConstants.URL, SCRIPT, STYLESHEETS,
+                            EXTENSION_POINT, AUTHOR, HOMEPAGE, LICENSE)
                     .unsorted()
                     .readOnly()
                     .build();

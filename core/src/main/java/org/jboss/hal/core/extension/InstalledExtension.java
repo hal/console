@@ -38,6 +38,7 @@ public class InstalledExtension extends NamedNode {
 
     public static InstalledExtension fromJson(final String url, final JsonObject json) {
         ModelNode node = new ModelNode();
+        node.get(URL).set(url);
         for (String key : json.keys()) {
             if (STYLESHEETS.equals(key)) {
                 JsonArray array = json.getArray(STYLESHEETS);
@@ -66,9 +67,6 @@ public class InstalledExtension extends NamedNode {
         super(modelNode);
         this.domain = UriUtils.fromString(Strings.getDomain(url));
         this.baseUrl = UriUtils.fromString(baseUrl(url));
-        if (!modelNode.hasDefined(URL)) {
-            modelNode.get(URL).set(url);
-        }
     }
 
     public String getDomain() {
