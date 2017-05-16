@@ -22,6 +22,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 
@@ -58,28 +59,20 @@ public class InstalledExtension extends NamedNode {
     }
 
 
+    private final SafeUri domain;
     private final SafeUri baseUrl;
 
     private InstalledExtension(final String url, final ModelNode modelNode) {
         super(modelNode);
+        this.domain = UriUtils.fromString(Strings.getDomain(url));
         this.baseUrl = UriUtils.fromString(baseUrl(url));
+        if (!modelNode.hasDefined(URL)) {
+            modelNode.get(URL).set(url);
+        }
     }
 
-    private String baseUrl(String url) {
-        String result = url;
-        if (url != null) {
-            if (url.endsWith("/")) {
-                result = url.substring(0, url.length() - 1);
-            } else {
-                int lastSlash = url.lastIndexOf('/', url.length());
-                if (lastSlash != -1) {
-                    result = url.substring(0, lastSlash);
-                } else {
-                    throw new IllegalArgumentException("Illegal extension URL: " + url);
-                }
-            }
-        }
-        return result;
+    public String getDomain() {
+        return domain.asString();
     }
 
     public String getFqScript() {
@@ -94,5 +87,20 @@ public class InstalledExtension extends NamedNode {
             stylesheets = Collections.emptyList();
         }
         return stylesheets;
+    }
+
+    private String baseUrl(String url) {
+        String result = url;
+        if (url != null) {
+            if (url.endsWith("/")) {
+                result = url.substring(0, url.length() - 1);
+            } else {
+                int lastSlash = url.lastIndexOf('/', url.length());
+                if (lastSlash != -1) {
+                    result = url.substring(0, lastSlash);
+                }
+            }
+        }
+        return result;
     }
 }

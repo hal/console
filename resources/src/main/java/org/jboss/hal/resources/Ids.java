@@ -187,6 +187,7 @@ public interface Ids {
     String EXTENSION = "extension";
     String EXTENSION_ADD = build(EXTENSION, ADD_SUFFIX);
     String EXTENSION_REVIEW_FORM = build(EXTENSION, "review", FORM_SUFFIX);
+    String EXTENSION_URL_FORM = build(EXTENSION, "url", FORM_SUFFIX);
     String EXTENSION_STORAGE = build(STORAGE_PREFIX, EXTENSION);
 
     String FINDER = "hal-finder";

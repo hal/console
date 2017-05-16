@@ -131,7 +131,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String exploded();
     String expression();
     String expressionResolver();
-    String extensionDescription();
+    String extensionError();
+    String extensionNotFound();
+    String extensionProcessing();
 
     String failed();
     String filter();
@@ -241,6 +243,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllHeader();
     String input();
     String invalidExpression();
+    String invalidJson();
+    String invalidMetadata();
 
     String jcaConfiguration();
     String jgroupsRelayAlias();
@@ -271,9 +275,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
     String monitor();
 
-    String next();
     String needsReload();
     String needsRestart();
+    String networkError();
+    String next();
     String no();
     String noAttributes();
     String noBootErrors();
@@ -297,7 +302,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noTransport();
     String noWrite();
     String notANumber();
-
     String notEnabled();
     String nothingSelected();
 
@@ -416,6 +420,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String undeploy();
     String undeployContent();
     String undeployed();
+    String unknownError();
     String unknownState();
     String unmanaged();
     String unpin();

@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
@@ -61,9 +62,16 @@ import static org.jboss.hal.resources.CSS.hidden;
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @FunctionalInterface
-    public interface PingResult {
+    public interface MetadataCallback {
 
         void result(int status, JsonObject json);
+    }
+
+
+    @FunctionalInterface
+    public interface ScriptCallback {
+
+        void result(int status);
     }
 
 
@@ -94,30 +102,49 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     }
 
     @JsIgnore
-    @SuppressWarnings("HardCodedStringLiteral")
-    public void ping(final String url, final PingResult pingResult) {
+    public void verifyMetadata(final String url, final MetadataCallback metadataCallback) {
         SafeUri safeUrl = UriUtils.fromString(url);
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.setOnreadystatechange(event -> {
             int readyState = xhr.getReadyState();
             if (readyState == 4) {
-                String responseText = xhr.getResponseText();
-                if (Strings.isNullOrEmpty(responseText)) {
-                    pingResult.result(415, null); // 415 - Unsupported Media Type
-                } else {
-                    JsonObject extensionJson = null;
-                    try {
-                        extensionJson = Json.parse(responseText);
-                    } catch (JsonException e) {
-                        logger.error("Unable to parse {} as JSON", safeUrl.asString());
-                        pingResult.result(500, null);
+                if (xhr.getStatus() >= 200 && xhr.getStatus() < 400) {
+                    String responseText = xhr.getResponseText();
+                    if (Strings.isNullOrEmpty(responseText)) {
+                        metadataCallback.result(415, null); // 415 - Unsupported Media Type
+                    } else {
+                        JsonObject extensionJson;
+                        try {
+                            extensionJson = Json.parse(responseText);
+                            metadataCallback.result(xhr.getStatus(), extensionJson);
+                        } catch (JsonException e) {
+                            logger.error("Unable to parse {} as JSON", safeUrl.asString());
+                            metadataCallback.result(500, null);
+                        }
                     }
-                    pingResult.result(xhr.getStatus(), extensionJson);
+
+                } else {
+                    metadataCallback.result(xhr.getStatus(), null);
                 }
             }
         });
-        xhr.addEventListener("error",  event -> pingResult.result(503, null), false);
-        xhr.open("GET", safeUrl.asString(), true);
+        xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); //NON-NLS
+        xhr.open(GET.name(), safeUrl.asString(), true);
+        xhr.setWithCredentials(true);
+        xhr.send();
+    }
+
+    @JsIgnore
+    public void verifyScript(final String script, final ScriptCallback scriptCallback) {
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                scriptCallback.result(xhr.getStatus());
+            }
+        });
+        xhr.addEventListener("error", event -> scriptCallback.result(503), false); //NON-NLS
+        xhr.open(GET.name(), script, true);
         xhr.setWithCredentials(true);
         xhr.send();
     }

@@ -29,6 +29,7 @@ public interface Names {
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
+    String ALLOWED_ORIGIN = "allowed-origin";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
     String ASYNC_OPERATIONS = "Async Operations";

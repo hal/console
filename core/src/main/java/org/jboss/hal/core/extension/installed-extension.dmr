@@ -44,14 +44,14 @@
             "description" => "The author of the extension",
             "nillable" => true
         },
-        "license" => {
-            "type" => STRING,
-            "description" => "The license of the extension",
-            "nillable" => true
-        },
         "homepage" => {
             "type" => STRING,
             "description" => "The homepage of the extension",
+            "nillable" => true
+        },
+        "license" => {
+            "type" => STRING,
+            "description" => "The license of the extension",
             "nillable" => true
         }
     }

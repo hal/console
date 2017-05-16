@@ -42,7 +42,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     //@formatter:off
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
-    SafeHtml addExtensionError();
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
@@ -121,8 +120,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativesError(String alternatives);
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
-    SafeHtml extensionAvailable();
-    SafeHtml extensionNotAvailable();
+    SafeHtml extensionError(int status);
+    SafeHtml extensionNetworkError(String console, String extension);
+    SafeHtml extensionNoJson();
+    SafeHtml extensionOk();
+    SafeHtml extensionProcessing();
+    SafeHtml extensionNotFound();
+    SafeHtml extensionScriptError();
+    SafeHtml extensionUrl();
 
     SafeHtml flushConnectionSuccess();
 
@@ -145,6 +150,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml includeAllHelpText();
 
+    SafeHtml invalidExtensionJson();
+    SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidRange(long value, long min, long max);
 
     SafeHtml jdbcDriverDeploymentHint();

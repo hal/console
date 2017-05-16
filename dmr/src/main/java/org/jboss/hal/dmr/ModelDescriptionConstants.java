@@ -57,6 +57,7 @@ public interface ModelDescriptionConstants {
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
+    String ALLOWED_ORIGINS = "allowed-origins";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
     String ALTERNATIVES = "alternatives";
     String ANY = "any";

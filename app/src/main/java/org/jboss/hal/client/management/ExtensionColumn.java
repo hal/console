@@ -128,7 +128,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             public Element getIcon() {
                 Element icon = Browser.getDocument().createSpanElement();
                 if (ModelNodeHelper.failSafeBoolean(item, STANDALONE)) {
-                    icon.setClassName(fontAwesome("external-link"));
+                    icon.setClassName(fontAwesome("puzzle-piece"));
                 } else {
                     icon.setClassName(fontAwesome("archive"));
                 }
@@ -149,7 +149,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
     }
 
     private void add() {
-        new AddExtensionWizard(this, extensionRegistry, extensionStorage, resources).show();
+        new AddExtensionWizard(this, eventBus, extensionRegistry, extensionStorage, resources).show();
     }
 
     private void remove(InstalledExtension extension) {
