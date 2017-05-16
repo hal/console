@@ -117,6 +117,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                     }
                 })
                 .end().build();
+        Elements.setVisible(peekLink, false);
     }
 
     @Override

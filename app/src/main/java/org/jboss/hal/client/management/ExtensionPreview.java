@@ -33,22 +33,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
-    private final ExtensionRegistry extensionRegistry;
-    private final Alert scriptOk;
-    private final Alert scriptError;
-
     ExtensionPreview(final InstalledExtension extension,
             final ExtensionRegistry extensionRegistry,
             final Resources resources) {
 
         super(Names.EXTENSION);
-        this.extensionRegistry = extensionRegistry;
 
-        scriptOk = new Alert(Icons.OK, resources.messages().extensionOk());
-        scriptError = new Alert(Icons.ERROR, resources.messages().extensionScriptError());
-
-        Elements.setVisible(scriptOk.asElement(), false);
-        Elements.setVisible(scriptError.asElement(), false);
+        Alert scriptOk = new Alert(Icons.OK, resources.messages().extensionOk());
+        Alert scriptError = new Alert(Icons.ERROR, resources.messages().extensionScriptError());
 
         PreviewAttributes<InstalledExtension> attributes = new PreviewAttributes<>(extension,
                 asList(NAME, VERSION, DESCRIPTION, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE, LICENSE))
@@ -58,14 +50,9 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
                 .add(scriptOk)
                 .add(scriptError)
                 .addAll(attributes);
-    }
 
-    @Override
-    public void update(final InstalledExtension extension) {
-        extensionRegistry.verifyScript(extension.getFqScript(), status -> {
-            boolean scriptOk = status >= 200 && status < 400;
-            Elements.setVisible(this.scriptOk.asElement(), scriptOk);
-            Elements.setVisible(this.scriptError.asElement(), !scriptOk);
-        });
+        boolean injected = extensionRegistry.verifyScript(extension.getFqScript());
+        Elements.setVisible(scriptOk.asElement(), injected);
+        Elements.setVisible(scriptError.asElement(), !injected);
     }
 }

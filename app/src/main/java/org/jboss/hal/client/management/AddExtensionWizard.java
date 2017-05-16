@@ -71,8 +71,6 @@ class AddExtensionWizard {
 
     static class UrlStep extends WizardStep<Context, State> implements AsyncStep<Context> {
 
-        private static final String URL_INPUT = "urlInput";
-
         private final ExtensionRegistry extensionRegistry;
         private final Resources resources;
         private final TextBoxItem urlItem;

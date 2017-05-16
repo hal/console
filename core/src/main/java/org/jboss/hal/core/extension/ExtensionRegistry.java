@@ -93,14 +93,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         eventBus.addHandler(ApplicationReadyEvent.getType(), this);
     }
 
-    public void register(final Extension extension) {
-        if (!ready) {
-            queue.offer(extension);
-        } else {
-            failSafeApply(extension);
-        }
-    }
-
     @JsIgnore
     public void verifyMetadata(final String url, final MetadataCallback metadataCallback) {
         SafeUri safeUrl = UriUtils.fromString(url);
@@ -135,18 +127,8 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     }
 
     @JsIgnore
-    public void verifyScript(final String script, final ScriptCallback scriptCallback) {
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.setOnreadystatechange(event -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                scriptCallback.result(xhr.getStatus());
-            }
-        });
-        xhr.addEventListener("error", event -> scriptCallback.result(503), false); //NON-NLS
-        xhr.open(GET.name(), script, true);
-        xhr.setWithCredentials(true);
-        xhr.send();
+    public boolean verifyScript(final String script) {
+        return Browser.getDocument().getHead().querySelector("script[src='" + script + "']") != null; //NON-NLS
     }
 
     @JsIgnore
@@ -166,6 +148,14 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
         while (!queue.isEmpty()) {
             failSafeApply(queue.poll());
+        }
+    }
+
+    public void register(final Extension extension) {
+        if (!ready) {
+            queue.offer(extension);
+        } else {
+            failSafeApply(extension);
         }
     }
 

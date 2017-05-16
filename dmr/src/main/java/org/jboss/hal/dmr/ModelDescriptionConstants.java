@@ -200,6 +200,7 @@ public interface ModelDescriptionConstants {
     String HTTP_CONNECTOR = "http-connector";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
+    String HTTP_UPGRADE = "http-upgrade";
     String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";
 
@@ -383,10 +384,13 @@ public interface ModelDescriptionConstants {
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
+    String SASL_PROTOCOL = "sasl-protocol";
     String SCRIPT = "script";
     //String SECURITY = "security-elytron";
+    String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_REALM = "security-realm";
     String SECURITY_SETTING = "security-setting";
     String SELECT = "select";
     String SELECTOR = "selector";
@@ -417,6 +421,7 @@ public interface ModelDescriptionConstants {
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";
     String SMTP = "smtp";
+    String SSL_CONTEXT = "ssl-context";
     String STACK = "stack";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
