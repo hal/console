@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for HAL 0.8.0
- * Build date: 2017-05-05 10:25:13
+ * Generated CSS file for HAL 0.8.1
+ * Build date: 2017-05-17 07:36:53
  */
 /*
  * Fonts
@@ -10209,8 +10209,8 @@ select.selectpicker {
 .bootstrap-switch .bootstrap-switch-label {
   box-sizing: border-box;
   cursor: pointer;
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block !important;
+  height: 100%;
   padding: 2px 6px;
   font-size: 12px;
   line-height: 20px;
@@ -10258,9 +10258,6 @@ select.selectpicker {
   color: #4d5258;
   background: #f1f1f1;
 }
-.bootstrap-switch span::before {
-  content: "\200b";
-}
 .bootstrap-switch .bootstrap-switch-handle-on {
   border-bottom-left-radius: 1px - 1;
   border-top-left-radius: 1px - 1;
@@ -10278,7 +10275,6 @@ select.selectpicker {
   z-index: -1;
   opacity: 0;
   filter: alpha(opacity=0);
-  visibility: hidden;
 }
 .bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-on,
 .bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-off,
