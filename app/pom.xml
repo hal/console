@@ -283,7 +283,7 @@
                                 </additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
-                                <processor>org.jboss.hal.processor.JsDocProcessor</processor>
+                                <processor>org.jboss.hal.processor.EsDocProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>

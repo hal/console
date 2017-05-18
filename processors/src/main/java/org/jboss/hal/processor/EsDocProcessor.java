@@ -43,7 +43,6 @@ import org.jboss.auto.AbstractProcessor;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static java.util.stream.Collectors.joining;
-import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
 import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
 /**
@@ -52,19 +51,18 @@ import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all exported js types in all maven modules.
 @SupportedAnnotationTypes("jsinterop.annotations.JsType")
-@SuppressWarnings({"HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored"})
-public class JsDocProcessor extends AbstractProcessor {
+@SuppressWarnings({"HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored", "SpellCheckingInspection"})
+public class EsDocProcessor extends AbstractProcessor {
 
     private static final String AUTO = "<auto>";
-    private static final String JS_TYPES = "jsTypes";
-    private static final String NAMESPACE = "namespace";
-    private static final String PACKAGE = "jsdoc";
-    private static final String TEMPLATE = "JsDoc.ftl";
+    private static final String PACKAGE = "esdoc";
+    private static final String TEMPLATE = "EsDoc.ftl";
+    private static final String TYPES = "types";
 
-    private final Multimap<String, JsTypeInfo> types;
+    private final Multimap<String, Type> types;
 
-    public JsDocProcessor() {
-        super(JsDocProcessor.class, TEMPLATES);
+    public EsDocProcessor() {
+        super(EsDocProcessor.class, TEMPLATES);
         types = HashMultimap.create();
     }
 
@@ -82,10 +80,10 @@ public class JsDocProcessor extends AbstractProcessor {
                 continue;
             }
 
-            JsTypeInfo typeInfo = new JsTypeInfo(namespace(packageElement, typeElement), typeName(typeElement),
+            Type type = new Type(namespace(packageElement, typeElement), typeName(typeElement),
                     comment(typeElement));
-            types.put(typeInfo.getNamespace(), typeInfo);
-            debug("Discovered JsType [%s]", typeInfo);
+            types.put(type.getNamespace(), type);
+            debug("Discovered JsType [%s]", type);
 
             final List<? extends Element> elements = typeElement.getEnclosedElements();
             Predicate<Element> jsRelevant = e -> e != null &&
@@ -97,7 +95,7 @@ public class JsDocProcessor extends AbstractProcessor {
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsConstructor.class) != null))
                     .findFirst()
-                    .ifPresent(e -> typeInfo.setConstructor(new JsConstructorInfo(parameters(e), comment(e))));
+                    .ifPresent(e -> type.setConstructor(new Constructor(parameters(e), comment(e))));
 
             // Properties - Fields
             ElementFilter.fieldsIn(elements)
@@ -105,33 +103,28 @@ public class JsDocProcessor extends AbstractProcessor {
                     .filter(jsRelevant)
                     .forEach(e -> {
                         boolean setter = !e.getModifiers().contains(Modifier.FINAL);
-                        typeInfo.addProperty(
-                                new JsPropertyInfo(propertyName(e), comment(e), true, setter, _static(e)));
+                        type.addProperty(new Property(propertyName(e), comment(e), true, setter, _static(e)));
                     });
 
             // Properties - Methods (only getters are supported)
             ElementFilter.methodsIn(elements)
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) != null))
-                    .forEach(e -> typeInfo.addProperty(
-                            new JsPropertyInfo(propertyName(e), comment(e), true, false, _static(e))));
+                    .forEach(e -> type.addProperty(new Property(propertyName(e), comment(e), true, false, _static(e))));
 
             // Methods
             ElementFilter.methodsIn(elements)
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) == null))
-                    .forEach(e -> typeInfo.addMethod(
-                            new JsMethodInfo(methodName(e), parameters(e), comment(e), _static(e))));
+                    .forEach(e -> type.addMethod(new Method(methodName(e), parameters(e), comment(e), _static(e))));
         }
 
         if (!types.isEmpty()) {
-            types.asMap().forEach((namespace, jsTypes) ->
+            types.asMap().forEach((namespace, nsTypes) ->
                     resource(TEMPLATE, PACKAGE, namespace + ".es6",
                             () -> {
                                 Map<String, Object> context = new HashMap<>();
-                                context.put(GENERATED_WITH, JsDocProcessor.class.getName());
-                                context.put(NAMESPACE, namespace);
-                                context.put(JS_TYPES, jsTypes);
+                                context.put(TYPES, nsTypes);
                                 return context;
                             }));
             types.clear();
@@ -209,16 +202,16 @@ public class JsDocProcessor extends AbstractProcessor {
     }
 
 
-    public static class JsTypeInfo {
+    public static class Type {
 
         private final String namespace;
         private final String name;
         private final String comment;
-        private JsConstructorInfo constructor;
-        private final List<JsPropertyInfo> properties;
-        private final List<JsMethodInfo> methods;
+        private Constructor constructor;
+        private final List<Property> properties;
+        private final List<Method> methods;
 
-        JsTypeInfo(final String namespace, final String name, final String comment) {
+        Type(final String namespace, final String name, final String comment) {
             this.namespace = namespace;
             this.name = name;
             this.comment = comment;
@@ -231,11 +224,11 @@ public class JsDocProcessor extends AbstractProcessor {
             return String.format("%s.%s", namespace, name);
         }
 
-        void addProperty(JsPropertyInfo property) {
+        void addProperty(Property property) {
             properties.add(property);
         }
 
-        void addMethod(JsMethodInfo method) {
+        void addMethod(Method method) {
             methods.add(method);
         }
 
@@ -251,30 +244,30 @@ public class JsDocProcessor extends AbstractProcessor {
             return comment;
         }
 
-        public JsConstructorInfo getConstructor() {
+        public Constructor getConstructor() {
             return constructor;
         }
 
-        public void setConstructor(final JsConstructorInfo constructor) {
+        public void setConstructor(final Constructor constructor) {
             this.constructor = constructor;
         }
 
-        public List<JsPropertyInfo> getProperties() {
+        public List<Property> getProperties() {
             return properties;
         }
 
-        public List<JsMethodInfo> getMethods() {
+        public List<Method> getMethods() {
             return methods;
         }
     }
 
 
-    public static class JsConstructorInfo {
+    public static class Constructor {
 
         private final String parameters;
         private final String comment;
 
-        JsConstructorInfo(final String parameters, final String comment) {
+        Constructor(final String parameters, final String comment) {
             this.parameters = parameters;
             this.comment = comment;
         }
@@ -294,7 +287,7 @@ public class JsDocProcessor extends AbstractProcessor {
     }
 
 
-    public static class JsPropertyInfo {
+    public static class Property {
 
         private final String name;
         private final String comment;
@@ -302,7 +295,7 @@ public class JsDocProcessor extends AbstractProcessor {
         private final boolean setter;
         private final boolean _static;
 
-        JsPropertyInfo(final String name, final String comment, final boolean getter, final boolean setter,
+        Property(final String name, final String comment, final boolean getter, final boolean setter,
                 final boolean _static) {
             this.name = name;
             this.comment = comment;
@@ -338,14 +331,14 @@ public class JsDocProcessor extends AbstractProcessor {
     }
 
 
-    public static class JsMethodInfo {
+    public static class Method {
 
         private final String name;
         private final String parameters;
         private final String comment;
         private final boolean _static;
 
-        JsMethodInfo(final String name, final String parameters, final String comment, final boolean _static) {
+        Method(final String name, final String parameters, final String comment, final boolean _static) {
             this.name = name;
             this.parameters = parameters;
             this.comment = comment;
