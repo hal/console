@@ -91,7 +91,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
      * Builder useful to automatically inspect the read-resource-description and associate the
      * attributes (by calling: include, customFormItem). Creates the required form items and help texts.
      */
-    @JsType(namespace = "ui", name = "FormBuilder")
+    @JsType(namespace = "hal.ui", name = "FormBuilder")
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";

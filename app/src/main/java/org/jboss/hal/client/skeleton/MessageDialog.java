@@ -56,8 +56,6 @@ class MessageDialog {
 
         dialog = new Dialog.Builder(CONSTANTS.message())
                 .closeOnly()
-                .closeIcon(true)
-                .closeOnEsc(true)
                 .add(elementBuilder.elements())
                 .build();
     }

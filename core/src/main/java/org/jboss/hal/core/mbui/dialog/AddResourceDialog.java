@@ -94,9 +94,8 @@ public class AddResourceDialog {
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
                 .primary(CONSTANTS.add(), form::save)
-                .cancel()
                 .size(Size.MEDIUM)
-                .closeOnEsc(true)
+                .cancel()
                 .build();
         this.dialog.registerAttachable(form);
     }

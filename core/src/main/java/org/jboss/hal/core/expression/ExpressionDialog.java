@@ -107,8 +107,6 @@ public class ExpressionDialog {
                 })
                 .secondary(resources.constants().close(), () -> true)
                 .size(Dialog.Size.MEDIUM)
-                .closeOnEsc(true)
-                .closeIcon(true)
                 .build();
         dialog.registerAttachable(form);
     }

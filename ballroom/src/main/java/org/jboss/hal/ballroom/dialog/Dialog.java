@@ -29,9 +29,14 @@ import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
@@ -57,6 +62,7 @@ import static org.jboss.hal.resources.UIConstants.*;
  *
  * @author Harald Pehl
  */
+@JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {
 
     public enum Size {
@@ -73,6 +79,7 @@ public class Dialog implements IsElement {
     /**
      * A button callback which returns a boolean to indicate whether the dialog should be closed or stay open.
      */
+    @JsFunction
     @FunctionalInterface
     public interface ResultCallback {
 
@@ -102,7 +109,7 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog builder
 
-
+    @JsType(namespace = "hal.ui", name = "DialogBuilder")
     public static class Builder {
 
         // mandatory attributes
@@ -117,6 +124,7 @@ public class Dialog implements IsElement {
         private boolean fadeIn;
         private Callback closed;
 
+        @JsIgnore
         public Builder(final String title) {
             this.title = title;
             this.elements = new ArrayList<>();
@@ -124,6 +132,7 @@ public class Dialog implements IsElement {
 
             this.size = Size.MEDIUM;
             this.closeIcon = true;
+            this.closeOnEsc = true;
             this.fadeIn = false;
         }
 
@@ -163,7 +172,7 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder okCancel(Callback okCallback) {
+        Builder okCancel(Callback okCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));
@@ -173,6 +182,7 @@ public class Dialog implements IsElement {
         /**
          * Adds a primary with label 'Save' and position {@value #PRIMARY_POSITION}.
          */
+        @JsIgnore
         public Builder primary(ResultCallback callback) {
             return primary(CONSTANTS.save(), callback);
         }
@@ -181,6 +191,7 @@ public class Dialog implements IsElement {
             return primary(PRIMARY_POSITION, label, callback);
         }
 
+        @JsIgnore
         public Builder primary(int position, String label, ResultCallback callback) {
             buttons.put(position, new Button(label, callback, null, true));
             return this;
@@ -193,6 +204,7 @@ public class Dialog implements IsElement {
         /**
          * Adds a secondary button with label 'Cancel' and position {@value #SECONDARY_POSITION}
          */
+        @JsIgnore
         public Builder secondary(ResultCallback callback) {
             return secondary(CONSTANTS.cancel(), callback);
         }
@@ -201,36 +213,45 @@ public class Dialog implements IsElement {
             return secondary(SECONDARY_POSITION, label, callback);
         }
 
+        @JsIgnore
         public Builder secondary(int position, String label, ResultCallback callback) {
             buttons.put(position, new Button(label, callback, null, false));
             return this;
         }
 
+        @JsIgnore
         public Builder size(Size size) {
             this.size = size;
             return this;
         }
 
+        @JsIgnore
+        @SuppressWarnings("SameParameterValue")
         public Builder closeIcon(boolean closeIcon) {
             this.closeIcon = closeIcon;
             return this;
         }
 
+        @JsIgnore
+        @SuppressWarnings("SameParameterValue")
         public Builder closeOnEsc(boolean closeOnEsc) {
             this.closeOnEsc = closeOnEsc;
             return this;
         }
 
+        @JsIgnore
         public Builder closed(Callback closed) {
             this.closed = closed;
             return this;
         }
 
+        @JsIgnore
         public Builder fadeIn(boolean fadeIn) {
             this.fadeIn = fadeIn;
             return this;
         }
 
+        @JsIgnore
         public Builder add(Element... elements) {
             if (elements != null) {
                 this.elements.addAll(Arrays.asList(elements));
@@ -238,6 +259,7 @@ public class Dialog implements IsElement {
             return this;
         }
 
+        @JsIgnore
         public Builder add(Iterable<Element> elements) {
             if (elements != null) {
                 //noinspection ResultOfMethodCallIgnored
@@ -249,12 +271,31 @@ public class Dialog implements IsElement {
         public Dialog build() {
             return new Dialog(this);
         }
+
+
+        // ------------------------------------------------------ JS methods
+
+        @JsMethod(name = "add")
+        public Builder jsAdd(Element element) {
+            return add(element);
+        }
+
+        @JsMethod(name = "okCancel")
+        public Builder jsOkCancel(JsCallback okCallback) {
+            return okCancel(okCallback::execute);
+        }
+
+        @JsMethod(name = "size")
+        public Builder jsSize(String size) {
+            return size(Size.valueOf(size));
+        }
+
     }
 
 
     // ------------------------------------------------------ dialog singleton
 
-    public static final int PRIMARY_POSITION = 200;
+    @JsIgnore public static final int PRIMARY_POSITION = 200;
     static final int SECONDARY_POSITION = 100;
     private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
 
@@ -307,6 +348,7 @@ public class Dialog implements IsElement {
         initEventHandler();
     }
 
+    @JsIgnore
     public static boolean isOpen() {
         return open;
     }
@@ -385,10 +427,12 @@ public class Dialog implements IsElement {
     }
 
     @Override
+    @JsIgnore
     public Element asElement() {
         return root;
     }
 
+    @JsIgnore
     public void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
         if (rest != null) {
@@ -421,10 +465,12 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ properties
 
+    @JsIgnore
     public void setTitle(String title) {
         Dialog.title.setInnerHTML(title);
     }
 
+    @JsIgnore
     public ButtonElement getButton(int position) {
         return buttons.get(position);
     }

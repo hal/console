@@ -301,8 +301,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             p.setInnerHTML(resources.messages().closeToLogout().asString());
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
                     .add(p)
-                    .closeIcon(true)
-                    .closeOnEsc(true)
                     .primary(resources.constants().ok(), () -> true)
                     .build();
             dialog.show();
