@@ -34,7 +34,7 @@ import org.jboss.hal.spi.Callback;
  *
  * @author Harald Pehl
  */
-@JsType(namespace = "ui")
+@JsType(namespace = "hal.ui")
 public interface Form<T> extends IsElement, Attachable {
 
     // ------------------------------------------------------ states and operations

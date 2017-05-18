@@ -36,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.meta")
 public class ResourceDescription extends ModelNode {
 
     @JsIgnore

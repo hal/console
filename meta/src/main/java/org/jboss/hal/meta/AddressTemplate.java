@@ -78,7 +78,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
 
     @FunctionalInterface
@@ -242,6 +242,7 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     @Override
+    @JsIgnore
     public boolean equals(Object o) {
         if (this == o) { return true; }
         if (!(o instanceof AddressTemplate)) { return false; }
@@ -251,8 +252,8 @@ public final class AddressTemplate implements Iterable<String> {
 
     }
 
-    @JsIgnore
     @Override
+    @JsIgnore
     public int hashCode() {
         int result = template.hashCode();
         result = 31 * result + (optional ? 1 : 0);

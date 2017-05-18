@@ -76,7 +76,7 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
  *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.dmr")
 public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface

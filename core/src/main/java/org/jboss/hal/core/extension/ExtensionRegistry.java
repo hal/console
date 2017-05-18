@@ -58,7 +58,7 @@ import static org.jboss.hal.resources.CSS.hidden;
 /**
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @FunctionalInterface
