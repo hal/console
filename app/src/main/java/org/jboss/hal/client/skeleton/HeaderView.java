@@ -112,6 +112,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element connectedTo;
     @DataElement Element patching;
     @DataElement Element accessControl;
+    @DataElement Element management;
     @DataElement Element topLevelCategories;
     @DataElement Element breadcrumb;
     @DataElement Element backItem;
@@ -141,17 +142,20 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlcPlaceRequests.put(NameTokens.DEPLOYMENTS,    new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
         tlcPlaceRequests.put(NameTokens.CONFIGURATION,  new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
-        tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
         tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
-        // @formatter:on
+        tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
+        tlcPlaceRequests.put(NameTokens.MANAGEMENT,     new PlaceRequest.Builder().nameToken(NameTokens.MANAGEMENT).build());
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
-        tlc.put(NameTokens.DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
-        tlc.put(NameTokens.CONFIGURATION, root.querySelector("#" + Ids.TLC_CONFIGURATION));
-        tlc.put(NameTokens.RUNTIME, root.querySelector("#" + Ids.TLC_RUNTIME));
-        tlc.put(NameTokens.ACCESS_CONTROL, root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
-        tlc.put(NameTokens.PATCHING, root.querySelector("#" + Ids.TLC_PATCHING));
+        tlc.put(NameTokens.HOMEPAGE,        root.querySelector("#" + Ids.TLC_HOMEPAGE));
+        tlc.put(NameTokens.DEPLOYMENTS,     root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
+        tlc.put(NameTokens.CONFIGURATION,   root.querySelector("#" + Ids.TLC_CONFIGURATION));
+        tlc.put(NameTokens.RUNTIME,         root.querySelector("#" + Ids.TLC_RUNTIME));
+        tlc.put(NameTokens.PATCHING,        root.querySelector("#" + Ids.TLC_PATCHING));
+        tlc.put(NameTokens.ACCESS_CONTROL,  root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
+        tlc.put(NameTokens.MANAGEMENT,      root.querySelector("#" + Ids.TLC_MANAGEMENT));
+        // @formatter:on
+
         for (Map.Entry<String, Element> entry : tlc.entrySet()) {
             entry.getValue().setOnclick(event -> {
                 if (tlcPlaceRequests.containsKey(entry.getKey())) {
@@ -164,6 +168,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         if (!su) {
             topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(accessControl);
+            topLevelCategories.removeChild(management);
         }
         Elements.setVisible(breadcrumb, false);
     }

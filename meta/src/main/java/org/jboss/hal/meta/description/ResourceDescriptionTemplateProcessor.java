@@ -50,7 +50,7 @@ public class ResourceDescriptionTemplateProcessor implements Function<AddressTem
 
     @Override
     public AddressTemplate apply(final AddressTemplate template) {
-        if (template != null) {
+        if (template != null && !AddressTemplate.ROOT.equals(template)) {
             List<String[]> segments = stream(template.spliterator(), false)
                     .map(segment -> {
                         if (segment.contains("=")) {

@@ -144,8 +144,6 @@ public class DeployContentDialog1 {
                 .add(builder.elements())
                 .primary(primary, this::finish)
                 .cancel()
-                .closeIcon(true)
-                .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(table);
     }

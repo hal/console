@@ -17,25 +17,41 @@ package org.jboss.hal.core.extension;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
+import elemental.html.HeadElement;
+import elemental.html.LinkElement;
+import elemental.html.ScriptElement;
+import elemental.js.util.JsArrayOf;
+import elemental.json.Json;
+import elemental.json.JsonException;
+import elemental.json.JsonObject;
+import elemental.xml.XMLHttpRequest;
 import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
-import org.jboss.hal.core.extension.Extension.Kind;
+import org.jboss.hal.core.extension.Extension.Point;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
@@ -44,6 +60,13 @@ import static org.jboss.hal.resources.CSS.hidden;
  */
 @JsType
 public class ExtensionRegistry implements ApplicationReadyHandler {
+
+    @FunctionalInterface
+    public interface MetadataCallback {
+
+        void result(int status, JsonObject json);
+    }
+
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
@@ -63,12 +86,46 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         eventBus.addHandler(ApplicationReadyEvent.getType(), this);
     }
 
-    public void register(final Extension extension) {
-        if (!ready) {
-            queue.offer(extension);
-        } else {
-            failSafeApply(extension);
-        }
+    @JsIgnore
+    public void verifyMetadata(final String url, final MetadataCallback metadataCallback) {
+        SafeUri safeUrl = UriUtils.fromString(url);
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                if (xhr.getStatus() >= 200 && xhr.getStatus() < 400) {
+                    String responseText = xhr.getResponseText();
+                    if (Strings.isNullOrEmpty(responseText)) {
+                        metadataCallback.result(415, null); // 415 - Unsupported Media Type
+                    } else {
+                        JsonObject extensionJson;
+                        try {
+                            extensionJson = Json.parse(responseText);
+                            metadataCallback.result(xhr.getStatus(), extensionJson);
+                        } catch (JsonException e) {
+                            logger.error("Unable to parse {} as JSON", safeUrl.asString());
+                            metadataCallback.result(500, null);
+                        }
+                    }
+
+                } else {
+                    metadataCallback.result(xhr.getStatus(), null);
+                }
+            }
+        });
+        xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); //NON-NLS
+        xhr.open(GET.name(), safeUrl.asString(), true);
+        xhr.send();
+    }
+
+    @JsIgnore
+    public boolean verifyScript(final String script) {
+        return Browser.getDocument().getHead().querySelector("script[src='" + script + "']") != null; //NON-NLS
+    }
+
+    @JsIgnore
+    public void inject(final String script, final List<String> stylesheets) {
+        jsInject(script, JsHelper.asJsArray(stylesheets));
     }
 
     @Override
@@ -86,27 +143,35 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         }
     }
 
+    public void register(final Extension extension) {
+        if (!ready) {
+            queue.offer(extension);
+        } else {
+            failSafeApply(extension);
+        }
+    }
+
     private void failSafeApply(Extension extension) {
         if (ready && headerDropdown != null && headerExtensions != null &&
                 footerDropdown != null && footerExtensions != null) {
-            if (extensions.contains(extension.id)) {
-                logger.warn("Extension {} already registered", extension.id);
+            if (extensions.contains(extension.name)) {
+                logger.warn("Extension {} already registered", extension.name);
             } else {
                 apply(extension);
             }
         } else {
-            logger.error("Cannot register extension {}: Console not ready", extension.id);
+            logger.error("Cannot register extension {}: Console not ready", extension.name);
         }
     }
 
     private void apply(Extension extension) {
-        extensions.add(extension.id);
-        if (extension.kind == Kind.HEADER || extension.kind == Kind.FOOTER) {
+        extensions.add(extension.name);
+        if (extension.point == Extension.Point.HEADER || extension.point == Point.FOOTER) {
             // @formatter:off
             Element li = new Elements.Builder()
                 .li()
                     .a()
-                        .id(extension.id)
+                        .id(extension.name)
                         .css(clickable)
                         .textContent(extension.title)
                         .on(click, event -> extension.entryPoint.execute())
@@ -117,7 +182,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
             Element ul;
             Element dropdown;
-            if (extension.kind == Kind.HEADER) {
+            if (extension.point == Point.HEADER) {
                 dropdown = headerDropdown;
                 ul = headerExtensions;
             } else {
@@ -127,8 +192,31 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
             ul.appendChild(li);
             dropdown.getClassList().remove(hidden);
 
-        } else if (extension.kind == Kind.FINDER_ITEM) {
+        } else if (extension.point == Extension.Point.FINDER_ITEM) {
             // TODO Handle finder item extensions
         }
+    }
+
+
+    // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "inject")
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void jsInject(final String script, final JsArrayOf<String> stylesheets) {
+        Document document = Browser.getDocument();
+        HeadElement head = document.getHead();
+
+        if (stylesheets != null && !stylesheets.isEmpty()) {
+            for (int i = 0; i < stylesheets.length(); i++) {
+                LinkElement linkElement = document.createLinkElement();
+                linkElement.setRel("stylesheet"); //NON-NLS
+                linkElement.setHref(stylesheets.get(i));
+                head.appendChild(linkElement);
+            }
+        }
+        ScriptElement scriptElement = document.createScriptElement();
+        scriptElement.setAsync(true);
+        scriptElement.setSrc(script);
+        head.appendChild(scriptElement);
     }
 }

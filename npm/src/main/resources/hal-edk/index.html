@@ -18,7 +18,7 @@
 <body>
 <script>
     window.addEventListener("halReady", function() {
-        $.getScript("extension.js");
+        hal.core.Core.getInstance().extensionRegistry.inject("extension.js");
     });
 </script>
 </body>

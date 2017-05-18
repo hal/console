@@ -184,6 +184,11 @@ public interface Ids {
     String ENDPOINT_PING = build(ENDPOINT, "ping");
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
     String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
+    String EXTENSION = "extension";
+    String EXTENSION_ADD = build(EXTENSION, ADD_SUFFIX);
+    String EXTENSION_REVIEW_FORM = build(EXTENSION, "review", FORM_SUFFIX);
+    String EXTENSION_URL_FORM = build(EXTENSION, "url", FORM_SUFFIX);
+    String EXTENSION_STORAGE = build(STORAGE_PREFIX, EXTENSION);
 
     String FINDER = "hal-finder";
     String FOOTER_EXTENSIONS = "footer-extensions";
@@ -334,6 +339,7 @@ public interface Ids {
     String MAIL_SESSION_ENTRY = build(MAIL_SESSION, ENTRY_SUFFIX);
     String MAIL_SESSION_FORM = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
+    String MANAGEMENT = "management";
     String MEMBERSHIP = "membership";
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
@@ -487,6 +493,7 @@ public interface Ids {
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";
+    String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
 

@@ -61,7 +61,7 @@ import static org.jboss.hal.resources.UIConstants.data;
  */
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
-    @JsType(namespace = "ui", name = "TableBuilder")
+    @JsType(namespace = "hal.ui", name = "TableBuilder")
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
         private final String id;

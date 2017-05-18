@@ -296,6 +296,7 @@ public class Wizard<C, S extends Enum<S>> {
     private EnumSet<S> lastStates;
     private FinishCallback<C, S> finishCallback;
     private CancelCallback<C> cancelCallback;
+    private boolean showsError;
     private boolean stayOpenAfterFinish;
     private boolean finishCanClose;
     private S state;
@@ -313,6 +314,7 @@ public class Wizard<C, S extends Enum<S>> {
                 .of(Iterables.getLast(steps.keySet())) : builder.lastStates;
         this.finishCallback = builder.finishCallback;
         this.cancelCallback = builder.cancelCallback;
+        this.showsError = false;
         this.stayOpenAfterFinish = builder.stayOpenAfterFinish;
         this.finishCanClose = false;
 
@@ -462,12 +464,13 @@ public class Wizard<C, S extends Enum<S>> {
 
         cancelButton.setDisabled(lastStep);
         backButton.setDisabled(lastStep);
-        nextButton.setDisabled(false);
+        nextButton.setDisabled(!lastStep);
         if (lastStep) {
             nextText.setTextContent(CONSTANTS.close());
             Elements.setVisible(nextIcon, false);
         }
         finishCanClose = lastStep;
+        showsError = true;
     }
 
     public C getContext() {
@@ -477,35 +480,69 @@ public class Wizard<C, S extends Enum<S>> {
 
     // ------------------------------------------------------ workflow
 
+    @SuppressWarnings("unchecked")
     private void onCancel() {
-        if (currentStep().onCancel(context)) {
-            cancel();
+        if (currentStep() instanceof AsyncStep) {
+            ((AsyncStep<C>) currentStep()).onCancel(context, this::cancel);
+        } else {
+            if (currentStep().onCancel(context)) {
+                cancel();
+            }
         }
     }
 
+    private void cancel() {
+        if (cancelCallback != null) {
+            cancelCallback.onCancel(context);
+        }
+        close();
+    }
+
+    @SuppressWarnings("unchecked")
     private void onBack() {
-        if (currentStep().onBack(context)) {
-            final S previousState = back.back(context, state);
-            if (previousState != null) {
-                pushState(previousState);
+        if (currentStep() instanceof AsyncStep) {
+            ((AsyncStep<C>) currentStep()).onBack(context, this::back);
+        } else {
+            if (currentStep().onBack(context)) {
+                back();
             }
         }
         finishCanClose = false;
     }
 
+    private void back() {
+        if (showsError) {
+            pushState(state);
+        } else {
+            final S previousState = back.back(context, state);
+            if (previousState != null) {
+                pushState(previousState);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private void onNext() {
         if (finishCanClose) {
             // we're on the last step and have either seen a success or error message
             close();
         } else {
-            if (currentStep().onNext(context)) {
-                final S nextState = next.next(context, state);
-                if (nextState != null) {
-                    pushState(nextState);
-                } else {
-                    finish();
+            if (currentStep() instanceof AsyncStep) {
+                ((AsyncStep<C>) currentStep()).onNext(context, this::next);
+            } else {
+                if (currentStep().onNext(context)) {
+                    next();
                 }
             }
+        }
+    }
+
+    private void next() {
+        final S nextState = next.next(context, state);
+        if (nextState != null) {
+            pushState(nextState);
+        } else {
+            finish();
         }
     }
 
@@ -519,22 +556,13 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     /**
-     * Method which is called when the wizard is canceled.
-     */
-    private void cancel() {
-        if (cancelCallback != null) {
-            cancelCallback.onCancel(context);
-        }
-        close();
-    }
-
-    /**
      * Sets the current state to the specified state and updates the UI to reflect the current state.
      *
      * @param state the next state
      */
     private void pushState(final S state) {
         this.state = state;
+        this.showsError = false;
 
         stepIndicators.forEach((s, element) -> {
             if (s == state) {

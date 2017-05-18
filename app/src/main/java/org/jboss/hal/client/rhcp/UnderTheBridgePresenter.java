@@ -49,6 +49,17 @@ public class UnderTheBridgePresenter
             final Finder finder) {
         super(eventBus, view, proxy, finder);
         model = new ModelNode();
+        model.get("string-required").set("Foo");
+        model.get("int-required").set(1);
+        model.get("long-required").set(2L);
+        model.get("boolean-required").set(true);
+        model.get("single-select-required").set("sit");
+        model.get("multi-select-required").add("Zombie");
+        model.get("multi-select-required").add("inferno");
+        model.get("multi-select-required").add("cerebro");
+        model.get("list-required").add("foo");
+        model.get("list-required").add("bar");
+        model.get("properties-required").set("foo", "bar");
     }
 
     @Override

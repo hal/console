@@ -121,6 +121,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         for (FormItem item : Lists.asList(formItem, formItems)) {
             this.formItems.put(item.getName(), item);
             item.setId(Ids.build(id, item.getName()));
+            if (item instanceof AbstractFormItem) {
+                ((AbstractFormItem) item).setForm(this);
+            }
         }
     }
 

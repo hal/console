@@ -75,13 +75,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
 @SuppressWarnings({"HardCodedStringLiteral", "Duplicates", "DuplicateStringLiteralInspection"})
 public class ModelNode implements Cloneable {
 
-    /**
-     * For use from JavaScript
-     */
-    public static ModelNode create() {
-        return new ModelNode();
-    }
-
     public static ModelNode fromBase64(String encoded) {
         ModelNode node = new ModelNode();
         String decoded = Browser.getWindow().atob(encoded);
@@ -1623,6 +1616,11 @@ public class ModelNode implements Cloneable {
 
 
     // ------------------------------------------------------ JS methods
+
+    @JsMethod(name = "create")
+    public static ModelNode jsCreate() {
+        return new ModelNode();
+    }
 
     @JsMethod(name = "getJSONString")
     public String jsGetJSONString() {

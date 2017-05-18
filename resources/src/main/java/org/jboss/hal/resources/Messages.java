@@ -120,6 +120,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String exactlyOneAlternativesError(String alternatives);
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
+    SafeHtml extensionError(int status);
+    SafeHtml extensionNetworkError(String console, String extension);
+    SafeHtml extensionNoJson();
+    SafeHtml extensionOk();
+    SafeHtml extensionProcessing();
+    SafeHtml extensionNotFound();
+    SafeHtml extensionScriptError();
+    SafeHtml extensionUrl();
 
     SafeHtml flushConnectionSuccess();
 
@@ -142,6 +150,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml includeAllHelpText();
 
+    SafeHtml invalidExtensionJson();
+    SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidRange(long value, long min, long max);
 
     SafeHtml jdbcDriverDeploymentHint();
@@ -227,6 +237,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String removeConfirmationTitle(String name);
     SafeHtml removeConfirmationQuestion(String name);
     SafeHtml removeCurrentUserError();
+    SafeHtml removeExtensionQuestion();
+    SafeHtml removeExtensionSuccess();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
     SafeHtml removeResourceSuccess(String type, String name);

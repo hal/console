@@ -57,6 +57,7 @@ public interface ModelDescriptionConstants {
     String ADMIN_OBJECTS = "admin-objects";
     String AJP_LISTENER = "ajp-listener";
     String ALLOWED = "allowed";
+    String ALLOWED_ORIGINS = "allowed-origins";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
     String ALTERNATIVES = "alternatives";
     String ANY = "any";
@@ -65,6 +66,7 @@ public interface ModelDescriptionConstants {
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTES_ONLY = "attributes-only";
+    String AUTHOR = "author";
     String AUTO_START = "auto-start";
 
     String BACKUP_FOR = "backup-for";
@@ -83,6 +85,7 @@ public interface ModelDescriptionConstants {
     String BROWSE_CONTENT = "browse-content";
     String BUFFER_CACHE = "buffer-cache";
     String BUFFER_POOL = "buffer-pool";
+    String BUNDLED = "bundled";
 
     String CACHE_CONTAINER = "cache-container";
     String CACHE_TYPE = "cache-type";
@@ -160,6 +163,7 @@ public interface ModelDescriptionConstants {
     String EXPLODED = "exploded";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
+    String EXTENSION_POINT = "extension-point";
 
     String FAILED = "failed";
     String FAILED_OPERATION = "failed-operation";
@@ -186,6 +190,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
+    String HOMEPAGE = "homepage";
     String HOST = "host";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -195,6 +200,7 @@ public interface ModelDescriptionConstants {
     String HTTP_CONNECTOR = "http-connector";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
+    String HTTP_UPGRADE = "http-upgrade";
     String HTTPS = "https";
     String HTTPS_LISTENER = "https-listener";
 
@@ -233,6 +239,7 @@ public interface ModelDescriptionConstants {
 
     String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
+    String LICENSE = "license";
     String LINES = "lines";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
@@ -377,9 +384,13 @@ public interface ModelDescriptionConstants {
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
+    String SASL_PROTOCOL = "sasl-protocol";
+    String SCRIPT = "script";
     //String SECURITY = "security-elytron";
+    String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_REALM = "security-realm";
     String SECURITY_SETTING = "security-setting";
     String SELECT = "select";
     String SELECTOR = "selector";
@@ -410,6 +421,7 @@ public interface ModelDescriptionConstants {
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";
     String SMTP = "smtp";
+    String SSL_CONTEXT = "ssl-context";
     String STACK = "stack";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
@@ -420,6 +432,7 @@ public interface ModelDescriptionConstants {
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
+    String STYLESHEETS = "stylesheets";
     String STORAGE = "storage";
     String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
@@ -461,6 +474,7 @@ public interface ModelDescriptionConstants {
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
+    String VERSION = "version";
 
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";

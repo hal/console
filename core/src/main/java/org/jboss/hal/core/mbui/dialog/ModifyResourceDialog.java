@@ -60,7 +60,6 @@ public class ModifyResourceDialog {
                 .add(form.asElement())
                 .saveCancel(form::save)
                 .size(Size.MEDIUM)
-                .closeOnEsc(true)
                 .closed(closed)
                 .build();
         this.dialog.registerAttachable(form);

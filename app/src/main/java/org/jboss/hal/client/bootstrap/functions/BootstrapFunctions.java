@@ -39,7 +39,7 @@ public class BootstrapFunctions {
                 findDomainController,
                 registerStaticCapabilities,
                 loadSettings,
-                // readExtensions
+                readExtensions
         };
     }
 

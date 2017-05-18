@@ -18,6 +18,7 @@ package org.jboss.hal.core.extension;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Harald Pehl
@@ -25,26 +26,38 @@ import org.jboss.hal.ballroom.JsCallback;
 @JsType(namespace = "hal.core")
 public class Extension {
 
-    public enum Kind {HEADER, FINDER_ITEM, FOOTER}
+    public enum Point {
+        HEADER("Header"), FINDER_ITEM("Finder Item"), FOOTER("Footer"), CUSTOM("Custom");
 
-    @JsMethod
-    public static Extension header(final String id, final String title, final JsCallback entryPoint) {
-        return new Extension(id, title, Kind.HEADER, entryPoint);
+        private final String title;
+
+        Point(@NonNls final String title) {
+            this.title = title;
+        }
+
+        public String title() {
+            return title;
+        }
     }
 
     @JsMethod
-    public static Extension footer(final String id, final String title, final JsCallback entryPoint) {
-        return new Extension(id, title, Kind.FOOTER, entryPoint);
+    public static Extension header(final String name, final String title, final JsCallback entryPoint) {
+        return new Extension(name, title, Point.HEADER, entryPoint);
     }
 
-    final String id;
+    @JsMethod
+    public static Extension footer(final String name, final String title, final JsCallback entryPoint) {
+        return new Extension(name, title, Point.FOOTER, entryPoint);
+    }
+
+    final String name;
     final String title;
-    final Kind kind;
+    final Point point;
     final JsCallback entryPoint;
 
-    private Extension(final String id, final String title, final Kind kind, final JsCallback entryPoint) {
-        this.id = id;
-        this.kind = kind;
+    private Extension(final String name, final String title, final Point point, final JsCallback entryPoint) {
+        this.name = name;
+        this.point = point;
         this.title = title;
         this.entryPoint = entryPoint;
     }

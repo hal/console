@@ -17,11 +17,14 @@ package org.jboss.hal.core;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.extension.ExtensionRegistry;
@@ -39,6 +42,9 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.Message.Level;
+import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -141,11 +147,41 @@ public class Core {
     }
 
 
-    // ------------------------------------------------------ JS methods
+    // ------------------------------------------------------ JS methods (static, inner classes, a-z)
 
     @JsMethod(name = "getInstance")
     public static Core jsGetInstance() {
         return INSTANCE;
+    }
+
+    @JsMethod(name = "dialog")
+    public Dialog.Builder jsDialog(final String title) {
+        return new Dialog.Builder(title);
+    }
+
+    @JsMethod(name = "error")
+    public void jsError(final String message) {
+        jsMessage(Level.ERROR, message);
+    }
+
+    @JsMethod(name = "form")
+    public ModelNodeForm.Builder<ModelNode> jsForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
+    }
+
+    @JsMethod(name = "info")
+    public void jsInfo(final String message) {
+        jsMessage(Level.INFO, message);
+    }
+
+    @JsMethod(name = "namedForm")
+    public ModelNodeForm.Builder<NamedNode> jsNamedForm(final Object meta) {
+        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
+    }
+
+    @JsMethod(name = "namedTable")
+    public ModelNodeTable.Builder<NamedNode> jsNamedTable(final Object meta) {
+        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
     }
 
     @JsMethod(name = "operation")
@@ -158,19 +194,15 @@ public class Core {
         } else if (address instanceof String) {
             ra = AddressTemplate.of(((String) address)).resolve(statementContext());
         } else {
-            throw new IllegalArgumentException("Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|String) address, String name)");
+            throw new IllegalArgumentException(
+                    "Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|String) address, String name)");
         }
         return new Operation.Builder(ra, name);
     }
 
-    @JsMethod(name = "form")
-    public ModelNodeForm.Builder<ModelNode> jsForm(final Object meta) {
-        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
-    }
-
-    @JsMethod(name = "namedForm")
-    public ModelNodeForm.Builder<NamedNode> jsNamedForm(final Object meta) {
-        return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
+    @JsMethod(name = "success")
+    public void jsSuccess(final String message) {
+        jsMessage(Level.SUCCESS, message);
     }
 
     @JsMethod(name = "table")
@@ -178,9 +210,27 @@ public class Core {
         return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB_SUFFIX), jsMetadata("table", meta));
     }
 
-    @JsMethod(name = "namedTable")
-    public ModelNodeTable.Builder<NamedNode> jsNamedTable(final Object meta) {
-        return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
+    @JsMethod(name = "warning")
+    public void jsWarning(final String message) {
+        jsMessage(Level.WARNING, message);
+    }
+
+    private void jsMessage(final Level level, final String message) {
+        SafeHtml safeMessage = SafeHtmlUtils.fromSafeConstant(message);
+        switch (level) {
+            case ERROR:
+                MessageEvent.fire(eventBus, Message.error(safeMessage));
+                break;
+            case WARNING:
+                MessageEvent.fire(eventBus, Message.warning(safeMessage));
+                break;
+            case INFO:
+                MessageEvent.fire(eventBus, Message.info(safeMessage));
+                break;
+            case SUCCESS:
+                MessageEvent.fire(eventBus, Message.success(safeMessage));
+                break;
+        }
     }
 
     private Metadata jsMetadata(@NonNls String method, Object meta) {

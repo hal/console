@@ -69,8 +69,6 @@ public final class DialogFactory {
         }
 
         return new Dialog.Builder(title)
-                .closeIcon(true)
-                .closeOnEsc(true)
                 .yesNo(confirm)
                 .size(size)
                 .add(content)

@@ -18,6 +18,8 @@ package org.jboss.hal.ballroom.form;
 import org.jboss.hal.dmr.ModelNode;
 
 /**
+ * Marker interface for form items which manage complex attributes.
+ *
  * @author Harald Pehl
  */
 public interface ModelNodeItem extends FormItem<ModelNode> {

@@ -29,6 +29,7 @@ public interface Names {
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
+    String ALLOWED_ORIGIN = "allowed-origin";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
     String ASYNC_OPERATIONS = "Async Operations";
@@ -47,6 +48,7 @@ public interface Names {
     String BRIDGE = "Bridge";
     String BROADCAST_GROUP = "Broadcast Group";
     String BUFFER_CACHES = "Buffer Caches";
+    String BUNDLED_EXTENSION = "Bundled Extension";
 
     String CACHE_CONTAINER = "Cache Container";
     String CHANNEL = "Channel";
@@ -57,6 +59,7 @@ public interface Names {
     String CLUSTERING = "Clustering";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
+    String CONFIGURATION_CHANGES = "Configuration Changes";
     String CONNECTION = "Connection";
     String CONNECTION_FACTORY = "Connection Factory";
     String CONNECTION_DEFINITION = "Connection Definition";
@@ -89,6 +92,8 @@ public interface Names {
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
     String EXPIRATION = "Expiration";
+    String EXTENSION = "Extension";
+    String EXTENSIONS = "Extensions";
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
@@ -153,6 +158,7 @@ public interface Names {
 
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT = "Management";
+    String MANAGEMENT_INTERFACE = "Management Interface";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MAPPERS_DECODERS = "Mappers / Decoders";
@@ -230,11 +236,10 @@ public interface Names {
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE = "Store";
-    String STORES_TRANSFORMERS = "Stores / Transformers";
-    String STRING_JDBC = "String JDBC";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
     String SUBDEPLOYMENTS = "Subdeployments";
@@ -253,6 +258,7 @@ public interface Names {
 
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
+    String URL = "URL";
 
     String VALUE = "Value";
 

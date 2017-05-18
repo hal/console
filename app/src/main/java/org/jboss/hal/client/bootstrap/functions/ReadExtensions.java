@@ -17,42 +17,39 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import javax.inject.Inject;
 
-import elemental.client.Browser;
-import elemental.html.ScriptElement;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.core.extension.ExtensionRegistry;
+import org.jboss.hal.core.extension.ExtensionStorage;
+import org.jboss.hal.core.extension.InstalledExtension;
 
 /**
  * @author Harald Pehl
  */
 public class ReadExtensions implements BootstrapFunction {
 
-    private final CrudOperations crud;
+    private final ExtensionRegistry extensionRegistry;
+    private final ExtensionStorage extensionStorage;
 
     @Inject
-    public ReadExtensions(final CrudOperations crud) {this.crud = crud;}
+    public ReadExtensions(final ExtensionRegistry extensionRegistry, final ExtensionStorage extensionStorage) {
+        this.extensionRegistry = extensionRegistry;
+        this.extensionStorage = extensionStorage;
+    }
 
     @Override
     public void execute(final Control<FunctionContext> control) {
-        // TODO Decide where to store extensions in the management model
-        crud.readChildren(AddressTemplate.of("/core-service=management/service=console"), "extension",
-                extensions -> extensions.forEach(
-                        extension -> injectScript(extension.getValue().get("script").asString())));
+        logStart();
+        // TODO Load server side extensions from /core-service=management/console-extension=*
+        for (InstalledExtension extension : extensionStorage.list()) {
+            extensionRegistry.inject(extension.getFqScript(), extension.getFqStylesheets());
+        }
+        logDone();
+        control.proceed();
     }
 
     @Override
     public String name() {
         return "Bootstrap[ReadExtensions]";
-    }
-
-    private void injectScript(String script) {
-        // TODO Should there be any checks before we inject the script? Is that even possible?
-        ScriptElement scriptElement = Browser.getDocument().createScriptElement();
-        scriptElement.setType("text/javascript"); //NON-NLS
-        scriptElement.setAsync(true);
-        scriptElement.setSrc(script);
-        Browser.getDocument().getHead().appendChild(scriptElement);
     }
 }

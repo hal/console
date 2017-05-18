@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Deprecation;
@@ -97,7 +98,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean expressionAllowed;
     private Deprecation deprecation;
 
-    private final Map<Form.State, Appearance<T>> appearances;
+    private Form form;
+    private final Map<State, Appearance<T>> appearances;
     private SuggestHandler suggestHandler;
     private final List<FormItemValidation<T>> validationHandlers;
     private final List<ResolveExpressionHandler> resolveExpressionHandlers;
@@ -125,7 +127,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.resolveExpressionHandlers = new LinkedList<>();
     }
 
-    protected void addAppearance(Form.State state, Appearance<T> appearance) {
+    protected void addAppearance(State state, Appearance<T> appearance) {
         appearances.put(state, appearance);
         appearance.setLabel(label);
         if (hint != null) {
@@ -137,7 +139,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ element and appearance
 
     @Override
-    public Element asElement(final Form.State state) {
+    public Element asElement(final State state) {
         if (appearances.containsKey(state)) {
             return appearances.get(state).asElement();
         } else {
@@ -151,9 +153,24 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      */
     @Override
     public void attach() {
-        appearances.values().forEach(Appearance::attach);
-        if (suggestHandler instanceof Attachable) {
-            ((Attachable) suggestHandler).attach();
+        if (form != null) {
+            // if there's a back reference use it to attach only the appearances which are supported by the form
+            for (Map.Entry<State, Appearance<T>> entry : appearances.entrySet()) {
+                State state = entry.getKey();
+                if (form.getStateMachine().supports(state)) {
+                    Appearance<T> appearance = entry.getValue();
+                    appearance.attach();
+                }
+            }
+            if (form.getStateMachine().supports(State.EDITING) && suggestHandler instanceof Attachable) {
+                ((Attachable) suggestHandler).attach();
+            }
+
+        } else {
+            appearances.values().forEach(Appearance::attach);
+            if (suggestHandler instanceof Attachable) {
+                ((Attachable) suggestHandler).attach();
+            }
         }
     }
 
@@ -177,7 +194,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.unapply(decoration));
     }
 
-    private Optional<Appearance<T>> appearance(Form.State state) {
+    private Optional<Appearance<T>> appearance(State state) {
         if (appearances.containsKey(state)) {
             return Optional.of(appearances.get(state));
         }
@@ -188,7 +205,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ id, value & name
 
     @Override
-    public String getId(final Form.State state) {
+    public String getId(final State state) {
         return appearance(state).map(Appearance::getId).orElse(null);
     }
 
@@ -523,25 +540,25 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public int getTabIndex() {
-        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        Optional<Appearance<T>> appearance = appearance(State.EDITING);
         return appearance.map(Focusable::getTabIndex).orElse(-1);
     }
 
     @Override
     public void setTabIndex(final int index) {
-        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        Optional<Appearance<T>> appearance = appearance(State.EDITING);
         appearance.ifPresent((Appearance<T> a) -> a.setTabIndex(index));
     }
 
     @Override
     public void setAccessKey(final char accessKey) {
-        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        Optional<Appearance<T>> appearance = appearance(State.EDITING);
         appearance.ifPresent((Appearance<T> a) -> a.setAccessKey(accessKey));
     }
 
     @Override
     public void setFocus(final boolean focus) {
-        Optional<Appearance<T>> appearance = appearance(Form.State.EDITING);
+        Optional<Appearance<T>> appearance = appearance(State.EDITING);
         appearance.ifPresent((Appearance<T> a) -> a.setFocus(focus));
     }
 
@@ -605,5 +622,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         } else {
             unapply(DEPRECATED);
         }
+    }
+
+    void setForm(final Form form) {
+        this.form = form;
     }
 }

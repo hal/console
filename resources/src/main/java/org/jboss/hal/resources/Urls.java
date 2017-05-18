@@ -20,17 +20,18 @@ package org.jboss.hal.resources;
  */
 public interface Urls {
 
-    String MANAGEMENT = "/management";
-    String LOGOUT = "/logout";
-    String UPLOAD = "/management-upload";
-    String WILDFLY_HOMEPAGE = "http://www.wildfly.org";
-    String WFLY10_DOCUMENTATION = "https://docs.jboss.org/author/display/WFLY10/Documentation";
-    String WFLY10_ADMIN_GUIDE = "https://docs.jboss.org/author/display/WFLY10/Admin+Guide";
-    String WILDSCRIBE_GITHUB_IO = "http://wildscribe.github.io/index.html";
-    String WILDFLY_ISSUES = "https://issues.jboss.org/browse/WFLY";
-    String WILDFLY_NEWS = "http://wildfly.org/news/";
+    String EXTENSION_DOCUMENTATION = "https://github.com/hal/hal.next/wiki/Extensions";
     String JBOSS_ORG_DEVELOPER_MATERIALS = "http://www.jboss.org/developer-materials/";
     String JBOSS_COMMUNITY_DISCUSSIONS = "https://community.jboss.org/en/wildfly?view=discussions";
+    String LOGOUT = "/logout";
+    String MANAGEMENT = "/management";
+    String UPLOAD = "/management-upload";
+    String WILDFLY_HOMEPAGE = "http://www.wildfly.org";
+    String WILDFLY_ISSUES = "https://issues.jboss.org/browse/WFLY";
+    String WILDFLY_NEWS = "http://wildfly.org/news/";
     String WILDFLY_IRC = "irc://freenode.org/#wildfly";
     String WILDFLY_DEV_MAILING_LIST = "https://lists.jboss.org/mailman/listinfo/wildfly-dev";
+    String WILDFLY_10_ADMIN_GUIDE = "https://docs.jboss.org/author/display/WFLY10/Admin+Guide";
+    String WILDFLY_10_DOCUMENTATION = "https://docs.jboss.org/author/display/WFLY10/Documentation";
+    String WILDSCRIBE_GITHUB_IO = "http://wildscribe.github.io/index.html";
 }
