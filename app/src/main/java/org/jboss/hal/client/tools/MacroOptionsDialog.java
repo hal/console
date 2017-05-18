@@ -64,9 +64,8 @@ public class MacroOptionsDialog {
 
         dialog = new Dialog.Builder(resources.constants().startMacro())
                 .add(form.asElement())
-                .primary(resources.constants().ok(), () -> form.save())
+                .primary(resources.constants().ok(), form::save)
                 .cancel()
-                .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(form);
     }

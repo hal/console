@@ -345,8 +345,6 @@ public class ContentColumn extends FinderColumn<Content> {
         UploadElement uploadElement = new UploadElement(resources.messages().noContent());
         Dialog dialog = new Dialog.Builder(resources.constants().replaceContent())
                 .add(uploadElement.asElement())
-                .closeIcon(true)
-                .closeOnEsc(true)
                 .cancel()
                 .primary(resources.constants().replace(), () -> {
                     boolean valid = uploadElement.validate();
