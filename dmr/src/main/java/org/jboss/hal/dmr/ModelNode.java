@@ -1439,6 +1439,7 @@ public class ModelNode implements Cloneable {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
+    @JsIgnore
     public boolean equals(final Object other) {
         return other instanceof ModelNode && equals((ModelNode) other);
     }
@@ -1474,6 +1475,7 @@ public class ModelNode implements Cloneable {
      * @return the clone
      */
     @SuppressWarnings("MethodDoesntCallSuperMethod")
+    @JsIgnore
     public ModelNode clone() {
         final ModelNode clone = new ModelNode();
         clone.value = value.copy();

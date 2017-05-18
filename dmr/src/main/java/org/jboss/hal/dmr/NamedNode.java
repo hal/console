@@ -51,6 +51,7 @@ public class NamedNode extends ModelNode {
     }
 
     @Override
+    @JsIgnore
     public boolean equals(final Object o) {
         if (this == o) { return true; }
         if (!(o instanceof NamedNode)) { return false; }

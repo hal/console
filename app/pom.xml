@@ -260,7 +260,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-jsdoc</id>
+                        <id>generate-esdoc</id>
                         <goals>
                             <goal>process</goal>
                         </goals>

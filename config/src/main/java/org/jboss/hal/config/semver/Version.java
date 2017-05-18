@@ -600,6 +600,7 @@ public class Version implements Comparable<Version> {
      * @see #compareTo(Version other)
      */
     @Override
+    @JsIgnore
     public boolean equals(Object other) {
         if (this == other) {
             return true;
