@@ -244,16 +244,46 @@
                             <additionalSourceDirectories>
                                 <additionalSourceDirectory>${project.build.directory}/generated-sources/apt-app
                                 </additionalSourceDirectory>
+                                <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../themes/${theme.name}/src/main/java
                                 </additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-jsdoc</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <options>
+                                <!-- Uncomment to get more messages from the annotation processors -->
+                                <!--<debug>true</debug>-->
+                            </options>
+                            <defaultOutputDirectory>${project.build.directory}/generated-resources</defaultOutputDirectory>
+                            <additionalSourceDirectories>
+                                <additionalSourceDirectory>../ballroom/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../spi/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java
+                                </additionalSourceDirectory>
+                            </additionalSourceDirectories>
+                            <processors>
+                                <processor>org.jboss.hal.processor.JsDocProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>
