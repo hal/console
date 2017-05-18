@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
+import java.util.function.Supplier;
+
 import com.google.gwt.resources.client.ExternalTextResource;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -23,8 +25,8 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -42,12 +44,12 @@ import static org.jboss.hal.resources.Names.ROOT_LOGGER;
 class LoggingPreview<T> extends PreviewContent<T> {
 
     private final Dispatcher dispatcher;
-    private final Operation operation;
+    private final Supplier<Operation> operation;
     private final PreviewAttributes<ModelNode> attributes;
     private final Element undefined;
 
     LoggingPreview(Dispatcher dispatcher, Resources resources,
-            String header, ExternalTextResource description, Operation operation) {
+            String header, ExternalTextResource description, Supplier<Operation> operation) {
         super(header, description);
         this.dispatcher = dispatcher;
         this.operation = operation;
@@ -77,7 +79,7 @@ class LoggingPreview<T> extends PreviewContent<T> {
 
     @Override
     public void update(T whatever) {
-        dispatcher.execute(operation,
+        dispatcher.execute(operation.get(),
                 (model) -> {
                     for (Element element : attributes.asElements()) {
                         Elements.setVisible(element, true);
