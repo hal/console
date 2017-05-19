@@ -17,6 +17,7 @@ package org.jboss.hal.processor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +29,12 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsIgnore;
@@ -39,10 +43,15 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.core.Strings;
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
 /**
@@ -51,11 +60,14 @@ import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all exported js types in all maven modules.
 @SupportedAnnotationTypes("jsinterop.annotations.JsType")
-@SuppressWarnings({"HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored", "SpellCheckingInspection"})
+@SuppressWarnings({"HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored", "SpellCheckingInspection",
+        "DuplicateStringLiteralInspection"})
 public class EsDocProcessor extends AbstractProcessor {
 
     private static final String AUTO = "<auto>";
     private static final String PACKAGE = "esdoc";
+    private static final String PARAM_TAG = "@param";
+    private static final String RETURN_TAG = "@return";
     private static final String TEMPLATE = "EsDoc.ftl";
     private static final String TYPES = "types";
 
@@ -81,7 +93,7 @@ public class EsDocProcessor extends AbstractProcessor {
             }
 
             Type type = new Type(namespace(packageElement, typeElement), typeName(typeElement),
-                    comment(typeElement));
+                    comment(typeElement, ""));
             types.put(type.getNamespace(), type);
             debug("Discovered JsType [%s]", type);
 
@@ -95,7 +107,8 @@ public class EsDocProcessor extends AbstractProcessor {
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsConstructor.class) != null))
                     .findFirst()
-                    .ifPresent(e -> type.setConstructor(new Constructor(parameters(e), comment(e))));
+                    .ifPresent(e -> type.setConstructor(
+                            new Constructor(parameters(e), comment(e, "    "))));
 
             // Properties - Fields
             ElementFilter.fieldsIn(elements)
@@ -103,20 +116,23 @@ public class EsDocProcessor extends AbstractProcessor {
                     .filter(jsRelevant)
                     .forEach(e -> {
                         boolean setter = !e.getModifiers().contains(Modifier.FINAL);
-                        type.addProperty(new Property(propertyName(e), comment(e), true, setter, _static(e)));
+                        type.addProperty(
+                                new Property(propertyName(e), comment(e, "    "), true, setter, _static(e)));
                     });
 
             // Properties - Methods (only getters are supported)
             ElementFilter.methodsIn(elements)
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) != null))
-                    .forEach(e -> type.addProperty(new Property(propertyName(e), comment(e), true, false, _static(e))));
+                    .forEach(e -> type.addProperty(
+                            new Property(propertyName(e), comment(e, "    "), true, false, _static(e))));
 
             // Methods
             ElementFilter.methodsIn(elements)
                     .stream()
                     .filter(jsRelevant.and(e -> e.getAnnotation(JsProperty.class) == null))
-                    .forEach(e -> type.addMethod(new Method(methodName(e), parameters(e), comment(e), _static(e))));
+                    .forEach(e -> type.addMethod(
+                            new Method(methodName(e), parameters(e), comment(e, "    "), _static(e))));
         }
 
         if (!types.isEmpty()) {
@@ -147,9 +163,103 @@ public class EsDocProcessor extends AbstractProcessor {
         return namespace;
     }
 
-    private String comment(Element element) {
+    private String comment(Element element, String padding) {
+        List<String> parameters = new ArrayList<>();
         String comment = elementUtils.getDocComment(element);
-        return comment == null ? "Undocumented" : comment;
+        if (comment != null) {
+
+            // process comment line by line
+            List<String> lines = stream(Splitter.on('\n').trimResults().split(comment).spliterator(), false)
+
+                    // not supported by ESDoc
+                    .filter(line -> !(line.contains("@author") || line.contains("@version")))
+
+                    // process @param and @return in methods
+                    .map(line -> {
+                        String result = line;
+                        if (element instanceof ExecutableElement) {
+                            ExecutableElement method = (ExecutableElement) element;
+
+                            if (line.startsWith(PARAM_TAG)) {
+                                String paramType;
+                                String lineWithoutParam = line.substring(PARAM_TAG.length());
+                                VariableElement parameter = getParameter(method, parameters.size());
+                                if (parameter != null) {
+                                    EsParam esParam = parameter.getAnnotation(EsParam.class);
+                                    if (esParam != null) {
+                                        paramType = esParam.value();
+                                    } else {
+                                        paramType = simpleName(parameter.asType().toString());
+                                    }
+                                    result = PARAM_TAG + " {" + paramType + "}" + lineWithoutParam;
+                                }
+                                parameters.add(line); // parameters++
+
+                            } else if (line.startsWith(RETURN_TAG)) {
+                                String returnType;
+                                EsReturn esReturn = method.getAnnotation(EsReturn.class);
+                                if (esReturn != null) {
+                                    returnType = esReturn.value();
+                                } else {
+                                    returnType = simpleName(method.getReturnType().toString());
+                                }
+                                result = RETURN_TAG + " {" + returnType + "}" + line.substring(RETURN_TAG.length());
+                            }
+                        }
+                        return result;
+                    })
+
+                    // format comment and collect into list
+                    .map(line -> padding + " * " + line)
+                    .collect(toList());
+
+            // remove trailing empty lines
+            List<String> reversed = Lists.reverse(lines);
+            for (Iterator<String> iterator = reversed.iterator(); iterator.hasNext(); ) {
+                String line = iterator.next();
+                if (line.equals(padding + " * ")) {
+                    iterator.remove();
+                } else {
+                    break;
+                }
+            }
+
+            if (reversed.isEmpty()) {
+                comment = null;
+            } else {
+                // add first and last lines
+                comment = Lists.reverse(reversed).stream().collect(joining("\n"));
+                comment = "/**\n" + comment + "\n" + padding + " */";
+            }
+        }
+        return comment;
+    }
+
+    private VariableElement getParameter(final ExecutableElement method, int index) {
+        List<? extends VariableElement> parameters = method.getParameters();
+        return index < parameters.size() ? parameters.get(index) : null;
+    }
+
+    private String simpleName(String type) {
+        String simple = type.contains(".") ? Strings.substringAfterLast(type, ".") : type;
+        switch (simple) {
+            case "double":
+            case "Double":
+            case "float":
+            case "Float":
+            case "int":
+            case "Integer":
+            case "long":
+            case "Long":
+            case "Number":
+                simple = "number";
+                break;
+
+            case "String":
+                simple = "string";
+                break;
+        }
+        return simple;
     }
 
     private String typeName(Element element) {

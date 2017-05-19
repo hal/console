@@ -15,12 +15,9 @@
  */
 package org.jboss.hal.config;
 
-import jsinterop.annotations.JsType;
-
 /**
  * @author Harald Pehl
  */
-@JsType
 public enum AccessControlProvider {
     SIMPLE, RBAC
 }

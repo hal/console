@@ -46,6 +46,7 @@ import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Point;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,8 @@ import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
 /**
+ * Registry to manage HAL extensions written in JavaScript.
+ *
  * @author Harald Pehl
  */
 @JsType(namespace = "hal.core")
@@ -143,6 +146,13 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         }
     }
 
+    /**
+     * Registers an extension. Use this method to register your extension.
+     * <p>
+     * If the extension is already registered, this method will do nothing.
+     *
+     * @param extension the extension to register.
+     */
     public void register(final Extension extension) {
         if (!ready) {
             queue.offer(extension);
@@ -200,9 +210,16 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't
+     * have to call this method.
+     *
+     * @param script the extension's script.
+     * @param stylesheets an optional list of stylesheets.
+     */
     @JsMethod(name = "inject")
     @SuppressWarnings("HardCodedStringLiteral")
-    public void jsInject(final String script, final JsArrayOf<String> stylesheets) {
+    public void jsInject(final String script, @EsParam("string[]") final JsArrayOf<String> stylesheets) {
         Document document = Browser.getDocument();
         HeadElement head = document.getHead();
 

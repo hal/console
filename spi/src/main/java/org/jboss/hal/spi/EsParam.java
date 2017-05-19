@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.config;
+package org.jboss.hal.spi;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
- * Enum for the operation mode.
+ * Annotation used to generate ECMAScript 6 documentation.
  *
  * @author Harald Pehl
  */
-public enum OperationMode {
+@Retention(SOURCE)
+@Target(PARAMETER)
+public @interface EsParam {
 
-    SELF_CONTAINED, // WildFly Swarm
-    STANDALONE,
-    DOMAIN,
-    UNDEFINED
+    String value();
 }

@@ -27,12 +27,13 @@ import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.config.Role.*;
 
 /**
- * Contains the list of standard roles plus the custom defined scoped roles.
+ * Provides access to all standard and scoped roles.
  *
  * @author Harald Pehl
  */
@@ -84,6 +85,11 @@ public class Roles implements Iterable<Role> {
         scopedRoles.clear();
     }
 
+    /**
+     * @param id The unique ID of the role.
+     *
+     * @return the role for that ID or null if no such role was found.
+     */
     public Role get(String id) {
         if (id != null) {
             return lookup.get(id);
@@ -110,7 +116,11 @@ public class Roles implements Iterable<Role> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return all roles (standard and scoped).
+     */
     @JsProperty(name = "all")
+    @EsReturn("Role[]")
     public JsArrayOf<Role> jsAll() {
         JsArrayOf<Role> array = JsArrayOf.create();
         for (Role role : lookup.values()) {
@@ -119,7 +129,11 @@ public class Roles implements Iterable<Role> {
         return array;
     }
 
+    /**
+     * @return standard roles.
+     */
     @JsProperty(name = "standardRoles")
+    @EsReturn("Role[]")
     public JsArrayOf<Role> jsStandardRoles() {
         JsArrayOf<Role> array = JsArrayOf.create();
         for (Role role : standardRoles) {
@@ -128,7 +142,11 @@ public class Roles implements Iterable<Role> {
         return array;
     }
 
+    /**
+     * @return scoped roles or an empty array if no scoped roles are defined.
+     */
     @JsProperty(name = "scopedRoles")
+    @EsReturn("Role[]")
     public JsArrayOf<Role> jsScopedRoles() {
         JsArrayOf<Role> array = JsArrayOf.create();
         for (Role role : scopedRoles) {

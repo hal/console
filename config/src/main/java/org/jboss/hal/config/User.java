@@ -22,11 +22,14 @@ import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.config.Role.ADMINISTRATOR;
 import static org.jboss.hal.config.Role.SUPER_USER;
 
 /**
+ * Holds information about an user.
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -34,6 +37,9 @@ public class User {
 
     private static final User current = new User("Unknown", new HashSet<>()); //NON-NLS
 
+    /**
+     * @return the current user.
+     */
     public static User current() {
         return current;
     }
@@ -46,6 +52,9 @@ public class User {
         this.roles = roles;
     }
 
+    /**
+     * @return the user name.
+     */
     @JsProperty
     public String getName() {
         return name;
@@ -72,6 +81,9 @@ public class User {
         roles.add(role);
     }
 
+    /**
+     * @return true if this user belongs to the role SuperUser, false otherwise.
+     */
     @JsProperty
     public boolean isSuperuser() {
         for (Role role : roles) {
@@ -82,6 +94,9 @@ public class User {
         return false;
     }
 
+    /**
+     * @return true if this user belongs to the role Administrator, false otherwise.
+     */
     @JsProperty
     public boolean isAdministrator() {
         for (Role role : roles) {
@@ -95,7 +110,11 @@ public class User {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return the roles of this user.
+     */
     @JsProperty(name = "roles")
+    @EsReturn("Role[]")
     public JsArrayOf<Role> jsRoles() {
         JsArrayOf<Role> array = JsArrayOf.create();
         for (Role role : roles) {
