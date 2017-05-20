@@ -1446,8 +1446,8 @@ public class CrudOperations {
     /**
      * Executes a read-resource operation on the specified address and passes the result to the callback.
      *
-     * @param address  the address for the read-resource operation operation
-     * @param callback the callback which gets the result of the read-resource operation
+     * @param address  The address for the read-resource operation operation.
+     * @param callback The callback which gets the result of the read-resource operation.
      */
     @JsMethod(name = "read")
     public void jsRead(@EsParam("AddressTemplate|ResourceAddress|string") Object address,
@@ -1468,8 +1468,8 @@ public class CrudOperations {
     /**
      * Executes a recursive read-resource operation on the specified address and passes the result to the callback.
      *
-     * @param address  the address for the read-resource operation operation
-     * @param callback the callback which gets the result of the read-resource operation
+     * @param address  The address for the read-resource operation operation.
+     * @param callback The callback which gets the result of the read-resource operation.
      */
     @JsMethod(name = "readRecursive")
     public void jsReadRecursive(@EsParam("AddressTemplate|ResourceAddress|string") Object address,
@@ -1491,9 +1491,9 @@ public class CrudOperations {
      * Executes a read-children-resources operation on the specified address and passes the result as {@link Property}
      * array to the callback.
      *
-     * @param address   the address for the read-children-resources operation
-     * @param childType the child resource type
-     * @param callback  the callback which gets the result of the read-children-resources operation
+     * @param address   The address for the read-children-resources operation.
+     * @param childType The child resource type.
+     * @param callback  The callback which gets the result of the read-children-resources operation.
      */
     @JsMethod(name = "readChildren")
     public void jsReadChildren(@EsParam("AddressTemplate|ResourceAddress|string") Object address, String childType,
@@ -1517,11 +1517,11 @@ public class CrudOperations {
      * is displayed and the callback is executed. If the change set is empty, a warning message is displayed and the
      * callback is executed.
      *
-     * @param type      the human readable resource type used in the success message
-     * @param name      the resource name
-     * @param address   the address for the operation
-     * @param changeSet a key-value map containing the changes to the resource
-     * @param callback  the callback executed after the resource has been saved
+     * @param type      The human readable resource type used in the success message.
+     * @param name      The resource name.
+     * @param address   The address for the operation.
+     * @param changeSet A key-value map containing the changes to the resource.
+     * @param callback  The callback executed after the resource has been saved.
      */
     @JsMethod(name = "save")
     public void jsSave(String type, String name, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
@@ -1547,10 +1547,10 @@ public class CrudOperations {
      * success message is displayed and the callback is executed. If the change set is empty, a warning message is
      * displayed and the callback is executed.
      *
-     * @param type      the human readable resource type used in the success message
-     * @param address   the address for the operation
-     * @param changeSet a key-value map containing the changes to the resource
-     * @param callback  the callback executed after the singleton resource has been saved
+     * @param type      The human readable resource type used in the success message.
+     * @param address   The address for the operation.
+     * @param changeSet A key-value map containing the changes to the resource.
+     * @param callback  The callback executed after the singleton resource has been saved.
      */
     @JsMethod(name = "saveSingleton")
     public void jsSaveSingleton(String type, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
@@ -1572,10 +1572,10 @@ public class CrudOperations {
      * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been
      * removed a success message is displayed and the callback is executed.
      *
-     * @param type     the human readable resource type used in the success message
-     * @param name     the resource name
-     * @param address  the address for the operation
-     * @param callback the callback executed after the resource has been removed
+     * @param type     The human readable resource type used in the success message.
+     * @param name     The resource name.
+     * @param address  The address for the operation.
+     * @param callback The callback executed after the resource has been removed.
      */
     @JsMethod(name = "remove")
     public void jsRemove(String type, String name, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
@@ -1598,9 +1598,9 @@ public class CrudOperations {
      * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
      * been removed a success message is displayed and the callback is executed.
      *
-     * @param type     the human readable resource type used in the success message
-     * @param address  the address for the operation
-     * @param callback the callback executed after the resource has been removed
+     * @param type     The human readable resource type used in the success message.
+     * @param address  The address for the operation.
+     * @param callback The callback executed after the resource has been removed.
      */
     @JsMethod(name = "removeSingleton")
     public void jsRemoveSingleton(String type, @EsParam("AddressTemplate|ResourceAddress|string") Object address,

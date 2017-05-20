@@ -42,19 +42,20 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * Helper class / singleton to get access to selected dependencies. Please use <em>only</em> if no DI is available!
- * <p>
- * Entry point for the HAL JavaScript API.
+ * Provides access to all important classes. Acts as an entry point for the JavaScript API.
  *
  * @author Harald Pehl
  */
 @JsType
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public class Core {
 
     @Inject
@@ -149,43 +150,98 @@ public class Core {
 
     // ------------------------------------------------------ JS methods (static, inner classes, a-z)
 
+    /**
+     * @return the singleton core instance.
+     */
     @JsMethod(name = "getInstance")
     public static Core jsGetInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Creates and returns a dialog builder using the specified title.
+     *
+     * @param title The dialog title.
+     *
+     * @return a builder to create dialogs
+     */
     @JsMethod(name = "dialog")
-    public Dialog.Builder jsDialog(final String title) {
+    @EsReturn("DialogBuilder")
+    public Dialog.Builder jsDialog(String title) {
         return new Dialog.Builder(title);
     }
 
+    /**
+     * Shows an error message.
+     *
+     * @param message The error message.
+     */
     @JsMethod(name = "error")
-    public void jsError(final String message) {
+    public void jsError(String message) {
         jsMessage(Level.ERROR, message);
     }
 
+    /**
+     * Returns a new form builder for a {@link ModelNode}.
+     *
+     * @param meta The metadata for the form.
+     *
+     * @return the form builder
+     */
     @JsMethod(name = "form")
-    public ModelNodeForm.Builder<ModelNode> jsForm(final Object meta) {
+    @EsReturn("FormBuilder")
+    public ModelNodeForm.Builder<ModelNode> jsForm(@EsParam("Metadata|AddressTemplate|string") Object meta) {
         return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("form", meta));
     }
 
+    /**
+     * Shows an info message.
+     *
+     * @param message The info message.
+     */
     @JsMethod(name = "info")
-    public void jsInfo(final String message) {
+    public void jsInfo(String message) {
         jsMessage(Level.INFO, message);
     }
 
+    /**
+     * Returns a new form builder for a {@link NamedNode}.
+     *
+     * @param meta The metadata for the form.
+     *
+     * @return the form builder
+     */
     @JsMethod(name = "namedForm")
-    public ModelNodeForm.Builder<NamedNode> jsNamedForm(final Object meta) {
+    @EsReturn("FormBuilder")
+    public ModelNodeForm.Builder<NamedNode> jsNamedForm(@EsParam("Metadata|AddressTemplate|string") Object meta) {
         return new ModelNodeForm.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedForm", meta));
     }
 
+    /**
+     * Returns a new table builder for a {@link NamedNode}.
+     *
+     * @param meta The metadata for the table.
+     *
+     * @return the table builder
+     */
     @JsMethod(name = "namedTable")
-    public ModelNodeTable.Builder<NamedNode> jsNamedTable(final Object meta) {
+    @EsReturn("TableBuilder")
+    public ModelNodeTable.Builder<NamedNode> jsNamedTable(@EsParam("Metadata|AddressTemplate|string") Object meta) {
         return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.FORM_SUFFIX), jsMetadata("namedTable", meta));
     }
 
+    /**
+     * Returns a new operation builder.
+     *
+     * @param address The address.
+     * @param name    The operation name.
+     *
+     * @return the operation builder
+     */
     @JsMethod(name = "operation")
-    public Operation.Builder jsOperation(final Object address, final String name) {
+    @EsReturn("OperationBuilder")
+    public Operation.Builder jsOperation(@EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            String name) {
         ResourceAddress ra;
         if (address instanceof AddressTemplate) {
             ra = ((AddressTemplate) address).resolve(statementContext());
@@ -195,27 +251,45 @@ public class Core {
             ra = AddressTemplate.of(((String) address)).resolve(statementContext());
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|String) address, String name)");
+                    "Illegal 1st argument: Use Core.operation((AddressTemplate|ResourceAddress|string), string)");
         }
         return new Operation.Builder(ra, name);
     }
 
+    /**
+     * Shows a success message.
+     *
+     * @param message The success message.
+     */
     @JsMethod(name = "success")
-    public void jsSuccess(final String message) {
+    public void jsSuccess(String message) {
         jsMessage(Level.SUCCESS, message);
     }
 
+    /**
+     * Returns a new table builder for a {@link ModelNode}.
+     *
+     * @param meta The metadata for the table.
+     *
+     * @return the table builder
+     */
     @JsMethod(name = "table")
+    @EsReturn("TableBuilder")
     public ModelNodeTable.Builder<ModelNode> jsTable(final Object meta) {
         return new ModelNodeTable.Builder<>(Ids.build(Ids.uniqueId(), Ids.TAB_SUFFIX), jsMetadata("table", meta));
     }
 
+    /**
+     * Shows a warning message.
+     *
+     * @param message The warning message.
+     */
     @JsMethod(name = "warning")
-    public void jsWarning(final String message) {
+    public void jsWarning(String message) {
         jsMessage(Level.WARNING, message);
     }
 
-    private void jsMessage(final Level level, final String message) {
+    private void jsMessage(Level level, String message) {
         SafeHtml safeMessage = SafeHtmlUtils.fromSafeConstant(message);
         switch (level) {
             case ERROR:
@@ -242,7 +316,7 @@ public class Core {
         } else if (meta instanceof Metadata) {
             return (Metadata) meta;
         } else {
-            throw new IllegalArgumentException("Use Core." + method + "(String|AddressTemplate|Metadata)");
+            throw new IllegalArgumentException("Use Core." + method + "(string|AddressTemplate|Metadata)");
         }
     }
 }
