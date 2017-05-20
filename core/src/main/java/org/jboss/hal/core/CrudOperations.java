@@ -71,6 +71,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType
 public class CrudOperations {
 
@@ -1426,7 +1427,7 @@ public class CrudOperations {
      * @param callback The callback executed after the singleton resource has been added.
      */
     @JsMethod(name = "addSingleton")
-    public void jsAddSingleton( String type,
+    public void jsAddSingleton(String type,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address, final ModelNode payload,
             @EsParam("function(address: ResourceAddress)") AddSingletonCallback callback) {
 
@@ -1438,12 +1439,20 @@ public class CrudOperations {
             addSingleton(type, AddressTemplate.of(((String) address)).resolve(statementContext), payload, callback);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 2nd argument: Use CrudOperations.addSingleton(String type, (AddressTemplate|ResourceAddress|String) address, ModelNode payload, function(ResourceAddress address, String name) callback)");
+                    "Illegal 2nd argument: Use CrudOperations.addSingleton(string, (AddressTemplate|ResourceAddress|string), ModelNode, function(ResourceAddress, string))");
         }
     }
 
+    /**
+     * Executes a read-resource operation on the specified address and passes the result to the callback.
+     *
+     * @param address  the address for the read-resource operation operation
+     * @param callback the callback which gets the result of the read-resource operation
+     */
     @JsMethod(name = "read")
-    public void jsRead(final Object address, final ReadCallback callback) {
+    public void jsRead(@EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("function(result: ModelNode)") ReadCallback callback) {
+
         if (address instanceof AddressTemplate) {
             read((AddressTemplate) address, callback);
         } else if (address instanceof ResourceAddress) {
@@ -1452,12 +1461,20 @@ public class CrudOperations {
             read(AddressTemplate.of((String) address), callback);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use CrudOperations.read((AddressTemplate|ResourceAddress|String) address, function(ModelNode result) callback)");
+                    "Illegal 1st argument: Use CrudOperations.read((AddressTemplate|ResourceAddress|string), function(ModelNode))");
         }
     }
 
+    /**
+     * Executes a recursive read-resource operation on the specified address and passes the result to the callback.
+     *
+     * @param address  the address for the read-resource operation operation
+     * @param callback the callback which gets the result of the read-resource operation
+     */
     @JsMethod(name = "readRecursive")
-    public void jsReadRecursive(final Object address, final ReadCallback callback) {
+    public void jsReadRecursive(@EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("function(result: ModelNode)") ReadCallback callback) {
+
         if (address instanceof AddressTemplate) {
             readRecursive((AddressTemplate) address, callback);
         } else if (address instanceof ResourceAddress) {
@@ -1466,12 +1483,22 @@ public class CrudOperations {
             readRecursive(AddressTemplate.of((String) address), callback);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use CrudOperations.readRecursive((AddressTemplate|ResourceAddress|String) address, function(ModelNode result) callback)");
+                    "Illegal 1st argument: Use CrudOperations.readRecursive((AddressTemplate|ResourceAddress|string), function(ModelNode))");
         }
     }
 
+    /**
+     * Executes a read-children-resources operation on the specified address and passes the result as {@link Property}
+     * array to the callback.
+     *
+     * @param address   the address for the read-children-resources operation
+     * @param childType the child resource type
+     * @param callback  the callback which gets the result of the read-children-resources operation
+     */
     @JsMethod(name = "readChildren")
-    public void jsReadChildren(final Object address, final String childType, final JsReadChildrenCallback callback) {
+    public void jsReadChildren(@EsParam("AddressTemplate|ResourceAddress|string") Object address, String childType,
+            @EsParam("function(children: Property[])") JsReadChildrenCallback callback) {
+
         ReadChildrenCallback rcc = children -> callback.execute(JsHelper.asJsArray(children));
         if (address instanceof AddressTemplate) {
             readChildren((AddressTemplate) address, childType, rcc);
@@ -1481,13 +1508,26 @@ public class CrudOperations {
             readChildren(AddressTemplate.of((String) address), childType, rcc);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use CrudOperations.readChildren((AddressTemplate|ResourceAddress|String) address, String childType, function(Property[] children) callback)");
+                    "Illegal 1st argument: Use CrudOperations.readChildren((AddressTemplate|ResourceAddress|string), string, function(Property[]))");
         }
     }
 
+    /**
+     * Writes the changed values to the specified resource. After the resource has been saved a standard success message
+     * is displayed and the callback is executed. If the change set is empty, a warning message is displayed and the
+     * callback is executed.
+     *
+     * @param type      the human readable resource type used in the success message
+     * @param name      the resource name
+     * @param address   the address for the operation
+     * @param changeSet a key-value map containing the changes to the resource
+     * @param callback  the callback executed after the resource has been saved
+     */
     @JsMethod(name = "save")
-    public void jsSave(final String type, final String name, final Object address,
-            final JsMapFromStringTo<Object> changeSet, final JsCallback callback) {
+    public void jsSave(String type, String name, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("{key: string, value: object}") JsMapFromStringTo<Object> changeSet,
+            @EsParam("function()") JsCallback callback) {
+
         Callback c = callback::execute;
         if (address instanceof AddressTemplate) {
             save(type, name, ((AddressTemplate) address), JsHelper.asMap(changeSet), c);
@@ -1498,13 +1538,25 @@ public class CrudOperations {
             save(type, name, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 3rd argument: Use CrudOperations.save(String type, String name, (AddressTemplate|ResourceAddress|String) address, {\"key\": <value>} changeSet, function() callback)");
+                    "Illegal 3rd argument: Use CrudOperations.save(string, string, (AddressTemplate|ResourceAddress|string), {\"key\": <value>}, function())");
         }
     }
 
+    /**
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a standard
+     * success message is displayed and the callback is executed. If the change set is empty, a warning message is
+     * displayed and the callback is executed.
+     *
+     * @param type      the human readable resource type used in the success message
+     * @param address   the address for the operation
+     * @param changeSet a key-value map containing the changes to the resource
+     * @param callback  the callback executed after the singleton resource has been saved
+     */
     @JsMethod(name = "saveSingleton")
-    public void jsSaveSingleton(final String type, final Object address, final JsMapFromStringTo<Object> changeSet,
-            final JsCallback callback) {
+    public void jsSaveSingleton(String type, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("{key: string, value: object}") JsMapFromStringTo<Object> changeSet,
+            @EsParam("function()") JsCallback callback) {
+
         Callback c = callback::execute;
         if (address instanceof AddressTemplate) {
             saveSingleton(type, ((AddressTemplate) address), JsHelper.asMap(changeSet), c);
@@ -1512,12 +1564,23 @@ public class CrudOperations {
             saveSingleton(type, AddressTemplate.of(((String) address)), JsHelper.asMap(changeSet), c);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 2nd argument: Use CrudOperations.save(String type, (AddressTemplate|ResourceAddress|String) address, {\"key\": <value>} changeSet, function() callback)");
+                    "Illegal 2nd argument: Use CrudOperations.save(string, (AddressTemplate|ResourceAddress|string), {\"key\": <value>}, function())");
         }
     }
 
+    /**
+     * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been
+     * removed a success message is displayed and the callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param name     the resource name
+     * @param address  the address for the operation
+     * @param callback the callback executed after the resource has been removed
+     */
     @JsMethod(name = "remove")
-    public void jsRemove(final String type, final String name, final Object address, final JsCallback callback) {
+    public void jsRemove(String type, String name, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("function()") JsCallback callback) {
+
         Callback c = callback::execute;
         if (address instanceof AddressTemplate) {
             remove(type, name, ((AddressTemplate) address), c);
@@ -1527,12 +1590,22 @@ public class CrudOperations {
             remove(type, name, AddressTemplate.of(((String) address)), c);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 3rd argument: Use CrudOperations.remove(String type, String name, (AddressTemplate|ResourceAddress|String) address, function() callback)");
+                    "Illegal 3rd argument: Use CrudOperations.remove(string, string, (AddressTemplate|ResourceAddress|string), function())");
         }
     }
 
+    /**
+     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has
+     * been removed a success message is displayed and the callback is executed.
+     *
+     * @param type     the human readable resource type used in the success message
+     * @param address  the address for the operation
+     * @param callback the callback executed after the resource has been removed
+     */
     @JsMethod(name = "removeSingleton")
-    public void jsRemoveSingleton(final String type, final Object address, final JsCallback callback) {
+    public void jsRemoveSingleton(String type, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
+            @EsParam("function()") JsCallback callback) {
+
         Callback c = callback::execute;
         if (address instanceof AddressTemplate) {
             removeSingleton(type, ((AddressTemplate) address), c);
@@ -1542,7 +1615,7 @@ public class CrudOperations {
             removeSingleton(type, AddressTemplate.of(((String) address)), c);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 2nd argument: Use CrudOperations.removeSingleton(String type, (AddressTemplate|ResourceAddress|String) address, function() callback)");
+                    "Illegal 2nd argument: Use CrudOperations.removeSingleton(string, (AddressTemplate|ResourceAddress|string), function())");
         }
     }
 }
