@@ -28,13 +28,16 @@ import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Static helper methods for dealing with {@link ModelNode}s.
+ * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}ss. Some methods accept a path
+ * parameter separated by "/" to get a deeply nested data.
  *
  * @author Harald Pehl
  */
@@ -55,7 +58,6 @@ public final class ModelNodeHelper {
 
     /**
      * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with "/".
-     * "/" inside a path segment must have been encoded using {@link #encodeValue(String)}.
      *
      * @param modelNode The model node to read from
      * @param path      A path separated with "/"
@@ -85,6 +87,15 @@ public final class ModelNodeHelper {
         return undefined;
     }
 
+    /**
+     * Tries to get a deeply nested boolean value from the specified model node. Nested paths must be separated with
+     * "/".
+     *
+     * @param modelNode The model node to read from
+     * @param path      A path separated with "/"
+     *
+     * @return the boolean value or false.
+     */
     public static boolean failSafeBoolean(final ModelNode modelNode, final String path) {
         ModelNode attribute = failSafeGet(modelNode, path);
         return attribute.isDefined() && attribute.asBoolean();
@@ -163,18 +174,45 @@ public final class ModelNodeHelper {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Tries to get a deeply nested node array from the specified model node. Nested paths must be separated with "/".
+     *
+     * @param modelNode The model node to read from
+     * @param path      A path separated with "/"
+     *
+     * @return the model nodes or an empty array
+     */
     @JsMethod(name = "failSafeList")
+    @EsReturn("ModelNode[]")
     public static JsArrayOf<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
         return asJsArray(failSafeList(modelNode, path));
     }
 
+    /**
+     * Tries to get a deeply nested property array from the specified model node. Nested paths must be separated with
+     * "/".
+     *
+     * @param modelNode The model node to read from
+     * @param path      A path separated with "/"
+     *
+     * @return the properties or an empty array
+     */
     @JsMethod(name = "failSafePropertyList")
+    @EsReturn("Property[]")
     public static JsArrayOf<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
         return asJsArray(failSafePropertyList(modelNode, path));
     }
 
+    /**
+     * Turns an properties array into an array of names nodes.
+     *
+     * @param properties The properties
+     *
+     * @return the array of named nodes
+     */
     @JsMethod(name = "asNamedNodes")
-    public static JsArrayOf<NamedNode> jsAsNamedNodes(JsArrayOf<Property> properties) {
+    @EsReturn("NamedNode[]")
+    public static JsArrayOf<NamedNode> jsAsNamedNodes(@EsParam("Property[]") JsArrayOf<Property> properties) {
         return asJsArray(asNamedNodes(asList(properties)));
     }
 

@@ -53,6 +53,7 @@ import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
@@ -70,12 +71,11 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /**
- * The dispatcher executes operations / uploads against the management endpoint.
- * <p>
- * TODO Add a way to track management operations.
+ * Executes operations against the management endpoint.
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType(namespace = "hal.dmr")
 public class Dispatcher implements RecordingHandler {
 
@@ -625,14 +625,27 @@ public class Dispatcher implements RecordingHandler {
         void onSuccess(CompositeResult result);
     }
 
+    /**
+     * Executes the specified composite operation.
+     *
+     * @param composite The composite operation to execute.
+     * @param callback  The callback receiving the result.
+     */
     @JsMethod(name = "executeComposite")
-    public void jsExecuteComposite(final Composite composite, final JsCompositeCallback callback) {
+    public void jsExecuteComposite(Composite composite,
+            @EsParam("function(result: CompositeResult)") JsCompositeCallback callback) {
         CompositeCallback cc = callback::onSuccess;
         dmr(composite, payload -> payload.get(RESULT), cc, failedCallback, exceptionCallback);
     }
 
+    /**
+     * Executes the specified operation. The callback contains just the result w/o surrounding nodes like "outcome".
+     *
+     * @param operation The operation to execute.
+     * @param callback  The callback receiving the result.
+     */
     @JsMethod(name = "execute")
-    public void jsExecute(final Operation operation, final JsOperationCallback callback) {
+    public void jsExecute(Operation operation, @EsParam("function(result: ModelNode)") JsOperationCallback callback) {
         OperationCallback oc = callback::onSuccess;
         dmr(operation, payload -> payload.get(RESULT), oc, failedCallback, exceptionCallback);
     }

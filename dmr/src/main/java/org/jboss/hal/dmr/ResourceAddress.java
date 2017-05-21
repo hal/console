@@ -34,7 +34,7 @@ import jsinterop.annotations.JsType;
 public class ResourceAddress extends ModelNode {
 
     /**
-     * @return an empty (root) address
+     * @return the empty (root) address
      */
     public static ResourceAddress root() {
         // Do not replace this with a static constant! In most cases the returned address is modified somehow.
@@ -145,7 +145,7 @@ public class ResourceAddress extends ModelNode {
      * @param name     The name of the segment.
      * @param newValue The new value.
      *
-     * @return this address
+     * @return this address containing the replaced value
      */
     public ResourceAddress replaceValue(String name, String newValue) {
         ResourceAddress newAddress = new ResourceAddress();

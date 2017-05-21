@@ -19,11 +19,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -31,11 +31,18 @@ import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
+ * Represents a DMR operation.
+ *
  * @author Harald Pehl
  */
 @JsType
 public class Operation extends ModelNode {
 
+    /**
+     * A builder for operations.
+     *
+     * @author Harald Pehl
+     */
     @JsType(name = "OperationBuilder")
     public static class Builder {
 
@@ -110,11 +117,21 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        /**
+         * Uses the specified payload for the operation.
+         *
+         * @param payload The operation as model node.
+         *
+         * @return this builder
+         */
         public Builder payload(ModelNode payload) {
             parameter = payload;
             return this;
         }
 
+        /**
+         * @return builds and returns the operation
+         */
         public Operation build() {
             return new Operation(name, address, parameter, header, roles);
         }
@@ -122,8 +139,16 @@ public class Operation extends ModelNode {
 
         // ------------------------------------------------------ JS methods
 
+        /**
+         * Add a parameter to the operation
+         *
+         * @param name  The name of the parameter.
+         * @param value The value of the parameter.
+         *
+         * @return this builder
+         */
         @JsMethod(name = "param")
-        public Builder jsParam(final String name, final Object value) {
+        public Builder jsParam(String name, @EsParam("boolean|int|string") Object value) {
             if (value instanceof Boolean) {
                 param(name, ((Boolean) value));
             } else if (value instanceof Integer) {
@@ -136,8 +161,16 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        /**
+         * Add a header to the operation
+         *
+         * @param name  The name of the header.
+         * @param value The value of the header.
+         *
+         * @return this builder
+         */
         @JsMethod(name = "header")
-        public Builder jsHeader(final String name, final Object value) {
+        public Builder jsHeader(String name, @EsParam("boolean|int|string") Object value) {
             if (value instanceof Boolean) {
                 header(name, ((Boolean) value));
             } else if (value instanceof String) {
@@ -209,21 +242,33 @@ public class Operation extends ModelNode {
         }
     }
 
+    /**
+     * @return the name of the operation
+     */
     @JsProperty
     public String getName() {
         return get(OP).asString();
     }
 
+    /**
+     * @return the address of the operation
+     */
     @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
 
+    /**
+     * @return the parameters of the operation
+     */
     @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
 
+    /**
+     * @return the header of the operation
+     */
     @JsProperty
     public ModelNode getHeader() {
         return header;
@@ -244,11 +289,17 @@ public class Operation extends ModelNode {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
 
+    /**
+     * @return the string representation of the operation as used in the CLI
+     */
     @Override
     public String toString() {
         return asCli();
     }
 
+    /**
+     * @return the string representation of the operation as used in the CLI
+     */
     public String asCli() {
         StringBuilder builder = new StringBuilder();
         if (address.isDefined() && !address.asList().isEmpty()) {
@@ -278,17 +329,5 @@ public class Operation extends ModelNode {
             builder.append("}");
         }
         return builder.toString();
-    }
-
-
-    // ------------------------------------------------------ JS methods
-
-    @JsProperty(name = "roles")
-    public JsArrayOf<String> jsRoles() {
-        JsArrayOf<String> array = JsArrayOf.create();
-        for (String role : roles) {
-            array.push(role);
-        }
-        return array;
     }
 }
