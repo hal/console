@@ -3,6 +3,8 @@
 
 # HAL.next
 
+[![Join the chat at https://gitter.im/hal/hal.next](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal/hal.next?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Fresh start of the HAL management console using the latest frameworks / libraries. 
 
 - Java 8
