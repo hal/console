@@ -48,10 +48,13 @@ import java.util.Set;
 
 import elemental.client.Browser;
 import elemental.js.util.JsArrayOf;
+import elemental.json.Json;
+import elemental.json.JsonObject;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
@@ -59,15 +62,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
 
 /**
  * A dynamic model representation node object.
- * <p>
- * A node can be of any type specified in the {@link ModelType} enumeration.  The type can
- * be queried via {@link #getType()} and updated via any of the {@code set*()} methods.  The
- * value of the node can be acquired via the {@code as<type>()} methods, where {@code <type>} is
- * the desired value type.  If the type is not the same as the node type, a conversion is attempted between
- * the types.
- * <p>A node can be made read-only by way of its {@link #protect()} method, which will prevent
- * any further changes to the node or its sub-nodes.
- * <p>Instances of this class are <b>not</b> thread-safe and need to be synchronized externally.
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
@@ -75,6 +69,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
 @SuppressWarnings({"HardCodedStringLiteral", "Duplicates", "DuplicateStringLiteralInspection"})
 public class ModelNode implements Cloneable {
 
+    /**
+     * Creates a new node from a base64 encoded string
+     *
+     * @param encoded The base64 encoded string.
+     *
+     * @return the new model node
+     */
     public static ModelNode fromBase64(String encoded) {
         ModelNode node = new ModelNode();
         String decoded = Browser.getWindow().atob(encoded);
@@ -147,10 +148,10 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get the value of this node as an {@code int}. Collection types will return the size
+     * Get the value of this node as number. Collection types will return the size
      * of the collection for this value. Other types may attempt a string conversion.
      *
-     * @return the int value
+     * @return the numeric value
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
@@ -159,7 +160,7 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get the value of this node as an {@code int}. Collection types will return the size
+     * Get the value of this node as number. Collection types will return the size
      * of the collection for this value. Other types may attempt a string conversion.
      *
      * @param defVal the default value if no conversion is possible
@@ -172,8 +173,8 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get the value of this node as a {@code boolean}. Collection types return {@code true} for non-empty
-     * collections. Numerical types return {@code true} for non-zero values.
+     * Get the value of this node as a boolean. Collection types return true for non-empty collections. Numerical types
+     * return true for non-zero values.
      *
      * @return the boolean value
      *
@@ -314,10 +315,10 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Get a copy of this value as an object. Object values will simply copy themselves as by the {@link #clone()}
-     * method.
-     * Property values will return a single-entry object whose key and value are copied from the property key and
-     * value.
+     * Get a copy of this value as an object. Object values will simply copy themselves.
+     * <p>
+     * Property values will return a single-entry object whose key and value are copied from the property key and value.
+     * <p>
      * List values will attempt to interpolate the list into an object by iterating each item, mapping each property
      * into an object entry and otherwise taking pairs of list entries, converting the first to a string, and using the
      * pair of entries as a single object entry. If an object key appears more than once in the source object, the
@@ -394,9 +395,9 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Determine whether this node is defined. Equivalent to the expression: {@code getType() != ModelType.UNDEFINED}.
+     * Determine whether this node is defined.
      *
-     * @return {@code true} if this node's value is defined
+     * @return true if this node's value is defined, false otherwise
      */
     @JsProperty
     public boolean isDefined() {
@@ -410,7 +411,7 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setInt")
+    @JsMethod(name = "setNumber")
     public ModelNode set(final int newValue) {
         checkProtect();
         value = new IntModelValue(newValue);
@@ -856,7 +857,7 @@ public class ModelNode implements Cloneable {
     }
 
     /**
-     * Clear this node's value and change its type to {@link ModelType#UNDEFINED}.
+     * Clear this node's value and change its type to undefined.
      *
      * @return this node
      */
@@ -868,7 +869,7 @@ public class ModelNode implements Cloneable {
 
     /**
      * Get the child of this node with the given name. If no such child exists, create it. If the node is undefined,
-     * it will be initialized to be of type {@link ModelType#OBJECT}.
+     * it will be initialized to be of type object.
      * <p>
      * When called on property values, the name must match the property name.
      *
@@ -1238,7 +1239,7 @@ public class ModelNode implements Cloneable {
 
     /**
      * Add a node to the end of this node's value list and return it. If the node is undefined, it will be initialized
-     * to be of type {@link ModelType#LIST}.
+     * to be of type list.
      *
      * @return the new node
      */
@@ -1299,7 +1300,7 @@ public class ModelNode implements Cloneable {
      *
      * @param key the name
      *
-     * @return {@code true} if there is a (possibly undefined) node at the given key
+     * @return true if there is a (possibly undefined) node at the given key
      */
     public boolean has(final String key) {
         return value.has(key);
@@ -1325,8 +1326,7 @@ public class ModelNode implements Cloneable {
      *
      * @param key the name
      *
-     * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not {@link
-     * ModelType#UNDEFINED}
+     * @return true if there is a node at the given index and its type is not undefined
      */
     public boolean hasDefined(String key) {
         return value.has(key) && get(key).isDefined();
@@ -1398,8 +1398,8 @@ public class ModelNode implements Cloneable {
         return value.toJSONString(compact);
     }
 
-    @SuppressWarnings("unused")
     @JsIgnore
+    @SuppressWarnings("unused")
     public String toJSONString() {
         return value.toJSONString(false);
     }
@@ -1474,8 +1474,8 @@ public class ModelNode implements Cloneable {
      *
      * @return the clone
      */
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @JsIgnore
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public ModelNode clone() {
         final ModelNode clone = new ModelNode();
         clone.value = value.copy();
@@ -1591,11 +1591,17 @@ public class ModelNode implements Cloneable {
         }
     }
 
+    /**
+     * @return true if this node has an outcome and the outcome does not equal "success"
+     */
     @JsProperty
     public boolean isFailure() {
         return hasDefined(OUTCOME) && !get(OUTCOME).asString().equals(SUCCESS);
     }
 
+    /**
+     * @return the failure description or "No failure-description provided"
+     */
     @JsProperty
     public String getFailureDescription() {
         return hasDefined(FAILURE_DESCRIPTION)
@@ -1619,17 +1625,29 @@ public class ModelNode implements Cloneable {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Creates a new undefined model node
+     * @return the new model node
+     */
     @JsMethod(name = "create")
     public static ModelNode jsCreate() {
         return new ModelNode();
     }
 
-    @JsMethod(name = "getJSONString")
-    public String jsGetJSONString() {
-        return toJSONString(true);
+    /**
+     * @return the model node as JSON
+     */
+    @JsMethod(name = "getJSON")
+    @EsReturn("json")
+    public JsonObject jsGetJSONString() {
+        return Json.parse(toJSONString(true));
     }
 
+    /**
+     * @return this model node as an {@link Property} array
+     */
     @JsMethod(name = "asProperties")
+    @EsReturn("Property[]")
     public JsArrayOf<Property> jsAsProperties() {
         List<Property> properties = value.asPropertyList();
         if (properties != null) {
@@ -1642,7 +1660,11 @@ public class ModelNode implements Cloneable {
         return JsArrayOf.create();
     }
 
+    /**
+     * @return this model node as an array.
+     */
     @JsMethod(name = "asList")
+    @EsReturn("ModelNode[]")
     public JsArrayOf<ModelNode> jsAsList() {
         List<ModelNode> modelNodes = value.asList();
         if (modelNodes != null) {

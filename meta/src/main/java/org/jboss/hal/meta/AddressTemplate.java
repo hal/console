@@ -33,14 +33,15 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
 
 /**
- * Wrapper for a DMR address which might contain multiple variable parts.
- * <p>
+ * Template for a DMR address which might contain multiple variable parts.
+ *
  * An address template can be defined using the following BNF:
  * <pre>
  * &lt;address template&gt; ::= "/" | &lt;segment&gt;
@@ -53,30 +54,21 @@ import static java.util.stream.Collectors.toList;
  * &lt;upper&gt;            ::= "A" | "B" | … | "Z"
  * &lt;lower&gt;            ::= "a" | "b" | … | "z"
  * </pre>
- * <p>
- * Here are some examples for address templates:
- * <pre>
- *     AddressTemplate a2 = AddressTemplate.of("{selected.profile}");
- *     AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
- *     AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
- * </pre>
- * <p>
- * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)}
- * method.
- * <p>
- * <strong>Please note:<br/></strong>
- * If a value of your template contains a '/', you have to encode those values using {@link
- * ModelNodeHelper#encodeValue(String)}:
- * <pre>
- *     AddressTemplate safe1 = AddressTemplate.of("/foo=bar")
- *          .append(AddressTemplate.encode("special=java:jboss/x/y/z"))
- *          .append("another=segment);
- *     AddressTemplate safe2 = AddressTemplate.of("/foo=bar" +
- *          AddressTemplate.encode("special=java:jboss/x/y/z") +
- *          "another=segment);
- * </pre>
  *
- * @author Harald Pehl
+ * Following variables are supported:
+ * - <code>{domain.controller}</code>
+ * - <code>{selected.profile}</code>
+ * - <code>{selected.group}</code>
+ * - <code>{selected.server-config}</code>
+ * - <code>{selected.server}</code>
+ *
+ * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode
+ * the variables will resolve to an empty string. The values of the variables are managed by the {@link
+ * StatementContext}.
+ *
+ * @example AddressTemplate a2 = AddressTemplate.of("{selected.profile}");
+ * AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
+ * AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
  */
 @JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
@@ -88,6 +80,9 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
 
+    /**
+     * The root template
+     */
     public static final AddressTemplate ROOT = AddressTemplate.of("/");
 
     /**
@@ -128,8 +123,7 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Creates a new address template from an encoded string template. '/' characters inside values must have been
-     * encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     * Creates a new address template from an encoded string template.
      */
     public static AddressTemplate of(@NonNls String template) {
         return new AddressTemplate(withSlash(template));
@@ -260,13 +254,16 @@ public final class AddressTemplate implements Iterable<String> {
         return result;
     }
 
+    /**
+     * @return the string representation of this address template
+     */
     @Override
     public String toString() {
         return template.length() == 0 ? "/" : template;
     }
 
     /**
-     * @return {@code true} if this template contains no tokens, {@code false} otherwise
+     * @return true if this template contains no tokens, false otherwise
      */
     @JsProperty
     public boolean isEmpty() {return tokens.isEmpty();}
@@ -323,6 +320,9 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(join(this.optional, subTokens));
     }
 
+    /**
+     * @return the parent address template or the root template
+     */
     @JsProperty
     public AddressTemplate getParent() {
         if (isEmpty() || size() == 1) {
@@ -363,6 +363,9 @@ public final class AddressTemplate implements Iterable<String> {
         return AddressTemplate.of(join(this.optional, replacedTokens));
     }
 
+    /**
+     * @return the name of the first segment or null if this address template is empty.
+     */
     @JsProperty(name = "firstName")
     public String firstName() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
@@ -371,6 +374,9 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    /**
+     * @return the value of the first segment or null if this address template is empty.
+     */
     @JsProperty(name = "firstValue")
     public String firstValue() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
@@ -379,6 +385,9 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    /**
+     * @return the name of the last segment or null if this address template is empty.
+     */
     @JsProperty(name = "lastName")
     public String lastName() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
@@ -387,6 +396,9 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
+    /**
+     * @return the value of the last segment or null if this address template is empty.
+     */
     @JsProperty(name = "lastValue")
     public String lastValue() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
@@ -400,6 +412,9 @@ public final class AddressTemplate implements Iterable<String> {
         return optional;
     }
 
+    /**
+     * @return the address template
+     */
     @JsProperty
     String getTemplate() {
         return template;
@@ -415,9 +430,9 @@ public final class AddressTemplate implements Iterable<String> {
      * @param wildcards An optional list of wildcards which are used to resolve any wildcards in this address template
      *                  from left to right
      *
-     * @return a full qualified resource address which might be empty, but which does not contain any tokens
+     * @return a fully qualified resource address which might be empty, but which does not contain any tokens
      */
-    public ResourceAddress resolve(StatementContext context, String... wildcards) {
+    public ResourceAddress resolve(StatementContext context, @EsParam("...string") String... wildcards) {
         if (isEmpty()) {
             return ResourceAddress.root();
         }
@@ -611,8 +626,15 @@ public final class AddressTemplate implements Iterable<String> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Append an address to this addrress template and return a new one.
+     *
+     * @param address The address to append.
+     *
+     * @return a new address template with the specified address added at the end.
+     */
     @JsMethod(name = "append")
-    public AddressTemplate jsAppend(Object address) {
+    public AddressTemplate jsAppend(@EsParam("string|AddressTemplate") Object address) {
         if (address instanceof String) {
             return append(((String) address));
         } else if (address instanceof AddressTemplate) {

@@ -36,7 +36,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}ss. Some methods accept a path
+ * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
  * parameter separated by "/" to get a deeply nested data.
  *
  * @author Harald Pehl

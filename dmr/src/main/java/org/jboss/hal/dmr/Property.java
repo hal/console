@@ -41,6 +41,8 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
+ * Represents a DMR property.
+ *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
 @JsType
@@ -49,6 +51,12 @@ public final class Property implements Cloneable {
     private final String name;
     private final ModelNode value;
 
+    /**
+     * Creates a new property
+     *
+     * @param name  The name of the property.
+     * @param value The value of the property.
+     */
     @JsConstructor
     public Property(final String name, final ModelNode value) {
         if (name == null) {
@@ -61,11 +69,17 @@ public final class Property implements Cloneable {
         this.value = value.clone();
     }
 
+    /**
+     * @return the name of the property
+     */
     @JsProperty
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the value of the property
+     */
     @JsProperty
     public ModelNode getValue() {
         return value;

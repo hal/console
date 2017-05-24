@@ -24,8 +24,11 @@ import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 /**
+ * Represents the result of a composite operation.
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -71,9 +74,15 @@ public class CompositeResult implements Iterable<ModelNode> {
         return steps.values().iterator();
     }
 
+    /**
+     * @return the number of steps
+     */
     @JsProperty(name = "size")
     public int size() {return steps.size();}
 
+    /**
+     * @return whether this composite result contains steps
+     */
     @JsProperty
     public boolean isEmpty() {return steps.isEmpty();}
 
@@ -85,7 +94,11 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return the steps of this composite result
+     */
     @JsProperty(name = "steps")
+    @EsReturn("ModelNode[]")
     public JsArrayOf<ModelNode> jsSteps() {
         JsArrayOf<ModelNode> array = JsArrayOf.create();
         for (ModelNode modelNode : steps.values()) {

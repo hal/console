@@ -51,6 +51,14 @@ public class ResourceAddress extends ModelNode {
         set(address);
     }
 
+    /**
+     * Adds the specified segment to this address.
+     *
+     * @param propertyName  the property name
+     * @param propertyValue the property value
+     *
+     * @return this address with the specified segment added
+     */
     @JsMethod(name = "addSegment")
     public ResourceAddress add(final String propertyName, final String propertyValue) {
         add().set(propertyName, propertyValue);

@@ -78,11 +78,17 @@ public class Metadata {
         return new Metadata(template, securityContext, resourceDescription, capabilities);
     }
 
+    /**
+     * @return the address template
+     */
     @JsProperty
     public AddressTemplate getTemplate() {
         return template;
     }
 
+    /**
+     * @return the security context
+     */
     @JsProperty
     public SecurityContext getSecurityContext() {
         if (securityContext != null && securityContext.get() != null) {
@@ -93,6 +99,9 @@ public class Metadata {
         }
     }
 
+    /**
+     * @return the resource description
+     */
     @JsProperty
     public ResourceDescription getDescription() {
         return description;

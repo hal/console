@@ -24,6 +24,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -124,6 +125,7 @@ public class Operation extends ModelNode {
          *
          * @return this builder
          */
+        @EsReturn("OperationBuilder")
         public Builder payload(ModelNode payload) {
             parameter = payload;
             return this;
@@ -148,6 +150,7 @@ public class Operation extends ModelNode {
          * @return this builder
          */
         @JsMethod(name = "param")
+        @EsReturn("OperationBuilder")
         public Builder jsParam(String name, @EsParam("boolean|int|string") Object value) {
             if (value instanceof Boolean) {
                 param(name, ((Boolean) value));
@@ -170,6 +173,7 @@ public class Operation extends ModelNode {
          * @return this builder
          */
         @JsMethod(name = "header")
+        @EsReturn("OperationBuilder")
         public Builder jsHeader(String name, @EsParam("boolean|int|string") Object value) {
             if (value instanceof Boolean) {
                 header(name, ((Boolean) value));

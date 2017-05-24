@@ -27,7 +27,12 @@ module.exports = function (grunt) {
             bower: 'bower_components',
             less: 'src/main/less',
             public: 'src/main/resources/org/jboss/hal/public',
-            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>'
+            themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
+            esdoc: {
+                source: 'target/generated-resources/esdoc',
+                destination: 'target/esdoc',
+                input: 'src/esdoc'
+            }
         },
 
         clean: {
@@ -230,6 +235,30 @@ module.exports = function (grunt) {
             less: {
                 files: ['<%= config.less %>/*.less'],
                 tasks: ['less']
+            }
+        },
+
+        esdoc : {
+            dist: {
+                options: {
+                    source: '<%= config.esdoc.source %>',
+                    excludes: [],
+                    destination: '<%= config.esdoc.destination %>',
+                    access: ['public'],
+                    index: '<%= config.esdoc.input %>/README.md',
+                    title: 'HAL JavaScript API',
+                    styles: ['<%= config.esdoc.input %>/style.css'],
+                    manual: {
+                        example: ['<%= config.esdoc.input %>/manual/example.md']
+                    },
+                    coverage: false,
+                    unexportIdentifier: true,
+                    undocumentIdentifier: true,
+                    experimentalProposal: {
+                        "classProperties": true,
+                        "objectRestSpread": true
+                    }
+                }
             }
         }
     });

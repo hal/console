@@ -97,21 +97,33 @@ public class Core {
         this.tableButtonFactory = tableButtonFactory;
     }
 
+    /**
+     * @return crud operations
+     */
     @JsProperty(name = "crud")
     public CrudOperations crud() {
         return crud;
     }
 
+    /**
+     * @return dispatcher
+     */
     @JsProperty(name = "dispatcher")
     public Dispatcher dispatcher() {
         return dispatcher;
     }
 
+    /**
+     * @return endpoints
+     */
     @JsProperty(name = "endpoints")
     public Endpoints endpoints() {
         return endpoints;
     }
 
+    /**
+     * @return environment
+     */
     @JsProperty(name = "environment")
     public Environment environment() {
         return environment;
@@ -122,21 +134,33 @@ public class Core {
         return eventBus;
     }
 
+    /**
+     * @return extension registry
+     */
     @JsProperty(name = "extensionRegistry")
     public ExtensionRegistry extensionRegistry() {
         return extensionRegistry;
     }
 
+    /**
+     * @return metadata processor
+     */
     @JsProperty(name = "metadataProcessor")
     public MetadataProcessor metadataProcessor() {
         return metadataProcessor;
     }
 
+    /**
+     * @return metadata registry
+     */
     @JsProperty(name = "metadataRegistry")
     public MetadataRegistry metadataRegistry() {
         return metadataRegistry;
     }
 
+    /**
+     * @return statement context
+     */
     @JsProperty(name = "statementContext")
     public StatementContext statementContext() {
         return statementContext;

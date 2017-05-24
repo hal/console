@@ -1,4 +1,4 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal)  
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal/hal.next)  
 [![Issues in Ready](https://badge.waffle.io/hal/hal.next.svg?label=ready&title=Ready)](http://waffle.io/hal/hal.next) [![Issues in Progress](https://badge.waffle.io/hal/hal.next.svg?label=In%20Progress&title=In%20Progress)](http://waffle.io/hal/hal.next) 
 
 # HAL.next
@@ -31,7 +31,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Use capabilities & requirements to generate combo boxes with type-ahead support
     - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
     - [JavaScript API](https://github.com/hal/hal.next/wiki/JavaScript-API)
-    - [Runtime extensions](https://github.com/hal/hal.next/wiki/Extensions)
+    - [Extensions](Extensions.md)
     - Remove deprecated APIs 
 
 - Finder

@@ -25,12 +25,10 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
+import org.jboss.hal.spi.EsParam;
 
 /**
- * Registry for {@link Metadata} which combines the information from {@link ResourceDescriptionRegistry},
- * {@link SecurityContextRegistry} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
- * <p>
- * Does not hold own state, but simply returns metadata which is built by using the registries from above.
+ * Registry for existing resource {@link Metadata}.
  *
  * @author Harald Pehl
  */
@@ -74,8 +72,15 @@ public class MetadataRegistry implements Registry<Metadata> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Checks whether there's a metadata for the specified template.
+     *
+     * @param template The address template to check.
+     *
+     * @return true if the registry contains metadata for the given template, false otherwise
+     */
     @JsMethod(name = "contains")
-    public boolean jsContains(Object template) {
+    public boolean jsContains(@EsParam("AddressTemplate|String") Object template) {
         if (template instanceof String) {
             return contains(AddressTemplate.of(((String) template)));
         } else if (template instanceof AddressTemplate) {
@@ -84,8 +89,17 @@ public class MetadataRegistry implements Registry<Metadata> {
         return false;
     }
 
+    /**
+     * Returns metadata associated with the specified address template.
+     *
+     * @param template The address template to lookup.
+     *
+     * @return the metadata for the specified template
+     *
+     * @throws MissingMetadataException if no metadata for the given template exists
+     */
     @JsMethod(name = "lookup")
-    public Metadata jsLookup(Object template) throws MissingMetadataException {
+    public Metadata jsLookup(@EsParam("AddressTemplate|String") Object template) throws MissingMetadataException {
         if (template instanceof String) {
             return lookup(AddressTemplate.of(((String) template)));
         } else if (template instanceof AddressTemplate) {

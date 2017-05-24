@@ -23,6 +23,8 @@ import jsinterop.annotations.JsType;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
+ * A model node with a name.
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -73,27 +75,34 @@ public class NamedNode extends ModelNode {
         return result;
     }
 
+    /**
+     * @return a string representation of this model node
+     */
     @Override
     public String toString() {
         return "NamedNode(" + name + ")";
     }
 
+    /**
+     * @return the name of this named node
+     */
     @JsProperty
     public String getName() {
         return get(NAME).asString();
     }
 
-    @JsProperty
     public void setName(final String name) {
         get(NAME).set(name);
     }
 
+    /**
+     * @return the model node of this named node
+     */
     @JsProperty(name = "modelNode")
     public ModelNode asModelNode() {
         return node;
     }
 
-    @JsProperty(name = "modelNode")
     public void update(ModelNode node) {
         set(node);
         setName(name); // restore name!

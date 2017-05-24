@@ -137,7 +137,7 @@ public class EsDocProcessor extends AbstractProcessor {
 
         if (!types.isEmpty()) {
             types.asMap().forEach((namespace, nsTypes) ->
-                    resource(TEMPLATE, PACKAGE, namespace + ".es6",
+                    resource(TEMPLATE, PACKAGE + "." + namespace, namespace + ".es6",
                             () -> {
                                 Map<String, Object> context = new HashMap<>();
                                 context.put(TYPES, nsTypes);

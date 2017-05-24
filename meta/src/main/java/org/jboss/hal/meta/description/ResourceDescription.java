@@ -27,12 +27,13 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.spi.EsReturn;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Represents the result of a read-resource-description operation for one specific resource.
+ * Contains the resource and attribute descriptions from the read-resource-description operation.
  *
  * @author Harald Pehl
  */
@@ -44,6 +45,9 @@ public class ResourceDescription extends ModelNode {
         set(payload);
     }
 
+    /**
+     * @return the resource description
+     */
     @JsProperty
     public String getDescription() {
         return get(DESCRIPTION).asString();
@@ -165,7 +169,11 @@ public class ResourceDescription extends ModelNode {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return the attribute descriptions
+     */
     @JsMethod(name = "getAttributes")
+    @EsReturn("Property[]")
     public JsArrayOf<Property> jsGetAttributes() {
         List<Property> attributes = getAttributes(ATTRIBUTES);
         JsArrayOf<Property> array = JsArrayOf.create();
@@ -175,7 +183,11 @@ public class ResourceDescription extends ModelNode {
         return array;
     }
 
+    /**
+     * @return the request properties of the add operation
+     */
     @JsMethod(name = "getRequestProperties")
+    @EsReturn("Property[]")
     public JsArrayOf<Property> jsGetRequestProperties() {
         List<Property> attributes = getAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES);
         JsArrayOf<Property> array = JsArrayOf.create();
@@ -185,7 +197,11 @@ public class ResourceDescription extends ModelNode {
         return array;
     }
 
+    /**
+     * @return the operation descriptions
+     */
     @JsProperty(name = "operations")
+    @EsReturn("Property[]")
     public JsArrayOf<Property> jsOperations() {
         List<Property> operations = getOperations();
         JsArrayOf<Property> array = JsArrayOf.create();
