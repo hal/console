@@ -1,8 +1,0 @@
-<p>The JGroups subsystem provides group communication support for HA services in the form of JGroups channels.</p>
-<p>Named channel instances permit application peers in a cluster to communicate as a group and in such a way that the communication satisfies defined properties (e.g. reliable, ordered, failure-sensitive). Communication properties are configurable for each channel and are defined by the protocol stack used to create the channel. Protocol stacks consist of a base transport layer (used to transport messages around the cluster) together with a user-defined, ordered stack of protocol layers, where each protocol layer supports a given communication property.</p>
-<p>The JGroups subsystem provides the following features:</p>
-<ul>
-    <li>Allows definition of named protocol stacks.</li>
-    <li>Specify a default stack for general use.</li>
-</ul>
-<p>JGroups channels are created transparently as part of the clustering functionality (e.g. on clustered application deployment, channels will be created behind the scenes to support clustered features such as session replication or transmission of SSO contexts around the cluster).</p>
