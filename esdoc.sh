@@ -13,8 +13,10 @@
 ROOT=$PWD
 CHANGES=$(git diff --no-ext-diff --quiet --exit-code)
 
+echo "Changes: '${CHANGES}'"
+
 # Prerequisites
-if [ "$1" == "deploy" ] && [ -z "$CHANGES" ]; then
+if [ "$1" == "deploy" ] && [ "$CHANGES" == "0" ]; then
     echo "Cannot publish to esdoc. You have uncommitted changes in the current branch."
     exit -1
 fi
