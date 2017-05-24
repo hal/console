@@ -11,12 +11,10 @@
 #   2. Publish the doc to branch 'gh-pages' (only if parameter 'deploy' was specified)
 
 ROOT=$PWD
-CHANGES=$(git diff --no-ext-diff --quiet --exit-code)
-
-echo "Changes: '${CHANGES}'"
+CHANGES=$(git diff-index --name-only HEAD --)
 
 # Prerequisites
-if [ "$1" == "deploy" ] && [ "$CHANGES" == "0" ]; then
+if [ "$1" == "deploy" ] && [ -n "$CHANGES" ]; then
     echo "Cannot publish to esdoc. You have uncommitted changes in the current branch."
     exit -1
 fi
