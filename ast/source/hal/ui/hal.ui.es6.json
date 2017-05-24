@@ -1,0 +1,4571 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Form",
+        "range": [
+          447,
+          451
+        ],
+        "loc": {
+          "start": {
+            "line": 9,
+            "column": 6
+          },
+          "end": {
+            "line": 9,
+            "column": 10
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "undefined",
+              "range": [
+                468,
+                477
+              ],
+              "loc": {
+                "start": {
+                  "line": 12,
+                  "column": 8
+                },
+                "end": {
+                  "line": 12,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  480,
+                  482
+                ],
+                "loc": {
+                  "start": {
+                    "line": 12,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 12,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                477,
+                482
+              ],
+              "loc": {
+                "start": {
+                  "line": 12,
+                  "column": 17
+                },
+                "end": {
+                  "line": 12,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              464,
+              482
+            ],
+            "loc": {
+              "start": {
+                "line": 12,
+                "column": 4
+              },
+              "end": {
+                "line": 12,
+                "column": 22
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "transient",
+              "range": [
+                497,
+                506
+              ],
+              "loc": {
+                "start": {
+                  "line": 15,
+                  "column": 8
+                },
+                "end": {
+                  "line": 15,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  509,
+                  511
+                ],
+                "loc": {
+                  "start": {
+                    "line": 15,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 15,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                506,
+                511
+              ],
+              "loc": {
+                "start": {
+                  "line": 15,
+                  "column": 17
+                },
+                "end": {
+                  "line": 15,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              493,
+              511
+            ],
+            "loc": {
+              "start": {
+                "line": 15,
+                "column": 4
+              },
+              "end": {
+                "line": 15,
+                "column": 22
+              }
+            },
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {T} the current model.\n     ",
+                "range": [
+                  517,
+                  566
+                ],
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 19,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "model",
+              "range": [
+                575,
+                580
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 8
+                },
+                "end": {
+                  "line": 20,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  583,
+                  585
+                ],
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                580,
+                585
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 13
+                },
+                "end": {
+                  "line": 20,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              571,
+              585
+            ],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 4
+              },
+              "end": {
+                "line": 20,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {T} the current model.\n     ",
+                "range": [
+                  517,
+                  566
+                ],
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 19,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Takes the specified model and updates the read-only state with the values from the model.\n     * \n     * @param {T} model the model to view.\n     ",
+                "range": [
+                  591,
+                  750
+                ],
+                "loc": {
+                  "start": {
+                    "line": 22,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "view",
+              "range": [
+                755,
+                759
+              ],
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 4
+                },
+                "end": {
+                  "line": 27,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "model",
+                  "range": [
+                    760,
+                    765
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 27,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 14
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  767,
+                  769
+                ],
+                "loc": {
+                  "start": {
+                    "line": 27,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 27,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                759,
+                769
+              ],
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 8
+                },
+                "end": {
+                  "line": 27,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              755,
+              769
+            ],
+            "loc": {
+              "start": {
+                "line": 27,
+                "column": 4
+              },
+              "end": {
+                "line": 27,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Takes the specified model and updates the read-only state with the values from the model.\n     * \n     * @param {T} model the model to view.\n     ",
+                "range": [
+                  591,
+                  750
+                ],
+                "loc": {
+                  "start": {
+                    "line": 22,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Clears this form by removing the model reference and by clearing all form fields.\n     ",
+                "range": [
+                  775,
+                  875
+                ],
+                "loc": {
+                  "start": {
+                    "line": 29,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 31,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "clear",
+              "range": [
+                880,
+                885
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 4
+                },
+                "end": {
+                  "line": 32,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  888,
+                  890
+                ],
+                "loc": {
+                  "start": {
+                    "line": 32,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 32,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                885,
+                890
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 9
+                },
+                "end": {
+                  "line": 32,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              880,
+              890
+            ],
+            "loc": {
+              "start": {
+                "line": 32,
+                "column": 4
+              },
+              "end": {
+                "line": 32,
+                "column": 14
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Clears this form by removing the model reference and by clearing all form fields.\n     ",
+                "range": [
+                  775,
+                  875
+                ],
+                "loc": {
+                  "start": {
+                    "line": 29,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 31,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Takes the specified model and populates the editing state with the values from the model.\n     * \n     * @param {T} model the model to edit.\n     ",
+                "range": [
+                  896,
+                  1055
+                ],
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 38,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "edit",
+              "range": [
+                1060,
+                1064
+              ],
+              "loc": {
+                "start": {
+                  "line": 39,
+                  "column": 4
+                },
+                "end": {
+                  "line": 39,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "model",
+                  "range": [
+                    1065,
+                    1070
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 39,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 39,
+                      "column": 14
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1072,
+                  1074
+                ],
+                "loc": {
+                  "start": {
+                    "line": 39,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 39,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1064,
+                1074
+              ],
+              "loc": {
+                "start": {
+                  "line": 39,
+                  "column": 8
+                },
+                "end": {
+                  "line": 39,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1060,
+              1074
+            ],
+            "loc": {
+              "start": {
+                "line": 39,
+                "column": 4
+              },
+              "end": {
+                "line": 39,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Takes the specified model and populates the editing state with the values from the model.\n     * \n     * @param {T} model the model to edit.\n     ",
+                "range": [
+                  896,
+                  1055
+                ],
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 38,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Validates the form and its fields and upon successful validation persists the changes to the model and\n     * calls the save callback.\n     ",
+                "range": [
+                  1080,
+                  1233
+                ],
+                "loc": {
+                  "start": {
+                    "line": 41,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 44,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "save",
+              "range": [
+                1238,
+                1242
+              ],
+              "loc": {
+                "start": {
+                  "line": 45,
+                  "column": 4
+                },
+                "end": {
+                  "line": 45,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1245,
+                  1247
+                ],
+                "loc": {
+                  "start": {
+                    "line": 45,
+                    "column": 11
+                  },
+                  "end": {
+                    "line": 45,
+                    "column": 13
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1242,
+                1247
+              ],
+              "loc": {
+                "start": {
+                  "line": 45,
+                  "column": 8
+                },
+                "end": {
+                  "line": 45,
+                  "column": 13
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1238,
+              1247
+            ],
+            "loc": {
+              "start": {
+                "line": 45,
+                "column": 4
+              },
+              "end": {
+                "line": 45,
+                "column": 13
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Validates the form and its fields and upon successful validation persists the changes to the model and\n     * calls the save callback.\n     ",
+                "range": [
+                  1080,
+                  1233
+                ],
+                "loc": {
+                  "start": {
+                    "line": 41,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 44,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Cancels any modifications to the model.\n     ",
+                "range": [
+                  1253,
+                  1311
+                ],
+                "loc": {
+                  "start": {
+                    "line": 47,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 49,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "cancel",
+              "range": [
+                1316,
+                1322
+              ],
+              "loc": {
+                "start": {
+                  "line": 50,
+                  "column": 4
+                },
+                "end": {
+                  "line": 50,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1325,
+                  1327
+                ],
+                "loc": {
+                  "start": {
+                    "line": 50,
+                    "column": 13
+                  },
+                  "end": {
+                    "line": 50,
+                    "column": 15
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1322,
+                1327
+              ],
+              "loc": {
+                "start": {
+                  "line": 50,
+                  "column": 10
+                },
+                "end": {
+                  "line": 50,
+                  "column": 15
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1316,
+              1327
+            ],
+            "loc": {
+              "start": {
+                "line": 50,
+                "column": 4
+              },
+              "end": {
+                "line": 50,
+                "column": 15
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Cancels any modifications to the model.\n     ",
+                "range": [
+                  1253,
+                  1311
+                ],
+                "loc": {
+                  "start": {
+                    "line": 47,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 49,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          452,
+          1329
+        ],
+        "loc": {
+          "start": {
+            "line": 9,
+            "column": 11
+          },
+          "end": {
+            "line": 51,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        441,
+        1329
+      ],
+      "loc": {
+        "start": {
+          "line": 9,
+          "column": 0
+        },
+        "end": {
+          "line": 51,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * A form bound to a model using well defined states and operations. The form contains a list of form items which are\n * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the\n * attributes of the model (text input, check boxes or select boxes), whereas unbound form items have no relation to\n * the model (static text or buttons).\n * \n * @param <T> The model for this form\n ",
+          "range": [
+            0,
+            440
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 8,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Table",
+        "range": [
+          1338,
+          1343
+        ],
+        "loc": {
+          "start": {
+            "line": 54,
+            "column": 6
+          },
+          "end": {
+            "line": 54,
+            "column": 11
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedRow",
+              "range": [
+                1360,
+                1371
+              ],
+              "loc": {
+                "start": {
+                  "line": 57,
+                  "column": 8
+                },
+                "end": {
+                  "line": 57,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1374,
+                  1376
+                ],
+                "loc": {
+                  "start": {
+                    "line": 57,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1371,
+                1376
+              ],
+              "loc": {
+                "start": {
+                  "line": 57,
+                  "column": 19
+                },
+                "end": {
+                  "line": 57,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1356,
+              1376
+            ],
+            "loc": {
+              "start": {
+                "line": 57,
+                "column": 4
+              },
+              "end": {
+                "line": 57,
+                "column": 24
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "bindForm",
+              "range": [
+                1387,
+                1395
+              ],
+              "loc": {
+                "start": {
+                  "line": 60,
+                  "column": 4
+                },
+                "end": {
+                  "line": 60,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "form",
+                  "range": [
+                    1396,
+                    1400
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 60,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 60,
+                      "column": 17
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1402,
+                  1404
+                ],
+                "loc": {
+                  "start": {
+                    "line": 60,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 60,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1395,
+                1404
+              ],
+              "loc": {
+                "start": {
+                  "line": 60,
+                  "column": 12
+                },
+                "end": {
+                  "line": 60,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1387,
+              1404
+            ],
+            "loc": {
+              "start": {
+                "line": 60,
+                "column": 4
+              },
+              "end": {
+                "line": 60,
+                "column": 21
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "clear",
+              "range": [
+                1415,
+                1420
+              ],
+              "loc": {
+                "start": {
+                  "line": 63,
+                  "column": 4
+                },
+                "end": {
+                  "line": 63,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1423,
+                  1425
+                ],
+                "loc": {
+                  "start": {
+                    "line": 63,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 63,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1420,
+                1425
+              ],
+              "loc": {
+                "start": {
+                  "line": 63,
+                  "column": 9
+                },
+                "end": {
+                  "line": 63,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1415,
+              1425
+            ],
+            "loc": {
+              "start": {
+                "line": 63,
+                "column": 4
+              },
+              "end": {
+                "line": 63,
+                "column": 14
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "onSelectionChange",
+              "range": [
+                1436,
+                1453
+              ],
+              "loc": {
+                "start": {
+                  "line": 66,
+                  "column": 4
+                },
+                "end": {
+                  "line": 66,
+                  "column": 21
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "handler",
+                  "range": [
+                    1454,
+                    1461
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 66,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 66,
+                      "column": 29
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1463,
+                  1465
+                ],
+                "loc": {
+                  "start": {
+                    "line": 66,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 66,
+                    "column": 33
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1453,
+                1465
+              ],
+              "loc": {
+                "start": {
+                  "line": 66,
+                  "column": 21
+                },
+                "end": {
+                  "line": 66,
+                  "column": 33
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1436,
+              1465
+            ],
+            "loc": {
+              "start": {
+                "line": 66,
+                "column": 4
+              },
+              "end": {
+                "line": 66,
+                "column": 33
+              }
+            },
+            "static": false
+          }
+        ],
+        "range": [
+          1344,
+          1467
+        ],
+        "loc": {
+          "start": {
+            "line": 54,
+            "column": 12
+          },
+          "end": {
+            "line": 67,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        1332,
+        1467
+      ],
+      "loc": {
+        "start": {
+          "line": 54,
+          "column": 0
+        },
+        "end": {
+          "line": 67,
+          "column": 1
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "DialogBuilder",
+        "range": [
+          1476,
+          1489
+        ],
+        "loc": {
+          "start": {
+            "line": 70,
+            "column": 6
+          },
+          "end": {
+            "line": 70,
+            "column": 19
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "closeOnly",
+              "range": [
+                1567,
+                1576
+              ],
+              "loc": {
+                "start": {
+                  "line": 75,
+                  "column": 4
+                },
+                "end": {
+                  "line": 75,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1579,
+                  1581
+                ],
+                "loc": {
+                  "start": {
+                    "line": 75,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 75,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1576,
+                1581
+              ],
+              "loc": {
+                "start": {
+                  "line": 75,
+                  "column": 13
+                },
+                "end": {
+                  "line": 75,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1567,
+              1581
+            ],
+            "loc": {
+              "start": {
+                "line": 75,
+                "column": 4
+              },
+              "end": {
+                "line": 75,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shortcut for a dialog with one 'Close' button.\n     ",
+                "range": [
+                  1497,
+                  1562
+                ],
+                "loc": {
+                  "start": {
+                    "line": 72,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 74,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified\n     * callback.\n     ",
+                "range": [
+                  1587,
+                  1723
+                ],
+                "loc": {
+                  "start": {
+                    "line": 77,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 80,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "saveCancel",
+              "range": [
+                1728,
+                1738
+              ],
+              "loc": {
+                "start": {
+                  "line": 81,
+                  "column": 4
+                },
+                "end": {
+                  "line": 81,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "saveCallback",
+                  "range": [
+                    1739,
+                    1751
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 81,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 81,
+                      "column": 27
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1753,
+                  1755
+                ],
+                "loc": {
+                  "start": {
+                    "line": 81,
+                    "column": 29
+                  },
+                  "end": {
+                    "line": 81,
+                    "column": 31
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1738,
+                1755
+              ],
+              "loc": {
+                "start": {
+                  "line": 81,
+                  "column": 14
+                },
+                "end": {
+                  "line": 81,
+                  "column": 31
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1728,
+              1755
+            ],
+            "loc": {
+              "start": {
+                "line": 81,
+                "column": 4
+              },
+              "end": {
+                "line": 81,
+                "column": 31
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified\n     * callback.\n     ",
+                "range": [
+                  1587,
+                  1723
+                ],
+                "loc": {
+                  "start": {
+                    "line": 77,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 80,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "primary",
+              "range": [
+                1766,
+                1773
+              ],
+              "loc": {
+                "start": {
+                  "line": 84,
+                  "column": 4
+                },
+                "end": {
+                  "line": 84,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "label",
+                  "range": [
+                    1774,
+                    1779
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 17
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    1781,
+                    1789
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 27
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1791,
+                  1793
+                ],
+                "loc": {
+                  "start": {
+                    "line": 84,
+                    "column": 29
+                  },
+                  "end": {
+                    "line": 84,
+                    "column": 31
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1773,
+                1793
+              ],
+              "loc": {
+                "start": {
+                  "line": 84,
+                  "column": 11
+                },
+                "end": {
+                  "line": 84,
+                  "column": 31
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1766,
+              1793
+            ],
+            "loc": {
+              "start": {
+                "line": 84,
+                "column": 4
+              },
+              "end": {
+                "line": 84,
+                "column": 31
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "cancel",
+              "range": [
+                1804,
+                1810
+              ],
+              "loc": {
+                "start": {
+                  "line": 87,
+                  "column": 4
+                },
+                "end": {
+                  "line": 87,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1813,
+                  1815
+                ],
+                "loc": {
+                  "start": {
+                    "line": 87,
+                    "column": 13
+                  },
+                  "end": {
+                    "line": 87,
+                    "column": 15
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1810,
+                1815
+              ],
+              "loc": {
+                "start": {
+                  "line": 87,
+                  "column": 10
+                },
+                "end": {
+                  "line": 87,
+                  "column": 15
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1804,
+              1815
+            ],
+            "loc": {
+              "start": {
+                "line": 87,
+                "column": 4
+              },
+              "end": {
+                "line": 87,
+                "column": 15
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "secondary",
+              "range": [
+                1826,
+                1835
+              ],
+              "loc": {
+                "start": {
+                  "line": 90,
+                  "column": 4
+                },
+                "end": {
+                  "line": 90,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "label",
+                  "range": [
+                    1836,
+                    1841
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 90,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 90,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    1843,
+                    1851
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 90,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 90,
+                      "column": 29
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1853,
+                  1855
+                ],
+                "loc": {
+                  "start": {
+                    "line": 90,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 90,
+                    "column": 33
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1835,
+                1855
+              ],
+              "loc": {
+                "start": {
+                  "line": 90,
+                  "column": 13
+                },
+                "end": {
+                  "line": 90,
+                  "column": 33
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1826,
+              1855
+            ],
+            "loc": {
+              "start": {
+                "line": 90,
+                "column": 4
+              },
+              "end": {
+                "line": 90,
+                "column": 33
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "build",
+              "range": [
+                1866,
+                1871
+              ],
+              "loc": {
+                "start": {
+                  "line": 93,
+                  "column": 4
+                },
+                "end": {
+                  "line": 93,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1874,
+                  1876
+                ],
+                "loc": {
+                  "start": {
+                    "line": 93,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1871,
+                1876
+              ],
+              "loc": {
+                "start": {
+                  "line": 93,
+                  "column": 9
+                },
+                "end": {
+                  "line": 93,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1866,
+              1876
+            ],
+            "loc": {
+              "start": {
+                "line": 93,
+                "column": 4
+              },
+              "end": {
+                "line": 93,
+                "column": 14
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "add",
+              "range": [
+                1887,
+                1890
+              ],
+              "loc": {
+                "start": {
+                  "line": 96,
+                  "column": 4
+                },
+                "end": {
+                  "line": 96,
+                  "column": 7
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "element",
+                  "range": [
+                    1891,
+                    1898
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 96,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 96,
+                      "column": 15
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1900,
+                  1902
+                ],
+                "loc": {
+                  "start": {
+                    "line": 96,
+                    "column": 17
+                  },
+                  "end": {
+                    "line": 96,
+                    "column": 19
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1890,
+                1902
+              ],
+              "loc": {
+                "start": {
+                  "line": 96,
+                  "column": 7
+                },
+                "end": {
+                  "line": 96,
+                  "column": 19
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1887,
+              1902
+            ],
+            "loc": {
+              "start": {
+                "line": 96,
+                "column": 4
+              },
+              "end": {
+                "line": 96,
+                "column": 19
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "okCancel",
+              "range": [
+                1913,
+                1921
+              ],
+              "loc": {
+                "start": {
+                  "line": 99,
+                  "column": 4
+                },
+                "end": {
+                  "line": 99,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "okCallback",
+                  "range": [
+                    1922,
+                    1932
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 99,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 99,
+                      "column": 23
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1934,
+                  1936
+                ],
+                "loc": {
+                  "start": {
+                    "line": 99,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 99,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1921,
+                1936
+              ],
+              "loc": {
+                "start": {
+                  "line": 99,
+                  "column": 12
+                },
+                "end": {
+                  "line": 99,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1913,
+              1936
+            ],
+            "loc": {
+              "start": {
+                "line": 99,
+                "column": 4
+              },
+              "end": {
+                "line": 99,
+                "column": 27
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "size",
+              "range": [
+                1947,
+                1951
+              ],
+              "loc": {
+                "start": {
+                  "line": 102,
+                  "column": 4
+                },
+                "end": {
+                  "line": 102,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "size",
+                  "range": [
+                    1952,
+                    1956
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 102,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 102,
+                      "column": 13
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1958,
+                  1960
+                ],
+                "loc": {
+                  "start": {
+                    "line": 102,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 102,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1951,
+                1960
+              ],
+              "loc": {
+                "start": {
+                  "line": 102,
+                  "column": 8
+                },
+                "end": {
+                  "line": 102,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              1947,
+              1960
+            ],
+            "loc": {
+              "start": {
+                "line": 102,
+                "column": 4
+              },
+              "end": {
+                "line": 102,
+                "column": 17
+              }
+            },
+            "static": false
+          }
+        ],
+        "range": [
+          1490,
+          1962
+        ],
+        "loc": {
+          "start": {
+            "line": 70,
+            "column": 20
+          },
+          "end": {
+            "line": 103,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        1470,
+        1962
+      ],
+      "loc": {
+        "start": {
+          "line": 70,
+          "column": 0
+        },
+        "end": {
+          "line": 103,
+          "column": 1
+        }
+      },
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can\n * be placed on the left or the right side. Each button has a callback. The callback is either a {@link Callback}\n * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}\n * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons\n * as you like, but only one of them should be the primary button.\n * <p>\n * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If\n * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive\n * numbers for the right side. On each side the buttons are ordered according to the placement.\n ",
+          "range": [
+            1964,
+            2840
+          ],
+          "loc": {
+            "start": {
+              "line": 105,
+              "column": 0
+            },
+            "end": {
+              "line": 115,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Dialog",
+        "range": [
+          2847,
+          2853
+        ],
+        "loc": {
+          "start": {
+            "line": 116,
+            "column": 6
+          },
+          "end": {
+            "line": 116,
+            "column": 12
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "show",
+              "range": [
+                2866,
+                2870
+              ],
+              "loc": {
+                "start": {
+                  "line": 119,
+                  "column": 4
+                },
+                "end": {
+                  "line": 119,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2873,
+                  2875
+                ],
+                "loc": {
+                  "start": {
+                    "line": 119,
+                    "column": 11
+                  },
+                  "end": {
+                    "line": 119,
+                    "column": 13
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2870,
+                2875
+              ],
+              "loc": {
+                "start": {
+                  "line": 119,
+                  "column": 8
+                },
+                "end": {
+                  "line": 119,
+                  "column": 13
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2866,
+              2875
+            ],
+            "loc": {
+              "start": {
+                "line": 119,
+                "column": 4
+              },
+              "end": {
+                "line": 119,
+                "column": 13
+              }
+            },
+            "static": false
+          }
+        ],
+        "range": [
+          2854,
+          2877
+        ],
+        "loc": {
+          "start": {
+            "line": 116,
+            "column": 13
+          },
+          "end": {
+            "line": 120,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        2841,
+        2877
+      ],
+      "loc": {
+        "start": {
+          "line": 116,
+          "column": 0
+        },
+        "end": {
+          "line": 120,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can\n * be placed on the left or the right side. Each button has a callback. The callback is either a {@link Callback}\n * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}\n * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons\n * as you like, but only one of them should be the primary button.\n * <p>\n * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If\n * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive\n * numbers for the right side. On each side the buttons are ordered according to the placement.\n ",
+          "range": [
+            1964,
+            2840
+          ],
+          "loc": {
+            "start": {
+              "line": 105,
+              "column": 0
+            },
+            "end": {
+              "line": 115,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "TableBuilder",
+        "range": [
+          2886,
+          2898
+        ],
+        "loc": {
+          "start": {
+            "line": 123,
+            "column": 6
+          },
+          "end": {
+            "line": 123,
+            "column": 18
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "column",
+              "range": [
+                2911,
+                2917
+              ],
+              "loc": {
+                "start": {
+                  "line": 126,
+                  "column": 4
+                },
+                "end": {
+                  "line": 126,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "attribute",
+                  "range": [
+                    2918,
+                    2927
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 126,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 126,
+                      "column": 20
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2929,
+                  2931
+                ],
+                "loc": {
+                  "start": {
+                    "line": 126,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 126,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2917,
+                2931
+              ],
+              "loc": {
+                "start": {
+                  "line": 126,
+                  "column": 10
+                },
+                "end": {
+                  "line": 126,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2911,
+              2931
+            ],
+            "loc": {
+              "start": {
+                "line": 126,
+                "column": 4
+              },
+              "end": {
+                "line": 126,
+                "column": 24
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "build",
+              "range": [
+                2942,
+                2947
+              ],
+              "loc": {
+                "start": {
+                  "line": 129,
+                  "column": 4
+                },
+                "end": {
+                  "line": 129,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2950,
+                  2952
+                ],
+                "loc": {
+                  "start": {
+                    "line": 129,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 129,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2947,
+                2952
+              ],
+              "loc": {
+                "start": {
+                  "line": 129,
+                  "column": 9
+                },
+                "end": {
+                  "line": 129,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2942,
+              2952
+            ],
+            "loc": {
+              "start": {
+                "line": 129,
+                "column": 4
+              },
+              "end": {
+                "line": 129,
+                "column": 14
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "add",
+              "range": [
+                2963,
+                2966
+              ],
+              "loc": {
+                "start": {
+                  "line": 132,
+                  "column": 4
+                },
+                "end": {
+                  "line": 132,
+                  "column": 7
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    2967,
+                    2971
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 132,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 132,
+                      "column": 12
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    2973,
+                    2981
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 132,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 132,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "attributes",
+                  "range": [
+                    2983,
+                    2993
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 132,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 132,
+                      "column": 34
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    2995,
+                    3003
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 132,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 132,
+                      "column": 44
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3005,
+                  3007
+                ],
+                "loc": {
+                  "start": {
+                    "line": 132,
+                    "column": 46
+                  },
+                  "end": {
+                    "line": 132,
+                    "column": 48
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2966,
+                3007
+              ],
+              "loc": {
+                "start": {
+                  "line": 132,
+                  "column": 7
+                },
+                "end": {
+                  "line": 132,
+                  "column": 48
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2963,
+              3007
+            ],
+            "loc": {
+              "start": {
+                "line": 132,
+                "column": 4
+              },
+              "end": {
+                "line": 132,
+                "column": 48
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "remove",
+              "range": [
+                3018,
+                3024
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 4
+                },
+                "end": {
+                  "line": 135,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    3025,
+                    3029
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    3031,
+                    3039
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 25
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    3041,
+                    3045
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 31
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    3047,
+                    3055
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 41
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3057,
+                  3059
+                ],
+                "loc": {
+                  "start": {
+                    "line": 135,
+                    "column": 43
+                  },
+                  "end": {
+                    "line": 135,
+                    "column": 45
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3024,
+                3059
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 10
+                },
+                "end": {
+                  "line": 135,
+                  "column": 45
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3018,
+              3059
+            ],
+            "loc": {
+              "start": {
+                "line": 135,
+                "column": 4
+              },
+              "end": {
+                "line": 135,
+                "column": 45
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "button",
+              "range": [
+                3070,
+                3076
+              ],
+              "loc": {
+                "start": {
+                  "line": 138,
+                  "column": 4
+                },
+                "end": {
+                  "line": 138,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "text",
+                  "range": [
+                    3077,
+                    3081
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 138,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 138,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "scope",
+                  "range": [
+                    3083,
+                    3088
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 138,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 138,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "handler",
+                  "range": [
+                    3090,
+                    3097
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 138,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 138,
+                      "column": 31
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3099,
+                  3101
+                ],
+                "loc": {
+                  "start": {
+                    "line": 138,
+                    "column": 33
+                  },
+                  "end": {
+                    "line": 138,
+                    "column": 35
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3076,
+                3101
+              ],
+              "loc": {
+                "start": {
+                  "line": 138,
+                  "column": 10
+                },
+                "end": {
+                  "line": 138,
+                  "column": 35
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3070,
+              3101
+            ],
+            "loc": {
+              "start": {
+                "line": 138,
+                "column": 4
+              },
+              "end": {
+                "line": 138,
+                "column": 35
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "columns",
+              "range": [
+                3112,
+                3119
+              ],
+              "loc": {
+                "start": {
+                  "line": 141,
+                  "column": 4
+                },
+                "end": {
+                  "line": 141,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "columns",
+                  "range": [
+                    3120,
+                    3127
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 141,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 141,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3129,
+                  3131
+                ],
+                "loc": {
+                  "start": {
+                    "line": 141,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 141,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3119,
+                3131
+              ],
+              "loc": {
+                "start": {
+                  "line": 141,
+                  "column": 11
+                },
+                "end": {
+                  "line": 141,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3112,
+              3131
+            ],
+            "loc": {
+              "start": {
+                "line": 141,
+                "column": 4
+              },
+              "end": {
+                "line": 141,
+                "column": 23
+              }
+            },
+            "static": false
+          }
+        ],
+        "range": [
+          2899,
+          3133
+        ],
+        "loc": {
+          "start": {
+            "line": 123,
+            "column": 19
+          },
+          "end": {
+            "line": 142,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        2880,
+        3133
+      ],
+      "loc": {
+        "start": {
+          "line": 123,
+          "column": 0
+        },
+        "end": {
+          "line": 142,
+          "column": 1
+        }
+      },
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Builder useful to automatically inspect the read-resource-description and associate the\n * attributes (by calling: include, customFormItem). Creates the required form items and help texts.\n ",
+          "range": [
+            3135,
+            3334
+          ],
+          "loc": {
+            "start": {
+              "line": 144,
+              "column": 0
+            },
+            "end": {
+              "line": 147,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "FormBuilder",
+        "range": [
+          3341,
+          3352
+        ],
+        "loc": {
+          "start": {
+            "line": 148,
+            "column": 6
+          },
+          "end": {
+            "line": 148,
+            "column": 17
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "addOnly",
+              "range": [
+                3605,
+                3612
+              ],
+              "loc": {
+                "start": {
+                  "line": 156,
+                  "column": 4
+                },
+                "end": {
+                  "line": 156,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3615,
+                  3617
+                ],
+                "loc": {
+                  "start": {
+                    "line": 156,
+                    "column": 14
+                  },
+                  "end": {
+                    "line": 156,
+                    "column": 16
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3612,
+                3617
+              ],
+              "loc": {
+                "start": {
+                  "line": 156,
+                  "column": 11
+                },
+                "end": {
+                  "line": 156,
+                  "column": 16
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3605,
+              3617
+            ],
+            "loc": {
+              "start": {
+                "line": 156,
+                "column": 4
+              },
+              "end": {
+                "line": 156,
+                "column": 16
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Use this flag if you just want to use the form to add model nodes. This will create a form with an\n     * {@link AddOnlyStateMachine}.\n     * <p>\n     * The attributes will be taken from the {@code ATTRIBUTES} child node.\n     ",
+                "range": [
+                  3360,
+                  3600
+                ],
+                "loc": {
+                  "start": {
+                    "line": 150,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 155,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Use this flag if you just want to use the form to add model nodes. This will create a form with an\n     * {@link AddOnlyStateMachine}.\n     * <p>\n     * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.\n     ",
+                "range": [
+                  3623,
+                  3894
+                ],
+                "loc": {
+                  "start": {
+                    "line": 158,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 163,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "fromRequestProperties",
+              "range": [
+                3899,
+                3920
+              ],
+              "loc": {
+                "start": {
+                  "line": 164,
+                  "column": 4
+                },
+                "end": {
+                  "line": 164,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3923,
+                  3925
+                ],
+                "loc": {
+                  "start": {
+                    "line": 164,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 164,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3920,
+                3925
+              ],
+              "loc": {
+                "start": {
+                  "line": 164,
+                  "column": 25
+                },
+                "end": {
+                  "line": 164,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3899,
+              3925
+            ],
+            "loc": {
+              "start": {
+                "line": 164,
+                "column": 4
+              },
+              "end": {
+                "line": 164,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Use this flag if you just want to use the form to add model nodes. This will create a form with an\n     * {@link AddOnlyStateMachine}.\n     * <p>\n     * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.\n     ",
+                "range": [
+                  3623,
+                  3894
+                ],
+                "loc": {
+                  "start": {
+                    "line": 158,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 163,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "readOnly",
+              "range": [
+                3936,
+                3944
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 4
+                },
+                "end": {
+                  "line": 167,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3947,
+                  3949
+                ],
+                "loc": {
+                  "start": {
+                    "line": 167,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 167,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3944,
+                3949
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 12
+                },
+                "end": {
+                  "line": 167,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3936,
+              3949
+            ],
+            "loc": {
+              "start": {
+                "line": 167,
+                "column": 4
+              },
+              "end": {
+                "line": 167,
+                "column": 17
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "unsorted",
+              "range": [
+                3960,
+                3968
+              ],
+              "loc": {
+                "start": {
+                  "line": 170,
+                  "column": 4
+                },
+                "end": {
+                  "line": 170,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3971,
+                  3973
+                ],
+                "loc": {
+                  "start": {
+                    "line": 170,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 170,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3968,
+                3973
+              ],
+              "loc": {
+                "start": {
+                  "line": 170,
+                  "column": 12
+                },
+                "end": {
+                  "line": 170,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3960,
+              3973
+            ],
+            "loc": {
+              "start": {
+                "line": 170,
+                "column": 4
+              },
+              "end": {
+                "line": 170,
+                "column": 17
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "requiredOnly",
+              "range": [
+                3984,
+                3996
+              ],
+              "loc": {
+                "start": {
+                  "line": 173,
+                  "column": 4
+                },
+                "end": {
+                  "line": 173,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3999,
+                  4001
+                ],
+                "loc": {
+                  "start": {
+                    "line": 173,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 173,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3996,
+                4001
+              ],
+              "loc": {
+                "start": {
+                  "line": 173,
+                  "column": 16
+                },
+                "end": {
+                  "line": 173,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3984,
+              4001
+            ],
+            "loc": {
+              "start": {
+                "line": 173,
+                "column": 4
+              },
+              "end": {
+                "line": 173,
+                "column": 21
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "includeRuntime",
+              "range": [
+                4012,
+                4026
+              ],
+              "loc": {
+                "start": {
+                  "line": 176,
+                  "column": 4
+                },
+                "end": {
+                  "line": 176,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4029,
+                  4031
+                ],
+                "loc": {
+                  "start": {
+                    "line": 176,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4026,
+                4031
+              ],
+              "loc": {
+                "start": {
+                  "line": 176,
+                  "column": 18
+                },
+                "end": {
+                  "line": 176,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4012,
+              4031
+            ],
+            "loc": {
+              "start": {
+                "line": 176,
+                "column": 4
+              },
+              "end": {
+                "line": 176,
+                "column": 23
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "showDeprecated",
+              "range": [
+                4042,
+                4056
+              ],
+              "loc": {
+                "start": {
+                  "line": 179,
+                  "column": 4
+                },
+                "end": {
+                  "line": 179,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4059,
+                  4061
+                ],
+                "loc": {
+                  "start": {
+                    "line": 179,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 179,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4056,
+                4061
+              ],
+              "loc": {
+                "start": {
+                  "line": 179,
+                  "column": 18
+                },
+                "end": {
+                  "line": 179,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4042,
+              4061
+            ],
+            "loc": {
+              "start": {
+                "line": 179,
+                "column": 4
+              },
+              "end": {
+                "line": 179,
+                "column": 23
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "build",
+              "range": [
+                4072,
+                4077
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 4
+                },
+                "end": {
+                  "line": 182,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4080,
+                  4082
+                ],
+                "loc": {
+                  "start": {
+                    "line": 182,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 182,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4077,
+                4082
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 9
+                },
+                "end": {
+                  "line": 182,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4072,
+              4082
+            ],
+            "loc": {
+              "start": {
+                "line": 182,
+                "column": 4
+              },
+              "end": {
+                "line": 182,
+                "column": 14
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "include",
+              "range": [
+                4093,
+                4100
+              ],
+              "loc": {
+                "start": {
+                  "line": 185,
+                  "column": 4
+                },
+                "end": {
+                  "line": 185,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "attributes",
+                  "range": [
+                    4101,
+                    4111
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 185,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 185,
+                      "column": 22
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4113,
+                  4115
+                ],
+                "loc": {
+                  "start": {
+                    "line": 185,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 185,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4100,
+                4115
+              ],
+              "loc": {
+                "start": {
+                  "line": 185,
+                  "column": 11
+                },
+                "end": {
+                  "line": 185,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4093,
+              4115
+            ],
+            "loc": {
+              "start": {
+                "line": 185,
+                "column": 4
+              },
+              "end": {
+                "line": 185,
+                "column": 26
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "exclude",
+              "range": [
+                4126,
+                4133
+              ],
+              "loc": {
+                "start": {
+                  "line": 188,
+                  "column": 4
+                },
+                "end": {
+                  "line": 188,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "attributes",
+                  "range": [
+                    4134,
+                    4144
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 188,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 188,
+                      "column": 22
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4146,
+                  4148
+                ],
+                "loc": {
+                  "start": {
+                    "line": 188,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 188,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4133,
+                4148
+              ],
+              "loc": {
+                "start": {
+                  "line": 188,
+                  "column": 11
+                },
+                "end": {
+                  "line": 188,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4126,
+              4148
+            ],
+            "loc": {
+              "start": {
+                "line": 188,
+                "column": 4
+              },
+              "end": {
+                "line": 188,
+                "column": 26
+              }
+            },
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "onSave",
+              "range": [
+                4159,
+                4165
+              ],
+              "loc": {
+                "start": {
+                  "line": 191,
+                  "column": 4
+                },
+                "end": {
+                  "line": 191,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    4166,
+                    4174
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 191,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 191,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4176,
+                  4178
+                ],
+                "loc": {
+                  "start": {
+                    "line": 191,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 191,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4165,
+                4178
+              ],
+              "loc": {
+                "start": {
+                  "line": 191,
+                  "column": 10
+                },
+                "end": {
+                  "line": 191,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4159,
+              4178
+            ],
+            "loc": {
+              "start": {
+                "line": 191,
+                "column": 4
+              },
+              "end": {
+                "line": 191,
+                "column": 23
+              }
+            },
+            "static": false
+          }
+        ],
+        "range": [
+          3353,
+          4180
+        ],
+        "loc": {
+          "start": {
+            "line": 148,
+            "column": 18
+          },
+          "end": {
+            "line": 192,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        3335,
+        4180
+      ],
+      "loc": {
+        "start": {
+          "line": 148,
+          "column": 0
+        },
+        "end": {
+          "line": 192,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Builder useful to automatically inspect the read-resource-description and associate the\n * attributes (by calling: include, customFormItem). Creates the required form items and help texts.\n ",
+          "range": [
+            3135,
+            3334
+          ],
+          "loc": {
+            "start": {
+              "line": 144,
+              "column": 0
+            },
+            "end": {
+              "line": 147,
+              "column": 3
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    441,
+    4180
+  ],
+  "loc": {
+    "start": {
+      "line": 9,
+      "column": 0
+    },
+    "end": {
+      "line": 192,
+      "column": 1
+    }
+  },
+  "comments": [
+    {
+      "type": "Block",
+      "value": "*\n * A form bound to a model using well defined states and operations. The form contains a list of form items which are\n * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the\n * attributes of the model (text input, check boxes or select boxes), whereas unbound form items have no relation to\n * the model (static text or buttons).\n * \n * @param <T> The model for this form\n ",
+      "range": [
+        0,
+        440
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 8,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {T} the current model.\n     ",
+      "range": [
+        517,
+        566
+      ],
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 4
+        },
+        "end": {
+          "line": 19,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Takes the specified model and updates the read-only state with the values from the model.\n     * \n     * @param {T} model the model to view.\n     ",
+      "range": [
+        591,
+        750
+      ],
+      "loc": {
+        "start": {
+          "line": 22,
+          "column": 4
+        },
+        "end": {
+          "line": 26,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Clears this form by removing the model reference and by clearing all form fields.\n     ",
+      "range": [
+        775,
+        875
+      ],
+      "loc": {
+        "start": {
+          "line": 29,
+          "column": 4
+        },
+        "end": {
+          "line": 31,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Takes the specified model and populates the editing state with the values from the model.\n     * \n     * @param {T} model the model to edit.\n     ",
+      "range": [
+        896,
+        1055
+      ],
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 4
+        },
+        "end": {
+          "line": 38,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Validates the form and its fields and upon successful validation persists the changes to the model and\n     * calls the save callback.\n     ",
+      "range": [
+        1080,
+        1233
+      ],
+      "loc": {
+        "start": {
+          "line": 41,
+          "column": 4
+        },
+        "end": {
+          "line": 44,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Cancels any modifications to the model.\n     ",
+      "range": [
+        1253,
+        1311
+      ],
+      "loc": {
+        "start": {
+          "line": 47,
+          "column": 4
+        },
+        "end": {
+          "line": 49,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shortcut for a dialog with one 'Close' button.\n     ",
+      "range": [
+        1497,
+        1562
+      ],
+      "loc": {
+        "start": {
+          "line": 72,
+          "column": 4
+        },
+        "end": {
+          "line": 74,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified\n     * callback.\n     ",
+      "range": [
+        1587,
+        1723
+      ],
+      "loc": {
+        "start": {
+          "line": 77,
+          "column": 4
+        },
+        "end": {
+          "line": 80,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can\n * be placed on the left or the right side. Each button has a callback. The callback is either a {@link Callback}\n * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}\n * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons\n * as you like, but only one of them should be the primary button.\n * <p>\n * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If\n * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive\n * numbers for the right side. On each side the buttons are ordered according to the placement.\n ",
+      "range": [
+        1964,
+        2840
+      ],
+      "loc": {
+        "start": {
+          "line": 105,
+          "column": 0
+        },
+        "end": {
+          "line": 115,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Builder useful to automatically inspect the read-resource-description and associate the\n * attributes (by calling: include, customFormItem). Creates the required form items and help texts.\n ",
+      "range": [
+        3135,
+        3334
+      ],
+      "loc": {
+        "start": {
+          "line": 144,
+          "column": 0
+        },
+        "end": {
+          "line": 147,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Use this flag if you just want to use the form to add model nodes. This will create a form with an\n     * {@link AddOnlyStateMachine}.\n     * <p>\n     * The attributes will be taken from the {@code ATTRIBUTES} child node.\n     ",
+      "range": [
+        3360,
+        3600
+      ],
+      "loc": {
+        "start": {
+          "line": 150,
+          "column": 4
+        },
+        "end": {
+          "line": 155,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Use this flag if you just want to use the form to add model nodes. This will create a form with an\n     * {@link AddOnlyStateMachine}.\n     * <p>\n     * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.\n     ",
+      "range": [
+        3623,
+        3894
+      ],
+      "loc": {
+        "start": {
+          "line": 158,
+          "column": 4
+        },
+        "end": {
+          "line": 163,
+          "column": 7
+        }
+      }
+    }
+  ]
+}

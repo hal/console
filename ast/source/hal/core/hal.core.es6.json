@@ -1,0 +1,6069 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Extension",
+        "range": [
+          64,
+          73
+        ],
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 6
+          },
+          "end": {
+            "line": 4,
+            "column": 15
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "header",
+              "range": [
+                477,
+                483
+              ],
+              "loc": {
+                "start": {
+                  "line": 15,
+                  "column": 11
+                },
+                "end": {
+                  "line": 15,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    484,
+                    488
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 15,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "title",
+                  "range": [
+                    490,
+                    495
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 15,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "entryPoint",
+                  "range": [
+                    497,
+                    507
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 15,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 41
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  509,
+                  511
+                ],
+                "loc": {
+                  "start": {
+                    "line": 15,
+                    "column": 43
+                  },
+                  "end": {
+                    "line": 15,
+                    "column": 45
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                483,
+                511
+              ],
+              "loc": {
+                "start": {
+                  "line": 15,
+                  "column": 17
+                },
+                "end": {
+                  "line": 15,
+                  "column": 45
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              470,
+              511
+            ],
+            "loc": {
+              "start": {
+                "line": 15,
+                "column": 4
+              },
+              "end": {
+                "line": 15,
+                "column": 45
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a header extension.\n     * \n     * @param {string} name       A unique name of the extension.\n     * @param {string} title      The title of the menu item in the header.\n     * @param {function()} entryPoint The entrypoint of the header extension.\n     * \n     * @return {Extension} the extension which can be registered using the {@link ExtensionRegistry}.\n     ",
+                "range": [
+                  81,
+                  465
+                ],
+                "loc": {
+                  "start": {
+                    "line": 6,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 14,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a footer extension.\n     * \n     * @param {string} name       A unique name of the extension.\n     * @param {string} title      The title of the menu item in the footer.\n     * @param {function()} entryPoint The entrypoint of the footer extension.\n     * \n     * @return {Extension} the extension which can be registered using the {@link ExtensionRegistry}.\n     ",
+                "range": [
+                  517,
+                  901
+                ],
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "footer",
+              "range": [
+                913,
+                919
+              ],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 11
+                },
+                "end": {
+                  "line": 26,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    920,
+                    924
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "title",
+                  "range": [
+                    926,
+                    931
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "entryPoint",
+                  "range": [
+                    933,
+                    943
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 41
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  945,
+                  947
+                ],
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 43
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 45
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                919,
+                947
+              ],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 17
+                },
+                "end": {
+                  "line": 26,
+                  "column": 45
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              906,
+              947
+            ],
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 4
+              },
+              "end": {
+                "line": 26,
+                "column": 45
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a footer extension.\n     * \n     * @param {string} name       A unique name of the extension.\n     * @param {string} title      The title of the menu item in the footer.\n     * @param {function()} entryPoint The entrypoint of the footer extension.\n     * \n     * @return {Extension} the extension which can be registered using the {@link ExtensionRegistry}.\n     ",
+                "range": [
+                  517,
+                  901
+                ],
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          }
+        ],
+        "range": [
+          74,
+          949
+        ],
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 16
+          },
+          "end": {
+            "line": 27,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        58,
+        949
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 27,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Represents an extension written in JavaScript.\n ",
+          "range": [
+            0,
+            57
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains generic CRUD methods to add, read, update and remove (singleton) resources. Some methods just execute the\n * underlying DMR operations, other methods also interact with the user by showing (confirmation) dialogs.\n ",
+          "range": [
+            951,
+            1183
+          ],
+          "loc": {
+            "start": {
+              "line": 29,
+              "column": 0
+            },
+            "end": {
+              "line": 32,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "CrudOperations",
+        "range": [
+          1190,
+          1204
+        ],
+        "loc": {
+          "start": {
+            "line": 33,
+            "column": 6
+          },
+          "end": {
+            "line": 33,
+            "column": 20
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "addDialog",
+              "range": [
+                2116,
+                2125
+              ],
+              "loc": {
+                "start": {
+                  "line": 46,
+                  "column": 4
+                },
+                "end": {
+                  "line": 46,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    2126,
+                    2130
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 46,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 46,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    2132,
+                    2139
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 46,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 46,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "attributes",
+                  "range": [
+                    2141,
+                    2151
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 46,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 46,
+                      "column": 39
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    2153,
+                    2161
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 46,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 46,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2163,
+                  2165
+                ],
+                "loc": {
+                  "start": {
+                    "line": 46,
+                    "column": 51
+                  },
+                  "end": {
+                    "line": 46,
+                    "column": 53
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2125,
+                2165
+              ],
+              "loc": {
+                "start": {
+                  "line": 46,
+                  "column": 13
+                },
+                "end": {
+                  "line": 46,
+                  "column": 53
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2116,
+              2165
+            ],
+            "loc": {
+              "start": {
+                "line": 46,
+                "column": 4
+              },
+              "end": {
+                "line": 46,
+                "column": 53
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Opens an add-resource dialog for the given resource type. The dialog contains fields for all required request\n     * properties. When clicking \"Add\", a new resource is added using the specified address. After the resource has been\n     * added a success message is displayed and the callback is executed.\n     * \n     * @param {string} type       The human readable resource type used in the dialog header and success message.\n     * @param {AddressTemplate|ResourceAddress|string} address    The address for the add operation. Must end in <code>&lt;resource type&gt;=*</code>.\n     * @param {string[]} attributes Additional attributes (besides the required attributes) which should be part of the\n     * add-resource dialog. May be null or empty.\n     * @param {function(name: string, address: ResourceAddress)} callback   The callback executed after the resource has been added.\n     ",
+                "range": [
+                  1212,
+                  2111
+                ],
+                "loc": {
+                  "start": {
+                    "line": 35,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 45,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes an add operation using the specified name and payload. After the resource has been added a success\n     * message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {string} name     The resource name which is part of the add operation.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=*</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(name: string, address: ResourceAddress)} callback The callback executed after the resource has been added.\n     ",
+                "range": [
+                  2171,
+                  2946
+                ],
+                "loc": {
+                  "start": {
+                    "line": 48,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "add",
+              "range": [
+                2951,
+                2954
+              ],
+              "loc": {
+                "start": {
+                  "line": 58,
+                  "column": 4
+                },
+                "end": {
+                  "line": 58,
+                  "column": 7
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    2955,
+                    2959
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 58,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 58,
+                      "column": 12
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    2961,
+                    2965
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 58,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 58,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    2967,
+                    2974
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 58,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 58,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "payload",
+                  "range": [
+                    2976,
+                    2983
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 58,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 58,
+                      "column": 36
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    2985,
+                    2993
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 58,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 58,
+                      "column": 46
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2995,
+                  2997
+                ],
+                "loc": {
+                  "start": {
+                    "line": 58,
+                    "column": 48
+                  },
+                  "end": {
+                    "line": 58,
+                    "column": 50
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2954,
+                2997
+              ],
+              "loc": {
+                "start": {
+                  "line": 58,
+                  "column": 7
+                },
+                "end": {
+                  "line": 58,
+                  "column": 50
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2951,
+              2997
+            ],
+            "loc": {
+              "start": {
+                "line": 58,
+                "column": 4
+              },
+              "end": {
+                "line": 58,
+                "column": 50
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes an add operation using the specified name and payload. After the resource has been added a success\n     * message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {string} name     The resource name which is part of the add operation.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=*</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(name: string, address: ResourceAddress)} callback The callback executed after the resource has been added.\n     ",
+                "range": [
+                  2171,
+                  2946
+                ],
+                "loc": {
+                  "start": {
+                    "line": 48,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Opens an add-resource dialog for the given singleton resource type. The dialog contains fields for all required\n     * request properties. When clicking \"Add\", a new singleton resource is added using the specified address template.\n     * After the singleton resource has been added a success message is displayed and the callback is executed.\n     * \n     * @param {string} type       The human readable resource type used in the dialog header and success message.\n     * @param {Object} address    The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {string[]} attributes Additional attributes (besides the required attributes) which should be part of the\n     * add-resource dialog. May be null or empty.\n     * @param {function(address: ResourceAddress)} callback   The callback executed after the singleton resource has been added.\n     ",
+                "range": [
+                  3003,
+                  3932
+                ],
+                "loc": {
+                  "start": {
+                    "line": 60,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 71,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "addSingletonDialog",
+              "range": [
+                3937,
+                3955
+              ],
+              "loc": {
+                "start": {
+                  "line": 72,
+                  "column": 4
+                },
+                "end": {
+                  "line": 72,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    3956,
+                    3960
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 72,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 72,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    3962,
+                    3969
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 72,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 72,
+                      "column": 36
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "attributes",
+                  "range": [
+                    3971,
+                    3981
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 72,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 72,
+                      "column": 48
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    3983,
+                    3991
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 72,
+                      "column": 50
+                    },
+                    "end": {
+                      "line": 72,
+                      "column": 58
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3993,
+                  3995
+                ],
+                "loc": {
+                  "start": {
+                    "line": 72,
+                    "column": 60
+                  },
+                  "end": {
+                    "line": 72,
+                    "column": 62
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3955,
+                3995
+              ],
+              "loc": {
+                "start": {
+                  "line": 72,
+                  "column": 22
+                },
+                "end": {
+                  "line": 72,
+                  "column": 62
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3937,
+              3995
+            ],
+            "loc": {
+              "start": {
+                "line": 72,
+                "column": 4
+              },
+              "end": {
+                "line": 72,
+                "column": 62
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Opens an add-resource dialog for the given singleton resource type. The dialog contains fields for all required\n     * request properties. When clicking \"Add\", a new singleton resource is added using the specified address template.\n     * After the singleton resource has been added a success message is displayed and the callback is executed.\n     * \n     * @param {string} type       The human readable resource type used in the dialog header and success message.\n     * @param {Object} address    The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {string[]} attributes Additional attributes (besides the required attributes) which should be part of the\n     * add-resource dialog. May be null or empty.\n     * @param {function(address: ResourceAddress)} callback   The callback executed after the singleton resource has been added.\n     ",
+                "range": [
+                  3003,
+                  3932
+                ],
+                "loc": {
+                  "start": {
+                    "line": 60,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 71,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes an add operation using the specified payload. After the resource has been added a success message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(address: ResourceAddress)} callback The callback executed after the singleton resource has been added.\n     ",
+                "range": [
+                  4001,
+                  4704
+                ],
+                "loc": {
+                  "start": {
+                    "line": 74,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 83,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "addSingleton",
+              "range": [
+                4709,
+                4721
+              ],
+              "loc": {
+                "start": {
+                  "line": 84,
+                  "column": 4
+                },
+                "end": {
+                  "line": 84,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    4722,
+                    4726
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    4728,
+                    4735
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "payload",
+                  "range": [
+                    4737,
+                    4744
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 39
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    4746,
+                    4754
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 84,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 84,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4756,
+                  4758
+                ],
+                "loc": {
+                  "start": {
+                    "line": 84,
+                    "column": 51
+                  },
+                  "end": {
+                    "line": 84,
+                    "column": 53
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4721,
+                4758
+              ],
+              "loc": {
+                "start": {
+                  "line": 84,
+                  "column": 16
+                },
+                "end": {
+                  "line": 84,
+                  "column": 53
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4709,
+              4758
+            ],
+            "loc": {
+              "start": {
+                "line": 84,
+                "column": 4
+              },
+              "end": {
+                "line": 84,
+                "column": 53
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes an add operation using the specified payload. After the resource has been added a success message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(address: ResourceAddress)} callback The callback executed after the singleton resource has been added.\n     ",
+                "range": [
+                  4001,
+                  4704
+                ],
+                "loc": {
+                  "start": {
+                    "line": 74,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 83,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+                "range": [
+                  4764,
+                  5128
+                ],
+                "loc": {
+                  "start": {
+                    "line": 86,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 91,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "read",
+              "range": [
+                5133,
+                5137
+              ],
+              "loc": {
+                "start": {
+                  "line": 92,
+                  "column": 4
+                },
+                "end": {
+                  "line": 92,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    5138,
+                    5145
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 92,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 92,
+                      "column": 16
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    5147,
+                    5155
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 92,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 92,
+                      "column": 26
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5157,
+                  5159
+                ],
+                "loc": {
+                  "start": {
+                    "line": 92,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 92,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5137,
+                5159
+              ],
+              "loc": {
+                "start": {
+                  "line": 92,
+                  "column": 8
+                },
+                "end": {
+                  "line": 92,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5133,
+              5159
+            ],
+            "loc": {
+              "start": {
+                "line": 92,
+                "column": 4
+              },
+              "end": {
+                "line": 92,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+                "range": [
+                  4764,
+                  5128
+                ],
+                "loc": {
+                  "start": {
+                    "line": 86,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 91,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a recursive read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+                "range": [
+                  5165,
+                  5539
+                ],
+                "loc": {
+                  "start": {
+                    "line": 94,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 99,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "readRecursive",
+              "range": [
+                5544,
+                5557
+              ],
+              "loc": {
+                "start": {
+                  "line": 100,
+                  "column": 4
+                },
+                "end": {
+                  "line": 100,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    5558,
+                    5565
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 100,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 100,
+                      "column": 25
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    5567,
+                    5575
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 100,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 100,
+                      "column": 35
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5577,
+                  5579
+                ],
+                "loc": {
+                  "start": {
+                    "line": 100,
+                    "column": 37
+                  },
+                  "end": {
+                    "line": 100,
+                    "column": 39
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5557,
+                5579
+              ],
+              "loc": {
+                "start": {
+                  "line": 100,
+                  "column": 17
+                },
+                "end": {
+                  "line": 100,
+                  "column": 39
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5544,
+              5579
+            ],
+            "loc": {
+              "start": {
+                "line": 100,
+                "column": 4
+              },
+              "end": {
+                "line": 100,
+                "column": 39
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a recursive read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+                "range": [
+                  5165,
+                  5539
+                ],
+                "loc": {
+                  "start": {
+                    "line": 94,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 99,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a read-children-resources operation on the specified address and passes the result as {@link Property}\n     * array to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the read-children-resources operation.\n     * @param {string} childType The child resource type.\n     * @param {function(children: Property[])} callback  The callback which gets the result of the read-children-resources operation.\n     ",
+                "range": [
+                  5585,
+                  6065
+                ],
+                "loc": {
+                  "start": {
+                    "line": 102,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 109,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "readChildren",
+              "range": [
+                6070,
+                6082
+              ],
+              "loc": {
+                "start": {
+                  "line": 110,
+                  "column": 4
+                },
+                "end": {
+                  "line": 110,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    6083,
+                    6090
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 110,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 110,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "childType",
+                  "range": [
+                    6092,
+                    6101
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 110,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 110,
+                      "column": 35
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    6103,
+                    6111
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 110,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 110,
+                      "column": 45
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  6113,
+                  6115
+                ],
+                "loc": {
+                  "start": {
+                    "line": 110,
+                    "column": 47
+                  },
+                  "end": {
+                    "line": 110,
+                    "column": 49
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                6082,
+                6115
+              ],
+              "loc": {
+                "start": {
+                  "line": 110,
+                  "column": 16
+                },
+                "end": {
+                  "line": 110,
+                  "column": 49
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              6070,
+              6115
+            ],
+            "loc": {
+              "start": {
+                "line": 110,
+                "column": 4
+              },
+              "end": {
+                "line": 110,
+                "column": 49
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Executes a read-children-resources operation on the specified address and passes the result as {@link Property}\n     * array to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the read-children-resources operation.\n     * @param {string} childType The child resource type.\n     * @param {function(children: Property[])} callback  The callback which gets the result of the read-children-resources operation.\n     ",
+                "range": [
+                  5585,
+                  6065
+                ],
+                "loc": {
+                  "start": {
+                    "line": 102,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 109,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Writes the changed values to the specified resource. After the resource has been saved a standard success message\n     * is displayed and the callback is executed. If the change set is empty, a warning message is displayed and the\n     * callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {string} name      The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the resource has been saved.\n     ",
+                "range": [
+                  6121,
+                  6855
+                ],
+                "loc": {
+                  "start": {
+                    "line": 112,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 122,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "save",
+              "range": [
+                6860,
+                6864
+              ],
+              "loc": {
+                "start": {
+                  "line": 123,
+                  "column": 4
+                },
+                "end": {
+                  "line": 123,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    6865,
+                    6869
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 123,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 123,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    6871,
+                    6875
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 123,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 123,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    6877,
+                    6884
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 123,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 123,
+                      "column": 28
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "changeSet",
+                  "range": [
+                    6886,
+                    6895
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 123,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 123,
+                      "column": 39
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    6897,
+                    6905
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 123,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 123,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  6907,
+                  6909
+                ],
+                "loc": {
+                  "start": {
+                    "line": 123,
+                    "column": 51
+                  },
+                  "end": {
+                    "line": 123,
+                    "column": 53
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                6864,
+                6909
+              ],
+              "loc": {
+                "start": {
+                  "line": 123,
+                  "column": 8
+                },
+                "end": {
+                  "line": 123,
+                  "column": 53
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              6860,
+              6909
+            ],
+            "loc": {
+              "start": {
+                "line": 123,
+                "column": 4
+              },
+              "end": {
+                "line": 123,
+                "column": 53
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Writes the changed values to the specified resource. After the resource has been saved a standard success message\n     * is displayed and the callback is executed. If the change set is empty, a warning message is displayed and the\n     * callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {string} name      The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the resource has been saved.\n     ",
+                "range": [
+                  6121,
+                  6855
+                ],
+                "loc": {
+                  "start": {
+                    "line": 112,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 122,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Writes the changed values to the specified singleton resource. After the resource has been saved a standard\n     * success message is displayed and the callback is executed. If the change set is empty, a warning message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the singleton resource has been saved.\n     ",
+                "range": [
+                  6915,
+                  7617
+                ],
+                "loc": {
+                  "start": {
+                    "line": 125,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 134,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "saveSingleton",
+              "range": [
+                7622,
+                7635
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 4
+                },
+                "end": {
+                  "line": 135,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    7636,
+                    7640
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    7642,
+                    7649
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 31
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "changeSet",
+                  "range": [
+                    7651,
+                    7660
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    7662,
+                    7670
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 135,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 135,
+                      "column": 52
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7672,
+                  7674
+                ],
+                "loc": {
+                  "start": {
+                    "line": 135,
+                    "column": 54
+                  },
+                  "end": {
+                    "line": 135,
+                    "column": 56
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7635,
+                7674
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 17
+                },
+                "end": {
+                  "line": 135,
+                  "column": 56
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              7622,
+              7674
+            ],
+            "loc": {
+              "start": {
+                "line": 135,
+                "column": 4
+              },
+              "end": {
+                "line": 135,
+                "column": 56
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Writes the changed values to the specified singleton resource. After the resource has been saved a standard\n     * success message is displayed and the callback is executed. If the change set is empty, a warning message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the singleton resource has been saved.\n     ",
+                "range": [
+                  6915,
+                  7617
+                ],
+                "loc": {
+                  "start": {
+                    "line": 125,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 134,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been\n     * removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {string} name     The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+                "range": [
+                  7680,
+                  8224
+                ],
+                "loc": {
+                  "start": {
+                    "line": 137,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 145,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "remove",
+              "range": [
+                8229,
+                8235
+              ],
+              "loc": {
+                "start": {
+                  "line": 146,
+                  "column": 4
+                },
+                "end": {
+                  "line": 146,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    8236,
+                    8240
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 146,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 146,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    8242,
+                    8246
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 146,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 146,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    8248,
+                    8255
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 146,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 146,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    8257,
+                    8265
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 146,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 146,
+                      "column": 40
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  8267,
+                  8269
+                ],
+                "loc": {
+                  "start": {
+                    "line": 146,
+                    "column": 42
+                  },
+                  "end": {
+                    "line": 146,
+                    "column": 44
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                8235,
+                8269
+              ],
+              "loc": {
+                "start": {
+                  "line": 146,
+                  "column": 10
+                },
+                "end": {
+                  "line": 146,
+                  "column": 44
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              8229,
+              8269
+            ],
+            "loc": {
+              "start": {
+                "line": 146,
+                "column": 4
+              },
+              "end": {
+                "line": 146,
+                "column": 44
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been\n     * removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {string} name     The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+                "range": [
+                  7680,
+                  8224
+                ],
+                "loc": {
+                  "start": {
+                    "line": 137,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 145,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has\n     * been removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+                "range": [
+                  8275,
+                  8778
+                ],
+                "loc": {
+                  "start": {
+                    "line": 148,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 155,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "removeSingleton",
+              "range": [
+                8783,
+                8798
+              ],
+              "loc": {
+                "start": {
+                  "line": 156,
+                  "column": 4
+                },
+                "end": {
+                  "line": 156,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "type",
+                  "range": [
+                    8799,
+                    8803
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 156,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 156,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    8805,
+                    8812
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 156,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 156,
+                      "column": 33
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    8814,
+                    8822
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 156,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 156,
+                      "column": 43
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  8824,
+                  8826
+                ],
+                "loc": {
+                  "start": {
+                    "line": 156,
+                    "column": 45
+                  },
+                  "end": {
+                    "line": 156,
+                    "column": 47
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                8798,
+                8826
+              ],
+              "loc": {
+                "start": {
+                  "line": 156,
+                  "column": 19
+                },
+                "end": {
+                  "line": 156,
+                  "column": 47
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              8783,
+              8826
+            ],
+            "loc": {
+              "start": {
+                "line": 156,
+                "column": 4
+              },
+              "end": {
+                "line": 156,
+                "column": 47
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has\n     * been removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+                "range": [
+                  8275,
+                  8778
+                ],
+                "loc": {
+                  "start": {
+                    "line": 148,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 155,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          1205,
+          8828
+        ],
+        "loc": {
+          "start": {
+            "line": 33,
+            "column": 21
+          },
+          "end": {
+            "line": 157,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        1184,
+        8828
+      ],
+      "loc": {
+        "start": {
+          "line": 33,
+          "column": 0
+        },
+        "end": {
+          "line": 157,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains generic CRUD methods to add, read, update and remove (singleton) resources. Some methods just execute the\n * underlying DMR operations, other methods also interact with the user by showing (confirmation) dialogs.\n ",
+          "range": [
+            951,
+            1183
+          ],
+          "loc": {
+            "start": {
+              "line": 29,
+              "column": 0
+            },
+            "end": {
+              "line": 32,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to all important classes. Acts as an entry point for the JavaScript API.\n ",
+          "range": [
+            8830,
+            8929
+          ],
+          "loc": {
+            "start": {
+              "line": 159,
+              "column": 0
+            },
+            "end": {
+              "line": 161,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Core",
+        "range": [
+          8936,
+          8940
+        ],
+        "loc": {
+          "start": {
+            "line": 162,
+            "column": 6
+          },
+          "end": {
+            "line": 162,
+            "column": 10
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "crud",
+              "range": [
+                9016,
+                9020
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 8
+                },
+                "end": {
+                  "line": 167,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9023,
+                  9025
+                ],
+                "loc": {
+                  "start": {
+                    "line": 167,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 167,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9020,
+                9025
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 12
+                },
+                "end": {
+                  "line": 167,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9012,
+              9025
+            ],
+            "loc": {
+              "start": {
+                "line": 167,
+                "column": 4
+              },
+              "end": {
+                "line": 167,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {CrudOperations} crud operations\n     ",
+                "range": [
+                  8948,
+                  9007
+                ],
+                "loc": {
+                  "start": {
+                    "line": 164,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 166,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Dispatcher} dispatcher\n     ",
+                "range": [
+                  9031,
+                  9081
+                ],
+                "loc": {
+                  "start": {
+                    "line": 169,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 171,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "dispatcher",
+              "range": [
+                9090,
+                9100
+              ],
+              "loc": {
+                "start": {
+                  "line": 172,
+                  "column": 8
+                },
+                "end": {
+                  "line": 172,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9103,
+                  9105
+                ],
+                "loc": {
+                  "start": {
+                    "line": 172,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 172,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9100,
+                9105
+              ],
+              "loc": {
+                "start": {
+                  "line": 172,
+                  "column": 18
+                },
+                "end": {
+                  "line": 172,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9086,
+              9105
+            ],
+            "loc": {
+              "start": {
+                "line": 172,
+                "column": 4
+              },
+              "end": {
+                "line": 172,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Dispatcher} dispatcher\n     ",
+                "range": [
+                  9031,
+                  9081
+                ],
+                "loc": {
+                  "start": {
+                    "line": 169,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 171,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Endpoints} endpoints\n     ",
+                "range": [
+                  9111,
+                  9159
+                ],
+                "loc": {
+                  "start": {
+                    "line": 174,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "endpoints",
+              "range": [
+                9168,
+                9177
+              ],
+              "loc": {
+                "start": {
+                  "line": 177,
+                  "column": 8
+                },
+                "end": {
+                  "line": 177,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9180,
+                  9182
+                ],
+                "loc": {
+                  "start": {
+                    "line": 177,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 177,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9177,
+                9182
+              ],
+              "loc": {
+                "start": {
+                  "line": 177,
+                  "column": 17
+                },
+                "end": {
+                  "line": 177,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9164,
+              9182
+            ],
+            "loc": {
+              "start": {
+                "line": 177,
+                "column": 4
+              },
+              "end": {
+                "line": 177,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Endpoints} endpoints\n     ",
+                "range": [
+                  9111,
+                  9159
+                ],
+                "loc": {
+                  "start": {
+                    "line": 174,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Environment} environment\n     ",
+                "range": [
+                  9188,
+                  9240
+                ],
+                "loc": {
+                  "start": {
+                    "line": 179,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "environment",
+              "range": [
+                9249,
+                9260
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 8
+                },
+                "end": {
+                  "line": 182,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9263,
+                  9265
+                ],
+                "loc": {
+                  "start": {
+                    "line": 182,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 182,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9260,
+                9265
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 19
+                },
+                "end": {
+                  "line": 182,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9245,
+              9265
+            ],
+            "loc": {
+              "start": {
+                "line": 182,
+                "column": 4
+              },
+              "end": {
+                "line": 182,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Environment} environment\n     ",
+                "range": [
+                  9188,
+                  9240
+                ],
+                "loc": {
+                  "start": {
+                    "line": 179,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {ExtensionRegistry} extension registry\n     ",
+                "range": [
+                  9271,
+                  9336
+                ],
+                "loc": {
+                  "start": {
+                    "line": 184,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 186,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "extensionRegistry",
+              "range": [
+                9345,
+                9362
+              ],
+              "loc": {
+                "start": {
+                  "line": 187,
+                  "column": 8
+                },
+                "end": {
+                  "line": 187,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9365,
+                  9367
+                ],
+                "loc": {
+                  "start": {
+                    "line": 187,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 187,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9362,
+                9367
+              ],
+              "loc": {
+                "start": {
+                  "line": 187,
+                  "column": 25
+                },
+                "end": {
+                  "line": 187,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9341,
+              9367
+            ],
+            "loc": {
+              "start": {
+                "line": 187,
+                "column": 4
+              },
+              "end": {
+                "line": 187,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {ExtensionRegistry} extension registry\n     ",
+                "range": [
+                  9271,
+                  9336
+                ],
+                "loc": {
+                  "start": {
+                    "line": 184,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 186,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {MetadataProcessor} metadata processor\n     ",
+                "range": [
+                  9373,
+                  9438
+                ],
+                "loc": {
+                  "start": {
+                    "line": 189,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 191,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "metadataProcessor",
+              "range": [
+                9447,
+                9464
+              ],
+              "loc": {
+                "start": {
+                  "line": 192,
+                  "column": 8
+                },
+                "end": {
+                  "line": 192,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9467,
+                  9469
+                ],
+                "loc": {
+                  "start": {
+                    "line": 192,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 192,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9464,
+                9469
+              ],
+              "loc": {
+                "start": {
+                  "line": 192,
+                  "column": 25
+                },
+                "end": {
+                  "line": 192,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9443,
+              9469
+            ],
+            "loc": {
+              "start": {
+                "line": 192,
+                "column": 4
+              },
+              "end": {
+                "line": 192,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {MetadataProcessor} metadata processor\n     ",
+                "range": [
+                  9373,
+                  9438
+                ],
+                "loc": {
+                  "start": {
+                    "line": 189,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 191,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {MetadataRegistry} metadata registry\n     ",
+                "range": [
+                  9475,
+                  9538
+                ],
+                "loc": {
+                  "start": {
+                    "line": 194,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 196,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "metadataRegistry",
+              "range": [
+                9547,
+                9563
+              ],
+              "loc": {
+                "start": {
+                  "line": 197,
+                  "column": 8
+                },
+                "end": {
+                  "line": 197,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9566,
+                  9568
+                ],
+                "loc": {
+                  "start": {
+                    "line": 197,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 197,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9563,
+                9568
+              ],
+              "loc": {
+                "start": {
+                  "line": 197,
+                  "column": 24
+                },
+                "end": {
+                  "line": 197,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9543,
+              9568
+            ],
+            "loc": {
+              "start": {
+                "line": 197,
+                "column": 4
+              },
+              "end": {
+                "line": 197,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {MetadataRegistry} metadata registry\n     ",
+                "range": [
+                  9475,
+                  9538
+                ],
+                "loc": {
+                  "start": {
+                    "line": 194,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 196,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {StatementContext} statement context\n     ",
+                "range": [
+                  9574,
+                  9637
+                ],
+                "loc": {
+                  "start": {
+                    "line": 199,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 201,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "statementContext",
+              "range": [
+                9646,
+                9662
+              ],
+              "loc": {
+                "start": {
+                  "line": 202,
+                  "column": 8
+                },
+                "end": {
+                  "line": 202,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9665,
+                  9667
+                ],
+                "loc": {
+                  "start": {
+                    "line": 202,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 202,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9662,
+                9667
+              ],
+              "loc": {
+                "start": {
+                  "line": 202,
+                  "column": 24
+                },
+                "end": {
+                  "line": 202,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              9642,
+              9667
+            ],
+            "loc": {
+              "start": {
+                "line": 202,
+                "column": 4
+              },
+              "end": {
+                "line": 202,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {StatementContext} statement context\n     ",
+                "range": [
+                  9574,
+                  9637
+                ],
+                "loc": {
+                  "start": {
+                    "line": 199,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 201,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Core} the singleton core instance.\n     ",
+                "range": [
+                  9673,
+                  9735
+                ],
+                "loc": {
+                  "start": {
+                    "line": 204,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 206,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "getInstance",
+              "range": [
+                9747,
+                9758
+              ],
+              "loc": {
+                "start": {
+                  "line": 207,
+                  "column": 11
+                },
+                "end": {
+                  "line": 207,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9761,
+                  9763
+                ],
+                "loc": {
+                  "start": {
+                    "line": 207,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 207,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9758,
+                9763
+              ],
+              "loc": {
+                "start": {
+                  "line": 207,
+                  "column": 22
+                },
+                "end": {
+                  "line": 207,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              9740,
+              9763
+            ],
+            "loc": {
+              "start": {
+                "line": 207,
+                "column": 4
+              },
+              "end": {
+                "line": 207,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Core} the singleton core instance.\n     ",
+                "range": [
+                  9673,
+                  9735
+                ],
+                "loc": {
+                  "start": {
+                    "line": 204,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 206,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates and returns a dialog builder using the specified title.\n     * \n     * @param {string} title The dialog title.\n     * \n     * @return {DialogBuilder} a builder to create dialogs\n     ",
+                "range": [
+                  9769,
+                  9973
+                ],
+                "loc": {
+                  "start": {
+                    "line": 209,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 215,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "dialog",
+              "range": [
+                9978,
+                9984
+              ],
+              "loc": {
+                "start": {
+                  "line": 216,
+                  "column": 4
+                },
+                "end": {
+                  "line": 216,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "title",
+                  "range": [
+                    9985,
+                    9990
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 216,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 216,
+                      "column": 16
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  9992,
+                  9994
+                ],
+                "loc": {
+                  "start": {
+                    "line": 216,
+                    "column": 18
+                  },
+                  "end": {
+                    "line": 216,
+                    "column": 20
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                9984,
+                9994
+              ],
+              "loc": {
+                "start": {
+                  "line": 216,
+                  "column": 10
+                },
+                "end": {
+                  "line": 216,
+                  "column": 20
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              9978,
+              9994
+            ],
+            "loc": {
+              "start": {
+                "line": 216,
+                "column": 4
+              },
+              "end": {
+                "line": 216,
+                "column": 20
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates and returns a dialog builder using the specified title.\n     * \n     * @param {string} title The dialog title.\n     * \n     * @return {DialogBuilder} a builder to create dialogs\n     ",
+                "range": [
+                  9769,
+                  9973
+                ],
+                "loc": {
+                  "start": {
+                    "line": 209,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 215,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows an error message.\n     * \n     * @param {string} message The error message.\n     ",
+                "range": [
+                  10000,
+                  10100
+                ],
+                "loc": {
+                  "start": {
+                    "line": 218,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 222,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "error",
+              "range": [
+                10105,
+                10110
+              ],
+              "loc": {
+                "start": {
+                  "line": 223,
+                  "column": 4
+                },
+                "end": {
+                  "line": 223,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "message",
+                  "range": [
+                    10111,
+                    10118
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 223,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 223,
+                      "column": 17
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  10120,
+                  10122
+                ],
+                "loc": {
+                  "start": {
+                    "line": 223,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 223,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                10110,
+                10122
+              ],
+              "loc": {
+                "start": {
+                  "line": 223,
+                  "column": 9
+                },
+                "end": {
+                  "line": 223,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              10105,
+              10122
+            ],
+            "loc": {
+              "start": {
+                "line": 223,
+                "column": 4
+              },
+              "end": {
+                "line": 223,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows an error message.\n     * \n     * @param {string} message The error message.\n     ",
+                "range": [
+                  10000,
+                  10100
+                ],
+                "loc": {
+                  "start": {
+                    "line": 218,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 222,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new form builder for a {@link ModelNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+                "range": [
+                  10128,
+                  10340
+                ],
+                "loc": {
+                  "start": {
+                    "line": 225,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 231,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "form",
+              "range": [
+                10345,
+                10349
+              ],
+              "loc": {
+                "start": {
+                  "line": 232,
+                  "column": 4
+                },
+                "end": {
+                  "line": 232,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "meta",
+                  "range": [
+                    10350,
+                    10354
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 232,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 232,
+                      "column": 13
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  10356,
+                  10358
+                ],
+                "loc": {
+                  "start": {
+                    "line": 232,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 232,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                10349,
+                10358
+              ],
+              "loc": {
+                "start": {
+                  "line": 232,
+                  "column": 8
+                },
+                "end": {
+                  "line": 232,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              10345,
+              10358
+            ],
+            "loc": {
+              "start": {
+                "line": 232,
+                "column": 4
+              },
+              "end": {
+                "line": 232,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new form builder for a {@link ModelNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+                "range": [
+                  10128,
+                  10340
+                ],
+                "loc": {
+                  "start": {
+                    "line": 225,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 231,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows an info message.\n     * \n     * @param {string} message The info message.\n     ",
+                "range": [
+                  10364,
+                  10462
+                ],
+                "loc": {
+                  "start": {
+                    "line": 234,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 238,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "info",
+              "range": [
+                10467,
+                10471
+              ],
+              "loc": {
+                "start": {
+                  "line": 239,
+                  "column": 4
+                },
+                "end": {
+                  "line": 239,
+                  "column": 8
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "message",
+                  "range": [
+                    10472,
+                    10479
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 239,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 239,
+                      "column": 16
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  10481,
+                  10483
+                ],
+                "loc": {
+                  "start": {
+                    "line": 239,
+                    "column": 18
+                  },
+                  "end": {
+                    "line": 239,
+                    "column": 20
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                10471,
+                10483
+              ],
+              "loc": {
+                "start": {
+                  "line": 239,
+                  "column": 8
+                },
+                "end": {
+                  "line": 239,
+                  "column": 20
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              10467,
+              10483
+            ],
+            "loc": {
+              "start": {
+                "line": 239,
+                "column": 4
+              },
+              "end": {
+                "line": 239,
+                "column": 20
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows an info message.\n     * \n     * @param {string} message The info message.\n     ",
+                "range": [
+                  10364,
+                  10462
+                ],
+                "loc": {
+                  "start": {
+                    "line": 234,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 238,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new form builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+                "range": [
+                  10489,
+                  10701
+                ],
+                "loc": {
+                  "start": {
+                    "line": 241,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 247,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "namedForm",
+              "range": [
+                10706,
+                10715
+              ],
+              "loc": {
+                "start": {
+                  "line": 248,
+                  "column": 4
+                },
+                "end": {
+                  "line": 248,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "meta",
+                  "range": [
+                    10716,
+                    10720
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 248,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 248,
+                      "column": 18
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  10722,
+                  10724
+                ],
+                "loc": {
+                  "start": {
+                    "line": 248,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 248,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                10715,
+                10724
+              ],
+              "loc": {
+                "start": {
+                  "line": 248,
+                  "column": 13
+                },
+                "end": {
+                  "line": 248,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              10706,
+              10724
+            ],
+            "loc": {
+              "start": {
+                "line": 248,
+                "column": 4
+              },
+              "end": {
+                "line": 248,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new form builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+                "range": [
+                  10489,
+                  10701
+                ],
+                "loc": {
+                  "start": {
+                    "line": 241,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 247,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new table builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+                "range": [
+                  10730,
+                  10946
+                ],
+                "loc": {
+                  "start": {
+                    "line": 250,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 256,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "namedTable",
+              "range": [
+                10951,
+                10961
+              ],
+              "loc": {
+                "start": {
+                  "line": 257,
+                  "column": 4
+                },
+                "end": {
+                  "line": 257,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "meta",
+                  "range": [
+                    10962,
+                    10966
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 257,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 257,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  10968,
+                  10970
+                ],
+                "loc": {
+                  "start": {
+                    "line": 257,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 257,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                10961,
+                10970
+              ],
+              "loc": {
+                "start": {
+                  "line": 257,
+                  "column": 14
+                },
+                "end": {
+                  "line": 257,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              10951,
+              10970
+            ],
+            "loc": {
+              "start": {
+                "line": 257,
+                "column": 4
+              },
+              "end": {
+                "line": 257,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new table builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+                "range": [
+                  10730,
+                  10946
+                ],
+                "loc": {
+                  "start": {
+                    "line": 250,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 256,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new operation builder.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address The address.\n     * @param {string} name    The operation name.\n     * \n     * @return {OperationBuilder} the operation builder\n     ",
+                "range": [
+                  10976,
+                  11226
+                ],
+                "loc": {
+                  "start": {
+                    "line": 259,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 266,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "operation",
+              "range": [
+                11231,
+                11240
+              ],
+              "loc": {
+                "start": {
+                  "line": 267,
+                  "column": 4
+                },
+                "end": {
+                  "line": 267,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    11241,
+                    11248
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 267,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 267,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "name",
+                  "range": [
+                    11250,
+                    11254
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 267,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 267,
+                      "column": 27
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  11256,
+                  11258
+                ],
+                "loc": {
+                  "start": {
+                    "line": 267,
+                    "column": 29
+                  },
+                  "end": {
+                    "line": 267,
+                    "column": 31
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                11240,
+                11258
+              ],
+              "loc": {
+                "start": {
+                  "line": 267,
+                  "column": 13
+                },
+                "end": {
+                  "line": 267,
+                  "column": 31
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              11231,
+              11258
+            ],
+            "loc": {
+              "start": {
+                "line": 267,
+                "column": 4
+              },
+              "end": {
+                "line": 267,
+                "column": 31
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new operation builder.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address The address.\n     * @param {string} name    The operation name.\n     * \n     * @return {OperationBuilder} the operation builder\n     ",
+                "range": [
+                  10976,
+                  11226
+                ],
+                "loc": {
+                  "start": {
+                    "line": 259,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 266,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a success message.\n     * \n     * @param {string} message The success message.\n     ",
+                "range": [
+                  11264,
+                  11367
+                ],
+                "loc": {
+                  "start": {
+                    "line": 269,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 273,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "success",
+              "range": [
+                11372,
+                11379
+              ],
+              "loc": {
+                "start": {
+                  "line": 274,
+                  "column": 4
+                },
+                "end": {
+                  "line": 274,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "message",
+                  "range": [
+                    11380,
+                    11387
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 274,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 274,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  11389,
+                  11391
+                ],
+                "loc": {
+                  "start": {
+                    "line": 274,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 274,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                11379,
+                11391
+              ],
+              "loc": {
+                "start": {
+                  "line": 274,
+                  "column": 11
+                },
+                "end": {
+                  "line": 274,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              11372,
+              11391
+            ],
+            "loc": {
+              "start": {
+                "line": 274,
+                "column": 4
+              },
+              "end": {
+                "line": 274,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a success message.\n     * \n     * @param {string} message The success message.\n     ",
+                "range": [
+                  11264,
+                  11367
+                ],
+                "loc": {
+                  "start": {
+                    "line": 269,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 273,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new table builder for a {@link ModelNode}.\n     * \n     * @param {Object} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+                "range": [
+                  11397,
+                  11588
+                ],
+                "loc": {
+                  "start": {
+                    "line": 276,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 282,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "table",
+              "range": [
+                11593,
+                11598
+              ],
+              "loc": {
+                "start": {
+                  "line": 283,
+                  "column": 4
+                },
+                "end": {
+                  "line": 283,
+                  "column": 9
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "meta",
+                  "range": [
+                    11599,
+                    11603
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 283,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 283,
+                      "column": 14
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  11605,
+                  11607
+                ],
+                "loc": {
+                  "start": {
+                    "line": 283,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 283,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                11598,
+                11607
+              ],
+              "loc": {
+                "start": {
+                  "line": 283,
+                  "column": 9
+                },
+                "end": {
+                  "line": 283,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              11593,
+              11607
+            ],
+            "loc": {
+              "start": {
+                "line": 283,
+                "column": 4
+              },
+              "end": {
+                "line": 283,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns a new table builder for a {@link ModelNode}.\n     * \n     * @param {Object} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+                "range": [
+                  11397,
+                  11588
+                ],
+                "loc": {
+                  "start": {
+                    "line": 276,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 282,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a warning message.\n     * \n     * @param {string} message The warning message.\n     ",
+                "range": [
+                  11613,
+                  11716
+                ],
+                "loc": {
+                  "start": {
+                    "line": 285,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 289,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "warning",
+              "range": [
+                11721,
+                11728
+              ],
+              "loc": {
+                "start": {
+                  "line": 290,
+                  "column": 4
+                },
+                "end": {
+                  "line": 290,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "message",
+                  "range": [
+                    11729,
+                    11736
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 290,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 290,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  11738,
+                  11740
+                ],
+                "loc": {
+                  "start": {
+                    "line": 290,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 290,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                11728,
+                11740
+              ],
+              "loc": {
+                "start": {
+                  "line": 290,
+                  "column": 11
+                },
+                "end": {
+                  "line": 290,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              11721,
+              11740
+            ],
+            "loc": {
+              "start": {
+                "line": 290,
+                "column": 4
+              },
+              "end": {
+                "line": 290,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Shows a warning message.\n     * \n     * @param {string} message The warning message.\n     ",
+                "range": [
+                  11613,
+                  11716
+                ],
+                "loc": {
+                  "start": {
+                    "line": 285,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 289,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          8941,
+          11742
+        ],
+        "loc": {
+          "start": {
+            "line": 162,
+            "column": 11
+          },
+          "end": {
+            "line": 291,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        8930,
+        11742
+      ],
+      "loc": {
+        "start": {
+          "line": 162,
+          "column": 0
+        },
+        "end": {
+          "line": 291,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to all important classes. Acts as an entry point for the JavaScript API.\n ",
+          "range": [
+            8830,
+            8929
+          ],
+          "loc": {
+            "start": {
+              "line": 159,
+              "column": 0
+            },
+            "end": {
+              "line": 161,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Registry to manage HAL extensions written in JavaScript.\n ",
+          "range": [
+            11744,
+            11811
+          ],
+          "loc": {
+            "start": {
+              "line": 293,
+              "column": 0
+            },
+            "end": {
+              "line": 295,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "ExtensionRegistry",
+        "range": [
+          11818,
+          11835
+        ],
+        "loc": {
+          "start": {
+            "line": 296,
+            "column": 6
+          },
+          "end": {
+            "line": 296,
+            "column": 23
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "register",
+              "range": [
+                12092,
+                12100
+              ],
+              "loc": {
+                "start": {
+                  "line": 305,
+                  "column": 4
+                },
+                "end": {
+                  "line": 305,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "extension",
+                  "range": [
+                    12101,
+                    12110
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 305,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 305,
+                      "column": 22
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  12112,
+                  12114
+                ],
+                "loc": {
+                  "start": {
+                    "line": 305,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 305,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                12100,
+                12114
+              ],
+              "loc": {
+                "start": {
+                  "line": 305,
+                  "column": 12
+                },
+                "end": {
+                  "line": 305,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              12092,
+              12114
+            ],
+            "loc": {
+              "start": {
+                "line": 305,
+                "column": 4
+              },
+              "end": {
+                "line": 305,
+                "column": 26
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Registers an extension. Use this method to register your extension.\n     * <p>\n     * If the extension is already registered, this method will do nothing.\n     * \n     * @param {Extension} extension the extension to register.\n     ",
+                "range": [
+                  11843,
+                  12087
+                ],
+                "loc": {
+                  "start": {
+                    "line": 298,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 304,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't\n     * have to call this method.\n     * \n     * @param {string} script the extension's script.\n     * @param {string[]} stylesheets an optional list of stylesheets.\n     ",
+                "range": [
+                  12120,
+                  12414
+                ],
+                "loc": {
+                  "start": {
+                    "line": 307,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 313,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "inject",
+              "range": [
+                12419,
+                12425
+              ],
+              "loc": {
+                "start": {
+                  "line": 314,
+                  "column": 4
+                },
+                "end": {
+                  "line": 314,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "script",
+                  "range": [
+                    12426,
+                    12432
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 314,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 314,
+                      "column": 17
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "stylesheets",
+                  "range": [
+                    12434,
+                    12445
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 314,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 314,
+                      "column": 30
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  12447,
+                  12449
+                ],
+                "loc": {
+                  "start": {
+                    "line": 314,
+                    "column": 32
+                  },
+                  "end": {
+                    "line": 314,
+                    "column": 34
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                12425,
+                12449
+              ],
+              "loc": {
+                "start": {
+                  "line": 314,
+                  "column": 10
+                },
+                "end": {
+                  "line": 314,
+                  "column": 34
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              12419,
+              12449
+            ],
+            "loc": {
+              "start": {
+                "line": 314,
+                "column": 4
+              },
+              "end": {
+                "line": 314,
+                "column": 34
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't\n     * have to call this method.\n     * \n     * @param {string} script the extension's script.\n     * @param {string[]} stylesheets an optional list of stylesheets.\n     ",
+                "range": [
+                  12120,
+                  12414
+                ],
+                "loc": {
+                  "start": {
+                    "line": 307,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 313,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          11836,
+          12451
+        ],
+        "loc": {
+          "start": {
+            "line": 296,
+            "column": 24
+          },
+          "end": {
+            "line": 315,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        11812,
+        12451
+      ],
+      "loc": {
+        "start": {
+          "line": 296,
+          "column": 0
+        },
+        "end": {
+          "line": 315,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Registry to manage HAL extensions written in JavaScript.\n ",
+          "range": [
+            11744,
+            11811
+          ],
+          "loc": {
+            "start": {
+              "line": 293,
+              "column": 0
+            },
+            "end": {
+              "line": 295,
+              "column": 3
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    58,
+    12451
+  ],
+  "loc": {
+    "start": {
+      "line": 4,
+      "column": 0
+    },
+    "end": {
+      "line": 315,
+      "column": 1
+    }
+  },
+  "comments": [
+    {
+      "type": "Block",
+      "value": "*\n * Represents an extension written in JavaScript.\n ",
+      "range": [
+        0,
+        57
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 3,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Creates a header extension.\n     * \n     * @param {string} name       A unique name of the extension.\n     * @param {string} title      The title of the menu item in the header.\n     * @param {function()} entryPoint The entrypoint of the header extension.\n     * \n     * @return {Extension} the extension which can be registered using the {@link ExtensionRegistry}.\n     ",
+      "range": [
+        81,
+        465
+      ],
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 4
+        },
+        "end": {
+          "line": 14,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Creates a footer extension.\n     * \n     * @param {string} name       A unique name of the extension.\n     * @param {string} title      The title of the menu item in the footer.\n     * @param {function()} entryPoint The entrypoint of the footer extension.\n     * \n     * @return {Extension} the extension which can be registered using the {@link ExtensionRegistry}.\n     ",
+      "range": [
+        517,
+        901
+      ],
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 4
+        },
+        "end": {
+          "line": 25,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Contains generic CRUD methods to add, read, update and remove (singleton) resources. Some methods just execute the\n * underlying DMR operations, other methods also interact with the user by showing (confirmation) dialogs.\n ",
+      "range": [
+        951,
+        1183
+      ],
+      "loc": {
+        "start": {
+          "line": 29,
+          "column": 0
+        },
+        "end": {
+          "line": 32,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Opens an add-resource dialog for the given resource type. The dialog contains fields for all required request\n     * properties. When clicking \"Add\", a new resource is added using the specified address. After the resource has been\n     * added a success message is displayed and the callback is executed.\n     * \n     * @param {string} type       The human readable resource type used in the dialog header and success message.\n     * @param {AddressTemplate|ResourceAddress|string} address    The address for the add operation. Must end in <code>&lt;resource type&gt;=*</code>.\n     * @param {string[]} attributes Additional attributes (besides the required attributes) which should be part of the\n     * add-resource dialog. May be null or empty.\n     * @param {function(name: string, address: ResourceAddress)} callback   The callback executed after the resource has been added.\n     ",
+      "range": [
+        1212,
+        2111
+      ],
+      "loc": {
+        "start": {
+          "line": 35,
+          "column": 4
+        },
+        "end": {
+          "line": 45,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Executes an add operation using the specified name and payload. After the resource has been added a success\n     * message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {string} name     The resource name which is part of the add operation.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=*</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(name: string, address: ResourceAddress)} callback The callback executed after the resource has been added.\n     ",
+      "range": [
+        2171,
+        2946
+      ],
+      "loc": {
+        "start": {
+          "line": 48,
+          "column": 4
+        },
+        "end": {
+          "line": 57,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Opens an add-resource dialog for the given singleton resource type. The dialog contains fields for all required\n     * request properties. When clicking \"Add\", a new singleton resource is added using the specified address template.\n     * After the singleton resource has been added a success message is displayed and the callback is executed.\n     * \n     * @param {string} type       The human readable resource type used in the dialog header and success message.\n     * @param {Object} address    The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {string[]} attributes Additional attributes (besides the required attributes) which should be part of the\n     * add-resource dialog. May be null or empty.\n     * @param {function(address: ResourceAddress)} callback   The callback executed after the singleton resource has been added.\n     ",
+      "range": [
+        3003,
+        3932
+      ],
+      "loc": {
+        "start": {
+          "line": 60,
+          "column": 4
+        },
+        "end": {
+          "line": 71,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Executes an add operation using the specified payload. After the resource has been added a success message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the dialog header and success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource\n     * name&gt;</code>.\n     * @param {ModelNode} payload  The optional payload of the add operation (may be null or undefined).\n     * @param {function(address: ResourceAddress)} callback The callback executed after the singleton resource has been added.\n     ",
+      "range": [
+        4001,
+        4704
+      ],
+      "loc": {
+        "start": {
+          "line": 74,
+          "column": 4
+        },
+        "end": {
+          "line": 83,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Executes a read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+      "range": [
+        4764,
+        5128
+      ],
+      "loc": {
+        "start": {
+          "line": 86,
+          "column": 4
+        },
+        "end": {
+          "line": 91,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Executes a recursive read-resource operation on the specified address and passes the result to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the read-resource operation operation.\n     * @param {function(result: ModelNode)} callback The callback which gets the result of the read-resource operation.\n     ",
+      "range": [
+        5165,
+        5539
+      ],
+      "loc": {
+        "start": {
+          "line": 94,
+          "column": 4
+        },
+        "end": {
+          "line": 99,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Executes a read-children-resources operation on the specified address and passes the result as {@link Property}\n     * array to the callback.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the read-children-resources operation.\n     * @param {string} childType The child resource type.\n     * @param {function(children: Property[])} callback  The callback which gets the result of the read-children-resources operation.\n     ",
+      "range": [
+        5585,
+        6065
+      ],
+      "loc": {
+        "start": {
+          "line": 102,
+          "column": 4
+        },
+        "end": {
+          "line": 109,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Writes the changed values to the specified resource. After the resource has been saved a standard success message\n     * is displayed and the callback is executed. If the change set is empty, a warning message is displayed and the\n     * callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {string} name      The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the resource has been saved.\n     ",
+      "range": [
+        6121,
+        6855
+      ],
+      "loc": {
+        "start": {
+          "line": 112,
+          "column": 4
+        },
+        "end": {
+          "line": 122,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Writes the changed values to the specified singleton resource. After the resource has been saved a standard\n     * success message is displayed and the callback is executed. If the change set is empty, a warning message is\n     * displayed and the callback is executed.\n     * \n     * @param {string} type      The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address   The address for the operation.\n     * @param {{key: string, value: object}} changeSet A key-value map containing the changes to the resource.\n     * @param {function()} callback  The callback executed after the singleton resource has been saved.\n     ",
+      "range": [
+        6915,
+        7617
+      ],
+      "loc": {
+        "start": {
+          "line": 125,
+          "column": 4
+        },
+        "end": {
+          "line": 134,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows a confirmation dialog and removes the resource if confirmed by the user. After the resource has been\n     * removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {string} name     The resource name.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+      "range": [
+        7680,
+        8224
+      ],
+      "loc": {
+        "start": {
+          "line": 137,
+          "column": 4
+        },
+        "end": {
+          "line": 145,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows a confirmation dialog and removes the singleton resource if confirmed by the user. After the resource has\n     * been removed a success message is displayed and the callback is executed.\n     * \n     * @param {string} type     The human readable resource type used in the success message.\n     * @param {AddressTemplate|ResourceAddress|string} address  The address for the operation.\n     * @param {function()} callback The callback executed after the resource has been removed.\n     ",
+      "range": [
+        8275,
+        8778
+      ],
+      "loc": {
+        "start": {
+          "line": 148,
+          "column": 4
+        },
+        "end": {
+          "line": 155,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Provides access to all important classes. Acts as an entry point for the JavaScript API.\n ",
+      "range": [
+        8830,
+        8929
+      ],
+      "loc": {
+        "start": {
+          "line": 159,
+          "column": 0
+        },
+        "end": {
+          "line": 161,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {CrudOperations} crud operations\n     ",
+      "range": [
+        8948,
+        9007
+      ],
+      "loc": {
+        "start": {
+          "line": 164,
+          "column": 4
+        },
+        "end": {
+          "line": 166,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Dispatcher} dispatcher\n     ",
+      "range": [
+        9031,
+        9081
+      ],
+      "loc": {
+        "start": {
+          "line": 169,
+          "column": 4
+        },
+        "end": {
+          "line": 171,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Endpoints} endpoints\n     ",
+      "range": [
+        9111,
+        9159
+      ],
+      "loc": {
+        "start": {
+          "line": 174,
+          "column": 4
+        },
+        "end": {
+          "line": 176,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Environment} environment\n     ",
+      "range": [
+        9188,
+        9240
+      ],
+      "loc": {
+        "start": {
+          "line": 179,
+          "column": 4
+        },
+        "end": {
+          "line": 181,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {ExtensionRegistry} extension registry\n     ",
+      "range": [
+        9271,
+        9336
+      ],
+      "loc": {
+        "start": {
+          "line": 184,
+          "column": 4
+        },
+        "end": {
+          "line": 186,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {MetadataProcessor} metadata processor\n     ",
+      "range": [
+        9373,
+        9438
+      ],
+      "loc": {
+        "start": {
+          "line": 189,
+          "column": 4
+        },
+        "end": {
+          "line": 191,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {MetadataRegistry} metadata registry\n     ",
+      "range": [
+        9475,
+        9538
+      ],
+      "loc": {
+        "start": {
+          "line": 194,
+          "column": 4
+        },
+        "end": {
+          "line": 196,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {StatementContext} statement context\n     ",
+      "range": [
+        9574,
+        9637
+      ],
+      "loc": {
+        "start": {
+          "line": 199,
+          "column": 4
+        },
+        "end": {
+          "line": 201,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Core} the singleton core instance.\n     ",
+      "range": [
+        9673,
+        9735
+      ],
+      "loc": {
+        "start": {
+          "line": 204,
+          "column": 4
+        },
+        "end": {
+          "line": 206,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Creates and returns a dialog builder using the specified title.\n     * \n     * @param {string} title The dialog title.\n     * \n     * @return {DialogBuilder} a builder to create dialogs\n     ",
+      "range": [
+        9769,
+        9973
+      ],
+      "loc": {
+        "start": {
+          "line": 209,
+          "column": 4
+        },
+        "end": {
+          "line": 215,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows an error message.\n     * \n     * @param {string} message The error message.\n     ",
+      "range": [
+        10000,
+        10100
+      ],
+      "loc": {
+        "start": {
+          "line": 218,
+          "column": 4
+        },
+        "end": {
+          "line": 222,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns a new form builder for a {@link ModelNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+      "range": [
+        10128,
+        10340
+      ],
+      "loc": {
+        "start": {
+          "line": 225,
+          "column": 4
+        },
+        "end": {
+          "line": 231,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows an info message.\n     * \n     * @param {string} message The info message.\n     ",
+      "range": [
+        10364,
+        10462
+      ],
+      "loc": {
+        "start": {
+          "line": 234,
+          "column": 4
+        },
+        "end": {
+          "line": 238,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns a new form builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the form.\n     * \n     * @return {FormBuilder} the form builder\n     ",
+      "range": [
+        10489,
+        10701
+      ],
+      "loc": {
+        "start": {
+          "line": 241,
+          "column": 4
+        },
+        "end": {
+          "line": 247,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns a new table builder for a {@link NamedNode}.\n     * \n     * @param {Metadata|AddressTemplate|string} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+      "range": [
+        10730,
+        10946
+      ],
+      "loc": {
+        "start": {
+          "line": 250,
+          "column": 4
+        },
+        "end": {
+          "line": 256,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns a new operation builder.\n     * \n     * @param {AddressTemplate|ResourceAddress|string} address The address.\n     * @param {string} name    The operation name.\n     * \n     * @return {OperationBuilder} the operation builder\n     ",
+      "range": [
+        10976,
+        11226
+      ],
+      "loc": {
+        "start": {
+          "line": 259,
+          "column": 4
+        },
+        "end": {
+          "line": 266,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows a success message.\n     * \n     * @param {string} message The success message.\n     ",
+      "range": [
+        11264,
+        11367
+      ],
+      "loc": {
+        "start": {
+          "line": 269,
+          "column": 4
+        },
+        "end": {
+          "line": 273,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns a new table builder for a {@link ModelNode}.\n     * \n     * @param {Object} meta The metadata for the table.\n     * \n     * @return {TableBuilder} the table builder\n     ",
+      "range": [
+        11397,
+        11588
+      ],
+      "loc": {
+        "start": {
+          "line": 276,
+          "column": 4
+        },
+        "end": {
+          "line": 282,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Shows a warning message.\n     * \n     * @param {string} message The warning message.\n     ",
+      "range": [
+        11613,
+        11716
+      ],
+      "loc": {
+        "start": {
+          "line": 285,
+          "column": 4
+        },
+        "end": {
+          "line": 289,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Registry to manage HAL extensions written in JavaScript.\n ",
+      "range": [
+        11744,
+        11811
+      ],
+      "loc": {
+        "start": {
+          "line": 293,
+          "column": 0
+        },
+        "end": {
+          "line": 295,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Registers an extension. Use this method to register your extension.\n     * <p>\n     * If the extension is already registered, this method will do nothing.\n     * \n     * @param {Extension} extension the extension to register.\n     ",
+      "range": [
+        11843,
+        12087
+      ],
+      "loc": {
+        "start": {
+          "line": 298,
+          "column": 4
+        },
+        "end": {
+          "line": 304,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't\n     * have to call this method.\n     * \n     * @param {string} script the extension's script.\n     * @param {string[]} stylesheets an optional list of stylesheets.\n     ",
+      "range": [
+        12120,
+        12414
+      ],
+      "loc": {
+        "start": {
+          "line": 307,
+          "column": 4
+        },
+        "end": {
+          "line": 313,
+          "column": 7
+        }
+      }
+    }
+  ]
+}

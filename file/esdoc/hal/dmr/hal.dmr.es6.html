@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">esdoc/hal/dmr/hal.dmr.es6 | HAL JavaScript API API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">hal/config</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~Endpoints.html">Endpoints</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~Environment.html">Environment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~InstanceInfo.html">InstanceInfo</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~Role.html">Role</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~Roles.html">Roles</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~User.html">User</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/config/hal.config.es6~Version.html">Version</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">hal/core</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/core/hal.core.es6~Core.html">Core</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/core/hal.core.es6~CrudOperations.html">CrudOperations</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/core/hal.core.es6~Extension.html">Extension</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/core/hal.core.es6~ExtensionRegistry.html">ExtensionRegistry</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">hal/dmr</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~Composite.html">Composite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~CompositeResult.html">CompositeResult</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~Dispatcher.html">Dispatcher</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~ModelNode.html">ModelNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~ModelNodeHelper.html">ModelNodeHelper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~NamedNode.html">NamedNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~Operation.html">Operation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~OperationBuilder.html">OperationBuilder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~Property.html">Property</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/dmr/hal.dmr.es6~ResourceAddress.html">ResourceAddress</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">hal/meta</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~AddressTemplate.html">AddressTemplate</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~Metadata.html">Metadata</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~MetadataProcessor.html">MetadataProcessor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~MetadataRegistry.html">MetadataRegistry</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~ResourceDescription.html">ResourceDescription</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~SecurityContext.html">SecurityContext</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/meta/hal.meta.es6~StatementContext.html">StatementContext</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">hal/ui</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~Dialog.html">Dialog</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~DialogBuilder.html">DialogBuilder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~Form.html">Form</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~FormBuilder.html">FormBuilder</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~Table.html">Table</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/esdoc/hal/ui/hal.ui.es6~TableBuilder.html">TableBuilder</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">esdoc/hal/dmr/hal.dmr.es6</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * Executes operations against the management endpoint.
+ */
+class Dispatcher {
+
+    /**
+     * Executes the specified composite operation.
+     * 
+     * @param {Composite} composite The composite operation to execute.
+     * @param {function(result: CompositeResult)} callback  The callback receiving the result.
+     */
+    executeComposite(composite, callback) {}
+
+    /**
+     * Executes the specified operation. The callback contains just the result w/o surrounding nodes like &quot;outcome&quot;.
+     * 
+     * @param {Operation} operation The operation to execute.
+     * @param {function(result: ModelNode)} callback  The callback receiving the result.
+     */
+    execute(operation, callback) {}
+}
+
+/**
+ * Represents a composite operation consisting of n {@link Operation}s.
+ */
+class Composite {
+
+    /**
+     * @return {boolean} whether this composite contains operations
+     */
+    get empty() {}
+
+    /**
+     * @return {number} the number of operations
+     */
+    get size() {}
+
+    /**
+     * @return {Operation[]} the operations of this composite
+     */
+    get operations() {}
+
+    /**
+     * Adds the specified operation to this composite.
+     * 
+     * @param {Operation} operation The operation to add.
+     * 
+     * @return {Composite} this composite
+     */
+    addOperation(operation) {}
+
+    /**
+     * @return {string} a string representation of this composite
+     */
+    toString() {}
+
+    /**
+     * @return {string} the string representation of the operation as used in the CLI
+     */
+    asCli() {}
+}
+
+/**
+ * Represents a DMR property.
+ */
+class Property {
+
+    /**
+     * Creates a new property
+     * 
+     * @param {string} name  The name of the property.
+     * @param {ModelNode} value The value of the property.
+     */
+    constructor(name, value) {}
+
+    /**
+     * @return {string} the name of the property
+     */
+    get name() {}
+
+    /**
+     * @return {ModelNode} the value of the property
+     */
+    get value() {}
+}
+
+/**
+ * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
+ * parameter separated by &quot;/&quot; to get a deeply nested data.
+ */
+class ModelNodeHelper {
+
+    /**
+     * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with &quot;/&quot;.
+     * 
+     * @param {ModelNode} modelNode The model node to read from
+     * @param {string} path      A path separated with &quot;/&quot;
+     * 
+     * @return {ModelNode} The nested node or an empty / undefined model node
+     */
+    static failSafeGet(modelNode, path) {}
+
+    /**
+     * Tries to get a deeply nested boolean value from the specified model node. Nested paths must be separated with
+     * &quot;/&quot;.
+     * 
+     * @param {ModelNode} modelNode The model node to read from
+     * @param {string} path      A path separated with &quot;/&quot;
+     * 
+     * @return {boolean} the boolean value or false.
+     */
+    static failSafeBoolean(modelNode, path) {}
+
+    /**
+     * Tries to get a deeply nested node array from the specified model node. Nested paths must be separated with &quot;/&quot;.
+     * 
+     * @param {ModelNode} modelNode The model node to read from
+     * @param {string} path      A path separated with &quot;/&quot;
+     * 
+     * @return {ModelNode[]} the model nodes or an empty array
+     */
+    static failSafeList(modelNode, path) {}
+
+    /**
+     * Tries to get a deeply nested property array from the specified model node. Nested paths must be separated with
+     * &quot;/&quot;.
+     * 
+     * @param {ModelNode} modelNode The model node to read from
+     * @param {string} path      A path separated with &quot;/&quot;
+     * 
+     * @return {Property[]} the properties or an empty array
+     */
+    static failSafePropertyList(modelNode, path) {}
+
+    /**
+     * Turns an properties array into an array of names nodes.
+     * 
+     * @param {Property[]} properties The properties
+     * 
+     * @return {NamedNode[]} the array of named nodes
+     */
+    static asNamedNodes(properties) {}
+}
+
+/**
+ * Represents a fully qualified DMR address ready to be put into a DMR operation. The address consists of 0-n segments
+ * with a name and a value for each segment.
+ */
+class ResourceAddress {
+
+    /**
+     * @return {string} the value of the first segment or null if this address is empty.
+     */
+    get firstValue() {}
+
+    /**
+     * @return {string} the name of the last segment or null if this address is empty.
+     */
+    get lastName() {}
+
+    /**
+     * @return {string} the value of the last segment or null if this address is empty.
+     */
+    get lastValue() {}
+
+    /**
+     * @return {ResourceAddress} the parent address or the root address if this address has no parent.
+     */
+    get parent() {}
+
+    /**
+     * @return {number} the number of segments.
+     */
+    get size() {}
+
+    /**
+     * @return {boolean} whether this address is empty.
+     */
+    get empty() {}
+
+    /**
+     * @return {ResourceAddress} the empty (root) address
+     */
+    static root() {}
+
+    /**
+     * Adds the specified segment to this address.
+     * 
+     * @param {string} propertyName  the property name
+     * @param {string} propertyValue the property value
+     * 
+     * @return {ResourceAddress} this address with the specified segment added
+     */
+    addSegment(propertyName, propertyValue) {}
+
+    /**
+     * Adds the specified address to this address.
+     * 
+     * @param {ResourceAddress} address The address to add.
+     * 
+     * @return {ResourceAddress} this address with the specified address added
+     */
+    addAddress(address) {}
+
+    /**
+     * Replaces the value in the specified segment
+     * 
+     * @param {string} name     The name of the segment.
+     * @param {string} newValue The new value.
+     * 
+     * @return {ResourceAddress} this address containing the replaced value
+     */
+    replaceValue(name, newValue) {}
+
+    /**
+     * @return {string} the address as string
+     */
+    toString() {}
+}
+
+/**
+ * Represents a DMR operation.
+ */
+class Operation {
+
+    /**
+     * @return {string} the name of the operation
+     */
+    get name() {}
+
+    /**
+     * @return {ResourceAddress} the address of the operation
+     */
+    get address() {}
+
+    /**
+     * @return {ModelNode} the parameters of the operation
+     */
+    get parameter() {}
+
+    /**
+     * @return {ModelNode} the header of the operation
+     */
+    get header() {}
+
+    /**
+     * @return {string} the string representation of the operation as used in the CLI
+     */
+    toString() {}
+
+    /**
+     * @return {string} the string representation of the operation as used in the CLI
+     */
+    asCli() {}
+}
+
+/**
+ * A dynamic model representation node object.
+ */
+class ModelNode {
+
+    /**
+     * Determine whether this node is defined.
+     * 
+     * @return {boolean} true if this node&apos;s value is defined, false otherwise
+     */
+    get defined() {}
+
+    /**
+     * @return {boolean} true if this node has an outcome and the outcome does not equal &quot;success&quot;
+     */
+    get failure() {}
+
+    /**
+     * @return {string} the failure description or &quot;No failure-description provided&quot;
+     */
+    get failureDescription() {}
+
+    /**
+     * Creates a new node from a base64 encoded string
+     * 
+     * @param {string} encoded The base64 encoded string.
+     * 
+     * @return {ModelNode} the new model node
+     */
+    static fromBase64(encoded) {}
+
+    /**
+     * Get the value of this node as number. Collection types will return the size
+     * of the collection for this value. Other types may attempt a string conversion.
+     * 
+     * @return {number} the numeric value
+     * 
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    asInt() {}
+
+    /**
+     * Get the value of this node as a boolean. Collection types return true for non-empty collections. Numerical types
+     * return true for non-zero values.
+     * 
+     * @return {boolean} the boolean value
+     * 
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    asBoolean() {}
+
+    /**
+     * Get the value as a string. This is the literal value of this model node. More than one node type may
+     * yield the same value for this method.
+     * 
+     * @return {string} the string value
+     */
+    asString() {}
+
+    /**
+     * Get the value of this node as a property. Object values will return a property if there is exactly one
+     * property in the object. List values will return a property if there are exactly two items in the list,
+     * and if the first is convertible to a string.
+     * 
+     * @return {Property} the property value
+     * 
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    asProperty() {}
+
+    /**
+     * Get a copy of this value as an object. Object values will simply copy themselves.
+     * &lt;p&gt;
+     * Property values will return a single-entry object whose key and value are copied from the property key and value.
+     * &lt;p&gt;
+     * List values will attempt to interpolate the list into an object by iterating each item, mapping each property
+     * into an object entry and otherwise taking pairs of list entries, converting the first to a string, and using the
+     * pair of entries as a single object entry. If an object key appears more than once in the source object, the
+     * last key takes precedence.
+     * 
+     * @return {ModelNode} the object value
+     * 
+     * @throws IllegalArgumentException if no conversion is possible
+     */
+    asObject() {}
+
+    /**
+     * Change this node&apos;s value to the given value.
+     * 
+     * @param {number} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setNumber(newValue) {}
+
+    /**
+     * Change this node&apos;s value to the given value.
+     * 
+     * @param {boolean} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setBoolean(newValue) {}
+
+    /**
+     * Change this node&apos;s value to the given expression value.
+     * 
+     * @param {string} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setExpression(newValue) {}
+
+    /**
+     * Change this node&apos;s value to the given value.
+     * 
+     * @param {string} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setString(newValue) {}
+
+    /**
+     * Change this node&apos;s value to the given value. The value is copied from the parameter.
+     * 
+     * @param {ModelNode} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setNode(newValue) {}
+
+    /**
+     * Change this node&apos;s value to the given value.
+     * 
+     * @param {Property} newValue the new value
+     * 
+     * @return {ModelNode} this node
+     */
+    setProperty(newValue) {}
+
+    /**
+     * Change this node&apos;s value to an empty list.
+     * 
+     * @return {ModelNode} this node
+     */
+    setEmptyList() {}
+
+    /**
+     * Change this node&apos;s value to an empty object.
+     * 
+     * @return {ModelNode} this node
+     */
+    setEmptyObject() {}
+
+    /**
+     * Clear this node&apos;s value and change its type to undefined.
+     * 
+     * @return {ModelNode} this node
+     */
+    clear() {}
+
+    /**
+     * Get the child of this node with the given name. If no such child exists, create it. If the node is undefined,
+     * it will be initialized to be of type object.
+     * &lt;p&gt;
+     * When called on property values, the name must match the property name.
+     * 
+     * @param {string} name the child name
+     * 
+     * @return {ModelNode} the child
+     * 
+     * @throws IllegalArgumentException if this node does not support getting a child with the given name
+     */
+    get(name) {}
+
+    /**
+     * Add a node to the end of this node&apos;s value list and return it. If the node is undefined, it will be initialized
+     * to be of type list.
+     * 
+     * @return {ModelNode} the new node
+     */
+    add() {}
+
+    /**
+     * Determine whether this node has a child with the given name. Property node types always contain exactly one
+     * value with a key equal to the property name.
+     * 
+     * @param {string} key the name
+     * 
+     * @return {boolean} true if there is a (possibly undefined) node at the given key
+     */
+    has(key) {}
+
+    /**
+     * Determine whether this node has a defined child with the given name. Property node types always contain exactly
+     * one value with a key equal to the property name.
+     * 
+     * @param {string} key the name
+     * 
+     * @return {boolean} true if there is a node at the given index and its type is not undefined
+     */
+    hasDefined(key) {}
+
+    /**
+     * Get a human-readable string representation of this model node, formatted nicely (possibly on multiple lines).
+     * 
+     * @return {string} the string representation
+     */
+    toString() {}
+
+    
+    toBase64String() {}
+
+    /**
+     * Creates a new undefined model node
+     * @return {ModelNode} the new model node
+     */
+    static create() {}
+
+    /**
+     * @return {json} the model node as JSON
+     */
+    getJSON() {}
+
+    /**
+     * @return {Property[]} this model node as an {@link Property} array
+     */
+    asProperties() {}
+
+    /**
+     * @return {ModelNode[]} this model node as an array.
+     */
+    asList() {}
+}
+
+/**
+ * A model node with a name.
+ */
+class NamedNode {
+
+    /**
+     * @return {string} the name of this named node
+     */
+    get name() {}
+
+    /**
+     * @return {ModelNode} the model node of this named node
+     */
+    get modelNode() {}
+
+    /**
+     * @return {string} a string representation of this model node
+     */
+    toString() {}
+
+    
+    setName(name) {}
+
+    
+    update(node) {}
+
+    
+    static create(name) {}
+}
+
+/**
+ * Represents the result of a composite operation.
+ */
+class CompositeResult {
+
+    /**
+     * @return {number} the number of steps
+     */
+    get size() {}
+
+    /**
+     * @return {boolean} whether this composite result contains steps
+     */
+    get empty() {}
+
+    /**
+     * @return {ModelNode[]} the steps of this composite result
+     */
+    get steps() {}
+
+    /**
+     * @param {string} step Step as &quot;step-n&quot; (one-based!)
+     * 
+     * @return {ModelNode} the related step result
+     */
+    step(step) {}
+}
+
+/**
+ * A builder for operations.
+ */
+class OperationBuilder {
+
+    /**
+     * Uses the specified payload for the operation.
+     * 
+     * @param {ModelNode} payload The operation as model node.
+     * 
+     * @return {OperationBuilder} this builder
+     */
+    payload(payload) {}
+
+    /**
+     * @return {Operation} builds and returns the operation
+     */
+    build() {}
+
+    /**
+     * Add a parameter to the operation
+     * 
+     * @param {string} name  The name of the parameter.
+     * @param {boolean|int|string} value The value of the parameter.
+     * 
+     * @return {OperationBuilder} this builder
+     */
+    param(name, value) {}
+
+    /**
+     * Add a header to the operation
+     * 
+     * @param {string} name  The name of the header.
+     * @param {boolean|int|string} value The value of the header.
+     * 
+     * @return {OperationBuilder} this builder
+     */
+    header(name, value) {}
+}
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

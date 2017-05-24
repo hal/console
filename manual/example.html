@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Example</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
+</head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual" data-toc-name="example">
+    <h1 class="manual-toc-title"><a href="manual/example.html" data-ice="title">Example</a></h1>
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1"><span class="manual-dot"></span><a href="manual/example.html#crud-operations" data-ice="link">CRUD Operations</a></li>
+<li data-ice="manualNav" class="indent-h1"><span class="manual-dot"></span><a href="manual/example.html#read-child-resources" data-ice="link">Read Child Resources</a></li>
+<li data-ice="manualNav" class="indent-h1"><span class="manual-dot"></span><a href="manual/example.html#execute-dmr-operations" data-ice="link">Execute DMR Operations</a></li>
+<li data-ice="manualNav" class="indent-h1"><span class="manual-dot"></span><a href="manual/example.html#ui-elements" data-ice="link">UI Elements</a></li>
+<li data-ice="manualNav" class="indent-h2"><span class="manual-dot"></span><a href="manual/example.html#table" data-ice="link">Table</a></li>
+<li data-ice="manualNav" class="indent-h2"><span class="manual-dot"></span><a href="manual/example.html#form" data-ice="link">Form</a></li>
+<li data-ice="manualNav" class="indent-h2"><span class="manual-dot"></span><a href="manual/example.html#master-detail" data-ice="link">Master Detail</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="reference">
+    <h1 class="manual-toc-title"><a href="identifiers.html" data-ice="title">Reference</a></h1>
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1"><span class="manual-dot"></span><a href="identifiers.html#class" data-ice="link">Class</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown">
+  <div class="manual-breadcrumb-list">
+    <a href="./manual/./index.html">Manual</a>
+    <span>&#xBB;</span>
+    <span data-ice="title">Example</span>
+  </div>
+  <div data-ice="content"><p>The following sections contains some basic examples how to use the JavaScript API.</p>
+<ol>
+<li><a href="#crud-operations">CRUD Operations</a></li>
+<li><a href="#read-child-resources">Read Child Resources</a></li>
+<li><a href="#execute-dmr-operations">Execute DMR Operations</a></li>
+<li><a href="#ui-elements">UI Elements</a><ol>
+<li><a href="#table">Table</a></li>
+<li><a href="#form">Form</a></li>
+<li><a href="#master-detail">Master Detail</a></li>
+</ol>
+</li>
+</ol>
+<h2 id="crud-operations">CRUD Operations</h2>
+<p>This example shows the CRUD operations in action. First a IO worker is created using an add-resource dialog, then the newly created resource is read. Finally the IO worker is modified and removed again. </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let core = hal.core.Core.getInstance();
+let address = &quot;{selected.profile}/subsystem=io/worker=*&quot;;
+let template = hal.meta.AddressTemplate.of(address);
+let attributes = [&quot;io-threads&quot;, &quot;stack-size&quot;, &quot;task-keepalive&quot;, &quot;task-max-threads&quot;];
+
+core.crud.addDialog(&quot;Worker&quot;, address, attributes, (name, address) =&gt; {
+
+    console.log(&quot;Worker &apos;&quot; + name + &quot;&apos; successfully added as &apos;&quot; + address.toString() + &quot;&apos;&quot;); 
+    let workerAddress = template.resolve(core.statementContext, name);
+    core.crud.read(workerAddress, worker =&gt; {
+
+        console.log(worker.toString());
+        core.crud.save(&quot;Worker&quot;, name, template, {&quot;stack-size&quot;: 42}, () =&gt; {
+
+            console.log(&quot;Worker &apos;&quot; + name + &quot;&apos; successfully modified&quot;); 
+            core.crud.remove(&quot;Worker&quot;, name, workerAddress, () =&gt; {
+
+                console.log(&quot;Worker &apos;&quot; + name + &quot;&apos; successfully removed&quot;); 
+            });
+        });
+    });
+});</code>
+</code></pre>
+<h2 id="read-child-resources">Read Child Resources</h2>
+<p>This example uses the crud operations to read the children of a resource. In this case the subsystems of the selected profile are read. </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let core = hal.core.Core.getInstance();
+
+core.crud.readChildren(&quot;{selected.profile}&quot;, &quot;subsystem&quot;, children =&gt; {
+    children.forEach(child =&gt; console.log(child.name))
+});</code>
+</code></pre>
+<h2 id="execute-dmr-operations">Execute DMR Operations</h2>
+<p>This example shows how to execute arbitrary operations. </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let core = hal.core.Core.getInstance();
+let op = core.operation(&quot;/&quot;, &quot;read-resource&quot;)
+    .param(&quot;attributes-only&quot;, true)
+    .param(&quot;include-runtime&quot;, true)
+    .build();
+
+core.dispatcher.execute(op, result =&gt; console.log(result.toString()));</code>
+</code></pre>
+<h2 id="ui-elements">UI Elements</h2>
+<h3 id="table">Table</h3>
+<p>Creates a table to manage paths defined at <code>/path=*</code>.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let name = &quot;Path&quot;;
+let core = hal.core.Core.getInstance();
+let template = hal.meta.AddressTemplate.of(&quot;/path=*&quot;);
+
+core.metadataProcessor.lookup(template, metadata =&gt; {
+    let table = core.table(metadata)
+        .add(name, template, [&quot;name&quot;, &quot;path&quot;, &quot;relative-to&quot;], refresh)
+        .remove(name, template, t =&gt; t.selectedRow.get(&quot;name&quot;).asString(), refresh)
+        .columns([&quot;name&quot;, &quot;path&quot;])
+        .build();
+
+    $(&quot;#hal-root-container&quot;)
+        .empty()
+        .append(&quot;&lt;h1&gt;&quot; + name + &quot;&lt;/h1&gt;&quot;)
+        .append(&quot;&lt;p&gt;&quot; + metadata.description.description + &quot;&lt;/p&gt;&quot;)
+        .append(table.element);
+    table.attach();
+    refresh();
+
+    function refresh() {
+        core.crud.readChildren(&quot;/&quot;, &quot;path&quot;, properties =&gt; {
+            table.update(properties.map(property =&gt; property.value));
+        });
+    }
+});</code>
+</code></pre>
+<h3 id="form">Form</h3>
+<p>Creates a form to view and edit the transaction manager defined at <code>/subsystem=transactions</code>.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let name = &quot;Transaction Manager&quot;;
+let core = hal.core.Core.getInstance();
+let template = hal.meta.AddressTemplate.of(&quot;{selected.profile}/subsystem=transactions&quot;);
+
+core.metadataProcessor.lookup(template, metadata =&gt; {
+    let form = core.form(metadata)
+        .onSave((f, changedValues) =&gt; {
+            core.crud.saveSingleton(name, template, changedValues, refresh);
+        })
+        .build();
+
+    $(&quot;#hal-root-container&quot;)
+        .empty()
+        .append(&quot;&lt;h1&gt;&quot; + name + &quot;&lt;/h1&gt;&quot;)
+        .append(&quot;&lt;p&gt;&quot; + metadata.description.description + &quot;&lt;/p&gt;&quot;)
+        .append(form.element);
+    form.attach();
+    refresh();
+
+    function refresh() {
+        core.crud.read(template, config =&gt; form.view(config));
+    }
+});</code>
+</code></pre>
+<h3 id="master-detail">Master Detail</h3>
+<p>Creates a master-detail view to manage log categories defined at <code>/subsystem=logging/logger=*</code>.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let type = &quot;Category&quot;;
+let core = hal.core.Core.getInstance();
+let template = hal.meta.AddressTemplate.of(&quot;{selected.profile}/subsystem=logging/logger=*&quot;);
+
+core.metadataProcessor.lookup(template, metadata =&gt; {
+    let table = core.namedTable(metadata)
+        .add(type, template, [&quot;level&quot;, &quot;handlers&quot;, &quot;use-parent-handlers&quot;], refresh)
+        .remove(type, template, t =&gt; t.selectedRow.name, refresh)
+        .columns([&quot;category&quot;, &quot;level&quot;])
+        .build();
+
+    let form = core.namedForm(metadata)
+        .onSave((f, changedValues) =&gt; {
+            core.crud.save(type, f.model.name, template, changedValues, refresh);
+        })
+        .build();
+
+    $(&quot;#hal-root-container&quot;)
+        .empty()
+        .append(&quot;&lt;h1&gt;Categories&lt;/h1&gt;&quot;)
+        .append(&quot;&lt;p&gt;&quot; + metadata.description.description + &quot;&lt;/p&gt;&quot;)
+        .append(table.element)
+        .append(form.element);
+
+    table.attach();
+    form.attach();
+    table.bindForm(form);
+    refresh();
+
+    function refresh() {
+        core.crud.readChildren(template.parent, &quot;logger&quot;, properties =&gt; {
+            form.clear();
+            table.update(hal.dmr.ModelNodeHelper.asNamedNodes(properties));
+        });
+    }
+});</code>
+</code></pre>
+</div>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

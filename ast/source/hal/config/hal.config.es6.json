@@ -1,0 +1,6496 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Role",
+        "range": [
+          72,
+          76
+        ],
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 6
+          },
+          "end": {
+            "line": 4,
+            "column": 10
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "ADMINISTRATOR",
+              "range": [
+                228,
+                241
+              ],
+              "loc": {
+                "start": {
+                  "line": 9,
+                  "column": 15
+                },
+                "end": {
+                  "line": 9,
+                  "column": 28
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  244,
+                  246
+                ],
+                "loc": {
+                  "start": {
+                    "line": 9,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 9,
+                    "column": 33
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                241,
+                246
+              ],
+              "loc": {
+                "start": {
+                  "line": 9,
+                  "column": 28
+                },
+                "end": {
+                  "line": 9,
+                  "column": 33
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              217,
+              246
+            ],
+            "loc": {
+              "start": {
+                "line": 9,
+                "column": 4
+              },
+              "end": {
+                "line": 9,
+                "column": 33
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Has all permissions except cannot read or write resources related to the administrative audit logging system.\n     ",
+                "range": [
+                  84,
+                  212
+                ],
+                "loc": {
+                  "start": {
+                    "line": 6,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 8,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Can read anything. Can only modify the resources related to the administrative audit logging system.\n     ",
+                "range": [
+                  252,
+                  371
+                ],
+                "loc": {
+                  "start": {
+                    "line": 11,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 13,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "AUDITOR",
+              "range": [
+                387,
+                394
+              ],
+              "loc": {
+                "start": {
+                  "line": 14,
+                  "column": 15
+                },
+                "end": {
+                  "line": 14,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  397,
+                  399
+                ],
+                "loc": {
+                  "start": {
+                    "line": 14,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 14,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                394,
+                399
+              ],
+              "loc": {
+                "start": {
+                  "line": 14,
+                  "column": 22
+                },
+                "end": {
+                  "line": 14,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              376,
+              399
+            ],
+            "loc": {
+              "start": {
+                "line": 14,
+                "column": 4
+              },
+              "end": {
+                "line": 14,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Can read anything. Can only modify the resources related to the administrative audit logging system.\n     ",
+                "range": [
+                  252,
+                  371
+                ],
+                "loc": {
+                  "start": {
+                    "line": 11,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 13,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are\n     * considered to be \"application resources\". A deployment is an application resource. The messaging server is not.\n     * Items like datasources and JMS destinations are not considered to be application resources by default, but this\n     * is configurable.\n     ",
+                "range": [
+                  405,
+                  793
+                ],
+                "loc": {
+                  "start": {
+                    "line": 16,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "DEPLOYER",
+              "range": [
+                809,
+                817
+              ],
+              "loc": {
+                "start": {
+                  "line": 22,
+                  "column": 15
+                },
+                "end": {
+                  "line": 22,
+                  "column": 23
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  820,
+                  822
+                ],
+                "loc": {
+                  "start": {
+                    "line": 22,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 22,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                817,
+                822
+              ],
+              "loc": {
+                "start": {
+                  "line": 22,
+                  "column": 23
+                },
+                "end": {
+                  "line": 22,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              798,
+              822
+            ],
+            "loc": {
+              "start": {
+                "line": 22,
+                "column": 4
+              },
+              "end": {
+                "line": 22,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are\n     * considered to be \"application resources\". A deployment is an application resource. The messaging server is not.\n     * Items like datasources and JMS destinations are not considered to be application resources by default, but this\n     * is configurable.\n     ",
+                "range": [
+                  405,
+                  793
+                ],
+                "loc": {
+                  "start": {
+                    "line": 16,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Operator permissions, plus can modify the persistent configuration.\n     ",
+                "range": [
+                  828,
+                  914
+                ],
+                "loc": {
+                  "start": {
+                    "line": 24,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "MAINTAINER",
+              "range": [
+                930,
+                940
+              ],
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 15
+                },
+                "end": {
+                  "line": 27,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  943,
+                  945
+                ],
+                "loc": {
+                  "start": {
+                    "line": 27,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 27,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                940,
+                945
+              ],
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 25
+                },
+                "end": {
+                  "line": 27,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              919,
+              945
+            ],
+            "loc": {
+              "start": {
+                "line": 27,
+                "column": 4
+              },
+              "end": {
+                "line": 27,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Operator permissions, plus can modify the persistent configuration.\n     ",
+                "range": [
+                  828,
+                  914
+                ],
+                "loc": {
+                  "start": {
+                    "line": 24,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * A read-only role. Cannot modify any resource.\n     ",
+                "range": [
+                  951,
+                  1015
+                ],
+                "loc": {
+                  "start": {
+                    "line": 29,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 31,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "MONITOR",
+              "range": [
+                1031,
+                1038
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 15
+                },
+                "end": {
+                  "line": 32,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1041,
+                  1043
+                ],
+                "loc": {
+                  "start": {
+                    "line": 32,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 32,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1038,
+                1043
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 22
+                },
+                "end": {
+                  "line": 32,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1020,
+              1043
+            ],
+            "loc": {
+              "start": {
+                "line": 32,
+                "column": 4
+              },
+              "end": {
+                "line": 32,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * A read-only role. Cannot modify any resource.\n     ",
+                "range": [
+                  951,
+                  1015
+                ],
+                "loc": {
+                  "start": {
+                    "line": 29,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 31,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Monitor permissions, plus can modify runtime state, but cannot modify anything that ends up in the persistent\n     * configuration. Could, for example, restart a server.\n     ",
+                "range": [
+                  1049,
+                  1237
+                ],
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 37,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "OPERATOR",
+              "range": [
+                1253,
+                1261
+              ],
+              "loc": {
+                "start": {
+                  "line": 38,
+                  "column": 15
+                },
+                "end": {
+                  "line": 38,
+                  "column": 23
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1264,
+                  1266
+                ],
+                "loc": {
+                  "start": {
+                    "line": 38,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 38,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1261,
+                1266
+              ],
+              "loc": {
+                "start": {
+                  "line": 38,
+                  "column": 23
+                },
+                "end": {
+                  "line": 38,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1242,
+              1266
+            ],
+            "loc": {
+              "start": {
+                "line": 38,
+                "column": 4
+              },
+              "end": {
+                "line": 38,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Monitor permissions, plus can modify runtime state, but cannot modify anything that ends up in the persistent\n     * configuration. Could, for example, restart a server.\n     ",
+                "range": [
+                  1049,
+                  1237
+                ],
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 37,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Has all permissions. Equivalent to a JBoss AS 7 administrator.\n     ",
+                "range": [
+                  1272,
+                  1353
+                ],
+                "loc": {
+                  "start": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 42,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "SUPER_USER",
+              "range": [
+                1369,
+                1379
+              ],
+              "loc": {
+                "start": {
+                  "line": 43,
+                  "column": 15
+                },
+                "end": {
+                  "line": 43,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1382,
+                  1384
+                ],
+                "loc": {
+                  "start": {
+                    "line": 43,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 43,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1379,
+                1384
+              ],
+              "loc": {
+                "start": {
+                  "line": 43,
+                  "column": 25
+                },
+                "end": {
+                  "line": 43,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1358,
+              1384
+            ],
+            "loc": {
+              "start": {
+                "line": 43,
+                "column": 4
+              },
+              "end": {
+                "line": 43,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Has all permissions. Equivalent to a JBoss AS 7 administrator.\n     ",
+                "range": [
+                  1272,
+                  1353
+                ],
+                "loc": {
+                  "start": {
+                    "line": 40,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 42,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the unique ID of this role.\n     ",
+                "range": [
+                  1390,
+                  1453
+                ],
+                "loc": {
+                  "start": {
+                    "line": 45,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 47,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "id",
+              "range": [
+                1462,
+                1464
+              ],
+              "loc": {
+                "start": {
+                  "line": 48,
+                  "column": 8
+                },
+                "end": {
+                  "line": 48,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1467,
+                  1469
+                ],
+                "loc": {
+                  "start": {
+                    "line": 48,
+                    "column": 13
+                  },
+                  "end": {
+                    "line": 48,
+                    "column": 15
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1464,
+                1469
+              ],
+              "loc": {
+                "start": {
+                  "line": 48,
+                  "column": 10
+                },
+                "end": {
+                  "line": 48,
+                  "column": 15
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1458,
+              1469
+            ],
+            "loc": {
+              "start": {
+                "line": 48,
+                "column": 4
+              },
+              "end": {
+                "line": 48,
+                "column": 15
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the unique ID of this role.\n     ",
+                "range": [
+                  1390,
+                  1453
+                ],
+                "loc": {
+                  "start": {
+                    "line": 45,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 47,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this is a standard role, false otherwise.\n     ",
+                "range": [
+                  1475,
+                  1561
+                ],
+                "loc": {
+                  "start": {
+                    "line": 50,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "standard",
+              "range": [
+                1570,
+                1578
+              ],
+              "loc": {
+                "start": {
+                  "line": 53,
+                  "column": 8
+                },
+                "end": {
+                  "line": 53,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1581,
+                  1583
+                ],
+                "loc": {
+                  "start": {
+                    "line": 53,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 53,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1578,
+                1583
+              ],
+              "loc": {
+                "start": {
+                  "line": 53,
+                  "column": 16
+                },
+                "end": {
+                  "line": 53,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1566,
+              1583
+            ],
+            "loc": {
+              "start": {
+                "line": 53,
+                "column": 4
+              },
+              "end": {
+                "line": 53,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this is a standard role, false otherwise.\n     ",
+                "range": [
+                  1475,
+                  1561
+                ],
+                "loc": {
+                  "start": {
+                    "line": 50,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this is a scoped role, false otherwise.\n     ",
+                "range": [
+                  1589,
+                  1673
+                ],
+                "loc": {
+                  "start": {
+                    "line": 55,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "scoped",
+              "range": [
+                1682,
+                1688
+              ],
+              "loc": {
+                "start": {
+                  "line": 58,
+                  "column": 8
+                },
+                "end": {
+                  "line": 58,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1691,
+                  1693
+                ],
+                "loc": {
+                  "start": {
+                    "line": 58,
+                    "column": 17
+                  },
+                  "end": {
+                    "line": 58,
+                    "column": 19
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1688,
+                1693
+              ],
+              "loc": {
+                "start": {
+                  "line": 58,
+                  "column": 14
+                },
+                "end": {
+                  "line": 58,
+                  "column": 19
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1678,
+              1693
+            ],
+            "loc": {
+              "start": {
+                "line": 58,
+                "column": 4
+              },
+              "end": {
+                "line": 58,
+                "column": 19
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this is a scoped role, false otherwise.\n     ",
+                "range": [
+                  1589,
+                  1673
+                ],
+                "loc": {
+                  "start": {
+                    "line": 55,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of this role.\n     ",
+                "range": [
+                  1699,
+                  1757
+                ],
+                "loc": {
+                  "start": {
+                    "line": 60,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 62,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "name",
+              "range": [
+                1766,
+                1770
+              ],
+              "loc": {
+                "start": {
+                  "line": 63,
+                  "column": 8
+                },
+                "end": {
+                  "line": 63,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1773,
+                  1775
+                ],
+                "loc": {
+                  "start": {
+                    "line": 63,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 63,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1770,
+                1775
+              ],
+              "loc": {
+                "start": {
+                  "line": 63,
+                  "column": 12
+                },
+                "end": {
+                  "line": 63,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1762,
+              1775
+            ],
+            "loc": {
+              "start": {
+                "line": 63,
+                "column": 4
+              },
+              "end": {
+                "line": 63,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of this role.\n     ",
+                "range": [
+                  1699,
+                  1757
+                ],
+                "loc": {
+                  "start": {
+                    "line": 60,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 62,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role} the base role if this is a scoped role, null otherwise.\n     ",
+                "range": [
+                  1781,
+                  1870
+                ],
+                "loc": {
+                  "start": {
+                    "line": 65,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 67,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "baseRole",
+              "range": [
+                1879,
+                1887
+              ],
+              "loc": {
+                "start": {
+                  "line": 68,
+                  "column": 8
+                },
+                "end": {
+                  "line": 68,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1890,
+                  1892
+                ],
+                "loc": {
+                  "start": {
+                    "line": 68,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 68,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1887,
+                1892
+              ],
+              "loc": {
+                "start": {
+                  "line": 68,
+                  "column": 16
+                },
+                "end": {
+                  "line": 68,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1875,
+              1892
+            ],
+            "loc": {
+              "start": {
+                "line": 68,
+                "column": 4
+              },
+              "end": {
+                "line": 68,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role} the base role if this is a scoped role, null otherwise.\n     ",
+                "range": [
+                  1781,
+                  1870
+                ],
+                "loc": {
+                  "start": {
+                    "line": 65,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 67,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string[]} the scopes if this is a scoped role, an empty array otherwise.\n     ",
+                "range": [
+                  1898,
+                  1998
+                ],
+                "loc": {
+                  "start": {
+                    "line": 70,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 72,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "scope",
+              "range": [
+                2007,
+                2012
+              ],
+              "loc": {
+                "start": {
+                  "line": 73,
+                  "column": 8
+                },
+                "end": {
+                  "line": 73,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2015,
+                  2017
+                ],
+                "loc": {
+                  "start": {
+                    "line": 73,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 73,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2012,
+                2017
+              ],
+              "loc": {
+                "start": {
+                  "line": 73,
+                  "column": 13
+                },
+                "end": {
+                  "line": 73,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2003,
+              2017
+            ],
+            "loc": {
+              "start": {
+                "line": 73,
+                "column": 4
+              },
+              "end": {
+                "line": 73,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string[]} the scopes if this is a scoped role, an empty array otherwise.\n     ",
+                "range": [
+                  1898,
+                  1998
+                ],
+                "loc": {
+                  "start": {
+                    "line": 70,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 72,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} a string representation of this role.\n     ",
+                "range": [
+                  2023,
+                  2096
+                ],
+                "loc": {
+                  "start": {
+                    "line": 75,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 77,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "range": [
+                2101,
+                2109
+              ],
+              "loc": {
+                "start": {
+                  "line": 78,
+                  "column": 4
+                },
+                "end": {
+                  "line": 78,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2112,
+                  2114
+                ],
+                "loc": {
+                  "start": {
+                    "line": 78,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 78,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2109,
+                2114
+              ],
+              "loc": {
+                "start": {
+                  "line": 78,
+                  "column": 12
+                },
+                "end": {
+                  "line": 78,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2101,
+              2114
+            ],
+            "loc": {
+              "start": {
+                "line": 78,
+                "column": 4
+              },
+              "end": {
+                "line": 78,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} a string representation of this role.\n     ",
+                "range": [
+                  2023,
+                  2096
+                ],
+                "loc": {
+                  "start": {
+                    "line": 75,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 77,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          77,
+          2116
+        ],
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 11
+          },
+          "end": {
+            "line": 79,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        66,
+        2116
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 79,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * A standard or scoped role used when RBAC is turned on.\n ",
+          "range": [
+            0,
+            65
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Instance holding information about the console and its environment.\n ",
+          "range": [
+            2118,
+            2196
+          ],
+          "loc": {
+            "start": {
+              "line": 81,
+              "column": 0
+            },
+            "end": {
+              "line": 83,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Environment",
+        "range": [
+          2203,
+          2214
+        ],
+        "loc": {
+          "start": {
+            "line": 84,
+            "column": 6
+          },
+          "end": {
+            "line": 84,
+            "column": 17
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "halVersion",
+              "range": [
+                2284,
+                2294
+              ],
+              "loc": {
+                "start": {
+                  "line": 89,
+                  "column": 8
+                },
+                "end": {
+                  "line": 89,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2297,
+                  2299
+                ],
+                "loc": {
+                  "start": {
+                    "line": 89,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 89,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2294,
+                2299
+              ],
+              "loc": {
+                "start": {
+                  "line": 89,
+                  "column": 18
+                },
+                "end": {
+                  "line": 89,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2280,
+              2299
+            ],
+            "loc": {
+              "start": {
+                "line": 89,
+                "column": 4
+              },
+              "end": {
+                "line": 89,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Version} the HAL version.\n     ",
+                "range": [
+                  2222,
+                  2275
+                ],
+                "loc": {
+                  "start": {
+                    "line": 86,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 88,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {InstanceInfo} information about the server instance.\n     ",
+                "range": [
+                  2305,
+                  2385
+                ],
+                "loc": {
+                  "start": {
+                    "line": 91,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "instanceInfo",
+              "range": [
+                2394,
+                2406
+              ],
+              "loc": {
+                "start": {
+                  "line": 94,
+                  "column": 8
+                },
+                "end": {
+                  "line": 94,
+                  "column": 20
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2409,
+                  2411
+                ],
+                "loc": {
+                  "start": {
+                    "line": 94,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 94,
+                    "column": 25
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2406,
+                2411
+              ],
+              "loc": {
+                "start": {
+                  "line": 94,
+                  "column": 20
+                },
+                "end": {
+                  "line": 94,
+                  "column": 25
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2390,
+              2411
+            ],
+            "loc": {
+              "start": {
+                "line": 94,
+                "column": 4
+              },
+              "end": {
+                "line": 94,
+                "column": 25
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {InstanceInfo} information about the server instance.\n     ",
+                "range": [
+                  2305,
+                  2385
+                ],
+                "loc": {
+                  "start": {
+                    "line": 91,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true for standalone mode, false otherwise.\n     ",
+                "range": [
+                  2417,
+                  2496
+                ],
+                "loc": {
+                  "start": {
+                    "line": 96,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 98,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "standalone",
+              "range": [
+                2505,
+                2515
+              ],
+              "loc": {
+                "start": {
+                  "line": 99,
+                  "column": 8
+                },
+                "end": {
+                  "line": 99,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2518,
+                  2520
+                ],
+                "loc": {
+                  "start": {
+                    "line": 99,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 99,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2515,
+                2520
+              ],
+              "loc": {
+                "start": {
+                  "line": 99,
+                  "column": 18
+                },
+                "end": {
+                  "line": 99,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2501,
+              2520
+            ],
+            "loc": {
+              "start": {
+                "line": 99,
+                "column": 4
+              },
+              "end": {
+                "line": 99,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true for standalone mode, false otherwise.\n     ",
+                "range": [
+                  2417,
+                  2496
+                ],
+                "loc": {
+                  "start": {
+                    "line": 96,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 98,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the domain controller (DC).\n     ",
+                "range": [
+                  2526,
+                  2601
+                ],
+                "loc": {
+                  "start": {
+                    "line": 101,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 103,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "domainController",
+              "range": [
+                2610,
+                2626
+              ],
+              "loc": {
+                "start": {
+                  "line": 104,
+                  "column": 8
+                },
+                "end": {
+                  "line": 104,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2629,
+                  2631
+                ],
+                "loc": {
+                  "start": {
+                    "line": 104,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 104,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2626,
+                2631
+              ],
+              "loc": {
+                "start": {
+                  "line": 104,
+                  "column": 24
+                },
+                "end": {
+                  "line": 104,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2606,
+              2631
+            ],
+            "loc": {
+              "start": {
+                "line": 104,
+                "column": 4
+              },
+              "end": {
+                "line": 104,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the domain controller (DC).\n     ",
+                "range": [
+                  2526,
+                  2601
+                ],
+                "loc": {
+                  "start": {
+                    "line": 101,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 103,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Version} the management model version.\n     ",
+                "range": [
+                  2637,
+                  2703
+                ],
+                "loc": {
+                  "start": {
+                    "line": 106,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 108,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "managementVersion",
+              "range": [
+                2712,
+                2729
+              ],
+              "loc": {
+                "start": {
+                  "line": 109,
+                  "column": 8
+                },
+                "end": {
+                  "line": 109,
+                  "column": 25
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2732,
+                  2734
+                ],
+                "loc": {
+                  "start": {
+                    "line": 109,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 109,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2729,
+                2734
+              ],
+              "loc": {
+                "start": {
+                  "line": 109,
+                  "column": 25
+                },
+                "end": {
+                  "line": 109,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2708,
+              2734
+            ],
+            "loc": {
+              "start": {
+                "line": 109,
+                "column": 4
+              },
+              "end": {
+                "line": 109,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Version} the management model version.\n     ",
+                "range": [
+                  2637,
+                  2703
+                ],
+                "loc": {
+                  "start": {
+                    "line": 106,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 108,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if SSO is used, false otherwise.\n     ",
+                "range": [
+                  2740,
+                  2814
+                ],
+                "loc": {
+                  "start": {
+                    "line": 111,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 113,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "singleSignOn",
+              "range": [
+                2823,
+                2835
+              ],
+              "loc": {
+                "start": {
+                  "line": 114,
+                  "column": 8
+                },
+                "end": {
+                  "line": 114,
+                  "column": 20
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2838,
+                  2840
+                ],
+                "loc": {
+                  "start": {
+                    "line": 114,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 114,
+                    "column": 25
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2835,
+                2840
+              ],
+              "loc": {
+                "start": {
+                  "line": 114,
+                  "column": 20
+                },
+                "end": {
+                  "line": 114,
+                  "column": 25
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2819,
+              2840
+            ],
+            "loc": {
+              "start": {
+                "line": 114,
+                "column": 4
+              },
+              "end": {
+                "line": 114,
+                "column": 25
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if SSO is used, false otherwise.\n     ",
+                "range": [
+                  2740,
+                  2814
+                ],
+                "loc": {
+                  "start": {
+                    "line": 111,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 113,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Roles} the standard and scoped roles.\n     ",
+                "range": [
+                  2846,
+                  2911
+                ],
+                "loc": {
+                  "start": {
+                    "line": 116,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 118,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "roles",
+              "range": [
+                2920,
+                2925
+              ],
+              "loc": {
+                "start": {
+                  "line": 119,
+                  "column": 8
+                },
+                "end": {
+                  "line": 119,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2928,
+                  2930
+                ],
+                "loc": {
+                  "start": {
+                    "line": 119,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 119,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2925,
+                2930
+              ],
+              "loc": {
+                "start": {
+                  "line": 119,
+                  "column": 13
+                },
+                "end": {
+                  "line": 119,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2916,
+              2930
+            ],
+            "loc": {
+              "start": {
+                "line": 119,
+                "column": 4
+              },
+              "end": {
+                "line": 119,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Roles} the standard and scoped roles.\n     ",
+                "range": [
+                  2846,
+                  2911
+                ],
+                "loc": {
+                  "start": {
+                    "line": 116,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 118,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          2215,
+          2932
+        ],
+        "loc": {
+          "start": {
+            "line": 84,
+            "column": 18
+          },
+          "end": {
+            "line": 120,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        2197,
+        2932
+      ],
+      "loc": {
+        "start": {
+          "line": 84,
+          "column": 0
+        },
+        "end": {
+          "line": 120,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Instance holding information about the console and its environment.\n ",
+          "range": [
+            2118,
+            2196
+          ],
+          "loc": {
+            "start": {
+              "line": 81,
+              "column": 0
+            },
+            "end": {
+              "line": 83,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Holds information about an user.\n ",
+          "range": [
+            2934,
+            2977
+          ],
+          "loc": {
+            "start": {
+              "line": 122,
+              "column": 0
+            },
+            "end": {
+              "line": 124,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "User",
+        "range": [
+          2984,
+          2988
+        ],
+        "loc": {
+          "start": {
+            "line": 125,
+            "column": 6
+          },
+          "end": {
+            "line": 125,
+            "column": 10
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "name",
+              "range": [
+                3055,
+                3059
+              ],
+              "loc": {
+                "start": {
+                  "line": 130,
+                  "column": 8
+                },
+                "end": {
+                  "line": 130,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3062,
+                  3064
+                ],
+                "loc": {
+                  "start": {
+                    "line": 130,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 130,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3059,
+                3064
+              ],
+              "loc": {
+                "start": {
+                  "line": 130,
+                  "column": 12
+                },
+                "end": {
+                  "line": 130,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3051,
+              3064
+            ],
+            "loc": {
+              "start": {
+                "line": 130,
+                "column": 4
+              },
+              "end": {
+                "line": 130,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the user name.\n     ",
+                "range": [
+                  2996,
+                  3046
+                ],
+                "loc": {
+                  "start": {
+                    "line": 127,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 129,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this user belongs to the role SuperUser, false otherwise.\n     ",
+                "range": [
+                  3070,
+                  3172
+                ],
+                "loc": {
+                  "start": {
+                    "line": 132,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 134,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "superuser",
+              "range": [
+                3181,
+                3190
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 8
+                },
+                "end": {
+                  "line": 135,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3193,
+                  3195
+                ],
+                "loc": {
+                  "start": {
+                    "line": 135,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 135,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3190,
+                3195
+              ],
+              "loc": {
+                "start": {
+                  "line": 135,
+                  "column": 17
+                },
+                "end": {
+                  "line": 135,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3177,
+              3195
+            ],
+            "loc": {
+              "start": {
+                "line": 135,
+                "column": 4
+              },
+              "end": {
+                "line": 135,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this user belongs to the role SuperUser, false otherwise.\n     ",
+                "range": [
+                  3070,
+                  3172
+                ],
+                "loc": {
+                  "start": {
+                    "line": 132,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 134,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this user belongs to the role Administrator, false otherwise.\n     ",
+                "range": [
+                  3201,
+                  3307
+                ],
+                "loc": {
+                  "start": {
+                    "line": 137,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 139,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "administrator",
+              "range": [
+                3316,
+                3329
+              ],
+              "loc": {
+                "start": {
+                  "line": 140,
+                  "column": 8
+                },
+                "end": {
+                  "line": 140,
+                  "column": 21
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3332,
+                  3334
+                ],
+                "loc": {
+                  "start": {
+                    "line": 140,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 140,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3329,
+                3334
+              ],
+              "loc": {
+                "start": {
+                  "line": 140,
+                  "column": 21
+                },
+                "end": {
+                  "line": 140,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3312,
+              3334
+            ],
+            "loc": {
+              "start": {
+                "line": 140,
+                "column": 4
+              },
+              "end": {
+                "line": 140,
+                "column": 26
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this user belongs to the role Administrator, false otherwise.\n     ",
+                "range": [
+                  3201,
+                  3307
+                ],
+                "loc": {
+                  "start": {
+                    "line": 137,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 139,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} the roles of this user.\n     ",
+                "range": [
+                  3340,
+                  3399
+                ],
+                "loc": {
+                  "start": {
+                    "line": 142,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 144,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "roles",
+              "range": [
+                3408,
+                3413
+              ],
+              "loc": {
+                "start": {
+                  "line": 145,
+                  "column": 8
+                },
+                "end": {
+                  "line": 145,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3416,
+                  3418
+                ],
+                "loc": {
+                  "start": {
+                    "line": 145,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 145,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3413,
+                3418
+              ],
+              "loc": {
+                "start": {
+                  "line": 145,
+                  "column": 13
+                },
+                "end": {
+                  "line": 145,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3404,
+              3418
+            ],
+            "loc": {
+              "start": {
+                "line": 145,
+                "column": 4
+              },
+              "end": {
+                "line": 145,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} the roles of this user.\n     ",
+                "range": [
+                  3340,
+                  3399
+                ],
+                "loc": {
+                  "start": {
+                    "line": 142,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 144,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {User} the current user.\n     ",
+                "range": [
+                  3424,
+                  3475
+                ],
+                "loc": {
+                  "start": {
+                    "line": 147,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 149,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "current",
+              "range": [
+                3487,
+                3494
+              ],
+              "loc": {
+                "start": {
+                  "line": 150,
+                  "column": 11
+                },
+                "end": {
+                  "line": 150,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3497,
+                  3499
+                ],
+                "loc": {
+                  "start": {
+                    "line": 150,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 150,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3494,
+                3499
+              ],
+              "loc": {
+                "start": {
+                  "line": 150,
+                  "column": 18
+                },
+                "end": {
+                  "line": 150,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3480,
+              3499
+            ],
+            "loc": {
+              "start": {
+                "line": 150,
+                "column": 4
+              },
+              "end": {
+                "line": 150,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {User} the current user.\n     ",
+                "range": [
+                  3424,
+                  3475
+                ],
+                "loc": {
+                  "start": {
+                    "line": 147,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 149,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          }
+        ],
+        "range": [
+          2989,
+          3501
+        ],
+        "loc": {
+          "start": {
+            "line": 125,
+            "column": 11
+          },
+          "end": {
+            "line": 151,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        2978,
+        3501
+      ],
+      "loc": {
+        "start": {
+          "line": 125,
+          "column": 0
+        },
+        "end": {
+          "line": 151,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Holds information about an user.\n ",
+          "range": [
+            2934,
+            2977
+          ],
+          "loc": {
+            "start": {
+              "line": 122,
+              "column": 0
+            },
+            "end": {
+              "line": 124,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains information about the server instance the console is connected to or loaded from (taken from the root\n * resource).\n ",
+          "range": [
+            3503,
+            3638
+          ],
+          "loc": {
+            "start": {
+              "line": 153,
+              "column": 0
+            },
+            "end": {
+              "line": 156,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "InstanceInfo",
+        "range": [
+          3645,
+          3657
+        ],
+        "loc": {
+          "start": {
+            "line": 157,
+            "column": 6
+          },
+          "end": {
+            "line": 157,
+            "column": 18
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "productName",
+              "range": [
+                3727,
+                3738
+              ],
+              "loc": {
+                "start": {
+                  "line": 162,
+                  "column": 8
+                },
+                "end": {
+                  "line": 162,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3741,
+                  3743
+                ],
+                "loc": {
+                  "start": {
+                    "line": 162,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 162,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3738,
+                3743
+              ],
+              "loc": {
+                "start": {
+                  "line": 162,
+                  "column": 19
+                },
+                "end": {
+                  "line": 162,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3723,
+              3743
+            ],
+            "loc": {
+              "start": {
+                "line": 162,
+                "column": 4
+              },
+              "end": {
+                "line": 162,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the product name.\n     ",
+                "range": [
+                  3665,
+                  3718
+                ],
+                "loc": {
+                  "start": {
+                    "line": 159,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 161,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the product version.\n     ",
+                "range": [
+                  3749,
+                  3805
+                ],
+                "loc": {
+                  "start": {
+                    "line": 164,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 166,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "productVersion",
+              "range": [
+                3814,
+                3828
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 8
+                },
+                "end": {
+                  "line": 167,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3831,
+                  3833
+                ],
+                "loc": {
+                  "start": {
+                    "line": 167,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 167,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3828,
+                3833
+              ],
+              "loc": {
+                "start": {
+                  "line": 167,
+                  "column": 22
+                },
+                "end": {
+                  "line": 167,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3810,
+              3833
+            ],
+            "loc": {
+              "start": {
+                "line": 167,
+                "column": 4
+              },
+              "end": {
+                "line": 167,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the product version.\n     ",
+                "range": [
+                  3749,
+                  3805
+                ],
+                "loc": {
+                  "start": {
+                    "line": 164,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 166,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the release name.\n     ",
+                "range": [
+                  3839,
+                  3892
+                ],
+                "loc": {
+                  "start": {
+                    "line": 169,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 171,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "releaseName",
+              "range": [
+                3901,
+                3912
+              ],
+              "loc": {
+                "start": {
+                  "line": 172,
+                  "column": 8
+                },
+                "end": {
+                  "line": 172,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3915,
+                  3917
+                ],
+                "loc": {
+                  "start": {
+                    "line": 172,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 172,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3912,
+                3917
+              ],
+              "loc": {
+                "start": {
+                  "line": 172,
+                  "column": 19
+                },
+                "end": {
+                  "line": 172,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3897,
+              3917
+            ],
+            "loc": {
+              "start": {
+                "line": 172,
+                "column": 4
+              },
+              "end": {
+                "line": 172,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the release name.\n     ",
+                "range": [
+                  3839,
+                  3892
+                ],
+                "loc": {
+                  "start": {
+                    "line": 169,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 171,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the release version.\n     ",
+                "range": [
+                  3923,
+                  3979
+                ],
+                "loc": {
+                  "start": {
+                    "line": 174,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "releaseVersion",
+              "range": [
+                3988,
+                4002
+              ],
+              "loc": {
+                "start": {
+                  "line": 177,
+                  "column": 8
+                },
+                "end": {
+                  "line": 177,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4005,
+                  4007
+                ],
+                "loc": {
+                  "start": {
+                    "line": 177,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 177,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4002,
+                4007
+              ],
+              "loc": {
+                "start": {
+                  "line": 177,
+                  "column": 22
+                },
+                "end": {
+                  "line": 177,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              3984,
+              4007
+            ],
+            "loc": {
+              "start": {
+                "line": 177,
+                "column": 4
+              },
+              "end": {
+                "line": 177,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the release version.\n     ",
+                "range": [
+                  3923,
+                  3979
+                ],
+                "loc": {
+                  "start": {
+                    "line": 174,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the server name.\n     ",
+                "range": [
+                  4013,
+                  4065
+                ],
+                "loc": {
+                  "start": {
+                    "line": 179,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "serverName",
+              "range": [
+                4074,
+                4084
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 8
+                },
+                "end": {
+                  "line": 182,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4087,
+                  4089
+                ],
+                "loc": {
+                  "start": {
+                    "line": 182,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 182,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4084,
+                4089
+              ],
+              "loc": {
+                "start": {
+                  "line": 182,
+                  "column": 18
+                },
+                "end": {
+                  "line": 182,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4070,
+              4089
+            ],
+            "loc": {
+              "start": {
+                "line": 182,
+                "column": 4
+              },
+              "end": {
+                "line": 182,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the server name.\n     ",
+                "range": [
+                  4013,
+                  4065
+                ],
+                "loc": {
+                  "start": {
+                    "line": 179,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          3658,
+          4091
+        ],
+        "loc": {
+          "start": {
+            "line": 157,
+            "column": 19
+          },
+          "end": {
+            "line": 183,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        3639,
+        4091
+      ],
+      "loc": {
+        "start": {
+          "line": 157,
+          "column": 0
+        },
+        "end": {
+          "line": 183,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains information about the server instance the console is connected to or loaded from (taken from the root\n * resource).\n ",
+          "range": [
+            3503,
+            3638
+          ],
+          "loc": {
+            "start": {
+              "line": 153,
+              "column": 0
+            },
+            "end": {
+              "line": 156,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to all standard and scoped roles.\n ",
+          "range": [
+            4093,
+            4153
+          ],
+          "loc": {
+            "start": {
+              "line": 185,
+              "column": 0
+            },
+            "end": {
+              "line": 187,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Roles",
+        "range": [
+          4160,
+          4165
+        ],
+        "loc": {
+          "start": {
+            "line": 188,
+            "column": 6
+          },
+          "end": {
+            "line": 188,
+            "column": 11
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "all",
+              "range": [
+                4250,
+                4253
+              ],
+              "loc": {
+                "start": {
+                  "line": 193,
+                  "column": 8
+                },
+                "end": {
+                  "line": 193,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4256,
+                  4258
+                ],
+                "loc": {
+                  "start": {
+                    "line": 193,
+                    "column": 14
+                  },
+                  "end": {
+                    "line": 193,
+                    "column": 16
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4253,
+                4258
+              ],
+              "loc": {
+                "start": {
+                  "line": 193,
+                  "column": 11
+                },
+                "end": {
+                  "line": 193,
+                  "column": 16
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4246,
+              4258
+            ],
+            "loc": {
+              "start": {
+                "line": 193,
+                "column": 4
+              },
+              "end": {
+                "line": 193,
+                "column": 16
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} all roles (standard and scoped).\n     ",
+                "range": [
+                  4173,
+                  4241
+                ],
+                "loc": {
+                  "start": {
+                    "line": 190,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 192,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} standard roles.\n     ",
+                "range": [
+                  4264,
+                  4315
+                ],
+                "loc": {
+                  "start": {
+                    "line": 195,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 197,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "standardRoles",
+              "range": [
+                4324,
+                4337
+              ],
+              "loc": {
+                "start": {
+                  "line": 198,
+                  "column": 8
+                },
+                "end": {
+                  "line": 198,
+                  "column": 21
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4340,
+                  4342
+                ],
+                "loc": {
+                  "start": {
+                    "line": 198,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 198,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4337,
+                4342
+              ],
+              "loc": {
+                "start": {
+                  "line": 198,
+                  "column": 21
+                },
+                "end": {
+                  "line": 198,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4320,
+              4342
+            ],
+            "loc": {
+              "start": {
+                "line": 198,
+                "column": 4
+              },
+              "end": {
+                "line": 198,
+                "column": 26
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} standard roles.\n     ",
+                "range": [
+                  4264,
+                  4315
+                ],
+                "loc": {
+                  "start": {
+                    "line": 195,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 197,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} scoped roles or an empty array if no scoped roles are defined.\n     ",
+                "range": [
+                  4348,
+                  4446
+                ],
+                "loc": {
+                  "start": {
+                    "line": 200,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 202,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "scopedRoles",
+              "range": [
+                4455,
+                4466
+              ],
+              "loc": {
+                "start": {
+                  "line": 203,
+                  "column": 8
+                },
+                "end": {
+                  "line": 203,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4469,
+                  4471
+                ],
+                "loc": {
+                  "start": {
+                    "line": 203,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 203,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4466,
+                4471
+              ],
+              "loc": {
+                "start": {
+                  "line": 203,
+                  "column": 19
+                },
+                "end": {
+                  "line": 203,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4451,
+              4471
+            ],
+            "loc": {
+              "start": {
+                "line": 203,
+                "column": 4
+              },
+              "end": {
+                "line": 203,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Role[]} scoped roles or an empty array if no scoped roles are defined.\n     ",
+                "range": [
+                  4348,
+                  4446
+                ],
+                "loc": {
+                  "start": {
+                    "line": 200,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 202,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} id The unique ID of the role.\n     * \n     * @return {Role} the role for that ID or null if no such role was found.\n     ",
+                "range": [
+                  4477,
+                  4627
+                ],
+                "loc": {
+                  "start": {
+                    "line": 205,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 209,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "get",
+              "range": [
+                4632,
+                4635
+              ],
+              "loc": {
+                "start": {
+                  "line": 210,
+                  "column": 4
+                },
+                "end": {
+                  "line": 210,
+                  "column": 7
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "id",
+                  "range": [
+                    4636,
+                    4638
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 210,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 210,
+                      "column": 10
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4640,
+                  4642
+                ],
+                "loc": {
+                  "start": {
+                    "line": 210,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 210,
+                    "column": 14
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4635,
+                4642
+              ],
+              "loc": {
+                "start": {
+                  "line": 210,
+                  "column": 7
+                },
+                "end": {
+                  "line": 210,
+                  "column": 14
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4632,
+              4642
+            ],
+            "loc": {
+              "start": {
+                "line": 210,
+                "column": 4
+              },
+              "end": {
+                "line": 210,
+                "column": 14
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} id The unique ID of the role.\n     * \n     * @return {Role} the role for that ID or null if no such role was found.\n     ",
+                "range": [
+                  4477,
+                  4627
+                ],
+                "loc": {
+                  "start": {
+                    "line": 205,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 209,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          4166,
+          4644
+        ],
+        "loc": {
+          "start": {
+            "line": 188,
+            "column": 12
+          },
+          "end": {
+            "line": 211,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        4154,
+        4644
+      ],
+      "loc": {
+        "start": {
+          "line": 188,
+          "column": 0
+        },
+        "end": {
+          "line": 211,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to all standard and scoped roles.\n ",
+          "range": [
+            4093,
+            4153
+          ],
+          "loc": {
+            "start": {
+              "line": 185,
+              "column": 0
+            },
+            "end": {
+              "line": 187,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to the endpoints used in HAL.\n ",
+          "range": [
+            4646,
+            4702
+          ],
+          "loc": {
+            "start": {
+              "line": 213,
+              "column": 0
+            },
+            "end": {
+              "line": 215,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Endpoints",
+        "range": [
+          4709,
+          4718
+        ],
+        "loc": {
+          "start": {
+            "line": 216,
+            "column": 6
+          },
+          "end": {
+            "line": 216,
+            "column": 15
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "dmr",
+              "range": [
+                4822,
+                4825
+              ],
+              "loc": {
+                "start": {
+                  "line": 221,
+                  "column": 8
+                },
+                "end": {
+                  "line": 221,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4828,
+                  4830
+                ],
+                "loc": {
+                  "start": {
+                    "line": 221,
+                    "column": 14
+                  },
+                  "end": {
+                    "line": 221,
+                    "column": 16
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4825,
+                4830
+              ],
+              "loc": {
+                "start": {
+                  "line": 221,
+                  "column": 11
+                },
+                "end": {
+                  "line": 221,
+                  "column": 16
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4818,
+              4830
+            ],
+            "loc": {
+              "start": {
+                "line": 221,
+                "column": 4
+              },
+              "end": {
+                "line": 221,
+                "column": 16
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the endpoint used to execute management operations.\n     ",
+                "range": [
+                  4726,
+                  4813
+                ],
+                "loc": {
+                  "start": {
+                    "line": 218,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 220,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the endpoint used for file uploads.\n     ",
+                "range": [
+                  4836,
+                  4907
+                ],
+                "loc": {
+                  "start": {
+                    "line": 223,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 225,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "upload",
+              "range": [
+                4916,
+                4922
+              ],
+              "loc": {
+                "start": {
+                  "line": 226,
+                  "column": 8
+                },
+                "end": {
+                  "line": 226,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4925,
+                  4927
+                ],
+                "loc": {
+                  "start": {
+                    "line": 226,
+                    "column": 17
+                  },
+                  "end": {
+                    "line": 226,
+                    "column": 19
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4922,
+                4927
+              ],
+              "loc": {
+                "start": {
+                  "line": 226,
+                  "column": 14
+                },
+                "end": {
+                  "line": 226,
+                  "column": 19
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4912,
+              4927
+            ],
+            "loc": {
+              "start": {
+                "line": 226,
+                "column": 4
+              },
+              "end": {
+                "line": 226,
+                "column": 19
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the endpoint used for file uploads.\n     ",
+                "range": [
+                  4836,
+                  4907
+                ],
+                "loc": {
+                  "start": {
+                    "line": 223,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 225,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if the console is served from a WildFly / EAP instance, false if it runs standalone and\n     * connected to an arbitrary management endpoint.\n     ",
+                "range": [
+                  4933,
+                  5116
+                ],
+                "loc": {
+                  "start": {
+                    "line": 228,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 231,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "sameOrigin",
+              "range": [
+                5125,
+                5135
+              ],
+              "loc": {
+                "start": {
+                  "line": 232,
+                  "column": 8
+                },
+                "end": {
+                  "line": 232,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5138,
+                  5140
+                ],
+                "loc": {
+                  "start": {
+                    "line": 232,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 232,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5135,
+                5140
+              ],
+              "loc": {
+                "start": {
+                  "line": 232,
+                  "column": 18
+                },
+                "end": {
+                  "line": 232,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5121,
+              5140
+            ],
+            "loc": {
+              "start": {
+                "line": 232,
+                "column": 4
+              },
+              "end": {
+                "line": 232,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if the console is served from a WildFly / EAP instance, false if it runs standalone and\n     * connected to an arbitrary management endpoint.\n     ",
+                "range": [
+                  4933,
+                  5116
+                ],
+                "loc": {
+                  "start": {
+                    "line": 228,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 231,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          4719,
+          5142
+        ],
+        "loc": {
+          "start": {
+            "line": 216,
+            "column": 16
+          },
+          "end": {
+            "line": 233,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        4703,
+        5142
+      ],
+      "loc": {
+        "start": {
+          "line": 216,
+          "column": 0
+        },
+        "end": {
+          "line": 233,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Provides access to the endpoints used in HAL.\n ",
+          "range": [
+            4646,
+            4702
+          ],
+          "loc": {
+            "start": {
+              "line": 213,
+              "column": 0
+            },
+            "end": {
+              "line": 215,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Represents a version consisting of a major, minor and micro part.\n * \n * @since 0.1.0\n ",
+          "range": [
+            5144,
+            5240
+          ],
+          "loc": {
+            "start": {
+              "line": 235,
+              "column": 0
+            },
+            "end": {
+              "line": 239,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Version",
+        "range": [
+          5247,
+          5254
+        ],
+        "loc": {
+          "start": {
+            "line": 240,
+            "column": 6
+          },
+          "end": {
+            "line": 240,
+            "column": 13
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "major",
+              "range": [
+                5332,
+                5337
+              ],
+              "loc": {
+                "start": {
+                  "line": 245,
+                  "column": 8
+                },
+                "end": {
+                  "line": 245,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5340,
+                  5342
+                ],
+                "loc": {
+                  "start": {
+                    "line": 245,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 245,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5337,
+                5342
+              ],
+              "loc": {
+                "start": {
+                  "line": 245,
+                  "column": 13
+                },
+                "end": {
+                  "line": 245,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5328,
+              5342
+            ],
+            "loc": {
+              "start": {
+                "line": 245,
+                "column": 4
+              },
+              "end": {
+                "line": 245,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the major version number.\n     ",
+                "range": [
+                  5262,
+                  5323
+                ],
+                "loc": {
+                  "start": {
+                    "line": 242,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 244,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the minor version number.\n     ",
+                "range": [
+                  5348,
+                  5409
+                ],
+                "loc": {
+                  "start": {
+                    "line": 247,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 249,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "minor",
+              "range": [
+                5418,
+                5423
+              ],
+              "loc": {
+                "start": {
+                  "line": 250,
+                  "column": 8
+                },
+                "end": {
+                  "line": 250,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5426,
+                  5428
+                ],
+                "loc": {
+                  "start": {
+                    "line": 250,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 250,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5423,
+                5428
+              ],
+              "loc": {
+                "start": {
+                  "line": 250,
+                  "column": 13
+                },
+                "end": {
+                  "line": 250,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5414,
+              5428
+            ],
+            "loc": {
+              "start": {
+                "line": 250,
+                "column": 4
+              },
+              "end": {
+                "line": 250,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the minor version number.\n     ",
+                "range": [
+                  5348,
+                  5409
+                ],
+                "loc": {
+                  "start": {
+                    "line": 247,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 249,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the patch version number.\n     ",
+                "range": [
+                  5434,
+                  5495
+                ],
+                "loc": {
+                  "start": {
+                    "line": 252,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 254,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "micro",
+              "range": [
+                5504,
+                5509
+              ],
+              "loc": {
+                "start": {
+                  "line": 255,
+                  "column": 8
+                },
+                "end": {
+                  "line": 255,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5512,
+                  5514
+                ],
+                "loc": {
+                  "start": {
+                    "line": 255,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 255,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5509,
+                5514
+              ],
+              "loc": {
+                "start": {
+                  "line": 255,
+                  "column": 13
+                },
+                "end": {
+                  "line": 255,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5500,
+              5514
+            ],
+            "loc": {
+              "start": {
+                "line": 255,
+                "column": 4
+              },
+              "end": {
+                "line": 255,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the patch version number.\n     ",
+                "range": [
+                  5434,
+                  5495
+                ],
+                "loc": {
+                  "start": {
+                    "line": 252,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 254,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a new version as a result of parsing the specified version string.\n     * \n     * @param {string} version The version string to parse\n     * \n     * @return {Version} a new version\n     ",
+                "range": [
+                  5520,
+                  5727
+                ],
+                "loc": {
+                  "start": {
+                    "line": 257,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 263,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "valueOf",
+              "range": [
+                5739,
+                5746
+              ],
+              "loc": {
+                "start": {
+                  "line": 264,
+                  "column": 11
+                },
+                "end": {
+                  "line": 264,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "version",
+                  "range": [
+                    5747,
+                    5754
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 264,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 264,
+                      "column": 26
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5756,
+                  5758
+                ],
+                "loc": {
+                  "start": {
+                    "line": 264,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 264,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5746,
+                5758
+              ],
+              "loc": {
+                "start": {
+                  "line": 264,
+                  "column": 18
+                },
+                "end": {
+                  "line": 264,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5732,
+              5758
+            ],
+            "loc": {
+              "start": {
+                "line": 264,
+                "column": 4
+              },
+              "end": {
+                "line": 264,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a new version as a result of parsing the specified version string.\n     * \n     * @param {string} version The version string to parse\n     * \n     * @return {Version} a new version\n     ",
+                "range": [
+                  5520,
+                  5727
+                ],
+                "loc": {
+                  "start": {
+                    "line": 257,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 263,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} &lt;major&gt;.&lt;minor&gt;.&lt;micro&gt;\n     ",
+                "range": [
+                  5764,
+                  5841
+                ],
+                "loc": {
+                  "start": {
+                    "line": 266,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 268,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "range": [
+                5846,
+                5854
+              ],
+              "loc": {
+                "start": {
+                  "line": 269,
+                  "column": 4
+                },
+                "end": {
+                  "line": 269,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5857,
+                  5859
+                ],
+                "loc": {
+                  "start": {
+                    "line": 269,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 269,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5854,
+                5859
+              ],
+              "loc": {
+                "start": {
+                  "line": 269,
+                  "column": 12
+                },
+                "end": {
+                  "line": 269,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5846,
+              5859
+            ],
+            "loc": {
+              "start": {
+                "line": 269,
+                "column": 4
+              },
+              "end": {
+                "line": 269,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} &lt;major&gt;.&lt;minor&gt;.&lt;micro&gt;\n     ",
+                "range": [
+                  5764,
+                  5841
+                ],
+                "loc": {
+                  "start": {
+                    "line": 266,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 268,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          5255,
+          5861
+        ],
+        "loc": {
+          "start": {
+            "line": 240,
+            "column": 14
+          },
+          "end": {
+            "line": 270,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        5241,
+        5861
+      ],
+      "loc": {
+        "start": {
+          "line": 240,
+          "column": 0
+        },
+        "end": {
+          "line": 270,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Represents a version consisting of a major, minor and micro part.\n * \n * @since 0.1.0\n ",
+          "range": [
+            5144,
+            5240
+          ],
+          "loc": {
+            "start": {
+              "line": 235,
+              "column": 0
+            },
+            "end": {
+              "line": 239,
+              "column": 3
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    66,
+    5861
+  ],
+  "loc": {
+    "start": {
+      "line": 4,
+      "column": 0
+    },
+    "end": {
+      "line": 270,
+      "column": 1
+    }
+  },
+  "comments": [
+    {
+      "type": "Block",
+      "value": "*\n * A standard or scoped role used when RBAC is turned on.\n ",
+      "range": [
+        0,
+        65
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 3,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Has all permissions except cannot read or write resources related to the administrative audit logging system.\n     ",
+      "range": [
+        84,
+        212
+      ],
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 4
+        },
+        "end": {
+          "line": 8,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Can read anything. Can only modify the resources related to the administrative audit logging system.\n     ",
+      "range": [
+        252,
+        371
+      ],
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 4
+        },
+        "end": {
+          "line": 13,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are\n     * considered to be \"application resources\". A deployment is an application resource. The messaging server is not.\n     * Items like datasources and JMS destinations are not considered to be application resources by default, but this\n     * is configurable.\n     ",
+      "range": [
+        405,
+        793
+      ],
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 4
+        },
+        "end": {
+          "line": 21,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Operator permissions, plus can modify the persistent configuration.\n     ",
+      "range": [
+        828,
+        914
+      ],
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 4
+        },
+        "end": {
+          "line": 26,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * A read-only role. Cannot modify any resource.\n     ",
+      "range": [
+        951,
+        1015
+      ],
+      "loc": {
+        "start": {
+          "line": 29,
+          "column": 4
+        },
+        "end": {
+          "line": 31,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Monitor permissions, plus can modify runtime state, but cannot modify anything that ends up in the persistent\n     * configuration. Could, for example, restart a server.\n     ",
+      "range": [
+        1049,
+        1237
+      ],
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 4
+        },
+        "end": {
+          "line": 37,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Has all permissions. Equivalent to a JBoss AS 7 administrator.\n     ",
+      "range": [
+        1272,
+        1353
+      ],
+      "loc": {
+        "start": {
+          "line": 40,
+          "column": 4
+        },
+        "end": {
+          "line": 42,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the unique ID of this role.\n     ",
+      "range": [
+        1390,
+        1453
+      ],
+      "loc": {
+        "start": {
+          "line": 45,
+          "column": 4
+        },
+        "end": {
+          "line": 47,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if this is a standard role, false otherwise.\n     ",
+      "range": [
+        1475,
+        1561
+      ],
+      "loc": {
+        "start": {
+          "line": 50,
+          "column": 4
+        },
+        "end": {
+          "line": 52,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if this is a scoped role, false otherwise.\n     ",
+      "range": [
+        1589,
+        1673
+      ],
+      "loc": {
+        "start": {
+          "line": 55,
+          "column": 4
+        },
+        "end": {
+          "line": 57,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the name of this role.\n     ",
+      "range": [
+        1699,
+        1757
+      ],
+      "loc": {
+        "start": {
+          "line": 60,
+          "column": 4
+        },
+        "end": {
+          "line": 62,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Role} the base role if this is a scoped role, null otherwise.\n     ",
+      "range": [
+        1781,
+        1870
+      ],
+      "loc": {
+        "start": {
+          "line": 65,
+          "column": 4
+        },
+        "end": {
+          "line": 67,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string[]} the scopes if this is a scoped role, an empty array otherwise.\n     ",
+      "range": [
+        1898,
+        1998
+      ],
+      "loc": {
+        "start": {
+          "line": 70,
+          "column": 4
+        },
+        "end": {
+          "line": 72,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} a string representation of this role.\n     ",
+      "range": [
+        2023,
+        2096
+      ],
+      "loc": {
+        "start": {
+          "line": 75,
+          "column": 4
+        },
+        "end": {
+          "line": 77,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Instance holding information about the console and its environment.\n ",
+      "range": [
+        2118,
+        2196
+      ],
+      "loc": {
+        "start": {
+          "line": 81,
+          "column": 0
+        },
+        "end": {
+          "line": 83,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Version} the HAL version.\n     ",
+      "range": [
+        2222,
+        2275
+      ],
+      "loc": {
+        "start": {
+          "line": 86,
+          "column": 4
+        },
+        "end": {
+          "line": 88,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {InstanceInfo} information about the server instance.\n     ",
+      "range": [
+        2305,
+        2385
+      ],
+      "loc": {
+        "start": {
+          "line": 91,
+          "column": 4
+        },
+        "end": {
+          "line": 93,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true for standalone mode, false otherwise.\n     ",
+      "range": [
+        2417,
+        2496
+      ],
+      "loc": {
+        "start": {
+          "line": 96,
+          "column": 4
+        },
+        "end": {
+          "line": 98,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the name of the domain controller (DC).\n     ",
+      "range": [
+        2526,
+        2601
+      ],
+      "loc": {
+        "start": {
+          "line": 101,
+          "column": 4
+        },
+        "end": {
+          "line": 103,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Version} the management model version.\n     ",
+      "range": [
+        2637,
+        2703
+      ],
+      "loc": {
+        "start": {
+          "line": 106,
+          "column": 4
+        },
+        "end": {
+          "line": 108,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if SSO is used, false otherwise.\n     ",
+      "range": [
+        2740,
+        2814
+      ],
+      "loc": {
+        "start": {
+          "line": 111,
+          "column": 4
+        },
+        "end": {
+          "line": 113,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Roles} the standard and scoped roles.\n     ",
+      "range": [
+        2846,
+        2911
+      ],
+      "loc": {
+        "start": {
+          "line": 116,
+          "column": 4
+        },
+        "end": {
+          "line": 118,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Holds information about an user.\n ",
+      "range": [
+        2934,
+        2977
+      ],
+      "loc": {
+        "start": {
+          "line": 122,
+          "column": 0
+        },
+        "end": {
+          "line": 124,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the user name.\n     ",
+      "range": [
+        2996,
+        3046
+      ],
+      "loc": {
+        "start": {
+          "line": 127,
+          "column": 4
+        },
+        "end": {
+          "line": 129,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if this user belongs to the role SuperUser, false otherwise.\n     ",
+      "range": [
+        3070,
+        3172
+      ],
+      "loc": {
+        "start": {
+          "line": 132,
+          "column": 4
+        },
+        "end": {
+          "line": 134,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if this user belongs to the role Administrator, false otherwise.\n     ",
+      "range": [
+        3201,
+        3307
+      ],
+      "loc": {
+        "start": {
+          "line": 137,
+          "column": 4
+        },
+        "end": {
+          "line": 139,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Role[]} the roles of this user.\n     ",
+      "range": [
+        3340,
+        3399
+      ],
+      "loc": {
+        "start": {
+          "line": 142,
+          "column": 4
+        },
+        "end": {
+          "line": 144,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {User} the current user.\n     ",
+      "range": [
+        3424,
+        3475
+      ],
+      "loc": {
+        "start": {
+          "line": 147,
+          "column": 4
+        },
+        "end": {
+          "line": 149,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Contains information about the server instance the console is connected to or loaded from (taken from the root\n * resource).\n ",
+      "range": [
+        3503,
+        3638
+      ],
+      "loc": {
+        "start": {
+          "line": 153,
+          "column": 0
+        },
+        "end": {
+          "line": 156,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the product name.\n     ",
+      "range": [
+        3665,
+        3718
+      ],
+      "loc": {
+        "start": {
+          "line": 159,
+          "column": 4
+        },
+        "end": {
+          "line": 161,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the product version.\n     ",
+      "range": [
+        3749,
+        3805
+      ],
+      "loc": {
+        "start": {
+          "line": 164,
+          "column": 4
+        },
+        "end": {
+          "line": 166,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the release name.\n     ",
+      "range": [
+        3839,
+        3892
+      ],
+      "loc": {
+        "start": {
+          "line": 169,
+          "column": 4
+        },
+        "end": {
+          "line": 171,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the release version.\n     ",
+      "range": [
+        3923,
+        3979
+      ],
+      "loc": {
+        "start": {
+          "line": 174,
+          "column": 4
+        },
+        "end": {
+          "line": 176,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the server name.\n     ",
+      "range": [
+        4013,
+        4065
+      ],
+      "loc": {
+        "start": {
+          "line": 179,
+          "column": 4
+        },
+        "end": {
+          "line": 181,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Provides access to all standard and scoped roles.\n ",
+      "range": [
+        4093,
+        4153
+      ],
+      "loc": {
+        "start": {
+          "line": 185,
+          "column": 0
+        },
+        "end": {
+          "line": 187,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Role[]} all roles (standard and scoped).\n     ",
+      "range": [
+        4173,
+        4241
+      ],
+      "loc": {
+        "start": {
+          "line": 190,
+          "column": 4
+        },
+        "end": {
+          "line": 192,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Role[]} standard roles.\n     ",
+      "range": [
+        4264,
+        4315
+      ],
+      "loc": {
+        "start": {
+          "line": 195,
+          "column": 4
+        },
+        "end": {
+          "line": 197,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Role[]} scoped roles or an empty array if no scoped roles are defined.\n     ",
+      "range": [
+        4348,
+        4446
+      ],
+      "loc": {
+        "start": {
+          "line": 200,
+          "column": 4
+        },
+        "end": {
+          "line": 202,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @param {string} id The unique ID of the role.\n     * \n     * @return {Role} the role for that ID or null if no such role was found.\n     ",
+      "range": [
+        4477,
+        4627
+      ],
+      "loc": {
+        "start": {
+          "line": 205,
+          "column": 4
+        },
+        "end": {
+          "line": 209,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Provides access to the endpoints used in HAL.\n ",
+      "range": [
+        4646,
+        4702
+      ],
+      "loc": {
+        "start": {
+          "line": 213,
+          "column": 0
+        },
+        "end": {
+          "line": 215,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the endpoint used to execute management operations.\n     ",
+      "range": [
+        4726,
+        4813
+      ],
+      "loc": {
+        "start": {
+          "line": 218,
+          "column": 4
+        },
+        "end": {
+          "line": 220,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the endpoint used for file uploads.\n     ",
+      "range": [
+        4836,
+        4907
+      ],
+      "loc": {
+        "start": {
+          "line": 223,
+          "column": 4
+        },
+        "end": {
+          "line": 225,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if the console is served from a WildFly / EAP instance, false if it runs standalone and\n     * connected to an arbitrary management endpoint.\n     ",
+      "range": [
+        4933,
+        5116
+      ],
+      "loc": {
+        "start": {
+          "line": 228,
+          "column": 4
+        },
+        "end": {
+          "line": 231,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Represents a version consisting of a major, minor and micro part.\n * \n * @since 0.1.0\n ",
+      "range": [
+        5144,
+        5240
+      ],
+      "loc": {
+        "start": {
+          "line": 235,
+          "column": 0
+        },
+        "end": {
+          "line": 239,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {number} the major version number.\n     ",
+      "range": [
+        5262,
+        5323
+      ],
+      "loc": {
+        "start": {
+          "line": 242,
+          "column": 4
+        },
+        "end": {
+          "line": 244,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {number} the minor version number.\n     ",
+      "range": [
+        5348,
+        5409
+      ],
+      "loc": {
+        "start": {
+          "line": 247,
+          "column": 4
+        },
+        "end": {
+          "line": 249,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {number} the patch version number.\n     ",
+      "range": [
+        5434,
+        5495
+      ],
+      "loc": {
+        "start": {
+          "line": 252,
+          "column": 4
+        },
+        "end": {
+          "line": 254,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Creates a new version as a result of parsing the specified version string.\n     * \n     * @param {string} version The version string to parse\n     * \n     * @return {Version} a new version\n     ",
+      "range": [
+        5520,
+        5727
+      ],
+      "loc": {
+        "start": {
+          "line": 257,
+          "column": 4
+        },
+        "end": {
+          "line": 263,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} &lt;major&gt;.&lt;minor&gt;.&lt;micro&gt;\n     ",
+      "range": [
+        5764,
+        5841
+      ],
+      "loc": {
+        "start": {
+          "line": 266,
+          "column": 4
+        },
+        "end": {
+          "line": 268,
+          "column": 7
+        }
+      }
+    }
+  ]
+}

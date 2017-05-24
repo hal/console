@@ -1,0 +1,5585 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "AddressTemplate",
+        "range": [
+          1460,
+          1475
+        ],
+        "loc": {
+          "start": {
+            "line": 32,
+            "column": 6
+          },
+          "end": {
+            "line": 32,
+            "column": 21
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "ROOT",
+              "range": [
+                1535,
+                1539
+              ],
+              "loc": {
+                "start": {
+                  "line": 37,
+                  "column": 15
+                },
+                "end": {
+                  "line": 37,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1542,
+                  1544
+                ],
+                "loc": {
+                  "start": {
+                    "line": 37,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 37,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1539,
+                1544
+              ],
+              "loc": {
+                "start": {
+                  "line": 37,
+                  "column": 19
+                },
+                "end": {
+                  "line": 37,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1524,
+              1544
+            ],
+            "loc": {
+              "start": {
+                "line": 37,
+                "column": 4
+              },
+              "end": {
+                "line": 37,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * The root template\n     ",
+                "range": [
+                  1483,
+                  1519
+                ],
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 36,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this template contains no tokens, false otherwise\n     ",
+                "range": [
+                  1550,
+                  1644
+                ],
+                "loc": {
+                  "start": {
+                    "line": 39,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 41,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "empty",
+              "range": [
+                1653,
+                1658
+              ],
+              "loc": {
+                "start": {
+                  "line": 42,
+                  "column": 8
+                },
+                "end": {
+                  "line": 42,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1661,
+                  1663
+                ],
+                "loc": {
+                  "start": {
+                    "line": 42,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 42,
+                    "column": 18
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1658,
+                1663
+              ],
+              "loc": {
+                "start": {
+                  "line": 42,
+                  "column": 13
+                },
+                "end": {
+                  "line": 42,
+                  "column": 18
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1649,
+              1663
+            ],
+            "loc": {
+              "start": {
+                "line": 42,
+                "column": 4
+              },
+              "end": {
+                "line": 42,
+                "column": 18
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} true if this template contains no tokens, false otherwise\n     ",
+                "range": [
+                  1550,
+                  1644
+                ],
+                "loc": {
+                  "start": {
+                    "line": 39,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 41,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the number of tokens\n     ",
+                "range": [
+                  1669,
+                  1725
+                ],
+                "loc": {
+                  "start": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 46,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "size",
+              "range": [
+                1734,
+                1738
+              ],
+              "loc": {
+                "start": {
+                  "line": 47,
+                  "column": 8
+                },
+                "end": {
+                  "line": 47,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1741,
+                  1743
+                ],
+                "loc": {
+                  "start": {
+                    "line": 47,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 47,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1738,
+                1743
+              ],
+              "loc": {
+                "start": {
+                  "line": 47,
+                  "column": 12
+                },
+                "end": {
+                  "line": 47,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1730,
+              1743
+            ],
+            "loc": {
+              "start": {
+                "line": 47,
+                "column": 4
+              },
+              "end": {
+                "line": 47,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {number} the number of tokens\n     ",
+                "range": [
+                  1669,
+                  1725
+                ],
+                "loc": {
+                  "start": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 46,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {AddressTemplate} the parent address template or the root template\n     ",
+                "range": [
+                  1749,
+                  1842
+                ],
+                "loc": {
+                  "start": {
+                    "line": 49,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 51,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "parent",
+              "range": [
+                1851,
+                1857
+              ],
+              "loc": {
+                "start": {
+                  "line": 52,
+                  "column": 8
+                },
+                "end": {
+                  "line": 52,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1860,
+                  1862
+                ],
+                "loc": {
+                  "start": {
+                    "line": 52,
+                    "column": 17
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 19
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1857,
+                1862
+              ],
+              "loc": {
+                "start": {
+                  "line": 52,
+                  "column": 14
+                },
+                "end": {
+                  "line": 52,
+                  "column": 19
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1847,
+              1862
+            ],
+            "loc": {
+              "start": {
+                "line": 52,
+                "column": 4
+              },
+              "end": {
+                "line": 52,
+                "column": 19
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {AddressTemplate} the parent address template or the root template\n     ",
+                "range": [
+                  1749,
+                  1842
+                ],
+                "loc": {
+                  "start": {
+                    "line": 49,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 51,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the first segment or null if this address template is empty.\n     ",
+                "range": [
+                  1868,
+                  1976
+                ],
+                "loc": {
+                  "start": {
+                    "line": 54,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 56,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "firstName",
+              "range": [
+                1985,
+                1994
+              ],
+              "loc": {
+                "start": {
+                  "line": 57,
+                  "column": 8
+                },
+                "end": {
+                  "line": 57,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  1997,
+                  1999
+                ],
+                "loc": {
+                  "start": {
+                    "line": 57,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                1994,
+                1999
+              ],
+              "loc": {
+                "start": {
+                  "line": 57,
+                  "column": 17
+                },
+                "end": {
+                  "line": 57,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              1981,
+              1999
+            ],
+            "loc": {
+              "start": {
+                "line": 57,
+                "column": 4
+              },
+              "end": {
+                "line": 57,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the first segment or null if this address template is empty.\n     ",
+                "range": [
+                  1868,
+                  1976
+                ],
+                "loc": {
+                  "start": {
+                    "line": 54,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 56,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the value of the first segment or null if this address template is empty.\n     ",
+                "range": [
+                  2005,
+                  2114
+                ],
+                "loc": {
+                  "start": {
+                    "line": 59,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 61,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "firstValue",
+              "range": [
+                2123,
+                2133
+              ],
+              "loc": {
+                "start": {
+                  "line": 62,
+                  "column": 8
+                },
+                "end": {
+                  "line": 62,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2136,
+                  2138
+                ],
+                "loc": {
+                  "start": {
+                    "line": 62,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 62,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2133,
+                2138
+              ],
+              "loc": {
+                "start": {
+                  "line": 62,
+                  "column": 18
+                },
+                "end": {
+                  "line": 62,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2119,
+              2138
+            ],
+            "loc": {
+              "start": {
+                "line": 62,
+                "column": 4
+              },
+              "end": {
+                "line": 62,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the value of the first segment or null if this address template is empty.\n     ",
+                "range": [
+                  2005,
+                  2114
+                ],
+                "loc": {
+                  "start": {
+                    "line": 59,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 61,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the last segment or null if this address template is empty.\n     ",
+                "range": [
+                  2144,
+                  2251
+                ],
+                "loc": {
+                  "start": {
+                    "line": 64,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 66,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "lastName",
+              "range": [
+                2260,
+                2268
+              ],
+              "loc": {
+                "start": {
+                  "line": 67,
+                  "column": 8
+                },
+                "end": {
+                  "line": 67,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2271,
+                  2273
+                ],
+                "loc": {
+                  "start": {
+                    "line": 67,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 67,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2268,
+                2273
+              ],
+              "loc": {
+                "start": {
+                  "line": 67,
+                  "column": 16
+                },
+                "end": {
+                  "line": 67,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2256,
+              2273
+            ],
+            "loc": {
+              "start": {
+                "line": 67,
+                "column": 4
+              },
+              "end": {
+                "line": 67,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the name of the last segment or null if this address template is empty.\n     ",
+                "range": [
+                  2144,
+                  2251
+                ],
+                "loc": {
+                  "start": {
+                    "line": 64,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 66,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the value of the last segment or null if this address template is empty.\n     ",
+                "range": [
+                  2279,
+                  2387
+                ],
+                "loc": {
+                  "start": {
+                    "line": 69,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 71,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "lastValue",
+              "range": [
+                2396,
+                2405
+              ],
+              "loc": {
+                "start": {
+                  "line": 72,
+                  "column": 8
+                },
+                "end": {
+                  "line": 72,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2408,
+                  2410
+                ],
+                "loc": {
+                  "start": {
+                    "line": 72,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 72,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2405,
+                2410
+              ],
+              "loc": {
+                "start": {
+                  "line": 72,
+                  "column": 17
+                },
+                "end": {
+                  "line": 72,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              2392,
+              2410
+            ],
+            "loc": {
+              "start": {
+                "line": 72,
+                "column": 4
+              },
+              "end": {
+                "line": 72,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the value of the last segment or null if this address template is empty.\n     ",
+                "range": [
+                  2279,
+                  2387
+                ],
+                "loc": {
+                  "start": {
+                    "line": 69,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 71,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a new address template from an encoded string template.\n     ",
+                "range": [
+                  2416,
+                  2498
+                ],
+                "loc": {
+                  "start": {
+                    "line": 74,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 76,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "of",
+              "range": [
+                2510,
+                2512
+              ],
+              "loc": {
+                "start": {
+                  "line": 77,
+                  "column": 11
+                },
+                "end": {
+                  "line": 77,
+                  "column": 13
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    2513,
+                    2521
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 77,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 77,
+                      "column": 22
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2523,
+                  2525
+                ],
+                "loc": {
+                  "start": {
+                    "line": 77,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 77,
+                    "column": 26
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2512,
+                2525
+              ],
+              "loc": {
+                "start": {
+                  "line": 77,
+                  "column": 13
+                },
+                "end": {
+                  "line": 77,
+                  "column": 26
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2503,
+              2525
+            ],
+            "loc": {
+              "start": {
+                "line": 77,
+                "column": 4
+              },
+              "end": {
+                "line": 77,
+                "column": 26
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Creates a new address template from an encoded string template.\n     ",
+                "range": [
+                  2416,
+                  2498
+                ],
+                "loc": {
+                  "start": {
+                    "line": 74,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 76,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the string representation of this address template\n     ",
+                "range": [
+                  2531,
+                  2617
+                ],
+                "loc": {
+                  "start": {
+                    "line": 79,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 81,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "range": [
+                2622,
+                2630
+              ],
+              "loc": {
+                "start": {
+                  "line": 82,
+                  "column": 4
+                },
+                "end": {
+                  "line": 82,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  2633,
+                  2635
+                ],
+                "loc": {
+                  "start": {
+                    "line": 82,
+                    "column": 15
+                  },
+                  "end": {
+                    "line": 82,
+                    "column": 17
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                2630,
+                2635
+              ],
+              "loc": {
+                "start": {
+                  "line": 82,
+                  "column": 12
+                },
+                "end": {
+                  "line": 82,
+                  "column": 17
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              2622,
+              2635
+            ],
+            "loc": {
+              "start": {
+                "line": 82,
+                "column": 4
+              },
+              "end": {
+                "line": 82,
+                "column": 17
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the string representation of this address template\n     ",
+                "range": [
+                  2531,
+                  2617
+                ],
+                "loc": {
+                  "start": {
+                    "line": 79,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 81,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Resolve this address template against the specified statement context.\n     * \n     * @param {StatementContext} context   the statement context\n     * @param {...string} wildcards An optional list of wildcards which are used to resolve any wildcards in this address template\n     * from left to right\n     * \n     * @return {ResourceAddress} a fully qualified resource address which might be empty, but which does not contain any tokens\n     ",
+                "range": [
+                  2641,
+                  3096
+                ],
+                "loc": {
+                  "start": {
+                    "line": 84,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 92,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "resolve",
+              "range": [
+                3101,
+                3108
+              ],
+              "loc": {
+                "start": {
+                  "line": 93,
+                  "column": 4
+                },
+                "end": {
+                  "line": 93,
+                  "column": 11
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "context",
+                  "range": [
+                    3109,
+                    3116
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 93,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 93,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "wildcards",
+                  "range": [
+                    3118,
+                    3127
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 93,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 93,
+                      "column": 30
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3129,
+                  3131
+                ],
+                "loc": {
+                  "start": {
+                    "line": 93,
+                    "column": 32
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 34
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3108,
+                3131
+              ],
+              "loc": {
+                "start": {
+                  "line": 93,
+                  "column": 11
+                },
+                "end": {
+                  "line": 93,
+                  "column": 34
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3101,
+              3131
+            ],
+            "loc": {
+              "start": {
+                "line": 93,
+                "column": 4
+              },
+              "end": {
+                "line": 93,
+                "column": 34
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Resolve this address template against the specified statement context.\n     * \n     * @param {StatementContext} context   the statement context\n     * @param {...string} wildcards An optional list of wildcards which are used to resolve any wildcards in this address template\n     * from left to right\n     * \n     * @return {ResourceAddress} a fully qualified resource address which might be empty, but which does not contain any tokens\n     ",
+                "range": [
+                  2641,
+                  3096
+                ],
+                "loc": {
+                  "start": {
+                    "line": 84,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 92,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Append an address to this addrress template and return a new one.\n     * \n     * @param {string|AddressTemplate} address The address to append.\n     * \n     * @return {AddressTemplate} a new address template with the specified address added at the end.\n     ",
+                "range": [
+                  3137,
+                  3408
+                ],
+                "loc": {
+                  "start": {
+                    "line": 95,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 101,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "append",
+              "range": [
+                3413,
+                3419
+              ],
+              "loc": {
+                "start": {
+                  "line": 102,
+                  "column": 4
+                },
+                "end": {
+                  "line": 102,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "address",
+                  "range": [
+                    3420,
+                    3427
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 102,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 102,
+                      "column": 18
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3429,
+                  3431
+                ],
+                "loc": {
+                  "start": {
+                    "line": 102,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 102,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3419,
+                3431
+              ],
+              "loc": {
+                "start": {
+                  "line": 102,
+                  "column": 10
+                },
+                "end": {
+                  "line": 102,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3413,
+              3431
+            ],
+            "loc": {
+              "start": {
+                "line": 102,
+                "column": 4
+              },
+              "end": {
+                "line": 102,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Append an address to this addrress template and return a new one.\n     * \n     * @param {string|AddressTemplate} address The address to append.\n     * \n     * @return {AddressTemplate} a new address template with the specified address added at the end.\n     ",
+                "range": [
+                  3137,
+                  3408
+                ],
+                "loc": {
+                  "start": {
+                    "line": 95,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 101,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          1476,
+          3433
+        ],
+        "loc": {
+          "start": {
+            "line": 32,
+            "column": 22
+          },
+          "end": {
+            "line": 103,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        1454,
+        3433
+      ],
+      "loc": {
+        "start": {
+          "line": 32,
+          "column": 0
+        },
+        "end": {
+          "line": 103,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Template for a DMR address which might contain multiple variable parts.\n * \n * An address template can be defined using the following BNF:\n * <pre>\n * &lt;address template&gt; ::= \"/\" | &lt;segment&gt;\n * &lt;segment&gt;          ::= &lt;tuple&gt; | &lt;segment&gt;\"/\"&lt;tuple&gt;\n * &lt;tuple&gt;            ::= &lt;variable&gt; | &lt;key&gt;\"=\"&lt;value&gt;\n * &lt;variable&gt;         ::= \"{\"&lt;alpha&gt;\"}\"\n * &lt;key&gt;              ::= &lt;alpha&gt;\n * &lt;value&gt;            ::= &lt;variable&gt; | &lt;alpha&gt; | \"*\"\n * &lt;alpha&gt;            ::= &lt;upper&gt; | &lt;lower&gt;\n * &lt;upper&gt;            ::= \"A\" | \"B\" | … | \"Z\"\n * &lt;lower&gt;            ::= \"a\" | \"b\" | … | \"z\"\n * </pre>\n * \n * Following variables are supported:\n * - <code>{domain.controller}</code>\n * - <code>{selected.profile}</code>\n * - <code>{selected.group}</code>\n * - <code>{selected.server-config}</code>\n * - <code>{selected.server}</code>\n * \n * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode\n * the variables will resolve to an empty string. The values of the variables are managed by the {@link\n * StatementContext}.\n * \n * @example AddressTemplate a2 = AddressTemplate.of(\"{selected.profile}\");\n * AddressTemplate a3 = AddressTemplate.of(\"{selected.profile}/subsystem=mail\");\n * AddressTemplate a4 = AddressTemplate.of(\"{selected.profile}/subsystem=mail/mail-session=*\");\n ",
+          "range": [
+            0,
+            1453
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 31,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Registry for existing resource {@link Metadata}.\n ",
+          "range": [
+            3435,
+            3494
+          ],
+          "loc": {
+            "start": {
+              "line": 105,
+              "column": 0
+            },
+            "end": {
+              "line": 107,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "MetadataRegistry",
+        "range": [
+          3501,
+          3517
+        ],
+        "loc": {
+          "start": {
+            "line": 108,
+            "column": 6
+          },
+          "end": {
+            "line": 108,
+            "column": 22
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "contains",
+              "range": [
+                3809,
+                3817
+              ],
+              "loc": {
+                "start": {
+                  "line": 117,
+                  "column": 4
+                },
+                "end": {
+                  "line": 117,
+                  "column": 12
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    3818,
+                    3826
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 117,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 117,
+                      "column": 21
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  3828,
+                  3830
+                ],
+                "loc": {
+                  "start": {
+                    "line": 117,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 117,
+                    "column": 25
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                3817,
+                3830
+              ],
+              "loc": {
+                "start": {
+                  "line": 117,
+                  "column": 12
+                },
+                "end": {
+                  "line": 117,
+                  "column": 25
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              3809,
+              3830
+            ],
+            "loc": {
+              "start": {
+                "line": 117,
+                "column": 4
+              },
+              "end": {
+                "line": 117,
+                "column": 25
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Checks whether there's a metadata for the specified template.\n     * \n     * @param {AddressTemplate|String} template The address template to check.\n     * \n     * @return {boolean} true if the registry contains metadata for the given template, false otherwise\n     ",
+                "range": [
+                  3525,
+                  3804
+                ],
+                "loc": {
+                  "start": {
+                    "line": 110,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 116,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns metadata associated with the specified address template.\n     * \n     * @param {AddressTemplate|String} template The address template to lookup.\n     * \n     * @return {Metadata} the metadata for the specified template\n     * \n     * @throws MissingMetadataException if no metadata for the given template exists\n     ",
+                "range": [
+                  3836,
+                  4174
+                ],
+                "loc": {
+                  "start": {
+                    "line": 119,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 127,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "lookup",
+              "range": [
+                4179,
+                4185
+              ],
+              "loc": {
+                "start": {
+                  "line": 128,
+                  "column": 4
+                },
+                "end": {
+                  "line": 128,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    4186,
+                    4194
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 128,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 128,
+                      "column": 19
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4196,
+                  4198
+                ],
+                "loc": {
+                  "start": {
+                    "line": 128,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 128,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4185,
+                4198
+              ],
+              "loc": {
+                "start": {
+                  "line": 128,
+                  "column": 10
+                },
+                "end": {
+                  "line": 128,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              4179,
+              4198
+            ],
+            "loc": {
+              "start": {
+                "line": 128,
+                "column": 4
+              },
+              "end": {
+                "line": 128,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Returns metadata associated with the specified address template.\n     * \n     * @param {AddressTemplate|String} template The address template to lookup.\n     * \n     * @return {Metadata} the metadata for the specified template\n     * \n     * @throws MissingMetadataException if no metadata for the given template exists\n     ",
+                "range": [
+                  3836,
+                  4174
+                ],
+                "loc": {
+                  "start": {
+                    "line": 119,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 127,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          3518,
+          4200
+        ],
+        "loc": {
+          "start": {
+            "line": 108,
+            "column": 23
+          },
+          "end": {
+            "line": 129,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        3495,
+        4200
+      ],
+      "loc": {
+        "start": {
+          "line": 108,
+          "column": 0
+        },
+        "end": {
+          "line": 129,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Registry for existing resource {@link Metadata}.\n ",
+          "range": [
+            3435,
+            3494
+          ],
+          "loc": {
+            "start": {
+              "line": 105,
+              "column": 0
+            },
+            "end": {
+              "line": 107,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return\n * null.\n ",
+          "range": [
+            4202,
+            4338
+          ],
+          "loc": {
+            "start": {
+              "line": 131,
+              "column": 0
+            },
+            "end": {
+              "line": 134,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "StatementContext",
+        "range": [
+          4345,
+          4361
+        ],
+        "loc": {
+          "start": {
+            "line": 135,
+            "column": 6
+          },
+          "end": {
+            "line": 135,
+            "column": 22
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "domainController",
+              "range": [
+                4435,
+                4451
+              ],
+              "loc": {
+                "start": {
+                  "line": 140,
+                  "column": 8
+                },
+                "end": {
+                  "line": 140,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4454,
+                  4456
+                ],
+                "loc": {
+                  "start": {
+                    "line": 140,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 140,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4451,
+                4456
+              ],
+              "loc": {
+                "start": {
+                  "line": 140,
+                  "column": 24
+                },
+                "end": {
+                  "line": 140,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4431,
+              4456
+            ],
+            "loc": {
+              "start": {
+                "line": 140,
+                "column": 4
+              },
+              "end": {
+                "line": 140,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the domain controller\n     ",
+                "range": [
+                  4369,
+                  4426
+                ],
+                "loc": {
+                  "start": {
+                    "line": 137,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 139,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected profile\n     ",
+                "range": [
+                  4462,
+                  4518
+                ],
+                "loc": {
+                  "start": {
+                    "line": 142,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 144,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedProfile",
+              "range": [
+                4527,
+                4542
+              ],
+              "loc": {
+                "start": {
+                  "line": 145,
+                  "column": 8
+                },
+                "end": {
+                  "line": 145,
+                  "column": 23
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4545,
+                  4547
+                ],
+                "loc": {
+                  "start": {
+                    "line": 145,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 145,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4542,
+                4547
+              ],
+              "loc": {
+                "start": {
+                  "line": 145,
+                  "column": 23
+                },
+                "end": {
+                  "line": 145,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4523,
+              4547
+            ],
+            "loc": {
+              "start": {
+                "line": 145,
+                "column": 4
+              },
+              "end": {
+                "line": 145,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected profile\n     ",
+                "range": [
+                  4462,
+                  4518
+                ],
+                "loc": {
+                  "start": {
+                    "line": 142,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 144,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server group\n     ",
+                "range": [
+                  4553,
+                  4614
+                ],
+                "loc": {
+                  "start": {
+                    "line": 147,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 149,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedServerGroup",
+              "range": [
+                4623,
+                4642
+              ],
+              "loc": {
+                "start": {
+                  "line": 150,
+                  "column": 8
+                },
+                "end": {
+                  "line": 150,
+                  "column": 27
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4645,
+                  4647
+                ],
+                "loc": {
+                  "start": {
+                    "line": 150,
+                    "column": 30
+                  },
+                  "end": {
+                    "line": 150,
+                    "column": 32
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4642,
+                4647
+              ],
+              "loc": {
+                "start": {
+                  "line": 150,
+                  "column": 27
+                },
+                "end": {
+                  "line": 150,
+                  "column": 32
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4619,
+              4647
+            ],
+            "loc": {
+              "start": {
+                "line": 150,
+                "column": 4
+              },
+              "end": {
+                "line": 150,
+                "column": 32
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server group\n     ",
+                "range": [
+                  4553,
+                  4614
+                ],
+                "loc": {
+                  "start": {
+                    "line": 147,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 149,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected host\n     ",
+                "range": [
+                  4653,
+                  4706
+                ],
+                "loc": {
+                  "start": {
+                    "line": 152,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 154,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedHost",
+              "range": [
+                4715,
+                4727
+              ],
+              "loc": {
+                "start": {
+                  "line": 155,
+                  "column": 8
+                },
+                "end": {
+                  "line": 155,
+                  "column": 20
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4730,
+                  4732
+                ],
+                "loc": {
+                  "start": {
+                    "line": 155,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 155,
+                    "column": 25
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4727,
+                4732
+              ],
+              "loc": {
+                "start": {
+                  "line": 155,
+                  "column": 20
+                },
+                "end": {
+                  "line": 155,
+                  "column": 25
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4711,
+              4732
+            ],
+            "loc": {
+              "start": {
+                "line": 155,
+                "column": 4
+              },
+              "end": {
+                "line": 155,
+                "column": 25
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected host\n     ",
+                "range": [
+                  4653,
+                  4706
+                ],
+                "loc": {
+                  "start": {
+                    "line": 152,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 154,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server config\n     ",
+                "range": [
+                  4738,
+                  4800
+                ],
+                "loc": {
+                  "start": {
+                    "line": 157,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 159,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedServerConfig",
+              "range": [
+                4809,
+                4829
+              ],
+              "loc": {
+                "start": {
+                  "line": 160,
+                  "column": 8
+                },
+                "end": {
+                  "line": 160,
+                  "column": 28
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4832,
+                  4834
+                ],
+                "loc": {
+                  "start": {
+                    "line": 160,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 160,
+                    "column": 33
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4829,
+                4834
+              ],
+              "loc": {
+                "start": {
+                  "line": 160,
+                  "column": 28
+                },
+                "end": {
+                  "line": 160,
+                  "column": 33
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4805,
+              4834
+            ],
+            "loc": {
+              "start": {
+                "line": 160,
+                "column": 4
+              },
+              "end": {
+                "line": 160,
+                "column": 33
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server config\n     ",
+                "range": [
+                  4738,
+                  4800
+                ],
+                "loc": {
+                  "start": {
+                    "line": 157,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 159,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server\n     ",
+                "range": [
+                  4840,
+                  4895
+                ],
+                "loc": {
+                  "start": {
+                    "line": 162,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 164,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "selectedServer",
+              "range": [
+                4904,
+                4918
+              ],
+              "loc": {
+                "start": {
+                  "line": 165,
+                  "column": 8
+                },
+                "end": {
+                  "line": 165,
+                  "column": 22
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  4921,
+                  4923
+                ],
+                "loc": {
+                  "start": {
+                    "line": 165,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 165,
+                    "column": 27
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                4918,
+                4923
+              ],
+              "loc": {
+                "start": {
+                  "line": 165,
+                  "column": 22
+                },
+                "end": {
+                  "line": 165,
+                  "column": 27
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              4900,
+              4923
+            ],
+            "loc": {
+              "start": {
+                "line": 165,
+                "column": 4
+              },
+              "end": {
+                "line": 165,
+                "column": 27
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the selected server\n     ",
+                "range": [
+                  4840,
+                  4895
+                ],
+                "loc": {
+                  "start": {
+                    "line": 162,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 164,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          4362,
+          4925
+        ],
+        "loc": {
+          "start": {
+            "line": 135,
+            "column": 23
+          },
+          "end": {
+            "line": 166,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        4339,
+        4925
+      ],
+      "loc": {
+        "start": {
+          "line": 135,
+          "column": 0
+        },
+        "end": {
+          "line": 166,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return\n * null.\n ",
+          "range": [
+            4202,
+            4338
+          ],
+          "loc": {
+            "start": {
+              "line": 131,
+              "column": 0
+            },
+            "end": {
+              "line": 134,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Represents the RBAC related payload from the read-resource-description operation.\n ",
+          "range": [
+            4927,
+            5019
+          ],
+          "loc": {
+            "start": {
+              "line": 168,
+              "column": 0
+            },
+            "end": {
+              "line": 170,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "SecurityContext",
+        "range": [
+          5026,
+          5041
+        ],
+        "loc": {
+          "start": {
+            "line": 171,
+            "column": 6
+          },
+          "end": {
+            "line": 171,
+            "column": 21
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "READ_ONLY",
+              "range": [
+                5194,
+                5203
+              ],
+              "loc": {
+                "start": {
+                  "line": 176,
+                  "column": 15
+                },
+                "end": {
+                  "line": 176,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5206,
+                  5208
+                ],
+                "loc": {
+                  "start": {
+                    "line": 176,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 176,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5203,
+                5208
+              ],
+              "loc": {
+                "start": {
+                  "line": 176,
+                  "column": 24
+                },
+                "end": {
+                  "line": 176,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5183,
+              5208
+            ],
+            "loc": {
+              "start": {
+                "line": 176,
+                "column": 4
+              },
+              "end": {
+                "line": 176,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * A security context with hardcoded permissions to read resources, write and execute operations are not allowed.\n     ",
+                "range": [
+                  5049,
+                  5178
+                ],
+                "loc": {
+                  "start": {
+                    "line": 173,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 175,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * A security context with hardcoded permissions to read, write and execute any resource.\n     ",
+                "range": [
+                  5214,
+                  5319
+                ],
+                "loc": {
+                  "start": {
+                    "line": 178,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 180,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "RWX",
+              "range": [
+                5335,
+                5338
+              ],
+              "loc": {
+                "start": {
+                  "line": 181,
+                  "column": 15
+                },
+                "end": {
+                  "line": 181,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5341,
+                  5343
+                ],
+                "loc": {
+                  "start": {
+                    "line": 181,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5338,
+                5343
+              ],
+              "loc": {
+                "start": {
+                  "line": 181,
+                  "column": 18
+                },
+                "end": {
+                  "line": 181,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5324,
+              5343
+            ],
+            "loc": {
+              "start": {
+                "line": 181,
+                "column": 4
+              },
+              "end": {
+                "line": 181,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * A security context with hardcoded permissions to read, write and execute any resource.\n     ",
+                "range": [
+                  5214,
+                  5319
+                ],
+                "loc": {
+                  "start": {
+                    "line": 178,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 180,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} whether the security context is readable\n     ",
+                "range": [
+                  5349,
+                  5426
+                ],
+                "loc": {
+                  "start": {
+                    "line": 183,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 185,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": true
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "readable",
+              "range": [
+                5435,
+                5443
+              ],
+              "loc": {
+                "start": {
+                  "line": 186,
+                  "column": 8
+                },
+                "end": {
+                  "line": 186,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5446,
+                  5448
+                ],
+                "loc": {
+                  "start": {
+                    "line": 186,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 186,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5443,
+                5448
+              ],
+              "loc": {
+                "start": {
+                  "line": 186,
+                  "column": 16
+                },
+                "end": {
+                  "line": 186,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5431,
+              5448
+            ],
+            "loc": {
+              "start": {
+                "line": 186,
+                "column": 4
+              },
+              "end": {
+                "line": 186,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} whether the security context is readable\n     ",
+                "range": [
+                  5349,
+                  5426
+                ],
+                "loc": {
+                  "start": {
+                    "line": 183,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 185,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} whether the security context is writable\n     ",
+                "range": [
+                  5454,
+                  5531
+                ],
+                "loc": {
+                  "start": {
+                    "line": 188,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 190,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "writable",
+              "range": [
+                5540,
+                5548
+              ],
+              "loc": {
+                "start": {
+                  "line": 191,
+                  "column": 8
+                },
+                "end": {
+                  "line": 191,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5551,
+                  5553
+                ],
+                "loc": {
+                  "start": {
+                    "line": 191,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 191,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5548,
+                5553
+              ],
+              "loc": {
+                "start": {
+                  "line": 191,
+                  "column": 16
+                },
+                "end": {
+                  "line": 191,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              5536,
+              5553
+            ],
+            "loc": {
+              "start": {
+                "line": 191,
+                "column": 4
+              },
+              "end": {
+                "line": 191,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {boolean} whether the security context is writable\n     ",
+                "range": [
+                  5454,
+                  5531
+                ],
+                "loc": {
+                  "start": {
+                    "line": 188,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 190,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is readable\n     ",
+                "range": [
+                  5559,
+                  5694
+                ],
+                "loc": {
+                  "start": {
+                    "line": 193,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 197,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "isReadable",
+              "range": [
+                5699,
+                5709
+              ],
+              "loc": {
+                "start": {
+                  "line": 198,
+                  "column": 4
+                },
+                "end": {
+                  "line": 198,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "attribute",
+                  "range": [
+                    5710,
+                    5719
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 198,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 198,
+                      "column": 24
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5721,
+                  5723
+                ],
+                "loc": {
+                  "start": {
+                    "line": 198,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 198,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5709,
+                5723
+              ],
+              "loc": {
+                "start": {
+                  "line": 198,
+                  "column": 14
+                },
+                "end": {
+                  "line": 198,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5699,
+              5723
+            ],
+            "loc": {
+              "start": {
+                "line": 198,
+                "column": 4
+              },
+              "end": {
+                "line": 198,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is readable\n     ",
+                "range": [
+                  5559,
+                  5694
+                ],
+                "loc": {
+                  "start": {
+                    "line": 193,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 197,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is writable\n     ",
+                "range": [
+                  5729,
+                  5864
+                ],
+                "loc": {
+                  "start": {
+                    "line": 200,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 204,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "isWritable",
+              "range": [
+                5869,
+                5879
+              ],
+              "loc": {
+                "start": {
+                  "line": 205,
+                  "column": 4
+                },
+                "end": {
+                  "line": 205,
+                  "column": 14
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "attribute",
+                  "range": [
+                    5880,
+                    5889
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 205,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 205,
+                      "column": 24
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  5891,
+                  5893
+                ],
+                "loc": {
+                  "start": {
+                    "line": 205,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 205,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                5879,
+                5893
+              ],
+              "loc": {
+                "start": {
+                  "line": 205,
+                  "column": 14
+                },
+                "end": {
+                  "line": 205,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              5869,
+              5893
+            ],
+            "loc": {
+              "start": {
+                "line": 205,
+                "column": 4
+              },
+              "end": {
+                "line": 205,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is writable\n     ",
+                "range": [
+                  5729,
+                  5864
+                ],
+                "loc": {
+                  "start": {
+                    "line": 200,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 204,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} operation The operation to check.\n     * \n     * @return {boolean} whether the operation is executable\n     ",
+                "range": [
+                  5899,
+                  6036
+                ],
+                "loc": {
+                  "start": {
+                    "line": 207,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 211,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "isExecutable",
+              "range": [
+                6041,
+                6053
+              ],
+              "loc": {
+                "start": {
+                  "line": 212,
+                  "column": 4
+                },
+                "end": {
+                  "line": 212,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "operation",
+                  "range": [
+                    6054,
+                    6063
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 212,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 212,
+                      "column": 26
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  6065,
+                  6067
+                ],
+                "loc": {
+                  "start": {
+                    "line": 212,
+                    "column": 28
+                  },
+                  "end": {
+                    "line": 212,
+                    "column": 30
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                6053,
+                6067
+              ],
+              "loc": {
+                "start": {
+                  "line": 212,
+                  "column": 16
+                },
+                "end": {
+                  "line": 212,
+                  "column": 30
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              6041,
+              6067
+            ],
+            "loc": {
+              "start": {
+                "line": 212,
+                "column": 4
+              },
+              "end": {
+                "line": 212,
+                "column": 30
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @param {string} operation The operation to check.\n     * \n     * @return {boolean} whether the operation is executable\n     ",
+                "range": [
+                  5899,
+                  6036
+                ],
+                "loc": {
+                  "start": {
+                    "line": 207,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 211,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          5042,
+          6069
+        ],
+        "loc": {
+          "start": {
+            "line": 171,
+            "column": 22
+          },
+          "end": {
+            "line": 213,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        5020,
+        6069
+      ],
+      "loc": {
+        "start": {
+          "line": 171,
+          "column": 0
+        },
+        "end": {
+          "line": 213,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Represents the RBAC related payload from the read-resource-description operation.\n ",
+          "range": [
+            4927,
+            5019
+          ],
+          "loc": {
+            "start": {
+              "line": 168,
+              "column": 0
+            },
+            "end": {
+              "line": 170,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link\n * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.\n ",
+          "range": [
+            6071,
+            6297
+          ],
+          "loc": {
+            "start": {
+              "line": 215,
+              "column": 0
+            },
+            "end": {
+              "line": 218,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "MetadataProcessor",
+        "range": [
+          6304,
+          6321
+        ],
+        "loc": {
+          "start": {
+            "line": 219,
+            "column": 6
+          },
+          "end": {
+            "line": 219,
+            "column": 23
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "lookup",
+              "range": [
+                6718,
+                6724
+              ],
+              "loc": {
+                "start": {
+                  "line": 228,
+                  "column": 4
+                },
+                "end": {
+                  "line": 228,
+                  "column": 10
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "template",
+                  "range": [
+                    6725,
+                    6733
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 228,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 228,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "type": "Identifier",
+                  "name": "callback",
+                  "range": [
+                    6735,
+                    6743
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 228,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 228,
+                      "column": 29
+                    }
+                  }
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  6745,
+                  6747
+                ],
+                "loc": {
+                  "start": {
+                    "line": 228,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 228,
+                    "column": 33
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                6724,
+                6747
+              ],
+              "loc": {
+                "start": {
+                  "line": 228,
+                  "column": 10
+                },
+                "end": {
+                  "line": 228,
+                  "column": 33
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              6718,
+              6747
+            ],
+            "loc": {
+              "start": {
+                "line": 228,
+                "column": 4
+              },
+              "end": {
+                "line": 228,
+                "column": 33
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is\n     * already in the registry it's passed directly to the callback.\n     * \n     * @param {AddressTemplate|String} template The address template to lookup.\n     * @param {function(metadata: Metadata)} callback The callback which receives the metadata.\n     ",
+                "range": [
+                  6329,
+                  6713
+                ],
+                "loc": {
+                  "start": {
+                    "line": 221,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 227,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          6322,
+          6749
+        ],
+        "loc": {
+          "start": {
+            "line": 219,
+            "column": 24
+          },
+          "end": {
+            "line": 229,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        6298,
+        6749
+      ],
+      "loc": {
+        "start": {
+          "line": 219,
+          "column": 0
+        },
+        "end": {
+          "line": 229,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link\n * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.\n ",
+          "range": [
+            6071,
+            6297
+          ],
+          "loc": {
+            "start": {
+              "line": 215,
+              "column": 0
+            },
+            "end": {
+              "line": 218,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains the resource and attribute descriptions from the read-resource-description operation.\n ",
+          "range": [
+            6751,
+            6856
+          ],
+          "loc": {
+            "start": {
+              "line": 231,
+              "column": 0
+            },
+            "end": {
+              "line": 233,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "ResourceDescription",
+        "range": [
+          6863,
+          6882
+        ],
+        "loc": {
+          "start": {
+            "line": 234,
+            "column": 6
+          },
+          "end": {
+            "line": 234,
+            "column": 25
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "description",
+              "range": [
+                6959,
+                6970
+              ],
+              "loc": {
+                "start": {
+                  "line": 239,
+                  "column": 8
+                },
+                "end": {
+                  "line": 239,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  6973,
+                  6975
+                ],
+                "loc": {
+                  "start": {
+                    "line": 239,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 239,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                6970,
+                6975
+              ],
+              "loc": {
+                "start": {
+                  "line": 239,
+                  "column": 19
+                },
+                "end": {
+                  "line": 239,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              6955,
+              6975
+            ],
+            "loc": {
+              "start": {
+                "line": 239,
+                "column": 4
+              },
+              "end": {
+                "line": 239,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {string} the resource description\n     ",
+                "range": [
+                  6890,
+                  6950
+                ],
+                "loc": {
+                  "start": {
+                    "line": 236,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 238,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the operation descriptions\n     ",
+                "range": [
+                  6981,
+                  7047
+                ],
+                "loc": {
+                  "start": {
+                    "line": 241,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 243,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "operations",
+              "range": [
+                7056,
+                7066
+              ],
+              "loc": {
+                "start": {
+                  "line": 244,
+                  "column": 8
+                },
+                "end": {
+                  "line": 244,
+                  "column": 18
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7069,
+                  7071
+                ],
+                "loc": {
+                  "start": {
+                    "line": 244,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 244,
+                    "column": 23
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7066,
+                7071
+              ],
+              "loc": {
+                "start": {
+                  "line": 244,
+                  "column": 18
+                },
+                "end": {
+                  "line": 244,
+                  "column": 23
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              7052,
+              7071
+            ],
+            "loc": {
+              "start": {
+                "line": 244,
+                "column": 4
+              },
+              "end": {
+                "line": 244,
+                "column": 23
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the operation descriptions\n     ",
+                "range": [
+                  6981,
+                  7047
+                ],
+                "loc": {
+                  "start": {
+                    "line": 241,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 243,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the attribute descriptions\n     ",
+                "range": [
+                  7077,
+                  7143
+                ],
+                "loc": {
+                  "start": {
+                    "line": 246,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 248,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "getAttributes",
+              "range": [
+                7148,
+                7161
+              ],
+              "loc": {
+                "start": {
+                  "line": 249,
+                  "column": 4
+                },
+                "end": {
+                  "line": 249,
+                  "column": 17
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7164,
+                  7166
+                ],
+                "loc": {
+                  "start": {
+                    "line": 249,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 249,
+                    "column": 22
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7161,
+                7166
+              ],
+              "loc": {
+                "start": {
+                  "line": 249,
+                  "column": 17
+                },
+                "end": {
+                  "line": 249,
+                  "column": 22
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              7148,
+              7166
+            ],
+            "loc": {
+              "start": {
+                "line": 249,
+                "column": 4
+              },
+              "end": {
+                "line": 249,
+                "column": 22
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the attribute descriptions\n     ",
+                "range": [
+                  7077,
+                  7143
+                ],
+                "loc": {
+                  "start": {
+                    "line": 246,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 248,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the request properties of the add operation\n     ",
+                "range": [
+                  7172,
+                  7255
+                ],
+                "loc": {
+                  "start": {
+                    "line": 251,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 253,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "getRequestProperties",
+              "range": [
+                7260,
+                7280
+              ],
+              "loc": {
+                "start": {
+                  "line": 254,
+                  "column": 4
+                },
+                "end": {
+                  "line": 254,
+                  "column": 24
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7283,
+                  7285
+                ],
+                "loc": {
+                  "start": {
+                    "line": 254,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 254,
+                    "column": 29
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7280,
+                7285
+              ],
+              "loc": {
+                "start": {
+                  "line": 254,
+                  "column": 24
+                },
+                "end": {
+                  "line": 254,
+                  "column": 29
+                }
+              }
+            },
+            "kind": "method",
+            "computed": false,
+            "range": [
+              7260,
+              7285
+            ],
+            "loc": {
+              "start": {
+                "line": 254,
+                "column": 4
+              },
+              "end": {
+                "line": 254,
+                "column": 29
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {Property[]} the request properties of the add operation\n     ",
+                "range": [
+                  7172,
+                  7255
+                ],
+                "loc": {
+                  "start": {
+                    "line": 251,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 253,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          6883,
+          7287
+        ],
+        "loc": {
+          "start": {
+            "line": 234,
+            "column": 26
+          },
+          "end": {
+            "line": 255,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        6857,
+        7287
+      ],
+      "loc": {
+        "start": {
+          "line": 234,
+          "column": 0
+        },
+        "end": {
+          "line": 255,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Contains the resource and attribute descriptions from the read-resource-description operation.\n ",
+          "range": [
+            6751,
+            6856
+          ],
+          "loc": {
+            "start": {
+              "line": 231,
+              "column": 0
+            },
+            "end": {
+              "line": 233,
+              "column": 3
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Simple data struct for common metadata. Used to keep the method signatures small and tidy.\n ",
+          "range": [
+            7289,
+            7390
+          ],
+          "loc": {
+            "start": {
+              "line": 257,
+              "column": 0
+            },
+            "end": {
+              "line": 259,
+              "column": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ClassDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "Metadata",
+        "range": [
+          7397,
+          7405
+        ],
+        "loc": {
+          "start": {
+            "line": 260,
+            "column": 6
+          },
+          "end": {
+            "line": 260,
+            "column": 14
+          }
+        }
+      },
+      "superClass": null,
+      "body": {
+        "type": "ClassBody",
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "template",
+              "range": [
+                7487,
+                7495
+              ],
+              "loc": {
+                "start": {
+                  "line": 265,
+                  "column": 8
+                },
+                "end": {
+                  "line": 265,
+                  "column": 16
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7498,
+                  7500
+                ],
+                "loc": {
+                  "start": {
+                    "line": 265,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 265,
+                    "column": 21
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7495,
+                7500
+              ],
+              "loc": {
+                "start": {
+                  "line": 265,
+                  "column": 16
+                },
+                "end": {
+                  "line": 265,
+                  "column": 21
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              7483,
+              7500
+            ],
+            "loc": {
+              "start": {
+                "line": 265,
+                "column": 4
+              },
+              "end": {
+                "line": 265,
+                "column": 21
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {AddressTemplate} the address template\n     ",
+                "range": [
+                  7413,
+                  7478
+                ],
+                "loc": {
+                  "start": {
+                    "line": 262,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 264,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {SecurityContext} the security context\n     ",
+                "range": [
+                  7506,
+                  7571
+                ],
+                "loc": {
+                  "start": {
+                    "line": 267,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 269,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "securityContext",
+              "range": [
+                7580,
+                7595
+              ],
+              "loc": {
+                "start": {
+                  "line": 270,
+                  "column": 8
+                },
+                "end": {
+                  "line": 270,
+                  "column": 23
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7598,
+                  7600
+                ],
+                "loc": {
+                  "start": {
+                    "line": 270,
+                    "column": 26
+                  },
+                  "end": {
+                    "line": 270,
+                    "column": 28
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7595,
+                7600
+              ],
+              "loc": {
+                "start": {
+                  "line": 270,
+                  "column": 23
+                },
+                "end": {
+                  "line": 270,
+                  "column": 28
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              7576,
+              7600
+            ],
+            "loc": {
+              "start": {
+                "line": 270,
+                "column": 4
+              },
+              "end": {
+                "line": 270,
+                "column": 28
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {SecurityContext} the security context\n     ",
+                "range": [
+                  7506,
+                  7571
+                ],
+                "loc": {
+                  "start": {
+                    "line": 267,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 269,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "trailingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {ResourceDescription} the resource description\n     ",
+                "range": [
+                  7606,
+                  7679
+                ],
+                "loc": {
+                  "start": {
+                    "line": 272,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 274,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "description",
+              "range": [
+                7688,
+                7699
+              ],
+              "loc": {
+                "start": {
+                  "line": 275,
+                  "column": 8
+                },
+                "end": {
+                  "line": 275,
+                  "column": 19
+                }
+              }
+            },
+            "value": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "body": [],
+                "range": [
+                  7702,
+                  7704
+                ],
+                "loc": {
+                  "start": {
+                    "line": 275,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 275,
+                    "column": 24
+                  }
+                }
+              },
+              "generator": false,
+              "expression": false,
+              "range": [
+                7699,
+                7704
+              ],
+              "loc": {
+                "start": {
+                  "line": 275,
+                  "column": 19
+                },
+                "end": {
+                  "line": 275,
+                  "column": 24
+                }
+              }
+            },
+            "kind": "get",
+            "computed": false,
+            "range": [
+              7684,
+              7704
+            ],
+            "loc": {
+              "start": {
+                "line": 275,
+                "column": 4
+              },
+              "end": {
+                "line": 275,
+                "column": 24
+              }
+            },
+            "leadingComments": [
+              {
+                "type": "Block",
+                "value": "*\n     * @return {ResourceDescription} the resource description\n     ",
+                "range": [
+                  7606,
+                  7679
+                ],
+                "loc": {
+                  "start": {
+                    "line": 272,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 274,
+                    "column": 7
+                  }
+                }
+              }
+            ],
+            "static": false
+          }
+        ],
+        "range": [
+          7406,
+          7706
+        ],
+        "loc": {
+          "start": {
+            "line": 260,
+            "column": 15
+          },
+          "end": {
+            "line": 276,
+            "column": 1
+          }
+        }
+      },
+      "range": [
+        7391,
+        7706
+      ],
+      "loc": {
+        "start": {
+          "line": 260,
+          "column": 0
+        },
+        "end": {
+          "line": 276,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\n * Simple data struct for common metadata. Used to keep the method signatures small and tidy.\n ",
+          "range": [
+            7289,
+            7390
+          ],
+          "loc": {
+            "start": {
+              "line": 257,
+              "column": 0
+            },
+            "end": {
+              "line": 259,
+              "column": 3
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    1454,
+    7706
+  ],
+  "loc": {
+    "start": {
+      "line": 32,
+      "column": 0
+    },
+    "end": {
+      "line": 276,
+      "column": 1
+    }
+  },
+  "comments": [
+    {
+      "type": "Block",
+      "value": "*\n * Template for a DMR address which might contain multiple variable parts.\n * \n * An address template can be defined using the following BNF:\n * <pre>\n * &lt;address template&gt; ::= \"/\" | &lt;segment&gt;\n * &lt;segment&gt;          ::= &lt;tuple&gt; | &lt;segment&gt;\"/\"&lt;tuple&gt;\n * &lt;tuple&gt;            ::= &lt;variable&gt; | &lt;key&gt;\"=\"&lt;value&gt;\n * &lt;variable&gt;         ::= \"{\"&lt;alpha&gt;\"}\"\n * &lt;key&gt;              ::= &lt;alpha&gt;\n * &lt;value&gt;            ::= &lt;variable&gt; | &lt;alpha&gt; | \"*\"\n * &lt;alpha&gt;            ::= &lt;upper&gt; | &lt;lower&gt;\n * &lt;upper&gt;            ::= \"A\" | \"B\" | … | \"Z\"\n * &lt;lower&gt;            ::= \"a\" | \"b\" | … | \"z\"\n * </pre>\n * \n * Following variables are supported:\n * - <code>{domain.controller}</code>\n * - <code>{selected.profile}</code>\n * - <code>{selected.group}</code>\n * - <code>{selected.server-config}</code>\n * - <code>{selected.server}</code>\n * \n * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode\n * the variables will resolve to an empty string. The values of the variables are managed by the {@link\n * StatementContext}.\n * \n * @example AddressTemplate a2 = AddressTemplate.of(\"{selected.profile}\");\n * AddressTemplate a3 = AddressTemplate.of(\"{selected.profile}/subsystem=mail\");\n * AddressTemplate a4 = AddressTemplate.of(\"{selected.profile}/subsystem=mail/mail-session=*\");\n ",
+      "range": [
+        0,
+        1453
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 31,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * The root template\n     ",
+      "range": [
+        1483,
+        1519
+      ],
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 4
+        },
+        "end": {
+          "line": 36,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} true if this template contains no tokens, false otherwise\n     ",
+      "range": [
+        1550,
+        1644
+      ],
+      "loc": {
+        "start": {
+          "line": 39,
+          "column": 4
+        },
+        "end": {
+          "line": 41,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {number} the number of tokens\n     ",
+      "range": [
+        1669,
+        1725
+      ],
+      "loc": {
+        "start": {
+          "line": 44,
+          "column": 4
+        },
+        "end": {
+          "line": 46,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {AddressTemplate} the parent address template or the root template\n     ",
+      "range": [
+        1749,
+        1842
+      ],
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 4
+        },
+        "end": {
+          "line": 51,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the name of the first segment or null if this address template is empty.\n     ",
+      "range": [
+        1868,
+        1976
+      ],
+      "loc": {
+        "start": {
+          "line": 54,
+          "column": 4
+        },
+        "end": {
+          "line": 56,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the value of the first segment or null if this address template is empty.\n     ",
+      "range": [
+        2005,
+        2114
+      ],
+      "loc": {
+        "start": {
+          "line": 59,
+          "column": 4
+        },
+        "end": {
+          "line": 61,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the name of the last segment or null if this address template is empty.\n     ",
+      "range": [
+        2144,
+        2251
+      ],
+      "loc": {
+        "start": {
+          "line": 64,
+          "column": 4
+        },
+        "end": {
+          "line": 66,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the value of the last segment or null if this address template is empty.\n     ",
+      "range": [
+        2279,
+        2387
+      ],
+      "loc": {
+        "start": {
+          "line": 69,
+          "column": 4
+        },
+        "end": {
+          "line": 71,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Creates a new address template from an encoded string template.\n     ",
+      "range": [
+        2416,
+        2498
+      ],
+      "loc": {
+        "start": {
+          "line": 74,
+          "column": 4
+        },
+        "end": {
+          "line": 76,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the string representation of this address template\n     ",
+      "range": [
+        2531,
+        2617
+      ],
+      "loc": {
+        "start": {
+          "line": 79,
+          "column": 4
+        },
+        "end": {
+          "line": 81,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Resolve this address template against the specified statement context.\n     * \n     * @param {StatementContext} context   the statement context\n     * @param {...string} wildcards An optional list of wildcards which are used to resolve any wildcards in this address template\n     * from left to right\n     * \n     * @return {ResourceAddress} a fully qualified resource address which might be empty, but which does not contain any tokens\n     ",
+      "range": [
+        2641,
+        3096
+      ],
+      "loc": {
+        "start": {
+          "line": 84,
+          "column": 4
+        },
+        "end": {
+          "line": 92,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Append an address to this addrress template and return a new one.\n     * \n     * @param {string|AddressTemplate} address The address to append.\n     * \n     * @return {AddressTemplate} a new address template with the specified address added at the end.\n     ",
+      "range": [
+        3137,
+        3408
+      ],
+      "loc": {
+        "start": {
+          "line": 95,
+          "column": 4
+        },
+        "end": {
+          "line": 101,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Registry for existing resource {@link Metadata}.\n ",
+      "range": [
+        3435,
+        3494
+      ],
+      "loc": {
+        "start": {
+          "line": 105,
+          "column": 0
+        },
+        "end": {
+          "line": 107,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Checks whether there's a metadata for the specified template.\n     * \n     * @param {AddressTemplate|String} template The address template to check.\n     * \n     * @return {boolean} true if the registry contains metadata for the given template, false otherwise\n     ",
+      "range": [
+        3525,
+        3804
+      ],
+      "loc": {
+        "start": {
+          "line": 110,
+          "column": 4
+        },
+        "end": {
+          "line": 116,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Returns metadata associated with the specified address template.\n     * \n     * @param {AddressTemplate|String} template The address template to lookup.\n     * \n     * @return {Metadata} the metadata for the specified template\n     * \n     * @throws MissingMetadataException if no metadata for the given template exists\n     ",
+      "range": [
+        3836,
+        4174
+      ],
+      "loc": {
+        "start": {
+          "line": 119,
+          "column": 4
+        },
+        "end": {
+          "line": 127,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return\n * null.\n ",
+      "range": [
+        4202,
+        4338
+      ],
+      "loc": {
+        "start": {
+          "line": 131,
+          "column": 0
+        },
+        "end": {
+          "line": 134,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the domain controller\n     ",
+      "range": [
+        4369,
+        4426
+      ],
+      "loc": {
+        "start": {
+          "line": 137,
+          "column": 4
+        },
+        "end": {
+          "line": 139,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the selected profile\n     ",
+      "range": [
+        4462,
+        4518
+      ],
+      "loc": {
+        "start": {
+          "line": 142,
+          "column": 4
+        },
+        "end": {
+          "line": 144,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the selected server group\n     ",
+      "range": [
+        4553,
+        4614
+      ],
+      "loc": {
+        "start": {
+          "line": 147,
+          "column": 4
+        },
+        "end": {
+          "line": 149,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the selected host\n     ",
+      "range": [
+        4653,
+        4706
+      ],
+      "loc": {
+        "start": {
+          "line": 152,
+          "column": 4
+        },
+        "end": {
+          "line": 154,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the selected server config\n     ",
+      "range": [
+        4738,
+        4800
+      ],
+      "loc": {
+        "start": {
+          "line": 157,
+          "column": 4
+        },
+        "end": {
+          "line": 159,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the selected server\n     ",
+      "range": [
+        4840,
+        4895
+      ],
+      "loc": {
+        "start": {
+          "line": 162,
+          "column": 4
+        },
+        "end": {
+          "line": 164,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Represents the RBAC related payload from the read-resource-description operation.\n ",
+      "range": [
+        4927,
+        5019
+      ],
+      "loc": {
+        "start": {
+          "line": 168,
+          "column": 0
+        },
+        "end": {
+          "line": 170,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * A security context with hardcoded permissions to read resources, write and execute operations are not allowed.\n     ",
+      "range": [
+        5049,
+        5178
+      ],
+      "loc": {
+        "start": {
+          "line": 173,
+          "column": 4
+        },
+        "end": {
+          "line": 175,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * A security context with hardcoded permissions to read, write and execute any resource.\n     ",
+      "range": [
+        5214,
+        5319
+      ],
+      "loc": {
+        "start": {
+          "line": 178,
+          "column": 4
+        },
+        "end": {
+          "line": 180,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} whether the security context is readable\n     ",
+      "range": [
+        5349,
+        5426
+      ],
+      "loc": {
+        "start": {
+          "line": 183,
+          "column": 4
+        },
+        "end": {
+          "line": 185,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {boolean} whether the security context is writable\n     ",
+      "range": [
+        5454,
+        5531
+      ],
+      "loc": {
+        "start": {
+          "line": 188,
+          "column": 4
+        },
+        "end": {
+          "line": 190,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is readable\n     ",
+      "range": [
+        5559,
+        5694
+      ],
+      "loc": {
+        "start": {
+          "line": 193,
+          "column": 4
+        },
+        "end": {
+          "line": 197,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @param {string} attribute The attribute to check.\n     * \n     * @return {boolean} whether the attribute is writable\n     ",
+      "range": [
+        5729,
+        5864
+      ],
+      "loc": {
+        "start": {
+          "line": 200,
+          "column": 4
+        },
+        "end": {
+          "line": 204,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @param {string} operation The operation to check.\n     * \n     * @return {boolean} whether the operation is executable\n     ",
+      "range": [
+        5899,
+        6036
+      ],
+      "loc": {
+        "start": {
+          "line": 207,
+          "column": 4
+        },
+        "end": {
+          "line": 211,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link\n * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.\n ",
+      "range": [
+        6071,
+        6297
+      ],
+      "loc": {
+        "start": {
+          "line": 215,
+          "column": 0
+        },
+        "end": {
+          "line": 218,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is\n     * already in the registry it's passed directly to the callback.\n     * \n     * @param {AddressTemplate|String} template The address template to lookup.\n     * @param {function(metadata: Metadata)} callback The callback which receives the metadata.\n     ",
+      "range": [
+        6329,
+        6713
+      ],
+      "loc": {
+        "start": {
+          "line": 221,
+          "column": 4
+        },
+        "end": {
+          "line": 227,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Contains the resource and attribute descriptions from the read-resource-description operation.\n ",
+      "range": [
+        6751,
+        6856
+      ],
+      "loc": {
+        "start": {
+          "line": 231,
+          "column": 0
+        },
+        "end": {
+          "line": 233,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {string} the resource description\n     ",
+      "range": [
+        6890,
+        6950
+      ],
+      "loc": {
+        "start": {
+          "line": 236,
+          "column": 4
+        },
+        "end": {
+          "line": 238,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Property[]} the operation descriptions\n     ",
+      "range": [
+        6981,
+        7047
+      ],
+      "loc": {
+        "start": {
+          "line": 241,
+          "column": 4
+        },
+        "end": {
+          "line": 243,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Property[]} the attribute descriptions\n     ",
+      "range": [
+        7077,
+        7143
+      ],
+      "loc": {
+        "start": {
+          "line": 246,
+          "column": 4
+        },
+        "end": {
+          "line": 248,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {Property[]} the request properties of the add operation\n     ",
+      "range": [
+        7172,
+        7255
+      ],
+      "loc": {
+        "start": {
+          "line": 251,
+          "column": 4
+        },
+        "end": {
+          "line": 253,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n * Simple data struct for common metadata. Used to keep the method signatures small and tidy.\n ",
+      "range": [
+        7289,
+        7390
+      ],
+      "loc": {
+        "start": {
+          "line": 257,
+          "column": 0
+        },
+        "end": {
+          "line": 259,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {AddressTemplate} the address template\n     ",
+      "range": [
+        7413,
+        7478
+      ],
+      "loc": {
+        "start": {
+          "line": 262,
+          "column": 4
+        },
+        "end": {
+          "line": 264,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {SecurityContext} the security context\n     ",
+      "range": [
+        7506,
+        7571
+      ],
+      "loc": {
+        "start": {
+          "line": 267,
+          "column": 4
+        },
+        "end": {
+          "line": 269,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "*\n     * @return {ResourceDescription} the resource description\n     ",
+      "range": [
+        7606,
+        7679
+      ],
+      "loc": {
+        "start": {
+          "line": 272,
+          "column": 4
+        },
+        "end": {
+          "line": 274,
+          "column": 7
+        }
+      }
+    }
+  ]
+}
