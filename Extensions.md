@@ -1,4 +1,4 @@
-Extensions are a way to add features to the management console. They are written in JavaScript and should use the [[JavaScript API|JavaScript-API]] to build the UI and interact with the management endpoint.  
+Extensions are a way to add features to the management console. They are written in JavaScript and should use the [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html) to build the UI and interact with the management endpoint.  
  
 # Architecture
 
