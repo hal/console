@@ -11,12 +11,10 @@
 #   2. Publish the doc to branch 'gh-pages' (only if parameter 'deploy' was specified)
 
 ROOT=$PWD
-BRANCH=$(git symbolic-ref -q HEAD)
-BRANCH=${BRANCH##refs/heads/}
-BRANCH=${BRANCH:-HEAD}
+CHANGES=$(git diff --no-ext-diff --quiet --exit-code)
 
 # Prerequisites
-if [$1 == "deploy"] && [! git diff --no-ext-diff --quiet --exit-code ]; then
+if [ "$1" == "deploy" ] && [ -z "$CHANGES" ]; then
     echo "Cannot publish to esdoc. You have uncommitted changes in the current branch."
     exit -1
 fi
@@ -25,7 +23,7 @@ cd app
 mvn process-sources
 grunt esdoc
 
-if $1 == "deploy"; then
+if [ "$1" == "deploy" ]; then
     rm -rf /tmp/esdoc
     cd /tmp/
     git clone -b esdoc --single-branch git@github.com:hal/hal.next.git
