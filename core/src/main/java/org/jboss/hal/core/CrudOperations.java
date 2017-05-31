@@ -26,12 +26,12 @@ import javax.inject.Provider;
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.js.util.JsArrayOf;
-import elemental.js.util.JsMapFromStringTo;
+import elemental2.core.Array;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.JsHelper;
@@ -71,8 +71,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public class CrudOperations {
 
     /**
@@ -1359,7 +1359,7 @@ public class CrudOperations {
             final ResourceAddress address, final Callback callback) {
 
         String title = resources.messages().removeConfirmationTitle(type);
-        SafeHtml question = resources.messages().removeConfirmationQuestion("index " + index);
+        SafeHtml question = resources.messages().removeConfirmationQuestion("index " + index); //NON-NLS
         SafeHtml success = resources.messages().removeResourceSuccess(type, name);
 
         DialogFactory.showConfirmation(title, question, () -> {
@@ -1394,7 +1394,7 @@ public class CrudOperations {
     @JsFunction
     public interface JsReadChildrenCallback {
 
-        void execute(JsArrayOf<Property> children);
+        void execute(Array<Property> children);
     }
 
     /**
@@ -1411,7 +1411,7 @@ public class CrudOperations {
     @JsMethod(name = "addDialog")
     public void jsAddDialog(String type,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("string[]") JsArrayOf<String> attributes,
+            @EsParam("string[]") Array<String> attributes,
             @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
 
         String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
@@ -1481,7 +1481,7 @@ public class CrudOperations {
      */
     @JsMethod(name = "addSingletonDialog")
     public void jsAddSingletonDialog(String type, Object address,
-            @EsParam("string[]") JsArrayOf<String> attributes,
+            @EsParam("string[]") Array<String> attributes,
             @EsParam("function(address: ResourceAddress)") AddSingletonCallback callback) {
 
         String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
@@ -1619,7 +1619,7 @@ public class CrudOperations {
      */
     @JsMethod(name = "save")
     public void jsSave(String type, String name, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsMapFromStringTo<Object> changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;
@@ -1648,7 +1648,7 @@ public class CrudOperations {
      */
     @JsMethod(name = "saveSingleton")
     public void jsSaveSingleton(String type, @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("{key: string, value: object}") JsMapFromStringTo<Object> changeSet,
+            @EsParam("{key: string, value: object}") JsPropertyMapOfAny changeSet,
             @EsParam("function()") JsCallback callback) {
 
         Callback c = callback::execute;

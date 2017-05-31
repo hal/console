@@ -35,7 +35,6 @@ public class ComplexAttributeModelNodeForm {
     public ComplexAttributeModelNodeForm(String parentId, Metadata metadata, String complexAttributeName) {
         this.parentId = parentId;
         this.complexAttributeName = complexAttributeName;
-
         this.metadata = metadata.repackageComplexAttribute(complexAttributeName, false, false, true);
     }
 

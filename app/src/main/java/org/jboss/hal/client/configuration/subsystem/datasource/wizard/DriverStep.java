@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
@@ -74,7 +74,7 @@ class DriverStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return form.asElement();
     }
 

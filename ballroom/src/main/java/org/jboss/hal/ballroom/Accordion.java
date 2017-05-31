@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -25,6 +27,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -42,50 +47,41 @@ public class Accordion implements IsElement {
     }
 
 
-    private static final String BODY_ELEMENT = "panelBody";
-
     private final String id;
-    private final Element root;
+    private final HTMLDivElement root;
 
     public Accordion(final String id) {
         this.id = id;
-        root = new Elements.Builder().div()
+        root = div()
                 .id(id)
                 .css(panelGroup)
                 .aria("multiselectable", UIConstants.TRUE)
                 .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                .build();
+                .asElement();
     }
 
-    public void add(String id, String title, Element first, Element... rest) {
-        boolean firstPanel = root.getChildElementCount() == 0;
+    public void add(String id, String title, HTMLElement first, HTMLElement... rest) {
+        boolean firstPanel = root.childElementCount == 0;
         String headerId = Ids.build(id, "header");
 
         // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(panel, panelDefault)
-                .div().css(panelHeading).id(headerId)
-                    .h(4).css(panelTitle)
-                        .a("#" + id)
-                            .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
-                            .data("parent", "#" + this.id)
-                            .aria(UIConstants.CONTROLS, id)
-                            .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
-                            .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                            .textContent(title)
-                        .end()
-                    .end()
-                .end()
-                .div().id(id).css(panelCollapse, collapse, firstPanel ? in : "").aria("labelledby", headerId)
-                    .div().css(panelBody).rememberAs(BODY_ELEMENT).end()
-                .end()
-            .end();
-        // @formatter:on
+        HTMLDivElement body;
+        HTMLDivElement div = div().css(panel, panelDefault)
+                .add(div().css(panelHeading).id(headerId)
+                        .add(h(4).css(panelTitle)
+                                .add(a("#" + id)
+                                        .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
+                                        .data("parent", "#" + this.id)
+                                        .aria(UIConstants.CONTROLS, id)
+                                        .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
+                                        .attr(UIConstants.ROLE, UIConstants.BUTTON)
+                                        .textContent(title))))
+                .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : "").aria("labelledby", headerId)
+                        .add(body = div().css(panelBody).asElement()))
+                .asElement();
 
-        Element body = builder.referenceFor(BODY_ELEMENT);
         fillBody(body, first, rest);
-
-        root.appendChild(builder.build());
+        root.appendChild(div);
     }
 
     private void fillBody(Element body, Element first, Element... rest) {
@@ -98,7 +94,7 @@ public class Accordion implements IsElement {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -116,7 +112,7 @@ public class Accordion implements IsElement {
 
     public void setContent(final String id, Element first, Element... rest) {
         if (id != null) {
-            Element body = Browser.getDocument().querySelector("#" + id + " > ." + panelBody);
+            Element body = DomGlobal.document.querySelector("#" + id + " > ." + panelBody);
             if (body != null) {
                 Elements.removeChildrenFrom(body);
                 fillBody(body, first, rest);

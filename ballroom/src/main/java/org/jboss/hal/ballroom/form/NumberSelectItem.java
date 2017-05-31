@@ -19,14 +19,17 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental.dom.Element;
-import elemental.html.ButtonElement;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -58,46 +61,38 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         private static final String BUTTON_GROUP = "buttonGroup";
         private static final String NUMBER = "number";
 
-        private final Map<Long, ButtonElement> buttons;
-        private final Element buttonGroup;
-        private final Element helpBlock;
-        private final Element inputContainer;
-        private final Element root;
+        private final Map<Long, HTMLButtonElement> buttons;
+        private final HTMLElement buttonGroup;
+        private final HTMLElement helpBlock;
+        private final HTMLElement inputContainer;
+        private final HTMLElement root;
 
         NumberSelectEditingAppearance(long[] numbers) {
             super(EnumSet.of(DEPRECATED, ENABLED, INVALID, REQUIRED));
             this.buttons = new HashMap<>();
-
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .div().css(formGroup)
-                    .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
-                    .div().css(halFormInput).rememberAs(INPUT_CONTAINER)
-                        .div().css(btnGroup).attr(UIConstants.ROLE, UIConstants.GROUP).rememberAs(BUTTON_GROUP);
-                            for (long number : numbers) {
-                                String value = String.valueOf(number);
-                                builder.button()
-                                        .data(NUMBER, value)
-                                        .css(btn, btnDefault)
-                                        .on(click, event -> {
-                                            showValue(number);
-                                            modifyValue(number);
-                                        })
-                                        .rememberAs(value)
-                                        .textContent(value)
-                                        .end();
-                                buttons.put(number, builder.referenceFor(value));
-                            }
-                        builder.end()
-                    .end()
-                .end();
-            // @formatter:on
-
+            
+            root = div().css(formGroup)
+                    .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                    .add(inputContainer = div().css(halFormInput)
+                            .add(buttonGroup = div().css(btnGroup)
+                                    .attr(UIConstants.ROLE, UIConstants.GROUP)
+                                    .asElement())
+                            .asElement())
+                    .asElement();
+            for (long number : numbers) {
+                String value = String.valueOf(number);
+                HTMLButtonElement button = button().css(btn, btnDefault)
+                        .textContent(value)
+                        .data(NUMBER, value)
+                        .on(click, event -> {
+                            showValue(number);
+                            modifyValue(number);
+                        })
+                        .asElement();
+                buttons.put(number, button);
+                buttonGroup.appendChild(button);
+            }
             helpBlock = Appearance.helpBlock();
-            buttonGroup = builder.referenceFor(BUTTON_GROUP);
-            labelElement = builder.referenceFor(LABEL_ELEMENT);
-            inputContainer = builder.referenceFor(INPUT_CONTAINER);
-            root = builder.build();
         }
 
         @Override
@@ -111,16 +106,16 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return root;
         }
 
         @Override
         public void setId(final String id) {
             this.id = Ids.build(id, EDITING.name().toLowerCase());
-            root.getDataset().setAt(FORM_ITEM_GROUP, this.id);
-            buttonGroup.setId(this.id);
-            labelElement.setHtmlFor(this.id);
+            root.dataset.set(FORM_ITEM_GROUP, this.id);
+            buttonGroup.id = this.id;
+            labelElement.htmlFor = this.id;
         }
 
         @Override
@@ -132,18 +127,18 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         public void showValue(final Long value) {
             buttons.forEach((number, button) -> {
                 if (number.equals(value)) {
-                    button.getClassList().remove(btnDefault);
-                    button.getClassList().add(btnPrimary);
+                    button.classList.remove(btnDefault);
+                    button.classList.add(btnPrimary);
                 } else {
-                    button.getClassList().remove(btnPrimary);
-                    button.getClassList().add(btnDefault);
+                    button.classList.remove(btnPrimary);
+                    button.classList.add(btnDefault);
                 }
             });
         }
 
         @Override
         public void clearValue() {
-            buttons.values().forEach(button -> button.getClassList().remove(btnPrimary));
+            buttons.values().forEach(button -> button.classList.remove(btnPrimary));
         }
 
         @Override
@@ -155,12 +150,12 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                     break;
 
                 case ENABLED:
-                    buttons.values().forEach(button -> button.setDisabled(false));
+                    buttons.values().forEach(button -> button.disabled = false);
                     break;
 
                 case INVALID:
-                    helpBlock.setTextContent(String.valueOf(context));
-                    root.getClassList().add(hasError);
+                    helpBlock.textContent = String.valueOf(context);
+                    root.classList.add(hasError);
                     inputContainer.appendChild(helpBlock);
                     break;
 
@@ -187,11 +182,11 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                     break;
 
                 case ENABLED:
-                    buttons.values().forEach(button -> button.setDisabled(true));
+                    buttons.values().forEach(button -> button.disabled = true);
                     break;
 
                 case INVALID:
-                    root.getClassList().remove(hasError);
+                    root.classList.remove(hasError);
                     Elements.failSafeRemove(inputContainer, helpBlock);
                     break;
 
@@ -211,7 +206,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
 
         @Override
         public int getTabIndex() {
-            return buttonGroup.getTabIndex();
+            return (int) buttonGroup.tabIndex;
         }
 
         @Override
@@ -230,7 +225,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
 
         @Override
         public void setTabIndex(final int index) {
-            buttonGroup.setTabIndex(index);
+            buttonGroup.tabIndex = index;
         }
     }
 

@@ -24,7 +24,7 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -44,13 +44,13 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -159,7 +159,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
@@ -169,7 +169,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 return dataSource.isEnabled() ? Icons.ok() : Icons.disabled();
             }
 

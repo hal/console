@@ -20,9 +20,8 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.ViewImpl;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.DivElement;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
 import static org.jboss.hal.resources.CSS.containerFluid;
@@ -43,13 +43,13 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RootView.class);
 
-    private final Map<Object, Element> slots;
-    private final DivElement rootContainer;
+    private final Map<Object, HTMLElement> slots;
+    private final HTMLElement rootContainer;
     private boolean initialized;
 
     public RootView() {
         slots = new HashMap<>();
-        rootContainer = new Elements.Builder().div().id(Ids.ROOT_CONTAINER).css(containerFluid).end().build();
+        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).asElement();
         initWidget(Elements.asWidget(rootContainer));
     }
 
@@ -58,13 +58,13 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
-            Element element = content instanceof IsElement ?
+            HTMLElement element = content instanceof IsElement ?
                     ((IsElement) content).asElement() :
                     Elements.asElement(content);
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
-                Element body = Browser.getDocument().getBody();
+                HTMLElement body = DomGlobal.document.body;
                 body.appendChild(slots.get(SLOT_HEADER_CONTENT));
                 body.appendChild(rootContainer);
                 body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
@@ -77,9 +77,9 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             Elements.removeChildrenFrom(rootContainer);
 
             if (content instanceof HasElements) {
-                Iterable<Element> elements = ((HasElements) content).asElements();
+                Iterable<HTMLElement> elements = ((HasElements) content).asElements();
                 if (elements != null) {
-                    for (Element element : elements) {
+                    for (HTMLElement element : elements) {
                         rootContainer.appendChild(element);
                     }
                     finished = true;
@@ -87,9 +87,9 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             }
 
             if (!finished) {
-                Element element = content instanceof IsElement ?
-                        ((IsElement) content).asElement() :
-                        Elements.asElement(content);
+                HTMLElement element = content instanceof IsElement
+                        ? ((IsElement) content).asElement()
+                        : Elements.asElement(content);
                 rootContainer.appendChild(element);
             }
 

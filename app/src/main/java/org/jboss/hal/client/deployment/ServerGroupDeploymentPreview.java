@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.deployment.Deployment.Status;
@@ -34,11 +35,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_DISABLED_AT;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -100,7 +97,6 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
             attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
             attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
         }
-        attributes.end();
         previewBuilder().addAll(attributes);
 
         // sub-deployments
@@ -110,7 +106,7 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
 
         // reference server
         if (deployment == null) {
-            previewBuilder().h(2).textContent(resources.constants().noReferenceServer()).end();
+            previewBuilder().add(Elements.h(2).textContent(resources.constants().noReferenceServer()));
             String serverGroup = sgd.getServerGroup();
             PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.RUNTIME, new FinderPath()
                     .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
@@ -118,10 +114,9 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
                     .build();
             String serverGroupHistoryToken = places.historyToken(serverGroupPlaceRequest);
             LabelBuilder labelBuilder = new LabelBuilder();
-            previewBuilder().p().innerHtml(resources.messages().noReferenceServerPreview(sgd.getName(),
+            previewBuilder().add(Elements.p().innerHtml(resources.messages().noReferenceServerPreview(sgd.getName(),
                     labelBuilder.label(STATUS), labelBuilder.label(LAST_ENABLED_AT),
-                    serverGroup, serverGroupHistoryToken))
-                    .end();
+                    serverGroup, serverGroupHistoryToken)));
         }
     }
 }

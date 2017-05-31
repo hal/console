@@ -15,8 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -27,16 +26,20 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+
 /**
  * Element to manage the {@linkplain ThreadPool thread pool} singletons of a cache container. The element contains a
  * fail safe form to update the thread pool resource.
  *
  * @author Harald Pehl
  */
-class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
+class ThreadPoolElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final Form<ModelNode> form;
-    private final Element root;
+    private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
     ThreadPoolElement(ThreadPool threadPool, MetadataRegistry metadataRegistry) {
@@ -48,19 +51,15 @@ class ThreadPoolElement implements IsElement, Attachable, HasPresenter<CacheCont
                 .prepareRemove(f -> presenter.removeThreadPool(threadPool, f))
                 .build();
 
-        // @formatter:off
-        root = new Elements.Builder()
-            .section()
-                .h(1).textContent(threadPool.type).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        root = section()
+                .add(h(1).textContent(threadPool.type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

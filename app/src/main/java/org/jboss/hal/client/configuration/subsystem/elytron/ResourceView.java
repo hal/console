@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
@@ -54,6 +53,9 @@ import org.jboss.hal.spi.Callback;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -149,7 +151,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     private Table<NamedNode> table;
     private Form<NamedNode> form;
     private ElytronPresenter presenter;
-    private Element elementLayout;
+    private HTMLElement elementLayout;
     private Metadata metadata;
     private Map<String, List<FormItem>> includesComplexAttributes = new HashMap<>();
     private Map<String, ModelNodeForm<NamedNode>> complexAttributeForms = new HashMap<>();
@@ -190,7 +192,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      * @param complexAttributeName The OBJECT attribute name.
      */
     public ResourceView addComplexAttributeAsTab(String complexAttributeName) {
-        includesComplexAttributes.put(complexAttributeName, Collections.EMPTY_LIST);
+        includesComplexAttributes.put(complexAttributeName, Collections.emptyList());
         return this;
     }
 
@@ -373,10 +375,6 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         return metadata;
     }
 
-    public Element getElementLayout() {
-        return elementLayout;
-    }
-
     public void showPage(String attribute) {
         if (table.hasSelection())
             pages.showPage(pagesId.get(attribute));
@@ -418,7 +416,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                                             .collect(toMap(node -> node.get(cp.getKeyName()).asString(),
                                                     node -> node.get(cp.getValueName()).asString()
                                                             .replaceAll("\\[|\"|\\]", "")));
-                                    formItem.setValue(mappings);
+                                    cp.setValue(mappings);
                                 } else {
                                     formItem.clearValue();
                                 }
@@ -471,31 +469,23 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         return form;
     }
 
-    private Element createElementLayout(String title, final Metadata metadata, Table<NamedNode> table,
+    private HTMLElement createElementLayout(String title,  Metadata metadata, Table<NamedNode> table,
             Form<NamedNode> form) {
-        Element elem = new Elements.Builder()
-                .div()
-                .h(1).textContent(title).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        return div()
+                .add(h(1).textContent(title))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-                .end()
-                .build();
-
-        return elem;
+                .asElement();
     }
 
-    private Element createElementLayout(String title, final Metadata metadata, Table<NamedNode> table, Tabs tabs) {
-        Element elem = new Elements.Builder()
-                .div()
-                .h(1).textContent(title).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+    private HTMLElement createElementLayout(String title,  Metadata metadata, Table<NamedNode> table, Tabs tabs) {
+        return div()
+                .add(h(1).textContent(title))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(tabs)
-                .end()
-                .build();
-
-        return elem;
+                .asElement();
     }
 
     private ModelNodeTable.Builder<NamedNode> createTable(String id, Metadata metadata, AddressTemplate template,

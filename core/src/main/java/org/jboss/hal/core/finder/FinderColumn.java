@@ -27,17 +27,22 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.dom.Element;
-import elemental.dom.NodeList;
-import elemental.events.Event;
-import elemental.events.KeyboardEvent;
-import elemental.events.KeyboardEvent.KeyCode;
-import elemental.html.InputElement;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import elemental2.dom.DragEvent;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.KeyboardEvent;
+import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.Key;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.Tooltip;
-import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
@@ -51,10 +56,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.gwt.elemento.core.Key.ArrowUp;
+import static org.jboss.gwt.elemento.core.Key.Escape;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
@@ -80,7 +90,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  *
  * @author Harald Pehl
  */
-public class FinderColumn<T> implements IsElement {
+public class FinderColumn<T> implements IsElement, Attachable {
 
     public static class Builder<T> {
 
@@ -195,11 +205,6 @@ public class FinderColumn<T> implements IsElement {
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String HIDDEN_COLUMNS_ELEMENT = "hiddenColumnsElement";
-    private static final String HEADER_ELEMENT = "headerElement";
-    private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
-    private static final String FILTER_ELEMENT = "filterElement";
-    private static final String UL_ELEMENT = "ulElement";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
 
     private final Finder finder;
@@ -207,9 +212,10 @@ public class FinderColumn<T> implements IsElement {
     private final String title;
     private final boolean showCount;
     private final boolean pinnable;
-    private final Element columnActions;
+    private final HTMLElement columnActions;
     private final List<T> initialItems;
     private final ItemSelectionHandler<T> selectionHandler;
+    private final List<HandlerRegistration> handlers;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
     private PreviewCallback<T> previewCallback;
@@ -220,12 +226,12 @@ public class FinderColumn<T> implements IsElement {
     private final Map<String, FinderRow<T>> rows;
     private final FinderColumnStorage storage;
 
-    private final Element root;
-    private final Element hiddenColumns;
-    private final Element headerElement;
-    private final InputElement filterElement;
-    private final Element ulElement;
-    private final Element noItems;
+    private final HTMLElement root;
+    private final HTMLElement hiddenColumns;
+    private final HTMLElement headerElement;
+    private final HTMLInputElement filterElement;
+    private final HTMLElement ulElement;
+    private final HTMLElement noItems;
 
     private boolean asElement;
 
@@ -250,128 +256,123 @@ public class FinderColumn<T> implements IsElement {
 
         this.rows = new HashMap<>();
         this.storage = new FinderColumnStorage(id);
+        this.handlers = new ArrayList<>();
 
         // header
-        // @formatter:off
-        Elements.Builder eb = new Elements.Builder()
-            .div().id(id)
-                .data(DATA_BREADCRUMB, title)
-                .css(finderColumn, column(2))
+        HTMLElement header;
+        root = div().css(finderColumn, column(2))
+                .id(id)
                 .attr(TABINDEX, "-1")
-                .on(keydown, this::onNavigation)
-                    .header()
-                        .span().css(CSS.hiddenColumns, fontAwesome("angle-double-left"))
-                            .title(CONSTANTS.hiddenColumns())
-                            .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                            .data(UIConstants.PLACEMENT, "bottom")
-                            .rememberAs(HIDDEN_COLUMNS_ELEMENT)
-                            .on(click, event -> finder.revealHiddenColumns(FinderColumn.this))
-                        .end()
-                        .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
-        // @formatter:on
+                .data(DATA_BREADCRUMB, title)
+                .add(header = header()
+                        .add(hiddenColumns = span().css(CSS.hiddenColumns, fontAwesome("angle-double-left"))
+                                .title(CONSTANTS.hiddenColumns())
+                                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                                .data(UIConstants.PLACEMENT, "bottom")
+                                .asElement())
+                        .add(headerElement = h(1, builder.title).title(builder.title).asElement())
+                        .asElement())
+                .asElement();
+
+        handlers.add(bind(root, keydown, this::onNavigation));
+        handlers.add(bind(hiddenColumns, click, event -> finder.revealHiddenColumns(FinderColumn.this)));
 
         // column actions
         List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
-        eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
+        HtmlContentBuilder<HTMLDivElement> actionsBuilder = div();
         if (allowedColumnActions.size() == 1) {
-            eb.add(newColumnButton(allowedColumnActions.get(0)));
+            actionsBuilder.add(newColumnButton(allowedColumnActions.get(0)));
         } else {
-            //noinspection DuplicateStringLiteralInspection
-            eb.css(btnGroup).attr(ROLE, GROUP);
+            actionsBuilder.css(btnGroup).attr(ROLE, GROUP);
             for (ColumnAction<T> action : allowedColumnActions) {
-                eb.add(newColumnButton(action));
+                actionsBuilder.add(newColumnButton(action));
             }
         }
-        eb.end().end(); // </columnActions> && </header>
+        columnActions = actionsBuilder.asElement();
+        header.appendChild(columnActions);
 
         // filter box
         if (builder.withFilter) {
             String iconId = Ids.build(id, filter, "icon");
-            // @formatter:off
-            eb.div().css(inputGroup, filter)
-                .input(text)
-                    .id(Ids.build(id, filter))
-                    .css(formControl)
-                    .aria("describedby", iconId)
-                    .attr(UIConstants.PLACEHOLDER, CONSTANTS.filter())
-                    .on(keydown, this::onNavigation)
-                    .on(keyup, this::onFilter)
-                    .rememberAs(FILTER_ELEMENT)
-                .span().id(iconId).css(inputGroupAddon, fontAwesome("search")).end()
-            .end();
-            // @formatter:on
+            root.appendChild(
+                    div().css(inputGroup, filter)
+                            .add(filterElement = input(text).css(formControl)
+                                    .id(Ids.build(id, filter))
+                                    .aria(UIConstants.ARIA_DESCRIBEDBY, iconId)
+                                    .attr(UIConstants.PLACEHOLDER, CONSTANTS.filter())
+                                    .asElement())
+                            .add(span().css(inputGroupAddon, fontAwesome("search")).id(iconId))
+                            .asElement());
+            handlers.add(bind(filterElement, keydown, this::onNavigation));
+            handlers.add(bind(filterElement, keyup, this::onFilter));
+        } else {
+            filterElement = null;
         }
 
         // rows
-        eb.ul();
+        root.appendChild(ulElement = ul().asElement());
         if (pinnable) {
-            eb.css(CSS.pinnable);
+            ulElement.classList.add(CSS.pinnable);
         }
-        eb.rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
 
         // no items marker
-        noItems = new Elements.Builder().li().css(empty)
-                .span().css(itemText).textContent(CONSTANTS.noItems()).end()
-                .end().build();
-
-        root = eb.build();
-        hiddenColumns = eb.referenceFor(HIDDEN_COLUMNS_ELEMENT);
-        headerElement = eb.referenceFor(HEADER_ELEMENT);
-        this.columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
-        filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
-        ulElement = eb.referenceFor(UL_ELEMENT);
+        noItems = li().css(empty)
+                .add(span().css(itemText).textContent(CONSTANTS.noItems()))
+                .asElement();
     }
 
     @SuppressWarnings("Duplicates")
-    private Element newColumnButton(final ColumnAction<T> action) {
-        Elements.Builder builder = new Elements.Builder();
+    private HTMLElement newColumnButton(final ColumnAction<T> action) {
+        HtmlContentBuilder builder;
         if (!action.actions.isEmpty()) {
-            // @formatter:off
-            builder.div().css(dropdown)
-                .button().css(btn, btnFinder, dropdownToggle).id(action.id)
-                        .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                        .aria(UIConstants.EXPANDED, "false"); //NON-NLS
-                    if (action.title != null) {
-                        builder.textContent(action.title);
-                    } else if (action.element != null) {
-                        builder.add(action.element);
-                    } else {
-                        builder.textContent(NOT_AVAILABLE);
-                    }
-                    builder.span().css(caret).end()
-                .end()
-                .ul().id(Ids.uniqueId()).css(dropdownMenu)
-                        .attr(UIConstants.ROLE, UIConstants.MENU)
-                        .aria(UIConstants.LABELLED_BY, action.id);
-                    for (ColumnAction<T> liAction : action.actions) {
-                        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION);
-                            builder.a()
-                                .id(liAction.id)
+            HTMLElement button;
+            HTMLElement ul;
+            builder = div().css(dropdown)
+                    .add(button = button().css(btn, btnFinder, dropdownToggle)
+                            .id(action.id)
+                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                            .aria(UIConstants.EXPANDED, UIConstants.FALSE)
+                            .asElement())
+                    .add(ul = ul().css(dropdownMenu)
+                            .id(Ids.uniqueId())
+                            .attr(UIConstants.ROLE, UIConstants.MENU)
+                            .aria(UIConstants.LABELLED_BY, action.id)
+                            .asElement());
+            if (action.title != null) {
+                button.textContent = action.title;
+            } else if (action.element != null) {
+                button.appendChild(action.element);
+            } else {
+                button.textContent = NOT_AVAILABLE;
+            }
+            button.appendChild(span().css(caret).asElement());
+
+            for (ColumnAction<T> liAction : action.actions) {
+                HTMLElement a;
+                ul.appendChild(li()
+                        .attr(UIConstants.ROLE, UIConstants.PRESENTATION)
+                        .add(a = a().id(liAction.id)
                                 .attr(UIConstants.ROLE, UIConstants.MENUITEM)
                                 .attr(UIConstants.TABINDEX, "-1")
                                 .on(click, event -> {
-                                    if (liAction.handler!= null) {
+                                    if (liAction.handler != null) {
                                         liAction.handler.execute(this);
                                     }
-                                });
-                                if (liAction.title != null){
-                                    builder.textContent(liAction.title);
-                                } else if (liAction.element != null) {
-                                    builder.add(liAction.element);
-                                } else {
-                                    builder.textContent(NOT_AVAILABLE);
-                                }
-                            builder.end()
-                        .end();
-                    }
-                builder.end()
-            .end();
-            // @formatter:on
+                                })
+                                .asElement())
+                        .asElement());
+                if (liAction.title != null) {
+                    a.textContent = liAction.title;
+                } else if (liAction.element != null) {
+                    a.appendChild(liAction.element);
+                } else {
+                    a.textContent = NOT_AVAILABLE;
+                }
+            }
 
         } else {
-            builder.button();
-            builder.id(action.id)
-                    .css(btn, btnFinder)
+            builder = button().css(btn, btnFinder)
+                    .id(action.id)
                     .on(click, event -> {
                         if (action.handler != null) {
                             action.handler.execute(this);
@@ -384,10 +385,8 @@ public class FinderColumn<T> implements IsElement {
             } else {
                 builder.textContent(NOT_AVAILABLE);
             }
-            builder.end();
         }
-
-        return builder.build();
+        return builder.asElement();
     }
 
     private void updateHeader(int matched) {
@@ -398,27 +397,39 @@ public class FinderColumn<T> implements IsElement {
             } else {
                 titleWithSize = title + " (" + matched + " / " + rows.size() + ")";
             }
-            headerElement.setInnerText(titleWithSize);
-            headerElement.setTitle(titleWithSize);
+            headerElement.textContent = titleWithSize;
+            headerElement.title = titleWithSize;
         }
+    }
+
+    @Override
+    public void attach() {
+        // noop
+    }
+
+    @Override
+    public void detach() {
+        for (HandlerRegistration handler : handlers) {
+            handler.removeHandler();
+        }
+        handlers.clear();
     }
 
 
     // ------------------------------------------------------ event handler
 
-    private void onFilter(final Event event) {
-        KeyboardEvent keyboardEvent = (KeyboardEvent) event;
-        if (keyboardEvent.getKeyCode() == KeyCode.ESC) {
-            filterElement.setValue("");
+    private void onFilter(KeyboardEvent event) {
+        if (Escape == Key.fromEvent(event)) {
+            filterElement.value = "";
         }
 
         int matched = 0;
-        String filter = filterElement.getValue();
-        for (Element li : Elements.children(ulElement)) {
+        String filter = filterElement.value;
+        for (HTMLElement li : Elements.children(ulElement)) {
             if (li == noItems) {
                 continue;
             }
-            Object filterData = li.getDataset().at(DATA_FILTER);
+            Object filterData = li.dataset.get(DATA_FILTER);
             boolean match = filter == null
                     || filter.trim().length() == 0
                     || filterData == null
@@ -436,19 +447,18 @@ public class FinderColumn<T> implements IsElement {
         }
     }
 
-    private void onNavigation(Event event) {
+    private void onNavigation(KeyboardEvent event) {
         if (hasVisibleElements()) {
-            KeyboardEvent keyboardEvent = (KeyboardEvent) event;
-            int keyCode = keyboardEvent.getKeyCode();
-            switch (keyCode) {
+            Key key = Key.fromEvent(event);
+            switch (key) {
 
-                case KeyCode.UP:
-                case KeyCode.DOWN: {
-                    Element activeElement = activeElement();
+                case ArrowUp:
+                case ArrowDown: {
+                    HTMLElement activeElement = activeElement();
                     if (!Elements.isVisible(activeElement)) {
                         activeElement = null;
                     }
-                    Element select = keyCode == KeyCode.UP
+                    HTMLElement select = key == ArrowUp
                             ? previousVisibleElement(activeElement)
                             : nextVisibleElement(activeElement);
                     if (select != null && select != noItems) {
@@ -461,10 +471,10 @@ public class FinderColumn<T> implements IsElement {
                     break;
                 }
 
-                case KeyCode.LEFT: {
-                    Element previousElement = root.getPreviousElementSibling();
+                case ArrowLeft: {
+                    HTMLElement previousElement = (HTMLElement) root.previousElementSibling;
                     if (previousElement != null) {
-                        FinderColumn previousColumn = finder.getColumn(previousElement.getId());
+                        FinderColumn previousColumn = finder.getColumn(previousElement.id);
                         if (previousColumn != null) {
                             event.preventDefault();
                             event.stopPropagation();
@@ -484,8 +494,8 @@ public class FinderColumn<T> implements IsElement {
                     break;
                 }
 
-                case KeyCode.RIGHT: {
-                    Element activeElement = activeElement();
+                case ArrowRight: {
+                    HTMLElement activeElement = activeElement();
                     String nextColumn = row(activeElement).getNextColumn();
                     if (Elements.isVisible(activeElement) && nextColumn != null) {
                         event.preventDefault();
@@ -503,8 +513,8 @@ public class FinderColumn<T> implements IsElement {
                                     @Override
                                     public void onSuccess(final FinderColumn column) {
                                         if (column.activeElement() == null && column.hasVisibleElements()) {
-                                            Element firstElement = column.nextVisibleElement(null);
-                                            column.markSelected(firstElement.getId());
+                                            HTMLElement firstElement = column.nextVisibleElement(null);
+                                            column.markSelected(firstElement.id);
                                             column.row(firstElement).updatePreview();
                                         }
                                         finder.updateContext();
@@ -516,8 +526,8 @@ public class FinderColumn<T> implements IsElement {
                     break;
                 }
 
-                case KeyCode.ENTER: {
-                    Element activeItem = activeElement();
+                case Enter: {
+                    HTMLElement activeItem = activeElement();
                     T item = row(activeItem).getItem();
                     ItemActionHandler<T> primaryAction = row(activeItem).getPrimaryAction();
                     if (Elements.isVisible(activeItem) && item != null && primaryAction != null) {
@@ -534,7 +544,7 @@ public class FinderColumn<T> implements IsElement {
     }
 
     protected boolean isVisible() {
-        return asElement && Elements.isVisible(root) && root.getParentElement() != null;
+        return asElement && Elements.isVisible(root) && root.parentNode != null;
     }
 
 
@@ -544,10 +554,10 @@ public class FinderColumn<T> implements IsElement {
         Elements.setVisible(hiddenColumns, show);
     }
 
-    private Element activeElement() {return ulElement.querySelector("li." + active);} //NON-NLS
+    private HTMLElement activeElement() {return (HTMLElement) ulElement.querySelector("li." + active);} //NON-NLS
 
     private boolean hasVisibleElements() {
-        for (Element element : Elements.children(ulElement)) {
+        for (HTMLElement element : Elements.children(ulElement)) {
             if (Elements.isVisible(element) && element != noItems) {
                 return true;
             }
@@ -555,18 +565,18 @@ public class FinderColumn<T> implements IsElement {
         return false;
     }
 
-    private Element previousVisibleElement(Element start) {
-        Element element = start == null ? ulElement.getLastElementChild() : start.getPreviousElementSibling();
+    private HTMLElement previousVisibleElement(HTMLElement start) {
+        HTMLElement element = (HTMLElement) (start == null ? ulElement.lastElementChild : start.previousElementSibling);
         while (element != null && !Elements.isVisible(element)) {
-            element = element.getPreviousElementSibling();
+            element = (HTMLElement) element.previousElementSibling;
         }
         return element;
     }
 
-    private Element nextVisibleElement(Element start) {
-        Element element = start == null ? ulElement.getFirstElementChild() : start.getNextElementSibling();
+    private HTMLElement nextVisibleElement(HTMLElement start) {
+        HTMLElement element = (HTMLElement) (start == null ? ulElement.firstElementChild : start.nextElementSibling);
         while (element != null && !Elements.isVisible(element)) {
-            element = element.getNextElementSibling();
+            element = (HTMLElement) element.nextElementSibling;
         }
         return element;
     }
@@ -576,13 +586,16 @@ public class FinderColumn<T> implements IsElement {
     }
 
     private FinderRow<T> row(Element element) {
-        return row(element.getId());
+        if (element instanceof HTMLElement) {
+            return row(((HTMLElement) element).id);
+        }
+        return null;
     }
 
     FinderRow<T> selectedRow() {
-        Element activeItem = ulElement.querySelector("li." + active); //NON-NLS
-        if (activeItem != null && rows.containsKey(activeItem.getId())) {
-            return rows.get(activeItem.getId());
+        HTMLElement activeItem = (HTMLElement) ulElement.querySelector("li." + active); //NON-NLS
+        if (activeItem != null && rows.containsKey(activeItem.id)) {
+            return rows.get(activeItem.id);
         }
         return null;
     }
@@ -602,9 +615,9 @@ public class FinderColumn<T> implements IsElement {
     }
 
     void resetSelection() {
-        Element element = activeElement();
+        HTMLElement element = activeElement();
         if (element != null) {
-            element.getClassList().remove(active);
+            element.classList.remove(active);
         }
     }
 
@@ -613,12 +626,12 @@ public class FinderColumn<T> implements IsElement {
     }
 
     void unpin(final FinderRow<T> row) {
-        row.asElement().getClassList().remove(pinned);
-        row.asElement().getClassList().add(unpinned);
+        row.asElement().classList.remove(pinned);
+        row.asElement().classList.add(unpinned);
 
         // move row to unpinned section
         ulElement.removeChild(row.asElement());
-        NodeList nodes = ulElement.querySelectorAll("." + unpinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll("." + unpinned);
         if (nodes.getLength() == 0) {
             // no unpinned rows append to bottom
             ulElement.appendChild(row.asElement());
@@ -635,15 +648,15 @@ public class FinderColumn<T> implements IsElement {
     }
 
     void pin(final FinderRow<T> row) {
-        row.asElement().getClassList().remove(unpinned);
-        row.asElement().getClassList().add(pinned);
+        row.asElement().classList.remove(unpinned);
+        row.asElement().classList.add(pinned);
 
         // move row to pinned section
         ulElement.removeChild(row.asElement());
-        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll("." + pinned);
         if (nodes.getLength() == 0) {
             // no pinned rows append to top
-            ulElement.insertBefore(row.asElement(), ulElement.getFirstChild());
+            ulElement.insertBefore(row.asElement(), ulElement.firstChild);
         } else {
             Element before = findPosition(nodes, row);
             if (before != null) {
@@ -662,9 +675,9 @@ public class FinderColumn<T> implements IsElement {
         storage.pinItem(row.getId());
     }
 
-    private Element findPosition(NodeList nodes, FinderRow<T> row) {
+    private Element findPosition(NodeList<Element> nodes, FinderRow<T> row) {
         for (int i = 0; i < nodes.getLength(); i++) {
-            Element currentElement = (Element) nodes.item(i);
+            Element currentElement = nodes.item(i);
             FinderRow<T> currentRow = row(currentElement);
             if (currentRow.getDisplay().getTitle().compareTo(row.getDisplay().getTitle()) > 0) {
                 return currentElement;
@@ -674,13 +687,13 @@ public class FinderColumn<T> implements IsElement {
     }
 
     private void adjustPinSeparator() {
-        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        NodeList<Element> nodes = ulElement.querySelectorAll("." + pinned);
         for (int i = 0; i < nodes.getLength(); i++) {
-            Element element = (Element) nodes.item(i);
+            Element element = nodes.item(i);
             if (i == nodes.getLength() - 1) {
-                element.getClassList().add(last);
+                element.classList.add(last);
             } else {
-                element.getClassList().remove(last);
+                element.classList.remove(last);
             }
         }
     }
@@ -713,7 +726,7 @@ public class FinderColumn<T> implements IsElement {
         rows.clear();
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
-            filterElement.setValue("");
+            filterElement.value = "";
         }
 
         List<T> pinnedItems = new ArrayList<>();
@@ -738,7 +751,7 @@ public class FinderColumn<T> implements IsElement {
             rows.put(row.getId(), row);
             ulElement.appendChild(row.asElement());
             if (!iterator.hasNext()) {
-                row.asElement().getClassList().add(last);
+                row.asElement().classList.add(last);
             }
         }
         for (T item : unpinnedItems) {
@@ -767,8 +780,8 @@ public class FinderColumn<T> implements IsElement {
     protected void addColumnAction(ColumnAction<T> columnAction) {
         if (isAllowed(columnAction)) {
             columnActions.appendChild(newColumnButton(columnAction));
-            if (columnActions.getChildElementCount() > 1) {
-                columnActions.getClassList().add(btnGroup);
+            if (columnActions.childElementCount > 1) {
+                columnActions.classList.add(btnGroup);
                 columnActions.setAttribute(ROLE, GROUP);
             }
         }
@@ -776,19 +789,18 @@ public class FinderColumn<T> implements IsElement {
 
     protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
         if (isAllowed(actions)) {
-            Element element = new Elements.Builder().span()
-                    .css(iconsCss)
+            HTMLElement element = span().css(iconsCss)
                     .title(title)
                     .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                     .data(UIConstants.PLACEMENT, "bottom")
-                    .end().build();
+                    .asElement();
             ColumnAction<T> dropdownAction = new ColumnAction.Builder<T>(id)
                     .element(element)
                     .actions(actions)
                     .build();
             columnActions.appendChild(newColumnButton(dropdownAction));
-            if (columnActions.getChildElementCount() > 1) {
-                columnActions.getClassList().add(btnGroup);
+            if (columnActions.childElementCount > 1) {
+                columnActions.classList.add(btnGroup);
                 columnActions.setAttribute(ROLE, GROUP);
             }
         }
@@ -873,8 +885,8 @@ public class FinderColumn<T> implements IsElement {
         return firstActionAsBreadcrumbHandler;
     }
 
-    protected void setOnDrop(DropEventHandler handler) {
-        JsHelper.addDropHandler(ulElement, handler);
+    protected void setOnDrop(EventCallbackFn<DragEvent> handler) {
+        handlers.add(JsHelper.addDropHandler(ulElement, handler));
     }
 
     private void assertNotAsElement(String method) {
@@ -888,7 +900,7 @@ public class FinderColumn<T> implements IsElement {
     // ------------------------------------------------------ public API
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         asElement = true;
         return root;
     }

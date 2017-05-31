@@ -20,8 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.client.Browser;
-import elemental.html.Storage;
+import elemental2.dom.DomGlobal;
+import elemental2.webstorage.Storage;
+import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
@@ -41,7 +42,7 @@ public class ExtensionStorage {
     private final Map<String, InstalledExtension> extensions;
 
     public ExtensionStorage() {
-        this.storage = Browser.getWindow().getLocalStorage();
+        this.storage = WebStorageWindow.of(DomGlobal.window).localStorage;
         this.extensions = load();
     }
 

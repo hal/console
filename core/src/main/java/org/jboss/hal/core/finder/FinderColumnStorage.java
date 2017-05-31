@@ -20,8 +20,9 @@ import java.util.Set;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental.client.Browser;
-import elemental.html.Storage;
+import elemental2.dom.DomGlobal;
+import elemental2.webstorage.Storage;
+import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.resources.Ids;
 
 /**
@@ -34,7 +35,7 @@ class FinderColumnStorage {
 
     FinderColumnStorage(final String id) {
         this.pinnedId = Ids.build(Ids.STORAGE_PREFIX, id, "pinned");
-        this.storage = Browser.getWindow().getLocalStorage();
+        this.storage = WebStorageWindow.of(DomGlobal.window).localStorage;
     }
 
     void pinItem(String id) {

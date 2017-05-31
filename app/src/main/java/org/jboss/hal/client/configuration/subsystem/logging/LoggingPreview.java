@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 import java.util.function.Supplier;
 
 import com.google.gwt.resources.client.ExternalTextResource;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -31,9 +31,11 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.joining;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.Names.ROOT_LOGGER;
 
 /**
@@ -46,7 +48,7 @@ class LoggingPreview<T> extends PreviewContent<T> {
     private final Dispatcher dispatcher;
     private final Supplier<Operation> operation;
     private final PreviewAttributes<ModelNode> attributes;
-    private final Element undefined;
+    private final HTMLElement undefined;
 
     LoggingPreview(Dispatcher dispatcher, Resources resources,
             String header, ExternalTextResource description, Supplier<Operation> operation) {
@@ -65,15 +67,14 @@ class LoggingPreview<T> extends PreviewContent<T> {
                                 .collect(joining(", "));
                     }
                     return new PreviewAttribute(labelBuilder.label(HANDLERS), handlers);
-                })
-                .end();
+                });
         previewBuilder().addAll(attributes);
 
-        previewBuilder().div().rememberAs(UNDEFINED)
-                .h(2).textContent(ROOT_LOGGER).end()
-                .p().textContent(resources.constants().noRootLoggerDescription()).end()
-                .end();
-        undefined = previewBuilder().referenceFor(UNDEFINED);
+        previewBuilder()
+                .add(undefined = div()
+                        .add(h(2).textContent(ROOT_LOGGER))
+                        .add(p().textContent(resources.constants().noRootLoggerDescription()))
+                        .asElement());
         Elements.setVisible(undefined, false);
     }
 
@@ -81,14 +82,14 @@ class LoggingPreview<T> extends PreviewContent<T> {
     public void update(T whatever) {
         dispatcher.execute(operation.get(),
                 (model) -> {
-                    for (Element element : attributes.asElements()) {
+                    for (HTMLElement element : attributes.asElements()) {
                         Elements.setVisible(element, true);
                     }
                     Elements.setVisible(undefined, false);
                     attributes.refresh(model);
                 },
                 (operation1, failure) -> {
-                    for (Element element : attributes.asElements()) {
+                    for (HTMLElement element : attributes.asElements()) {
                         Elements.setVisible(element, false);
                     }
                     Elements.setVisible(undefined, true);

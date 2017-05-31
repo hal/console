@@ -17,9 +17,10 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 
+import static org.jboss.gwt.elemento.core.Elements.pre;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.wrap;
@@ -32,10 +33,10 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
     PreReadOnlyAppearance() {
         super(EnumSet.of(RESTRICTED));
 
-        Element parent = valueContainer.getParentElement();
+        HTMLElement parent = (HTMLElement) valueContainer.parentNode;
         Elements.removeChildrenFrom(parent);
 
-        valueElement = new Elements.Builder().start("pre").css(formControlStatic, wrap).end().build();
+        valueElement = pre().css(formControlStatic, wrap).asElement();
         parent.appendChild(valueElement);
     }
 
@@ -47,8 +48,8 @@ class PreReadOnlyAppearance<T> extends ReadOnlyAppearance<T> {
     @Override
     protected <C> void safeApply(final Decoration decoration, final C context) {
         if (decoration == RESTRICTED) {
-            valueElement.setTextContent("");
-            valueElement.setTextContent(CONSTANTS.restricted());
+            valueElement.textContent = "";
+            valueElement.textContent = CONSTANTS.restricted();
         }
     }
 }

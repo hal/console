@@ -20,16 +20,19 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -44,7 +47,7 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  * @see <a href="http://www.patternfly.org/pattern-library/communication/empty-state/">http://www.patternfly.org/pattern-library/communication/empty-state/</a>
  */
-public class EmptyState implements IsElement {
+public class EmptyState implements IsElement<HTMLElement> {
 
     private static class Action {
 
@@ -63,7 +66,7 @@ public class EmptyState implements IsElement {
     public static class Builder {
 
         private final String title;
-        private final List<Element> elements;
+        private final List<HTMLElement> elements;
         private final List<Action> secondaryActions;
         private String icon;
         private Action primaryAction;
@@ -80,25 +83,21 @@ public class EmptyState implements IsElement {
         }
 
         public Builder description(String description) {
-            Element p = Browser.getDocument().createElement("p"); //NON-NLS
-            p.setTextContent(description);
-            elements.add(p);
+            elements.add(p().textContent(description).asElement());
             return this;
         }
 
         public Builder description(SafeHtml description) {
-            Element p = Browser.getDocument().createElement("p"); //NON-NLS
-            p.setInnerHTML(description.asString());
-            elements.add(p);
+            elements.add(p().innerHtml(description).asElement());
             return this;
         }
 
-        public Builder add(Element element) {
+        public Builder add(HTMLElement element) {
             elements.add(element);
             return this;
         }
 
-        public Builder addAll(Iterable<Element> elements) {
+        public Builder addAll(Iterable<HTMLElement> elements) {
             Iterables.addAll(this.elements, elements);
             return this;
         }
@@ -127,92 +126,81 @@ public class EmptyState implements IsElement {
     }
 
 
-    private static final String ICON = "icon";
-    private static final String HEADER = "header";
-    private static final String PARAGRAPHS_DIV = "paragraphsDiv";
-    private static final String PRIMARY_ACTION_DIV = "primaryActionDiv";
-    private static final String SECONDARY_ACTIONS_DIV = "secondaryActionsDiv";
-
-    private final Element root;
-    private final Element icon;
-    private final Element header;
-    private final Element paragraphsDiv;
-    private final Element primaryActionDiv;
+    private final HTMLElement root;
+    private final HTMLElement icon;
+    private final HTMLElement header;
+    private final HTMLElement paragraphsDiv;
+    private final HTMLElement primaryActionDiv;
 
     private EmptyState(Builder builder) {
-        Elements.Builder eb = new Elements.Builder().div().css(blankSlatePf);
+        HtmlContentBuilder<HTMLDivElement> rb = div().css(blankSlatePf);
         if (builder.icon != null) {
-            eb.div().css(blankSlatePfIcon).start("i").css(builder.icon).rememberAs(ICON).end().end();
+            rb.add(div().css(blankSlatePfIcon).add(icon = i().css(builder.icon).asElement()).asElement());
+        } else {
+            icon = null;
         }
-        eb.h(1).rememberAs(HEADER).textContent(builder.title).end();
-        eb.div().rememberAs(PARAGRAPHS_DIV);
-        builder.elements.forEach(eb::add);
-        eb.end();
-
-        eb.div().css(blankSlatePfMainAction).rememberAs(PRIMARY_ACTION_DIV);
+        rb.add(header = h(1).textContent(builder.title).asElement());
+        rb.add(paragraphsDiv = div().asElement());
+        for (HTMLElement element : builder.elements) {
+            paragraphsDiv.appendChild(element);
+        }
+        rb.add(primaryActionDiv = div().css(blankSlatePfMainAction).asElement());
         if (builder.primaryAction != null) {
             if (builder.primaryAction.constraint != null) {
-                eb.data(UIConstants.CONSTRAINT, builder.primaryAction.constraint.data());
+                primaryActionDiv.dataset.set(UIConstants.CONSTRAINT, builder.primaryAction.constraint.data());
             }
-            eb.button().css(btn, btnPrimary, btnLg).on(click, event -> builder.primaryAction.callback.execute())
+            primaryActionDiv.appendChild(button()
+                    .css(btn, btnPrimary, btnLg)
                     .textContent(builder.primaryAction.title)
-                    .end();
+                    .on(click, event -> builder.primaryAction.callback.execute())
+                    .asElement());
         }
-        eb.end();
-
-        eb.div().css(blankSlatePfSecondaryAction).rememberAs(SECONDARY_ACTIONS_DIV);
+        HTMLElement secondaryActionsDiv;
+        rb.add(secondaryActionsDiv = div().css(blankSlatePfSecondaryAction).asElement());
         if (!builder.secondaryActions.isEmpty()) {
             for (Action a : builder.secondaryActions) {
-                eb.button().css(btn, btnDefault).on(click, event -> a.callback.execute());
+                HtmlContentBuilder<HTMLButtonElement> bb = button()
+                        .css(btn, btnDefault)
+                        .textContent(a.title)
+                        .on(click, event -> a.callback.execute());
                 if (a.constraint != null) {
-                    eb.data(UIConstants.CONSTRAINT, a.constraint.data());
+                    bb.data(UIConstants.CONSTRAINT, a.constraint.data());
                 }
-                eb.textContent(a.title).end();
+                secondaryActionsDiv.appendChild(bb.asElement());
             }
         }
-        eb.end().end();
-
-        icon = builder.icon != null ? eb.referenceFor(ICON) : null;
-        header = eb.referenceFor(HEADER);
-        paragraphsDiv = eb.referenceFor(PARAGRAPHS_DIV);
-        primaryActionDiv = eb.referenceFor(PRIMARY_ACTION_DIV);
-        Element secondaryActionsDiv = eb.referenceFor(SECONDARY_ACTIONS_DIV);
-        root = eb.build();
-
+        root = rb.asElement();
         Elements.setVisible(primaryActionDiv, builder.primaryAction != null);
         Elements.setVisible(secondaryActionsDiv, !builder.secondaryActions.isEmpty());
     }
 
     public void setIcon(String icon) {
         if (this.icon != null) {
-            this.icon.setClassName(icon);
+            this.icon.className = icon;
         }
     }
 
     public void setHeader(String header) {
-        this.header.setTextContent(header);
+        this.header.textContent =header;
     }
 
     public void setDescription(SafeHtml description) {
         Elements.removeChildrenFrom(paragraphsDiv);
-        Element p = Browser.getDocument().createElement("p"); //NON-NLS
-        p.setInnerHTML(description.asString());
-        paragraphsDiv.appendChild(p);
+        paragraphsDiv.appendChild(p().innerHtml(description).asElement());
     }
 
     public void setPrimaryAction(String title, Callback callback) {
         Elements.removeChildrenFrom(primaryActionDiv);
-        Element element = new Elements.Builder()
-                .button().css(btn, btnPrimary, btnLg).on(click, event -> callback.execute())
+        HTMLElement element = button()
+                .css(btn, btnPrimary, btnLg).on(click, event -> callback.execute())
                 .textContent(title)
-                .end()
-                .build();
+                .asElement();
         primaryActionDiv.appendChild(element);
         Elements.setVisible(primaryActionDiv, true);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

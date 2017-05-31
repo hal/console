@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -247,7 +247,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafeList")
     @EsReturn("ModelNode[]")
-    public static JsArrayOf<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
+    public static Array<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
         return asJsArray(failSafeList(modelNode, path));
     }
 
@@ -262,7 +262,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafePropertyList")
     @EsReturn("Property[]")
-    public static JsArrayOf<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
+    public static Array<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
         return asJsArray(failSafePropertyList(modelNode, path));
     }
 
@@ -275,12 +275,13 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "asNamedNodes")
     @EsReturn("NamedNode[]")
-    public static JsArrayOf<NamedNode> jsAsNamedNodes(@EsParam("Property[]") JsArrayOf<Property> properties) {
+    public static Array<NamedNode> jsAsNamedNodes(@EsParam("Property[]") Array<Property> properties) {
         return asJsArray(asNamedNodes(asList(properties)));
     }
 
-    private static <T> JsArrayOf<T> asJsArray(List<T> list) {
-        JsArrayOf<T> array = JsArrayOf.create();
+    @SuppressWarnings("unchecked")
+    private static <T> Array<T> asJsArray(List<T> list) {
+        Array<T> array = new Array<>();
         for (T t : list) {
             array.push(t);
         }
@@ -288,11 +289,11 @@ public final class ModelNodeHelper {
     }
 
     @SuppressWarnings("Duplicates")
-    private static <T> List<T> asList(JsArrayOf<T> array) {
+    private static <T> List<T> asList(Array<T> array) {
         if (array != null) {
-            List<T> list = new ArrayList<>(array.length());
-            for (int i = 0; i < array.length(); i++) {
-                list.add(array.get(i));
+            List<T> list = new ArrayList<>(array.getLength());
+            for (int i = 0; i < array.getLength(); i++) {
+                list.add(array.getAt(i));
             }
             return list;
         }

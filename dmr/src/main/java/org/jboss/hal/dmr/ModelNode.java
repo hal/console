@@ -46,14 +46,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import elemental.client.Browser;
-import elemental.js.util.JsArrayOf;
-import elemental.json.Json;
-import elemental.json.JsonObject;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.json.Json;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.spi.EsReturn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
@@ -78,7 +77,7 @@ public class ModelNode implements Cloneable {
      */
     public static ModelNode fromBase64(String encoded) {
         ModelNode node = new ModelNode();
-        String decoded = Browser.getWindow().atob(encoded);
+        String decoded = atob(encoded);
         try {
             node.readExternal(new DataInput(toBytes(decoded)));
         } catch (IOException e) {
@@ -86,6 +85,14 @@ public class ModelNode implements Cloneable {
         }
         return node;
     }
+
+    private static native String atob(String value) /*-{
+        return $wnd.atob(value);
+    }-*/;
+
+    private static native String btoa(String value) /*-{
+        return $wnd.btoa(value);
+    }-*/;
 
     private static native byte[] toBytes(String str) /*-{
         var bytes = [];
@@ -1412,7 +1419,7 @@ public class ModelNode implements Cloneable {
             throw new IllegalStateException(e);
         }
         try {
-            return Browser.getWindow().btoa(new String(out.getBytes(), "ISO-8859-1"));
+            return btoa(new String(out.getBytes(), "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Failed to encode string:" + e.getMessage());
         }
@@ -1648,16 +1655,16 @@ public class ModelNode implements Cloneable {
      */
     @JsMethod(name = "asProperties")
     @EsReturn("Property[]")
-    public JsArrayOf<Property> jsAsProperties() {
+    public Array<Property> jsAsProperties() {
         List<Property> properties = value.asPropertyList();
         if (properties != null) {
-            JsArrayOf<Property> array = JsArrayOf.create();
+            Array<Property> array = new Array<>();
             for (Property t : properties) {
                 array.push(t);
             }
             return array;
         }
-        return JsArrayOf.create();
+        return new Array<>();
     }
 
     /**
@@ -1665,15 +1672,15 @@ public class ModelNode implements Cloneable {
      */
     @JsMethod(name = "asList")
     @EsReturn("ModelNode[]")
-    public JsArrayOf<ModelNode> jsAsList() {
+    public Array<ModelNode> jsAsList() {
         List<ModelNode> modelNodes = value.asList();
         if (modelNodes != null) {
-            JsArrayOf<ModelNode> array = JsArrayOf.create();
+            Array<ModelNode> array = new Array<>();
             for (ModelNode modelNode : modelNodes) {
                 array.push(modelNode);
             }
             return array;
         }
-        return JsArrayOf.create();
+        return new Array<>();
     }
 }

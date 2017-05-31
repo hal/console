@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
@@ -48,10 +48,10 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
         noReferenceServer = new EmptyState.Builder(resources.constants().noReferenceServer())
                 .icon(CSS.pfIcon("server"))
                 .build();
-        noReferenceServer.asElement().getClassList().add(marginTopLarge);
+        noReferenceServer.asElement().classList.add(marginTopLarge);
         Elements.setVisible(noReferenceServer.asElement(), false);
 
-        ArrayList<Element> elements = Lists.newArrayList(deploymentModel.asElements());
+        ArrayList<HTMLElement> elements = Lists.newArrayList(deploymentModel.asElements());
         elements.add(noReferenceServer.asElement());
         initElements(elements);
     }

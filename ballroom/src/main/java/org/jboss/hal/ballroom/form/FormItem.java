@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasValue;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.dmr.Deprecation;
@@ -29,7 +29,7 @@ import org.jboss.hal.dmr.Deprecation;
  */
 public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T> {
 
-    Element asElement(Form.State state);
+    HTMLElement asElement(Form.State state);
 
     void clearValue();
 

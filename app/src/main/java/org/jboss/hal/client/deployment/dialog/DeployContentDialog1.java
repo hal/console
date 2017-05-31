@@ -19,9 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
@@ -38,6 +39,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
@@ -72,17 +74,14 @@ public class DeployContentDialog1 {
     }
 
 
-    private static final String ENABLE_CONTAINER = "enableContainer";
-    private static final String ENABLE = "enable";
-
     private final Content content;
     private final List<ServerGroup> serverGroups;
     private final DeployCallback deployCallback;
     private final UndeployCallback undeployCallback;
     private final Alert noServerGroupSelected;
     private final Table<ServerGroup> table;
-    private final Element enableContainer;
-    private final InputElement enable;
+    private final HTMLElement enableContainer;
+    private final HTMLInputElement enable;
     private final Dialog dialog;
 
     public DeployContentDialog1(final Content content, final Set<String> serverGroupsWithoutContent,
@@ -121,27 +120,23 @@ public class DeployContentDialog1 {
         SafeHtml description = deployCallback != null ? resources.messages()
                 .chooseServerGroupsToDeploy(content.getName()) : resources.messages()
                 .chooseServerGroupsToUndeploy(content.getName());
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().add(noServerGroupSelected).end()
-            .p().innerHtml(description).end()
-            .add(table)
-            .div().css(marginTopLarge).rememberAs(ENABLE_CONTAINER)
-                .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                .label().css(CSS.marginLeft5)
-                    .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                    .textContent(resources.constants().enableDeployment())
-                .end()
-            .end();
-        // @formatter:on
-        enable = builder.referenceFor(ENABLE);
-        enableContainer = builder.referenceFor(ENABLE_CONTAINER);
+
+        ElementsBuilder elements = elements()
+                .add(div().add(noServerGroupSelected))
+                .add(p().innerHtml(description))
+                .add(table)
+                .add(enableContainer = div().css(marginTopLarge)
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).asElement())
+                        .add(label().css(CSS.marginLeft5)
+                                .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
+                                .textContent(resources.constants().enableDeployment()))
+                        .asElement());
 
         String title = deployCallback != null ? resources.constants().deployContent() : resources.constants()
                 .undeployContent();
         String primary = deployCallback != null ? resources.constants().deploy() : resources.constants().undeploy();
         dialog = new Dialog.Builder(title)
-                .add(builder.elements())
+                .add(elements.asElements())
                 .primary(primary, this::finish)
                 .cancel()
                 .build();

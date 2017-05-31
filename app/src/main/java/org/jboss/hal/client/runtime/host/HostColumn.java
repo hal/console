@@ -22,7 +22,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -135,7 +135,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return item.isDomainController() ? ItemDisplay
                         .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
             }
@@ -167,7 +167,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 if (hostActions.isPending(item)) {
                     return Icons.unknown();
                 } else if (item.isAdminMode() || item.isStarting()) {

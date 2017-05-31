@@ -24,6 +24,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
@@ -38,27 +39,22 @@ class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
         JdbcDriver.Provider provider = driver.getProvider();
         if (provider == MODULE) {
-            previewBuilder().p().innerHtml(
-                    resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getModule())).end();
+            previewBuilder().add(
+                    p().innerHtml(resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getModule())));
         } else if (provider == DEPLOYMENT) {
-            previewBuilder().p().innerHtml(
-                    resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getDeploymentName()))
-                    .end();
-            previewBuilder().p().innerHtml(resources.messages().jdbcDriverDeploymentHint()).end();
+            previewBuilder().add(
+                    p().innerHtml(
+                            resources.messages().jdbcDriverProvidedBy(provider.text(), driver.getDeploymentName())));
+            previewBuilder().add(p().innerHtml(resources.messages().jdbcDriverDeploymentHint()));
         }
 
         LabelBuilder labelBuilder = new LabelBuilder();
         PreviewAttributes<JdbcDriver> attributes = new PreviewAttributes<>(driver)
-
                 .append(model -> new PreviewAttribute(labelBuilder.label("driver-classes"), //NON-NLS
                         model.getDriverClasses().isEmpty() ? Names.NOT_AVAILABLE : Joiner.on(',')
                                 .skipNulls().join(model.getDriverClasses())))
-
                 .append(model -> new PreviewAttribute(labelBuilder.label(DRIVER_VERSION), model.getDriverVersion()))
-
-                .append("jdbc-compliant") //NON-NLS
-                .end();
-
+                .append("jdbc-compliant"); //NON-NLS
         previewBuilder().addAll(attributes);
     }
 }

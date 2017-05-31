@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,18 +32,21 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class GenericElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
+public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     protected final Table<NamedNode> table;
     protected final Resources resources;
     private final Form<NamedNode> form;
     protected JGroupsPresenter presenter;
-    private Element section;
+    private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     GenericElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
@@ -67,20 +69,16 @@ public class GenericElement implements IsElement, Attachable, HasPresenter<JGrou
                         metadata))
                 .build();
 
-        // @formatter:off
-        section = new Elements.Builder()
-            .section()
-                .h(1).textContent(name).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        section = section()
+                .add(h(1).textContent(name))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return section;
     }
 

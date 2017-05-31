@@ -17,7 +17,7 @@ package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.PreBootstrapper;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
@@ -37,8 +37,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
             LoadingPanel.get().off();
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
             logger.error("Uncaught bootstrap error: {}", errorMessage);
-            Browser.getDocument().getBody().appendChild(
-                    BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).asElement());
+            DomGlobal.document.body.appendChild(BootstrapFailed.create(errorMessage, Endpoints.INSTANCE).asElement());
         });
     }
 }

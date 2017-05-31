@@ -17,9 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
@@ -29,6 +28,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
 /**
@@ -36,53 +36,47 @@ import static org.jboss.gwt.elemento.core.EventType.click;
  */
 class ChooseTemplateStep extends WizardStep<Context, State> {
 
-    private final Element root;
+    private final HTMLElement root;
 
     ChooseTemplateStep(final DataSourceTemplates templates,
             final Resources resources, final boolean xa) {
         super(resources.constants().chooseTemplate());
 
-        Elements.Builder builder = new Elements.Builder().div()
-                .p().textContent(resources.messages().chooseTemplate(resources.constants().custom())).end();
+        root = div()
+                .add(p().textContent(resources.messages().chooseTemplate(resources.constants().custom())))
+                .asElement();
 
-        // @formatter:off
-        builder.div().css(CSS.radio)
-            .label()
-                .input(InputType.radio)
-                    .attr("name", "template") //NON-NLS
-                    .attr("value", "custom")
-                    .on(click, event -> wizard().getContext().template  = null)
-                .span().textContent(resources.constants().custom()).end()
-            .end()
-        .end();
-        // @formatter:on
+        root.appendChild(div().css(CSS.radio)
+                .add(label()
+                        .add(input(InputType.radio)
+                                .attr("name", "template") //NON-NLS
+                                .attr("value", "custom")
+                                .on(click, event -> wizard().getContext().template = null))
+                        .add(span().textContent(resources.constants().custom())))
+                .asElement());
 
         List<DataSourceTemplate> matchingTemplates = stream(templates.spliterator(), false)
                 .filter(t -> t.getDataSource().isXa() == xa).collect(toList());
         for (DataSourceTemplate template : matchingTemplates) {
-            // @formatter:off
-            builder.div().css(CSS.radio)
-                .label()
-                    .input(InputType.radio)
-                        .attr("name", "template") //NON-NLS
-                        .attr("value", template.getId())
-                    .on(click, event -> {
-                        String id = ((InputElement)event.getTarget()).getValue();
-                        wizard().getContext().template = templates.getTemplate(id);
-                    })
-                    .span().textContent(template.toString()).end()
-                .end()
-            .end();
-            // @formatter:on
+            root.appendChild(div().css(CSS.radio)
+                    .add(label()
+                            .add(input(InputType.radio)
+                                    .attr("name", "template") //NON-NLS
+                                    .attr("value", template.getId())
+                                    .on(click, event -> {
+                                        String id = ((HTMLInputElement)event.target).value;
+                                        wizard().getContext().template = templates.getTemplate(id);
+                                    }))
+                            .add(span().textContent(resources.constants().custom())))
+                    .asElement());
         }
-        this.root = builder.end().build();
 
-        InputElement firstRadio = (InputElement) root.querySelector("input[type=radio]"); //NON-NLS
-        firstRadio.setChecked(true);
+        HTMLInputElement firstRadio = (HTMLInputElement) root.querySelector("input[type=radio]"); //NON-NLS
+        firstRadio.checked = true;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

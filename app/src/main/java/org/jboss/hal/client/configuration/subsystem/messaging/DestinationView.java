@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -35,6 +34,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_SETTING;
@@ -94,16 +96,12 @@ public abstract class DestinationView extends MbuiViewImpl<DestinationPresenter>
 
         registerAttachable(roleTable, roleForm);
 
-        // @formatter:off
-        Element roleSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.SECURITY_SETTING).end()
-                .p().textContent(roleMetadata.getDescription().getDescription()).end()
+        HTMLElement roleSection = section()
+                .add(h(1).textContent(Names.SECURITY_SETTING))
+                .add(p().textContent(roleMetadata.getDescription().getDescription()))
                 .add(roleTable)
                 .add(roleForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         //noinspection HardCodedStringLiteral
         navigation.insertPrimary(Ids.MESSAGING_SECURITY_SETTING_ROLE_ENTRY, "messaging-address-setting-entry",

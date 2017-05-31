@@ -15,22 +15,21 @@
  */
 package org.jboss.hal.client.homepage;
 
-import java.util.Collections;
 import javax.annotation.PostConstruct;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import elemental.client.Browser;
-import elemental.dom.Document;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.DataElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.gwt.elemento.template.DataElement;
+import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.in;
 
@@ -59,34 +58,35 @@ abstract class HomepageSection implements IsElement {
     // @formatter:on
 
 
-    @DataElement Element toggleIcon;
-    @DataElement Element sectionHeader;
-    @DataElement Element sectionBody;
-    @DataElement Element sectionIntro;
-    @DataElement Element sectionSteps;
+    @DataElement HTMLElement toggleIcon;
+    @DataElement HTMLElement toggleSection;
+    @DataElement HTMLElement sectionHeader;
+    @DataElement HTMLElement sectionBody;
+    @DataElement HTMLElement sectionIntro;
+    @DataElement HTMLElement sectionSteps;
 
     @PostConstruct
     void init() {
         if (open()) {
-            toggleIcon.getClassList().remove("fa-angle-right");
-            toggleIcon.getClassList().add("fa-angle-down");
-            sectionBody.getClassList().add(in);
+            toggleIcon.classList.remove("fa-angle-right");
+            toggleIcon.classList.add("fa-angle-down");
+            sectionBody.classList.add(in);
         } else {
-            toggleIcon.getClassList().remove("fa-angle-down");
-            toggleIcon.getClassList().add("fa-angle-right");
-            sectionBody.getClassList().remove(in);
+            toggleIcon.classList.remove("fa-angle-down");
+            toggleIcon.classList.add("fa-angle-right");
+            sectionBody.classList.remove(in);
         }
-        sectionHeader.setInnerHTML(header());
-        sectionIntro.setInnerHTML(intro());
+        sectionHeader.innerHTML = header();
+        sectionIntro.innerHTML = intro();
         sectionBody.setAttribute("aria-expanded", String.valueOf(open())); //NON-NLS
 
         Elements.removeChildrenFrom(sectionSteps);
-        Document document = Browser.getDocument();
         for (String step : steps()) {
-            Element li = document.createLIElement();
-            li.setInnerHTML(step);
+            HTMLLIElement li = li().innerHtml(SafeHtmlUtils.fromString(step)).asElement();
             sectionSteps.appendChild(li);
         }
+
+        bind(toggleSection, click, event -> toggle());
     }
 
     String historyToken() {
@@ -94,15 +94,14 @@ abstract class HomepageSection implements IsElement {
         return places().historyToken(placeRequest);
     }
 
-    @EventHandler(element = "toggleSection", on = click)
     void toggle() {
-        boolean open = toggleIcon.getClassList().contains("fa-angle-down");
+        boolean open = toggleIcon.classList.contains("fa-angle-down");
         if (open) {
-            toggleIcon.getClassList().remove("fa-angle-down");
-            toggleIcon.getClassList().add("fa-angle-right");
+            toggleIcon.classList.remove("fa-angle-down");
+            toggleIcon.classList.add("fa-angle-right");
         } else {
-            toggleIcon.getClassList().remove("fa-angle-right");
-            toggleIcon.getClassList().add("fa-angle-down");
+            toggleIcon.classList.remove("fa-angle-right");
+            toggleIcon.classList.add("fa-angle-down");
         }
     }
 }

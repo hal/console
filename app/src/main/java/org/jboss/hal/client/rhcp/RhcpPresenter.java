@@ -21,14 +21,16 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.elements;
+import static org.jboss.gwt.elemento.core.Elements.img;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.resources.CSS.preview;
 
 @SuppressWarnings("HardCodedStringLiteral")
@@ -56,16 +58,14 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
 
     @Override
     protected PreviewContent initialPreview() {
-        Element element = new Elements.Builder()
-                .div()
-                .p().textContent(
-                        "w00t you found a secret page! The main purpose of this page is to test deeply nested columns. Therefore the discography of the Red Hot Chili Peppers is used (obviously one of the developers is a big RHCP fan ;-)")
-                .end()
-                .p().textContent("Have fun browsing through the albums (and don't forget to look under the bridge).").end()
-                .add("img").css(preview).attr("src",
+        ElementsBuilder elements = elements()
+                .add(p().textContent(
+                        "w00t you found a secret page! The main purpose of this page is to test deeply nested columns. Therefore the discography of the Red Hot Chili Peppers is used (obviously one of the developers is a big RHCP fan ;-)"))
+                .add(p().textContent(
+                        "Have fun browsing through the albums (and don't forget to look under the bridge)."))
+                .add(img(
                         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Redgotchilipeppers-logo.svg/240px-Redgotchilipeppers-logo.svg.png")
-                .end()
-                .build();
-        return new PreviewContent("Red Hot Chili Peppers", element);
+                        .css(preview));
+        return new PreviewContent("Red Hot Chili Peppers", elements);
     }
 }

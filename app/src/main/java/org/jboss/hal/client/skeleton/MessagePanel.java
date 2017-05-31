@@ -18,8 +18,9 @@ package org.jboss.hal.client.skeleton;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -30,6 +31,10 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.mouseout;
+import static org.jboss.gwt.elemento.core.EventType.mouseover;
 import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
 import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
 
@@ -45,21 +50,20 @@ class MessagePanel implements IsElement {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private final Resources resources;
-    private final Map<String, Integer> messageIds;
+    private final Map<String, Double> messageIds;
     private final Map<Long, Message> stickyMessages;
-    private final Element root;
+    private final HTMLElement root;
 
     MessagePanel(final Resources resources) {
         this.resources = resources;
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
-        this.root = Browser.getDocument().createDivElement();
-        this.root.getClassList().add(toastNotificationsListPf);
-        Browser.getDocument().getBody().appendChild(root);
+        this.root = div().css(toastNotificationsListPf).asElement();
+        DomGlobal.document.body.appendChild(root);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -69,14 +73,14 @@ class MessagePanel implements IsElement {
 
         } else {
             String id = Ids.uniqueId();
-            Element element = new MessagePanelElement(this, message, resources).asElement();
-            element.setId(id);
+            HTMLElement element = new MessagePanelElement(this, message, resources).asElement();
+            element.id = id;
             root.appendChild(element);
 
             if (!message.isSticky()) {
                 startMessageTimeout(id);
-                element.setOnmouseover(e1 -> stopMessageTimeout(id));
-                element.setOnmouseout(e2 -> startMessageTimeout(id));
+                bind(element, mouseover, e1 -> stopMessageTimeout(id));
+                bind(element, mouseout, e2 -> startMessageTimeout(id));
             } else {
                 stickyMessages.put(message.getId(), message);
             }
@@ -94,19 +98,19 @@ class MessagePanel implements IsElement {
 
 
     private void startMessageTimeout(String id) {
-        int timeoutHandle = Browser.getWindow().setTimeout(() -> remove(id), MESSAGE_TIMEOUT);
+        double timeoutHandle = DomGlobal.setTimeout((o) -> remove(id), MESSAGE_TIMEOUT);
         messageIds.put(id, timeoutHandle);
     }
 
     private void stopMessageTimeout(String id) {
         if (messageIds.containsKey(id)) {
-            Browser.getWindow().clearTimeout(messageIds.get(id));
+            DomGlobal.clearTimeout(messageIds.get(id));
             messageIds.remove(id);
         }
     }
 
     private void remove(String id) {
-        Element element = Browser.getDocument().getElementById(id);
+        Element element = DomGlobal.document.getElementById(id);
         Elements.failSafeRemove(root, element);
         messageIds.remove(id);
     }

@@ -15,8 +15,7 @@
  */
 package org.jboss.hal.client.management;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -30,6 +29,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Names;
 
 import static java.util.stream.Collectors.joining;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Icons.flag;
 
@@ -62,19 +62,14 @@ class ManagementInterfacePreview extends PreviewContent<StaticItem> {
                 .append(model -> {
                     String label = labelBuilder.label(HTTP_UPGRADE);
                     boolean httpUpgrade = ModelNodeHelper.failSafeBoolean(model, HTTP_UPGRADE + "/" + ENABLED);
-                    Element element = new Elements.Builder()
-                            .span()
-                            .css(flag(httpUpgrade))
-                            .end()
-                            .build();
+                    HTMLElement element = span().css(flag(httpUpgrade)).asElement();
                     return new PreviewAttribute(label, element);
                 })
                 .append(SOCKET_BINDING)
                 .append(SECURE_SOCKET_BINDING)
                 .append(SECURITY_REALM)
                 .append(SASL_PROTOCOL)
-                .append(SSL_CONTEXT)
-                .end();
+                .append(SSL_CONTEXT);
 
         previewBuilder().addAll(attributes);
     }

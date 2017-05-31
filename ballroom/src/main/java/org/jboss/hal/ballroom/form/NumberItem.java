@@ -19,10 +19,15 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLInputElement;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.change;
+import static org.jboss.gwt.elemento.core.EventType.keyup;
+import static org.jboss.gwt.elemento.core.InputType.number;
+import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.resources.CSS.formControl;
 
@@ -46,7 +51,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
     private static class NumberEditingAppearance extends EditingAppearance<Long> {
 
-        NumberEditingAppearance(InputElement inputElement) {
+        NumberEditingAppearance(HTMLInputElement inputElement) {
             super(EnumSet.allOf(Decoration.class), inputElement);
         }
 
@@ -57,17 +62,17 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public void showValue(final Long value) {
-            inputElement.setValue(String.valueOf(value));
+            inputElement.value = String.valueOf(value);
         }
 
         @Override
         public void showExpression(final String expression) {
-            inputElement.setValue(expression);
+            inputElement.value = expression;
         }
 
         @Override
         public void clearValue() {
-            inputElement.setValue("");
+            inputElement.value = "";
         }
     }
 
@@ -79,7 +84,7 @@ public class NumberItem extends AbstractFormItem<Long> {
             if (!isExpressionValue()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
-                    Long.parseLong(inputElement.getValue());
+                    Long.parseLong(inputElement.value);
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {
                     return ValidationResult.invalid(CONSTANTS.notANumber());
@@ -114,7 +119,7 @@ public class NumberItem extends AbstractFormItem<Long> {
      */
     public static final long MAX_SAFE_LONG = 9007199254740991L;
 
-    private final InputElement inputElement;
+    private final HTMLInputElement inputElement;
     private long min;
     private long max;
 
@@ -125,14 +130,11 @@ public class NumberItem extends AbstractFormItem<Long> {
         // read-only appearance
         addAppearance(Form.State.READONLY, new NumberReadOnlyAppearance());
 
-        // editing appearance
-        inputElement = Browser.getDocument().createInputElement();
-        // type="number" not possible because of expression support
-        inputElement.setType("text"); //NON-NLS
-        inputElement.getClassList().add(formControl);
+        // editing appearance - type="number" not possible because of expression support
+        inputElement = input(text).css(formControl).asElement();
 
-        inputElement.setOnchange(event -> {
-            String stringValue = inputElement.getValue();
+        remember(bind(inputElement, change, event -> {
+            String stringValue = inputElement.value;
             if (isExpressionAllowed() && hasExpressionScheme(stringValue)) {
                 modifyExpressionValue(stringValue);
             } else {
@@ -147,12 +149,11 @@ public class NumberItem extends AbstractFormItem<Long> {
                     }
                 }
             }
-        });
-
-        inputElement.setOnkeyup(event -> {
-            toggleExpressionSupport(inputElement.getValue());
+        }));
+        remember(bind(inputElement, keyup, event -> {
+            toggleExpressionSupport(inputElement.value);
             inputElement.focus();
-        });
+        }));
 
         addAppearance(Form.State.EDITING, new NumberEditingAppearance(inputElement));
     }
@@ -182,9 +183,9 @@ public class NumberItem extends AbstractFormItem<Long> {
     public void setExpressionAllowed(final boolean expressionAllowed) {
         super.setExpressionAllowed(expressionAllowed);
         if (!expressionAllowed) {
-            inputElement.setType("number");
+            inputElement.type = number.name();
         } else {
-            inputElement.setType("text");
+            inputElement.type = text.name();
         }
     }
 }

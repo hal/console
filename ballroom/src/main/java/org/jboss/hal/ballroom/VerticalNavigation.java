@@ -21,8 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -37,6 +39,8 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -74,10 +78,10 @@ public class VerticalNavigation implements Attachable {
         private final String id;
         private final String parentId;
         private final String text;
-        private final Element element;
+        private final HTMLElement element;
         private final LinkedHashSet<String> children;
 
-        private Entry(final String id, String parentId, final String text, final Element element) {
+        private Entry(final String id, String parentId, final String text, final HTMLElement element) {
             this.id = id;
             this.parentId = parentId;
             this.text = text;
@@ -86,7 +90,7 @@ public class VerticalNavigation implements Attachable {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return element;
         }
 
@@ -107,9 +111,9 @@ public class VerticalNavigation implements Attachable {
     private static class Pane implements IsElement {
 
         private final String id;
-        private final Element element;
+        private final HTMLElement element;
 
-        private Pane(final String id, final Element element) {
+        private Pane(final String id, final HTMLElement element) {
             this.id = id;
             this.element = element;
         }
@@ -120,7 +124,7 @@ public class VerticalNavigation implements Attachable {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return element;
         }
     }
@@ -128,29 +132,22 @@ public class VerticalNavigation implements Attachable {
 
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
-    private static final String UL_ELEMENT = "ulElement";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
-    private static Element rootContainer;
-    private static final Element root;
-    private static final Element ul;
+    private static HTMLElement rootContainer;
+    private static final HTMLElement root;
+    private static final HTMLElement ul;
 
     static {
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(navPfVertical, navPfVerticalHal)
-                .ul().css(listGroup).rememberAs(UL_ELEMENT).end()
-            .end();
-        // @formatter:on
-
-        root = builder.build();
-        ul = builder.referenceFor(UL_ELEMENT);
+        root = div().css(navPfVertical, navPfVerticalHal)
+                .add(ul = ul().css(listGroup).asElement())
+                .asElement();
         Elements.setVisible(root, false);
     }
 
     private static void init() {
-        rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
-        Browser.getDocument().getBody().insertBefore(root, rootContainer);
+        rootContainer = (HTMLElement) DomGlobal.document.getElementById(Ids.ROOT_CONTAINER);
+        DomGlobal.document.body.insertBefore(root, rootContainer);
     }
 
     private LinkedHashMap<String, Entry> entries;
@@ -168,12 +165,12 @@ public class VerticalNavigation implements Attachable {
         if (rootContainer == null) {
             init();
         }
-        rootContainer.getClassList().add(containerPfNavPfVertical);
+        rootContainer.classList.add(containerPfNavPfVertical);
         if (hasSecondary()) {
-            rootContainer.getClassList().add(containerPfNavPfVerticalWithSubMenus);
-            rootContainer.getClassList().add(navPfPersistentSecondary);
-            root.getClassList().add(navPfVerticalWithSubMenus);
-            root.getClassList().add(navPfPersistentSecondary);
+            rootContainer.classList.add(containerPfNavPfVerticalWithSubMenus);
+            rootContainer.classList.add(navPfPersistentSecondary);
+            root.classList.add(navPfVerticalWithSubMenus);
+            root.classList.add(navPfPersistentSecondary);
         }
         entries.values().stream()
                 .filter(entry -> entry.parentId == null)
@@ -187,13 +184,13 @@ public class VerticalNavigation implements Attachable {
     @Override
     public void detach() {
         Elements.removeChildrenFrom(ul);
-        root.getClassList().remove(navPfPersistentSecondary);
-        root.getClassList().remove(navPfVerticalWithSubMenus);
-        root.getClassList().remove(secondaryVisiblePf);
-        rootContainer.getClassList().remove(secondaryVisiblePf);
-        rootContainer.getClassList().remove(navPfPersistentSecondary);
-        rootContainer.getClassList().remove(containerPfNavPfVerticalWithSubMenus);
-        rootContainer.getClassList().remove(containerPfNavPfVertical);
+        root.classList.remove(navPfPersistentSecondary);
+        root.classList.remove(navPfVerticalWithSubMenus);
+        root.classList.remove(secondaryVisiblePf);
+        rootContainer.classList.remove(secondaryVisiblePf);
+        rootContainer.classList.remove(navPfPersistentSecondary);
+        rootContainer.classList.remove(containerPfNavPfVerticalWithSubMenus);
+        rootContainer.classList.remove(containerPfNavPfVertical);
 
         Elements.setVisible(root, false);
     }
@@ -222,7 +219,7 @@ public class VerticalNavigation implements Attachable {
         return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
     }
 
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, HTMLElement element) {
         return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
     }
 
@@ -238,7 +235,7 @@ public class VerticalNavigation implements Attachable {
         insertPrimary(id, beforeId, text, iconClass, element.asElement());
     }
 
-    public void insertPrimary(String id, String beforeId, String text, String iconClass, Element element) {
+    public void insertPrimary(String id, String beforeId, String text, String iconClass, HTMLElement element) {
         if (entries.isEmpty()) {
             logger.error("Cannot insert {}: There has to be at least one other entry.", id);
             return;
@@ -249,7 +246,7 @@ public class VerticalNavigation implements Attachable {
             Pane lastPane = panes.values().iterator().next();
             Pane pane = new Pane(id, element);
             addPrimary(entries, panes, id, text, iconClass, pane);
-            lastPane.asElement().getParentElement().appendChild(pane.asElement());
+            lastPane.asElement().parentNode.appendChild(pane.asElement());
 
         } else {
             if (entries.containsKey(beforeId)) {
@@ -266,7 +263,7 @@ public class VerticalNavigation implements Attachable {
                         Pane pane = new Pane(id, element);
                         addPrimary(reshuffledEntries, reshuffledPanes, id, text, iconClass, pane);
                         Pane refPane = panes.get(currentId);
-                        refPane.asElement().getParentElement().insertBefore(pane.asElement(), refPane.asElement());
+                        refPane.asElement().parentNode.insertBefore(pane.asElement(), refPane.asElement());
                         reshuffledEntries.put(currentId, entries.get(currentId));
                         reshuffledPanes.put(currentId, panes.get(currentId));
 
@@ -286,26 +283,26 @@ public class VerticalNavigation implements Attachable {
 
     private VerticalNavigation addPrimary(LinkedHashMap<String, Entry> entries, LinkedHashMap<String, Pane> panes,
             String id, String text, String iconClass, Pane pane) {
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .li().css(listGroupItem).id(id)
-                .a().css(clickable);
-                    if (pane != null) {
-                        builder.on(click, event -> show(id));
-                    }
-                    if (iconClass != null) {
-                        builder.span().css(iconClass).end();
-                    }
-                    builder.span().css(listGroupItemValue).textContent(text);
-                    if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
-                        builder.title(text);
-                    }
-                    builder.end()
-                .end()
-            .end();
-        // @formatter:on
 
-        Entry entry = new Entry(id, null, text, builder.build());
+        HTMLAnchorElement a;
+        HTMLElement span;
+        HTMLElement primary = li().css(listGroupItem)
+                .id(id)
+                .add(a = a().css(clickable).asElement())
+                .asElement();
+
+        if (pane != null) {
+            bind(a, click, event -> show(id));
+        }
+        if (iconClass != null) {
+            a.appendChild(span().css(iconClass).asElement());
+        }
+        a.appendChild(span = span().css(listGroupItemValue).textContent(text).asElement());
+        if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
+            span.title = text;
+        }
+
+        Entry entry = new Entry(id, null, text, primary);
         entries.put(id, entry);
         if (pane != null) {
             panes.put(id, pane);
@@ -317,7 +314,7 @@ public class VerticalNavigation implements Attachable {
 
     // ------------------------------------------------------ add secondary items
 
-    public VerticalNavigation addSecondary(String primaryId, String id, String text, Element element) {
+    public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
         return addSecondary(primaryId, id, text, new Pane(id, element));
     }
 
@@ -325,47 +322,38 @@ public class VerticalNavigation implements Attachable {
         Entry primaryEntry = entries.get(primaryId);
 
         if (primaryEntry != null) {
-            Element secondaryUl = primaryEntry.asElement()
+            HTMLElement secondaryUl = (HTMLElement) primaryEntry.asElement()
                     .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
 
             if (secondaryUl == null) {
                 // seems to be the first secondary entry -> setup the secondary containers
                 String secondaryContainerId = Ids.build(primaryId, "secondary");
-                primaryEntry.asElement().getClassList().add(secondaryNavItemPf);
-                primaryEntry.asElement().getDataset().setAt(UIConstants.TARGET, "#" + secondaryContainerId);
+                primaryEntry.asElement().classList.add(secondaryNavItemPf);
+                primaryEntry.asElement().dataset.set(UIConstants.TARGET, "#" + secondaryContainerId);
 
-                // @formatter:off
-                Elements.Builder builder = new Elements.Builder()
-                    .div().id(secondaryContainerId).css(navPfSecondaryNav, navPfSecondaryNavHal)
-                        .div().css(navItemPfHeader)
-                            .a().css(secondaryCollapseTogglePf)
-                                .data(UIConstants.TOGGLE, "collapse-secondary-nav") //NON-NLS
-                            .end()
-                            .span().textContent(primaryEntry.text);
-                            if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
-                                builder.title(text);
-                            }
-                            builder.end()
-                        .end()
-                        .ul().css(listGroup).rememberAs(UL_ELEMENT).end()
-                    .end();
-                // @formatter:on
+                HTMLElement span;
+                HTMLElement div = div().css(navPfSecondaryNav, navPfSecondaryNavHal)
+                        .id(secondaryContainerId)
+                        .add(div().css(navItemPfHeader)
+                                .add(a().css(secondaryCollapseTogglePf)
+                                        .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
+                                .add(span = span().textContent(primaryEntry.text).asElement()))
+                        .add(secondaryUl = ul().css(listGroup).asElement())
+                        .asElement();
 
-                secondaryUl = builder.referenceFor(UL_ELEMENT);
-                primaryEntry.asElement().appendChild(builder.build());
+                if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
+                    span.title = text;
+                }
+                primaryEntry.asElement().appendChild(div);
             }
 
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .li().css(listGroupItem)
-                    .a().css(clickable).on(click, event -> show(id))
-                        .span().css(listGroupItemValue).textContent(text).end()
-                    .end()
-                .end();
-            // @formatter:on
+            HTMLElement li = li().css(listGroupItem)
+                    .add(a().css(clickable).on(click, event -> show(id))
+                            .add(span().css(listGroupItemValue).textContent(text)))
+                    .asElement();
 
             primaryEntry.addChild(id);
-            Entry secondaryEntry = new Entry(id, primaryId, text, builder.build());
+            Entry secondaryEntry = new Entry(id, primaryId, text, li);
             secondaryUl.appendChild(secondaryEntry.asElement());
             entries.put(id, secondaryEntry);
             panes.put(id, pane);
@@ -434,16 +422,14 @@ public class VerticalNavigation implements Attachable {
     public void updateBadge(String id, int count) {
         Entry entry = entries.get(id);
         if (entry != null) {
-            Element a = entry.asElement().getFirstElementChild();
-            Element badgeContainer = a.querySelector("." + badgeContainerPf);
+            Element a = entry.asElement().firstElementChild;
+            HTMLElement badgeContainer = (HTMLElement) a.querySelector("." + badgeContainerPf);
             if (badgeContainer != null) {
                 a.removeChild(badgeContainer);
             }
-            badgeContainer = new Elements.Builder()
-                    .div().css(badgeContainerPf)
-                    .span().css(badge).textContent(String.valueOf(count)).end()
-                    .end()
-                    .build();
+            badgeContainer = div().css(badgeContainerPf)
+                    .add(span().css(badge).textContent(String.valueOf(count)))
+                    .asElement();
             a.appendChild(badgeContainer);
         } else {
             logger.error("Unable to find navigation entry for id '{}'", id);

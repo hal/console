@@ -16,7 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +29,12 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
@@ -162,7 +162,7 @@ class JdbcDriverFunctions {
                 }
             }
             List<JdbcDriver> drivers = new ArrayList<>(map.values());
-            Collections.sort(drivers, (driver1, driver2) -> driver1.getName().compareTo(driver2.getName()));
+            drivers.sort(Comparator.comparing(JdbcDriver::getName));
             control.getContext().set(DRIVERS, drivers);
             control.proceed();
         }

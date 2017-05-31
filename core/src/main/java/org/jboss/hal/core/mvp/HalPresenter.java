@@ -20,7 +20,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.header.HeaderModeEvent;
@@ -64,12 +64,12 @@ abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
     protected abstract HeaderModeEvent headerMode();
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return getView().asElement();
     }
 
     @Override
-    public Iterable<Element> asElements() {
+    public Iterable<HTMLElement> asElements() {
         return getView().asElements();
     }
 }

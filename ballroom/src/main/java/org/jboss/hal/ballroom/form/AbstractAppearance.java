@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
-import elemental.html.LabelElement;
+import elemental2.dom.HTMLLabelElement;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -45,7 +45,7 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     private final Set<Decoration> appliedDecorations;
     String id;
     String label;
-    LabelElement labelElement;
+    HTMLLabelElement labelElement;
 
     AbstractAppearance(final Set<Decoration> supportedDecorations) {
         this.supportedDecorations = new HashSet<>(supportedDecorations);
@@ -110,25 +110,25 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     @Override
     public void setLabel(final String label) {
         this.label = label;
-        labelElement.setTitle(label);
-        labelElement.setTextContent(label);
+        labelElement.title = label;
+        labelElement.textContent = label;
     }
 
     void markAsDeprecated(Deprecation deprecation) {
-        labelElement.setTitle(MESSAGES.deprecated(deprecation.getSince(), deprecation.getReason()));
-        labelElement.getClassList().add(deprecated);
+        labelElement.title = MESSAGES.deprecated(deprecation.getSince(), deprecation.getReason());
+        labelElement.classList.add(deprecated);
     }
 
     void clearDeprecation() {
-        labelElement.setTitle(label);
-        labelElement.getClassList().remove(deprecated);
+        labelElement.title = label;
+        labelElement.classList.remove(deprecated);
     }
 
     void markAsRequired() {
-        labelElement.setInnerHTML(label + " " + MESSAGES.requiredMarker().asString());
+        labelElement.innerHTML = label + " " + MESSAGES.requiredMarker().asString();
     }
 
     void clearRequired() {
-        labelElement.setInnerHTML(label);
+        labelElement.innerHTML = label;
     }
 }

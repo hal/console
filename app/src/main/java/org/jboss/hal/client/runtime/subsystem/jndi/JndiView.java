@@ -17,10 +17,9 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Search;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -33,7 +32,10 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
@@ -48,14 +50,11 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
     private static final String JAVA_CONTEXTS = "java: contexts";
     private static final String APPLICATIONS = "applications";
-    private static final String HEADER = "header";
-    private static final String TREE_CONTAINER = "treeContainer";
-    private static final String HINT = "hint";
 
-    private Element header;
-    private Element treeContainer;
+    private HTMLElement header;
+    private HTMLElement treeContainer;
     private Tree<JndiContext> tree;
-    private Element hint;
+    private HTMLElement hint;
     private Search search;
     private Form<ModelNode> details;
     private JndiPresenter presenter;
@@ -84,36 +83,25 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
                 .build();
         registerAttachable(details);
 
-        // @formatter:off
-        LayoutBuilder builder = new LayoutBuilder()
-            .row()
-                .column(4)
-                    .h(1).rememberAs(HEADER).textContent(resources.constants().jndiTree()).end()
-                    .div().css(flexRow)
-                        .div().css(btnGroup, marginRightSmall)
-                            .button().css(btn, btnDefault).on(click, event -> presenter.reload())
-                                .add("i").css(fontAwesome(CSS.refresh))
-                            .end()
-                            .button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))
-                                .add("i").css(fontAwesome("minus"))
-                            .end()
-                        .end()
-                        .add(search)
-                    .end()
-                    .div().rememberAs(TREE_CONTAINER).css(CSS.treeContainer).end()
-                .end()
-                .column(8)
-                    .h(1).textContent(resources.constants().details()).end()
-                    .p().rememberAs(HINT).textContent(resources.constants().noDetails()).end()
-                    .add(details)
-                .end()
-            .end();
-        // @formatter:on
-
-        header = builder.referenceFor(HEADER);
-        treeContainer = builder.referenceFor(TREE_CONTAINER);
-        hint = builder.referenceFor(HINT);
-        initElements(builder.elements());
+        HTMLElement root = row()
+                .add(column(4)
+                        .add(header = h(1).textContent(resources.constants().jndiTree()).asElement())
+                        .add(div().css(flexRow)
+                                .add(div().css(btnGroup, marginRightSmall)
+                                        .add(button().css(btn, btnDefault)
+                                                .on(click, event -> presenter.reload())
+                                                .add(i().css(fontAwesome(CSS.refresh))))
+                                        .add(button().css(btn, btnDefault)
+                                                .on(click, event -> collapse(tree.api().getSelected()))
+                                                .add(i().css(fontAwesome("minus")))))
+                                .add(search))
+                        .add(treeContainer = div().css(CSS.treeContainer).asElement()))
+                .add(column(8)
+                        .add(h(1).textContent(resources.constants().details()))
+                        .add(hint = p().textContent(resources.constants().noDetails()).asElement())
+                        .add(details))
+                .asElement();
+        initElement(root);
     }
 
     @Override
@@ -128,10 +116,10 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
     }
 
     private void adjustHeight() {
-        int headerHeight = header.getOffsetHeight();
-        int searchHeight = search.asElement().getOffsetHeight();
+        int headerHeight = (int) header.offsetHeight;
+        int searchHeight = (int) search.asElement().offsetHeight;
         int offset = applicationOffset() + 2 * MARGIN_BIG + headerHeight + searchHeight + 2 * MARGIN_SMALL;
-        treeContainer.getStyle().setHeight(vh(offset));
+        treeContainer.style.height = vh(offset);
     }
 
     private void collapse(final Node<JndiContext> node) {
@@ -144,7 +132,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final ModelNode jndi) {
         JndiParser jndiParser = new JndiParser();
-        JsArrayOf<Node<JndiContext>> nodes = JsArrayOf.create();
+        Array<Node<JndiContext>> nodes = new Array<>();
 
         if (jndi.hasDefined(JAVA_CONTEXTS)) {
             JndiContext jndiContext = new JndiContext();
@@ -173,7 +161,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> {
             if (!"ready".equals(selectionContext.action)) {
-                boolean hasSelection = !selectionContext.selected.isEmpty();
+                boolean hasSelection = selectionContext.selected.getLength() != 0;
                 boolean validSelection = hasSelection && selectionContext.node.data.hasDetails;
                 Elements.setVisible(hint, !validSelection);
                 Elements.setVisible(details.asElement(), validSelection);

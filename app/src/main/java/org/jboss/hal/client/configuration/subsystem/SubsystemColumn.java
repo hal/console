@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -35,9 +35,9 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -78,7 +78,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     }
 
                     @Override
-                    public Element asElement() {
+                    public HTMLElement asElement() {
                         return item.getSubtitle() != null ? ItemDisplay
                                 .withSubtitle(item.getTitle(), item.getSubtitle()) : null;
                     }

@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,6 +32,9 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -41,9 +43,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  *
  * @author Harald Pehl
  */
-class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePresenter> {
+class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
 
-    private final Element root;
+    private final HTMLElement root;
     private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private WebservicePresenter presenter;
@@ -67,20 +69,16 @@ class HandlerElement implements IsElement, Attachable, HasPresenter<WebservicePr
                 .prepareReset(form -> presenter.resetHandler(form.getModel().getName(), form))
                 .build();
 
-        // @formatter:off
-        root = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.HANDLER).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        root = section()
+                .add(h(1).textContent(Names.HANDLER))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

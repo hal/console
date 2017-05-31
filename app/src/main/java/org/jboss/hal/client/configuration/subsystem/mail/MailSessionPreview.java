@@ -54,7 +54,6 @@ class MailSessionPreview extends PreviewContent<MailSession> {
                     POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
                     model.getServerSocketBinding(POP3)));
         }
-        attributes.end();
         previewBuilder().addAll(attributes);
     }
 }

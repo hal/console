@@ -19,8 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.resources.client.ExternalTextResource;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -29,28 +28,22 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 
 /**
  * @author Harald Pehl
  */
 class RolePreview extends PreviewContent<Role> {
 
-    private static final String INCLUDE_ALL_DIV = "includeAllDiv";
-    private static final String NOT_INCLUDE_ALL_DIV = "notIncludeAllDiv";
-    private static final String NO_EXCLUDES = "noExcludes";
-    private static final String EXCLUDE_UL = "excludeUl";
-    private static final String NO_INCLUDES = "noIncludes";
-    private static final String INCLUDE_UL = "includeUl";
-
     private final AccessControl accessControl;
     private final AccessControlTokens tokens;
     private final Resources resources;
-    private final Element includeAllDiv;
-    private final Element notIncludeAllDiv;
-    private final Element noExcludes;
-    private final Element excludesUl;
-    private final Element noIncludes;
-    private final Element includesUl;
+    private final HTMLElement includeAllDiv;
+    private final HTMLElement notIncludeAllDiv;
+    private final HTMLElement noExcludes;
+    private final HTMLElement excludesUl;
+    private final HTMLElement noIncludes;
+    private final HTMLElement includesUl;
 
     RolePreview(final AccessControl accessControl, final AccessControlTokens tokens, final Role role,
             final Resources resources) {
@@ -61,50 +54,42 @@ class RolePreview extends PreviewContent<Role> {
                     : resources.messages().serverGroupScopedRole(role.getBaseRole().getName(), String.join(", ", role.getScope())))
                 : null);
         // @formatter:on
+
         this.accessControl = accessControl;
         this.tokens = tokens;
         this.resources = resources;
 
-        // @formatter:off
         previewBuilder()
-            .div().rememberAs(INCLUDE_ALL_DIV)
-                .h(2).textContent(resources.constants().includesAllHeader()).end()
-                .p().textContent(resources.constants().includesAllDescription()).end()
-            .end()
-            .div().rememberAs(NOT_INCLUDE_ALL_DIV)
-                .h(2).textContent(resources.constants().excludes()).end()
-                .p().rememberAs(NO_EXCLUDES).textContent(resources.constants().noPrincipalsExcluded()).end()
-                .ul().rememberAs(EXCLUDE_UL).end()
-
-                .h(2).textContent(resources.constants().includes()).end()
-                .p().rememberAs(NO_INCLUDES).textContent(resources.constants().noPrincipalsIncluded()).end()
-                .ul().rememberAs(INCLUDE_UL).end()
-            .end();
-        // @formatter:on
-
-        includeAllDiv = previewBuilder().referenceFor(INCLUDE_ALL_DIV);
-        notIncludeAllDiv = previewBuilder().referenceFor(NOT_INCLUDE_ALL_DIV);
-        noExcludes = previewBuilder().referenceFor(NO_EXCLUDES);
-        excludesUl = previewBuilder().referenceFor(EXCLUDE_UL);
-        noIncludes = previewBuilder().referenceFor(NO_INCLUDES);
-        includesUl = previewBuilder().referenceFor(INCLUDE_UL);
+                .add(includeAllDiv = div()
+                        .add(h(2).textContent(resources.constants().includesAllHeader()))
+                        .add(p().textContent(resources.constants().includesAllDescription()))
+                        .asElement())
+                .add(notIncludeAllDiv = div()
+                        .add(h(2).textContent(resources.constants().excludes()))
+                        .add(noExcludes = p().textContent(resources.constants().noPrincipalsExcluded()).asElement())
+                        .add(excludesUl = ul().asElement())
+                        .add(h(2).textContent(resources.constants().includes()))
+                        .add(noIncludes = p().textContent(resources.constants().noPrincipalsIncluded()).asElement())
+                        .add(includesUl = ul().asElement())
+                        .asElement());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
         Elements.setVisible(noIncludes, false);
         Elements.setVisible(includesUl, false);
 
-        Element roleDescription = Browser.getDocument().createElement("p"); //NON-NLS
+        HTMLElement roleDescription = p().asElement();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);
-        previewBuilder().h(2).textContent(resources.constants().description()).end()
+        previewBuilder()
+                .add(h(2).textContent(resources.constants().description()))
                 .add(roleDescription);
     }
 
     @Override
     public void update(final Role role) {
-        Comparator<Principal> byType = (p1, p2) -> p1.getType().ordinal() - p2.getType().ordinal();
+        Comparator<Principal> byType = Comparator.comparingInt(p -> p.getType().ordinal());
         List<Principal> excludes = accessControl.assignments().excludes(role).map(Assignment::getPrincipal)
                 .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
         List<Principal> includes = accessControl.assignments().includes(role).map(Assignment::getPrincipal)
@@ -124,13 +109,12 @@ class RolePreview extends PreviewContent<Role> {
         includes.forEach(principal -> principal(includesUl, principal));
     }
 
-    private void principal(Element ul, Principal principal) {
+    private void principal(HTMLElement ul, Principal principal) {
         String type = principal.getType() == Principal.Type.USER ? resources.constants().user() : resources.constants()
                 .group();
-        ul.appendChild(new Elements.Builder()
-                .li()
-                .span().textContent(type + " ").end()
-                .a().attr("href", tokens.principal(principal)).textContent(principal.getName()).end()
-                .end().build());
+        ul.appendChild(li()
+                .add(span().textContent(type + " "))
+                .add(a(tokens.principal(principal)).textContent(principal.getName()))
+                .asElement());
     }
 }

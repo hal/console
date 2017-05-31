@@ -24,9 +24,7 @@ import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 
 import com.google.common.collect.Iterators;
-import elemental.dom.Element;
-import elemental.json.JsonObject;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -35,13 +33,14 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.rhcp.RhcpColumns.Decade.DECADES;
-import static org.jboss.hal.resources.CSS.listGroup;
 import static org.jboss.hal.resources.CSS.listGroupItem;
 import static org.jboss.hal.resources.CSS.preview;
 
@@ -158,7 +157,7 @@ public class RhcpColumns {
                     })
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
-                        public Element asElement() {
+                        public HTMLElement asElement() {
                             return ItemDisplay
                                     .withSubtitle(item.getString("title"), String.valueOf(item.getNumber("year")));
                         }
@@ -173,25 +172,15 @@ public class RhcpColumns {
                             return "rhcp-track";
                         }
                     })
-                    .onPreview(item -> {
-                        // @formatter:off
-                        Element element = new Elements.Builder()
-                            .div()
-                                .add("img").css(preview).attr("src", item.getString("cover"))
-                                .p()
-                                    .span().textContent("More infos: ").end()
-                                    .a()
-                                        .attr("target", "_blank")
-                                        .attr("href", item.getString("url"))
-                                        .textContent(item.getString("url"))
-                                    .end()
-                                .end()
-                            .end()
-                        .build();
-                        // @formatter:off
-                        return new PreviewContent<>(item.getString("title"), "Released " + item.getString("released"),
-                                element);
-                    }));
+                    .onPreview(item -> new PreviewContent<>(item.getString("title"),
+                            "Released " + item.getString("released"),
+                            elements()
+                                    .add(img(item.getString("cover")).css(preview))
+                                    .add(p()
+                                            .add(span().textContent("More infos: "))
+                                            .add(a(item.getString("url"))
+                                                    .attr("target", "_blank")
+                                                    .textContent(item.getString("url")))))));
         }
     }
 
@@ -210,14 +199,14 @@ public class RhcpColumns {
                                 .map(segment -> RhcpResources.DISCOGRAPHY.getObject(segment.getItemTitle()))
                                 .ifPresent(album -> {
                                     for (int i = 0; i < album.getArray("tracks").length(); i++) {
-                                        tracks.add(album.getArray("tracks").get(i));
+                                        tracks.add(album.getArray("tracks").getObject(i));
                                     }
                                 });
                         callback.onSuccess(tracks);
                     })
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
-                        public Element asElement() {
+                        public HTMLElement asElement() {
                             return ItemDisplay.withSubtitle(
                                     String.valueOf(item.getNumber("track")) + ". " + item.getString("title"),
                                     item.getString("length"));
@@ -239,19 +228,20 @@ public class RhcpColumns {
                     .onPreview(item -> {
                         String album = Iterators.getLast(finder.getContext().getPath().iterator()).getItemTitle();
                         String length = item.getString("length");
-                        Elements.Builder builder = new Elements.Builder();
-                        builder.ul().css(listGroup)
-                                .li().css(listGroupItem).textContent("Album: " + album).end()
-                                .li().css(listGroupItem).textContent("Length: " + length).end();
+                        HTMLElement ul = ul()
+                                .add(li().css(listGroupItem).textContent("Album: " + album))
+                                .add(li().css(listGroupItem).textContent("Length: " + length))
+                                .asElement();
                         if (item.hasKey("writer")) {
                             List<String> writers = new ArrayList<>();
                             for (int i = 0; i < item.getArray("writer").length(); i++) {
-                                writers.add(item.getArray("writer").get(i));
+                                writers.add(item.getArray("writer").getString(i));
                             }
-                            builder.li().css(listGroupItem).textContent("Writer: " + String.join(", ", writers)).end();
+                            ul.appendChild(li().css(listGroupItem)
+                                    .textContent("Writer: " + String.join(", ", writers))
+                                    .asElement());
                         }
-                        Element element = builder.end().build();
-                        return new PreviewContent<>(item.getString("title"), element);
+                        return new PreviewContent<>(item.getString("title"), ul);
                     }));
         }
     }

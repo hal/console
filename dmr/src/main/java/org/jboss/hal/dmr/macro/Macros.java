@@ -21,11 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.client.Browser;
-import elemental.html.Storage;
+import elemental2.dom.DomGlobal;
+import elemental2.webstorage.Storage;
+import elemental2.webstorage.WebStorageWindow;
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.resources.Ids;
 
@@ -44,7 +45,7 @@ public class Macros {
     private MacroOptions options;
 
     public Macros() {
-        storage = Browser.getWindow().getLocalStorage();
+        storage = WebStorageWindow.of(DomGlobal.window).localStorage;
         macros = load();
     }
 

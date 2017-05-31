@@ -64,7 +64,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         if (dataSource.isXa()) {
             attributes.remove(2);
         }
-        PreviewAttributes<DataSource> previewAttributes = new PreviewAttributes<>(dataSource, attributes).end();
+        PreviewAttributes<DataSource> previewAttributes = new PreviewAttributes<>(dataSource, attributes);
         previewBuilder().addAll(previewAttributes);
     }
 }

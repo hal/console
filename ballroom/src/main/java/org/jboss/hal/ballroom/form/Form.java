@@ -26,7 +26,7 @@ import org.jboss.hal.spi.Callback;
 
 /**
  * A form bound to a model using well defined states and operations. The form contains a list of form items which are
- * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the
+ * used to view and modify the attributes of the model. Form items can be bound or unbound. Bound form items show the
  * attributes of the model (text input, check boxes or select boxes), whereas unbound form items have no relation to
  * the model (static text or buttons).
  *

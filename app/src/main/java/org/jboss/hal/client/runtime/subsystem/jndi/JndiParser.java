@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -35,12 +35,13 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 class JndiParser {
 
-    void parse(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> root, List<Property> children) {
+    @SuppressWarnings("unchecked")
+    void parse(Array<Node<JndiContext>> nodes, Node<JndiContext> root, List<Property> children) {
         nodes.push(root);
         readChildren(nodes, root, children);
     }
 
-    private void readChildren(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, List<Property> children) {
+    private void readChildren(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, List<Property> children) {
 
         children.stream()
                 .filter(child -> child.getValue().isDefined())
@@ -85,7 +86,8 @@ class JndiParser {
         return jndiContext;
     }
 
-    private Node<JndiContext> pushFolder(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    @SuppressWarnings("unchecked")
+    private Node<JndiContext> pushFolder(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)
@@ -95,7 +97,8 @@ class JndiParser {
         return node;
     }
 
-    private Node<JndiContext> pushEntry(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    @SuppressWarnings("unchecked")
+    private Node<JndiContext> pushEntry(Array<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)

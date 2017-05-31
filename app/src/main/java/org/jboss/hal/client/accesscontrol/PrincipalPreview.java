@@ -17,7 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
@@ -26,23 +26,19 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 
 /**
  * @author Harald Pehl
  */
 class PrincipalPreview extends PreviewContent<Principal> {
 
-    private static final String NO_EXCLUDES = "noExcludes";
-    private static final String EXCLUDE_UL = "excludeUl";
-    private static final String NO_INCLUDES = "noIncludes";
-    private static final String INCLUDE_UL = "includeUl";
-
     private final AccessControl accessControl;
     private final AccessControlTokens tokens;
-    private final Element noExcludes;
-    private final Element excludesUl;
-    private final Element noIncludes;
-    private final Element includesUl;
+    private final HTMLElement noExcludes;
+    private final HTMLElement excludesUl;
+    private final HTMLElement noIncludes;
+    private final HTMLElement includesUl;
 
     PrincipalPreview(final AccessControl accessControl, final AccessControlTokens tokens, final Principal principal,
             final Resources resources) {
@@ -53,18 +49,12 @@ class PrincipalPreview extends PreviewContent<Principal> {
         this.tokens = tokens;
 
         previewBuilder()
-                .h(2).textContent(resources.constants().excludes()).end()
-                .p().rememberAs(NO_EXCLUDES).textContent(resources.constants().noRolesExcluded()).end()
-                .ul().rememberAs(EXCLUDE_UL).end()
-
-                .h(2).textContent(resources.constants().includes()).end()
-                .p().rememberAs(NO_INCLUDES).textContent(resources.constants().noRolesIncluded()).end()
-                .ul().rememberAs(INCLUDE_UL).end();
-
-        noExcludes = previewBuilder().referenceFor(NO_EXCLUDES);
-        excludesUl = previewBuilder().referenceFor(EXCLUDE_UL);
-        noIncludes = previewBuilder().referenceFor(NO_INCLUDES);
-        includesUl = previewBuilder().referenceFor(INCLUDE_UL);
+                .add(h(2).textContent(resources.constants().excludes()))
+                .add(noExcludes = p().textContent(resources.constants().noRolesExcluded()).asElement())
+                .add(excludesUl = ul().asElement())
+                .add(h(2).textContent(resources.constants().includes()))
+                .add(noIncludes = p().textContent(resources.constants().noRolesIncluded()).asElement())
+                .add(includesUl = ul().asElement());
 
         Elements.setVisible(noExcludes, false);
         Elements.setVisible(excludesUl, false);
@@ -82,17 +72,13 @@ class PrincipalPreview extends PreviewContent<Principal> {
         Elements.setVisible(noExcludes, excludes.isEmpty());
         Elements.setVisible(excludesUl, !excludes.isEmpty());
         Elements.removeChildrenFrom(excludesUl);
-        excludes.forEach(role -> excludesUl.appendChild(
-                new Elements.Builder().li()
-                        .a().attr("href", tokens.role(role)).textContent(role.getName()).end()
-                        .end().build()));
+        excludes.forEach(role -> excludesUl.appendChild(li()
+                .add(a(tokens.role(role)).textContent(role.getName())).asElement()));
 
         Elements.setVisible(noIncludes, includes.isEmpty());
         Elements.setVisible(includesUl, !includes.isEmpty());
         Elements.removeChildrenFrom(includesUl);
-        includes.forEach(role -> includesUl.appendChild(
-                new Elements.Builder().li()
-                        .a().attr("href", tokens.role(role)).textContent(role.getName()).end()
-                        .end().build()));
+        includes.forEach(role -> includesUl.appendChild(li()
+                .add(a(tokens.role(role)).textContent(role.getName())).asElement()));
     }
 }

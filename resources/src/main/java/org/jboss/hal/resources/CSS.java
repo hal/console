@@ -17,6 +17,7 @@ package org.jboss.hal.resources;
 
 import java.util.Arrays;
 
+import elemental2.dom.CSSProperties.HeightUnionType;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
@@ -382,8 +383,20 @@ public interface CSS {
         }
     }
 
-    static String vh(int offset) {
-        return "calc(100vh - " + offset + "px)"; //NON-NLS
+    static HeightUnionType vh(int offset) {
+        return height("calc(100vh - " + offset + "px)"); //NON-NLS
+    }
+
+    static HeightUnionType height(Object height) {
+        return HeightUnionType.of(height);
+    }
+
+    static String px(int value) {
+        return String.valueOf(value) + "px"; //NON-NLS
+    }
+
+    static String px(double value) {
+        return String.valueOf(value) + "px"; //NON-NLS
     }
 
     /**

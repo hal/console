@@ -22,11 +22,10 @@ import java.util.function.Function;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.html.File;
-import elemental.html.FormData;
-import elemental.html.InputElement;
-import elemental.xml.XMLHttpRequest;
+import elemental2.dom.File;
+import elemental2.dom.FormData;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -61,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.google.common.collect.Sets.difference;
+import static elemental2.core.Global.encodeURIComponent;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -112,9 +112,9 @@ public class Dispatcher implements RecordingHandler {
 
 
     @FunctionalInterface
-    private interface ReadyListener {
+    private interface OnLoad {
 
-        void onReady(XMLHttpRequest xhr);
+        void onLoad(XMLHttpRequest xhr);
     }
 
 
@@ -322,25 +322,25 @@ public class Dispatcher implements RecordingHandler {
     }-*/;
 
     @JsIgnore
-    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback) {
+    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
+    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
+    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(fileInput, uploadOperation.toBase64String());
         uploadFormData(formData, uploadOperation, callback, failedCallback, exceptionCallback);
     }
 
-    private native FormData createFormData(InputElement fileInput, String operation) /*-{
+    private native FormData createFormData(HTMLInputElement fileInput, String operation) /*-{
         var formData = new $wnd.FormData();
         formData.append(fileInput.name, fileInput.files[0]);
         formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
@@ -363,16 +363,13 @@ public class Dispatcher implements RecordingHandler {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
         XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                int status = xhr.getStatus();
-                String responseText = xhr.getResponseText();
+            int status = (int) xhr.status;
+            String responseText = xhr.responseText;
 
-                if (status == 200) {
-                    successCallback.onSuccess(responseText);
-                } else {
-                    handleErrorCodes(url, status, downloadOperation, exceptionCallback);
-                }
+            if (status == 200) {
+                successCallback.onSuccess(responseText);
+            } else {
+                handleErrorCodes(url, status, downloadOperation, exceptionCallback);
             }
         });
         request.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
@@ -407,8 +404,8 @@ public class Dispatcher implements RecordingHandler {
         ResourceAddress address = operation.getAddress();
         if (!address.isEmpty()) {
             String path = address.asPropertyList().stream()
-                    .map(property -> Browser.encodeURIComponent(property.getName()) + "/" +
-                            Browser.encodeURIComponent(property.getValue().asString()))
+                    .map(property -> encodeURIComponent(property.getName()) + "/" +
+                            encodeURIComponent(property.getValue().asString()))
                     .collect(joining("/"));
             builder.append(path);
         }
@@ -424,9 +421,9 @@ public class Dispatcher implements RecordingHandler {
         // 3. parameter
         if (operation.hasParameter()) {
             operation.getParameter().asPropertyList().forEach(property -> {
-                builder.append("&").append(Browser.encodeURIComponent(property.getName()));
+                builder.append("&").append(encodeURIComponent(property.getName()));
                 if (property.getValue().isDefined()) {
-                    builder.append("=").append(Browser.encodeURIComponent(property.getValue().asString()));
+                    builder.append("=").append(encodeURIComponent(property.getValue().asString()));
                 }
             });
         }
@@ -444,64 +441,61 @@ public class Dispatcher implements RecordingHandler {
             final SuccessCallback<T> callback, final FailedCallback failedCallback,
             final ExceptionCallback exceptionCallback) {
         return newXhr(url, method, operation, exceptionCallback, xhr -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                int status = xhr.getStatus();
-                String responseText = xhr.getResponseText();
-                String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
+            int status = (int) xhr.status;
+            String responseText = xhr.responseText;
+            String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
 
-                if (status == 200 || status == 500) {
-                    ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
-                    if (!payload.isFailure()) {
-                        if (environment.isStandalone()) {
-                            if (payload.hasDefined(RESPONSE_HEADERS)) {
-                                Header[] headers = new Header[]{new Header(payload.get(RESPONSE_HEADERS))};
+            if (status == 200 || status == 500) {
+                ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
+                if (!payload.isFailure()) {
+                    if (environment.isStandalone()) {
+                        if (payload.hasDefined(RESPONSE_HEADERS)) {
+                            Header[] headers = new Header[]{new Header(payload.get(RESPONSE_HEADERS))};
+                            for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
+                                processor.process(headers);
+                            }
+                        }
+                    } else {
+                        if (payload.hasDefined(SERVER_GROUPS)) {
+                            Header[] headers = collectHeaders(payload.get(SERVER_GROUPS));
+                            if (headers.length != 0) {
                                 for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
                                     processor.process(headers);
                                 }
                             }
-                        } else {
-                            if (payload.hasDefined(SERVER_GROUPS)) {
-                                Header[] headers = collectHeaders(payload.get(SERVER_GROUPS));
-                                if (headers.length != 0) {
-                                    for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
-                                        processor.process(headers);
-                                    }
-                                }
-                            }
                         }
-                        ModelNode result = getResult.apply(payload);
-                        if (operation instanceof Composite && callback instanceof CompositeCallback) {
-                            ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
-                        } else if (callback instanceof OperationCallback) {
-                            ((OperationCallback) callback).onSuccess(result);
-                        } else {
-                            exceptionCallback.onException(operation,
-                                    new DispatchException("Wrong combination of operation and callback.", 500));
-                        }
+                    }
+                    ModelNode result = getResult.apply(payload);
+                    if (operation instanceof Composite && callback instanceof CompositeCallback) {
+                        ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
+                    } else if (callback instanceof OperationCallback) {
+                        ((OperationCallback) callback).onSuccess(result);
                     } else {
-                        failedCallback.onFailed(operation, payload.getFailureDescription());
+                        exceptionCallback.onException(operation,
+                                new DispatchException("Wrong combination of operation and callback.", 500));
                     }
                 } else {
-                    if (!pendingLifecycleAction) {
-                        handleErrorCodes(url, status, operation, exceptionCallback);
-                    }
+                    failedCallback.onFailed(operation, payload.getFailureDescription());
+                }
+            } else {
+                if (!pendingLifecycleAction) {
+                    handleErrorCodes(url, status, operation, exceptionCallback);
                 }
             }
         });
     }
 
     private XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
-            final ExceptionCallback exceptionCallback, final ReadyListener readyListener) {
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+            final ExceptionCallback exceptionCallback, final OnLoad onLoad) {
+        XMLHttpRequest xhr = new XMLHttpRequest();
 
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
-        xhr.setOnreadystatechange(event -> readyListener.onReady(xhr));
+        xhr.onload = event -> onLoad.onLoad(xhr);
         xhr.addEventListener("error",  //NON-NLS
-                event -> handleErrorCodes(url, xhr.getStatus(), operation, exceptionCallback), false);
+                event -> handleErrorCodes(url, (int) xhr.status, operation, exceptionCallback), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
-        xhr.setWithCredentials(true);
+        xhr.withCredentials = true;
 
         return xhr;
     }

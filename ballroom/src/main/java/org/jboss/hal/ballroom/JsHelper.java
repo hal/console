@@ -20,13 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.dom.Element;
-import elemental.events.EventListener;
-import elemental.js.util.JsArrayOf;
-import elemental.js.util.JsMapFromStringTo;
-import org.jboss.hal.ballroom.dragndrop.DragEvent;
-import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.google.web.bindery.event.shared.HandlerRegistrations;
+import elemental2.core.Array;
+import elemental2.dom.DragEvent;
+import elemental2.dom.HTMLElement;
+import jsinterop.base.JsPropertyMap;
+import jsinterop.base.JsPropertyMapOfAny;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 
+import static org.jboss.gwt.elemento.core.EventType.*;
 import static org.jboss.hal.resources.CSS.ondrag;
 
 /**
@@ -35,37 +38,35 @@ import static org.jboss.hal.resources.CSS.ondrag;
 public final class JsHelper {
 
     @SuppressWarnings("Duplicates")
-    public static <T> List<T> asList(JsArrayOf<T> array) {
+    public static <T> List<T> asList(Array<T> array) {
         if (array != null) {
-            List<T> list = new ArrayList<>(array.length());
-            for (int i = 0; i < array.length(); i++) {
-                list.add(array.get(i));
+            List<T> list = new ArrayList<>(array.getLength());
+            for (int i = 0; i < array.getLength(); i++) {
+                list.add(array.getAt(i));
             }
             return list;
         }
         return new ArrayList<>(); // Do not replace with Collections.emptyList()!
     }
 
-    public static <T> JsArrayOf<T> asJsArray(List<T> list) {
-        JsArrayOf<T> array = JsArrayOf.create();
+    @SuppressWarnings("unchecked")
+    public static <T> Array<T> asJsArray(List<T> list) {
+        Array<T> array = new Array<>();
         for (T t : list) {
             array.push(t);
         }
         return array;
     }
 
-    public static Map<String, Object> asMap(JsMapFromStringTo<Object> jsMap) {
+    public static Map<String, Object> asMap(JsPropertyMapOfAny jsMap) {
         Map<String, Object> map = new HashMap<>();
-        for (int i = 0; i < jsMap.keys().length(); i++) {
-            String key = jsMap.keys().get(i);
-            map.put(key, jsMap.get(key));
-        }
+        jsMap.forEach(key -> map.put(key, jsMap.get(key)));
         return map;
     }
 
-    public static JsMapFromStringTo<Object> asJsMap(Map<String, Object> map) {
-        JsMapFromStringTo<Object> jsMap = JsMapFromStringTo.create();
-        map.forEach(jsMap::put);
+    public static JsPropertyMapOfAny asJsMap(Map<String, Object> map) {
+        JsPropertyMapOfAny jsMap = JsPropertyMap.of();
+        map.forEach(jsMap::set);
         return jsMap;
     }
 
@@ -75,36 +76,32 @@ public final class JsHelper {
             'FormData' in window && 'FileReader' in window;
     }-*/;
 
-    public static void addDropHandler(Element element, DropEventHandler handler) {
-        EventListener noop = event -> {
+    public static HandlerRegistration addDropHandler(HTMLElement element, EventCallbackFn<DragEvent> handler) {
+        EventCallbackFn<DragEvent> noop = event -> {
             event.preventDefault();
             event.stopPropagation();
         };
-        EventListener addDragIndicator = event -> {
-            noop.handleEvent(event);
-            element.getClassList().add(ondrag);
+        EventCallbackFn<DragEvent> addDragIndicator = event -> {
+            noop.onEvent(event);
+            element.classList.add(ondrag);
         };
-        EventListener removeDragIndicator = event -> {
-            noop.handleEvent(event);
-            element.getClassList().remove(ondrag);
+        EventCallbackFn<DragEvent> removeDragIndicator = event -> {
+            noop.onEvent(event);
+            element.classList.remove(ondrag);
         };
 
-        element.setOndrag(noop);
-        element.setOndragstart(noop);
-
-        element.setOndragenter(addDragIndicator);
-        element.setOndragover(addDragIndicator);
-
-        element.setOndragleave(removeDragIndicator);
-        element.setOndragend(removeDragIndicator);
-
-        element.setOndrop(event -> {
-            noop.handleEvent(event);
-            removeDragIndicator.handleEvent(event);
-
-            DragEvent dragEvent = (DragEvent) event;
-            handler.onDrop(dragEvent);
-        });
+        return HandlerRegistrations.compose(
+                bind(element, drag, noop),
+                bind(element, dragstart, noop),
+                bind(element, dragenter, addDragIndicator),
+                bind(element, dragover, addDragIndicator),
+                bind(element, dragleave, removeDragIndicator),
+                bind(element, dragend, removeDragIndicator),
+                bind(element, drop, event -> {
+                    noop.onEvent(event);
+                    removeDragIndicator.onEvent(event);
+                    handler.onEvent(event);
+                }));
     }
 
     private JsHelper() {

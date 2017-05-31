@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -146,8 +146,8 @@ public class Composite extends Operation implements Iterable<Operation> {
      */
     @JsProperty(name = "operations")
     @EsReturn("Operation[]")
-    public JsArrayOf<Operation> jsOperations() {
-        JsArrayOf<Operation> array = JsArrayOf.create();
+    public Array<Operation> jsOperations() {
+        Array<Operation> array = new Array<>();
         for (Operation operation : operations) {
             array.push(operation);
         }

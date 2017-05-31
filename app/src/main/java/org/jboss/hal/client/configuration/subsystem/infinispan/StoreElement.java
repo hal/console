@@ -19,10 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.OptionElement;
-import elemental.html.SelectElement;
+import elemental2.dom.CSSProperties.WidthUnionType;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -42,6 +41,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -55,7 +56,7 @@ import static org.jboss.hal.resources.CSS.selectpicker;
  *
  * @author Harald Pehl
  */
-class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
+class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private static final class StoreTable {
 
@@ -74,6 +75,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
             StoreTable that = (StoreTable) o;
 
+            //noinspection SimplifiableIfStatement
             if (store != that.store) { return false; }
             return table == that.table;
         }
@@ -87,17 +89,15 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
     }
 
 
-    private static final String HEADER_FORM = "headerForm";
-
     private final EmptyState emptyState;
-    private final Element headerForm;
+    private final HTMLElement headerForm;
     private final String selectStoreId;
-    private final SelectElement selectStore;
+    private final HTMLSelectElement selectStore;
     private final Map<Store, Tabs> tabs;
     private final Map<Store, Form<ModelNode>> storeForms;
     private final Map<Store, WriteElement> writeElements;
     private final Map<StoreTable, Form<ModelNode>> tableForms;
-    private final Element root;
+    private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
     StoreElement(final Cache cache, final MetadataRegistry metadataRegistry, final Resources resources) {
@@ -106,7 +106,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
         this.writeElements = new HashMap<>();
         this.tableForms = new HashMap<>();
 
-        SelectElement emptyStoreSelect = storeSelect();
+        HTMLSelectElement emptyStoreSelect = storeSelect();
         emptyState = new EmptyState.Builder(resources.constants().noStore())
                 .description(resources.messages().noStore())
                 .add(emptyStoreSelect)
@@ -118,7 +118,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
         selectStoreId = Ids.build(cache.baseId, STORE, "select");
         selectStore = storeSelect();
-        selectStore.setId(selectStoreId);
+        selectStore.id = selectStoreId;
 
         for (Store store : Store.values()) {
             Tabs storeTabs = new Tabs();
@@ -149,43 +149,41 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
             }
         }
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .section()
-                .div().css(CSS.headerForm).rememberAs(HEADER_FORM)
-                    .label().attr("for", selectStoreId)
-                        .textContent(resources.constants().switchStore())
-                    .end()
-                    .add(selectStore)
-                .end()
-                .h(1).textContent(Names.STORE).end()
-                .p().textContent(resources.messages().cacheStore()).end()
-                .add(emptyState);
-                tabs.values().forEach(builder::add);
-            builder.end();
-        // @formatter:on
-
-        headerForm = builder.referenceFor(HEADER_FORM);
-        root = builder.build();
+        root = section()
+                .add(headerForm = div().css(CSS.headerForm)
+                        .add(label()
+                                .apply(l -> l.htmlFor = selectStoreId)
+                                .textContent(resources.constants().switchStore()))
+                        .add(selectStore)
+                        .asElement())
+                .add(h(1).textContent(Names.STORE))
+                .add(p().textContent(resources.messages().cacheStore()))
+                .add(emptyState)
+                .addAll(tabs.values().stream().map(Tabs::asElement).collect(toList()))
+                .asElement();
 
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(headerForm, false);
         tabs.values().forEach(t -> Elements.setVisible(t.asElement(), false));
     }
 
-    private SelectElement storeSelect() {
-        SelectElement select = Browser.getDocument().createSelectElement();
-        select.setMultiple(false);
-        select.setSize(1);
-        select.getClassList().add(selectpicker);
+    private HTMLSelectElement storeSelect() {
+        HTMLSelectElement select = Elements.select().css(selectpicker)
+                .apply(s -> {
+                    s.multiple = false;
+                    s.size = 1;
+
+                })
+                .asElement();
 
         for (Store store : Store.values()) {
-            OptionElement option = Browser.getDocument().createOptionElement();
-            option.setValue(store.resource);
-            option.setText(store.type);
-            select.appendChild(option);
+            select.appendChild(Elements.option()
+                    .apply(o -> {
+                        o.value = store.resource;
+                        o.text = store.type;
+                    })
+                    .asElement());
         }
-
         return select;
     }
 
@@ -209,7 +207,7 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -229,10 +227,10 @@ class StoreElement implements IsElement, Attachable, HasPresenter<CacheContainer
         tableForms.values().forEach(Attachable::attach);
     }
 
-    private void autoWidth(final Element element) {
-        Element select = element.querySelector("." + btnGroup + "." + bootstrapSelect);
+    private void autoWidth(HTMLElement element) {
+        HTMLElement select = (HTMLElement) element.querySelector("." + btnGroup + "." + bootstrapSelect);
         if (select != null) {
-            select.getStyle().setWidth("auto"); //NON-NLS
+            select.style.width = WidthUnionType.of("auto"); //NON-NLS
         }
     }
 

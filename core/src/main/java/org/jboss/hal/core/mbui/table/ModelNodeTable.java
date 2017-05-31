@@ -20,8 +20,8 @@ import java.util.function.Function;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import elemental.js.dom.JsElement;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -47,10 +47,13 @@ import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.ballroom.JsHelper.asJsArray;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -61,6 +64,8 @@ import static org.jboss.hal.resources.UIConstants.data;
  */
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
+    /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     @JsType(namespace = "hal.ui", name = "TableBuilder")
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
@@ -92,6 +97,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             return that();
         }
 
+        /** Adds a column which maps to the specified attribute. */
+        @EsReturn("TableBuilder")
         public Builder<T> column(@NonNls String attribute) {
             Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
             if (attributeDescription != null) {
@@ -118,6 +125,10 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             }
         }
 
+        /**
+         * Creates and returns the table.
+         */
+        @EsReturn("Table")
         public ModelNodeTable<T> build() {
             return new ModelNodeTable<>(this);
         }
@@ -132,29 +143,68 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             String getName(Table<T> table);
         }
 
+        /**
+         * Adds a button to add a new resource.
+         *
+         * @param type       The human readable resource type used in the dialog header and success message.
+         * @param template   The address template for the add operation. Must end in <code>&lt;resource
+         *                   type&gt;=&lt;resource
+         *                   name&gt;</code>.
+         * @param attributes attributes which should be part of the add resource dialog
+         * @param callback   the callback executed after the resource has been added
+         */
         @JsMethod(name = "add")
-        public Builder<T> jsAdd(final String type, final Object template, final JsArrayOf<String> attributes,
-                final AddCallback callback) {
+        @EsReturn("TableBuilder")
+        public Builder<T> jsAdd(final String type,
+                @EsParam("AddressTemplate|string") Object template,
+                @EsParam("string[]") Array<String> attributes,
+                @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
             String id = Ids.build(Ids.uniqueId(), Ids.ADD_SUFFIX);
             return button(buttonFactory.add(id, type, jsTemplate("add", template), JsHelper.asList(attributes),
                     callback));
         }
 
+        /**
+         * Adds a button to remove the selected resource.
+         *
+         * @param type     The human readable resource type used in the success message.
+         * @param template The address template for the add operation. Must end in <code>&lt;resource
+         *                 type&gt;=&lt;resource
+         * @param name     A function to get the name of the selected resource.
+         * @param callback The callback executed after the resource has been removed.
+         */
         @JsMethod(name = "remove")
-        public Builder<T> jsRemove(final String type, final Object template, JsNameFunction<T> name,
-                final JsCallback callback) {
+        @EsReturn("TableBuilder")
+        public Builder<T> jsRemove(String type,
+                @EsParam("AddressTemplate|string") Object template,
+                @EsParam("function(table: Table): string") JsNameFunction<T> name,
+                @EsParam("function()") JsCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
             return button(buttonFactory.remove(type, jsTemplate("remove", template), name::getName, callback::execute));
         }
 
+        /**
+         * Add a button which executes the specified callback.
+         *
+         * @param text    The text on the button
+         * @param scope   The scope: "selected" or "selectedSingle"
+         * @param handler The callback to execute when the button is clicked
+         */
         @JsMethod(name = "button")
-        public Builder<T> jsButton(final String text, final String scope, final ButtonHandler<T> handler) {
+        @EsReturn("TableBuilder")
+        public Builder<T> jsButton(String text, String scope,
+                @EsParam("function(table: Table)") ButtonHandler<T> handler) {
             return button(text, handler, Scope.fromSelector(scope));
         }
 
+        /**
+         * Adds columns for the specified attributes.
+         * @param columns The attributes
+         */
         @JsMethod(name = "columns")
-        public Builder<T> jsColumns(final JsArrayOf<String> columns) {
+        @EsReturn("TableBuilder")
+        public Builder<T> jsColumns(@EsParam("string[]") Array<String> columns) {
             return columns(JsHelper.asList(columns));
         }
 
@@ -166,7 +216,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                 t = (AddressTemplate) template;
             } else {
                 throw new IllegalArgumentException(
-                        "Invalid 2nd argument: Use TableBuilder." + method + "(String, (String|AddressTemplate), String[], function(String, ResourceAddress))");
+                        "Invalid 2nd argument: Use TableBuilder." + method + "(string, (string|AddressTemplate), string[], function(string, ResourceAddress))");
             }
             return t;
         }
@@ -251,22 +301,22 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "element")
-    public JsElement jsElement() {
-        return (JsElement) asElement();
+    public HTMLElement jsElement() {
+        return asElement();
     }
 
     @JsProperty(name = "rows")
-    public JsArrayOf<T> jsRows() {
-        return JsHelper.asJsArray(getRows());
+    public Array<T> jsRows() {
+        return asJsArray(getRows());
     }
 
     @JsProperty(name = "selectedRows")
-    public JsArrayOf<T> jsSelectedRows() {
-        return JsHelper.asJsArray(selectedRows());
+    public Array<T> jsSelectedRows() {
+        return asJsArray(selectedRows());
     }
 
     @JsMethod(name = "update")
-    public void jsUpdate(JsArrayOf<T> rows) {
+    public void jsUpdate(Array<T> rows) {
         update(JsHelper.asList(rows));
     }
 }

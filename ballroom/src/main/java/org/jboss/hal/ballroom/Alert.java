@@ -16,9 +16,9 @@
 package org.jboss.hal.ballroom;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
-import elemental.events.EventListener;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
@@ -26,6 +26,9 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -41,12 +44,9 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class Alert implements IsElement {
 
-    private static final String ALERT_ICON = "alertIconElement";
-    private static final String ALERT_TEXT = "alertTextElement";
-
-    private final Element root;
-    private final Element icon;
-    private final Element text;
+    private final HTMLElement root;
+    private final HTMLElement icon;
+    private final HTMLElement text;
 
     public Alert() {
         this(null, null, null, null);
@@ -56,37 +56,32 @@ public class Alert implements IsElement {
         this(icon, text, null, null);
     }
 
-    public Alert(final String icon, final SafeHtml text, final String linkText, final EventListener linkHandler) {
+    public Alert(final String icon, final SafeHtml text, final String linkText,
+            final EventCallbackFn<MouseEvent> linkHandler) {
         this(icon, text, linkText, linkHandler, null);
     }
 
-    public Alert(final String icon, final SafeHtml text, final String linkText, final EventListener linkHandler,
-            final Constraint constraint) {
-        Elements.Builder builder = new Elements.Builder();
+    public Alert(final String icon, final SafeHtml text, final String linkText,
+            final EventCallbackFn<MouseEvent> linkHandler, final Constraint constraint) {
+        this.root = div().css(alert, alertCss(icon))
+                .add(this.icon = span().css(icon).asElement())
+                .add(this.text = span().asElement())
+                .asElement();
 
-        // @formatter:off
-        builder
-            .div().css(alert, alertCss(icon))
-                .span().rememberAs(ALERT_ICON).css(icon).end()
-                .span().rememberAs(ALERT_TEXT);
-                    if (text != null) {
-                        builder.innerHtml(text);
-                    }
-                builder.end();
-                if (linkText != null && linkHandler != null) {
-                    builder.span().textContent(" ").end()
-                    .a().css(clickable, alertLink).on(click, linkHandler);
-                    if (constraint!= null) {
-                        builder.data(UIConstants.CONSTRAINT, constraint.data());
-                    }
-                    builder.textContent(linkText).end();
-                }
-            builder.end();
-        // @formatter:on
-
-        this.root = builder.build();
-        this.icon = builder.referenceFor(ALERT_ICON);
-        this.text = builder.referenceFor(ALERT_TEXT);
+        if (text != null) {
+            this.text.innerHTML = text.asString();
+        }
+        if (linkText != null && linkHandler != null) {
+            HTMLElement a;
+            this.root.appendChild(span().textContent(" ").asElement());
+            this.root.appendChild(a = a().css(clickable, alertLink)
+                    .on(click, linkHandler)
+                    .textContent(linkText)
+                    .asElement());
+            if (constraint != null) {
+                a.dataset.set(UIConstants.CONSTRAINT, constraint.data());
+            }
+        }
     }
 
     private String alertCss(final String icon) {
@@ -105,18 +100,18 @@ public class Alert implements IsElement {
 
     public Alert setIcon(String icon) {
         String alertCss = alertCss(icon);
-        this.root.setClassName(alert + (alertCss != null ? (" " + alertCss) : ""));
-        this.icon.setClassName(icon);
+        this.root.className = alert + (alertCss != null ? (" " + alertCss) : "");
+        this.icon.className = icon;
         return this;
     }
 
     public Alert setText(SafeHtml text) {
-        this.text.setInnerHTML(text.asString());
+        this.text.innerHTML = text.asString();
         return this;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

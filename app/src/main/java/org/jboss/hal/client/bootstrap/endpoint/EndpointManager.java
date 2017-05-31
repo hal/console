@@ -19,8 +19,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.client.Browser;
-import elemental.xml.XMLHttpRequest;
+import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
@@ -88,31 +87,28 @@ public class EndpointManager {
         } else {
             // Test whether this console is served from a WildFly / EAP instance
             String managementEndpoint = Endpoints.getBaseUrl() + MANAGEMENT;
-            XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-            xhr.setOnreadystatechange(event -> {
-                int readyState = xhr.getReadyState();
-                if (readyState == 4) {
-                    int status = xhr.getStatus();
-                    switch (status) {
-                        case 0:
-                        case 200:
-                        case 401:
-                            endpoints.useBase(Endpoints.getBaseUrl());
-                            callback.execute();
-                            break;
-                        // TODO Show an error page!
-                        // case 500:
-                        //     break;
-                        default:
-                            logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
-                                    managementEndpoint);
-                            openDialog();
-                            break;
-                    }
+            XMLHttpRequest xhr = new XMLHttpRequest();
+            xhr.onload = event -> {
+                int status = (int) xhr.status;
+                switch (status) {
+                    case 0:
+                    case 200:
+                    case 401:
+                        endpoints.useBase(Endpoints.getBaseUrl());
+                        callback.execute();
+                        break;
+                    // TODO Show an error page!
+                    // case 500:
+                    //     break;
+                    default:
+                        logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
+                                managementEndpoint);
+                        openDialog();
+                        break;
                 }
-            });
+            };
             xhr.open(GET.name(), managementEndpoint, true);
-            xhr.setWithCredentials(true);
+            xhr.withCredentials = true;
             xhr.send();
         }
     }
@@ -123,21 +119,18 @@ public class EndpointManager {
 
     void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.setOnreadystatechange(event -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                int status = xhr.getStatus();
-                if (status == 200) {
-                    callback.onSuccess(null);
-                } else {
-                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
-                    callback.onFailure(new IllegalStateException());
-                }
+        XMLHttpRequest xhr = new XMLHttpRequest();
+        xhr.onload = event -> {
+            int status = (int) xhr.status;
+            if (status == 200) {
+                callback.onSuccess(null);
+            } else {
+                logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
+                callback.onFailure(new IllegalStateException());
             }
-        });
+        };
         xhr.open(GET.name(), managementEndpoint, true);
-        xhr.setWithCredentials(true);
+        xhr.withCredentials = true;
         xhr.send();
     }
 

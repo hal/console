@@ -17,8 +17,8 @@ package org.jboss.hal.ballroom.metric;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.CSSProperties.WidthUnionType;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.resources.CSS;
@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PCT;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.PROGRESSBAR;
 import static org.jboss.hal.resources.UIConstants.ROLE;
@@ -54,11 +55,11 @@ public class Utilization implements IsElement {
 
     private final String unit;
     private final boolean thresholds;
-    private final Element valueBar;
-    private final Element valueElement;
-    private final Element remainingBar;
-    private final Element remainingElement;
-    private final Element root;
+    private final HTMLElement valueBar;
+    private final HTMLElement valueElement;
+    private final HTMLElement remainingBar;
+    private final HTMLElement remainingElement;
+    private final HTMLElement root;
     private long total;
 
     public Utilization(final String label, final String unit, boolean inline, boolean thresholds) {
@@ -66,46 +67,40 @@ public class Utilization implements IsElement {
         this.thresholds = thresholds;
         this.total = 0;
 
-        // @formatter:off
-        String[] containerCss = inline ? new String[]{progressDescriptionLeft, progressLabelRight} : null;
-        String[] progressCss = inline ? null : new String[]{progressLabelTopRight};
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(progressContainer, containerCss)
-                .div().css(progressDescription).title(label).textContent(label).end()
-                .div().css(progress, progressCss)
-                    .div().rememberAs(VALUE_BAR).css(progressBar).title(Names.NOT_AVAILABLE)
-                            .attr(ROLE, PROGRESSBAR)
-                            .aria(VALUE_MIN, "0")
-                            .aria(VALUE_NOW, "0")
-                            .aria(VALUE_MAX, "0")
-                            .data(TOGGLE, TOOLTIP)
-                        .span().rememberAs(VALUE_ELEMENT).end()
-                    .end()
-                    .div().rememberAs(REMAINING_BAR).css(progressBar, progressBarRemaining).title(Names.NOT_AVAILABLE)
-                            .attr(ROLE, PROGRESSBAR)
-                            .aria(VALUE_MIN, "0")
-                            .aria(VALUE_NOW, "0")
-                            .aria(VALUE_MAX, "0")
-                            .data(TOGGLE, TOOLTIP)
-                        .span().rememberAs(REMAINING_ELEMENT).css(srOnly).end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        String[] containerCss = inline
+                ? new String[]{progressContainer, progressDescriptionLeft, progressLabelRight}
+                : new String[]{progressContainer};
+        String[] progressCss = inline
+                ? new String[]{progress}
+                : new String[]{progress, progressLabelTopRight};
 
-        this.valueBar = builder.referenceFor(VALUE_BAR);
-        this.valueElement = builder.referenceFor(VALUE_ELEMENT);
-        this.remainingBar = builder.referenceFor(REMAINING_BAR);
-        this.remainingElement = builder.referenceFor(REMAINING_ELEMENT);
-        this.root = builder.build();
+        root = div().css(containerCss)
+                .add(div().css(progressDescription)
+                        .title(label)
+                        .textContent(label))
+                .add(div().css(progressCss)
+                        .add(valueBar = div().css(progressBar)
+                                .title(Names.NOT_AVAILABLE)
+                                .attr(ROLE, PROGRESSBAR)
+                                .aria(VALUE_MIN, "0")
+                                .aria(VALUE_NOW, "0")
+                                .aria(VALUE_MAX, "0")
+                                .data(TOGGLE, TOOLTIP)
+                                .add(valueElement = span().asElement())
+                                .asElement())
+                        .add(remainingBar = div().css(progressBar, progressBarRemaining)
+                                .title(Names.NOT_AVAILABLE)
+                                .add(remainingElement = span().css(srOnly).asElement())
+                                .asElement()))
+                .asElement();
 
         if (inline) {
-            valueElement.setTitle(unit);
+            valueElement.title = unit;
         }
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -122,32 +117,32 @@ public class Utilization implements IsElement {
 
             valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
             valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            valueBar.getStyle().setWidth(currentPercent, PCT);
+            valueBar.style.width = WidthUnionType.of(String.valueOf(currentPercent) + "%");
             Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
             //noinspection HardCodedStringLiteral
-            valueElement.setInnerHTML(new SafeHtmlBuilder()
+            valueElement.innerHTML = new SafeHtmlBuilder()
                     .appendHtmlConstant("<strong>")
                     .appendEscaped(MESSAGES.currentOfTotal(current, total))
                     .appendHtmlConstant("</strong>")
                     .appendEscaped(" " + unit)
-                    .toSafeHtml().asString());
+                    .toSafeHtml().asString();
 
             remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
             remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.getStyle().setWidth(remainingPercent, PCT);
+            remainingBar.style.width = WidthUnionType.of(String.valueOf(remainingPercent) +"%");
             Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
-            remainingElement.setTextContent(MESSAGES.available(remainingPercent));
+            remainingElement.textContent = MESSAGES.available(remainingPercent);
 
             if (thresholds) {
-                valueBar.getClassList().remove(progressBarDanger);
-                valueBar.getClassList().remove(progressBarWarning);
-                valueBar.getClassList().remove(progressBarSuccess);
+                valueBar.classList.remove(progressBarDanger);
+                valueBar.classList.remove(progressBarWarning);
+                valueBar.classList.remove(progressBarSuccess);
                 if (currentPercent > 90) {
-                    valueBar.getClassList().add(progressBarDanger);
+                    valueBar.classList.add(progressBarDanger);
                 } else if (currentPercent > 75) {
-                    valueBar.getClassList().add(progressBarWarning);
+                    valueBar.classList.add(progressBarWarning);
                 } else {
-                    valueBar.getClassList().add(progressBarSuccess);
+                    valueBar.classList.add(progressBarSuccess);
                 }
             }
 
@@ -162,9 +157,9 @@ public class Utilization implements IsElement {
 
     public void setDisabled(boolean disabled) {
         if (disabled) {
-            root.getClassList().add(CSS.disabled);
+            root.classList.add(CSS.disabled);
         } else {
-            root.getClassList().remove(CSS.disabled);
+            root.classList.remove(CSS.disabled);
         }
     }
 }

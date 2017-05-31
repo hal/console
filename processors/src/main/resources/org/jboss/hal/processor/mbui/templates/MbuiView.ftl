@@ -7,9 +7,10 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.gwt.elemento.template.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -32,6 +33,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -47,7 +51,7 @@ final class ${context.subclass} extends ${context.base} {
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
     </#list>
-    private final Map<String, Element> handlebarElements;
+    private final Map<String, HTMLElement> handlebarElements;
 
     @SuppressWarnings("unchecked")
     ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
@@ -288,90 +292,81 @@ final class ${context.subclass} extends ${context.base} {
         ${context.verticalNavigation.name} = new VerticalNavigation();
             <#list context.verticalNavigation.items as primaryItem>
                 <#if primaryItem.content?has_content>
-        Elements.Builder ${primaryItem.name}Builder = new Elements.Builder()
-            .section()
+                    <#if primaryItem.htmlContent?has_content>
+        HTMLElement <#list primaryItem.htmlContent as htmlContent>${htmlContent.name}<#if htmlContent_has_next>, </#if></#list>;
+                    </#if>
+        HTMLElement ${primaryItem.name}Element = section()
                     <#list primaryItem.content as content>
                         <#if content.html??>
-                .div()
-                    .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                    .rememberAs("${content.name}")
-                .end()
+            .add(${content.name} = div()
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                .asElement())
                         <#elseif content.reference??>
-                .add(${content.reference})
+            .add(${content.reference})
                         </#if>
                     </#list>
-            .end();
-        Element ${primaryItem.name}Element = ${primaryItem.name}Builder.build();
-                    <#list primaryItem.content as content>
-                        <#if content.html??>
-        handlebarElements.put("${content.name}", ${primaryItem.name}Builder.referenceFor("${content.name}"));
-                        </#if>
+            .asElement();
+                    <#list primaryItem.htmlContent as htmlContent>
+        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
                     </#list>
         ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>, ${primaryItem.name}Element);
                 <#elseif primaryItem.subItems?has_content>
         ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>);
                     <#list primaryItem.subItems as subItem>
                         <#if subItem.content?has_content>
-        Elements.Builder ${subItem.name}Builder = new Elements.Builder()
-            .section()
+                            <#if subItem.htmlContent?has_content>
+        HTMLElement <#list subItem.htmlContent as htmlContent>${htmlContent.name}<#if htmlContent_has_next>, </#if></#list>;
+                            </#if>
+        HTMLElement ${subItem.name}Element = section()
                             <#list subItem.content as content>
                                 <#if content.html??>
-                .div()
-                    .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                    .rememberAs("${content.name}")
-                .end()
+            .add(${content.name} = div()
+                .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                .asElement())
                                 <#elseif content.reference??>
-                .add(${content.reference})
+            .add(${content.reference})
                                 </#if>
                             </#list>
-            .end();
-        Element ${subItem.name}Element = ${subItem.name}Builder.build();
-                            <#list subItem.content as content>
-                                <#if content.html??>
-        handlebarElements.put("${content.name}", ${subItem.name}Builder.referenceFor("${content.name}"));
-                                </#if>
+            .asElement();
+                            <#list subItem.htmlContent as htmlContent>
+        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
                             </#list>
         ${context.verticalNavigation.name}.addSecondary("${primaryItem.id}", "${subItem.id}", ${subItem.title}, ${subItem.name}Element);
                         </#if>
                     </#list>
                 </#if>
             </#list>
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .addAll(${context.verticalNavigation.name}.panes())
-                .end()
-            .end();
+        HTMLElement root = row()
+            .add(column()
+                .addAll(${context.verticalNavigation.name}.panes()))
+            .asElement();
         <#else>
             <#if context.content?has_content>
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
+                <#if context.htmlContent?has_content>
+        HTMLElement <#list context.htmlContent as htmlContent>${htmlContent.name}<#if htmlContent_has_next>, </#if></#list>;
+                </#if>
+        HTMLElement root = row()
+            .add(column()
                 <#list context.content as content>
                     <#if content.html??>
-                    .div()
-                        .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
-                        .rememberAs("${content.name}")
-                    .end()
+                .add(${content.name} = div()
+                    .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                    .asElement())
                     <#elseif content.reference??>
-                    .add(${content.reference})
+                .add(${content.reference})
                     </#if>
-                </#list>
-                .end()
-            .end();
-                <#list context.content as content>
-                    <#if content.html??>
-            handlebarElements.put("${content.name}", layoutBuilder.referenceFor("${content.name}"));
-                    </#if>
+                </#list>)
+            .asElement();
+                <#list context.htmlContent as htmlContent>
+        handlebarElements.put("${htmlContent.name}", ${htmlContent.name});
                 </#list>
             <#else>
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent("${context.base}").end()
-                    .p().textContent(org.jboss.hal.resources.Names.NYI).end()
-                .end()
-            .end();
+        HTMLElement root = row()
+            .add(
+                column()
+                    .add(h(1).textContent("${context.base}"))
+                    .add(p().textContent(org.jboss.hal.resources.Names.NYI)))
+            .asElement();
             </#if>
         </#if>
 
@@ -379,7 +374,6 @@ final class ${context.subclass} extends ${context.base} {
         registerAttachable(${attachable.name});
         </#list>
 
-        Element root = layoutBuilder.build();
         initElement(root);
 
         <#-- @PostConstruct -->

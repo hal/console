@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import elemental.json.Json;
-import elemental.json.JsonObject;
-import elemental.json.JsonType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
+import org.jboss.hal.json.Json;
+import org.jboss.hal.json.JsonObject;
+import org.jboss.hal.json.JsonType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Names.UNKNOWN;

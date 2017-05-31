@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Async;
@@ -43,7 +43,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
@@ -53,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
@@ -161,22 +161,20 @@ public class Finder implements IsElement, Attachable {
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
     private static final int MAX_COLUMNS = 12;
-    private static final String PREVIEW_COLUMN = "previewColumn";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
     private final Environment environment;
     private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
-    private final MetadataRegistry metadataRegistry;
     private final SecurityContextRegistry securityContextRegistry;
     private final Provider<Progress> progress;
     private final FinderContext context;
     private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
     private final Map<String, PreviewContent> initialPreviewsByToken;
-    private final Element root;
-    private final Element previewColumn;
+    private final HTMLElement root;
+    private final HTMLElement previewColumn;
 
 
     // ------------------------------------------------------ ui
@@ -186,14 +184,13 @@ public class Finder implements IsElement, Attachable {
             final EventBus eventBus,
             final PlaceManager placeManager,
             final ColumnRegistry columnRegistry,
-            final MetadataRegistry metadataRegistry,
             final SecurityContextRegistry securityContextRegistry,
             @Footer final Provider<Progress> progress) {
+
         this.environment = environment;
         this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.columnRegistry = columnRegistry;
-        this.metadataRegistry = metadataRegistry;
         this.securityContextRegistry = securityContextRegistry;
         this.progress = progress;
 
@@ -202,29 +199,22 @@ public class Finder implements IsElement, Attachable {
         this.initialColumnsByToken = new HashMap<>();
         this.initialPreviewsByToken = new HashMap<>();
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().id(FINDER).css(row, finder)
-                .div()
-                    .id(Ids.PREVIEW_ID)
-                    .css(finderPreview, column(12))
-                    .rememberAs(PREVIEW_COLUMN)
-                .end()
-            .end();
-        // @formatter:on
-
-        root = builder.build();
-        previewColumn = builder.referenceFor(PREVIEW_COLUMN);
+        this.root = div().id(FINDER).css(row, finder)
+                .add(previewColumn = div()
+                        .id(Ids.PREVIEW_ID)
+                        .css(finderPreview, column(12))
+                        .asElement())
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
     @Override
     public void attach() {
-        root.getStyle().setHeight(vh(applicationOffset()));
+        root.style.height = vh(applicationOffset());
     }
 
     private FinderColumn initialColumn() {
@@ -238,7 +228,7 @@ public class Finder implements IsElement, Attachable {
     private void resizePreview() {
         long visibleColumns = Elements.stream(root).filter(Elements::isVisible).count() - 1;
         int previewSize = MAX_COLUMNS - 2 * min((int) visibleColumns, MAX_VISIBLE_COLUMNS);
-        previewColumn.setClassName(finderPreview + " " + column(previewSize));
+        previewColumn.className = finderPreview + " " + column(previewSize);
     }
 
 
@@ -319,20 +309,20 @@ public class Finder implements IsElement, Attachable {
     }
 
     private void reduceAll() {
-        for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
-            Element element = iterator.next();
+        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+            HTMLElement element = iterator.next();
             if (element == previewColumn) {
                 break;
             }
-            columns.remove(element.getId());
+            columns.remove(element.id);
             iterator.remove();
         }
     }
 
     void reduceTo(FinderColumn<?> column) {
         boolean removeFromHere = false;
-        for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
-            Element element = iterator.next();
+        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+            HTMLElement element = iterator.next();
             if (element == column.asElement()) {
                 removeFromHere = true;
                 continue;
@@ -341,7 +331,7 @@ public class Finder implements IsElement, Attachable {
                 break;
             }
             if (removeFromHere) {
-                columns.remove(element.getId());
+                columns.remove(element.id);
                 iterator.remove();
             }
         }
@@ -352,11 +342,11 @@ public class Finder implements IsElement, Attachable {
     void updateContext() {
         context.getPath().clear();
 
-        for (Element columnElement : Elements.children(root)) {
+        for (HTMLElement columnElement : Elements.children(root)) {
             if (columnElement == previewColumn) {
                 break;
             }
-            String key = columnElement.getId();
+            String key = columnElement.id;
             FinderColumn<?> column = columns.get(key);
             context.getPath().append(column);
         }
@@ -413,8 +403,8 @@ public class Finder implements IsElement, Attachable {
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
-            Iterable<Element> elements = preview.asElements();
-            for (Element element : elements) {
+            Iterable<HTMLElement> elements = preview.asElements();
+            for (HTMLElement element : elements) {
                 previewColumn.appendChild(element);
             }
             preview.attach();
@@ -452,8 +442,8 @@ public class Finder implements IsElement, Attachable {
         initialPreviewsByToken.put(token, initialPreview);
 
         columns.clear();
-        while (root.getFirstChild() != previewColumn) {
-            root.removeChild(root.getFirstChild());
+        while (root.firstChild != previewColumn) {
+            root.removeChild(root.firstChild);
         }
         context.reset(token);
         appendColumn(initialColumn, callback);

@@ -16,20 +16,17 @@
 package org.jboss.hal.client.runtime.subsystem.logging;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.html.PreElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginRight5;
-import static org.jboss.hal.resources.CSS.pullRight;
 
 /**
  * @author Harald Pehl
@@ -37,63 +34,54 @@ import static org.jboss.hal.resources.CSS.pullRight;
 class LogFilePreview extends PreviewContent<LogFile> {
 
     private static final int PREVIEW_LINES = 20;
-    private static final String PREVIEW_ELEMENT = "previewElement";
 
     private final LogFiles logFiles;
     private final Resources resources;
-    private final PreElement preview;
+    private final HTMLElement preview;
 
     LogFilePreview(LogFiles logFiles, LogFile logFile, Resources resources) {
         super(logFile.getFilename());
         this.logFiles = logFiles;
         this.resources = resources;
 
-        previewBuilder().div();
-        if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
-            previewBuilder().css(alert, alertWarning)
-                    .span().css(Icons.WARNING).end()
-                    .span()
-                    .innerHtml(resources.messages().largeLogFile(logFile.getFormattedSize()))
-                    .end();
-        } else {
-            previewBuilder().css(alert, alertInfo)
-                    .span().css(Icons.INFO).end()
-                    .span()
-                    .innerHtml(resources.messages().normalLogFile(logFile.getFormattedSize()))
-                    .end();
-        }
+        HTMLElement container, icon, message;
         previewBuilder()
-                .span().textContent(" ").end()
-                .a().css(alertLink)
-                .attr(UIConstants.HREF, logFiles.downloadUrl(logFile.getFilename()))
-                .attr(UIConstants.DOWNLOAD, logFile.getFilename())
-                .textContent(resources.constants().download())
-                .end()
-                .end();
+                .add(container = div()
+                        .add(icon = span().asElement())
+                        .add(message = span().asElement())
+                        .asElement());
+        if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
+            container.classList.add(alert, alertWarning);
+            icon.className = Icons.WARNING;
+            message.innerHTML = resources.messages().largeLogFile(logFile.getFormattedSize()).asString();
+        } else {
+            container.classList.add(alert, alertInfo);
+            icon.className = Icons.INFO;
+            message.innerHTML = resources.messages().normalLogFile(logFile.getFormattedSize()).asString();
+        }
+
+        previewBuilder()
+                .add(span().textContent(" "))
+                .add(a(logFiles.downloadUrl(logFile.getFilename())).css(alertLink)
+                        .apply(a -> a.download = logFile.getFilename())
+                        .textContent(resources.constants().download()));
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
                 .append(model ->
                         new PreviewAttribute(resources.constants().lastModified(),
                                 logFile.getFormattedLastModifiedDate()))
                 .append(model ->
-                        new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()))
-                .end();
+                        new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()));
         previewBuilder().addAll(previewAttributes);
 
-        // @formatter:off
         previewBuilder()
-                .h(2).textContent(resources.constants().preview()).end()
-                .div().css(clearfix)
-                    .a().css(clickable, pullRight).on(click, event -> update(logFile))
-                        .span().css(fontAwesome("refresh"), marginRight5).end()
-                        .span().textContent(resources.constants().refresh()).end()
-                    .end()
-                    .p().textContent(resources.messages().logFilePreview(PREVIEW_LINES)).end()
-                .end()
-                .start("pre").css(logFilePreview).rememberAs(PREVIEW_ELEMENT).end();
-        // @formatter:off
-
-        preview = previewBuilder().referenceFor(PREVIEW_ELEMENT);
+                .add(h(2).textContent(resources.constants().preview()))
+                .add(div().css(clearfix)
+                        .add(a().css(clickable, pullRight).on(click, event -> update(logFile))
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh())))
+                        .add(p().textContent(resources.messages().logFilePreview(PREVIEW_LINES))))
+                .add(preview = pre().css(logFilePreview).asElement());
     }
 
     @Override
@@ -101,12 +89,12 @@ class LogFilePreview extends PreviewContent<LogFile> {
         logFiles.tail(item.getFilename(), PREVIEW_LINES, new AsyncCallback<String>() {
             @Override
             public void onFailure(final Throwable caught) {
-                preview.setTextContent(resources.constants().logFilePreviewError());
+                preview.textContent = resources.constants().logFilePreviewError();
             }
 
             @Override
             public void onSuccess(final String result) {
-                preview.setTextContent(result);
+                preview.textContent = result;
             }
         });
     }

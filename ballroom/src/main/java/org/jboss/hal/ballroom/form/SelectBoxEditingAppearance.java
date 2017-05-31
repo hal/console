@@ -20,16 +20,19 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.OptionElement;
-import elemental.html.SelectElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLOptionElement;
+import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.UIConstants;
 
 import static com.google.common.base.Strings.emptyToNull;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
@@ -40,23 +43,31 @@ import static org.jboss.hal.resources.CSS.*;
  */
 abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
-    final SelectElement selectElement;
-    private final Element root;
-    private final Element inputContainer;
-    private final Element helpBlock;
-    private Element inputGroup;
-    private elemental.html.InputElement restrictedInput;
-    private Element restrictedMarker;
+    final HTMLSelectElement selectElement;
+    private final HTMLElement root;
+    private final HTMLElement inputContainer;
+    private final HTMLElement helpBlock;
+    private HTMLElement inputGroup;
+    private HTMLInputElement restrictedInput;
+    private HTMLElement restrictedMarker;
     final boolean allowEmpty;
     boolean attached;
 
-    SelectBoxEditingAppearance(final SelectElement selectElement, final List<String> options,
+    SelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
             final boolean allowEmpty) {
         super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED));
+
         this.selectElement = selectElement;
-        this.selectElement.getClassList().add(formControl);
-        this.selectElement.getClassList().add(selectpicker);
+        this.selectElement.classList.add(formControl);
+        this.selectElement.classList.add(selectpicker);
         this.allowEmpty = allowEmpty;
+        this.helpBlock = Appearance.helpBlock();
+        this.root = div().css(formGroup)
+                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(inputContainer = div().css(halFormInput)
+                        .add(selectElement)
+                        .asElement())
+                .asElement();
 
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -64,28 +75,12 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
             localOptions.add(0, "");
         }
         for (String option : localOptions) {
-            OptionElement optionElement = Browser.getDocument().createOptionElement();
-            optionElement.setText(option);
+            HTMLOptionElement optionElement = Elements.option(option).asElement();
             if (emptyToNull(option) == null) {
-                optionElement.setTitle(UNDEFINED);
+                optionElement.title = UNDEFINED;
             }
             this.selectElement.appendChild(optionElement);
         }
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(formGroup)
-                .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
-                .div().css(halFormInput).rememberAs(INPUT_CONTAINER)
-                    .add(selectElement)
-                .end()
-            .end();
-        // @formatter:on
-
-        helpBlock = Appearance.helpBlock();
-        labelElement = builder.referenceFor(LABEL_ELEMENT);
-        inputContainer = builder.referenceFor(INPUT_CONTAINER);
-        root = builder.build();
     }
 
     @Override
@@ -99,7 +94,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -114,7 +109,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
             case DEFAULT:
                 String defaultValue = String.valueOf(context);
-                selectElement.setTitle(Strings.isNullOrEmpty(defaultValue) ? UNDEFINED : defaultValue);
+                selectElement.title = Strings.isNullOrEmpty(defaultValue) ? UNDEFINED : defaultValue;
                 if (attached) {
                     refresh();
                 }
@@ -125,15 +120,15 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
                 break;
 
             case ENABLED:
-                selectElement.setDisabled(false);
+                selectElement.disabled = false;
                 if (attached) {
                     refresh();
                 }
                 break;
 
             case INVALID:
-                helpBlock.setTextContent(String.valueOf(context));
-                root.getClassList().add(hasError);
+                helpBlock.textContent = String.valueOf(context);
+                root.classList.add(hasError);
                 inputContainer.appendChild(helpBlock);
                 break;
 
@@ -143,12 +138,12 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
             case RESTRICTED:
                 if (inputGroup == null && restrictedInput == null && restrictedMarker == null) {
-                    restrictedInput = Browser.getDocument().createInputElement();
-                    restrictedInput.setType("text"); //NON-NLS
-                    restrictedInput.setValue(CONSTANTS.restricted());
-                    restrictedInput.setAttribute(UIConstants.READONLY, UIConstants.TRUE);
-                    restrictedInput.getClassList().add(restricted);
-
+                    restrictedInput = input(text).css(restricted)
+                            .apply(input -> {
+                                input.value = CONSTANTS.restricted();
+                                input.readOnly = true;
+                            })
+                            .asElement();
                     restrictedMarker = Appearance.restrictedMarker();
 
                     inputGroup = Appearance.inputGroup();
@@ -176,7 +171,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
         switch (decoration) {
 
             case DEFAULT:
-                selectElement.setTitle("");
+                selectElement.title = "";
                 if (attached) {
                     refresh();
                 }
@@ -187,14 +182,14 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
                 break;
 
             case ENABLED:
-                selectElement.setDisabled(true);
+                selectElement.disabled = true;
                 if (attached) {
                     refresh();
                 }
                 break;
 
             case INVALID:
-                root.getClassList().remove(hasError);
+                root.classList.remove(hasError);
                 Elements.failSafeRemove(inputContainer, helpBlock);
                 break;
 
@@ -224,24 +219,24 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     @Override
     public void setId(final String id) {
         this.id = Ids.build(id, EDITING.name().toLowerCase());
-        root.getDataset().setAt(FORM_ITEM_GROUP, this.id);
-        selectElement.setId(this.id);
-        labelElement.setHtmlFor(this.id);
+        root.dataset.set(FORM_ITEM_GROUP, this.id);
+        selectElement.id = this.id;
+        labelElement.htmlFor = this.id;
     }
 
     @Override
     public void setName(final String name) {
-        selectElement.setName(name);
+        selectElement.name = name;
     }
 
     @Override
     public int getTabIndex() {
-        return selectElement.getTabIndex();
+        return (int) selectElement.tabIndex;
     }
 
     @Override
     public void setAccessKey(final char key) {
-        selectElement.setAccessKey(String.valueOf(key));
+        // noop
     }
 
     @Override
@@ -255,6 +250,6 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
     @Override
     public void setTabIndex(final int index) {
-        selectElement.setTabIndex(index);
+        selectElement.tabIndex = index;
     }
 }

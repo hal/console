@@ -21,9 +21,10 @@ import com.google.common.collect.Ordering;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableRowElement;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -31,8 +32,11 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 import org.jetbrains.annotations.NonNls;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
 /**
@@ -40,30 +44,31 @@ import static org.jboss.hal.resources.UIConstants.NBSP;
  */
 class AttributesTable implements IsElement {
 
-    private final Element root;
+    private final HTMLElement root;
 
     AttributesTable(final List<Property> attributes, final Resources resources) {
 
-        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
-        Elements.Builder builder = new Elements.Builder().table()
+        HTMLElement tbody;
+        this.root = table()
                 .css(table, tableBordered, tableStriped, CSS.attributes)
-                .thead()
-                .tr()
-                .th().textContent(resources.constants().attribute()).end()
-                .th().textContent(resources.constants().type()).end()
-                .th().textContent(resources.constants().storage()).end()
-                .th().textContent(resources.constants().accessType()).end()
-                .end()
-                .end();
+                .add(thead()
+                        .add(tr()
+                                .add(th().textContent(resources.constants().attribute()))
+                                .add(th().textContent(resources.constants().type()))
+                                .add(th().textContent(resources.constants().storage()))
+                                .add(th().textContent(resources.constants().accessType()))))
+                .add(tbody = tbody().asElement())
+                .asElement();
 
-        builder.tbody();
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
             ModelNode attribute = property.getValue();
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
             boolean deprecated = attribute.hasDefined(DEPRECATED) && attribute.get(DEPRECATED).asBoolean();
             SafeHtml description = helpTextBuilder.helpText(property);
 
-            builder.tr();
+            // start a new table row
+            HtmlContentBuilder<HTMLTableRowElement> builder = tr();
 
             // attribute name & description
             @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
@@ -77,61 +82,58 @@ class AttributesTable implements IsElement {
             if (description != null) {
                 html.appendHtmlConstant("<br/>").append(description);
             }
-            builder.td().innerHtml(html.toSafeHtml()).end();
+            builder.add(td().innerHtml(html.toSafeHtml()));
 
             // type
-            builder.td().textContent(Types.formatType(attribute)).end();
+            builder.add(td().textContent(Types.formatType(attribute)));
 
             // storage
-            builder.td();
+            HTMLElement storageTd;
+            builder.add(storageTd = td().asElement());
             if (attribute.hasDefined(STORAGE)) {
                 switch (attribute.get(STORAGE).asString()) {
                     case CONFIGURATION:
-                        builder.start("i").css(fontAwesome("database")).title(CONFIGURATION).end();
+                        storageTd.appendChild(i().css(fontAwesome("database")).title(CONFIGURATION).asElement());
                         break;
                     case RUNTIME:
-                        builder.start("i").css(pfIcon("memory")).title(RUNTIME).end();
+                        storageTd.appendChild(i().css(pfIcon("memory")).title(RUNTIME).asElement());
                         break;
                     default:
-                        builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                        storageTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
                         break;
                 }
             } else {
                 builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
             }
-            builder.end();
 
             // access type
-            builder.td();
+            HTMLElement accessTypeTd;
+            builder.add(accessTypeTd = td().asElement());
             if (attribute.hasDefined(ACCESS_TYPE)) {
                 switch (attribute.get(ACCESS_TYPE).asString()) {
                     case READ_WRITE:
-                        builder.start("i").css(pfIcon("edit")).title(READ_WRITE).end();
+                        accessTypeTd.appendChild(i().css(pfIcon("edit")).title(READ_WRITE).asElement());
                         break;
                     case READ_ONLY:
-                        builder.start("i").css(fontAwesome("lock")).title(READ_ONLY).end();
+                        accessTypeTd.appendChild(i().css(fontAwesome("lock")).title(READ_ONLY).asElement());
                         break;
                     case METRIC:
-                        builder.start("i").css(pfIcon("trend-up")).title(METRIC).end();
+                        accessTypeTd.appendChild(i().css(pfIcon("trend-up")).title(METRIC).asElement());
                         break;
                     default:
-                        builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                        accessTypeTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
                         break;
                 }
             } else {
                 builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
             }
-            builder.end(); // td
-            builder.end(); // tr
-        }
 
-        builder.end(); // tbody
-        builder.end(); // table
-        this.root = builder.build();
+            tbody.appendChild(builder.asElement());
+        }
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

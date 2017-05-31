@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -85,7 +85,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return item.hasDefined(DEFAULT_CACHE) ? ItemDisplay.withSubtitle(item.getName(),
                         item.get(DEFAULT_CACHE).asString()) : null;
             }

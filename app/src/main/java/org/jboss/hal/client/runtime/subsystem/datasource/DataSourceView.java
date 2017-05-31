@@ -17,9 +17,8 @@ package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import javax.inject.Inject;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
@@ -33,7 +32,13 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_JDBC_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_POOL_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_JDBC_TEMPLATE;
@@ -47,7 +52,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
-    private static final String HEADER_ELEMENT = "headerElement";
     private static final String POOL_PATH = "statistics/pool";
     private static final String JDBC_PATH = "statistics/jdbc";
     private static final String[] XA_ATTRIBUTES = {
@@ -84,7 +88,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private DataSourcePresenter presenter;
-    private Element header;
+    private HTMLElement header;
     private Tabs nonXaTabs;
     private Tabs xaTabs;
     private Form<ModelNode> poolForm;
@@ -154,25 +158,17 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                 .build();
         xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, xaJdbcForm.asElement());
 
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
-                    .p().css(clearfix)
-                        .a().css(clickable, pullRight).on(click, event -> refresh())
-                            .span().css(fontAwesome("refresh"), marginRight5).end()
-                            .span().textContent(resources.constants().refresh()).end()
-                        .end()
-                    .end()
-                    .add(nonXaTabs.asElement())
-                    .add(xaTabs.asElement())
-                .end()
-            .end();
-        // @formatter:on
+        HTMLElement root = row()
+                .add(column()
+                        .add(header = header().textContent(Names.DATASOURCE).asElement())
+                        .add(p().css(clearfix)
+                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                                        .add(span().textContent(resources.constants().refresh()))))
+                        .add(nonXaTabs)
+                        .add(xaTabs))
+                .asElement();
 
-        Element root = layoutBuilder.build();
-        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         registerAttachables(asList(poolForm, xaPoolForm, jdbcForm, xaJdbcForm));
         initElement(root);
         setup = true;
@@ -186,7 +182,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     @Override
     public void update(final DataSource dataSource) {
         showHide(dataSource.isXa());
-        header.setTextContent(dataSource.getName());
+        header.textContent = dataSource.getName();
         if (dataSource.isXa()) {
             xaPoolForm.view(failSafeGet(dataSource, POOL_PATH));
             xaJdbcForm.view(failSafeGet(dataSource, JDBC_PATH));

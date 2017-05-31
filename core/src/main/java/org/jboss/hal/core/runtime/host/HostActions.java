@@ -23,7 +23,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -34,12 +34,12 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -166,7 +166,7 @@ public class HostActions {
 
                             // execute the reload with a little delay to ensure the confirmation dialog is closed
                             // before the next dialog is opened (only one modal can be open at a time!)
-                            Browser.getWindow().setTimeout(() -> {
+                            DomGlobal.setTimeout((o) -> {
 
                                 if (host.isDomainController()) {
                                     domainControllerOperation(host, operation, reloadTimeout(host),
@@ -212,7 +212,7 @@ public class HostActions {
         DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
-            Browser.getWindow().setTimeout(() -> {
+            DomGlobal.setTimeout((o) -> {
 
                 prepare(host, host.getServers(), Action.RESTART);
                 Operation operation = new Operation.Builder(host.getAddress(), SHUTDOWN)
@@ -250,7 +250,7 @@ public class HostActions {
                     @Override
                     public void onSuccess() {
                         // wait a little bit before event handlers try to use the reloaded / restarted domain controller
-                        Browser.getWindow().setTimeout(() -> {
+                        DomGlobal.setTimeout((o) -> {
                             pendingDialog.close();
                             finish(host, servers, Result.SUCCESS, Message.success(successMessage));
                         }, 666);

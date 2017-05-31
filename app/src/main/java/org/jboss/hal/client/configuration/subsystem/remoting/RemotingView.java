@@ -140,7 +140,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
                 connectorSecurityForm.asElement());
         connectorTabs.add(Ids.REMOTING_CONNECTOR_SECURITY_POLICY_TAB, mbuiContext.resources().constants().policy(),
                 connectorSecurityPolicyForm.asElement());
-        connectorTable.asElement().getParentElement().appendChild(connectorTabs.asElement());
+        connectorTable.asElement().parentNode.appendChild(connectorTabs.asElement());
 
         // http connector
         Metadata httpConnectorMetadata = mbuiContext.metadataRegistry().lookup(HTTP_CONNECTOR_TEMPLATE);
@@ -196,7 +196,7 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
         httpConnectorTabs
                 .add(Ids.REMOTING_HTTP_CONNECTOR_SECURITY_POLICY_TAB, mbuiContext.resources().constants().policy(),
                         httpConnectorSecurityPolicyForm.asElement());
-        httpConnectorTable.asElement().getParentElement().appendChild(httpConnectorTabs.asElement());
+        httpConnectorTable.asElement().parentNode.appendChild(httpConnectorTabs.asElement());
     }
 
     @Override

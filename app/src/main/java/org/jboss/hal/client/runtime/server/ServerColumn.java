@@ -27,8 +27,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -61,9 +61,9 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
@@ -79,6 +79,7 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import static elemental2.dom.DomGlobal.alert;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -272,7 +273,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return ItemDisplay.withSubtitle(item.getName(),
                         BrowseByColumn.browseByHosts(finder.getContext())
                                 ? item.getServerGroup()
@@ -301,7 +302,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 return new ServerIcon(serverActions).apply(item);
             }
 
@@ -401,11 +402,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void addServer(boolean browseByHost) {
-        Browser.getWindow().alert(Names.NYI);
+        alert(Names.NYI);
     }
 
     private void copyServer(Server server, boolean browseByHost) {
-        Browser.getWindow().alert(Names.NYI);
+        alert(Names.NYI);
     }
 
     private boolean serverIsLastSegment() {
@@ -420,7 +421,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
             return Optional.empty();
         });
-        Element addButton = Browser.getDocument().getElementById(Ids.SERVER_ADD);
+        HTMLElement addButton = (HTMLElement) DomGlobal.document.getElementById(Ids.SERVER_ADD);
         ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(serverConfigTemplate(host), ADD)));
     }
 

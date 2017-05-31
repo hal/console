@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -31,9 +31,9 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -117,7 +117,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 if (!mailSession.getServers().isEmpty()) {
                     return ItemDisplay
                             .withSubtitle(mailSession.getName(), Joiner.on(", ").join(mailSession.getServers()));

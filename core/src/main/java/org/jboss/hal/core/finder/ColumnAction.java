@@ -18,7 +18,7 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 
@@ -31,7 +31,7 @@ public class ColumnAction<T> {
 
         private final String id;
         private String title;
-        private Element element;
+        private HTMLElement element;
         private ColumnActionHandler<T> handler;
         private List<ColumnAction<T>> actions;
         private Constraint constraint;
@@ -50,7 +50,7 @@ public class ColumnAction<T> {
             return this;
         }
 
-        public Builder<T> element(final Element element) {
+        public Builder<T> element(final HTMLElement element) {
             this.element = element;
             return this;
         }
@@ -88,7 +88,7 @@ public class ColumnAction<T> {
 
     final String id;
     final String title;
-    final Element element;
+    final HTMLElement element;
     final List<ColumnAction<T>> actions;
     final ColumnActionHandler<T> handler;
     final Constraints constraints;

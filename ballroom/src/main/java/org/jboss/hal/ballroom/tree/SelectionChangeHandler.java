@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.events.JsEvent;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.Event;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
@@ -35,11 +35,11 @@ public interface SelectionChangeHandler<T> {
         public String action;
         public Api<T> api;
         public Node<T> node;
-        public JsArrayOf<String> selected;
+        public Array<String> selected;
     }
 
     /**
      * Called when a selection changed. That is when an item is selected <em>or</em> deselected.
      */
-    void onSelectionChanged(JsEvent event, SelectionContext<T> context);
+    void onSelectionChanged(Event event, SelectionContext<T> context);
 }

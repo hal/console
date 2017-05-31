@@ -23,7 +23,7 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -57,13 +57,13 @@ import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -233,7 +233,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 if (item.getDeployment() != null) {
                     if (item.getDeployment().getStatus() == Status.FAILED) {
                         return Icons.error();

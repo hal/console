@@ -21,9 +21,7 @@ import java.util.function.Function;
 import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -46,6 +44,11 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.ServletContainerSetting.COOKIE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.ServletContainerSetting.CRAWLER;
@@ -116,29 +119,23 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_TAB, Names.MIME_MAPPING, mimeMappingForm.asElement());
         tabs.add(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB, Names.WELCOME_FILE, welcomeFileForm.asElement());
 
-        // @formatter:off
-        Element configurationSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.CONFIGURATION).end()
-                .p().textContent(configurationMetadata.getDescription().getDescription()).end()
+        HTMLElement configurationSection = section()
+                .add(h(1).textContent(Names.CONFIGURATION))
+                .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(tabs)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         settings = new EnumMap<>(ServletContainerSetting.class);
-        Map<ServletContainerSetting, Element> settingsSections = new EnumMap<>(ServletContainerSetting.class);
+        Map<ServletContainerSetting, HTMLElement> settingsSections = new EnumMap<>(ServletContainerSetting.class);
         for (ServletContainerSetting setting : ServletContainerSetting.values()) {
             Metadata metadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(setting.templateSuffix()));
             Form<ModelNode> form = failSafeFrom(setting, metadata);
             settings.put(setting, form);
-            settingsSections.put(setting, new Elements.Builder()
-                    .section()
-                    .h(1).textContent(setting.type).end()
-                    .p().textContent(metadata.getDescription().getDescription()).end()
+            settingsSections.put(setting, section()
+                    .add(h(1).textContent(setting.type))
+                    .add(p().textContent(metadata.getDescription().getDescription()))
                     .add(form)
-                    .end()
-                    .build());
+                    .asElement());
         }
 
         VerticalNavigation navigation = new VerticalNavigation();
@@ -152,14 +149,9 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         registerAttachable(navigation, configurationForm, mimeMappingForm, welcomeFileForm);
         settings.values().forEach(s -> registerAttachable(s));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     private Form<ModelNode> failSafeFrom(ServletContainerSetting settingType, Metadata metadata) {

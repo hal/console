@@ -16,8 +16,9 @@
 package org.jboss.hal.client.deployment;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -30,6 +31,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
@@ -46,17 +48,13 @@ import static org.jboss.hal.resources.Icons.flag;
  */
 class ContentPreview extends PreviewContent<Content> {
 
-    private static final String DEPLOYMENTS_DIV = "deploymentsDiv";
-    private static final String DEPLOYMENTS_UL = "deploymentsUl";
-    private static final String UNDEPLOYED_CONTENT_DIV = "undeployedContentDiv";
-
     private final ContentColumn column;
     private final Places places;
     private final Resources resources;
     private final PreviewAttributes<Content> attributes;
-    private final Element deploymentsDiv;
-    private final Element deploymentsUl;
-    private final Element undeployedContent;
+    private final HTMLElement deploymentsDiv;
+    private final HTMLElement deploymentsUl;
+    private final HTMLElement undeployedContentDiv;
 
     ContentPreview(final ContentColumn column, final Content content, final Places places, final Resources resources) {
         super(content.getName());
@@ -68,44 +66,30 @@ class ContentPreview extends PreviewContent<Content> {
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
         attributes.append(model -> {
             String label = String.join(", ", labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .span()
-                    .title(labelBuilder.label(MANAGED))
-                    .css(flag(failSafeBoolean(model, MANAGED)), marginRight5)
-                .end()
-                .span()
-                    .title(labelBuilder.label(EXPLODED))
-                    .css(flag(failSafeBoolean(model, EXPLODED)))
-                .end();
-            // @formatter:on
-            return new PreviewAttribute(label, builder.elements());
+            ElementsBuilder elements = Elements.elements()
+                    .add(span()
+                            .title(labelBuilder.label(MANAGED))
+                            .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
+                    .add(span()
+                            .title(labelBuilder.label(EXPLODED))
+                            .css(flag(failSafeBoolean(model, EXPLODED))));
+            return new PreviewAttribute(label, elements.asElements());
         });
-        attributes.end();
         previewBuilder().addAll(attributes);
 
-        // @formatter:off
         previewBuilder()
-            .h(2).textContent(resources.constants().deployments()).end()
-            .div().rememberAs(DEPLOYMENTS_DIV)
-                .p().innerHtml(resources.messages().deployedTo(content.getName())).end()
-                .ul().rememberAs(DEPLOYMENTS_UL).end()
-            .end()
-            .div().rememberAs(UNDEPLOYED_CONTENT_DIV)
-                .p().rememberAs(UNDEPLOYED_CONTENT_DIV)
-                    .span()
-                        .innerHtml(resources.messages().undeployedContent(content.getName()))
-                    .end()
-                    .a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
-                        .textContent(resources.constants().deploy())
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        deploymentsDiv = previewBuilder().referenceFor(DEPLOYMENTS_DIV);
-        deploymentsUl = previewBuilder().referenceFor(DEPLOYMENTS_UL);
-        undeployedContent = previewBuilder().referenceFor(UNDEPLOYED_CONTENT_DIV);
+                .add(h(2).textContent(resources.constants().deployments()))
+                .add(deploymentsDiv = div()
+                        .add(p().innerHtml(resources.messages().deployedTo(content.getName())))
+                        .add(deploymentsUl = ul().asElement())
+                        .asElement())
+                .add(undeployedContentDiv = div()
+                        .add(p()
+                                .add(span()
+                                        .innerHtml(resources.messages().undeployedContent(content.getName())))
+                                .add(a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
+                                        .textContent(resources.constants().deploy())))
+                        .asElement());
     }
 
     @Override
@@ -114,10 +98,9 @@ class ContentPreview extends PreviewContent<Content> {
 
         boolean undeployed = content.getServerGroupDeployments().isEmpty();
         Elements.setVisible(deploymentsDiv, !undeployed);
-        Elements.setVisible(undeployedContent, undeployed);
+        Elements.setVisible(undeployedContentDiv, undeployed);
         if (!undeployed) {
             Elements.removeChildrenFrom(deploymentsUl);
-            Elements.Builder builder = new Elements.Builder();
             content.getServerGroupDeployments().forEach(sgd -> {
                 String serverGroup = sgd.getServerGroup();
                 PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
@@ -126,19 +109,15 @@ class ContentPreview extends PreviewContent<Content> {
                         .append(Ids.SERVER_GROUP_DEPLOYMENT, Ids.serverGroupDeployment(serverGroup, content.getName())))
                         .build();
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
-                // @formatter:off
-                builder
-                    .li()
-                        .a(serverGroupToken).textContent(serverGroup).end()
-                        .span().textContent(" (").end()
-                        .a().css(clickable)
-                            .on(click, event -> column.undeploy(content, serverGroup))
-                            .textContent(resources.constants().undeploy())
-                        .end()
-                        .span().textContent(")").end()
-                    .end();
-                // @formatter:on
-                deploymentsUl.appendChild(builder.build());
+                HTMLElement li = li()
+                        .add(a(serverGroupToken).textContent(serverGroup))
+                        .add(span().textContent(" ("))
+                        .add(a().css(clickable)
+                                .on(click, event -> column.undeploy(content, serverGroup))
+                                .textContent(resources.constants().undeploy()))
+                        .add(span().textContent(")"))
+                        .asElement();
+                deploymentsUl.appendChild(li);
             });
         }
     }

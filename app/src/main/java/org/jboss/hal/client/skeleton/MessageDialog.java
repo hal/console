@@ -17,11 +17,12 @@ package org.jboss.hal.client.skeleton;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.spi.Message;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -35,28 +36,25 @@ class MessageDialog {
 
     MessageDialog(final Message message) {
         String[] cssIcon = MessagePanelElement.cssIcon(message.getLevel());
-        Elements.Builder elementBuilder = new Elements.Builder();
+        ElementsBuilder builder = elements();
 
         // header
-        elementBuilder.div().css(alert, cssIcon[0])
-                .span().css(pfIcon(cssIcon[1])).end()
-                .span().innerHtml(message.getMessage()).end()
-                .end();
+        builder.add(div().css(alert, cssIcon[0])
+                .add(span().css(pfIcon(cssIcon[1])))
+                .add(span().innerHtml(message.getMessage())));
 
         // details
         String header = message.getDetails() != null ? CONSTANTS.details() : CONSTANTS.noDetails();
-        elementBuilder.p().css(messageDetails)
-                .span().textContent(header).end()
-                .span().css(pullRight, timestamp).textContent(message.getTimestamp()).end()
-                .end();
+        builder.add(p().css(messageDetails)
+                .add(span().textContent(header))
+                .add(span().css(pullRight, timestamp).textContent(message.getTimestamp())));
         if (message.getDetails() != null) {
-            elementBuilder.start("pre").css(messageDetailsPre).innerHtml(SafeHtmlUtils.fromString(message.getDetails()))
-                    .end();
+            builder.add(pre().css(messageDetailsPre).innerHtml(SafeHtmlUtils.fromString(message.getDetails())));
         }
 
         dialog = new Dialog.Builder(CONSTANTS.message())
                 .closeOnly()
-                .add(elementBuilder.elements())
+                .add(builder.asElements())
                 .build();
     }
 

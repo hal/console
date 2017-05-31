@@ -16,13 +16,17 @@
 package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
 
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.hal.resources.CSS.loading;
+import static org.jboss.hal.resources.CSS.loadingContainer;
+import static org.jboss.hal.resources.CSS.spinner;
 
 /**
  * @author Harald Pehl
@@ -35,30 +39,25 @@ public class LoadingPanel implements IsElement {
         if (instance == null) {
             instance = new LoadingPanel();
             instance.off();
-            Browser.getDocument().getBody().appendChild(instance.asElement());
+            DomGlobal.document.body.appendChild(instance.asElement());
         }
         return instance;
     }
 
     private static LoadingPanel instance;
 
-    private final Element root;
+    private final HTMLElement root;
 
     private LoadingPanel() {
-        // @formatter:off
-        root = new Elements.Builder()
-            .div().css(loadingContainer)
-                .div().css(loading)
-                    .h(3).textContent(CONSTANTS.loading()).end()
-                    .div().css(spinner).end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
+        root = div().css(loadingContainer)
+                .add(div().css(loading)
+                        .add(h(3).textContent(CONSTANTS.loading()))
+                        .add(div().css(spinner)))
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

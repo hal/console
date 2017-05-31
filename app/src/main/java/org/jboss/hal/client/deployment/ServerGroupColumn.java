@@ -21,18 +21,18 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -85,7 +85,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 

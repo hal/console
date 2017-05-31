@@ -20,8 +20,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.extension.Extension;
 import org.jboss.hal.core.extension.ExtensionRegistry;
@@ -43,6 +43,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.core.extension.Extension.Point.CUSTOM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BUNDLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXTENSION_POINT;
@@ -101,7 +102,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 Extension.Point point = ModelNodeHelper.asEnumValue(item, EXTENSION_POINT,
                         Extension.Point::valueOf, CUSTOM);
                 return ItemDisplay.withSubtitle(item.getName(), point.title());
@@ -125,14 +126,10 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
             }
 
             @Override
-            public Element getIcon() {
-                Element icon = Browser.getDocument().createSpanElement();
-                if (ModelNodeHelper.failSafeBoolean(item, STANDALONE)) {
-                    icon.setClassName(fontAwesome("puzzle-piece"));
-                } else {
-                    icon.setClassName(fontAwesome("archive"));
-                }
-                return icon;
+            public HTMLElement getIcon() {
+                return ModelNodeHelper.failSafeBoolean(item, STANDALONE)
+                        ? span().css(fontAwesome("puzzle-piece")).asElement()
+                        : span().css(fontAwesome("archive")).asElement();
             }
 
             @Override
@@ -159,7 +156,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
                     Message message = Message.success(
                             resources.messages().removeExtensionSuccess(),
                             resources.constants().reload(),
-                            () -> Browser.getWindow().getLocation().reload(), true);
+                            () -> DomGlobal.window.location.reload(), true);
                     MessageEvent.fire(eventBus, message);
                     refresh(RefreshMode.CLEAR_SELECTION);
                 });

@@ -15,26 +15,27 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import static org.jboss.gwt.elemento.core.Elements.p;
 
 /**
  * @author Harald Pehl
  */
 class PropertiesStep extends WizardStep<Context, State> {
 
-    private final Element root;
+    private final HTMLElement root;
 
     PropertiesStep(final Resources resources) {
         super(resources.constants().xaProperties());
-        root = new Elements.Builder().p().textContent(Names.NYI).end().build();
+        root = p().textContent(Names.NYI).asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

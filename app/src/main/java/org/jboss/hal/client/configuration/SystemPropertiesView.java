@@ -17,6 +17,8 @@ package org.jboss.hal.client.configuration;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -28,8 +30,8 @@ import org.jboss.hal.spi.MbuiView;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("DuplicateStringLiteralInspection")
 @MbuiView
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class SystemPropertiesView extends MbuiViewImpl<SystemPropertiesPresenter>
         implements SystemPropertiesPresenter.MyView {
 
@@ -42,6 +44,11 @@ public abstract class SystemPropertiesView extends MbuiViewImpl<SystemProperties
 
     SystemPropertiesView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    void init() {
+        // TODO Show column 'boot-time' only in domain mode
     }
 
     @Override

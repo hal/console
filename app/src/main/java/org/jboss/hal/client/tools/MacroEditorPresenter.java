@@ -25,7 +25,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -45,6 +44,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -156,7 +156,7 @@ public class MacroEditorPresenter
     }
 
     void rename(Macro macro) {
-        Browser.getWindow().alert(Names.NYI);
+        alert(Names.NYI);
     }
 
     void remove(Macro macro) {

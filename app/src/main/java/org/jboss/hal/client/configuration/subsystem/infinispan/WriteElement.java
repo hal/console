@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,7 +33,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.InputType.radio;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Write.BEHIND;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Write.THROUGH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
@@ -46,64 +48,52 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 /**
  * @author Harald Pehl
  */
-class WriteElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
-
-    private static final String BEHIND_RADIO = "behindRadio";
+class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final EmptyState emptyState;
-    private final Element throughElement;
-    private final Element behindElement;
+    private final HTMLElement throughElement;
+    private final HTMLElement behindElement;
     private final Form<ModelNode> behindForm;
-    private final Element root;
+    private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
     WriteElement(final Cache cache, final Store store, final MetadataRegistry metadataRegistry,
             final Resources resources) {
 
+        HTMLInputElement behindRadio;
         String radioName = Ids.build(cache.baseId, store.baseId, WRITE, "radio");
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(CSS.radio)
-                .label()
-                    .input(InputType.radio).rememberAs(BEHIND_RADIO)
-                        .attr(UIConstants.NAME, radioName)
-                        .attr(UIConstants.VALUE, BEHIND.resource)
-                    .span().textContent(BEHIND.type).end()
-                .end()
-            .end()
-            .div().css(CSS.radio)
-                .label()
-                    .input(InputType.radio)
-                        .attr(UIConstants.NAME, radioName)
-                        .attr(UIConstants.VALUE, THROUGH.resource)
-                        .attr(UIConstants.CHECKED, UIConstants.TRUE)
-                    .span().textContent(THROUGH.type).end()
-                .end()
-            .end();
-        // @formatter:on
-        InputElement behindRadio = builder.referenceFor(BEHIND_RADIO);
+        ElementsBuilder elements = elements()
+                .add(div().css(CSS.radio)
+                        .add(label()
+                                .add(behindRadio = input(radio)
+                                        .attr(UIConstants.NAME, radioName)
+                                        .attr(UIConstants.VALUE, BEHIND.resource)
+                                        .asElement())
+                                .add(span().textContent(BEHIND.type))))
+                .add(div().css(CSS.radio)
+                        .add(label()
+                                .add(input(radio)
+                                        .attr(UIConstants.NAME, radioName)
+                                        .attr(UIConstants.VALUE, THROUGH.resource)
+                                        .attr(UIConstants.CHECKED, UIConstants.TRUE))
+                                .add(span().textContent(THROUGH.type))));
 
         emptyState = new EmptyState.Builder(resources.constants().noWrite())
                 .description(resources.messages().noWrite())
-                .addAll(builder.elements())
+                .addAll(elements.asElements())
                 .primaryAction(resources.constants().add(), () -> {
-                    Write write = behindRadio.isChecked() ? BEHIND : THROUGH;
+                    Write write = behindRadio.checked ? BEHIND : THROUGH;
                     presenter.addWrite(write);
                 })
                 .build();
 
-        // @formatter:off
-        throughElement = new Elements.Builder()
-            .div()
-                .p().css(marginTopLarge)
-                    .innerHtml(resources.messages().writeBehaviour(THROUGH.type, BEHIND.type))
-                .end()
-                .button().css(btn, btnDefault).on(click, event -> presenter.switchWrite(THROUGH, BEHIND))
-                    .textContent(resources.constants().switchBehaviour())
-                .end()
-            .end()
-        .build();
-        // @formatter:on
+        throughElement = div()
+                .add(p().css(marginTopLarge)
+                        .innerHtml(resources.messages().writeBehaviour(THROUGH.type, BEHIND.type)))
+                .add(button(resources.constants().switchBehaviour())
+                        .css(btn, btnDefault)
+                        .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
+                .asElement();
 
         String id = Ids.build(cache.baseId, store.baseId, BEHIND.baseId, Ids.FORM_SUFFIX);
         Metadata metadata = metadataRegistry.lookup(cache.template
@@ -114,27 +104,20 @@ class WriteElement implements IsElement, Attachable, HasPresenter<CacheContainer
                 .prepareReset(f -> presenter.resetWrite(BEHIND, f))
                 .build();
 
-        // @formatter:off
-        behindElement = new Elements.Builder()
-            .div()
-                .p().css(marginTopLarge)
-                    .innerHtml(resources.messages().writeBehaviour(BEHIND.type, THROUGH.type))
-                .end()
-                .button().css(btn, btnDefault).on(click, event -> presenter.switchWrite(BEHIND, THROUGH))
-                    .textContent(resources.constants().switchBehaviour())
-                .end()
-                .add(behindForm.asElement())
-            .end()
-        .build();
-        // @formatter:on
+        behindElement = div()
+                .add(p().css(marginTopLarge)
+                        .innerHtml(resources.messages().writeBehaviour(BEHIND.type, THROUGH.type)))
+                .add(button(resources.constants().switchBehaviour())
+                        .css(btn, btnDefault)
+                        .on(click, event -> presenter.switchWrite(BEHIND, THROUGH)))
+                .add(behindForm)
+                .asElement();
 
-        root = new Elements.Builder()
-                .section()
+        root = section()
                 .add(emptyState)
                 .add(throughElement)
                 .add(behindElement)
-                .end()
-                .build();
+                .asElement();
 
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(throughElement, false);
@@ -142,7 +125,7 @@ class WriteElement implements IsElement, Attachable, HasPresenter<CacheContainer
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

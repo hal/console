@@ -260,5 +260,4 @@ class DefaultFormItemProvider implements FormItemProvider {
         }
         return emptyList();
     }
-
 }

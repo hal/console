@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -34,6 +33,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.StackElement.REMOTE_SITE_ID;
@@ -42,12 +44,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class RelayElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
+public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private JGroupsPresenter presenter;
-    private Element section;
+    private HTMLElement section;
 
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     RelayElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
@@ -72,20 +74,17 @@ public class RelayElement implements IsElement, Attachable, HasPresenter<JGroups
                 .prepareReset(form -> presenter.resetSingleton(SELECTED_RELAY_TEMPLATE, Names.RELAY, form, metadata))
                 .build();
 
-        // @formatter:off
-        section = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.RELAY).end()
-                .p().textContent(metadata.getDescription().getDescription() + ". " + resources.constants().jgroupsRelayAlias()).end()
+        section = section()
+                .add(h(1).textContent(Names.RELAY))
+                .add(p().textContent(
+                        metadata.getDescription().getDescription() + ". " + resources.constants().jgroupsRelayAlias()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return section;
     }
 

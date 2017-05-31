@@ -25,19 +25,17 @@ import javax.inject.Provider;
 
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.ButtonElement;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.tree.Node;
@@ -48,9 +46,9 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -67,8 +65,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.JsHelper.asList;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
@@ -88,7 +89,7 @@ import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
  *
  * @author Harald Pehl
  */
-public class ModelBrowser implements HasElements {
+public class ModelBrowser implements IsElement<HTMLElement> {
 
     private static class FilterInfo {
 
@@ -131,13 +132,9 @@ public class ModelBrowser implements HasElements {
     }
 
 
-    private static final String FILTER_ELEMENT = "filterElement";
-    private static final String REFRESH_ELEMENT = "refreshElement";
-    private static final String COLLAPSE_ELEMENT = "collapseElement";
-
-    static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
+
+    static final HTMLElement PLACE_HOLDER_ELEMENT = div().asElement();
 
     private final CrudOperations crud;
     private MetadataProcessor metadataProcessor;
@@ -147,13 +144,13 @@ public class ModelBrowser implements HasElements {
     private final Resources resources;
     private final Stack<FilterInfo> filterStack;
 
-    private final Iterable<Element> rows;
-    private final Element buttonGroup;
-    private final ButtonElement filter;
-    private final ButtonElement refresh;
-    private final ButtonElement collapse;
-    private final Element treeContainer;
-    private final Element content;
+    private final HTMLElement root;
+    private final HTMLElement buttonGroup;
+    private final HTMLButtonElement filter;
+    private final HTMLButtonElement refresh;
+    private final HTMLButtonElement collapse;
+    private final HTMLElement treeContainer;
+    private final HTMLElement content;
     private final ResourcePanel resourcePanel;
     private final ChildrenPanel childrenPanel;
     Tree<Context> tree;
@@ -181,59 +178,48 @@ public class ModelBrowser implements HasElements {
         this.updateBreadcrumb = false;
         this.surroundingHeight = 0;
 
-        // @formatter:off
-        Elements.Builder buttonsBuilder = new Elements.Builder()
-            .div().css(btnGroup, modelBrowserButtons)
-                .button().rememberAs(FILTER_ELEMENT).on(click, event -> filter(tree.api().getSelected())).css(btn, btnDefault)
-                    .add("i").css(fontAwesome(CSS.filter))
-                .end()
-                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> refresh(tree.api().getSelected())).css(btn, btnDefault)
-                    .add("i").css(fontAwesome(CSS.refresh))
-                .end()
-                .button().rememberAs(COLLAPSE_ELEMENT).on(click, event -> collapse(tree.api().getSelected())).css(btn, btnDefault)
-                    .add("i").css(fontAwesome("minus"))
-                .end()
-            .end();
-        // @formatter:on
-        filter = buttonsBuilder.referenceFor(FILTER_ELEMENT);
-        refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
-        collapse = buttonsBuilder.referenceFor(COLLAPSE_ELEMENT);
-        buttonGroup = buttonsBuilder.build();
-        treeContainer = new Elements.Builder().div().css(CSS.treeContainer).end().build();
-        content = new Elements.Builder().div().css(modelBrowserContent).end().build();
+        buttonGroup = div().css(btnGroup, modelBrowserButtons)
+                .add(filter = button().css(btn, btnDefault).on(click, event -> filter(tree.api().getSelected()))
+                        .add(i().css(fontAwesome(CSS.filter)))
+                        .asElement())
+                .add(refresh = button().css(btn, btnDefault).on(click, event -> refresh(tree.api().getSelected()))
+                        .add(i().css(fontAwesome(CSS.refresh)))
+                        .asElement())
+                .add(collapse = button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))
+                        .add(i().css(fontAwesome("minus")))
+                        .asElement())
+                .asElement();
+
+        treeContainer = div().css(CSS.treeContainer).asElement();
+        content = div().css(modelBrowserContent).asElement();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
-        for (Element element : resourcePanel.asElements()) {
+        for (HTMLElement element : resourcePanel.asElements()) {
             content.appendChild(element);
         }
         resourcePanel.hide();
 
         childrenPanel = new ChildrenPanel(this, dispatcher, resources);
-        for (Element element : childrenPanel.asElements()) {
+        for (HTMLElement element : childrenPanel.asElements()) {
             content.appendChild(element);
         }
         childrenPanel.hide();
 
-        // @formatter:off
-        rows =  new LayoutBuilder()
-            .row()
-                .column(4)
-                    .add(buttonGroup)
-                    .add(treeContainer)
-                .end()
-                .column(8).add(content).end()
-            .end()
-        .elements();
-        // @formatter:on
+        root = row()
+                .add(column(4)
+                        .addAll(buttonGroup, treeContainer))
+                .add(column(8)
+                        .add(content))
+                .asElement();
     }
 
     private void adjustHeight() {
-        int buttonGroup = this.buttonGroup.getOffsetHeight();
+        int buttonGroup = (int) this.buttonGroup.offsetHeight;
         int treeContainerOffset = applicationOffset() + 2 * MARGIN_BIG + buttonGroup + MARGIN_SMALL + surroundingHeight;
         int contentOffset = applicationOffset() + 2 * MARGIN_BIG + surroundingHeight;
 
-        treeContainer.getStyle().setHeight(vh(treeContainerOffset));
-        content.getStyle().setHeight(vh((contentOffset)));
+        treeContainer.style.height = vh(treeContainerOffset);
+        content.style.height = vh((contentOffset));
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -256,7 +242,7 @@ public class ModelBrowser implements HasElements {
                 .asyncFolder()
                 .build();
 
-        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(JsArrayOf.create()));
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Array<>()));
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
         tree.attach();
@@ -278,17 +264,14 @@ public class ModelBrowser implements HasElements {
     }
 
     private void filter(FilterInfo filter) {
-        Element oldFilterElement = buttonGroup.querySelector("." + tagManagerContainer);
+        elemental2.dom.Element oldFilterElement = buttonGroup.querySelector("." + tagManagerContainer);
         if (filter.filterText != null) {
-            // @formatter:off
-            Element filterElement = new Elements.Builder()
-                .div().css(tagManagerContainer)
-                    .span().css(tmTag, tagManagerTag)
-                        .span().textContent(filter.filterText).end()
-                        .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).textContent("x").end() //NON-NLS
-                    .end()
-                .end().build();
-            // @formatter:on
+            HTMLElement filterElement = div().css(tagManagerContainer)
+                    .add(span().css(tmTag, tagManagerTag)
+                            .add(span().textContent(filter.filterText))
+                            .add(a().css(clickable, tmTagRemove)
+                                    .on(click, event -> clearFilter()).textContent("x"))) //NON-NLS
+                    .asElement();
 
             if (oldFilterElement != null) {
                 buttonGroup.replaceChild(filterElement, oldFilterElement);
@@ -305,7 +288,7 @@ public class ModelBrowser implements HasElements {
     }
 
     private void clearFilter() {
-        Element filterElement = buttonGroup.querySelector("." + tagManagerContainer);
+        elemental2.dom.Element filterElement = buttonGroup.querySelector("." + tagManagerContainer);
         if (filterElement != null) {
             buttonGroup.removeChild(filterElement);
         }
@@ -351,15 +334,15 @@ public class ModelBrowser implements HasElements {
             return;
         }
 
-        filter.setDisabled(context.selected.isEmpty() ||
+        filter.disabled = context.selected.getLength() == 0 ||
                 !context.node.data.isFullyQualified() ||
-                context.node.id.equals(MODEL_BROWSER_ROOT));
-        refresh.setDisabled(context.selected.isEmpty());
-        collapse.setDisabled(context.selected.isEmpty());
+                context.node.id.equals(MODEL_BROWSER_ROOT);
+        refresh.disabled = context.selected.getLength() == 0;
+        collapse.disabled = context.selected.getLength() == 0;
 
         resourcePanel.hide();
         childrenPanel.hide();
-        if (context.selected.isEmpty()) {
+        if (context.selected.getLength() == 0) {
             updateBreadcrumb(null);
         } else {
             updateNode(context.node);
@@ -567,7 +550,7 @@ public class ModelBrowser implements HasElements {
     }
 
     @Override
-    public Iterable<Element> asElements() {
-        return rows;
+    public HTMLElement asElement() {
+        return root;
     }
 }

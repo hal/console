@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration;
 
 import java.util.List;
 
-import elemental.js.json.JsJsonObject;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -32,9 +31,10 @@ import org.jboss.hal.core.Core;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.StatementContext;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -103,7 +103,7 @@ public class PathsAutoComplete extends AutoComplete {
     }
 
     public PathsAutoComplete() {
-        Options options = new OptionsBuilder<JsJsonObject>(
+        Options options = new OptionsBuilder<JsonObject>(
                 (query, response) -> Core.INSTANCE.dispatcher().execute(operation,
                         result -> response.response(new NamesResultProcessor().process(query, result))))
                 .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))

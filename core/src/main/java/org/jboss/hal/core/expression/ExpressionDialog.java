@@ -23,9 +23,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.events.KeyboardEvent;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.Key;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
@@ -41,6 +41,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -80,14 +82,13 @@ public class ExpressionDialog {
         form = builder.build();
 
         FormItem<String> expressionItem = form.getFormItem(EXPRESSION);
-        InputElement inputElement = (InputElement) expressionItem.asElement(EDITING).querySelector("." + formControl);
+        HTMLInputElement inputElement = (HTMLInputElement) expressionItem.asElement(EDITING).querySelector("." + formControl);
         if (inputElement != null) {
-            inputElement.setOnkeydown(evt -> {
-                KeyboardEvent keyboardEvent = (KeyboardEvent) evt;
-                if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ENTER) {
+            bind(inputElement, keydown, event -> {
+                if (Key.fromEvent(event) == Key.Enter) {
                     // this would normally happen in the on change handler of the text box item,
                     // which is too late
-                    String value = inputElement.getValue();
+                    String value = inputElement.value;
                     expressionItem.setValue(value);
                     expressionItem.setModified(true);
                     expressionItem.setUndefined(Strings.isNullOrEmpty(value));

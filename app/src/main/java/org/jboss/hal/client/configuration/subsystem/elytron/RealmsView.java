@@ -18,9 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -31,6 +29,8 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 
 /**
@@ -56,7 +56,6 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
 
     private RealmsPresenter presenter;
 
-
     @Inject
     public RealmsView(final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -75,31 +74,31 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
 
         aggregateRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_AGGREGATE_REALM, "Aggregate Realm", AGGREGATE_REALM_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         cachingRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CACHING_REALM, "Caching Realm", CACHING_REALM_ADDRESS,this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                Ids.ELYTRON_CACHING_REALM, "Caching Realm", CACHING_REALM_ADDRESS, this, () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         customModifiableRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CUSTOM_MODIFIABLE_REALM, "Custom Modifiable Realm", CUSTOM_MODIFIABLE_REALM_ADDRESS,this,
+                Ids.ELYTRON_CUSTOM_MODIFIABLE_REALM, "Custom Modifiable Realm", CUSTOM_MODIFIABLE_REALM_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         customRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CUSTOM_REALM, "Custom Realm", CUSTOM_REALM_ADDRESS,this, () -> presenter.reload())
+                Ids.ELYTRON_CUSTOM_REALM, "Custom Realm", CUSTOM_REALM_ADDRESS, this, () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
                 .setTableAddCallback((name, address) -> presenter.reload())
@@ -107,38 +106,38 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
                 .create();
 
         filesystemRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_FILESYSTEM_REALM, "Filesystem Realm", FILESYSTEM_REALM_ADDRESS,this,
+                Ids.ELYTRON_FILESYSTEM_REALM, "Filesystem Realm", FILESYSTEM_REALM_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         identityRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_IDENTITY_REALM, "Identity Realm", IDENTITY_REALM_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         jdbcRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_JDBC_REALM, "JDBC Realm", JDBC_REALM_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
-            .build()
-            .addComplexAttributeAsPage("principal-query")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
+                .build()
+                .addComplexAttributeAsPage("principal-query")
+                .create();
 
         keystoreRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_KEYSTORE_REALM, "Keystore Realm", KEYSTORE_REALM_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         // TODO: implement support to add attr1.attr2 enhanced syntax
         //ldapRealmView.addComplexAttributeAsTab("identity-mapping.user-password-mapper", true);
@@ -146,79 +145,75 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         //ldapRealmView.addComplexAttributeAsTab("identity-mapping.x509-credential-mapper", true);
         ldapRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_LDAP_REALM, "LDAP Realm", LDAP_REALM_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddButtonHandler(table -> presenter.addLDAPRealm())
-            .build()
-            .addComplexAttributeAsTab("identity-mapping")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddButtonHandler(table -> presenter.addLDAPRealm())
+                .build()
+                .addComplexAttributeAsTab("identity-mapping")
+                .create();
 
         propertiesRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_PROPERTIES_REALM, "Properties Realm", PROPERTIES_REALM_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddButtonHandler(table -> presenter.addPropertiesRealm())
-            .build()
-            .addComplexAttributeAsTab("users-properties")
-            .addComplexAttributeAsTab("groups-properties")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddButtonHandler(table -> presenter.addPropertiesRealm())
+                .build()
+                .addComplexAttributeAsTab("users-properties")
+                .addComplexAttributeAsTab("groups-properties")
+                .create();
 
         tokenRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_TOKEN_REALM, "Token Realm", TOKEN_REALM_ADDRESS,this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("jwt")
-            .addComplexAttributeAsTab("oauth2-introspection")
-            .create();
+                Ids.ELYTRON_TOKEN_REALM, "Token Realm", TOKEN_REALM_ADDRESS, this, () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("jwt")
+                .addComplexAttributeAsTab("oauth2-introspection")
+                .create();
 
         constantRealmMapperView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_CONSTANT_REALM_MAPPER, "Constant Realm Mapper", CONSTANT_REALM_MAPPER_ADDRESS,this,
+                Ids.ELYTRON_CONSTANT_REALM_MAPPER, "Constant Realm Mapper", CONSTANT_REALM_MAPPER_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         customRealmMapperView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_CUSTOM_REALM_MAPPER, "Custom Realm Mapper", CUSTOM_REALM_MAPPER_ADDRESS,this,
+                Ids.ELYTRON_CUSTOM_REALM_MAPPER, "Custom Realm Mapper", CUSTOM_REALM_MAPPER_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         mappedRegexRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_MAPPED_REGEX_REALM_MAPPER, "Mapped Regex Realm Mapper", MAPPED_REGEX_REALM_MAPPER_ADDRESS,this,
+                Ids.ELYTRON_MAPPED_REGEX_REALM_MAPPER, "Mapped Regex Realm Mapper", MAPPED_REGEX_REALM_MAPPER_ADDRESS,
+                this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         simpleRegexRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_SIMPLE_REGEX_REALM_MAPPER, "Simple Regex Realm Mapper", SIMPLE_REGEX_REALM_MAPPER_ADDRESS,this,
+                Ids.ELYTRON_SIMPLE_REGEX_REALM_MAPPER, "Simple Regex Realm Mapper", SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
+                this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
 
     }
 
@@ -249,7 +244,6 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         customRealmMapperView.bindTableToForm();
         mappedRegexRealmView.bindTableToForm();
         simpleRegexRealmView.bindTableToForm();
-
     }
 
 
@@ -362,5 +356,4 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         mappedRegexRealmView.setPresenter(presenter);
         simpleRegexRealmView.setPresenter(presenter);
     }
-
 }

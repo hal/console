@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
@@ -43,12 +43,12 @@ public class Api<T> {
     public native Node<T> getNode(String id);
 
     @JsMethod
-    public native JsArrayOf<Node<T>> get_selected(boolean full);
+    public native Array<Node<T>> get_selected(boolean full);
 
     @JsOverlay
     public final Node<T> getSelected() {
-        JsArrayOf<Node<T>> selected = get_selected(true);
-        return selected.isEmpty() ? null : selected.get(0);
+        Array<Node<T>> selected = get_selected(true);
+        return selected.getLength() == 0 ? null : selected.getAt(0);
     }
 
     @JsMethod(name = "select_node")

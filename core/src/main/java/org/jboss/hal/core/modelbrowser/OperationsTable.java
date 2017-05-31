@@ -20,15 +20,24 @@ import java.util.List;
 import com.google.common.collect.Ordering;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableRowElement;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.Elements.table;
+import static org.jboss.gwt.elemento.core.Elements.tbody;
+import static org.jboss.gwt.elemento.core.Elements.td;
+import static org.jboss.gwt.elemento.core.Elements.th;
+import static org.jboss.gwt.elemento.core.Elements.thead;
+import static org.jboss.gwt.elemento.core.Elements.tr;
+import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REPLY_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
@@ -44,28 +53,29 @@ import static org.jboss.hal.resources.UIConstants.NBSP;
  */
 class OperationsTable implements IsElement {
 
-    private final Element root;
+    private final HTMLElement root;
     private final Resources resources;
 
     OperationsTable(final List<Property> operations, final Resources resources) {
+        HTMLElement tbody;
+
         this.resources = resources;
-
-        Elements.Builder builder = new Elements.Builder().table()
+        this.root = table()
                 .css(table, tableBordered, tableStriped, CSS.operations)
-                .thead()
-                .tr()
-                .th().textContent(Names.NAME).end()
-                .th().textContent(resources.constants().input()).end()
-                .th().textContent(resources.constants().output()).end()
-                .end()
-                .end();
+                .add(thead()
+                        .add(tr()
+                                .add(th().textContent(Names.NAME))
+                                .add(th().textContent(resources.constants().input()))
+                                .add(th().textContent(resources.constants().output()))))
+                .add(tbody = tbody().asElement())
+                .asElement();
 
-        builder.tbody();
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(operations)) {
             ModelNode operation = property.getValue();
             String description = operation.hasDefined(DESCRIPTION) ? operation.get(DESCRIPTION).asString() : null;
 
-            builder.tr();
+            // start a new table row
+            HtmlContentBuilder<HTMLTableRowElement> builder = tr();
 
             // operation name & description
             SafeHtmlBuilder html = new SafeHtmlBuilder();
@@ -75,43 +85,39 @@ class OperationsTable implements IsElement {
             if (description != null) {
                 html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
             }
-            builder.td().innerHtml(html.toSafeHtml()).end();
+            builder.add(td().innerHtml(html.toSafeHtml()));
 
             // input
-            builder.td();
+            HTMLElement inputTd;
+            builder.add(inputTd = td().asElement());
             if (operation.hasDefined(REQUEST_PROPERTIES) && !operation.get(REQUEST_PROPERTIES).asPropertyList()
                     .isEmpty()) {
                 List<Property> input = operation.get(REQUEST_PROPERTIES).asPropertyList();
-                builder.ul().css(operationParameter);
+                HTMLElement ul;
+                inputTd.appendChild(ul = ul().css(operationParameter).asElement());
                 for (Property parameter : Ordering.natural().onResultOf(Property::getName).sortedCopy(input)) {
-                    builder.li();
-                    buildParameter(builder, parameter.getName(), parameter.getValue());
-                    builder.end();
+                    HTMLElement li;
+                    ul.appendChild(li = li().asElement());
+                    buildParameter(li, parameter.getName(), parameter.getValue());
                 }
-                builder.end();
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                inputTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
-            builder.end();
 
             // output
-            builder.td();
+            HTMLElement outputTd;
+            builder.add(outputTd = td().asElement());
             if (operation.hasDefined(REPLY_PROPERTIES) && !operation.get(REPLY_PROPERTIES).asList().isEmpty()) {
-                buildParameter(builder, null, operation.get(REPLY_PROPERTIES));
+                buildParameter(outputTd, null, operation.get(REPLY_PROPERTIES));
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                outputTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
-            builder.end();
 
-            builder.end(); // tr
+            tbody.appendChild(builder.asElement());
         }
-
-        builder.end(); // tbody
-        builder.end(); // table
-        this.root = builder.build();
     }
 
-    private void buildParameter(Elements.Builder builder, String name, ModelNode parameter) {
+    private void buildParameter(HTMLElement element, String name, ModelNode parameter) {
         boolean required = parameter.hasDefined(REQUIRED) && parameter.get(REQUIRED).asBoolean();
         String description = parameter.hasDefined(DESCRIPTION) ? parameter.get(DESCRIPTION).asString() : null;
 
@@ -127,11 +133,11 @@ class OperationsTable implements IsElement {
         if (description != null) {
             html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
         }
-        builder.innerHtml(html.toSafeHtml());
+        element.innerHTML = html.toSafeHtml().asString();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.dragndrop;
 
-import elemental.html.FileList;
+import elemental2.dom.FileList;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 

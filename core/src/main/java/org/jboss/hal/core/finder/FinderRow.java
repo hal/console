@@ -18,10 +18,12 @@ package org.jboss.hal.core.finder;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
@@ -31,6 +33,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
@@ -40,17 +44,10 @@ import static org.jboss.hal.resources.UIConstants.data;
 
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.
- * <p>
- * TODO Add an option to activate an inline progress element which sets a striped background for long running
- * actions like 'restart server group'. Think about replacing the actions with a cancel button
- *
- * @author Harald Pehl
  */
 class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String FOLDER_ELEMENT = "folderElement";
-    private static final String BUTTON_CONTAINER = "buttonContainer";
     private static final String PREVENT_SET_ITEMS = "preventSetItems";
 
     private final Finder finder;
@@ -63,9 +60,9 @@ class FinderRow<T> implements IsElement {
     private String id;
     private T item;
 
-    private Element root;
-    private Element folderElement;
-    private Element buttonContainer;
+    private HTMLElement root;
+    private HTMLElement folderElement;
+    private HTMLElement buttonContainer;
 
     FinderRow(final Finder finder,
             final FinderColumn<T> column,
@@ -84,13 +81,14 @@ class FinderRow<T> implements IsElement {
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent<>(
                 display.getTitle());
 
-        root = Browser.getDocument().createLIElement();
+        root = li().asElement();
+        folderElement = null;
         if (column.isPinnable()) {
-            root.setClassName(pinned ? CSS.pinned : unpinned);
+            root.className = pinned ? CSS.pinned : unpinned;
         }
         updateItem(item);
         drawItem();
-        root.setOnclick(event -> onClick(((Element) event.getTarget())));
+        bind(root, click, event -> onClick(((HTMLElement) event.target)));
     }
 
     private List<ItemAction<T>> allowedActions(final List<ItemAction<T>> actions) {
@@ -107,126 +105,119 @@ class FinderRow<T> implements IsElement {
 
     private void drawItem() {
         Elements.removeChildrenFrom(root);
-        root.setId(display.getId());
-        root.getDataset().setAt(DATA_BREADCRUMB, display.getTitle());
+        root.id = display.getId();
+        root.dataset.set(DATA_BREADCRUMB, display.getTitle());
         // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
-        root.getDataset().setAt(DATA_FILTER, display.getFilterData());
+        root.dataset.set(DATA_FILTER, display.getFilterData());
 
-        Element icon = display.getIcon();
+        HTMLElement icon = display.getIcon();
         if (icon != null) {
-            icon.getClassList().add(itemIcon);
+            icon.classList.add(itemIcon);
             root.appendChild(icon);
         }
 
-        Element itemElement;
+        HTMLElement itemElement;
         if (display.asElement() != null) {
             itemElement = display.asElement();
         } else if (display.getTitle() != null) {
-            itemElement = new Elements.Builder().span().css(itemText).textContent(display.getTitle()).end().build();
+            itemElement = span().css(itemText).textContent(display.getTitle()).asElement();
         } else {
-            itemElement = new Elements.Builder().span().css(itemText).textContent(NOT_AVAILABLE).end().build();
+            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).asElement();
         }
         if (display.getTooltip() != null && itemElement != null) {
-            itemElement.setTitle(display.getTooltip());
-            itemElement.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            itemElement.getDataset().setAt(UIConstants.PLACEMENT, "top");
+            itemElement.title = display.getTooltip();
+            itemElement.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            itemElement.dataset.set(UIConstants.PLACEMENT, "top");
         }
         root.appendChild(itemElement);
 
-        Elements.Builder eb = new Elements.Builder();
-        boolean controls = column.isPinnable() || display.nextColumn() != null || !actions.isEmpty();
         // oder: 1) pin/unpin icon, 2) folder icon, 3) button(s)
         if (column.isPinnable()) {
-            eb.span()
-                    .css(unpin, pfIcon("close"))
+            root.appendChild(span().css(CSS.unpin, pfIcon("close"))
                     .title(CONSTANTS.unpin())
                     .on(click, e -> column.unpin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .end();
-            eb.span()
-                    .css(pin, pfIcon("thumb-tack-o"))
+                    .asElement());
+            root.appendChild(span().css(CSS.pin, pfIcon("thumb-tack-o"))
                     .title(CONSTANTS.pin())
                     .on(click, e -> column.pin(FinderRow.this))
                     .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                    .end();
+                    .asElement());
         }
+
         if (display.nextColumn() != null) {
-            eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
+            folderElement = span().css(folder, fontAwesome("angle-right")).asElement();
+            root.appendChild(folderElement);
         }
+
         if (!actions.isEmpty()) {
             if (actions.size() == 1) {
                 ItemAction<T> action = actions.get(0);
-                actionLink(eb, action, false, BUTTON_CONTAINER);
+                buttonContainer = actionLink(action, false);
+
             } else {
+                HTMLUListElement ul = null;
                 boolean firstAction = true;
                 boolean ulCreated = false;
-                eb.div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                        .rememberAs(BUTTON_CONTAINER);
+                buttonContainer = div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, UIConstants.TRUE).asElement();
                 for (ItemAction<T> action : actions) {
                     if (firstAction) {
-                        // @formatter:off
-                        actionLink(eb, action, false, null);
-                        eb.button()
+                        buttonContainer.appendChild(actionLink(action, false));
+                        buttonContainer.appendChild(button()
                                 .css(btn, btnFinder, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                                 .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                                 .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                                 .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                            .span().css(caret).data(PREVENT_SET_ITEMS, UIConstants.TRUE).end()
-                            .span()
-                                .css(srOnly).data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                                .textContent(CONSTANTS.toggleDropdown())
-                            .end()
-                        .end();
-                        // @formatter:on
+                                .add(span().css(caret)
+                                        .data(PREVENT_SET_ITEMS, UIConstants.TRUE))
+                                .add(span().css(srOnly)
+                                        .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                        .textContent(CONSTANTS.toggleDropdown()))
+                                .asElement());
                         firstAction = false;
-
                     } else {
                         if (!ulCreated) {
-                            eb.ul().css(dropdownMenu).data(PREVENT_SET_ITEMS, UIConstants.TRUE);
+                            buttonContainer.appendChild(ul = ul().css(dropdownMenu)
+                                    .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                    .asElement());
                             ulCreated = true;
                         }
-                        eb.li().data(PREVENT_SET_ITEMS, UIConstants.TRUE);
-                        actionLink(eb, action, true, null);
-                        eb.end();
+                        ul.appendChild(li()
+                                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                .add(actionLink(action, true))
+                                .asElement());
                     }
                 }
-                eb.end().end(); // </ul> && </div>
             }
-        }
-        folderElement = display.nextColumn() != null ? eb.referenceFor(FOLDER_ELEMENT) : null;
-        buttonContainer = actions.isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
-        if (controls) {
-            eb.elements().forEach(element -> root.appendChild(element));
+            root.appendChild(buttonContainer);
             Elements.setVisible(buttonContainer, isSelected());
         }
         PatternFly.initComponents("#" + display.getId());
     }
 
-    private void actionLink(Elements.Builder builder, ItemAction<T> action, boolean li, String reference) {
-        builder.a().css(clickable, li ? new String[]{} : new String[]{btn, btnFinder})
+    private HTMLAnchorElement actionLink(ItemAction<T> action, boolean li) {
+        String[] css = li ? new String[]{clickable} : new String[]{clickable, btn, btnFinder};
+        HtmlContentBuilder<HTMLAnchorElement> builder = a().css(css)
                 .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
                 .textContent(action.title);
         if (action.handler != null) {
             builder.on(click, event -> action.handler.execute(item));
         } else if (action.href != null) {
-            builder.attr(UIConstants.HREF, action.href);
+            builder.apply(a -> a.href = action.href);
         }
         if (!action.attributes.isEmpty()) {
             action.attributes.forEach(builder::attr);
         }
-        if (reference != null) {
-            builder.rememberAs(reference);
-        }
-        builder.end();
+        return builder.asElement();
     }
 
     void click() {
         onClick(null);
     }
 
-    private void onClick(final Element target) {
-        if (target != null && Boolean.parseBoolean(String.valueOf(target.getDataset().at(PREVENT_SET_ITEMS)))) {
+    private void onClick(final HTMLElement target) {
+        if (target != null && Boolean.parseBoolean(String.valueOf(target.dataset.get(PREVENT_SET_ITEMS)))) {
             return;
         }
         column.markSelected(id);
@@ -243,14 +234,14 @@ class FinderRow<T> implements IsElement {
 
     void markSelected(boolean select) {
         if (select) {
-            root.getClassList().add(active);
+            root.classList.add(active);
             if (buttonContainer != null) {
                 Elements.setVisible(buttonContainer, true);
                 Elements.setVisible(folderElement, false);
             }
 
         } else {
-            root.getClassList().remove(active);
+            root.classList.remove(active);
             Elements.setVisible(buttonContainer, false);
             Elements.setVisible(folderElement, true);
         }
@@ -271,7 +262,7 @@ class FinderRow<T> implements IsElement {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

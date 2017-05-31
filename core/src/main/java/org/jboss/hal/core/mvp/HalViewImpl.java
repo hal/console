@@ -22,8 +22,7 @@ import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Alert;
@@ -31,6 +30,10 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.resources.Icons;
 
+import static org.jboss.gwt.elemento.core.Elements.code;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
@@ -42,37 +45,31 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 public abstract class HalViewImpl extends ViewImpl implements HalView {
 
     private final List<Attachable> attachables;
-    private Element element;
-    private Iterable<Element> elements;
+    private HTMLElement element;
+    private Iterable<HTMLElement> elements;
     private boolean attached;
 
     protected HalViewImpl() {
         attachables = new ArrayList<>();
         attached = false;
 
-        // @formatter:off
         // noinspection HardCodedStringLiteral
-        element = new Elements.Builder()
-            .div().css(marginTopLarge)
+        element = div().css(marginTopLarge)
                 .add(new Alert(Icons.ERROR, SafeHtmlUtils.fromString("View not initialized")).asElement())
-                .p()
-                    .span().textContent("The view is not initialized. Did you forget to call ").end()
-                    .start("code").textContent("initElement(Element)").end()
-                    .span().textContent(" / ").end()
-                    .start("code").textContent("initElements(Iterable<Element>)").end()
-                    .span().textContent("?").end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
-
+                .add(p()
+                        .add(span().textContent("The view is not initialized. Did you forget to call "))
+                        .add(code().textContent("initElement(Element)"))
+                        .add(span().textContent(" / "))
+                        .add(code().textContent("initElements(Iterable<Element>)"))
+                        .add(span().textContent("?")))
+                .asElement();
     }
 
     protected void initElement(IsElement element) {
         initElement(element.asElement());
     }
 
-    protected void initElement(Element element) {
+    protected void initElement(HTMLElement element) {
         this.element = element;
     }
 
@@ -80,17 +77,17 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
         initElements(elements.asElements());
     }
 
-    protected void initElements(Iterable<Element> elements) {
+    protected void initElements(Iterable<HTMLElement> elements) {
         this.elements = elements;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return element;
     }
 
     @Override
-    public Iterable<Element> asElements() {
+    public Iterable<HTMLElement> asElements() {
         return elements;
     }
 

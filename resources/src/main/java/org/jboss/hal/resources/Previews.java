@@ -22,7 +22,7 @@ import com.google.gwt.resources.client.ResourceException;
 import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,26 +34,8 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ access control (rbac)
 
-    @Source("previews/rbac/administrator.html")
-    ExternalTextResource rbacAdministrator();
-
-    @Source("previews/rbac/auditor.html")
-    ExternalTextResource rbacAuditor();
-
-    @Source("previews/rbac/deployer.html")
-    ExternalTextResource rbacDeployer();
-
     @Source("previews/rbac/groups.html")
     ExternalTextResource rbacGroups();
-
-    @Source("previews/rbac/maintainer.html")
-    ExternalTextResource rbacMaintainer();
-
-    @Source("previews/rbac/monitor.html")
-    ExternalTextResource rbacMonitor();
-
-    @Source("previews/rbac/operator.html")
-    ExternalTextResource rbacOperator();
 
     @Source("previews/rbac/overview.html")
     ExternalTextResource rbacOverview();
@@ -63,9 +45,6 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/rbac/roles-standalone.html")
     ExternalTextResource rbacRolesStandalone();
-
-    @Source("previews/rbac/superuser.html")
-    ExternalTextResource rbacSuperUser();
 
     @Source("previews/rbac/users.html")
     ExternalTextResource rbacUsers();
@@ -277,7 +256,7 @@ public interface Previews extends ClientBundleWithLookup {
      * Sets the inner HTML of the specified element to the HTML from the specified resource.
      */
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    static void innerHtml(Element element, ExternalTextResource resource) {
+    static void innerHtml(HTMLElement element, ExternalTextResource resource) {
         if (resource != null) {
             try {
                 resource.getText(new ResourceCallback<TextResource>() {
@@ -289,7 +268,7 @@ public interface Previews extends ClientBundleWithLookup {
                     @Override
                     public void onSuccess(final TextResource textResource) {
                         SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
-                        element.setInnerHTML(html.asString());
+                        element.innerHTML = html.asString();
                     }
                 });
             } catch (ResourceException e) {

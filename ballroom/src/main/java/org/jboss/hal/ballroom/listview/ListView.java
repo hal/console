@@ -20,12 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.dom.Element;
-import elemental.dom.NodeList;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.CSS;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.listGroup;
 import static org.jboss.hal.resources.CSS.listViewPf;
@@ -39,7 +41,7 @@ public class ListView<T> implements IsElement {
     private final boolean multiselect;
     private final ItemRenderer<T> itemRenderer;
     private final Map<String, ListItem<T>> items;
-    private final Element root;
+    private final HTMLElement root;
     private SelectHandler<T> selectHandler;
 
     public ListView(final String id, final ItemRenderer<T> itemRenderer) {
@@ -51,11 +53,11 @@ public class ListView<T> implements IsElement {
         this.multiselect = multiselect;
         this.itemRenderer = itemRenderer;
         this.items = new HashMap<>();
-        this.root = new Elements.Builder().div().id(id).css(listGroup, listViewPf).end().build();
+        this.root = div().id(id).css(listGroup, listViewPf).asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -81,12 +83,12 @@ public class ListView<T> implements IsElement {
 
     void select(ListItem<T> item, boolean select) {
         if (select) {
-            item.asElement().getClassList().add(active);
+            item.asElement().classList.add(active);
             if (selectHandler != null) {
                 selectHandler.onSelect(item.item);
             }
         } else {
-            item.asElement().getClassList().remove(active);
+            item.asElement().classList.remove(active);
         }
         if (!multiselect) {
             // deselect all other items
@@ -94,7 +96,7 @@ public class ListView<T> implements IsElement {
                 if (otherItem == item) {
                     continue;
                 }
-                otherItem.asElement().getClassList().remove(active);
+                otherItem.asElement().classList.remove(active);
             }
         }
     }
@@ -108,21 +110,21 @@ public class ListView<T> implements IsElement {
     }
 
     public T selectedItem() {
-        Element element = root.querySelector("." + CSS.active);
-        if (element != null && element.getId() != null && items.containsKey(element.getId())) {
-            return items.get(element.getId()).item;
+        HTMLElement element = (HTMLElement) root.querySelector("." + CSS.active);
+        if (element != null && element.id != null && items.containsKey(element.id)) {
+            return items.get(element.id).item;
         }
         return null;
     }
 
     public List<T> selectedItems() {
         List<T> selected = new ArrayList<>();
-        NodeList nodes = root.querySelectorAll("." + CSS.active);
+        NodeList<Element> nodes = root.querySelectorAll("." + CSS.active);
         for (int i = 0; i < nodes.getLength(); i++) {
-            if (nodes.item(i) instanceof Element) {
-                Element element = (Element) nodes.item(i);
-                if (element.getId() != null && items.containsKey(element.getId())) {
-                    selected.add(items.get(element.getId()).item);
+            if (nodes.item(i) instanceof HTMLElement) {
+                HTMLElement element = (HTMLElement) nodes.item(i);
+                if (element.id != null && items.containsKey(element.id)) {
+                    selected.add(items.get(element.id).item);
                 }
             }
         }

@@ -19,7 +19,7 @@
     "javascript-auto-complete": "1.0.4",
     "jquery": "~2.2.4",
     "jstree": "~3.3.3",
-    "patternfly": "~3.24.0",
+    "patternfly": "~3.25.0",
     "tagmanager": "~3.0.2",
     "zeroclipboard": "^2.2.0"
   },

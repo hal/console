@@ -15,8 +15,7 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
@@ -25,59 +24,48 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.time;
 
 /**
  * @author Harald Pehl
  */
 class MessageSinkElement implements IsElement {
 
-    private static final String ICON_CONTAINER = "iconContainer";
-
-    private final Element root;
+    private final HTMLElement root;
 
     MessageSinkElement(final MessageSink messageSink, final Message message, final Resources resources) {
+        HTMLElement iconContainer;
         String id = Ids.uniqueId();
         String dropdownId = Ids.build("dropdown", id);
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().id(id).css(drawerPfNotification, unread)
-                .div().css(dropdown, pullRight, dropdownKebabPf)
-                    .button().id(dropdownId)
-                            .css(btn, btnLink, dropdownToggle)
-                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                            .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                            .aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                        .span().css(CSS.fontAwesome("ellipsis-v")).end()
-                    .end()
-                    .ul().css(dropdownMenu, dropdownMenuRight)
-                            .aria(UIConstants.LABELLED_BY, dropdownId)
-                        .li()
-                            .a().css(clickable)
-                                .on(click, event -> view(message))
-                                .textContent(resources.constants().view())
-                            .end()
-                        .end()
-                        .li()
-                            .a().css(clickable)
-                                .on(click, event -> messageSink.remove(id))
-                                .textContent(resources.constants().remove())
-                            .end()
-                        .end()
-                    .end()
-                .end()
-                .span().css(pullLeft).rememberAs(ICON_CONTAINER).end()
-                .span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()).end()
-                .span().css(drawerPfNotificationInfo)
-                    .span().css(date).textContent(message.getDate()).end()
-                    .span().css(time).textContent(message.getTime()).end()
-                .end()
-            .end();
-        // @formatter:on
+        root = div().css(drawerPfNotification, unread).id(id)
+                .add(div().css(dropdown, pullRight, dropdownKebabPf)
+                        .add(button().id(dropdownId)
+                                .css(btn, btnLink, dropdownToggle)
+                                .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                                .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                                .aria(UIConstants.EXPANDED, UIConstants.FALSE)
+                                .add(span().css(CSS.fontAwesome("ellipsis-v"))))
+                        .add(ul().css(dropdownMenu, dropdownMenuRight)
+                                .aria(UIConstants.LABELLED_BY, dropdownId)
+                                .add(li()
+                                        .add(a().css(clickable)
+                                                .on(click, event -> view(message))
+                                                .textContent(resources.constants().view())))
+                                .add(li()
+                                        .add(a().css(clickable)
+                                                .on(click, event -> messageSink.remove(id))
+                                                .textContent(resources.constants().remove())))))
+                .add(iconContainer = span().css(pullLeft).asElement())
+                .add(span().css(drawerPfNotificationMessage).innerHtml(message.getMessage()))
+                .add(span().css(drawerPfNotificationInfo)
+                        .add(span().css(date).textContent(message.getDate()))
+                        .add(span().css(time).textContent(message.getTime())))
+                .asElement();
 
-        Element iconContainer = builder.referenceFor(ICON_CONTAINER);
         String css = null;
         switch (message.getLevel()) {
             case ERROR:
@@ -93,17 +81,16 @@ class MessageSinkElement implements IsElement {
                 css = Icons.OK;
                 break;
         }
-        iconContainer.setClassName(css + " " + pullLeft);
-        root = builder.build();
+        iconContainer.className = css + " " + pullLeft;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
     private void view(Message message) {
-        root.getClassList().remove(unread);
+        root.classList.remove(unread);
         new MessageDialog(message).show();
     }
 }

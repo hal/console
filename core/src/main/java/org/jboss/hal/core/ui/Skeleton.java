@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.core.ui;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.CSSProperties.PaddingUnionType;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.hal.resources.CSS.external;
 import static org.jboss.hal.resources.CSS.navbar;
 
@@ -32,18 +32,18 @@ public final class Skeleton {
 
     public static int navigationHeight() {
         int navigation = 0;
-        Element element = Browser.getDocument().querySelector("body > nav." + navbar); //NON-NLS
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector("body > nav." + navbar); //NON-NLS
         if (element != null) {
-            navigation = element.getOffsetHeight();
+            navigation = (int) element.offsetHeight;
         }
         return navigation;
     }
 
     public static int footerHeight() {
         int footer = 0;
-        Element element = Browser.getDocument().querySelector("footer > nav." + navbar); //NON-NLS
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector("footer > nav." + navbar); //NON-NLS
         if (element != null) {
-            footer = element.getOffsetHeight();
+            footer = (int) element.offsetHeight;
         }
         return footer;
     }
@@ -53,12 +53,12 @@ public final class Skeleton {
     }
 
     public static int applicationHeight() {
-        return Browser.getWindow().getInnerHeight() - navigationHeight() - footerHeight();
+        return (int) (DomGlobal.window.innerHeight - navigationHeight() - footerHeight());
     }
 
     public static void externalMode() {
-        Browser.getDocument().getDocumentElement().getClassList().add(external);
-        Browser.getDocument().getBody().getStyle().setPadding(0, PX);
+        DomGlobal.document.documentElement.classList.add(external);
+        DomGlobal.document.body.style.padding = PaddingUnionType.of(0);
     }
 
     private Skeleton() {}

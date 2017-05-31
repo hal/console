@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tabs;
@@ -38,6 +37,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.clearfix;
@@ -55,9 +55,9 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final EmptyState emptyState;
-    private final Map<HaPolicy, Element> policyElements;
+    private final Map<HaPolicy, HTMLElement> policyElements;
     private final Map<HaPolicy, Form<ModelNode>> policyForms;
-    private final Element root;
+    private final HTMLElement root;
 
     private HaPolicyPresenter presenter;
     private Form<ModelNode> currentForm;
@@ -74,7 +74,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
                 .description(resources.messages().addHaPolicy())
                 .primaryAction(resources.messages().addResourceTitle(Names.HA_POLICY), () -> presenter.addHaPolicy())
                 .build();
-        emptyState.asElement().getClassList().add(marginTopLarge);
+        emptyState.asElement().classList.add(marginTopLarge);
 
         policyElements = new HashMap<>();
         policyForms = new HashMap<>();
@@ -88,7 +88,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         createSimple(HaPolicy.SHARED_STORE_MASTER);
         createSimple(HaPolicy.SHARED_STORE_SLAVE);
 
-        root = Browser.getDocument().createDivElement();
+        root = div().asElement();
         initElement(root);
     }
 
@@ -96,18 +96,14 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         Metadata metadata = metadataRegistry.lookup(haPolicy.template);
         Form<ModelNode> form = form(haPolicy);
 
-        // @formatter:off
-        Element element = new Elements.Builder()
-            .section().css(clearfix)
-                .h(1).textContent(haPolicy.type).end()
-                .a().css(clickable, pullRight).on(click, event -> presenter.resetHaPolicy())
-                    .textContent(resources.constants().remove())
-                .end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement element = section().css(clearfix)
+                .add(h(1).textContent(haPolicy.type))
+                .add(a().css(clickable, pullRight)
+                        .on(click, event -> presenter.resetHaPolicy())
+                        .textContent(resources.constants().remove()))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         policyForms.put(haPolicy, form);
         policyElements.put(haPolicy, element);
@@ -125,18 +121,14 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB_SUFFIX), Names.MASTER, masterForm.asElement());
         tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB_SUFFIX), Names.SLAVE, slaveForm.asElement());
 
-        // @formatter:off
-        Element element = new Elements.Builder()
-            .section().css(clearfix)
-                .h(1).textContent(haPolicy.type).end()
-                .a().css(clickable, pullRight).on(click, event -> presenter.resetHaPolicy())
-                    .textContent(resources.constants().remove())
-                .end()
-                .p().textContent(colocatedMetadata.getDescription().getDescription()).end()
+        HTMLElement element = section().css(clearfix)
+                .add(h(1).textContent(haPolicy.type))
+                .add(a().css(clickable, pullRight)
+                        .on(click, event -> presenter.resetHaPolicy())
+                        .textContent(resources.constants().remove()))
+                .add(p().textContent(colocatedMetadata.getDescription().getDescription()))
                 .add(tabs)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         policyForms.put(haPolicy, colocatedForm);
         policyForms.put(haPolicy.master, masterForm);
@@ -184,7 +176,7 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
 
     @Override
     public void update(final HaPolicy haPolicy, final ModelNode modelNode) {
-        Element element = policyElements.get(haPolicy);
+        HTMLElement element = policyElements.get(haPolicy);
         Form<ModelNode> form = policyForms.get(haPolicy);
 
         if (element != null && form != null) {

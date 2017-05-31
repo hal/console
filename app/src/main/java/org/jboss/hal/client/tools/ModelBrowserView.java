@@ -31,7 +31,7 @@ public class ModelBrowserView extends HalViewImpl implements ModelBrowserPresent
     @Inject
     public ModelBrowserView(ModelBrowser modelBrowser) {
         this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
+        initElement(modelBrowser);
     }
 
     @Override

@@ -15,12 +15,17 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.ALERT;
@@ -35,7 +40,7 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  */
 class MessagePanelElement implements IsElement {
 
-    private final Element root;
+    private final HTMLElement root;
 
     MessagePanelElement(final MessagePanel messagePanel, final Message message, final Resources resources) {
         String[] cssIcon = cssIcon(message.getLevel());
@@ -43,39 +48,35 @@ class MessagePanelElement implements IsElement {
             cssIcon[0] = cssIcon[0] + " " + alertDismissable;
         }
 
-        Elements.Builder builder = new Elements.Builder()
-                .div().css(toastPf, alert, cssIcon[0]);
+        root = Elements.div().css(toastPf, alert, cssIcon[0])
+                .asElement();
         if (message.isSticky()) {
-            builder.button()
+            root.appendChild(button()
                     .css(close)
                     .data(DISMISS, ALERT)
                     .aria(HIDDEN, TRUE)
                     .on(click, event -> messagePanel.closeSticky(message))
-                    .span().css(pfIcon(close)).end()
-                    .end();
+                    .add(span().css(pfIcon(close)))
+                    .asElement());
         }
-
         if (message.hasAction() || message.getDetails() != null) {
-            // @formatter:off
-            builder.div().css(pullRight, toastPfAction)
-                .a().css(clickable).data(DISMISS, ALERT);
-                    if (message.hasAction()) {
-                        builder.on(click, event -> message.getCallback().execute())
-                               .textContent(message.getActionTitle());
-                    } else {
-                        builder.on(click, event -> showMessage(message))
-                               .textContent(resources.constants().details());
-                    }
-                builder.end()
-            .end();
-            // @formatter:on
+            HTMLElement a;
+            root.appendChild(div().css(pullRight, toastPfAction)
+                    .add(a = a()
+                            .css(clickable)
+                            .data(DISMISS, ALERT)
+                            .asElement())
+                    .asElement());
+            if (message.hasAction()) {
+                a.textContent = message.getActionTitle();
+                bind(a, click, event -> message.getCallback().execute());
+            } else {
+                a.textContent = resources.constants().details();
+                bind(a, click, event -> showMessage(message));
+            }
         }
-
-        builder.span().css(pfIcon(cssIcon[1])).end();
-        builder.span().innerHtml(message.getMessage()).end();
-        builder.end(); // </div>
-
-        root = builder.build();
+        root.appendChild(span().css(pfIcon(cssIcon[1])).asElement());
+        root.appendChild(span().innerHtml(message.getMessage()).asElement());
     }
 
     private void showMessage(final Message message) {
@@ -83,7 +84,7 @@ class MessagePanelElement implements IsElement {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

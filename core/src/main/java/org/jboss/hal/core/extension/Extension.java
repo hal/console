@@ -53,8 +53,7 @@ public class Extension {
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */
     @JsMethod
-    public static Extension header(final String name, final String title,
-            @EsParam("function()") final JsCallback entryPoint) {
+    public static Extension header(String name, String title, @EsParam("function()") JsCallback entryPoint) {
         return new Extension(name, title, Point.HEADER, entryPoint);
     }
 
@@ -68,8 +67,7 @@ public class Extension {
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */
     @JsMethod
-    public static Extension footer(final String name, final String title,
-            @EsParam("function()") final JsCallback entryPoint) {
+    public static Extension footer(String name, String title, @EsParam("function()") JsCallback entryPoint) {
         return new Extension(name, title, Point.FOOTER, entryPoint);
     }
 

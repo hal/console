@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -203,8 +203,8 @@ public class Role {
      */
     @JsProperty(name = "scope")
     @EsReturn("string[]")
-    public JsArrayOf<String> jsScope() {
-        JsArrayOf<String> array = JsArrayOf.create();
+    public Array<String> jsScope() {
+        Array<String> array = new Array<>();
         for (String scope : getScope()) {
             array.push(scope);
         }

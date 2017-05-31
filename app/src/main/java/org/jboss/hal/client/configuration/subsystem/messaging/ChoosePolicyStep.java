@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
@@ -24,6 +24,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.formHorizontal;
 import static org.jboss.hal.resources.CSS.radio;
@@ -33,131 +34,97 @@ import static org.jboss.hal.resources.CSS.radio;
  */
 public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolicyWizard.State> {
 
-    private static final String REPLICATION_FORM = "replicationForm";
-    private static final String REPLICATION_LIVE_RADIO = "replicationLiveRadio";
-    private static final String REPLICATION_MASTER_RADIO = "replicationMasterRadio";
-    private static final String REPLICATION_SLAVE_RADIO = "replicationSlaveRadio";
-    private static final String REPLICATION_COLOCATED_RADIO = "replicationColocatedRadio";
+    private final HTMLElement root;
 
-    private static final String SHARED_STORE_FORM = "sharedStoreForm";
-    private static final String SHARED_STORE_MASTER_RADIO = "sharedStoreMasterRadio";
-    private static final String SHARED_STORE_SLAVE_RADIO = "sharedStoreSlaveRadio";
-    private static final String SHARED_STORE_COLOCATED_RADIO = "sharedStoreColocatedRadio";
+    private final HTMLElement replicationForm;
+    private final HTMLInputElement replicationLiveRadio;
+    private final HTMLInputElement replicationMasterRadio;
+    private final HTMLInputElement replicationSlaveRadio;
+    private final HTMLInputElement replicationColocatedRadio;
 
-    private final Element root;
-
-    private final Element replicationForm;
-    private final InputElement replicationLiveRadio;
-    private final InputElement replicationMasterRadio;
-    private final InputElement replicationSlaveRadio;
-    private final InputElement replicationColocatedRadio;
-
-    private final Element sharedStoreForm;
-    private final InputElement sharedStoreMasterRadio;
-    private final InputElement sharedStoreSlaveRadio;
-    private final InputElement sharedStoreColocatedRadio;
+    private final HTMLElement sharedStoreForm;
+    private final HTMLInputElement sharedStoreMasterRadio;
+    private final HTMLInputElement sharedStoreSlaveRadio;
+    private final HTMLInputElement sharedStoreColocatedRadio;
 
     ChoosePolicyStep(Resources resources) {
         super(resources.constants().choosePolicy());
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div()
-                .div().css(formHorizontal).rememberAs(REPLICATION_FORM)
-                    .p().innerHtml(resources.messages().chooseReplication()).end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(REPLICATION_LIVE_RADIO)
-                                .id(Ids.MESSAGING_HA_REPLICATION_LIVE_ONLY)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.LIVE_ONLY)
-                            .span().innerHtml(resources.messages().replicationLiveOnly()).end()
-                        .end()
-                    .end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(REPLICATION_MASTER_RADIO)
-                                .id(Ids.MESSAGING_HA_REPLICATION_MASTER)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_MASTER)
-                            .span().innerHtml(resources.messages().replicationMaster()).end()
-                        .end()
-                    .end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(REPLICATION_SLAVE_RADIO)
-                                .id(Ids.MESSAGING_HA_REPLICATION_SLAVE)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_SLAVE)
-                            .span().innerHtml(resources.messages().replicationSlave()).end()
-                        .end()
-                    .end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(REPLICATION_COLOCATED_RADIO)
-                                .id(Ids.MESSAGING_HA_REPLICATION_COLOCATED)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_COLOCATED)
-                            .span().innerHtml(resources.messages().replicationColocated()).end()
-                        .end()
-                    .end()
-                .end()
-                .div().css(formHorizontal).rememberAs(SHARED_STORE_FORM)
-                    .p().innerHtml(resources.messages().chooseSharedStore()).end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(SHARED_STORE_MASTER_RADIO)
-                                .id(Ids.MESSAGING_HA_SHARED_STORE_MASTER)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_MASTER)
-                            .span().innerHtml(resources.messages().sharedStoreMaster()).end()
-                        .end()
-                    .end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(SHARED_STORE_SLAVE_RADIO)
-                                .id(Ids.MESSAGING_HA_SHARED_STORE_SLAVE)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_SLAVE)
-                            .span().innerHtml(resources.messages().sharedStoreSlave()).end()
-                        .end()
-                    .end()
-                    .div().css(radio)
-                        .label()
-                            .input(InputType.radio)
-                                .rememberAs(SHARED_STORE_COLOCATED_RADIO)
-                                .id(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED)
-                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
-                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_COLOCATED)
-                            .span().innerHtml(resources.messages().sharedStoreColocated()).end()
-                        .end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        root = div()
+                .add(replicationForm = div().css(formHorizontal)
+                        .add(p().innerHtml(resources.messages().chooseReplication()))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(replicationLiveRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_REPLICATION_LIVE_ONLY)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
+                                                .on(click, e -> wizard().getContext().haPolicy = HaPolicy.LIVE_ONLY)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().replicationLiveOnly()))))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(replicationMasterRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_REPLICATION_MASTER)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_MASTER)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().replicationMaster()))))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(replicationSlaveRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_REPLICATION_SLAVE)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_SLAVE)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().replicationSlave()))))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(replicationColocatedRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_REPLICATION_COLOCATED)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_REPLICATION)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.REPLICATION_COLOCATED)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().replicationColocated()))))
+                        .asElement())
 
-        replicationForm = builder.referenceFor(REPLICATION_FORM);
-        replicationLiveRadio = builder.referenceFor(REPLICATION_LIVE_RADIO);
-        replicationColocatedRadio = builder.referenceFor(REPLICATION_COLOCATED_RADIO);
-        replicationMasterRadio = builder.referenceFor(REPLICATION_MASTER_RADIO);
-        replicationSlaveRadio = builder.referenceFor(REPLICATION_SLAVE_RADIO);
-
-        sharedStoreForm = builder.referenceFor(SHARED_STORE_FORM);
-        sharedStoreColocatedRadio = builder.referenceFor(SHARED_STORE_COLOCATED_RADIO);
-        sharedStoreMasterRadio = builder.referenceFor(SHARED_STORE_MASTER_RADIO);
-        sharedStoreSlaveRadio = builder.referenceFor(SHARED_STORE_SLAVE_RADIO);
-
-        root = builder.build();
+                .add(sharedStoreForm = div().css(formHorizontal)
+                        .add(p().innerHtml(resources.messages().chooseSharedStore()))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(sharedStoreMasterRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_SHARED_STORE_MASTER)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_MASTER)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().sharedStoreMaster()))))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(sharedStoreSlaveRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_SHARED_STORE_SLAVE)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_SLAVE)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().sharedStoreSlave()))))
+                        .add(div().css(radio)
+                                .add(label()
+                                        .add(sharedStoreColocatedRadio = input(InputType.radio)
+                                                .id(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED)
+                                                .attr(UIConstants.NAME, Ids.MESSAGING_HA_SHARED_STORE)
+                                                .on(click,
+                                                        e -> wizard().getContext().haPolicy = HaPolicy.SHARED_STORE_COLOCATED)
+                                                .asElement())
+                                        .add(span().innerHtml(resources.messages().sharedStoreColocated()))))
+                        .asElement())
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -167,24 +134,24 @@ public class ChoosePolicyStep extends WizardStep<HaPolicyWizard.Context, HaPolic
         Elements.setVisible(sharedStoreForm, !context.replication);
 
         if (context.haPolicy != null) {
-            replicationLiveRadio.setChecked(context.haPolicy == HaPolicy.LIVE_ONLY);
-            replicationMasterRadio.setChecked(context.haPolicy == HaPolicy.REPLICATION_MASTER);
-            replicationSlaveRadio.setChecked(context.haPolicy == HaPolicy.REPLICATION_SLAVE);
-            replicationColocatedRadio.setChecked(context.haPolicy == HaPolicy.REPLICATION_COLOCATED);
+            replicationLiveRadio.checked = context.haPolicy == HaPolicy.LIVE_ONLY;
+            replicationMasterRadio.checked = context.haPolicy == HaPolicy.REPLICATION_MASTER;
+            replicationSlaveRadio.checked = context.haPolicy == HaPolicy.REPLICATION_SLAVE;
+            replicationColocatedRadio.checked = context.haPolicy == HaPolicy.REPLICATION_COLOCATED;
 
-            sharedStoreMasterRadio.setChecked(context.haPolicy == HaPolicy.SHARED_STORE_MASTER);
-            sharedStoreSlaveRadio.setChecked(context.haPolicy == HaPolicy.SHARED_STORE_SLAVE);
-            sharedStoreColocatedRadio.setChecked(context.haPolicy == HaPolicy.SHARED_STORE_COLOCATED);
+            sharedStoreMasterRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_MASTER;
+            sharedStoreSlaveRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_SLAVE;
+            sharedStoreColocatedRadio.checked = context.haPolicy == HaPolicy.SHARED_STORE_COLOCATED;
 
         } else {
-            replicationLiveRadio.setChecked(true);
-            replicationMasterRadio.setChecked(false);
-            replicationSlaveRadio.setChecked(false);
-            replicationColocatedRadio.setChecked(false);
+            replicationLiveRadio.checked = true;
+            replicationMasterRadio.checked = false;
+            replicationSlaveRadio.checked = false;
+            replicationColocatedRadio.checked = false;
 
-            sharedStoreMasterRadio.setChecked(true);
-            sharedStoreSlaveRadio.setChecked(false);
-            sharedStoreColocatedRadio.setChecked(false);
+            sharedStoreMasterRadio.checked = true;
+            sharedStoreSlaveRadio.checked = false;
+            sharedStoreColocatedRadio.checked = false;
         }
     }
 }

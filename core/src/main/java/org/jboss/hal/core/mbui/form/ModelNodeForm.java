@@ -33,19 +33,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.js.dom.JsElement;
-import elemental.js.util.JsArrayOf;
-import elemental.js.util.JsMapFromStringTo;
+import elemental2.core.Array;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.HelpTextBuilder;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
@@ -72,12 +71,15 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.hal.ballroom.JsHelper.asJsMap;
+import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -88,8 +90,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     /**
-     * Builder useful to automatically inspect the read-resource-description and associate the
-     * attributes (by calling: include, customFormItem). Creates the required form items and help texts.
+     * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
+     * with <code>"storage" =&gt; "configuration"</code>.
      */
     @JsType(namespace = "hal.ui", name = "FormBuilder")
     public static class Builder<T extends ModelNode> {
@@ -177,11 +179,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this flag if you just want to use the form to add model nodes. This will create a form with an
-         * {@link AddOnlyStateMachine}.
-         * <p>
-         * The attributes will be taken from the {@code ATTRIBUTES} child node.
+         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
+         * ATTRIBUTES child node.
          */
+        @EsReturn("FormBuilder")
         public Builder<T> addOnly() {
             this.addOnly = true;
             this.attributePath = ATTRIBUTES;
@@ -189,37 +190,46 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this flag if you just want to use the form to add model nodes. This will create a form with an
-         * {@link AddOnlyStateMachine}.
-         * <p>
-         * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.
+         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
+         * REQUEST_PROPERTIES node of the ADD operation.
          */
+        @EsReturn("FormBuilder")
         public Builder<T> fromRequestProperties() {
             this.addOnly = true;
             this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
             return this;
         }
 
+        /** Makes the form read-only. */
+        @EsReturn("FormBuilder")
         public Builder<T> readOnly() {
             this.readOnly = true;
             return this;
         }
 
+        /** Doesn't sort the attributes alphabetically. */
+        @EsReturn("FormBuilder")
         public Builder<T> unsorted() {
             this.unsorted = true;
             return this;
         }
 
+        /** Includes only required attributes */
+        @EsReturn("FormBuilder")
         public Builder<T> requiredOnly() {
             this.requiredOnly = true;
             return this;
         }
 
+        /** Includes also attributes with <code>"storage" =&gt; "runtime"</code> */
+        @EsReturn("FormBuilder")
         public Builder<T> includeRuntime() {
             this.includeRuntime = true;
             return this;
         }
 
+        /** Includes also deprecated attributes */
+        @EsReturn("FormBuilder")
         public Builder<T> showDeprecated() {
             this.hideDeprecated = false;
             return this;
@@ -324,6 +334,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // ------------------------------------------------------ build
 
+        /**
+         * Creates and returns the form.
+         */
+        @EsReturn("Form")
         public ModelNodeForm<T> build() {
             validate();
             return new ModelNodeForm<>(this);
@@ -385,23 +399,28 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @JsFunction
         interface JsSaveCallback<T> {
 
-            void onSave(final Form<T> form, final JsMapFromStringTo<Object> changedValues);
+            void onSave(final Form<T> form, final JsPropertyMapOfAny changedValues);
         }
 
-
+        /** Includes the specified attributes */
         @JsMethod(name = "include")
-        public Builder<T> jsInclude(JsArrayOf<String> attributes) {
-            return include(JsHelper.asList(attributes));
+        @EsReturn("FormBuilder")
+        public Builder<T> jsInclude(Array<String> attributes) {
+            return include(asList(attributes));
         }
 
+        /** Excludes the specified attributes */
         @JsMethod(name = "exclude")
-        public Builder<T> jsExclude(JsArrayOf<String> attributes) {
-            return exclude(JsHelper.asList(attributes));
+        @EsReturn("FormBuilder")
+        public Builder<T> jsExclude(Array<String> attributes) {
+            return exclude(asList(attributes));
         }
 
+        /** Calls the specified callback when the save button was clicked and no validation errors occurred. */
         @JsMethod(name = "onSave")
+        @EsReturn("FormBuilder")
         public Builder<T> jsOnSave(final JsSaveCallback<T> callback) {
-            this.saveCallback = (form, changedValues) -> callback.onSave(form, JsHelper.asJsMap(changedValues));
+            this.saveCallback = (form, changedValues) -> callback.onSave(form, asJsMap(changedValues));
             return this;
         }
     }
@@ -664,7 +683,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "element")
-    public JsElement jsElement() {
-        return (JsElement) asElement();
+    public HTMLElement jsElement() {
+        return asElement();
     }
 }

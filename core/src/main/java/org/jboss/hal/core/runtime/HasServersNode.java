@@ -33,11 +33,6 @@ public abstract class HasServersNode extends NamedNode {
 
     private final List<Server> servers;
 
-    public HasServersNode(final ModelNode node) {
-        super(node);
-        this.servers = new ArrayList<>();
-    }
-
     public HasServersNode(final String name, final ModelNode node) {
         super(name, node);
         this.servers = new ArrayList<>();

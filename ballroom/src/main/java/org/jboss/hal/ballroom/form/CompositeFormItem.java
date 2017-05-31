@@ -23,12 +23,13 @@ import com.google.common.base.Strings;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.HRElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLHRElement;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.hr;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.separator;
@@ -79,8 +80,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
 
     private List<FormItem> formItems;
-    private Element readOnlyContainer;
-    private Element editingContainer;
+    private HTMLElement readOnlyContainer;
+    private HTMLElement editingContainer;
 
     public CompositeFormItem(final String name, final String label) {
         super(name, label, null);
@@ -89,16 +90,16 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected void addFormItems(List<FormItem> formItems) {
         this.formItems = new ArrayList<>(formItems);
 
-        editingContainer = Browser.getDocument().createDivElement();
-        readOnlyContainer = Browser.getDocument().createDivElement();
+        editingContainer = div().asElement();
+        readOnlyContainer = div().asElement();
 
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
             editingContainer.appendChild(formItem.asElement(EDITING));
             readOnlyContainer.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
-                HRElement hr = Browser.getDocument().createHRElement();
-                hr.getClassList().add(separator);
+                HTMLHRElement hr = hr().asElement();
+                hr.classList.add(separator);
                 readOnlyContainer.appendChild(hr);
             }
         }
@@ -115,7 +116,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    public Element asElement(final Form.State state) {
+    public HTMLElement asElement(final Form.State state) {
         if (state == EDITING) {
             return editingContainer;
         } else if (state == READONLY) {
@@ -169,9 +170,9 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     @Override
     public String getId(final Form.State state) {
         if (state == EDITING) {
-            return editingContainer.getId();
+            return editingContainer.id;
         } else if (state == READONLY) {
-            return readOnlyContainer.getId();
+            return readOnlyContainer.id;
         }
         return null;
     }
@@ -180,8 +181,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     public void setId(final String id) {
         String editId = Ids.build(id, EDITING.name().toLowerCase());
         String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
-        editingContainer.setId(editId);
-        readOnlyContainer.setId(readonlyId);
+        editingContainer.id = editId;
+        readOnlyContainer.id = readonlyId;
     }
 
     @Override

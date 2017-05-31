@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import elemental.dom.Element;
-import elemental.js.events.JsEvent;
+import elemental2.dom.Event;
+import elemental2.dom.HTMLInputElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
@@ -34,7 +34,7 @@ public class SwitchBridge {
     @FunctionalInterface
     public interface ChangeListener {
 
-        void onChange(JsEvent event, boolean state);
+        void onChange(Event event, boolean state);
     }
 
 
@@ -42,7 +42,7 @@ public class SwitchBridge {
     public static class Bridge {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge element(Element element);
+        public native static Bridge element(HTMLInputElement element);
 
         public native boolean bootstrapSwitch(String method);
 

@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
+
 public class MbuiViewContext {
 
     private final String pkg;
@@ -90,6 +92,10 @@ public class MbuiViewContext {
 
     public List<Content> getContent() {
         return content;
+    }
+
+    public List<Content> getHtmlContent() {
+        return content.stream().filter(c -> c.getHtml() != null).collect(toList());
     }
 
     void addContent(Content content) {

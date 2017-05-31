@@ -21,8 +21,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import elemental.client.Browser;
-import elemental.events.Event;
+import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -71,17 +70,15 @@ public class HalBootstrapper implements Bootstrapper {
     @Override
     public void onBootstrap() {
         // event for users of the JS API
-        Event event = Browser.getDocument().createEvent("Event"); //NON-NLS
-        event.initEvent("halReady", true, true); //NON-NLS
-        Browser.getWindow().dispatchEvent(event);
+        elemental2.dom.Event event = new elemental2.dom.Event("halReady"); //NON-NLS
+        DomGlobal.window.dispatchEvent(event);
 
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
                 LoadingPanel.get().off();
                 logger.error("Bootstrap error: {}", context.getError());
-                Browser.getDocument().getBody().appendChild(
-                        BootstrapFailed.create(context.getError(), endpoints).asElement());
+                DomGlobal.document.body.appendChild(BootstrapFailed.create(context.getError(), endpoints).asElement());
             }
 
             @Override

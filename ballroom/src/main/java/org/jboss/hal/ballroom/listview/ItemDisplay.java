@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
@@ -51,7 +51,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return false;
     }
 
-    default Element status() {
+    default HTMLElement status() {
         return null;
     }
 
@@ -81,7 +81,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default Element asElement() {
+    default HTMLElement asElement() {
         return null;
     }
 }

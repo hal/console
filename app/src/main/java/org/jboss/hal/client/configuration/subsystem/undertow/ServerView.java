@@ -20,9 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -43,6 +41,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.AJP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTP;
@@ -92,15 +95,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetServer(form))
                 .build();
 
-        // @formatter:off
-        Element configurationSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.CONFIGURATION).end()
-                .p().textContent(configurationMetadata.getDescription().getDescription()).end()
+        HTMLElement configurationSection = section()
+                .add(h(1).textContent(Names.CONFIGURATION))
+                .add(p().textContent(configurationMetadata.getDescription().getDescription()))
                 .add(configurationForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         // ------------------------------------------------------ hosts
 
@@ -143,16 +142,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                     hostSettingForms.get(setting).asElement());
         }
 
-        // @formatter:off
-        Element hostSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.HOSTS).end()
-                .p().textContent(hostMetadata.getDescription().getDescription()).end()
+        HTMLElement hostSection = section()
+                .add(h(1).textContent(Names.HOSTS))
+                .add(p().textContent(hostMetadata.getDescription().getDescription()))
                 .add(hostTable)
                 .add(tabs)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         // ------------------------------------------------------ host filter refs
 
@@ -170,16 +165,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetFilterRef(form))
                 .build();
 
-        // @formatter:off
-        Element filterRefSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.FILTERS).end()
-                .p().textContent(filterRefMetadata.getDescription().getDescription()).end()
+        HTMLElement filterRefSection = section()
+                .add(h(1).textContent(Names.FILTERS))
+                .add(p().textContent(filterRefMetadata.getDescription().getDescription()))
                 .add(filterRefTable)
                 .add(filterRefForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         // ------------------------------------------------------ host locations
 
@@ -198,16 +189,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetLocation(form))
                 .build();
 
-        // @formatter:off
-        Element locationSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.LOCATIONS).end()
-                .p().textContent(locationMetadata.getDescription().getDescription()).end()
+        HTMLElement locationSection = section()
+                .add(h(1).textContent(Names.LOCATIONS))
+                .add(p().textContent(locationMetadata.getDescription().getDescription()))
                 .add(locationTable)
                 .add(locationForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         // ------------------------------------------------------ host location filter refs
 
@@ -228,16 +215,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .prepareReset(form -> presenter.resetLocationFilterRef(form))
                 .build();
 
-        // @formatter:off
-        Element locationFilterRefSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.FILTERS).end()
-                .p().textContent(locationFilterRefMetadata.getDescription().getDescription()).end()
+        HTMLElement locationFilterRefSection = section()
+                .add(h(1).textContent(Names.FILTERS))
+                .add(p().textContent(locationFilterRefMetadata.getDescription().getDescription()))
                 .add(locationFilterRefTable)
                 .add(locationFilterRefForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         // ------------------------------------------------------ pages, listener and navigation
 
@@ -275,14 +258,9 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         registerAttachables(hostSettingForms.values());
         listener.values().forEach(element -> registerAttachable(element));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     private Form<ModelNode> hostSetting(final HostSetting hostSetting) {

@@ -111,6 +111,7 @@
         <module>config</module>
         <module>dmr</module>
         <module>fraction</module>
+        <module>json</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>

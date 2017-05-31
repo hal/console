@@ -23,11 +23,12 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.dom.NodeList;
-import elemental.html.ButtonElement;
-import elemental.html.DivElement;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLParagraphElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
@@ -36,6 +37,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
@@ -180,90 +183,60 @@ public class Wizard<C, S extends Enum<S>> {
     // ------------------------------------------------------ wizard singleton
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String BACK_BUTTON = "backButton";
-    private static final String BLANK_SLATE = "blankSlate";
-    private static final String CANCEL_BUTTON = "cancelButton";
-    private static final String CLOSE_ICON = "closeIcon";
-    private static final String MAIN_CONTAINER = "mainContainer";
-    private static final String NEXT_BUTTON = "nextButton";
-    private static final String NEXT_TEXT = "nextText";
-    private static final String NEXT_ICON = "nextIcon";
     private static final String SELECTOR_ID = "#" + Ids.HAL_WIZARD;
-    private static final String STEP_NAMES = "stepNames";
-    private static final String TITLE_ELEMENT = "titleElement";
 
-    private static final Element root;
-    private static final Element titleElement;
-    private static final Element closeIcon;
-    private static final Element stepsNames;
-    private static final Element mainContainer;
-    private static final Element blankSlate;
-    private static final ButtonElement cancelButton;
-    private static final ButtonElement backButton;
-    private static final ButtonElement nextButton;
-    private static final Element nextText;
-    private static final Element nextIcon;
+    private static final HTMLElement root;
+    private static final HTMLElement titleElement;
+    private static final HTMLElement closeIcon;
+    private static final HTMLElement stepsNames;
+    private static final HTMLElement mainContainer;
+    private static final HTMLElement blankSlate;
+    private static final HTMLButtonElement cancelButton;
+    private static final HTMLButtonElement backButton;
+    private static final HTMLButtonElement nextButton;
+    private static final HTMLElement nextText;
+    private static final HTMLElement nextIcon;
 
     private static boolean open;
 
 
     static {
-        // @formatter:off
-        Elements.Builder rootBuilder = new Elements.Builder()
-            .div().id(Ids.HAL_WIZARD).css(modal)
-                    .attr(ROLE, "wizard") //NON-NLS
-                    .attr(TABINDEX, "-1")
-                    .aria("labeledby", Ids.HAL_WIZARD_TITLE)
-                .div().css(modalDialog, modalLg, wizardPf)
-                    .div().css(modalContent)
-                        .div().css(modalHeader)
-                            .button().css(close).aria("label", CONSTANTS.close()).rememberAs(CLOSE_ICON)
-                                .span().css(pfIcon("close")).aria(HIDDEN, TRUE).end()
-                            .end()
-                            .h(4).css(modalTitle).id(Ids.HAL_WIZARD_TITLE).rememberAs(TITLE_ELEMENT).end()
-                        .end()
-                        .div().css(modalBody, wizardPfBody, clearfix)
-                            .div().css(wizardPfSteps)
-                                .ul().css(wizardPfStepsIndicator).rememberAs(STEP_NAMES)
-                                .end()
-                            .end()
-                            .div().css(wizardPfRow)
-                                .div().css(wizardPfMain, wizardHalNoSidebar).rememberAs(MAIN_CONTAINER)
-                                    .div().css(blankSlatePf).rememberAs(BLANK_SLATE).end()
-                                .end()
-                            .end()
-                        .end()
-                        .div().css(modalFooter, wizardPfFooter)
-                            .button().css(btn, btnDefault, btnCancel).rememberAs(CANCEL_BUTTON)
-                                .textContent(CONSTANTS.cancel())
-                                .end()
-                            .button().css(btn, btnDefault).rememberAs(BACK_BUTTON)
-                                .span().css(fontAwesome("angle-left")).end()
-                                .span().textContent(CONSTANTS.back()).end()
-                            .end()
-                            .button().css(btn, btnPrimary).rememberAs(NEXT_BUTTON)
-                                .span().textContent(CONSTANTS.next()).rememberAs(NEXT_TEXT).end()
-                                .span().css(fontAwesome("angle-right")).rememberAs(NEXT_ICON).end()
-                            .end()
-                        .end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        root = div().css(modal)
+                .id(Ids.HAL_WIZARD)
+                .attr(ROLE, "wizard") //NON-NLS
+                .attr(TABINDEX, "-1")
+                .aria("labeledby", Ids.HAL_WIZARD_TITLE)
+                .add(div().css(modalDialog, modalLg, wizardPf)
+                        .add(div().css(modalContent)
+                                .add(div().css(modalHeader)
+                                        .add(closeIcon = button().css(close)
+                                                .aria(UIConstants.LABEL, CONSTANTS.close())
+                                                .add(span().css(pfIcon("close")).aria(HIDDEN, TRUE))
+                                                .asElement())
+                                        .add(titleElement = h(4).css(modalTitle)
+                                                .id(Ids.HAL_WIZARD_TITLE)
+                                                .asElement()))
+                                .add(div().css(modalBody, wizardPfBody, clearfix)
+                                        .add(div().css(wizardPfSteps)
+                                                .add(stepsNames = ul().css(wizardPfStepsIndicator).asElement()))
+                                        .add(div().css(wizardPfRow)
+                                                .add(mainContainer = div().css(wizardPfMain, wizardHalNoSidebar)
+                                                        .add(blankSlate = div().css(blankSlatePf).asElement())
+                                                        .asElement())))
+                                .add(div().css(modalFooter, wizardPfFooter)
+                                        .add(cancelButton = button().css(btn, btnDefault, btnCancel)
+                                                .textContent(CONSTANTS.cancel()).asElement())
+                                        .add(backButton = button().css(btn, btnDefault)
+                                                .add(span().css(fontAwesome("angle-left")))
+                                                .add(span().textContent(CONSTANTS.back()))
+                                                .asElement())
+                                        .add(nextButton = button().css(btn, btnPrimary)
+                                                .add(nextText = span().textContent(CONSTANTS.next()).asElement())
+                                                .add(nextIcon = span().css(fontAwesome("angle-right")).asElement())
+                                                .asElement()))))
+                .asElement();
 
-        root = rootBuilder.build();
-        titleElement = rootBuilder.referenceFor(TITLE_ELEMENT);
-        closeIcon = rootBuilder.referenceFor(CLOSE_ICON);
-        stepsNames = rootBuilder.referenceFor(STEP_NAMES);
-        mainContainer = rootBuilder.referenceFor(MAIN_CONTAINER);
-        blankSlate = rootBuilder.referenceFor(BLANK_SLATE);
-        cancelButton = rootBuilder.referenceFor(CANCEL_BUTTON);
-        backButton = rootBuilder.referenceFor(BACK_BUTTON);
-        nextButton = rootBuilder.referenceFor(NEXT_BUTTON);
-        nextText = rootBuilder.referenceFor(NEXT_TEXT);
-        nextIcon = rootBuilder.referenceFor(NEXT_ICON);
-
-        Browser.getDocument().getBody().appendChild(root);
+        DomGlobal.document.body.appendChild(root);
         initEventHandler();
     }
 
@@ -278,7 +251,8 @@ public class Wizard<C, S extends Enum<S>> {
 
     private static void reset() {
         Elements.removeChildrenFrom(stepsNames);
-        NodeList contents = mainContainer.querySelectorAll("." + wizardPfContents);
+        elemental2.dom.NodeList<elemental2.dom.Element> contents = mainContainer.querySelectorAll(
+                "." + wizardPfContents);
         Elements.stream(contents).forEach(mainContainer::removeChild);
         Elements.setVisible(blankSlate, false);
     }
@@ -288,8 +262,8 @@ public class Wizard<C, S extends Enum<S>> {
 
     private final C context;
     private final LinkedHashMap<S, WizardStep<C, S>> steps;
-    private final LinkedHashMap<S, Element> stepElements;
-    private final Map<S, Element> stepIndicators;
+    private final LinkedHashMap<S, HTMLElement> stepElements;
+    private final Map<S, HTMLElement> stepIndicators;
     private S initialState;
     private BackFunction<C, S> back;
     private NextFunction<C, S> next;
@@ -319,11 +293,11 @@ public class Wizard<C, S extends Enum<S>> {
         this.finishCanClose = false;
 
         reset();
-        Wizard.titleElement.setTextContent(builder.title);
-        closeIcon.setOnclick(event -> onCancel());
-        cancelButton.setOnclick(event -> onCancel());
-        backButton.setOnclick(event -> onBack());
-        nextButton.setOnclick(event -> onNext());
+        Wizard.titleElement.textContent = builder.title;
+        bind(closeIcon, click, event -> onCancel());
+        bind(cancelButton, click, event -> onCancel());
+        bind(backButton, click, event -> onBack());
+        bind(nextButton, click, event -> onNext());
     }
 
 
@@ -334,7 +308,7 @@ public class Wizard<C, S extends Enum<S>> {
      * {@code super.show()} <em>before</em> you access or modify the context.
      */
     public void show() {
-        if (stepsNames.getChildElementCount() == 0) {
+        if (stepsNames.childElementCount == 0) {
             initSteps();
         }
 
@@ -354,21 +328,19 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     public void showProgress(final String title, final SafeHtml text) {
-        Elements.Builder builder = new Elements.Builder()
-                .div().css(spinner, spinnerLg, blankSlatePfIcon).end()
-                .h(3).css(blankSlatePfMainAction).textContent(title).end()
-                .p().css(blankSlatePfSecondaryAction).innerHtml(text).end();
-
-        blankSlate.getClassList().remove(wizardPfComplete);
-        blankSlate.getClassList().add(wizardPfProcess);
+        blankSlate.classList.remove(wizardPfComplete);
+        blankSlate.classList.add(wizardPfProcess);
         Elements.removeChildrenFrom(blankSlate);
-        builder.elements().forEach(blankSlate::appendChild);
+
+        blankSlate.appendChild(div().css(spinner, spinnerLg, blankSlatePfIcon).asElement());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).asElement());
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
 
-        backButton.setDisabled(true);
-        nextButton.setDisabled(true);
+        backButton.disabled = true;
+        nextButton.disabled = true;
     }
 
     public void showSuccess(final String title, final SafeHtml text) {
@@ -386,34 +358,34 @@ public class Wizard<C, S extends Enum<S>> {
 
     public void showSuccess(final String title, final SafeHtml text, final String successButton,
             SuccessAction<C> successAction, final boolean lastStep) {
-        Elements.Builder builder = new Elements.Builder()
-                .div().css(wizardPfSuccessIcon)
-                .span().css(glyphicon("ok-circle")).end()
-                .end()
-                .h(3).css(blankSlatePfMainAction).textContent(title).end()
-                .p().css(blankSlatePfSecondaryAction).innerHtml(text).end();
+        blankSlate.classList.remove(wizardPfProcess);
+        blankSlate.classList.add(wizardPfComplete);
+        Elements.removeChildrenFrom(blankSlate);
+
+        blankSlate.appendChild(div().css(wizardPfSuccessIcon)
+                .add(span().css(glyphicon("ok-circle")))
+                .asElement());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).asElement());
+
         if (successButton != null && successAction != null) {
-            builder.button().css(btn, btnLg, btnPrimary).textContent(successButton)
+            blankSlate.appendChild(button().css(btn, btnLg, btnPrimary)
+                    .textContent(successButton)
                     .on(click, event -> {
                         successAction.execute(context);
                         close();
                     })
-                    .end();
+                    .asElement());
         }
-
-        blankSlate.getClassList().remove(wizardPfProcess);
-        blankSlate.getClassList().add(wizardPfComplete);
-        Elements.removeChildrenFrom(blankSlate);
-        builder.elements().forEach(blankSlate::appendChild);
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
 
-        cancelButton.setDisabled(lastStep);
-        backButton.setDisabled(lastStep);
-        nextButton.setDisabled(false);
+        cancelButton.disabled = lastStep;
+        backButton.disabled = lastStep;
+        nextButton.disabled = false;
         if (lastStep) {
-            nextText.setTextContent(CONSTANTS.close());
+            nextText.textContent = CONSTANTS.close();
             Elements.setVisible(nextIcon, false);
         }
         finishCanClose = lastStep;
@@ -432,41 +404,39 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     public void showError(final String title, final SafeHtml text, final String error, final boolean lastStep) {
-        Elements.Builder builder = new Elements.Builder()
-                .div().css(wizardPfErrorIcon)
-                .span().css(glyphicon("remove-circle")).end()
-                .end()
-                .h(3).css(blankSlatePfMainAction).textContent(title).end()
-                .p().css(blankSlatePfSecondaryAction).innerHtml(text);
+        blankSlate.classList.remove(wizardPfProcess);
+        blankSlate.classList.add(wizardPfComplete);
+        Elements.removeChildrenFrom(blankSlate);
+
+        blankSlate.appendChild(div().css(wizardPfErrorIcon)
+                .add(span().css(glyphicon("remove-circle")))
+                .asElement());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).asElement());
+        HTMLParagraphElement p = p().css(blankSlatePfSecondaryAction)
+                .innerHtml(text)
+                .asElement();
+        blankSlate.appendChild(p);
         if (error != null) {
             String id = Ids.uniqueId();
-            builder.a("#" + id).css(marginLeft5)
+            p.appendChild(a("#" + id).css(marginLeft5)
                     .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
                     .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                     .aria(UIConstants.CONTROLS, id)
                     .textContent(CONSTANTS.details())
-                    .end();
-            builder.end(); // </p>
-            builder.div().css(collapse).id(id).aria(UIConstants.EXPANDED, UIConstants.FALSE)
-                    .start("pre").css(wizardHalErrorText).textContent(error).end()
-                    .end();
-        } else {
-            builder.end(); // </p>
+                    .asElement());
+            p.appendChild(div().css(collapse).id(id).aria(UIConstants.EXPANDED, UIConstants.FALSE)
+                    .add(pre().css(wizardHalErrorText).textContent(error))
+                    .asElement());
         }
-
-        blankSlate.getClassList().remove(wizardPfProcess);
-        blankSlate.getClassList().add(wizardPfComplete);
-        Elements.removeChildrenFrom(blankSlate);
-        builder.elements().forEach(blankSlate::appendChild);
 
         stepElements.values().forEach(element -> Elements.setVisible(element, false));
         Elements.setVisible(blankSlate, true);
 
-        cancelButton.setDisabled(lastStep);
-        backButton.setDisabled(lastStep);
-        nextButton.setDisabled(!lastStep);
+        cancelButton.disabled =lastStep;
+        backButton.disabled = lastStep;
+        nextButton.disabled = !lastStep;
         if (lastStep) {
-            nextText.setTextContent(CONSTANTS.close());
+            nextText.textContent = CONSTANTS.close();
             Elements.setVisible(nextIcon, false);
         }
         finishCanClose = lastStep;
@@ -566,19 +536,19 @@ public class Wizard<C, S extends Enum<S>> {
 
         stepIndicators.forEach((s, element) -> {
             if (s == state) {
-                element.getClassList().add(active);
+                element.classList.add(active);
             } else {
-                element.getClassList().remove(active);
+                element.classList.remove(active);
             }
         });
         Elements.setVisible(blankSlate, false);
         stepElements.forEach((s, element) -> Elements.setVisible(element, s == state));
         currentStep().onShow(context);
 
-        cancelButton.setDisabled(false);
-        backButton.setDisabled(state == initialState);
-        nextButton.setDisabled(false);
-        nextText.setTextContent(lastStates.contains(state) ? CONSTANTS.finish() : CONSTANTS.next());
+        cancelButton.disabled = false;
+        backButton.disabled = state == initialState;
+        nextButton.disabled = false;
+        nextText.textContent = lastStates.contains(state) ? CONSTANTS.finish() : CONSTANTS.next();
         Elements.setVisible(nextIcon, !lastStates.contains(state));
     }
 
@@ -595,23 +565,15 @@ public class Wizard<C, S extends Enum<S>> {
             S status = entry.getKey();
             WizardStep<C, S> step = entry.getValue();
 
-            // @formatter:off
-            Element li = new Elements.Builder()
-                .li()
-                    .a()
-                        .span().css(wizardPfStepNumber).textContent(String.valueOf(index)).end()
-                        .span().css(wizardPfStepTitle).textContent(step.title).end()
-                    .end()
-                .end()
-            .build();
-            // @formatter:on
-
+            HTMLLIElement li = li()
+                    .add(a()
+                            .add(span().css(wizardPfStepNumber).textContent(String.valueOf(index)))
+                            .add(span().css(wizardPfStepTitle).textContent(step.title)))
+                    .asElement();
             stepIndicators.put(status, li);
             stepsNames.appendChild(li);
 
-            DivElement wrapper = Browser.getDocument().createDivElement();
-            wrapper.getClassList().add(wizardPfContents);
-            wrapper.appendChild(step.asElement());
+            HTMLDivElement wrapper = div().css(wizardPfContents).add(step.asElement()).asElement();
             step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);

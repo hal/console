@@ -17,8 +17,8 @@ package org.jboss.hal.client.deployment;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
@@ -26,6 +26,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -51,22 +52,17 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
         attributes.append(model -> {
             String label = String.join(", ",
                     labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .span()
-                    .title(labelBuilder.label(ENABLED))
-                    .css(flag(failSafeBoolean(model, ENABLED)), marginRight5)
-                .end()
-                .span()
-                    .title(labelBuilder.label(MANAGED))
-                    .css(flag(failSafeBoolean(model, MANAGED)), marginRight5)
-                .end()
-                .span()
-                    .title(labelBuilder.label(EXPLODED))
-                    .css(flag(failSafeBoolean(model, EXPLODED)))
-                .end();
-            // @formatter:on
-            return new PreviewAttribute(label, builder.elements());
+            ElementsBuilder elements = elements()
+                    .add(span()
+                            .title(labelBuilder.label(ENABLED))
+                            .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
+                    .add(span()
+                            .title(labelBuilder.label(MANAGED))
+                            .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
+                    .add(span()
+                            .title(labelBuilder.label(EXPLODED))
+                            .css(flag(failSafeBoolean(model, EXPLODED))));
+            return new PreviewAttribute(label, elements.asElements());
         });
     }
 
@@ -75,10 +71,12 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
     }
 
     void subDeployments(Deployment deployment) {
-        previewBuilder().h(2).textContent(Names.SUBDEPLOYMENTS).end().ul();
+        HTMLElement ul;
+        previewBuilder()
+                .add(h(2).textContent(Names.SUBDEPLOYMENTS))
+                .add(ul = ul().asElement());
         deployment.getSubdeployments().forEach(
-                subdeployment -> previewBuilder().li().textContent(subdeployment.getName()).end());
-        previewBuilder().end();
+                subdeployment -> ul.appendChild(li().textContent(subdeployment.getName()).asElement()));
     }
 
     void contextRoot(PreviewAttributes<T> attributes, Deployment deployment) {
@@ -89,7 +87,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             }
 
         } else if (deployment.hasNestedSubsystem(UNDERTOW)) {
-            Elements.Builder builder = new Elements.Builder().ul();
+            HTMLElement ul = ul().asElement();
             for (Subdeployment subdeployment : deployment.getSubdeployments()) {
                 ModelNode contextRoot = failSafeGet(subdeployment, String.join("/", SUBSYSTEM, UNDERTOW, CONTEXT_ROOT));
                 if (contextRoot.isDefined()) {
@@ -98,11 +96,10 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .appendHtmlConstant("&rarr;") //NON-NLS
                             .appendEscaped(" " + contextRoot.asString())
                             .toSafeHtml();
-                    builder.li().innerHtml(safeHtml).end();
+                    ul.appendChild(li().innerHtml(safeHtml).asElement());
                 }
             }
-            Element element = builder.end().build(); // </ul>
-            attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOTS, element));
+            attributes.append(model -> new PreviewAttribute(Names.CONTEXT_ROOTS, ul));
         }
     }
 }

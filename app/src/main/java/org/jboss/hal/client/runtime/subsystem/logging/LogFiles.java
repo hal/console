@@ -19,14 +19,14 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -69,7 +69,7 @@ public class LogFiles {
     }
 
     public void download(String logFile) {
-        Browser.getWindow().open(downloadUrl(logFile), "", "");
+        DomGlobal.window.open(downloadUrl(logFile), "", "");
     }
 
     String downloadUrl(String name) {

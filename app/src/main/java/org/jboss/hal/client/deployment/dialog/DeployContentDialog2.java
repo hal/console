@@ -17,8 +17,9 @@ package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 
-import elemental.html.InputElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
@@ -34,6 +35,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
@@ -51,14 +53,12 @@ public class DeployContentDialog2 {
     }
 
 
-    private static final String ENABLE = "enable";
-
     private final String serverGroup;
     private final List<Content> content;
     private final DeployCallback deployCallback;
     private final Alert noContentSelected;
     private final Table<Content> table;
-    private final InputElement enable;
+    private final HTMLInputElement enable;
     private final Dialog dialog;
 
     public DeployContentDialog2(final String serverGroup, final List<Content> content, final Resources resources,
@@ -81,23 +81,18 @@ public class DeployContentDialog2 {
                 .options();
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().add(noContentSelected).end()
-            .p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)).end()
-            .add(table)
-            .div().css(marginTopLarge)
-                .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                .label().css(CSS.marginLeft5)
-                    .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                    .textContent(resources.constants().enableDeployment())
-                .end()
-            .end();
-        // @formatter:on
-        enable = builder.referenceFor(ENABLE);
+        ElementsBuilder elements = elements()
+                .add(div().add(noContentSelected))
+                .add(p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)))
+                .add(table)
+                .add(div().css(marginTopLarge)
+                        .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).asElement())
+                        .add(label().css(CSS.marginLeft5)
+                                .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
+                                .textContent(resources.constants().enableDeployment())));
 
         dialog = new Dialog.Builder(resources.constants().deployContent())
-                .add(builder.elements())
+                .add(elements.asElements())
                 .primary(resources.constants().deploy(), this::finish)
                 .cancel()
                 .build();

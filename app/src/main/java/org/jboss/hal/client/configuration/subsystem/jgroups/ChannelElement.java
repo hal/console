@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
@@ -35,6 +34,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_FORK_PROTOCOL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE;
@@ -45,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  *
  * @author Claudio Miranda
  */
-class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
+class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_CHANNEL_FORK_PROTOCOL, Ids.PAGE_SUFFIX);
     private static final String CHANNEL_ID = Ids.build(Ids.JGROUPS_CHANNEL_CONFIG, Ids.PAGE_SUFFIX);
@@ -87,16 +89,12 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
                         table.selectedRow().getName(), form, metadata))
                 .build();
 
-        // @formatter:off
-        Element section = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.CHANNEL).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement section = section()
+                .add(h(1).textContent(Names.CHANNEL))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         forkElement = new ForkElement(metadataRegistry, tableButtonFactory, resources);
         protocolElement = new GenericElement(metadataRegistry.lookup(CHANNEL_FORK_PROTOCOL_TEMPLATE),
@@ -118,7 +116,7 @@ class ChannelElement implements IsElement, Attachable, HasPresenter<JGroupsPrese
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return innerPages.asElement();
     }
 

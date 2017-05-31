@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -44,10 +44,10 @@ public class Options<T> {
         public boolean multiple;
         public boolean animation;
         public Themes themes;
-        public Object data; // can be a DataFunction<T> or JsArrayOf<Node<T>>
+        public Object data; // can be a DataFunction<T> or Array<Node<T>>
     }
 
 
-    public JsArrayOf<String> plugins;
+    public Array<String> plugins;
     public Core<T> core;
 }

@@ -44,6 +44,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-meta</artifactId>
         </dependency>
         <dependency>

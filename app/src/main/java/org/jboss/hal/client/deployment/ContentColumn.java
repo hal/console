@@ -23,9 +23,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.SpanElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -56,13 +54,13 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -84,6 +82,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.ROOT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
@@ -198,11 +197,9 @@ public class ContentColumn extends FinderColumn<Content> {
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
-                SpanElement spanElement = Browser.getDocument().createSpanElement();
-                spanElement.setClassName(icon);
-                return spanElement;
+                return span().css(icon).asElement();
             }
 
             @Override

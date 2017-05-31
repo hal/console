@@ -31,7 +31,7 @@ public class GenericSubsystemView extends HalViewImpl implements GenericSubsyste
     @Inject
     public GenericSubsystemView(ModelBrowser modelBrowser) {
         this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
+        initElement(modelBrowser);
     }
 
     @Override

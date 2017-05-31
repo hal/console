@@ -15,9 +15,14 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 
 /**
  * @author Harald Pehl
@@ -25,19 +30,21 @@ import org.jboss.hal.resources.Resources;
 class MembershipPreview extends PreviewContent<Assignment> {
 
     MembershipPreview(final AccessControlTokens tokens, final Principal principal, final Resources resources) {
-        super((principal.getType() == Principal.Type.USER ? resources.constants().user() : resources
-                        .constants().group()) + " " + principal.getName(),
-                principal.getRealm() != null ? Names.REALM + " " + principal
-                        .getRealm() : null);
+        super((principal.getType() == Principal.Type.USER
+                        ? resources.constants().user()
+                        : resources.constants().group()) + " " + principal.getName(),
+                principal.getRealm() != null
+                        ? Names.REALM + " " + principal.getRealm()
+                        : null);
 
-        previewBuilder().p();
+        HTMLElement p;
+        previewBuilder().add(p = p().asElement());
         if (principal.getType() == Principal.Type.USER) {
-            previewBuilder().span().textContent(resources.constants().assignmentsOfUser() + " ").end();
+            p.appendChild(span().textContent(resources.constants().assignmentsOfUser() + " ").asElement());
         } else {
-            previewBuilder().span().textContent(resources.constants().assignmentsOfGroup() + " ").end();
+            p.appendChild(span().textContent(resources.constants().assignmentsOfGroup() + " ").asElement());
         }
-        previewBuilder().a().attr("href", tokens.principal(principal)).textContent(principal.getName()).end()
-                .span().textContent(".").end()
-                .end();
+        p.appendChild(a(tokens.principal(principal)).textContent(principal.getName()).asElement());
+        p.appendChild(span().textContent(".").asElement());
     }
 }

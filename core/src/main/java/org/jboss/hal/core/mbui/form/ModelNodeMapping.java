@@ -95,6 +95,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void populateFormItem(final String id, String name, final ModelNode attributeDescription,
             final ModelNode value, final FormItem formItem) {
 

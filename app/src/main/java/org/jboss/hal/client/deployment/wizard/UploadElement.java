@@ -17,10 +17,8 @@ package org.jboss.hal.client.deployment.wizard;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
-import elemental.html.File;
-import elemental.html.FileList;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Alert;
@@ -29,6 +27,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.form;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.InputType.file;
 import static org.jboss.hal.resources.CSS.*;
@@ -39,73 +39,60 @@ import static org.jboss.hal.resources.FontAwesomeSize.x4;
  *
  * @author Harald Pehl
  */
-public class UploadElement implements IsElement {
+public class UploadElement implements IsElement<HTMLElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String ICON_ELEMENT = "iconElement";
-    private static final String FILE_INPUT_ELEMENT = "fileInputElement";
-    private static final String LABEL_ELEMENT = "labelElement";
-    private static final String DRAG_ELEMENT = "dragElement";
 
-    private Element root;
+    private HTMLElement root;
     private Alert alert;
-    private InputElement fileInput;
-    private Element labelElement;
+    private HTMLInputElement fileInput;
+    private HTMLElement labelElement;
 
     public UploadElement(final SafeHtml noFilesError) {
+        HTMLElement iconElement, dragElement;
+
         this.alert = new Alert(Icons.ERROR, noFilesError);
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .form().attr("novalidate", "true").css(upload) //NON-NLS
+        this.root = form().css(upload)
+                .apply(f -> f.noValidate = true)
                 .add(alert)
-                .div().rememberAs(ICON_ELEMENT).css(uploadIcon, fontAwesome("upload", x4)).end()
-                .input(file)
-                    .rememberAs(FILE_INPUT_ELEMENT)
-                    .id(Ids.UPLOAD_FILE_INPUT)
-                    .css(uploadFile)
-                    .on(change, event -> showFiles(fileInput.getFiles()))
-                .label().attr("for", Ids.UPLOAD_FILE_INPUT).rememberAs(LABEL_ELEMENT)
-                    .a().css(clickable)
-                        .textContent(CONSTANTS.chooseFile())
-                    .end()
-                    .span().rememberAs(DRAG_ELEMENT)
-                        .textContent(" " + CONSTANTS.orDragItHere())
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        Element iconElement = builder.referenceFor(ICON_ELEMENT);
-        fileInput = builder.referenceFor(FILE_INPUT_ELEMENT);
-        labelElement = builder.referenceFor(LABEL_ELEMENT);
-        Element dragElement = builder.referenceFor(DRAG_ELEMENT);
-        root = builder.build();
+                .add(iconElement = div().css(uploadIcon, fontAwesome("upload", x4)).asElement())
+                .add(fileInput = input(file)
+                        .id(Ids.UPLOAD_FILE_INPUT)
+                        .css(uploadFile)
+                        .on(change, event -> showFiles(fileInput.files))
+                        .asElement())
+                .add(labelElement = label()
+                        .apply(l -> l.htmlFor = Ids.UPLOAD_FILE_INPUT)
+                        .add(a().css(clickable)
+                                .textContent(CONSTANTS.chooseFile())
+                                .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).asElement()))
+                        .asElement())
+                .asElement();
 
         Elements.setVisible(alert.asElement(), false);
         boolean advancedUpload = JsHelper.supportsAdvancedUpload();
         if (advancedUpload) {
-            root.getClassList().add(uploadAdvanced);
+            root.classList.add(uploadAdvanced);
             JsHelper.addDropHandler(root, event -> {
-                fileInput.setFiles(event.dataTransfer.files);
+                fileInput.files = event.dataTransfer.files;
                 showFiles(event.dataTransfer.files);
             });
         } else {
-            root.getClassList().remove(uploadAdvanced);
+            root.classList.remove(uploadAdvanced);
         }
         Elements.setVisible(iconElement, advancedUpload);
         Elements.setVisible(dragElement, advancedUpload);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
-    private void showFiles(FileList files) {
+    private void showFiles(elemental2.dom.FileList files) {
         if (files.getLength() > 0) {
-            File file = files.item(0);
-            labelElement.setInnerHTML(file.getName());
+            elemental2.dom.File file = files.item(0);
+            labelElement.textContent = file.name;
             Elements.setVisible(alert.asElement(), false);
         }
     }
@@ -115,12 +102,12 @@ public class UploadElement implements IsElement {
     }
 
     public boolean validate() {
-        boolean valid = fileInput.getFiles().getLength() > 0;
+        boolean valid = fileInput.files.getLength() > 0;
         Elements.setVisible(alert.asElement(), !valid);
         return valid;
     }
 
-    public FileList getFiles() {
-        return fileInput.getFiles();
+    public elemental2.dom.FileList getFiles() {
+        return fileInput.files;
     }
 }

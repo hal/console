@@ -18,7 +18,7 @@ package org.jboss.hal.meta.description;
 import java.util.Collections;
 import java.util.List;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -174,9 +174,9 @@ public class ResourceDescription extends ModelNode {
      */
     @JsMethod(name = "getAttributes")
     @EsReturn("Property[]")
-    public JsArrayOf<Property> jsGetAttributes() {
+    public Array<Property> jsGetAttributes() {
         List<Property> attributes = getAttributes(ATTRIBUTES);
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : attributes) {
             array.push(t);
         }
@@ -188,9 +188,9 @@ public class ResourceDescription extends ModelNode {
      */
     @JsMethod(name = "getRequestProperties")
     @EsReturn("Property[]")
-    public JsArrayOf<Property> jsGetRequestProperties() {
+    public Array<Property> jsGetRequestProperties() {
         List<Property> attributes = getAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES);
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : attributes) {
             array.push(t);
         }
@@ -202,9 +202,9 @@ public class ResourceDescription extends ModelNode {
      */
     @JsProperty(name = "operations")
     @EsReturn("Property[]")
-    public JsArrayOf<Property> jsOperations() {
+    public Array<Property> jsOperations() {
         List<Property> operations = getOperations();
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : operations) {
             array.push(t);
         }

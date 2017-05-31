@@ -64,11 +64,7 @@ public class ServerStatusPresenter
     static final String BOOT_CLASS_PATH = "boot-class-path";
     static final String CLASS_PATH = "class-path";
     static final String INPUT_ARGUMENTS = "input-arguments";
-    static final String JVM_VERSION = "jvm-version";
     static final String LIBRARY_PATH = "library-path";
-    static final String OS_NAME = "os";
-    static final String OS_VERSION = "os-version";
-    static final String PROCESSORS = "processors";
     static final String START_TIME = "start-time";
     static final String SYSTEM_PROPERTIES = "system-properties";
     static final String UPTIME = "uptime";

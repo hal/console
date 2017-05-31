@@ -15,17 +15,15 @@
  */
 package org.jboss.hal.client.tools;
 
-import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.collect.Iterables;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
@@ -41,9 +39,13 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -52,7 +54,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter.MyView {
 
-    private static final String COPY_TO_CLIPBOARD_ELEMENT = "copyToClipboardElement";
     private static final String PLAY_ACTION = "play";
     private static final String RENAME_ACTION = "rename";
     private static final String REMOVE_ACTION = "remove";
@@ -62,8 +63,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     private final EmptyState empty;
     private final ListView<Macro> macroList;
     private final AceEditor editor;
-    private final Element copyToClipboard;
-    private final Iterable<Element> elements;
+    private final HTMLButtonElement copyToClipboard;
+    private final HTMLElement row;
     private MacroEditorPresenter presenter;
 
     @Inject
@@ -74,7 +75,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .icon(CSS.fontAwesome("dot-circle-o"))
                 .description(resources.messages().noMacrosDescription(resources.constants().startMacro()))
                 .build();
-        empty.asElement().getClassList().add(noMacros);
+        empty.asElement().classList.add(noMacros);
 
         macroList = new ListView<>(Ids.MACRO_LIST, macro -> new ItemDisplay<Macro>() {
             @Override
@@ -94,7 +95,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
             @Override
             public List<ItemAction<Macro>> actions() {
-                return Arrays.asList(
+                return asList(
                         new ItemAction<Macro>(PLAY_ACTION, resources.constants().play(),
                                 macro -> presenter.play(macro)),
                         new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
@@ -107,7 +108,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             }
         });
         macroList.onSelect(this::loadMacro);
-        macroList.asElement().getClassList().add(CSS.macroList);
+        macroList.asElement().classList.add(CSS.macroList);
 
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
@@ -116,37 +117,27 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.MACRO_EDITOR, editorOptions);
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(macroEditor)
-                .button()
-                    .css(btn, btnDefault, copy)
-                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                    .data(UIConstants.PLACEMENT, "left") //NON-NLS
-                    .title(resources.constants().copyToClipboard())
-                    .rememberAs(COPY_TO_CLIPBOARD_ELEMENT)
-                        .span().css(fontAwesome("clipboard")).end()
-                .end()
+        HTMLElement editorContainer = div().css(macroEditor)
+                .add(copyToClipboard = button().css(btn, btnDefault, copy)
+                        .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                        .data(UIConstants.PLACEMENT, "left") //NON-NLS
+                        .title(resources.constants().copyToClipboard())
+                        .add(span().css(fontAwesome("clipboard")))
+                        .asElement())
                 .add(editor)
-            .end();
-        // @formatter:on
-
-        Element editorContainer = builder.build();
-        copyToClipboard = builder.referenceFor(COPY_TO_CLIPBOARD_ELEMENT);
+                .asElement();
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
 
-        // @formatter:off
-        elements = new LayoutBuilder()
-            .row()
-                .column(4).add(macroList.asElement()).end()
-                .column(8).add(editorContainer).end()
-            .end()
-        .elements();
-        // @formatter:on
+        row = row()
+                .add(column(4)
+                        .add(macroList))
+                .add(column(8)
+                        .add(editorContainer))
+                .asElement();
 
         registerAttachable(editor);
-        initElements(Iterables.concat(singletonList(empty.asElement()), elements));
+        initElements(asList(empty.asElement(), row));
     }
 
     @Override
@@ -154,17 +145,20 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
         super.attach();
         adjustHeight();
         adjustEditorHeight();
-        Browser.getWindow().setOnresize(event -> adjustEditorHeight());
+        DomGlobal.window.onresize = event -> {
+            adjustEditorHeight();
+            return null;
+        };
     }
 
     private void adjustHeight() {
         int offset = Skeleton.applicationOffset() + 2 * MARGIN_BIG + 1;
-        macroList.asElement().getStyle().setHeight(vh(offset));
+        macroList.asElement().style.height = vh(offset);
     }
 
     private void adjustEditorHeight() {
         int height = max(Skeleton.applicationHeight() - 2 * MARGIN_BIG - 1, MIN_HEIGHT);
-        editor.asElement().getStyle().setHeight(height, PX);
+        editor.asElement().style.height = CSS.height(px(height));
         editor.getEditor().resize();
     }
 
@@ -176,17 +170,13 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     @Override
     public void empty() {
         Elements.setVisible(empty.asElement(), true);
-        for (Element element : elements) {
-            Elements.setVisible(element, false);
-        }
+        Elements.setVisible(row, false);
     }
 
     @Override
     public void setMacros(Iterable<Macro> macros) {
         Elements.setVisible(empty.asElement(), false);
-        for (Element element : elements) {
-            Elements.setVisible(element, true);
-        }
+        Elements.setVisible(row, true);
         macroList.setItems(macros);
     }
 
@@ -221,7 +211,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                     .setTitle(resources.constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            Browser.getWindow().setTimeout(tooltip::hide, 1000);
+            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 }

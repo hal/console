@@ -18,7 +18,7 @@ package org.jboss.hal.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -115,8 +115,8 @@ public class User {
      */
     @JsProperty(name = "roles")
     @EsReturn("Role[]")
-    public JsArrayOf<Role> jsRoles() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    public Array<Role> jsRoles() {
+        Array<Role> array = new Array<>();
         for (Role role : roles) {
             array.push(role);
         }

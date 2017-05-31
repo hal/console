@@ -18,8 +18,7 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,6 +38,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.client.configuration.SocketBindingGroupPresenter.ROOT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -99,14 +101,12 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 .prepareReset(form -> presenter.resetSocketBinding(INBOUND, form))
                 .build();
 
-        Element inboundSection = new Elements.Builder()
-                .section()
-                .h(1).textContent(Names.INBOUND).end()
-                .p().textContent(inboundMetadata.getDescription().getDescription()).end()
+        HTMLElement inboundSection = section()
+                .add(h(1).textContent(Names.INBOUND))
+                .add(p().textContent(inboundMetadata.getDescription().getDescription()))
                 .add(inboundTable)
                 .add(inboundForm)
-                .end()
-                .build();
+                .asElement();
 
         Metadata clientMappingsMetadata = clientMappingsMetadata(inboundMetadata);
 
@@ -134,14 +134,12 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                         changedValues))
                 .build();
 
-        Element clientMappingSection = new Elements.Builder()
-                .section()
-                .h(1).textContent(Names.CLIENT_MAPPINGS).end()
-                .p().textContent(clientMappingsMetadata.getDescription().getDescription()).end()
+        HTMLElement clientMappingSection = section()
+                .add(h(1).textContent(Names.CLIENT_MAPPINGS))
+                .add(p().textContent(clientMappingsMetadata.getDescription().getDescription()))
                 .add(clientMappingTable)
                 .add(clientMappingForm)
-                .end()
-                .build();
+                .asElement();
 
         String parentId = Ids.build(INBOUND.baseId, Ids.PAGE_SUFFIX);
         inboundPages = new Pages(parentId, inboundSection);

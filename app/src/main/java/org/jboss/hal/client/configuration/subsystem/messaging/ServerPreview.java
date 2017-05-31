@@ -38,6 +38,6 @@ class ServerPreview extends PreviewContent<NamedNode> {
                 "thread-pool-max-size",
                 "scheduled-thread-pool-max-size",
                 "transaction-timeout",
-                "transaction-timeout-scan-period")).end());
+                "transaction-timeout-scan-period")));
     }
 }

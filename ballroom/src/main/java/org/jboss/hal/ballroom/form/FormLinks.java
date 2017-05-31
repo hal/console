@@ -20,15 +20,21 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
-import elemental.events.EventListener;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLUListElement;
+import elemental2.dom.MouseEvent;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
@@ -57,44 +63,32 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class FormLinks<T> implements IsElement {
 
-    private static final String LINKS = "links";
-    private static final String HELP_CONTENT = "helpContent";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private final AbstractForm<T> form;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
-
-    private final Element root;
-    private Element editLink;
-    private Element resetLink;
-    private Element removeLink;
-    private Element helpLink;
+    private final HTMLElement root;
+    private HTMLElement editLink;
+    private HTMLElement resetLink;
+    private HTMLElement removeLink;
+    private HTMLElement helpLink;
 
     FormLinks(final AbstractForm<T> form,
             final StateMachine stateMachine,
             final LinkedHashMap<String, SafeHtml> helpTexts,
-            final EventListener onEdit,
-            final EventListener onReset,
-            final EventListener onRemove) {
-        this.form = form;
-
+            final EventCallbackFn<MouseEvent> onEdit,
+            final EventCallbackFn<MouseEvent> onReset,
+            final EventCallbackFn<MouseEvent> onRemove) {
         this.helpTexts = helpTexts;
 
-        String linksId = Ids.build(form.getId(), LINKS);
+        String linksId = Ids.build(form.getId(), "links");
         String helpId = Ids.build(form.getId(), "help");
 
-        // @formatter:off
-        Elements.Builder rootBuilder = new Elements.Builder()
-            .div().css(CSS.form, formHorizontal)
-                .ul().id(linksId).css(formLinks, clearfix).rememberAs(LINKS).end()
-                .div().id(helpId).css(formHelpContent, collapse)
-                    .div().rememberAs(HELP_CONTENT).end()
-                .end()
-            .end();
-        // @formatter:on
-
-        Element links = rootBuilder.referenceFor(LINKS);
-        Element helpContent = rootBuilder.referenceFor(HELP_CONTENT);
+        HTMLUListElement links;
+        HTMLDivElement helpContent;
+        HtmlContentBuilder<HTMLDivElement> rootBuilder = div().css(CSS.form, formHorizontal)
+                .add(links = ul().id(linksId).css(formLinks, clearfix).asElement())
+                .add(div().id(helpId).css(formHelpContent, collapse)
+                        .add(helpContent = div().asElement()));
 
         if (stateMachine.supports(EDIT)) {
             editLink = link(CONSTANTS.edit(), pfIcon("edit"), onEdit);
@@ -102,9 +96,9 @@ public class FormLinks<T> implements IsElement {
         }
         if (stateMachine.supports(RESET)) {
             resetLink = link(CONSTANTS.reset(), fontAwesome("undo"), onReset);
-            resetLink.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            resetLink.getDataset().setAt(UIConstants.PLACEMENT, "right"); //NON-NLS
-            resetLink.setTitle(CONSTANTS.formResetDesc());
+            resetLink.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            resetLink.dataset.set(UIConstants.PLACEMENT, "right"); //NON-NLS
+            resetLink.title = CONSTANTS.formResetDesc();
             links.appendChild(resetLink);
         }
         if (stateMachine.supports(REMOVE)) {
@@ -112,57 +106,42 @@ public class FormLinks<T> implements IsElement {
             links.appendChild(removeLink);
         }
         if (!helpTexts.isEmpty()) {
-            // @formatter:off
-            helpLink = new Elements.Builder()
-                .li()
-                    .a().attr("href", "#" + helpId + "")
-                            .data(UIConstants.TOGGLE,  UIConstants.COLLAPSE)
+            helpLink = li()
+                    .add(a("#" + helpId)
+                            .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
                             .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                             .aria(UIConstants.CONTROLS, helpId)
-                        .start("i").css(pfIcon("help")).end()
-                        .span().css(formLinkLabel).textContent(CONSTANTS.help()).end()
-                    .end()
-                .end().build();
-            // @formatter:on
+                            .add(i().css(pfIcon("help")))
+                            .add(span().css(formLinkLabel).textContent(CONSTANTS.help())))
+                    .asElement();
             for (Map.Entry<String, SafeHtml> entry : helpTexts.entrySet()) {
                 helpContent.appendChild(help(entry.getKey(), entry.getValue()));
             }
             links.appendChild(helpLink);
         }
-
-        root = rootBuilder.build();
+        root = rootBuilder.asElement();
     }
 
-    private Element link(String text, String css, EventListener onclick) {
-        // @formatter:off
-        return new Elements.Builder()
-            .li()
-                .a().css(clickable).on(click, onclick)
-                    .start("i").css(css).end()
-                    .span().css(formLinkLabel).textContent(text).end()
-                .end()
-            .end().build();
-        // @formatter:on
+    private HTMLLIElement link(String text, String css, EventCallbackFn<MouseEvent> onclick) {
+        return li()
+                .add(a().css(clickable).on(click, onclick)
+                        .add(i().css(css))
+                        .add(span().css(formLinkLabel).textContent(text)))
+                .asElement();
     }
 
-    private Element help(String label, SafeHtml description) {
-        // @formatter:off
-        return new Elements.Builder()
-            .div().css(formGroup)
-                .label().css(controlLabel, halFormLabel)
-                    .textContent(label)
-                .end()
-                .div().css(halFormInput)
-                    .p().css(formControlStatic)
-                        .innerHtml(description)
-                    .end()
-                .end()
-            .end().build();
-        // @formatter:on
+    private HTMLDivElement help(String label, SafeHtml description) {
+        return div().css(formGroup)
+                .add(label()
+                        .css(controlLabel, halFormLabel)
+                        .textContent(label))
+                .add(div().css(halFormInput)
+                        .add(p().css(formControlStatic).innerHtml(description)))
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         if (editLink == null && resetLink == null && removeLink == null && helpTexts.isEmpty()) {
             Elements.setVisible(root, false);
         }

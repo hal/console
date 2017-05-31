@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,6 +32,8 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -41,12 +42,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  *
  * @author Harald Pehl
  */
-class HandlerChainElement implements IsElement, Attachable, HasPresenter<WebservicePresenter> {
+class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
 
-    private static final String HEADER_ELEMENT = "headerElement";
-
-    private final Element root;
-    private final Element header;
+    private final HTMLElement root;
+    private final HTMLElement header;
     private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private WebservicePresenter presenter;
@@ -71,21 +70,15 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
                 .prepareReset(form -> presenter.resetHandlerChain(form.getModel().getName(), form))
                 .build();
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .section()
-                .h(1).rememberAs(HEADER_ELEMENT).end()
+        root = section()
+                .add(header = h(1).asElement())
                 .add(table)
                 .add(form)
-            .end();
-        // @formatter:on
-
-        header = builder.referenceFor(HEADER_ELEMENT);
-        root = builder.build();
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -108,7 +101,7 @@ class HandlerChainElement implements IsElement, Attachable, HasPresenter<Webserv
     }
 
     void update(HandlerChain handlerChainType, List<NamedNode> handlerChains) {
-        header.setTextContent(handlerChainType.type);
+        header.textContent = handlerChainType.type;
         form.clear();
         table.update(handlerChains);
     }

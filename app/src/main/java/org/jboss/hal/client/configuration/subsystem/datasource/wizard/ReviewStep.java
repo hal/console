@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
@@ -57,7 +57,7 @@ class ReviewStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return form.asElement();
     }
 

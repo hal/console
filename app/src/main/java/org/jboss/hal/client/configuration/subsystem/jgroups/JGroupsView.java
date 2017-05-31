@@ -18,9 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -36,6 +34,11 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.JGROUPS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -64,15 +67,12 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
                         resources.messages().modifySingleResourceSuccess(Names.JGROUPS)))
                 .prepareReset(form -> presenter.resetSingleton(JGROUPS_TEMPLATE, Names.JGROUPS, form, metadata))
                 .build();
-        // @formatter:off
-        Element jgroupsSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.JGROUPS).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+
+        HTMLElement jgroupsSection = section()
+                .add(h(1).textContent(Names.JGROUPS))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(jgroupsForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         stackConfig = new StackElement(metadataRegistry, tableButtonFactory, resources);
         channelConfig = new ChannelElement(metadataRegistry, tableButtonFactory, resources);
@@ -87,14 +87,9 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
 
         registerAttachables(asList(navigation, jgroupsForm, stackConfig, channelConfig));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override

@@ -76,6 +76,6 @@ class ServletContainerPreview extends PreviewContent<NamedNode> {
             return new PreviewAttribute(labelBuilder.label(WELCOME_FILE), Names.NOT_AVAILABLE);
         });
 
-        previewBuilder().addAll(attributes.end());
+        previewBuilder().addAll(attributes);
     }
 }

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.runtime.host;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -28,6 +28,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -40,8 +43,8 @@ import static org.jboss.hal.resources.CSS.hidden;
  */
 class HostPreview extends RuntimePreview<Host> {
 
-    private final Element reloadLink;
-    private final Element restartLink;
+    private final HTMLElement reloadLink;
+    private final HTMLElement restartLink;
     private final PreviewAttributes<Host> attributes;
     private final HostActions hostActions;
     private final Resources resources;
@@ -53,30 +56,22 @@ class HostPreview extends RuntimePreview<Host> {
         this.hostActions = hostActions;
         this.resources = resources;
 
-        // @formatter:off
         previewBuilder()
-            .div().rememberAs(ALERT_CONTAINER)
-                .span().rememberAs(ALERT_ICON).end()
-                .span().rememberAs(ALERT_TEXT).end()
-                .span().textContent(" ").end()
-                .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.reload(host))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
-                    .textContent(resources.constants().reload())
-                .end()
-                .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.restart(host))
-                    .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
-                    .textContent(resources.constants().restart())
-                .end()
-            .end();
-        // @formatter:on
-
-        alertContainer = previewBuilder().referenceFor(ALERT_CONTAINER);
-        alertIcon = previewBuilder().referenceFor(ALERT_ICON);
-        alertText = previewBuilder().referenceFor(ALERT_TEXT);
-        reloadLink = previewBuilder().referenceFor(RELOAD_LINK);
-        restartLink = previewBuilder().referenceFor(RESTART_LINK);
+                .add(alertContainer = div()
+                        .add(alertIcon = span().asElement())
+                        .add(alertText = span().asElement())
+                        .add(span().textContent(" "))
+                        .add(reloadLink = a().css(clickable, alertLink)
+                                .on(click, event -> hostActions.reload(host))
+                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RELOAD).data())
+                                .textContent(resources.constants().reload())
+                                .asElement())
+                        .add(restartLink = a().css(clickable, alertLink)
+                                .on(click, event -> hostActions.restart(host))
+                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
+                                .textContent(resources.constants().restart())
+                                .asElement())
+                        .asElement());
 
         attributes = new PreviewAttributes<>(host,
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
@@ -86,8 +81,7 @@ class HostPreview extends RuntimePreview<Host> {
                         String.join(".", model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
-                ))
-                .end();
+                ));
         previewBuilder().addAll(attributes);
 
         update(host);

@@ -18,8 +18,8 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.dom.Element;
-import elemental.html.ButtonElement;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -37,6 +37,8 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
 import static org.jboss.hal.ballroom.table.RefreshMode.HOLD;
 import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
@@ -63,8 +65,8 @@ class EndpointDialog {
 
     private final EndpointManager manager;
     private final EndpointStorage storage;
-    private final Element selectPage;
-    private final Element addPage;
+    private final HTMLElement selectPage;
+    private final HTMLElement addPage;
     private final Alert alert;
     private final Form<Endpoint> form;
 
@@ -82,17 +84,16 @@ class EndpointDialog {
                 .button(CONSTANTS.remove(), table -> {
                     storage.remove(table.selectedRow());
                     this.table.update(storage.list(), HOLD);
-                    dialog.getButton(PRIMARY_POSITION).setDisabled(!this.table.hasSelection());
+                    dialog.getButton(PRIMARY_POSITION).disabled = !this.table.hasSelection();
                 }, Scope.SELECTED)
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
 
-        selectPage = new Elements.Builder()
-                .div()
-                .p().textContent(CONSTANTS.endpointSelectDescription()).end()
+        selectPage = div()
+                .add(p().textContent(CONSTANTS.endpointSelectDescription()))
                 .add(table.asElement())
-                .end().build();
+                .asElement();
 
         alert = new Alert();
         ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
@@ -134,12 +135,11 @@ class EndpointDialog {
                 })
                 .build();
 
-        addPage = new Elements.Builder()
-                .div()
-                .p().textContent(CONSTANTS.endpointAddDescription()).end()
+        addPage = div()
+                .add(p().textContent(CONSTANTS.endpointAddDescription()))
                 .add(alert)
                 .add(form.asElement())
-                .end().build();
+                .asElement();
 
         dialog = new Dialog.Builder(CONSTANTS.endpointSelectTitle())
                 .add(selectPage, addPage)
@@ -178,12 +178,12 @@ class EndpointDialog {
     }
 
     private void switchTo(final Mode mode) {
-        ButtonElement primaryButton = dialog.getButton(PRIMARY_POSITION);
+        HTMLButtonElement primaryButton = dialog.getButton(PRIMARY_POSITION);
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
             table.update(storage.list(), HOLD);
-            primaryButton.setInnerText(CONSTANTS.endpointConnect());
-            primaryButton.setDisabled(!table.hasSelection());
+            primaryButton.textContent = CONSTANTS.endpointConnect();
+            primaryButton.disabled = !table.hasSelection();
             Elements.setVisible(addPage, false);
             Elements.setVisible(selectPage, true);
 
@@ -191,8 +191,8 @@ class EndpointDialog {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
             Elements.setVisible(alert.asElement(), false);
             form.edit(new Endpoint());
-            primaryButton.setInnerText(CONSTANTS.add());
-            primaryButton.setDisabled(false);
+            primaryButton.textContent = CONSTANTS.add();
+            primaryButton.disabled = false;
             Elements.setVisible(selectPage, false);
             Elements.setVisible(addPage, true);
         }
@@ -223,7 +223,7 @@ class EndpointDialog {
     void show() {
         dialog.show();
 
-        table.onSelectionChange(t -> dialog.getButton(PRIMARY_POSITION).setDisabled(!t.hasSelection()));
+        table.onSelectionChange(t -> dialog.getButton(PRIMARY_POSITION).disabled = !t.hasSelection());
         table.update(storage.list());
 
         switchTo(SELECT);

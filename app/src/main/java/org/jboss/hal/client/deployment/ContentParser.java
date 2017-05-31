@@ -22,7 +22,7 @@ import java.util.Map;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
@@ -35,13 +35,14 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 class ContentParser {
 
-    private static final Comparator<ContentEntry> BY_NAME = (c1, c2) -> c1.name.compareTo(c2.name);
-    private static final Comparator<ContentEntry> BY_DEPTH = (c1, c2) -> Integer.compare(c1.depth, c2.depth);
+    private static final Comparator<ContentEntry> BY_NAME = Comparator.comparing(c -> c.name);
+    private static final Comparator<ContentEntry> BY_DEPTH = Comparator.comparingInt(c -> c.depth);
 
     private static final String DIRECTORY = "directory";
     private static final String FILE_SIZE = "file-size";
 
-    void parse(JsArrayOf<Node<ContentEntry>> nodes, Node<ContentEntry> root, List<ModelNode> content) {
+    @SuppressWarnings("unchecked")
+    void parse(Array<Node<ContentEntry>> nodes, Node<ContentEntry> root, List<ModelNode> content) {
         nodes.push(root);
 
         Map<String, Node<ContentEntry>> nodesByPath = new HashMap<>();
@@ -85,7 +86,8 @@ class ContentParser {
         return contentEntry;
     }
 
-    private Node<ContentEntry> pushFolder(JsArrayOf<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
+    @SuppressWarnings("unchecked")
+    private Node<ContentEntry> pushFolder(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
         Node<ContentEntry> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), contentEntry.name,
                 contentEntry)
@@ -96,7 +98,8 @@ class ContentParser {
         return node;
     }
 
-    private Node<ContentEntry> pushEntry(JsArrayOf<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
+    @SuppressWarnings("unchecked")
+    private Node<ContentEntry> pushEntry(Array<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
             ContentEntry contentEntry) {
         Node<ContentEntry> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), contentEntry.name,
                 contentEntry)

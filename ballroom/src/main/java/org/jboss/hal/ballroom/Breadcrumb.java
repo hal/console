@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.Elements.ol;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.breadcrumb;
@@ -40,11 +42,10 @@ public class Breadcrumb implements IsElement {
     }
 
 
-    private final Element root;
+    private final HTMLElement root;
 
     public Breadcrumb() {
-        root = Browser.getDocument().createElement("ol"); //NON-NLS
-        root.getClassList().add(breadcrumb);
+        root = ol().css(breadcrumb).asElement();
     }
 
     public void clear() {
@@ -52,20 +53,21 @@ public class Breadcrumb implements IsElement {
     }
 
     public Breadcrumb append(final String segment, final SegmentHandler handler) {
-        Element li = new Elements.Builder().li().a().css(clickable).on(click, e -> handler.onClick())
-                .textContent(segment).end().end().build();
-        root.appendChild(li);
+        root.appendChild(li()
+                .add(a().css(clickable)
+                        .textContent(segment)
+                        .on(click, e -> handler.onClick()))
+                .asElement());
         return this;
     }
 
     public Breadcrumb append(final String segment) {
-        Element li = new Elements.Builder().li().css(active).textContent(segment).end().build();
-        root.appendChild(li);
+        root.appendChild(li().css(active).textContent(segment).asElement());
         return this;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

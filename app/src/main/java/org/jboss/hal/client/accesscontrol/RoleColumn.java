@@ -22,8 +22,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -57,8 +56,8 @@ import org.jboss.hal.core.mbui.dialog.ModifyResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -73,6 +72,8 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.small;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.*;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -185,20 +186,19 @@ public class RoleColumn extends FinderColumn<Role> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 if (item.isIncludeAll() && item.isScoped()) {
                     String scopedInfo = item.getBaseRole().getName() + " / " + String.join(", ", item.getScope());
-                    return new Elements.Builder()
-                            .span().css(itemText)
-                            .span().textContent(item.getName()).end()
-                            .start("small").css(subtitle).title(scopedInfo)
-                            .innerHtml(new SafeHtmlBuilder()
-                                    .appendEscaped(resources.constants().includesAll())
-                                    .appendHtmlConstant("<br/>") //NON-NLS
-                                    .appendEscaped(scopedInfo)
-                                    .toSafeHtml())
-                            .end()
-                            .end().build();
+                    return span().css(itemText)
+                            .add(span().textContent(item.getName()))
+                            .add(small().css(subtitle)
+                                    .title(scopedInfo)
+                                    .innerHtml(new SafeHtmlBuilder()
+                                            .appendEscaped(resources.constants().includesAll())
+                                            .appendHtmlConstant("<br/>") //NON-NLS
+                                            .appendEscaped(scopedInfo)
+                                            .toSafeHtml()))
+                            .asElement();
 
                 } else if (item.isIncludeAll()) {
                     return ItemDisplay.withSubtitle(item.getName(), resources.constants().includesAll());

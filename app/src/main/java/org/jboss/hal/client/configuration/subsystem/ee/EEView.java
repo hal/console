@@ -20,9 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -40,6 +38,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -97,13 +101,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);
 
-        Element navigationElement = new Elements.Builder()
-                .div()
-                .h(1).textContent(Names.DEPLOYMENTS).end()
-                .p().textContent(eeMetadata.getDescription().getDescription()).end()
-                .add(eeAttributesForm.asElement())
-                .end()
-                .build();
+        HTMLElement navigationElement = div()
+                .add(h(1).textContent(Names.DEPLOYMENTS))
+                .add(p().textContent(eeMetadata.getDescription().getDescription()))
+                .add(eeAttributesForm)
+                .asElement();
         navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
 
         // ============================================
@@ -119,13 +121,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .build();
         registerAttachable(globalModulesTable);
 
-        navigationElement = new Elements.Builder()
-                .div()
-                .h(1).textContent(Names.GLOBAL_MODULES).end()
-                .p().textContent(globalModulesMetadata.getDescription().getDescription()).end()
-                .add(globalModulesTable.asElement())
-                .end()
-                .build();
+        navigationElement = div()
+                .add(h(1).textContent(Names.GLOBAL_MODULES))
+                .add(p().textContent(globalModulesMetadata.getDescription().getDescription()))
+                .add(globalModulesTable)
+                .asElement();
         navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cubes"), navigationElement);
 
         // ============================================
@@ -143,13 +143,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
 
-        navigationElement = new Elements.Builder()
-                .div()
-                .h(1).textContent(DEFAULT_BINDINGS_NAME).end()
-                .p().textContent(defaultBindingsMetadata.getDescription().getDescription()).end()
-                .add(defaultBindingsForm.asElement())
-                .end()
-                .build();
+        navigationElement = div()
+                .add(h(1).textContent(DEFAULT_BINDINGS_NAME))
+                .add(p().textContent(defaultBindingsMetadata.getDescription().getDescription()))
+                .add(defaultBindingsForm)
+                .asElement();
         navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
                 navigationElement);
 
@@ -170,17 +168,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // main layout
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .addAll(navigation.panes())
-                .end()
-            .end();
-        // @formatter:on
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override
@@ -246,7 +236,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private Element buildServicePanel(String baseId, AddressTemplate template, String type) {
+    private HTMLElement buildServicePanel(String baseId, AddressTemplate template, String type) {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
@@ -281,13 +271,11 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         forms.put(template.lastName(), form);
         registerAttachable(form);
 
-        return new Elements.Builder()
-                .section()
-                .h(1).textContent(type).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
-                .add(table.asElement())
-                .add(form.asElement())
-                .end()
-                .build();
+        return section()
+                .add(h(1).textContent(type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(table)
+                .add(form)
+                .asElement();
     }
 }

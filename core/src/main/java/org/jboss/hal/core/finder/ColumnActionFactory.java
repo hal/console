@@ -19,8 +19,7 @@ import java.util.Collections;
 import java.util.function.Function;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
@@ -29,6 +28,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -107,17 +107,16 @@ public class ColumnActionFactory {
         return builder.build();
     }
 
-    public Element addButton(String type) {
+    public HTMLElement addButton(String type) {
         return addButton(type, pfIcon("add-circle-o"));
     }
 
-    public Element addButton(String type, String iconCss) {
-        return new Elements.Builder().span()
-                .css(iconCss)
+    public HTMLElement addButton(String type, String iconCss) {
+        return span().css(iconCss)
                 .title(resources.messages().addResourceTitle(type))
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
+                .asElement();
     }
 
     public <T> ColumnAction<T> refresh(String id) {
@@ -125,12 +124,12 @@ public class ColumnActionFactory {
     }
 
     public <T> ColumnAction<T> refresh(String id, ColumnActionHandler<T> handler) {
-        Element element = new Elements.Builder().span()
+        HTMLElement element = span()
                 .css(fontAwesome(CSS.refresh))
                 .title(resources.constants().refresh())
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
+                .asElement();
         return new ColumnAction.Builder<T>(id)
                 .element(element)
                 .handler(handler)

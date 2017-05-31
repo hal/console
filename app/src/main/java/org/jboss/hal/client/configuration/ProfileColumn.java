@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -38,10 +38,10 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -136,7 +136,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 if (item.hasDefined(INCLUDES) && !item.get(INCLUDES).asList().isEmpty()) {
                     String includes = item.get(INCLUDES).asList().stream()
                             .map(ModelNode::asString)

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -121,8 +121,8 @@ public class Roles implements Iterable<Role> {
      */
     @JsProperty(name = "all")
     @EsReturn("Role[]")
-    public JsArrayOf<Role> jsAll() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    public Array<Role> jsAll() {
+        Array<Role> array = new Array<>();
         for (Role role : lookup.values()) {
             array.push(role);
         }
@@ -134,8 +134,8 @@ public class Roles implements Iterable<Role> {
      */
     @JsProperty(name = "standardRoles")
     @EsReturn("Role[]")
-    public JsArrayOf<Role> jsStandardRoles() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    public Array<Role> jsStandardRoles() {
+        Array<Role> array = new Array<>();
         for (Role role : standardRoles) {
             array.push(role);
         }
@@ -147,8 +147,8 @@ public class Roles implements Iterable<Role> {
      */
     @JsProperty(name = "scopedRoles")
     @EsReturn("Role[]")
-    public JsArrayOf<Role> jsScopedRoles() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    public Array<Role> jsScopedRoles() {
+        Array<Role> array = new Array<>();
         for (Role role : scopedRoles) {
             array.push(role);
         }

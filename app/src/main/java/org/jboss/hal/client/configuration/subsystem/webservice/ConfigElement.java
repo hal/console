@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
@@ -41,6 +40,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerChain.POST_HANDLER_CHAIN;
 import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerChain.PRE_HANDLER_CHAIN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -55,7 +57,7 @@ import static org.jboss.hal.resources.CSS.columnAction;
  *
  * @author Harald Pehl
  */
-class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePresenter> {
+class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
 
     private final Pages pages;
     private final Table<NamedNode> table;
@@ -99,16 +101,12 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
                 .prepareReset(form -> presenter.resetConfig(form))
                 .build();
 
-        // @formatter:off
-        Element section = new Elements.Builder()
-            .section()
-                .h(1).textContent(configType.type).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement section = section()
+                .add(h(1).textContent(configType.type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         handlerChain = new HandlerChainElement(configType, metadataRegistry, tableButtonFactory);
         handler = new HandlerElement(configType, metadataRegistry, tableButtonFactory);
@@ -134,7 +132,7 @@ class ConfigElement implements IsElement, Attachable, HasPresenter<WebservicePre
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return pages.asElement();
     }
 

@@ -18,11 +18,13 @@ package org.jboss.hal.ballroom.form;
 import javax.annotation.Nullable;
 
 import com.google.gwt.user.client.ui.Focusable;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.helpBlock;
 import static org.jboss.hal.resources.CSS.inputGroup;
@@ -47,22 +49,22 @@ interface Appearance<T> extends IsElement, Attachable, Focusable {
 
     // ------------------------------------------------------ static builder methods
 
-    static Element inputGroup() {
-        return new Elements.Builder().div().css(inputGroup).end().build();
+    static HTMLElement inputGroup() {
+        return div().css(inputGroup).asElement();
     }
 
-    static Element helpBlock() {
-        return new Elements.Builder().span().css(helpBlock).end().build();
+    static HTMLElement helpBlock() {
+        return span().css(helpBlock).asElement();
     }
 
-    static Element restrictedMarker() {
-        return new Elements.Builder()
-                .span().css(inputGroupAddon).start("i").css(fontAwesome("lock")).end().end()
-                .build();
+    static HTMLElement restrictedMarker() {
+        return span().css(inputGroupAddon)
+                .add(i().css(fontAwesome("lock")))
+                .asElement();
     }
 
-    static Element hintMarker() {
-        return new Elements.Builder().span().css(inputGroupAddon).end().build();
+    static HTMLElement hintMarker() {
+        return span().css(inputGroupAddon).asElement();
     }
 
 

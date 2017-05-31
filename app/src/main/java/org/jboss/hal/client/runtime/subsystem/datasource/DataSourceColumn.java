@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
@@ -34,12 +34,12 @@ import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -162,7 +162,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
@@ -172,7 +172,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Element getIcon() {
+            public HTMLElement getIcon() {
                 if (!dataSource.isStatisticsEnabled()) {
                     return Icons.unknown();
                 } else if (!dataSource.isEnabled()) {

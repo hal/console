@@ -25,8 +25,7 @@ import javax.inject.Provider;
 import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
@@ -45,10 +44,10 @@ import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -60,6 +59,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
@@ -156,7 +156,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 if (item.getRole().isScoped()) {
                     return ItemDisplay.withSubtitle(item.getRole().getName(),
                             item.getRole().getBaseRole().getName() + " / " +
@@ -171,14 +171,10 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             }
 
             @Override
-            public Element getIcon() {
-                Element icon = Browser.getDocument().createSpanElement();
-                if (item.isInclude()) {
-                    icon.setClassName(fontAwesome("plus"));
-                } else {
-                    icon.setClassName(fontAwesome("minus"));
-                }
-                return icon;
+            public HTMLElement getIcon() {
+                return item.isInclude()
+                        ? span().css(fontAwesome("plus")).asElement()
+                        : span().css(fontAwesome("minus")).asElement();
             }
 
             @Override

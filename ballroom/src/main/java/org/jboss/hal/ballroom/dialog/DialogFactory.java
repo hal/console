@@ -16,10 +16,11 @@
 package org.jboss.hal.ballroom.dialog;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.SMALL;
 import static org.jboss.hal.resources.CSS.centerBlock;
 import static org.jboss.hal.resources.CSS.spinner;
@@ -44,7 +45,7 @@ public final class DialogFactory {
      * Creates and shows a confirmation dialog using the question and the provided element. When confirmed the specified
      * callback is executed.
      */
-    public static void showConfirmation(String title, SafeHtml question, Element element, Callback confirm) {
+    public static void showConfirmation(String title, SafeHtml question, HTMLElement element, Callback confirm) {
         buildConfirmation(title, question, element, confirm).show();
     }
 
@@ -55,17 +56,20 @@ public final class DialogFactory {
      * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
      * on the returned dialog.
      */
-    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, Callback confirm) {
+    public static Dialog buildConfirmation(String title, SafeHtml question, HTMLElement element, Callback confirm) {
         return buildConfirmation(title, question, element, SMALL, confirm);
     }
 
-    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, Dialog.Size size,
+    public static Dialog buildConfirmation(String title, SafeHtml question, HTMLElement element, Dialog.Size size,
             Callback confirm) {
-        Element content;
+        HTMLElement content;
         if (element != null) {
-            content = new Elements.Builder().div().p().innerHtml(question).end().add(element).end().build();
+            content = div()
+                    .add(p().innerHtml(question))
+                    .add(element)
+                    .asElement();
         } else {
-            content = new Elements.Builder().p().innerHtml(question).end().build();
+            content = p().innerHtml(question).asElement();
         }
 
         return new Dialog.Builder(title)
@@ -82,11 +86,9 @@ public final class DialogFactory {
      * on the returned dialog.
      */
     public static BlockingDialog buildBlocking(String title, SafeHtml message) {
-        Element element = new Elements.Builder()
-                .div().css(centerBlock)
-                .p().style("text-align: center").innerHtml(message).end()
-                .end()
-                .build();
+        HTMLElement element = div().css(centerBlock)
+                .add(p().style("text-align: center").innerHtml(message))
+                .asElement();
 
         return new BlockingDialog(new Dialog.Builder(title)
                 .size(SMALL)
@@ -100,12 +102,10 @@ public final class DialogFactory {
      * on the returned dialog.
      */
     public static BlockingDialog buildLongRunning(String title, SafeHtml message) {
-        Element element = new Elements.Builder()
-                .div().css(centerBlock)
-                .p().style("text-align: center").innerHtml(message).end()
-                .div().css(spinner, spinnerLg).end()
-                .end()
-                .build();
+        HTMLElement element = div().css(centerBlock)
+                .add(p().style("text-align: center").innerHtml(message))
+                .add(div().css(spinner, spinnerLg))
+                .asElement();
 
         return new BlockingDialog(new Dialog.Builder(title)
                 .size(SMALL)

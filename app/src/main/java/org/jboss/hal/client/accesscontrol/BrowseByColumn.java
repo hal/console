@@ -19,8 +19,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import com.google.gwt.resources.client.ExternalTextResource;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
@@ -34,6 +33,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+
+import static org.jboss.gwt.elemento.core.Elements.div;
 
 /**
  * @author Harald Pehl
@@ -55,7 +56,7 @@ public class BrowseByColumn extends StaticItemColumn {
                     event -> accessControl.switchProvider());
 
             previewBuilder().add(warning);
-            Element content = Browser.getDocument().createDivElement();
+            HTMLElement content = div().asElement();
             Previews.innerHtml(content, resource);
             previewBuilder().add(content);
         }

@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -33,6 +33,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NONE;
 
 /**
@@ -41,11 +44,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NONE;
  *
  * @author Harald Pehl
  */
-class TransportElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
+class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final EmptyState emptyState;
     private final Form<ModelNode> form;
-    private final Element root;
+    private final HTMLElement root;
     private CacheContainerPresenter presenter;
 
     TransportElement(final MetadataRegistry metadataRegistry, final Resources resources) {
@@ -62,23 +65,19 @@ class TransportElement implements IsElement, Attachable, HasPresenter<CacheConta
                 .prepareReset(f -> presenter.resetJgroups(f))
                 .build();
 
-        // @formatter:off
-        root = new Elements.Builder()
-            .div()
-                .h(1).textContent(Names.JGROUPS).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        root = div()
+                .add(h(1).textContent(Names.JGROUPS))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(emptyState)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         Elements.setVisible(emptyState.asElement(), false);
         Elements.setVisible(form.asElement(), false);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

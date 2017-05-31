@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -122,10 +123,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .icon(fontAwesome("sitemap"))
                 .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
                 .build();
-        noRootLogger.asElement().getClassList().add(marginTopLarge);
+        noRootLogger.asElement().classList.add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
-        rootLoggerForm.asElement().getParentElement().appendChild(noRootLogger.asElement());
+        rootLoggerForm.asElement().parentNode.appendChild(noRootLogger.asElement());
         rootLoggerVisibility(false);
 
         // add suggest handler
@@ -161,8 +162,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     private void rootLoggerVisibility(final boolean visible) {
-        Elements.setVisible(Browser.getDocument().getElementById("logging-profile-root-logger-header"), visible);
-        Elements.setVisible(Browser.getDocument().getElementById("logging-profile-root-logger-description"), visible);
+        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-profile-root-logger-header"),
+                visible);
+        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-profile-root-logger-description"),
+                visible);
         Elements.setVisible(rootLoggerForm.asElement(), visible);
         Elements.setVisible(noRootLogger.asElement(), !visible);
     }
@@ -301,16 +304,18 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
-        saveForm("Periodic ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
-                .resolve(selectionAwareStatementContext, name), changedValues, metadata);
+        saveForm("Periodic ActionHandler", name,
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+                        .resolve(selectionAwareStatementContext, name), changedValues, metadata);
     }
 
     void resetPeriodicHandler(Form<NamedNode> form) {
         String name = form.getModel().getName();
         Metadata metadata = mbuiContext.metadataRegistry()
                 .lookup(LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*"));
-        resetForm("Periodic ActionHandler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
-                .resolve(selectionAwareStatementContext, name), form, metadata);
+        resetForm("Periodic ActionHandler", name,
+                SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+                        .resolve(selectionAwareStatementContext, name), form, metadata);
     }
 
     @Override

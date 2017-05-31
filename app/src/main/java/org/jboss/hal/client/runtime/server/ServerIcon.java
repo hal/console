@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.server;
 
 import java.util.function.Function;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Icons;
@@ -25,7 +25,7 @@ import org.jboss.hal.resources.Icons;
 /**
  * @author Harald Pehl
  */
-class ServerIcon implements Function<Server, Element> {
+class ServerIcon implements Function<Server, HTMLElement> {
 
     private final ServerActions serverActions;
 
@@ -34,8 +34,8 @@ class ServerIcon implements Function<Server, Element> {
     }
 
     @Override
-    public Element apply(final Server server) {
-        final Element[] element = new Element[1];
+    public HTMLElement apply(final Server server) {
+        final HTMLElement[] element = new HTMLElement[1];
         ServerStatusSwitch sss = new ServerStatusSwitch(serverActions) {
             @Override
             protected void onPending(final Server server) {

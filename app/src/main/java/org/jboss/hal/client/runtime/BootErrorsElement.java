@@ -17,12 +17,11 @@ package org.jboss.hal.client.runtime;
 
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PreListItem;
 import org.jboss.hal.ballroom.form.PreTextItem;
@@ -43,6 +42,11 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -50,15 +54,13 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Harald Pehl
  */
-public class BootErrorsElement implements IsElement, Attachable {
+public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
 
-    private static final String BOOT_ERRORS_SECTION = "bootErrorsSection";
-
-    private final Element bootErrorsSection;
+    private final HTMLElement bootErrorsSection;
     private final Table<ModelNode> table;
     private final Form<ModelNode> form;
     private final EmptyState noBootErrors;
-    private final Element root;
+    private final HTMLElement root;
 
     public BootErrorsElement(final AddressTemplate template,
             final MetadataRegistry metadataRegistry, final Capabilities capabilities,
@@ -108,27 +110,20 @@ public class BootErrorsElement implements IsElement, Attachable {
                 .description(resources.messages().noBootErrors())
                 .build();
 
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .section().rememberAs(BOOT_ERRORS_SECTION)
-                        .h(1).textContent(Names.BOOT_ERRORS).end()
-                        .p().textContent(resources.messages().bootErrors()).end()
-                        .add(table.asElement())
-                        .add(form.asElement())
-                    .end()
-                    .add(noBootErrors)
-                .end()
-            .end();
-        // @formatter:on
-
-        this.bootErrorsSection = layoutBuilder.referenceFor(BOOT_ERRORS_SECTION);
-        this.root = layoutBuilder.build();
+        root = row()
+                .add(column()
+                        .add(bootErrorsSection = section()
+                                .add(h(1).textContent(Names.BOOT_ERRORS))
+                                .add(p().textContent(resources.messages().bootErrors()))
+                                .add(table)
+                                .add(form)
+                                .asElement())
+                        .add(noBootErrors))
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

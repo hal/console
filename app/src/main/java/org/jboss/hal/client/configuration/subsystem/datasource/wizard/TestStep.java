@@ -21,8 +21,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -34,12 +33,14 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
@@ -63,7 +64,7 @@ class TestStep extends WizardStep<Context, State> {
     private final Environment environment;
     private final Provider<Progress> progress;
     private final Resources resources;
-    private final Element root;
+    private final HTMLElement root;
 
     TestStep(final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -82,22 +83,17 @@ class TestStep extends WizardStep<Context, State> {
         SafeHtml description = environment.isStandalone()
                 ? resources.messages().testConnectionStandalone(testConnection)
                 : resources.messages().testConnectionDomain(testConnection);
-        // @formatter:off
-        root = new Elements.Builder()
-            .div()
-                .div().innerHtml(description).end()
-                .div().css(blankSlatePf)
-                    .button(resources.constants().testConnection()).css(btn, btnLg, btnPrimary)
-                        .on(click, event -> testConnection())
-                    .end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
+
+        root = div()
+                .add(div().innerHtml(description))
+                .add(div().css(blankSlatePf)
+                        .add(button(resources.constants().testConnection()).css(btn, btnLg, btnPrimary)
+                                .on(click, event -> testConnection())))
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

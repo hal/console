@@ -18,9 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -30,6 +28,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -82,32 +82,32 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         credentialStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("credential-reference")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
 
         filteringKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_FILTERING_KEY_STORE, "Filtering Key Store", FILTERING_KEY_STORE_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
 
         keystoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_KEY_STORE, "Key Store", KEY_STORE_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("credential-reference")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
 
         CustomPropertiesItem newItemAttributes = new CustomPropertiesItem("new-item-attributes",
                 resources.messages().mappingHint(), " | ");
@@ -115,128 +115,122 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("new-item-template", asList(newItemAttributes))
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("new-item-template", asList(newItemAttributes))
+                .create();
 
         aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_AGGREGATE_PROVIDERS, "Aggregate Providers", AGGREGATE_PROVIDERS_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         clientSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_CLIENT_SSL_CONTEXT, "Client SSL Context", CLIENT_SSL_CONTEXT_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         keyManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_KEY_MANAGER, "Key Manager", KEY_MANAGER_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("credential-reference")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
 
         providerLoaderView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_PROVIDER_LOADER, "Provider Loader", PROVIDER_LOADER_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         serverSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_SERVER_SSL_CONTEXT, "Server SSL Context", SERVER_SSL_CONTEXT_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         securityDomainView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_SECURITY_DOMAIN, "Security Domain", SECURITY_DOMAIN_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsPage("realms")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("realms")
+                .create();
 
         securityPropertyView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_SECURITY_PROPERTY, "Security Property", SECURITY_PROPERTY_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
 
         trustManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_TRUST_MANAGER, "Trust Manager", TRUST_MANAGER_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("certificate-revocation-list")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("certificate-revocation-list")
+                .create();
 
         authenticationConfigurationView = new ResourceView.Builder(tableButtonFactory,
                 primaryIdAuth, Ids.ELYTRON_AUTHENTICATION_CONFIGURATION, "Authentication Configuration",
                 AUTHENTICATION_CONF_ADDRESS, this, () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("credential-reference")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
 
         authenticationContextView = new ResourceView.Builder(tableButtonFactory, primaryIdAuth,
                 Ids.ELYTRON_AUTHENTICATION_CONTEXT, "Authentication Context", AUTHENTICATION_CONTEXT_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsPage("match-rules")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("match-rules")
+                .create();
 
         dirContextView = new ResourceView.Builder(tableButtonFactory, primaryIdDirCtx,
                 Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_ADDRESS, this,
                 () -> presenter.reload())
-            .setNavigation(navigation)
-            .setMetadataRegistry(metadataRegistry)
-            .setTableAddCallback((name, address) -> presenter.reload())
-            .build()
-            .addComplexAttributeAsTab("credential-reference")
-            .primaryLevel("fa fa-bug")
-            .create();
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .primaryLevel("fa fa-bug")
+                .create();
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
 
     }
 

@@ -40,8 +40,7 @@ class UndertowSubsystemPreview extends PreviewContent<StaticItem> {
         this.attributes = new PreviewAttributes<>(new ModelNode(),
                 asList("default-server",
                         "default-servlet-container",
-                        "default-virtual-host"))
-                .end();
+                        "default-virtual-host"));
 
         previewBuilder().addAll(attributes);
     }

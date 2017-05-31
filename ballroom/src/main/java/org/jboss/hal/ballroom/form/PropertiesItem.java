@@ -26,14 +26,16 @@ import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.uniqueId;
@@ -66,25 +68,21 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     private class PropertiesEditingAppearance extends EditingAppearance<Map<String, String>> {
 
-        private final Element tagsContainer;
+        private final HTMLElement tagsContainer;
 
-        PropertiesEditingAppearance(elemental.html.InputElement inputElement, SafeHtml inputHelp) {
+        PropertiesEditingAppearance(HTMLInputElement inputElement, SafeHtml inputHelp) {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), inputElement);
 
-            // @formatter:off
-            tagsContainer = new Elements.Builder()
-                .div()
-                    .id(Ids.build("tags", "container", uniqueId())).css(tagManagerContainer)
-                .end()
-            .build();
-            // @formatter:on
+            tagsContainer = div().css(tagManagerContainer)
+                    .id(Ids.build("tags", "container", uniqueId()))
+                    .asElement();
 
-            helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setInnerHTML(inputHelp.asString());
+            helpBlock.classList.add(CSS.hint);
+            helpBlock.innerHTML = inputHelp.asString();
 
             inputContainer.appendChild(tagsContainer);
             inputContainer.appendChild(helpBlock);
-            inputGroup.getClassList().add(properties);
+            inputGroup.classList.add(properties);
         }
 
         @Override
@@ -96,7 +94,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         public void attach() {
             super.attach();
             TagsManager.Options options = TagsManager.Defaults.get();
-            options.tagsContainer = "#" + tagsContainer.getId();
+            options.tagsContainer = "#" + tagsContainer.id;
             options.validator = PROPERTY_REGEX::test;
 
             TagsManager.Bridge bridge = TagsManager.Bridge.element(inputElement);
@@ -116,7 +114,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             if (attached) {
                 TagsManager.Bridge.element(inputElement).setTags(asTags(value));
             } else {
-                inputElement.setValue(asString(value));
+                inputElement.value = asString(value);
             }
         }
 
@@ -141,34 +139,34 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             if (attached) {
                 TagsManager.Bridge.element(inputElement).removeAll();
             } else {
-                inputElement.setValue("");
+                inputElement.value = "";
             }
         }
 
         @Override
         void applyEnabled() {
             super.applyEnabled();
-            inputContainer.getClassList().remove(disabled);
+            inputContainer.classList.remove(disabled);
         }
 
         @Override
         void unapplyEnabled() {
             super.unapplyEnabled();
-            inputContainer.getClassList().add(disabled);
+            inputContainer.classList.add(disabled);
         }
 
         @Override
         void applyInvalid(final String errorMessage) {
-            root.getClassList().add(hasError);
-            helpBlock.getClassList().remove(CSS.hint);
-            helpBlock.setTextContent(errorMessage);
+            root.classList.add(hasError);
+            helpBlock.classList.remove(CSS.hint);
+            helpBlock.textContent = errorMessage;
         }
 
         @Override
         void unapplyInvalid() {
-            root.getClassList().remove(hasError);
-            helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setInnerHTML(MESSAGES.propertiesHint().asString());
+            root.classList.remove(hasError);
+            helpBlock.classList.add(CSS.hint);
+            helpBlock.innerHTML = MESSAGES.propertiesHint().asString();
         }
     }
 
@@ -195,12 +193,8 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         addAppearance(Form.State.READONLY, new PropertiesReadOnlyAppearance(viewSeparator));
 
         // editing appearance
-        elemental.html.InputElement inputElement = Browser.getDocument().createInputElement();
-        inputElement.setType("text"); //NON-NLS
-        inputElement.getClassList().add(formControl);
-        inputElement.getClassList().add(properties);
-
-        addAppearance(Form.State.EDITING, new PropertiesEditingAppearance(inputElement, inputHelp));
+        addAppearance(Form.State.EDITING, new PropertiesEditingAppearance(
+                input(text).css(formControl, properties).asElement(), inputHelp));
     }
 
     @Override
