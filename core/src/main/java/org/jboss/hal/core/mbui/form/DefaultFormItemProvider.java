@@ -33,12 +33,12 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -146,6 +146,11 @@ class DefaultFormItemProvider implements FormItemProvider {
                             formItem = listItem;
                             checkCapabilityReference(attributeDescription, formItem);
                         }
+                    } else {
+                        logger.warn(
+                                "Unsupported model type {} for attribute {} in metadata {}. Unable to create a form item. Attribute will be skipped.",
+                                type.name(), property.getName(), metadata.getTemplate());
+                        break;
                     }
                     break;
                 }

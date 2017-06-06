@@ -35,11 +35,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static org.jboss.hal.ballroom.form.Decoration.*;
-import static org.jboss.hal.resources.CSS.disabled;
-import static org.jboss.hal.resources.CSS.formControl;
-import static org.jboss.hal.resources.CSS.hasError;
-import static org.jboss.hal.resources.CSS.properties;
-import static org.jboss.hal.resources.CSS.tagManagerContainer;
+import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.uniqueId;
 
 /**
@@ -49,8 +45,11 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     private static class PropertiesReadOnlyAppearance extends ReadOnlyAppearance<Map<String, String>> {
 
-        PropertiesReadOnlyAppearance() {
+        String viewSeparator;
+
+        PropertiesReadOnlyAppearance(String viewSeparator) {
             super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            this.viewSeparator = viewSeparator;
         }
 
         @Override
@@ -60,7 +59,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public String asString(final Map<String, String> value) {
-            return Joiner.on(", ").withKeyValueSeparator(" \u21D2 ").join(value);
+            return Joiner.on(viewSeparator).withKeyValueSeparator(" \u21D2 ").join(value);
         }
     }
 
@@ -186,10 +185,14 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     public PropertiesItem(final String name, final String label, final SafeHtml inputHelp) {
+        this(name, label, inputHelp, ", ");
+    }
+
+    public PropertiesItem(final String name, final String label, final SafeHtml inputHelp, String viewSeparator) {
         super(name, label, null);
 
         // read-only appearance
-        addAppearance(Form.State.READONLY, new PropertiesReadOnlyAppearance());
+        addAppearance(Form.State.READONLY, new PropertiesReadOnlyAppearance(viewSeparator));
 
         // editing appearance
         elemental.html.InputElement inputElement = Browser.getDocument().createInputElement();

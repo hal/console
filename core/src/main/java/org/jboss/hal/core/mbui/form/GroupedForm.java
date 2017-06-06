@@ -455,6 +455,11 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     }
 
     @Override
+    public Map<String, Object> getUpdatedModel() {
+        return forms.get(0).getUpdatedModel();
+    }
+
+    @Override
     public void addFormValidation(final FormValidation<T> formValidation) {
         forms.get(0).addFormValidation(formValidation);
     }

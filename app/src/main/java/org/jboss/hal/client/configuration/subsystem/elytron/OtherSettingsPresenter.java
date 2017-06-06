@@ -16,6 +16,8 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,11 +33,14 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
@@ -48,7 +53,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
-        implements SupportsExpertMode {
+        implements SupportsExpertMode, ElytronPresenter {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -119,15 +124,15 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     }
 
     @Override
-    protected void reload() {
+    public void reload() {
 
         ResourceAddress address = ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
         crud.readChildren(address, asList(
                 "key-store",
-                "key-managers",
+                "key-manager",
                 "server-ssl-context",
                 "client-ssl-context",
-                "trust-managers",
+                "trust-manager",
                 "credential-store",
                 "filtering-key-store",
                 "ldap-key-store",
@@ -160,4 +165,26 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 });
     }
 
+    @Override
+    public void saveForm(final String title, final String name, final AddressTemplate template,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.save(title, name, address, changedValues, metadata, () -> reload());
+    }
+
+    @Override
+    public void saveComplexForm(final String title, final String name, String complexAttributeName, final AddressTemplate template,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+
+    }
+
+    @Override
+    public void resetComplexAttribute(final String type, final String name, final AddressTemplate template,
+            final Set<String> attributes, final Metadata metadata, final Callback callback) {
+        crud.reset(type, name, template, attributes, metadata, callback);
+    }
 }

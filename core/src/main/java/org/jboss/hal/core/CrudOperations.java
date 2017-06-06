@@ -700,6 +700,27 @@ public class CrudOperations {
     }
 
     /**
+     * Write the changed values to the specified attribute in the resource. After the resource has been saved a standard
+     * success message is fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
+     *
+     * @param type          the human readable resource type used in the success message
+     * @param name          the resource name
+     * @param complexAttributeName The complex attribute name
+     * @param address       the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata      the metadata of the attributes in the change set
+     * @param callback      the callback executed after the resource has been saved
+     */
+    @JsIgnore
+    public void save(final String type, final String name, String complexAttributeName, final ResourceAddress address,
+            final Map<String, Object> changedValues, final Metadata metadata, final Callback callback) {
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, complexAttributeName, metadata);
+        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
+    }
+
+    /**
      * Write the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      * <p>
