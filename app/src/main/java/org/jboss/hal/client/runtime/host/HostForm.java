@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.runtime.host;
 
+import java.util.Map;
+
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -89,6 +91,11 @@ public class HostForm<T extends ModelNode> implements Form<T> {
 
     @Override
     public Iterable<FormItem> getBoundFormItems() {return form.getBoundFormItems();}
+
+    @Override
+    public Map<String, Object> getUpdatedModel() {
+        return form.getUpdatedModel();
+    }
 
     @Override
     public void addFormValidation(final FormValidation<T> formValidation) {form.addFormValidation(formValidation);}

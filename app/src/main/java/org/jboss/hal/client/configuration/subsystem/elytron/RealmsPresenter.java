@@ -16,6 +16,8 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -28,14 +30,20 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
@@ -48,7 +56,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
-        implements SupportsExpertMode {
+        implements SupportsExpertMode, ElytronPresenter {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -83,6 +91,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private MetadataRegistry metadataRegistry;
     private final Resources resources;
 
     @Inject
@@ -93,11 +102,13 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
 
@@ -119,8 +130,46 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                         resources.constants().settings(), Names.SECURITY_REALMS);
     }
 
+    public void addLDAPRealm() {
+
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_ADDRESS);
+
+        // repackage "identity-mapping" as it is a required attribute to be displayed in the form of the ADD dialog.
+        String complexAttributeName = "identity-mapping";
+        // the repackaged attribute must be prefixed so, the user knowns where it comes from.
+        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true);
+
+        new AddResourceDialog(Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(Names.ELYTRON_LDAP_REALM), nestedMetadata,
+                (name, model) -> {
+                    // once the model is posted, it must be correctly assembled as the attributes are not correct,
+                    // related to the r-r-d
+                    ModelNodeHelper.reassembleComplexAttribute(complexAttributeName, model, true);
+                    ResourceAddress address = LDAP_REALM_ADDRESS.resolve(statementContext, name);
+                    crud.add(Names.ELYTRON_LDAP_REALM, name, address, model, (name1, address1) -> reload());
+                }).show();
+
+    }
+
+    public void addPropertiesRealm() {
+
+        Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_ADDRESS);
+
+        // repackage "users-properties" as it is a required attribute to be displayed in the form of the ADD dialog.
+        String complexAttributeName = "users-properties";
+        // the repackaged attribute must be prefixed so, the user knowns where it comes from.
+        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true);
+
+        new AddResourceDialog(Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(Names.ELYTRON_PROPERTIES_REALM), nestedMetadata,
+                (name, model) -> {
+                    ModelNodeHelper.reassembleComplexAttribute(complexAttributeName, model, true);
+                    ResourceAddress address = PROPERTIES_REALM_ADDRESS.resolve(statementContext, name);
+                    crud.add(Names.ELYTRON_PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
+                }).show();
+
+    }
+
     @Override
-    protected void reload() {
+    public void reload() {
 
         ResourceAddress address = ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
         crud.readChildren(address, asList(
@@ -159,6 +208,32 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                     getView().updateSimpleRegexRealmMapper(asNamedNodes(result.step(14).get(RESULT).asPropertyList()));
                     // @formatter:on
                 });
+    }
+
+    @Override
+    public void saveForm(final String title, final String name, final AddressTemplate template,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.save(title, name, address, changedValues, metadata, () -> reload());
+    }
+
+    @Override
+    public void saveComplexForm(final String title, final String name, String complexAttributeName, final AddressTemplate template,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+
+    }
+
+    @Override
+    public void resetComplexAttribute(final String type, final String name, final AddressTemplate template,
+            final Set<String> attributes,
+            final Metadata metadata, final Callback callback) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.reset(type, name, address, attributes, metadata, callback);
     }
 
 }

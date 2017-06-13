@@ -274,9 +274,13 @@ public interface Form<T> extends IsElement, Attachable {
     @JsIgnore
     Iterable<FormItem> getBoundFormItems();
 
-    /**
-     * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
-     */
+    @JsIgnore
+    Map<String, Object> getUpdatedModel();
+
+
+        /**
+         * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
+         */
     @JsIgnore
     void addFormValidation(FormValidation<T> formValidation);
 }

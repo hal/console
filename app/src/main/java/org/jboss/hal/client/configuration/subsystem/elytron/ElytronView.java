@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.dmr.ModelNode;
+package org.jboss.hal.client.configuration.subsystem.elytron;
+
+import org.jboss.hal.ballroom.Attachable;
 
 /**
- * Takes care of the mapping between form fields and the model.
+ * This class is a wrapper around calls to HalViewImpl that are protected,
  *
- * @author Harald Pehl
+ * @author Claudio Miranda <claudio@redhat.com>
  */
-public interface DataMapping<T> {
+public interface ElytronView {
 
-    void newModel(T model, Form<T> form);
+    /**
+     *
+     * Call to HalViewImpl.registerAttachable(first, rest);
+     *
+     * @param first
+     * @param rest
+     */
+    void registerComponents(Attachable first, Attachable... rest);
 
-    void populateFormItems(T model, Form<T> form);
-
-    void populateFormItem(final String id, String name, final ModelNode attributeDescription,
-            final ModelNode value, final FormItem formItem);
-
-    void clearFormItems(Form<T> form);
-
-    void persistModel(T model, Form<T> form);
-
-    void persistModel(String id, T model, final Iterable<FormItem> formItems);
 }

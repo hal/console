@@ -87,6 +87,9 @@ public interface Names {
     String DOMAIN_CONTROLLER = "Domain Controller";
 
     String EE = "EE";
+    String ELYTRON = "Elytron";
+    String ELYTRON_LDAP_REALM = "LDAP Realm";
+    String ELYTRON_PROPERTIES_REALM = "Properties Realm";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";

@@ -153,10 +153,10 @@ interface AddressTemplates {
     // ======== other settings: authentication, stores, dir-context, SSL
 
     public static final String KEY_STORE = ELYTRON_SUBSYSTEM + "/key-store=*";
-    public static final String KEY_MANAGER = ELYTRON_SUBSYSTEM + "/key-managers=*";
+    public static final String KEY_MANAGER = ELYTRON_SUBSYSTEM + "/key-manager=*";
     public static final String SERVER_SSL_CONTEXT = ELYTRON_SUBSYSTEM + "/server-ssl-context=*";
     public static final String CLIENT_SSL_CONTEXT = ELYTRON_SUBSYSTEM + "/client-ssl-context=*";
-    public static final String TRUST_MANAGER = ELYTRON_SUBSYSTEM + "/trust-managers=*";
+    public static final String TRUST_MANAGER = ELYTRON_SUBSYSTEM + "/trust-manager=*";
     public static final String CREDENTIAL_STORE = ELYTRON_SUBSYSTEM + "/credential-store=*";
     public static final String FILTERING_KEY_STORE = ELYTRON_SUBSYSTEM + "/filtering-key-store=*";
     public static final String LDAP_KEY_STORE = ELYTRON_SUBSYSTEM + "/ldap-key-store=*";
