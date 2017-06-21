@@ -221,6 +221,7 @@ public interface ModelDescriptionConstants {
     String INFINISPAN = "infinispan";
     String INTERFACE = "interface";
     String IO = "io";
+    String ITEM = "item";
 
     String JCA = "jca";
     String JDBC = "jdbc";
@@ -241,8 +242,8 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LICENSE = "license";
     String LINES = "lines";
-    String LIST_ADD = "list-add";
-    String LIST_REMOVE = "list-remove";
+    String LIST_ADD_OPERATION = "list-add";
+    String LIST_REMOVE_OPERATION = "list-remove";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOCAL_DESTINATION_OUTBOUND_SOCKET_BINDING = "local-destination-outbound-socket-binding";

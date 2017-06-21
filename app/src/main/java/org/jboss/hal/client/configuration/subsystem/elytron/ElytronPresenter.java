@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -38,8 +39,17 @@ public interface ElytronPresenter {
             final AddressTemplate template,
             final Map<String, Object> changedValues, final Metadata metadata);
 
+    void listAdd(String title, String name, String complexAttributeName, AddressTemplate template,
+            Map<String, Object> changedValues, Metadata metadata);
+
+    void listRemove(String title, String resourceName, String complexAttributeName, int index,
+            AddressTemplate template);
+
     void resetComplexAttribute(String type, String name, AddressTemplate template, Set<String> attributes,
             Metadata metadata, Callback callback);
 
     void reload();
+
+    void launchAddDialog(AddressTemplate template, Function<String, String> resourceNameFunction, String complexAttributeName,
+            Metadata metadata, String title);
 }

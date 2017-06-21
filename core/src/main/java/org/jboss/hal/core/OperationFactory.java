@@ -202,6 +202,56 @@ public class OperationFactory {
         return new Composite(operation);
     }
 
+    /**
+     * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
+     * list-add} operation.
+     *
+     * @param address   the fq address used for the operations
+     * @param changeSet the changed values
+     * @param complexAttributeName the complex attribute name
+     * @param metadata  the metadata which should contain the attribute definitions of the change-set
+     */
+    public Composite fromListChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
+            String complexAttributeName, final Metadata metadata) {
+
+        ResourceDescription resourceDescription = metadata.getDescription();
+
+        ModelNode payload = new ModelNode();
+        changeSet.forEach((attribute, value) -> {
+            if (!isNullOrEmpty(value)) {
+                ModelNode valueNode = asValueNode(attribute, value, resourceDescription, complexAttributeName);
+                if (valueNode != null) {
+                    payload.get(attribute).set(valueNode);
+                }
+            }
+        });
+
+        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                            .param(NAME, complexAttributeName)
+                            .param(VALUE, payload)
+                            .build();
+
+        return new Composite(operation);
+    }
+
+    /**
+     * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
+     * list-add} operation.
+     *
+     * @param address   the fq address used for the operations
+     * @param complexAttributeName the complex attribute name
+     */
+    public Composite fromListChangeSet(final ResourceAddress address, final ModelNode payload,
+            String complexAttributeName) {
+
+        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                            .param(NAME, complexAttributeName)
+                            .param(VALUE, payload)
+                            .build();
+
+        return new Composite(operation);
+    }
+
 
     /**
      * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are
