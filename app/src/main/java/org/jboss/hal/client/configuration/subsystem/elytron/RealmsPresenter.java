@@ -18,12 +18,14 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -31,7 +33,9 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -137,7 +141,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         // repackage "identity-mapping" as it is a required attribute to be displayed in the form of the ADD dialog.
         String complexAttributeName = "identity-mapping";
         // the repackaged attribute must be prefixed so, the user knowns where it comes from.
-        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true);
+        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true, true);
 
         new AddResourceDialog(Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(Names.ELYTRON_LDAP_REALM), nestedMetadata,
                 (name, model) -> {
@@ -157,7 +161,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         // repackage "users-properties" as it is a required attribute to be displayed in the form of the ADD dialog.
         String complexAttributeName = "users-properties";
         // the repackaged attribute must be prefixed so, the user knowns where it comes from.
-        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true);
+        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true, true);
 
         new AddResourceDialog(Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX), resources.messages().addResourceTitle(Names.ELYTRON_PROPERTIES_REALM), nestedMetadata,
                 (name, model) -> {
@@ -224,7 +228,14 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
         ResourceAddress address = template.resolve(statementContext, name);
         crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+    }
 
+    @Override
+    public void listAdd(final String title, final String name, String complexAttributeName, final AddressTemplate template,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        crud.listAdd(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
@@ -234,6 +245,34 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
         ResourceAddress address = template.resolve(statementContext, name);
         crud.reset(type, name, address, attributes, metadata, callback);
+    }
+
+    public void launchOnAddJDBCRealm() {
+
+    }
+
+    @Override
+    public void launchAddDialog(AddressTemplate template, Function<String,String> resourceNameFunction, String complexAttributeName,
+            Metadata metadata, String title) {
+
+        String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
+        ResourceAddress address = template.resolve(statementContext, resourceNameFunction.apply(null));
+
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .fromRequestProperties()
+                .build();
+
+        AddResourceDialog dialog = new AddResourceDialog(title, form,
+                (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
+        dialog.show();
+    }
+
+    @Override
+    public void listRemove(String title, String resourceName, String complexAttributeName, int index,
+            AddressTemplate template) {
+
+        ResourceAddress address = template.resolve(statementContext, resourceName);
+        crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
     }
 
 }

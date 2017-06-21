@@ -81,121 +81,195 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
         navigation.addPrimary(primaryIdTransformers, "Principal Transformers", "fa fa-archive");
 
         // http factories
-        aggregateHttpServerMechanismFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdHttpFactories,
+        aggregateHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
                 Ids.ELYTRON_AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY, "Aggregate HTTP Server Mechanism", AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        configurableHttpServerMechanismFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        configurableHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory,
                 primaryIdHttpFactories,
                 Ids.ELYTRON_CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY, "Configurable HTTP Server Mechanism", CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .addComplexAttributeAsPage("filters")
+            .create();
 
-        httpAuthenticationFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdHttpFactories,
+        httpAuthenticationFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
                 Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, "HTTP Authentication Factory", HTTP_AUTHENTICATION_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .addComplexAttributeAsPage("mechanism-configurations")
+            .create();
 
-        providerHttpServerMechanismFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdHttpFactories,
+        providerHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
                 Ids.ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY, "Provider HTTP Server Mechanism", PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        serviceLoaderHttpServerMechanismFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdHttpFactories,
+        serviceLoaderHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
                 Ids.ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY, "Service Loader HTTP Server Mechanism", SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
         // sasl factories
-        aggregateSaslServerFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdSaslFactories,
+        aggregateSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
                 Ids.ELYTRON_AGGREGATE_SASL_SERVER_FACTORY, "Aggregate SASL Server", AGGREGATE_SASL_SERVER_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        configurableSaslServerFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdSaslFactories,
+        configurableSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
                 Ids.ELYTRON_CONFIGURABLE_SASL_SERVER_FACTORY, "Configurable SASL Server", CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .addComplexAttributeAsPage("filters")
+            .create();
 
-        mechanismProviderFilteringSaslServerFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
-                primaryIdSaslFactories,
+        mechanismProviderFilteringSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
                 Ids.ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY, "Mechanism Provider Filtering SASL Server", MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .addComplexAttributeAsPage("filters")
+            .create();
 
-        providerSaslServerFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation, primaryIdSaslFactories,
+        providerSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
                 Ids.ELYTRON_PROVIDER_SASL_SERVER_FACTORY, "Provider SASL Server", PROVIDER_SASL_SERVER_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        saslAuthenticationFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        saslAuthenticationFactory = new ResourceView.Builder(tableButtonFactory,
                 primaryIdSaslFactories,
                 Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, "SASL Authentication", SASL_AUTHENTICATION_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .addComplexAttributeAsPage("mechanism-configurations")
+            .create();
 
-        serviceLoaderSaslServerFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        serviceLoaderSaslServerFactory = new ResourceView.Builder(tableButtonFactory,
                 primaryIdSaslFactories,
                 Ids.ELYTRON_SERVICE_LOADER_SASL_SERVER_FACTORY, "Service Loader SASL Server", SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
         // other factories
-        kerberosSecurityFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        kerberosSecurityFactory = new ResourceView.Builder(tableButtonFactory,
                 primaryIdOtherFactories,
                 Ids.ELYTRON_KERBEROS_SECURITY_FACTORY, "Kerberos Security", KERBEROS_SECURITY_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        customCredentialSecurityFactory = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        customCredentialSecurityFactory = new ResourceView.Builder(tableButtonFactory,
                 primaryIdOtherFactories,
                 Ids.ELYTRON_CUSTOM_CREDENTIAL_SECURITY_FACTORY, "Custom Credential Security", CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
         // transformers
-        aggregatePrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        aggregatePrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_AGGREGATE_PRINCIPAL_TRANSFORMER, "Aggregate", AGGREGATE_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        chainedPrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        chainedPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_CHAINED_PRINCIPAL_TRANSFORMER, "Chained", CHAINED_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        constantPrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        constantPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_CONSTANT_PRINCIPAL_TRANSFORMER, "Constant", CONSTANT_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        customPrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        customPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_CUSTOM_PRINCIPAL_TRANSFORMER, "Custom", CUSTOM_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        regexPrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        regexPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_REGEX_PRINCIPAL_TRANSFORMER, "Regex", REGEX_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
-        regexValidatingPrincipalTransformer = new ResourceView(metadataRegistry, tableButtonFactory, navigation,
+        regexValidatingPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
                 primaryIdTransformers,
                 Ids.ELYTRON_REGEX_VALIDATING_PRINCIPAL_TRANSFORMER, "Regex Validating", REGEX_VALIDATING_TRANSFORMER_ADDRESS, this,
-                (name, address) -> presenter.reload(), () -> presenter.reload())
-            .build();
+                () -> presenter.reload())
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddCallback((name, address) -> presenter.reload())
+            .build()
+            .create();
 
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()

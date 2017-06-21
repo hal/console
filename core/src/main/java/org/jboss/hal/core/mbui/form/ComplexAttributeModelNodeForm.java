@@ -36,7 +36,7 @@ public class ComplexAttributeModelNodeForm {
         this.parentId = parentId;
         this.complexAttributeName = complexAttributeName;
 
-        this.metadata = metadata.repackageComplexAttribute(complexAttributeName, false, false);
+        this.metadata = metadata.repackageComplexAttribute(complexAttributeName, false, false, true);
     }
 
     public ModelNodeForm.Builder<NamedNode> builder() {
