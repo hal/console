@@ -17,15 +17,19 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.Set;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import elemental2.dom.CSSProperties.MarginLeftUnionType;
+import elemental2.dom.CSSProperties.MarginRightUnionType;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -47,55 +51,42 @@ import static org.jboss.hal.resources.CSS.*;
 @SuppressWarnings("WeakerAccess")
 public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
-    private static final String EXPRESSION_BUTTON = "expressionButton";
-    private static final String SUGGEST_BUTTON = "suggestButton";
-    private static final String PEEK_BUTTON = "peekButton";
-    private static final String PEEK_ICON = "peekIcon";
-
-    final Element root;
-    final Element inputContainer;
-    final InputElement inputElement;
+    final HTMLElement root;
+    final HTMLElement inputContainer;
+    final HTMLInputElement inputElement;
     final String inputType;
-    final Element inputGroup;
-    final Element helpBlock;
-    Element expressionContainer;
-    Element expressionButton;
-    Element suggestContainer;
-    Element suggestButton;
-    Element restrictedMarker;
-    Element hintMarker;
-    Element peekButton;
-    Element peekIcon;
-    Element peekContainer;
+    final HTMLElement inputGroup;
+    final HTMLElement helpBlock;
+    HTMLElement expressionContainer;
+    HTMLElement expressionButton;
+    HTMLElement suggestContainer;
+    HTMLElement suggestButton;
+    HTMLElement restrictedMarker;
+    HTMLElement hintMarker;
+    HTMLElement peekButton;
+    HTMLElement peekIcon;
+    HTMLElement peekContainer;
     boolean masked;
     boolean attached;
+    HandlerRegistration expressionHandler;
 
-    protected EditingAppearance(Set<Decoration> supportedDecorations, elemental.html.InputElement inputElement) {
+    protected EditingAppearance(Set<Decoration> supportedDecorations, HTMLInputElement inputElement) {
         super(supportedDecorations);
         this.inputElement = inputElement;
-        this.inputType = inputElement.getType();
+        this.inputType = inputElement.type;
         this.masked = false;
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(formGroup)
-                .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
-                .div().css(halFormInput).rememberAs(INPUT_CONTAINER)
-                    .add(inputElement)
-                .end()
-            .end();
-        // @formatter:on
-
-        inputGroup = Appearance.inputGroup();
-        helpBlock = Appearance.helpBlock();
-
-        labelElement = builder.referenceFor(LABEL_ELEMENT);
-        inputContainer = builder.referenceFor(INPUT_CONTAINER);
-        root = builder.build();
+        this.root = div().css(formGroup)
+                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(inputContainer = div().css(halFormInput)
+                        .add(inputElement)
+                        .asElement())
+                .asElement();
+        this.inputGroup = Appearance.inputGroup();
+        this.helpBlock = Appearance.helpBlock();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -114,33 +105,33 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     void wrapInputElement() {
         Elements.failSafeRemove(inputContainer, inputElement);
-        inputGroup.insertBefore(inputElement, inputGroup.getFirstElementChild());
-        inputContainer.insertBefore(inputGroup, inputContainer.getFirstElementChild());
+        inputGroup.insertBefore(inputElement, inputGroup.firstElementChild);
+        inputContainer.insertBefore(inputGroup, inputContainer.firstElementChild);
     }
 
     void unwrapInputElement() {
         if (Elements.failSafeRemove(inputGroup, inputElement)) {
-            inputContainer.insertBefore(inputElement, inputContainer.getFirstElementChild());
+            inputContainer.insertBefore(inputElement, inputContainer.firstElementChild);
         }
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
     private void mask() {
-        inputElement.setType("password");
+        inputElement.type = "password";
         inputElement.focus();
-        peekButton.setTitle(CONSTANTS.showSensitive());
-        peekIcon.getClassList().add("fa-eye");
-        peekIcon.getClassList().remove("fa-eye-slash");
+        peekButton.title = CONSTANTS.showSensitive();
+        peekIcon.classList.add("fa-eye");
+        peekIcon.classList.remove("fa-eye-slash");
         masked = true;
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
     private void unmask() {
-        inputElement.setType(inputType);
+        inputElement.type = inputType;
         inputElement.focus();
-        peekButton.setTitle(CONSTANTS.hideSensitive());
-        peekIcon.getClassList().add("fa-eye-slash");
-        peekIcon.getClassList().remove("fa-eye");
+        peekButton.title = CONSTANTS.hideSensitive();
+        peekIcon.classList.add("fa-eye-slash");
+        peekIcon.classList.remove("fa-eye");
         masked = false;
     }
 
@@ -184,7 +175,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     void applyDefault(final String defaultValue) {
-        inputElement.setPlaceholder(defaultValue);
+        inputElement.placeholder = defaultValue;
     }
 
     void applyDeprecated(final Deprecation deprecation) {
@@ -192,21 +183,16 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     void applyEnabled() {
-        inputElement.setDisabled(false);
+        inputElement.disabled = false;
     }
 
     protected void applyExpression(final ExpressionContext expressionContext) {
         if (expressionContainer == null) {
-            // @formatter:off
-            Elements.Builder expressionBuilder = new Elements.Builder()
-                .span().css(inputGroupBtn)
-                    .button().css(btn, btnDefault).title(CONSTANTS.resolveExpression()).rememberAs(EXPRESSION_BUTTON)
-                        .start("i").css(fontAwesome("link")).end()
-                    .end()
-                .end();
-            expressionButton = expressionBuilder.referenceFor(EXPRESSION_BUTTON);
-            expressionContainer = expressionBuilder.build();
-            // @formatter:on
+            expressionContainer = span().css(inputGroupBtn)
+                    .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
+                            .add(i().css(fontAwesome("link")))
+                            .asElement())
+                    .asElement();
         }
 
         if (!hasInputGroup()) {
@@ -214,14 +200,15 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
         if (isApplied(HINT)) {
             inputGroup.insertBefore(expressionContainer, hintMarker);
-            expressionButton.getStyle().setMarginLeft(-1, PX);
-            expressionButton.getStyle().setMarginRight(-1, PX);
+            expressionButton.style.marginLeft = MarginLeftUnionType.of("-1px"); //NON-NLS
+            expressionButton.style.marginRight = MarginRightUnionType.of("-1px"); //NON-NLS
         } else {
             inputGroup.appendChild(expressionContainer);
-            expressionButton.getStyle().clearMarginLeft();
-            expressionButton.getStyle().clearMarginRight();
+            expressionButton.style.marginLeft = MarginLeftUnionType.of("");
+            expressionButton.style.marginRight = MarginRightUnionType.of("");
         }
-        expressionButton.setOnclick(event -> expressionContext.callback.resolveExpression(inputElement.getValue()));
+        expressionHandler = bind(expressionButton, click,
+                event -> expressionContext.callback.resolveExpression(inputElement.value));
     }
 
     void applyHint(final String hint) {
@@ -232,14 +219,14 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         if (!hasInputGroup()) {
             wrapInputElement();
         }
-        hintMarker.setTextContent(hint);
-        inputElement.setAttribute(UIConstants.ARIA_DESCRIBEDBY, hintMarker.getId());
-        inputGroup.insertBefore(hintMarker, inputElement.getNextElementSibling());
+        hintMarker.textContent = hint;
+        inputElement.setAttribute(UIConstants.ARIA_DESCRIBEDBY, hintMarker.id);
+        inputGroup.insertBefore(hintMarker, inputElement.nextElementSibling);
     }
 
     void applyInvalid(final String errorMessage) {
-        helpBlock.setTextContent(errorMessage);
-        root.getClassList().add(hasError);
+        helpBlock.textContent = errorMessage;
+        root.classList.add(hasError);
         inputContainer.appendChild(helpBlock);
     }
 
@@ -252,9 +239,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             restrictedMarker = Appearance.restrictedMarker();
         }
 
-        inputElement.setValue(CONSTANTS.restricted());
+        inputElement.value = CONSTANTS.restricted();
         inputElement.setAttribute(UIConstants.READONLY, UIConstants.TRUE);
-        inputElement.getClassList().add(restricted);
+        inputElement.classList.add(restricted);
 
         // Don't ask for hasInputGroup()
         // Always clear the inputContainer and inputGroup, then wrap the input element
@@ -266,26 +253,20 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     void applySensitive() {
         if (peekIcon == null || peekButton == null) {
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .span().css(inputGroupBtn)
-                    .button().css(btn, btnDefault)
-                             .rememberAs(PEEK_BUTTON)
-                             .title(CONSTANTS.showSensitive())
-                             .on(click, event -> {
-                                 if (masked) {
-                                     unmask();
-                                 } else {
-                                     mask();
-                                 }
-                             })
-                        .start("i").css(fontAwesome("eye")).rememberAs(PEEK_ICON).end()
-                    .end()
-                .end();
-            // @formatter:on
-            peekButton = builder.referenceFor(PEEK_BUTTON);
-            peekIcon = builder.referenceFor(PEEK_ICON);
-            peekContainer = builder.build();
+            peekContainer = span().css(inputGroupBtn)
+                    .add(peekButton = button()
+                            .css(btn, btnDefault)
+                            .title(CONSTANTS.showSensitive())
+                            .on(click, event -> {
+                                if (masked) {
+                                    unmask();
+                                } else {
+                                    mask();
+                                }
+                            })
+                            .add(peekIcon = i().css(fontAwesome("eye")).asElement())
+                            .asElement())
+                    .asElement();
         }
 
         if (!hasInputGroup()) {
@@ -297,25 +278,22 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     void applySuggestions(final SuggestHandler suggestHandler) {
         if (suggestContainer == null) {
-            // @formatter:off
-            Elements.Builder suggestBuilder = new Elements.Builder()
-                .span().css(inputGroupBtn)
-                    .button().css(btn, btnDefault).title(CONSTANTS.showAll()).rememberAs(SUGGEST_BUTTON)
-                        .start("i").css(fontAwesome("angle-down")).end()
-                    .end()
-                .end();
-            suggestButton = suggestBuilder.referenceFor(SUGGEST_BUTTON);
-            suggestContainer = suggestBuilder.build();
-            // @formatter:on
+            suggestContainer = span().css(inputGroupBtn)
+                    .add(suggestButton = button()
+                            .css(btn, btnDefault)
+                            .title(CONSTANTS.showAll())
+                            .on(click, event -> suggestHandler.showAll())
+                            .add(i().css(fontAwesome("angle-down")))
+                            .asElement())
+                    .asElement();
 
             if (!hasInputGroup()) {
                 wrapInputElement();
             }
             if (isApplied(SENSITIVE)) {
-                peekButton.getStyle().setMarginLeft(-1, PX);
+                peekButton.style.marginLeft = MarginLeftUnionType.of("-1px"); //NON-NLS
             }
             inputGroup.appendChild(suggestContainer);
-            suggestButton.setOnclick(event -> suggestHandler.showAll());
         }
     }
 
@@ -367,10 +345,14 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     void unapplyEnabled() {
-        inputElement.setDisabled(true);
+        inputElement.disabled = true;
     }
 
     void unapplyExpression() {
+        if (expressionHandler != null) {
+            expressionHandler.removeHandler();
+            expressionHandler = null;
+        }
         Elements.failSafeRemove(inputGroup, expressionContainer);
         if (!isApplied(HINT) && !isApplied(RESTRICTED) && !isApplied(SENSITIVE)) {
             unwrapInputElement();
@@ -386,7 +368,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     void unapplyInvalid() {
-        root.getClassList().remove(hasError);
+        root.classList.remove(hasError);
         Elements.failSafeRemove(inputContainer, helpBlock);
     }
 
@@ -395,9 +377,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     void unapplyRestricted() {
-        inputElement.setValue("");
+        inputElement.value = "";
         inputElement.removeAttribute(UIConstants.READONLY);
-        inputElement.getClassList().remove(restricted);
+        inputElement.classList.remove(restricted);
 
         Elements.failSafeRemove(inputGroup, restrictedMarker);
         if (!isApplied(HINT) && !isApplied(EXPRESSION)) {
@@ -426,24 +408,24 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     @Override
     public void setId(final String id) {
         this.id = Ids.build(id, EDITING.name().toLowerCase());
-        root.getDataset().setAt(FORM_ITEM_GROUP, this.id);
-        inputElement.setId(this.id);
-        labelElement.setHtmlFor(this.id);
+        root.dataset.set(FORM_ITEM_GROUP, this.id);
+        inputElement.id = this.id;
+        labelElement.htmlFor = this.id;
     }
 
     @Override
     public void setName(final String name) {
-        inputElement.setName(name);
+        inputElement.name = name;
     }
 
     @Override
     public int getTabIndex() {
-        return inputElement.getTabIndex();
+        return (int) inputElement.tabIndex;
     }
 
     @Override
     public void setAccessKey(final char key) {
-        inputElement.setAccessKey(String.valueOf(key));
+        inputElement.accessKey = String.valueOf(key);
     }
 
     @Override
@@ -457,6 +439,6 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
 
     @Override
     public void setTabIndex(final int index) {
-        inputElement.setTabIndex(index);
+        inputElement.tabIndex = index;
     }
 }

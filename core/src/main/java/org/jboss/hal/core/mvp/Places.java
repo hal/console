@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import elemental.client.Browser;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -149,8 +148,12 @@ public class Places {
     }
 
     public String historyToken(PlaceRequest placeRequest) {
-        String href = Browser.getWindow().getLocation().getHref();
+        String href = location();
         href = href.substring(0, href.indexOf('#'));
         return href + "#" + tokenFormatter.toHistoryToken(singletonList(placeRequest));
     }
+
+    private native String location() /*-{
+        return $wnd.location.href;
+    }-*/;
 }

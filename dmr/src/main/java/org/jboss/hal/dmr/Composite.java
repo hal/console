@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import net.sourceforge.htmlunit.corejs.javascript.annotations.JSConstructor;
+import org.jboss.hal.spi.EsReturn;
 
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
@@ -34,6 +36,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 
 /**
+ * Represents a composite operation consisting of n {@link Operation}s.
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -41,6 +45,10 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     private List<Operation> operations;
 
+    /**
+     * Creates a new empty composite.
+     */
+    @JSConstructor
     public Composite() {
         super(COMPOSITE, ResourceAddress.root(), new ModelNode(), new ModelNode(), emptySet());
         this.operations = new ArrayList<>();
@@ -63,6 +71,13 @@ public class Composite extends Operation implements Iterable<Operation> {
         operations.forEach(this::add);
     }
 
+    /**
+     * Adds the specified operation to this composite.
+     *
+     * @param operation The operation to add.
+     *
+     * @return this composite
+     */
     @JsMethod(name = "addOperation")
     public Composite add(Operation operation) {
         operations.add(operation);
@@ -88,9 +103,15 @@ public class Composite extends Operation implements Iterable<Operation> {
         return operations.iterator();
     }
 
+    /**
+     * @return whether this composite contains operations
+     */
     @JsProperty
     public boolean isEmpty() {return operations.isEmpty();}
 
+    /**
+     * @return the number of operations
+     */
     @JsProperty(name = "size")
     public int size() {return operations.size();}
 
@@ -102,11 +123,17 @@ public class Composite extends Operation implements Iterable<Operation> {
         return new Composite(runAsOperations);
     }
 
+    /**
+     * @return a string representation of this composite
+     */
     @Override
     public String toString() {
         return "Composite(" + operations.size() + ")";
     }
 
+    /**
+     * @return the string representation of the operation as used in the CLI
+     */
     public String asCli() {
         return operations.stream().map(Operation::asCli).collect(joining("\n"));
     }
@@ -114,9 +141,13 @@ public class Composite extends Operation implements Iterable<Operation> {
 
     // ------------------------------------------------------ JS Methods
 
+    /**
+     * @return the operations of this composite
+     */
     @JsProperty(name = "operations")
-    public JsArrayOf<Operation> jsOperations() {
-        JsArrayOf<Operation> array = JsArrayOf.create();
+    @EsReturn("Operation[]")
+    public Array<Operation> jsOperations() {
+        Array<Operation> array = new Array<>();
         for (Operation operation : operations) {
             array.push(operation);
         }

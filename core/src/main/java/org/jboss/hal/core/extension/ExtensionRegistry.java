@@ -26,39 +26,41 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Document;
-import elemental.dom.Element;
-import elemental.html.HeadElement;
-import elemental.html.LinkElement;
-import elemental.html.ScriptElement;
-import elemental.js.util.JsArrayOf;
-import elemental.json.Json;
-import elemental.json.JsonException;
-import elemental.json.JsonObject;
-import elemental.xml.XMLHttpRequest;
+import elemental2.core.Array;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLHeadElement;
+import elemental2.dom.HTMLLinkElement;
+import elemental2.dom.HTMLScriptElement;
+import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Point;
+import org.jboss.hal.json.Json;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
 /**
+ * Registry to manage HAL extensions written in JavaScript.
+ *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @FunctionalInterface
@@ -73,10 +75,10 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     private final Queue<Extension> queue;
     private final Set<String> extensions;
     private boolean ready;
-    private Element headerDropdown;
-    private Element headerExtensions;
-    private Element footerDropdown;
-    private Element footerExtensions;
+    private elemental2.dom.Element headerDropdown;
+    private elemental2.dom.Element headerExtensions;
+    private elemental2.dom.Element footerDropdown;
+    private elemental2.dom.Element footerExtensions;
 
     @Inject
     @JsIgnore
@@ -89,30 +91,21 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @JsIgnore
     public void verifyMetadata(final String url, final MetadataCallback metadataCallback) {
         SafeUri safeUrl = UriUtils.fromString(url);
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.setOnreadystatechange(event -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                if (xhr.getStatus() >= 200 && xhr.getStatus() < 400) {
-                    String responseText = xhr.getResponseText();
-                    if (Strings.isNullOrEmpty(responseText)) {
-                        metadataCallback.result(415, null); // 415 - Unsupported Media Type
-                    } else {
-                        JsonObject extensionJson;
-                        try {
-                            extensionJson = Json.parse(responseText);
-                            metadataCallback.result(xhr.getStatus(), extensionJson);
-                        } catch (JsonException e) {
-                            logger.error("Unable to parse {} as JSON", safeUrl.asString());
-                            metadataCallback.result(500, null);
-                        }
-                    }
-
+        XMLHttpRequest xhr = new XMLHttpRequest();
+        xhr.onload = event -> {
+            int status = (int) xhr.status;
+            if (status >= 200 && status < 400) {
+                String responseText = xhr.responseText;
+                if (Strings.isNullOrEmpty(responseText)) {
+                    metadataCallback.result(415, null); // 415 - Unsupported Media Type
                 } else {
-                    metadataCallback.result(xhr.getStatus(), null);
+                    JsonObject extensionJson = Json.parse(responseText);
+                    metadataCallback.result(status, extensionJson);
                 }
+            } else {
+                metadataCallback.result(status, null);
             }
-        });
+        };
         xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); //NON-NLS
         xhr.open(GET.name(), safeUrl.asString(), true);
         xhr.send();
@@ -120,7 +113,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @JsIgnore
     public boolean verifyScript(final String script) {
-        return Browser.getDocument().getHead().querySelector("script[src='" + script + "']") != null; //NON-NLS
+        return DomGlobal.document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
     }
 
     @JsIgnore
@@ -133,16 +126,23 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @SuppressWarnings("HardCodedStringLiteral")
     public void onApplicationReady(final ApplicationReadyEvent event) {
         ready = true;
-        headerDropdown = Browser.getDocument().getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
-        headerExtensions = Browser.getDocument().getElementById(Ids.HEADER_EXTENSIONS);
-        footerDropdown = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
-        footerExtensions = Browser.getDocument().getElementById(Ids.FOOTER_EXTENSIONS);
+        headerDropdown = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
+        headerExtensions = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS);
+        footerDropdown = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
+        footerExtensions = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS);
 
         while (!queue.isEmpty()) {
             failSafeApply(queue.poll());
         }
     }
 
+    /**
+     * Registers an extension. Use this method to register your extension.
+     * <p>
+     * If the extension is already registered, this method will do nothing.
+     *
+     * @param extension the extension to register.
+     */
     public void register(final Extension extension) {
         if (!ready) {
             queue.offer(extension);
@@ -167,21 +167,16 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     private void apply(Extension extension) {
         extensions.add(extension.name);
         if (extension.point == Extension.Point.HEADER || extension.point == Point.FOOTER) {
-            // @formatter:off
-            Element li = new Elements.Builder()
-                .li()
-                    .a()
-                        .id(extension.name)
-                        .css(clickable)
-                        .textContent(extension.title)
-                        .on(click, event -> extension.entryPoint.execute())
-                    .end()
-                .end()
-            .build();
-            // @formatter:on
+            HTMLElement li = li()
+                    .add(a().id(extension.name)
+                            .css(clickable)
+                            .textContent(extension.title)
+                            .on(click, event -> extension.entryPoint.execute())
+                            .asElement())
+                    .asElement();
 
-            Element ul;
-            Element dropdown;
+            elemental2.dom.Element ul;
+            elemental2.dom.Element dropdown;
             if (extension.point == Point.HEADER) {
                 dropdown = headerDropdown;
                 ul = headerExtensions;
@@ -190,7 +185,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
                 ul = footerExtensions;
             }
             ul.appendChild(li);
-            dropdown.getClassList().remove(hidden);
+            dropdown.classList.remove(hidden);
 
         } else if (extension.point == Extension.Point.FINDER_ITEM) {
             // TODO Handle finder item extensions
@@ -200,23 +195,29 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't
+     * have to call this method.
+     *
+     * @param script      the extension's script.
+     * @param stylesheets an optional list of stylesheets.
+     */
     @JsMethod(name = "inject")
-    @SuppressWarnings("HardCodedStringLiteral")
-    public void jsInject(final String script, final JsArrayOf<String> stylesheets) {
-        Document document = Browser.getDocument();
-        HeadElement head = document.getHead();
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    public void jsInject(String script, @EsParam("string[]") Array<String> stylesheets) {
+        HTMLHeadElement head = DomGlobal.document.head;
 
-        if (stylesheets != null && !stylesheets.isEmpty()) {
-            for (int i = 0; i < stylesheets.length(); i++) {
-                LinkElement linkElement = document.createLinkElement();
-                linkElement.setRel("stylesheet"); //NON-NLS
-                linkElement.setHref(stylesheets.get(i));
+        if (stylesheets != null && stylesheets.getLength() != 0) {
+            for (int i = 0; i < stylesheets.getLength(); i++) {
+                HTMLLinkElement linkElement = (HTMLLinkElement) DomGlobal.document.createElement("link");
+                linkElement.rel = "stylesheet";
+                linkElement.href = stylesheets.getAt(i);
                 head.appendChild(linkElement);
             }
         }
-        ScriptElement scriptElement = document.createScriptElement();
-        scriptElement.setAsync(true);
-        scriptElement.setSrc(script);
+        HTMLScriptElement scriptElement = (HTMLScriptElement) DomGlobal.document.createElement("script");
+        scriptElement.src = script;
+        scriptElement.setAttribute("async", true);
         head.appendChild(scriptElement);
     }
 }

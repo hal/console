@@ -18,14 +18,17 @@ package org.jboss.hal.client.homepage;
 import javax.annotation.PostConstruct;
 
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.DataElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.gwt.elemento.template.DataElement;
+import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.hal.resources.Urls.*;
 
 /**
@@ -44,8 +47,8 @@ abstract class HomepageHelp implements IsElement {
     // @formatter:on
 
 
-    @DataElement Element generalResources;
-    @DataElement Element getHelp;
+    @DataElement HTMLElement generalResources;
+    @DataElement HTMLElement getHelp;
 
     @PostConstruct
     void init() {
@@ -92,7 +95,7 @@ abstract class HomepageHelp implements IsElement {
         }
     }
 
-    private Element helpLink(final String href, final String text) {
-        return new Elements.Builder().li().a().attr("href", href).textContent(text).end().end().build();
+    private HTMLElement helpLink(final String href, final String text) {
+        return li().add(a(href).textContent(text)).asElement();
     }
 }

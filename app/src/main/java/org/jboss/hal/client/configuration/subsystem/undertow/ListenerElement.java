@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
@@ -34,14 +33,17 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 
 /**
  * @author Harald Pehl
  */
-class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPresenter> {
+class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
-    private final Element root;
+    private final HTMLElement root;
     private final Table<NamedNode> table;
     private final Form<NamedNode> form;
     private ServerPresenter presenter;
@@ -64,20 +66,16 @@ class ListenerElement implements IsElement, Attachable, HasPresenter<ServerPrese
                 .prepareReset(form -> presenter.resetListener(listenerType, form.getModel().getName(), form))
                 .build();
 
-        // @formatter:off
-        root = new Elements.Builder()
-            .section()
-                .h(1).textContent(listenerType.type).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        root = section()
+                .add(h(1).textContent(listenerType.type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(form)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

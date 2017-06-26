@@ -15,17 +15,17 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental.js.json.JsJsonObject;
-import elemental.js.util.JsArrayOf;
-import org.jboss.hal.dmr.ModelNode;
+import elemental2.core.Array;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.json.JsonObject;
 
 /**
  * @author Harald Pehl
  */
 interface ResultProcessor {
 
-    JsArrayOf<JsJsonObject> process(String query, ModelNode nodes);
+    Array<JsonObject> process(String query, ModelNode nodes);
 
-    JsArrayOf<JsJsonObject> process(String query, CompositeResult compositeResult);
+    Array<JsonObject> process(String query, CompositeResult compositeResult);
 }

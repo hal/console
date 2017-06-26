@@ -71,7 +71,6 @@ class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
         status(attributes, deployment);
         attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
         attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
-        attributes.end();
         previewBuilder().addAll(attributes);
 
         // sub-deployments

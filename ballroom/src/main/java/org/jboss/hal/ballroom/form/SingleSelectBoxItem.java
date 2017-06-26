@@ -19,10 +19,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.html.SelectElement;
+import elemental2.dom.HTMLSelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
+import static org.jboss.gwt.elemento.core.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
@@ -47,7 +47,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     private class SingleSelectBoxEditingAppearance extends SelectBoxEditingAppearance<String> {
 
-        SingleSelectBoxEditingAppearance(final SelectElement selectElement, final List<String> options,
+        SingleSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options,
                 final boolean allowEmpty) {
             super(selectElement, options, allowEmpty);
         }
@@ -69,7 +69,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
             if (attached) {
                 Single.element(selectElement).setValue(value);
             } else {
-                selectElement.setValue(value);
+                selectElement.value = value;
             }
         }
 
@@ -79,7 +79,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
                 if (attached) {
                     Single.element(selectElement).setValue("");
                 } else {
-                    selectElement.setValue("");
+                    selectElement.value = "";
                 }
             }
         }
@@ -104,9 +104,12 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         addAppearance(Form.State.READONLY, new SingleSelectBoxReadOnlyAppearance());
 
         // editing appearance
-        elemental.html.SelectElement selectElement = Browser.getDocument().createSelectElement();
-        selectElement.setSize(1);
-        selectElement.setMultiple(false);
+        HTMLSelectElement selectElement = select()
+                .apply(select -> {
+                    select.size = 1;
+                    select.multiple = false;
+                })
+                .asElement();
 
         addAppearance(Form.State.EDITING, new SingleSelectBoxEditingAppearance(selectElement, options, allowEmpty));
     }

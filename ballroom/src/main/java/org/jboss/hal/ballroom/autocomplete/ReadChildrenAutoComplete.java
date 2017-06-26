@@ -19,14 +19,14 @@ import java.util.List;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental.js.json.JsJsonObject;
-import elemental.js.util.JsArrayOf;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import elemental2.core.Array;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
@@ -52,7 +52,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
         verifyTemplates(templates);
 
         ResultProcessor resultProcessor;
-        ItemRenderer<JsJsonObject> itemRenderer;
+        ItemRenderer<JsonObject> itemRenderer;
         int numberOfTemplates = Iterables.size(templates);
 
         if (numberOfTemplates == 1) {
@@ -72,7 +72,7 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             itemRenderer = new ReadChildrenRenderer();
         }
 
-        Options options = new OptionsBuilder<JsJsonObject>(
+        Options options = new OptionsBuilder<JsonObject>(
                 (query, response) -> {
                     List<Operation> operations = stream(templates.spliterator(), false)
                             .map(template -> template.resolve(statementContext))
@@ -83,12 +83,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 result -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(JsArrayOf.create());
+                                    response.response(new Array<>());
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(JsArrayOf.create());
+                                    response.response(new Array<>());
                                 });
 
                     } else {
@@ -96,12 +96,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 (CompositeResult result) -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(JsArrayOf.create());
+                                    response.response(new Array<>());
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(JsArrayOf.create());
+                                    response.response(new Array<>());
                                 });
                     }
                 })

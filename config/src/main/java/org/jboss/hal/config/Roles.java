@@ -23,16 +23,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.config.Role.*;
 
 /**
- * Contains the list of standard roles plus the custom defined scoped roles.
+ * Provides access to all standard and scoped roles.
  *
  * @author Harald Pehl
  */
@@ -84,6 +85,11 @@ public class Roles implements Iterable<Role> {
         scopedRoles.clear();
     }
 
+    /**
+     * @param id The unique ID of the role.
+     *
+     * @return the role for that ID or null if no such role was found.
+     */
     public Role get(String id) {
         if (id != null) {
             return lookup.get(id);
@@ -110,27 +116,39 @@ public class Roles implements Iterable<Role> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return all roles (standard and scoped).
+     */
     @JsProperty(name = "all")
-    public JsArrayOf<Role> jsAll() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    @EsReturn("Role[]")
+    public Array<Role> jsAll() {
+        Array<Role> array = new Array<>();
         for (Role role : lookup.values()) {
             array.push(role);
         }
         return array;
     }
 
+    /**
+     * @return standard roles.
+     */
     @JsProperty(name = "standardRoles")
-    public JsArrayOf<Role> jsStandardRoles() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    @EsReturn("Role[]")
+    public Array<Role> jsStandardRoles() {
+        Array<Role> array = new Array<>();
         for (Role role : standardRoles) {
             array.push(role);
         }
         return array;
     }
 
+    /**
+     * @return scoped roles or an empty array if no scoped roles are defined.
+     */
     @JsProperty(name = "scopedRoles")
-    public JsArrayOf<Role> jsScopedRoles() {
-        JsArrayOf<Role> array = JsArrayOf.create();
+    @EsReturn("Role[]")
+    public Array<Role> jsScopedRoles() {
+        Array<Role> array = new Array<>();
         for (Role role : scopedRoles) {
             array.push(role);
         }

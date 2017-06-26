@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
@@ -66,7 +66,7 @@ class NamesStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return form.asElement();
     }
 

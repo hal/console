@@ -15,12 +15,13 @@
  */
 package org.jboss.hal.client.patching;
 
-import elemental.dom.Element;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.resources.Names.NYI;
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 
 /**
  * @author Harald Pehl
@@ -28,16 +29,10 @@ import static org.jboss.hal.resources.Names.NYI;
 public class PatchingView extends HalViewImpl implements PatchingPresenter.MyView {
 
     public PatchingView() {
-        // @formatter:off
-        Element root = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(Names.PATCHING).end()
-                    .p().textContent(NYI).end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .add(header().textContent(Names.PATCHING))
+                        .add(p().textContent(Names.NYI)))
+                .asElement());
     }
 }

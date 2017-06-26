@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
@@ -41,6 +40,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Cache.LOCAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -53,7 +55,7 @@ import static org.jboss.hal.resources.CSS.columnAction;
  *
  * @author Harald Pehl
  */
-class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainerPresenter> {
+class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 
     private final Cache cache;
     private final org.jboss.hal.ballroom.table.Table<NamedNode> table;
@@ -140,16 +142,12 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
 
         storeElement = new StoreElement(cache, metadataRegistry, resources);
 
-        // @formatter:off
-        Element root = new Elements.Builder()
-            .section()
-                .h(1).textContent(cache.type).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement root = section()
+                .add(h(1).textContent(cache.type))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(tabs)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         String mainId = Ids.build(cache.baseId, Ids.PAGE_SUFFIX);
         pages = new Pages(mainId, root);
@@ -160,7 +158,8 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
             AddressTemplate backupTemplate = cache.template.append(COMPONENT + "=" + BACKUPS).append(BACKUP + "=*");
             Metadata backupMeta = metadataRegistry.lookup(backupTemplate);
 
-            backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX), backupMeta)
+            backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cache.baseId, BACKUPS, Ids.TABLE_SUFFIX),
+                    backupMeta)
                     .button(tableButtonFactory.add(backupTemplate, table -> presenter.addCacheBackup()))
                     .button(tableButtonFactory.remove(backupTemplate,
                             table -> presenter.removeCacheBackup(table.selectedRow().getName())))
@@ -174,16 +173,12 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
                     .prepareReset(form -> presenter.resetCacheBackup(form.getModel().getName(), form))
                     .build();
 
-            // @formatter:off
-            Element backupSection = new Elements.Builder()
-                .section()
-                    .h(1).textContent(Names.BACKUPS).end()
-                    .p().textContent(backupMeta.getDescription().getDescription()).end()
+            HTMLElement backupSection = section()
+                    .add(h(1).textContent(Names.BACKUPS))
+                    .add(p().textContent(backupMeta.getDescription().getDescription()))
                     .add(backupTable)
                     .add(backupForm)
-                .end()
-            .build();
-            // @formatter:on
+                    .asElement();
 
             pages.addPage(mainId, Ids.build(cache.baseId, BACKUPS, Ids.PAGE_SUFFIX),
                     () -> presenter.cacheSegment(), () -> Names.BACKUPS, backupSection);
@@ -191,7 +186,7 @@ class CacheElement implements IsElement, Attachable, HasPresenter<CacheContainer
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return pages.asElement();
     }
 

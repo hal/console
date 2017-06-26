@@ -1,4 +1,4 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal)  
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal/hal.next)  
 [![Issues in Ready](https://badge.waffle.io/hal/hal.next.svg?label=ready&title=Ready)](http://waffle.io/hal/hal.next) [![Issues in Progress](https://badge.waffle.io/hal/hal.next.svg?label=In%20Progress&title=In%20Progress)](http://waffle.io/hal/hal.next) 
 
 # HAL.next
@@ -6,15 +6,16 @@
 Fresh start of the HAL management console using the latest frameworks / libraries. 
 
 - Java 8
-- GWT 3.x (JsInterop, Elemental)
+- GWT 2.8.x (JsInterop, Elemental2)
+- Prepare for GWT 3.x / J2CL
 - Latest GWTP build
 - PatternFly
 
 ## Motivation
 
-HAL.next is a prototype and playground to test new features and evaluate the latest frameworks. The upcoming GWT 3.0 release will introduce many breaking changes for GWT applications. The most important change will be the deprecation of `gwt-user.jar`. This includes features such as the GWT widgets, deferred binding and GWT RPC. 
+HAL.next is the codebase for the next major version of the HAL management console. It ships with new features and uses the latest frameworks. The upcoming GWT 3.0 release will introduce many breaking changes for GWT applications. The most important change will be the deprecation of `gwt-user.jar`. This includes features such as the GWT widgets, deferred binding and GWT RPC. 
 
-In order to make the console future proof, it's necessary to rewrite these parts. At the same time this is an opportunity to fix some weak points of the current implementation and add new features. Currently the following features and enhancements are implemented / planned:
+In order to make the console future proof, it's necessary to rewrite these parts. At the same time this is an opportunity to fix some weak points of the current version and add new features. Currently the following features and enhancements are implemented / planned:
 
 - General
 
@@ -30,8 +31,8 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Enhanced form items for lists, properties and booleans
     - Use capabilities & requirements to generate combo boxes with type-ahead support
     - Declarative UI using MBUI and a simple XML format. See [LoggingView.mbui.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.mbui.xml) for an example.
-    - [JavaScript API](https://github.com/hal/hal.next/wiki/JavaScript-API)
-    - [Runtime extensions](https://github.com/hal/hal.next/wiki/Extensions)
+    - [JavaScript API](https://cdn.rawgit.com/hal/hal.next/esdoc/index.html)
+    - [Extensions](Extensions.md)
     - Remove deprecated APIs 
 
 - Finder
@@ -56,7 +57,7 @@ HAL.next should be used with **WildFly 11.x** (it makes use of the new capabilit
         
 ### Standalone
 
-The module `hal-standalone` contains an executable jar which launches a local web server at http://localhost:9090.
+The module `hal-standalone` contains an executable jar which launches a [Undertow](http://undertow.io/) web server at http://localhost:9090.
   
 1. Add http://localhost:9090 as allowed origin
 1. `mvn clean install -P prod,theme-hal`

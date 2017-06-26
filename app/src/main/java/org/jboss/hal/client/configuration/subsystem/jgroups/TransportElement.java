@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -44,7 +44,7 @@ class TransportElement extends GenericElement {
     private Form<ModelNode> threadPoolDefaultForm;
     private Form<ModelNode> threadPoolTimerForm;
     private Form<ModelNode> threadPoolInternalForm;
-    private Form<ModelNode> threadPooloobForm;
+    private Form<ModelNode> threadPoolOobForm;
 
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions", "DuplicateStringLiteralInspection"})
     TransportElement(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
@@ -96,7 +96,7 @@ class TransportElement extends GenericElement {
                     presenter.resetSingleton(template1, Names.THREAD_POOL + " Internal", form, threadPoolMetadata);
                 })
                 .build();
-        threadPooloobForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM,
+        threadPoolOobForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_OOB_FORM,
                 threadPoolMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
@@ -111,9 +111,9 @@ class TransportElement extends GenericElement {
                 })
                 .build();
 
-        Element parentElement = table.asElement().getParentElement();
+        HTMLElement parentElement = (HTMLElement) table.asElement().parentNode;
         // retrieve the form element to add it to the tab
-        Element form1 = parentElement.getLastElementChild();
+        HTMLElement form1 = (HTMLElement) parentElement.lastElementChild;
         // remove the element, then adds to the tab element
         parentElement.removeChild(form1);
 
@@ -127,10 +127,9 @@ class TransportElement extends GenericElement {
         threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_TIMER_TAB, "Thread Pool Timer",
                 threadPoolTimerForm.asElement());
         threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_OOB_TAB, "Thread Pool OOB",
-                threadPooloobForm.asElement());
+                threadPoolOobForm.asElement());
 
         parentElement.appendChild(threadPoolTabs.asElement());
-
     }
 
     @Override
@@ -146,12 +145,12 @@ class TransportElement extends GenericElement {
             // the thread-pool are singleton resources
             threadPoolTimerForm.view(transport.get(THREAD_POOL).get("timer"));
             threadPoolDefaultForm.view(transport.get(THREAD_POOL).get("default"));
-            threadPooloobForm.view(transport.get(THREAD_POOL).get("oob"));
+            threadPoolOobForm.view(transport.get(THREAD_POOL).get("oob"));
             threadPoolInternalForm.view(transport.get(THREAD_POOL).get("internal"));
         } else {
             threadPoolTimerForm.clear();
             threadPoolDefaultForm.clear();
-            threadPooloobForm.clear();
+            threadPoolOobForm.clear();
             threadPoolInternalForm.clear();
         }
     }

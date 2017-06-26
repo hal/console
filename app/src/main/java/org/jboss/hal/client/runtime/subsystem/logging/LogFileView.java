@@ -19,11 +19,11 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.DataElement;
-import org.jboss.gwt.elemento.core.EventHandler;
-import org.jboss.gwt.elemento.core.Templated;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import org.jboss.gwt.elemento.template.DataElement;
+import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Search;
@@ -36,15 +36,17 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
+import static org.jboss.hal.resources.CSS.px;
 
 /**
  * @author Harald Pehl
@@ -71,15 +73,16 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     private AceEditor editor;
     private LogFilePresenter presenter;
 
-    @DataElement Element header;
-    @DataElement Element logFileControls;
-    @DataElement Element status;
-    @DataElement Element tailMode;
-    @DataElement Element copyToClipboard;
-    @DataElement Element download;
-    @DataElement Element editorContainer;
-    @DataElement Element editorPlaceholder;
-    @DataElement Element loading;
+    @DataElement HTMLElement header;
+    @DataElement HTMLElement logFileControls;
+    @DataElement HTMLElement status;
+    @DataElement HTMLInputElement tailMode;
+    @DataElement HTMLElement copyToClipboard;
+    @DataElement HTMLElement download;
+    @DataElement HTMLElement editorContainer;
+    @DataElement HTMLElement editorPlaceholder;
+    @DataElement HTMLElement loading;
+    @DataElement HTMLElement refresh;
 
 
     // ------------------------------------------------------ init & ui
@@ -106,6 +109,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
         Clipboard clipboard = new Clipboard(copyToClipboard);
         clipboard.onCopy(event -> copyToClipboard(event.client));
+
+        bind(refresh, click, event -> presenter.reloadFile());
     }
 
     private void copyToClipboard(Clipboard clipboard) {
@@ -117,7 +122,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
                     .setTitle(resources().constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources().constants().copyToClipboard()));
-            Browser.getWindow().setTimeout(tooltip::hide, 1000);
+            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 
@@ -132,15 +137,18 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
         editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
 
         adjustEditorHeight();
-        Browser.getWindow().setOnresize(event -> adjustEditorHeight());
+        DomGlobal.window.onresize = event -> {
+            adjustEditorHeight();
+            return null;
+        };
     }
 
     private void adjustEditorHeight() {
         int height = Skeleton.applicationHeight();
         height -= 2 * MARGIN_BIG;
-        height -= (header.getOffsetHeight() + logFileControls.getOffsetHeight() + 20);
+        height -= (header.offsetHeight + logFileControls.offsetHeight + 20);
         height = max(height, MIN_HEIGHT);
-        editor.asElement().getStyle().setHeight(height, PX);
+        editor.asElement().style.height = CSS.height(px(height));
         editor.getEditor().resize();
     }
 
@@ -154,11 +162,11 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
 
     @Override
     public void loading() {
-        status.setTextContent(resources().constants().loadingPleaseWait());
-        status.setTitle(resources().constants().loadingPleaseWait());
-        int top = loading.getOffsetHeight() + editor.asElement().getOffsetHeight() / 2;
-        loading.getStyle().setTop(-1 * top, PX);
-        editorContainer.getClassList().add(logFileLoading);
+        status.textContent = resources().constants().loadingPleaseWait();
+        status.title = resources().constants().loadingPleaseWait();
+        int top = (int) (loading.offsetHeight + editor.asElement().offsetHeight / 2);
+        loading.style.top = String.valueOf(-1 * top) + "px"; //NON-NLS
+        editorContainer.classList.add(logFileLoading);
     }
 
     @Override
@@ -177,7 +185,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
             }
         }
         builder.append(logFile.getFilename());
-        header.setTextContent(builder.toString());
+        header.textContent = builder.toString();
         download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
         download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename()));
 
@@ -195,29 +203,21 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     @Override
     public int visibleLines() {
         int lineHeight = 15;
-        Element lineElement = Browser.getDocument()
+        HTMLElement lineElement = (HTMLElement) DomGlobal.document
                 .querySelector("#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
         if (lineElement != null) {
-            lineHeight = lineElement.getOffsetHeight();
+            lineHeight = (int) lineElement.offsetHeight;
         }
-        return editor.asElement().getOffsetHeight() / lineHeight;
+        return (int) (editor.asElement().offsetHeight / lineHeight);
     }
 
     private void statusUpdate(int lines) {
         String statusText = lines < LogFiles.LINES
                 ? resources().messages().logFileFullStatus(lines, Format.time(new Date()))
                 : resources().messages().logFilePartStatus(lines, Format.time(new Date()));
-        status.setTextContent(statusText);
-        status.setTitle(statusText);
-        editorContainer.getClassList().remove(logFileLoading);
+        status.textContent = statusText;
+        status.title = statusText;
+        editorContainer.classList.remove(logFileLoading);
         search.clear();
-    }
-
-
-    // ------------------------------------------------------ event handler
-
-    @EventHandler(element = "refresh", on = click)
-    void onRefresh() {
-        presenter.reloadFile();
     }
 }

@@ -17,9 +17,10 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import elemental.js.events.JsEvent;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.Event;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLSelectElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
@@ -60,7 +61,7 @@ public class SelectBoxBridge {
     @FunctionalInterface
     public interface ChangeListener {
 
-        void onChange(JsEvent event, int index);
+        void onChange(Event event, int index);
     }
 
 
@@ -68,7 +69,7 @@ public class SelectBoxBridge {
     public static class Single {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Single element(Element element);
+        public native static Single element(HTMLSelectElement element);
 
         public native String val();
 
@@ -104,13 +105,13 @@ public class SelectBoxBridge {
     public static class Multi {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Multi element(Element element);
+        public native static Multi element(HTMLElement element);
 
-        public native JsArrayOf<String> val();
+        public native Array<String> val();
 
         public native void selectpicker(String method);
 
-        public native void selectpicker(String method, JsArrayOf<String> param);
+        public native void selectpicker(String method, Array<String> param);
 
         public native void on(@NonNls String event, ChangeListener listener);
 

@@ -27,13 +27,13 @@ import java.util.TreeSet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_SINGLETONS;
@@ -68,6 +68,7 @@ final class ReadChildren implements DataFunction<Context> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void load(final Node<Context> node, final ResultCallback<Context> callback) {
         if (node.data.isFullyQualified()) {
             Operation operation = new Operation.Builder(node.data.getAddress(), READ_CHILDREN_TYPES_OPERATION)
@@ -86,7 +87,7 @@ final class ReadChildren implements DataFunction<Context> {
                     }
                 }
 
-                JsArrayOf<Node<Context>> children = JsArrayOf.create();
+                Array<Node<Context>> children = new Array<>();
                 for (Map.Entry<String, Collection<String>> entry : resources.asMap().entrySet()) {
                     String name = entry.getKey();
                     Set<String> singletons = new HashSet<>(entry.getValue());
@@ -113,7 +114,7 @@ final class ReadChildren implements DataFunction<Context> {
                     .build();
             dispatcher.execute(operation, result -> {
                 List<ModelNode> modelNodes = result.asList();
-                JsArrayOf<Node<Context>> children = JsArrayOf.create();
+                Array<Node<Context>> children = new Array<>();
                 SortedSet<String> singletons = new TreeSet<>(node.data.getSingletons());
 
                 // Add existing children

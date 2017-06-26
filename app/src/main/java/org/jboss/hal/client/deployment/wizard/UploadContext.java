@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-import elemental.html.File;
+import elemental2.dom.File;
 
 /**
  * @author Harald Pehl

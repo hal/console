@@ -21,9 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.SpanElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -42,9 +40,9 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -57,6 +55,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
@@ -146,15 +145,15 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
         setItemRenderer(driver -> new ItemDisplay<JdbcDriver>() {
             @Override
-            public Element getIcon() {
-                SpanElement icon = null;
+            public HTMLElement getIcon() {
+                HTMLElement icon = null;
                 JdbcDriver.Provider provider = driver.getProvider();
                 if (provider != UNKNOWN) {
-                    icon = Browser.getDocument().createSpanElement();
+                    icon = span().asElement();
                     if (provider == MODULE) {
-                        icon.setClassName(fontAwesome("cubes"));
+                        icon.className = fontAwesome("cubes");
                     } else if (provider == DEPLOYMENT) {
-                        icon.setClassName(fontAwesome("archive"));
+                        icon.className = fontAwesome("archive");
                     }
                 }
                 return icon;

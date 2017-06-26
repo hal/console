@@ -19,15 +19,19 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
 /**
@@ -35,44 +39,41 @@ import static org.jboss.gwt.elemento.core.EventType.click;
  */
 class ChooseSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
-    private final Element root;
-    private final InputElement firstRadio;
+    private final HTMLElement root;
+    private final HTMLInputElement firstRadio;
 
     ChooseSingletonStep(final Node<Context> parent, final List<String> children, final Resources resources) {
         super(resources.constants().chooseSingleton());
 
-        Elements.Builder builder = new Elements.Builder().div();
+        this.root = div().asElement();
         SortedSet<String> singletons = new TreeSet<>(parent.data.getSingletons());
         SortedSet<String> existing = new TreeSet<>(children);
         singletons.removeAll(existing);
 
         for (String singleton : singletons) {
-            // @formatter:off
-            builder.div().css(CSS.radio)
-                .label()
-                    .input(InputType.radio)
-                        .attr("name", "singleton") //NON-NLS
-                        .attr("value", singleton)
-                        .on(click, event ->
-                                wizard().getContext().singleton = ((InputElement) event.getTarget()).getValue())
-                    .span().textContent(singleton).end()
-                .end()
-            .end();
-            // @formatter:on
+            HTMLInputElement input;
+            root.appendChild(div().css(CSS.radio)
+                    .add(label()
+                            .add(input = input(InputType.radio)
+                                    .attr("name", "singleton") //NON-NLS
+                                    .attr("value", singleton)
+                                    .asElement())
+                            .add(span().textContent(singleton)))
+                    .asElement());
+            bind(input, click, event -> wizard().getContext().singleton = input.value);
         }
-        this.root = builder.end().build();
 
-        firstRadio = (InputElement) root.querySelector("input[type=radio]"); //NON-NLS
-        firstRadio.setChecked(true);
+        firstRadio = (HTMLInputElement) root.querySelector("input[type=radio]"); //NON-NLS
+        firstRadio.checked = true;
     }
 
     @Override
     public void reset(final SingletonContext context) {
-        context.singleton = firstRadio.getValue();
+        context.singleton = firstRadio.value;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

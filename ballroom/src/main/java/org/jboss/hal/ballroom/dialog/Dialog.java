@@ -26,9 +26,9 @@ import java.util.TreeMap;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.ButtonElement;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -44,6 +44,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
@@ -109,12 +113,13 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog builder
 
+
     @JsType(namespace = "hal.ui", name = "DialogBuilder")
     public static class Builder {
 
         // mandatory attributes
         private final String title;
-        private final List<Element> elements;
+        private final List<HTMLElement> elements;
         private final SortedMap<Integer, Button> buttons;
 
         // optional attributes
@@ -252,7 +257,7 @@ public class Dialog implements IsElement {
         }
 
         @JsIgnore
-        public Builder add(Element... elements) {
+        public Builder add(HTMLElement... elements) {
             if (elements != null) {
                 this.elements.addAll(Arrays.asList(elements));
             }
@@ -260,7 +265,7 @@ public class Dialog implements IsElement {
         }
 
         @JsIgnore
-        public Builder add(Iterable<Element> elements) {
+        public Builder add(Iterable<HTMLElement> elements) {
             if (elements != null) {
                 //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(this.elements, elements);
@@ -276,7 +281,7 @@ public class Dialog implements IsElement {
         // ------------------------------------------------------ JS methods
 
         @JsMethod(name = "add")
-        public Builder jsAdd(Element element) {
+        public Builder jsAdd(HTMLElement element) {
             return add(element);
         }
 
@@ -298,53 +303,34 @@ public class Dialog implements IsElement {
     @JsIgnore public static final int PRIMARY_POSITION = 200;
     static final int SECONDARY_POSITION = 100;
     private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String BODY_ELEMENT = "body";
-    private static final String CLOSE_ICON_ELEMENT = "closeIcon";
-    private static final String DIALOG_ELEMENT = "dialog";
-    private static final String FOOTER_ELEMENT = "footer";
-    private static final String TITLE_ELEMENT = "title";
 
-    private static final Element root;
-    private static final Element dialog;
-    private static final Element closeIcon;
-    private static final Element title;
-    private static final Element body;
-    private static final Element footer;
+    private static final HTMLElement root;
+    private static final HTMLElement dialog;
+    private static final HTMLButtonElement closeIcon;
+    private static final HTMLElement title;
+    private static final HTMLElement body;
+    private static final HTMLElement footer;
 
     private static boolean open;
 
-
     static {
-        // @formatter:off
-        Elements.Builder rootBuilder = new Elements.Builder()
-            .div().id(Ids.HAL_MODAL).css(modal)
-                    .attr(ROLE, DIALOG)
-                    .attr(TABINDEX, "-1")
-                    .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
-                .div().css(modalDialog).attr(ROLE, "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
-                    .div().css(modalContent)
-                        .div().css(modalHeader)
-                            .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
-                                .span().css(pfIcon("close")).aria(HIDDEN, TRUE).end()
-                            .end()
-                            .h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).rememberAs(TITLE_ELEMENT).end()
-                        .end()
-                        .div().css(modalBody).rememberAs(BODY_ELEMENT).end()
-                        .div().css(modalFooter).rememberAs(FOOTER_ELEMENT).end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        root = div()
+                .id(Ids.HAL_MODAL).css(modal)
+                .attr(ROLE, DIALOG)
+                .attr(TABINDEX, "-1")
+                .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
+                .add(dialog = div().css(modalDialog).attr(ROLE, "document") //NON-NLS
+                        .add(div().css(modalContent)
+                                .add(div().css(modalHeader)
+                                        .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close()).asElement())
+                                        .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).asElement()))
+                                .add(body = div().css(modalBody).asElement())
+                                .add(footer = div().css(modalFooter).asElement()))
+                        .asElement())
+                .asElement();
 
-        root = rootBuilder.build();
-        dialog = rootBuilder.referenceFor(DIALOG_ELEMENT);
-        closeIcon = rootBuilder.referenceFor(CLOSE_ICON_ELEMENT);
-        title = rootBuilder.referenceFor(TITLE_ELEMENT);
-        body = rootBuilder.referenceFor(BODY_ELEMENT);
-        footer = rootBuilder.referenceFor(FOOTER_ELEMENT);
-        Browser.getDocument().getBody().appendChild(root);
+        DomGlobal.document.body.appendChild(root);
         initEventHandler();
     }
 
@@ -359,9 +345,9 @@ public class Dialog implements IsElement {
     }
 
     private static void reset() {
-        root.getClassList().remove(fade);
+        root.classList.remove(fade);
         for (Size size : Size.values()) {
-            dialog.getClassList().remove(size.css);
+            dialog.classList.remove(size.css);
         }
         Elements.removeChildrenFrom(body);
         Elements.removeChildrenFrom(footer);
@@ -372,7 +358,7 @@ public class Dialog implements IsElement {
 
     private final boolean closeOnEsc;
     private final Callback closed;
-    private final Map<Integer, ButtonElement> buttons;
+    private final Map<Integer, HTMLButtonElement> buttons;
     private final List<Attachable> attachables;
 
     Dialog(final Builder builder) {
@@ -383,13 +369,13 @@ public class Dialog implements IsElement {
         this.attachables = new ArrayList<>();
 
         if (builder.fadeIn) {
-            Dialog.root.getClassList().add(fade);
+            Dialog.root.classList.add(fade);
         }
-        Dialog.dialog.getClassList().add(builder.size.css);
+        Dialog.dialog.classList.add(builder.size.css);
         Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
-        closeIcon.setOnclick(event -> close());
+        bind(closeIcon, click, event -> close());
         setTitle(builder.title);
-        for (Element element : builder.elements) {
+        for (HTMLElement element : builder.elements) {
             Dialog.body.appendChild(element);
         }
 
@@ -402,8 +388,7 @@ public class Dialog implements IsElement {
                     css = css + " " + pullLeft;
                 }
 
-                ButtonElement buttonElement = new Elements.Builder()
-                        .button()
+                HTMLButtonElement buttonElement = button(button.label)
                         .css(css)
                         .on(click, event -> {
                             if (button.resultCallback != null) {
@@ -417,8 +402,7 @@ public class Dialog implements IsElement {
                                 close();
                             }
                         })
-                        .textContent(button.label)
-                        .end().build();
+                        .asElement();
                 Dialog.footer.appendChild(buttonElement);
                 buttons.put(position, buttonElement);
             }
@@ -428,7 +412,7 @@ public class Dialog implements IsElement {
 
     @Override
     @JsIgnore
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -467,11 +451,11 @@ public class Dialog implements IsElement {
 
     @JsIgnore
     public void setTitle(String title) {
-        Dialog.title.setInnerHTML(title);
+        Dialog.title.textContent = title;
     }
 
     @JsIgnore
-    public ButtonElement getButton(int position) {
+    public HTMLButtonElement getButton(int position) {
         return buttons.get(position);
     }
 }

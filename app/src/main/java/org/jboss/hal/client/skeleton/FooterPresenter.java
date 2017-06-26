@@ -21,7 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
@@ -95,7 +95,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return getView().asElement();
     }
 

@@ -18,8 +18,8 @@ package org.jboss.hal.client.runtime.host;
 import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -65,15 +65,15 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     public void updateHost(final Host host) {
         hostConfigurationForm.view(host);
         hostConfigurationForm.getFormItem(NAME).unmask(); // makes no sense that this is sensitive
-        Element element = Browser.getDocument().getElementById("host-configuration-title");
+        HTMLElement element = (HTMLElement) DomGlobal.document.getElementById("host-configuration-title");
         if (element != null) {
-            element.setInnerHTML(new SafeHtmlBuilder()
+            element.innerHTML = new SafeHtmlBuilder()
                     .appendEscaped(host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER)
                     .appendEscaped(" ")
                     .appendHtmlConstant("<code>")
                     .appendEscaped(host.getName())
                     .appendHtmlConstant("</code>")
-                    .toSafeHtml().asString());
+                    .toSafeHtml().asString();
         }
     }
 

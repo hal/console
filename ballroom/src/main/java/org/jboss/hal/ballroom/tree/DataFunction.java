@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsFunction;
 
 /**
@@ -29,7 +29,7 @@ public interface DataFunction<T> {
     @FunctionalInterface
     interface ResultCallback<T> {
 
-        void result(JsArrayOf<Node<T>> nodes);
+        void result(Array<Node<T>> nodes);
     }
 
     void load(Node<T> node, ResultCallback<T> callback);

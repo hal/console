@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.collect.Lists;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
 
 /**
@@ -46,10 +46,10 @@ public class Pages implements IsElement {
         private final String parentId;
         private final Supplier<String> parentTitle;
         private final Supplier<String> title;
-        private final Element element;
+        private final HTMLElement element;
 
         private Page(final String parentId, final Supplier<String> parentTitle, final Supplier<String> title,
-                final Element element) {
+                final HTMLElement element) {
             this.parentId = parentId;
             this.parentTitle = parentTitle;
             this.title = title;
@@ -57,17 +57,17 @@ public class Pages implements IsElement {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return element;
         }
     }
 
 
     private final String mainId;
-    private final Element mainPage;
+    private final HTMLElement mainPage;
     private final Breadcrumb breadcrumb;
     private final Map<String, Page> pages;
-    private final Element root;
+    private final HTMLElement root;
 
     /**
      * Create a new instance with the main page id and element.
@@ -79,16 +79,17 @@ public class Pages implements IsElement {
     /**
      * Create a new instance with the main page id and element.
      */
-    public Pages(String id, final Element element) {
+    public Pages(String id, final HTMLElement element) {
         mainId = id;
         mainPage = element;
 
         breadcrumb = new Breadcrumb();
-        breadcrumb.asElement().getClassList().add(page);
+        breadcrumb.asElement().classList.add(page);
         pages = new HashMap<>();
-        root = Browser.getDocument().createDivElement();
-        root.appendChild(mainPage);
-        root.appendChild(breadcrumb.asElement());
+        root = div()
+                .add(mainPage)
+                .add(breadcrumb)
+                .asElement();
         showMain();
     }
 
@@ -126,7 +127,7 @@ public class Pages implements IsElement {
      */
     public void addPage(final String parentId, final String id,
             final Supplier<String> parentTitle, final Supplier<String> title,
-            final Element element) {
+            final HTMLElement element) {
         Page page = new Page(parentId, parentTitle, title, element);
         Elements.setVisible(page.asElement(), false);
 
@@ -176,7 +177,7 @@ public class Pages implements IsElement {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 }

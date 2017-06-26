@@ -39,8 +39,7 @@ class ElytronSubsystemPreview extends PreviewContent<StaticItem> {
         this.attributes = new PreviewAttributes<>(new ModelNode(),
                 asList("default-authentication-context",
                         "initial-providers",
-                        "final-providers"))
-                .end();
+                        "final-providers"));
 
         previewBuilder().addAll(attributes);
     }

@@ -15,17 +15,15 @@
  */
 package org.jboss.hal.client.homepage;
 
-import java.util.Collections;
 import javax.annotation.PostConstruct;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import elemental.dom.Element;
-import elemental.html.ImageElement;
-import org.jboss.gwt.elemento.core.DataElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLImageElement;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.gwt.elemento.template.DataElement;
+import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.core.mvp.Places;
 
 /**
@@ -50,16 +48,16 @@ abstract class HomepageModule implements IsElement {
     // @formatter:on
 
 
-    @DataElement ImageElement moduleImage;
-    @DataElement Element moduleBody;
-    @DataElement Element moduleHeader;
-    @DataElement Element moduleIntro;
+    @DataElement HTMLImageElement moduleImage;
+    @DataElement HTMLElement moduleBody;
+    @DataElement HTMLElement moduleHeader;
+    @DataElement HTMLElement moduleIntro;
 
     @PostConstruct
     void init() {
-        moduleImage.setSrc(image().getSafeUri().asString());
-        moduleHeader.setInnerHTML(header());
-        moduleIntro.setInnerHTML(intro());
+        moduleImage.src = image().getSafeUri().asString();
+        moduleHeader.textContent = header();
+        moduleIntro.textContent = intro();
 
         int i = 0;
         for (HomepageSection section : sections()) {

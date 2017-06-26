@@ -16,9 +16,8 @@
 package org.jboss.hal.ballroom.autocomplete;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.js.json.JsJsonArray;
-import elemental.js.json.JsJsonObject;
-import elemental.json.JsonObject;
+import org.jboss.hal.json.JsonArray;
+import org.jboss.hal.json.JsonObject;
 import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
@@ -32,14 +31,14 @@ import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 /**
  * @author Harald Pehl
  */
-final class ReadChildrenRenderer implements ItemRenderer<JsJsonObject> {
+final class ReadChildrenRenderer implements ItemRenderer<JsonObject> {
 
     @Override
-    public final String render(final JsJsonObject item, final String query) {
+    public final String render(final JsonObject item, final String query) {
         String name = item.get(NAME).asString();
         @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + name + "\">");
-        JsJsonArray addresses = (JsJsonArray) item.get(ADDRESSES);
+        JsonArray addresses = item.getArray(ADDRESSES);
         if (addresses.length() != 0) {
             for (int i = 0; i < addresses.length(); i++) {
                 JsonObject keyValue = addresses.getObject(i);

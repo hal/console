@@ -18,7 +18,8 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -99,10 +100,10 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 .icon("fa fa-sitemap")
                 .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
                 .build();
-        noRootLogger.asElement().getClassList().add(marginTopLarge);
+        noRootLogger.asElement().classList.add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
-        rootLoggerForm.asElement().getParentElement().appendChild(noRootLogger.asElement());
+        rootLoggerForm.asElement().parentNode.appendChild(noRootLogger.asElement());
         rootLoggerVisibility(true);
     }
 
@@ -129,8 +130,9 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     }
 
     private void rootLoggerVisibility(final boolean visible) {
-        Elements.setVisible(Browser.getDocument().getElementById("logging-root-logger-header"), visible);
-        Elements.setVisible(Browser.getDocument().getElementById("logging-root-logger-description"), visible);
+        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-root-logger-header"), visible);
+        Elements.setVisible((HTMLElement) DomGlobal.document.getElementById("logging-root-logger-description"),
+                visible);
         Elements.setVisible(rootLoggerForm.asElement(), visible);
         Elements.setVisible(noRootLogger.asElement(), !visible);
     }

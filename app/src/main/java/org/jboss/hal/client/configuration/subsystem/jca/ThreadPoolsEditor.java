@@ -18,8 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
@@ -39,6 +38,9 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_LRT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -53,9 +55,9 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
  *
  * @author Harald Pehl
  */
-class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresenter> {
+class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresenter<JcaPresenter> {
 
-    private final Element root;
+    private final HTMLElement root;
     private final List<Attachable> attachables;
     private final Table<ThreadPool> table;
     private final ModelNodeForm<ThreadPool> attributesForm;
@@ -109,21 +111,16 @@ class ThreadPoolsEditor implements IsElement, Attachable, HasPresenter<JcaPresen
                 .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_TAB), resources.constants().sizing(),
                         sizingForm.asElement());
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .section()
-                .h(1).textContent(THREAD_POOLS).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        root = section()
+                .add(h(1).textContent(THREAD_POOLS))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
                 .add(tabs)
-            .end();
-        // @formatter:on
-
-        root = builder.build();
+                .asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

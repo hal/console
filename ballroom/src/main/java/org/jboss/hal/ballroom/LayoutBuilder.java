@@ -15,59 +15,42 @@
  */
 package org.jboss.hal.ballroom;
 
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLDivElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.resources.CSS;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * Helper methods to create {@code <div/>} elements for bootstrap grids.
+ *
  * @author Harald Pehl
  */
-public class LayoutBuilder extends Elements.CoreBuilder<LayoutBuilder> {
+public final class LayoutBuilder {
 
-    public LayoutBuilder() {
-        super("hal.layoutBuilder");
-    }
-
-    @Override
-    protected LayoutBuilder that() {
-        return this;
-    }
-
-    /**
-     * Starts a row. You always need at least one row. Rows should contain columns only. Must be closed with {@link
-     * #end()}.
-     */
-    public LayoutBuilder row() {
+    public static HtmlContentBuilder<HTMLDivElement> row() {
         return div().css(row);
     }
 
-    /**
-     * Starts a column. Columns should contain (sub)headers, elements or tabs. Must be closed with {@link #end()}.
-     */
-    public LayoutBuilder column() {
+    public static HtmlContentBuilder<HTMLDivElement> column() {
         return column(0, 12);
     }
 
-    public LayoutBuilder column(int columns) {
+    public static HtmlContentBuilder<HTMLDivElement> column(int columns) {
         return column(0, columns);
     }
 
-    public LayoutBuilder column(int offset, int columns) {
+    public static HtmlContentBuilder<HTMLDivElement> column(int offset, int columns) {
         return div().css(rowCss(offset, columns));
     }
 
-    /**
-     * Adds a h1 header. Needs to be closed!
-     */
-    public LayoutBuilder header(String title) {
-        return h(1).textContent(title);
-    }
-
-    private String rowCss(int offset, int columns) {
+    private static String rowCss(int offset, int columns) {
         return offset == 0
                 ? CSS.column(columns, columnLg, columnMd, columnSm)
                 : offset(offset, columnLg, columnMd, columnSm) + " " + CSS
                 .column(columns, columnLg, columnMd, columnSm);
     }
+
+    private LayoutBuilder() {}
 }

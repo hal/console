@@ -32,7 +32,7 @@ class CacheContainerPreview extends PreviewContent<CacheContainer> {
         super(cc.getName());
 
         PreviewAttributes<CacheContainer> previewAttributes = new PreviewAttributes<>(cc,
-                asList(DEFAULT_CACHE, JNDI_NAME, STATISTICS_ENABLED)).end();
+                asList(DEFAULT_CACHE, JNDI_NAME, STATISTICS_ENABLED));
         previewBuilder().addAll(previewAttributes);
     }
 }

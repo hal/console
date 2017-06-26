@@ -18,9 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.mail;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,6 +37,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SOCKET_BINDING_TEMPLATE;
@@ -82,12 +85,10 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .build();
         registerAttachable(mailSessionForm);
 
-        Element mailSessionElement = new Elements.Builder()
-                .div()
-                .p().textContent(mailSessionMetadata.getDescription().getDescription()).end()
+        HTMLElement mailSessionElement = section()
+                .add(p().textContent(mailSessionMetadata.getDescription().getDescription()))
                 .add(mailSessionForm.asElement())
-                .end()
-                .build();
+                .asElement();
         navigation.addPrimary(Ids.MAIL_SESSION_ENTRY, resources.constants().attributes(),
                 fontAwesome("envelope"), mailSessionElement);
 
@@ -118,29 +119,19 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
         registerAttachable(serverForm);
 
-        mailSessionElement = new Elements.Builder()
-                .div()
-                .p().textContent(serverMetadata.getDescription().getDescription()).end()
+        mailSessionElement = section()
+                .add(p().textContent(serverMetadata.getDescription().getDescription()))
                 .add(serverTable.asElement())
                 .add(serverForm.asElement())
-                .end()
-                .build();
+                .asElement();
         navigation.addPrimary(Ids.MAIL_SERVER_ENTRY, Names.SERVER, pfIcon("server"), mailSessionElement);
 
         // ============================================
         // main layout
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(Names.MAIL_SESSION).end()
-                    .addAll(navigation.panes())
-                .end()
-            .end();
-        // @formatter:on
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .add(header().textContent(Names.MAIL_SESSION))
+                        .addAll(navigation.panes())));
     }
 
     @Override

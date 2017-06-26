@@ -22,9 +22,15 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
 import org.jboss.hal.core.Core;
@@ -34,14 +40,13 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
  * Element to show the basic attributes of a resource inside the preview pane.
- * TODO Apply constraints to attributes?
  *
  * @author Harald Pehl
  */
@@ -53,8 +58,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         final String value;
         final SafeHtml htmlValue;
         final String href;
-        final Element element;
-        final Iterable<Element> elements;
+        final HTMLElement element;
+        final Iterable<HTMLElement> elements;
 
         public PreviewAttribute(final String label, final String value) {
             this(label, value, null, null, null, null);
@@ -72,16 +77,16 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             this(label, null, value, href, null, null);
         }
 
-        public PreviewAttribute(final String label, final Iterable<Element> elements) {
+        public PreviewAttribute(final String label, final Iterable<HTMLElement> elements) {
             this(label, null, null, null, elements, null);
         }
 
-        public PreviewAttribute(final String label, final Element element) {
+        public PreviewAttribute(final String label, final HTMLElement element) {
             this(label, null, null, null, null, element);
         }
 
         private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href,
-                final Iterable<Element> elements, final Element element) {
+                final Iterable<HTMLElement> elements, final HTMLElement element) {
             this.label = label;
             this.value = value;
             this.htmlValue = htmlValue;
@@ -107,17 +112,18 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
 
-    private static final String DESCRIPTION = "description";
     private static final String LABEL = "label";
     private static final String VALUE = "value";
+    private static final String VALUE_MARKER = "valueMarker";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final T model;
-    private final Element description;
-    private final LabelBuilder labelBuilder;
-    private final Elements.Builder builder;
+    private final HTMLElement description;
+    private final HTMLUListElement ul;
+    private final LabelBuilder lb;
+    private final ElementsBuilder eb;
+    private final Map<String, HTMLLIElement> listItems;
     private final Map<String, PreviewAttributeFunction<T>> functions;
-    private final Map<String, Element> labelElements;
 
     public PreviewAttributes(final T model) {
         this(model, CONSTANTS.mainAttributes(), null, Collections.emptyList());
@@ -138,30 +144,31 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     public PreviewAttributes(final T model, final String header, final String description,
             final List<String> attributes) {
         this.model = model;
-        this.labelBuilder = new LabelBuilder();
         this.functions = new HashMap<>();
-        this.labelElements = new HashMap<>();
-        this.builder = new Elements.Builder().h(2).textContent(header).end().p().rememberAs(DESCRIPTION).end();
+        this.listItems = new HashMap<>();
+        this.lb = new LabelBuilder();
+        this.eb = new ElementsBuilder()
+                .add(h(2, header))
+                .add(this.description = p().asElement());
 
-        this.description = builder.referenceFor(DESCRIPTION);
         if (description != null) {
-            this.description.setTextContent(description);
+            this.description.textContent = description;
         } else {
             Elements.setVisible(this.description, false);
         }
 
-        this.builder.ul().css(listGroup);
+        eb.add(this.ul = ul().css(listGroup).asElement());
         attributes.forEach(this::append);
     }
 
     public PreviewAttributes<T> append(final String attribute) {
-        append(model -> new PreviewAttribute(labelBuilder.label(attribute),
+        append(model -> new PreviewAttribute(lb.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : ""));
         return this;
     }
 
     public PreviewAttributes<T> append(final String attribute, String href) {
-        append(model -> new PreviewAttribute(labelBuilder.label(attribute),
+        append(model -> new PreviewAttribute(lb.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : "",
                 href));
         return this;
@@ -171,68 +178,56 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         String id = Ids.uniqueId();
         String labelId = Ids.build(id, LABEL);
         String valueId = Ids.build(id, VALUE);
-        functions.put(id, function);
 
+        HTMLElement valueContainer;
         PreviewAttribute previewAttribute = function.labelValue(model);
-        // @formatter:off
-        builder.li().rememberAs(id).css(listGroupItem)
-            .span().rememberAs(labelId).css(key).textContent(previewAttribute.label).end();
-            if (previewAttribute.elements != null || previewAttribute.element != null) {
-                builder.span().rememberAs(valueId).css(CSS.value);
-                if (previewAttribute.elements != null) {
-                    builder.addAll(previewAttribute.elements);
-                } else {
-                    builder.add(previewAttribute.element);
-                }
-                builder.end();
+
+        HTMLLIElement li = li().id(id).css(listGroupItem)
+                .add(span().id(labelId).css(key).textContent(previewAttribute.label))
+                .add(valueContainer = span().id(valueId).css(CSS.value).asElement())
+                .asElement();
+
+        if (previewAttribute.elements != null || previewAttribute.element != null) {
+            if (previewAttribute.elements != null) {
+                previewAttribute.elements.forEach(valueContainer::appendChild);
             } else {
-                if (previewAttribute.href != null) {
-                    builder.span().css(value).a(previewAttribute.href).rememberAs(valueId);
-                } else {
-                    builder.span().css(value).rememberAs(valueId);
+                valueContainer.appendChild(previewAttribute.element);
+            }
+        } else {
+            if (previewAttribute.href != null) {
+                valueContainer.appendChild(valueContainer = a(previewAttribute.href).asElement());
+            }
+            if (previewAttribute.isUndefined()) {
+                valueContainer.textContent = Names.NOT_AVAILABLE;
+            } else if (previewAttribute.htmlValue != null) {
+                valueContainer.innerHTML = previewAttribute.htmlValue.asString();
+            } else {
+                if (previewAttribute.isExpression()) {
+                    HTMLElement resolveExpression = span().css(fontAwesome("link"), clickable, marginLeft5)
+                            .title(CONSTANTS.resolveExpression())
+                            .on(click, event -> Core.INSTANCE.eventBus()
+                                    .fireEvent(new ResolveExpressionEvent(previewAttribute.value)))
+                            .asElement();
+                    HTMLElement nextValueContainer = span().asElement();
+                    valueContainer.appendChild(nextValueContainer);
+                    valueContainer.appendChild(resolveExpression);
+                    valueContainer = nextValueContainer;
                 }
-                if (previewAttribute.isUndefined()) {
-                    builder.textContent(Names.NOT_AVAILABLE);
-                }
-                else if (previewAttribute.htmlValue != null) {
-                    builder.innerHtml(previewAttribute.htmlValue);
-                } else {
-                    if (previewAttribute.isExpression()) {
-                        builder.span();
-                    }
-                    builder.textContent(previewAttribute.value);
-                    if (previewAttribute.value.length() > 15) {
-                        builder.title(previewAttribute.value);
-                    }
-                    if (previewAttribute.isExpression()) {
-                        builder.end();
-                        builder.span()
-                                .css(fontAwesome("link"), clickable, marginLeft5)
-                                .title(CONSTANTS.resolveExpression())
-                                .on(click, event ->
-                                        Core.INSTANCE.eventBus().fireEvent(
-                                                new ResolveExpressionEvent(previewAttribute.value)))
-                                .end();
-                    }
-                }
-                builder.end();
-                if (previewAttribute.href != null) {
-                    builder.end();
+                valueContainer.textContent = previewAttribute.value;
+                if (previewAttribute.value.length() > 15) {
+                    valueContainer.title = previewAttribute.value;
                 }
             }
-        builder.end(); // </li>
-        // @formatter:on
+        }
 
-        Element lastAttributeGroupItem = builder.referenceFor(id);
-        labelElements.put(previewAttribute.label, lastAttributeGroupItem);
+        valueContainer.dataset.set(VALUE_MARKER, "");
+        listItems.put(previewAttribute.label, li);
+        functions.put(id, function);
+        ul.appendChild(li);
         return this;
     }
 
-    public PreviewAttributes<T> end() {
-        builder.end();
-        return this;
-    }
-
+    @SuppressWarnings("HardCodedStringLiteral")
     public void refresh(T model) {
         for (Map.Entry<String, PreviewAttributeFunction<T>> entry : functions.entrySet()) {
             String id = entry.getKey();
@@ -242,42 +237,58 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             PreviewAttributeFunction<T> function = entry.getValue();
             PreviewAttribute previewAttribute = function.labelValue(model);
 
-            builder.referenceFor(labelId).setTextContent(previewAttribute.label);
-            Element valueElement = builder.referenceFor(valueId);
-            if (previewAttribute.elements != null) {
-                Elements.removeChildrenFrom(valueElement);
-                previewAttribute.elements.forEach(valueElement::appendChild);
-            } else if (previewAttribute.element != null) {
-                Elements.removeChildrenFrom(valueElement);
-                valueElement.appendChild(previewAttribute.element);
-            } else if (previewAttribute.htmlValue != null || previewAttribute.value != null) {
-                if (previewAttribute.href != null && "a".equalsIgnoreCase(valueElement.getTagName())) { //NON-NLS
-                    valueElement.setAttribute(UIConstants.HREF, previewAttribute.href);
-                }
-                if (previewAttribute.htmlValue != null) {
-                    valueElement.setInnerHTML(previewAttribute.htmlValue.asString());
-                } else {
-                    valueElement.setTextContent(previewAttribute.value);
+            Element label = DomGlobal.document.getElementById(labelId);
+            if (label != null) {
+                label.textContent = previewAttribute.label;
+            }
+
+            HTMLElement valueContainer = (HTMLElement) DomGlobal.document.getElementById(valueId);
+            if (valueContainer != null) {
+                if (previewAttribute.elements != null) {
+                    Elements.removeChildrenFrom(valueContainer);
+                    previewAttribute.elements.forEach(valueContainer::appendChild);
+                } else if (previewAttribute.element != null) {
+                    Elements.removeChildrenFrom(valueContainer);
+                    valueContainer.appendChild(previewAttribute.element);
+                } else if (previewAttribute.htmlValue != null || previewAttribute.value != null) {
+                    if (previewAttribute.href != null) {
+                        Elements.stream(valueContainer.getElementsByTagName("a"))
+                                .findFirst()
+                                .ifPresent(a -> ((HTMLAnchorElement) a).href = previewAttribute.href);
+                    }
+                    Element valueElement;
+                    if (valueContainer.dataset.has("valueMarker")) {
+                        valueElement = valueContainer;
+                    } else {
+                        valueElement = valueContainer.querySelector("[data-value-marker]");
+                    }
+                    if (valueElement != null) {
+                        if (previewAttribute.htmlValue != null) {
+                            valueElement.innerHTML = previewAttribute.htmlValue.asString();
+                        } else {
+                            valueElement.textContent = previewAttribute.value;
+                        }
+                    }
                 }
             }
         }
     }
 
     public void setVisible(String attribute, boolean visible) {
-        Elements.setVisible(labelElements.get(labelBuilder.label(attribute)), visible);
+        Elements.setVisible(listItems.get(lb.label(attribute)), visible);
     }
 
     public void setDescription(String description) {
-        this.description.setTextContent(description);
+        this.description.textContent = description;
         Elements.setVisible(this.description, true);
     }
 
     public void setDescription(SafeHtml description) {
-        this.description.setInnerHTML(description.asString());
+        this.description.innerHTML = description.asString();
         Elements.setVisible(this.description, true);
     }
 
-    public void setDescription(Element description) {
+    public void setDescription(HTMLElement description) {
         Elements.removeChildrenFrom(description);
         this.description.appendChild(description);
         Elements.setVisible(this.description, true);
@@ -288,7 +299,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
     @Override
-    public Iterable<Element> asElements() {
-        return builder.elements();
+    public Iterable<HTMLElement> asElements() {
+        return eb.asElements();
     }
 }

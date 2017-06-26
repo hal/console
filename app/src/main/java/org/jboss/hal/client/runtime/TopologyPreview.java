@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,12 +29,19 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Document;
-import elemental.dom.Element;
-import elemental.dom.NodeList;
-import elemental.events.EventListener;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableCellElement;
+import elemental2.dom.HTMLTableColElement;
+import elemental2.dom.HTMLTableElement;
+import elemental2.dom.HTMLTableSectionElement;
+import elemental2.dom.MouseEvent;
+import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -67,8 +75,8 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
@@ -83,9 +91,11 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static com.google.common.collect.Lists.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
@@ -97,11 +107,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 
     private static final String CONTAINER = "container";
-    private static final String LOADING_SECTION = "loading-section";
-    private static final String TOPOLOGY_SECTION = "topology-section";
-    private static final String HOST_ATTRIBUTES_SECTION = "host-attributes-section";
-    private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
-    private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
     private final SecurityContextRegistry securityContextRegistry;
     private final Environment environment;
@@ -113,11 +118,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
     private final Resources resources;
-    private final Element loadingSection;
-    private final Element topologySection;
-    private final Element hostAttributesSection;
-    private final Element serverGroupAttributesSection;
-    private final Element serverAttributesSection;
+    private final HTMLElement loadingSection;
+    private final HTMLElement topologySection;
+    private final HTMLElement hostAttributesSection;
+    private final HTMLElement serverGroupAttributesSection;
+    private final HTMLElement serverAttributesSection;
     private final PreviewAttributes<ServerGroup> serverGroupAttributes;
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
@@ -152,24 +157,16 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
 
-        // @formatter:off
         previewBuilder()
-            .p()
-                .a().css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight5).end()
-                    .span().textContent(resources.constants().refresh()).end()
-                .end()
-            .end()
-            .section().css(centerBlock).rememberAs(LOADING_SECTION)
-                .p().textContent(resources.constants().loading()).end()
-                .div().css(spinner, spinnerLg).end()
-            .end()
-            .section().rememberAs(TOPOLOGY_SECTION)
-            .end();
-        // @formatter:on
-
-        loadingSection = previewBuilder().referenceFor(LOADING_SECTION);
-        topologySection = previewBuilder().referenceFor(TOPOLOGY_SECTION);
+                .add(p()
+                        .add(a().css(clickable, pullRight).on(click, event -> update(null))
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))))
+                .add(loadingSection = section().css(centerBlock)
+                        .add(p().textContent(resources.constants().loading()))
+                        .add(div().css(spinner, spinnerLg))
+                        .asElement())
+                .add(topologySection = section().asElement());
 
         hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST)
                 .append(model -> {
@@ -189,8 +186,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                 model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
-                ))
-                .end();
+                ));
 
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP)
                 .append(model -> {
@@ -214,8 +210,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             token);
                 })
                 .append(SOCKET_BINDING_PORT_OFFSET)
-                .append(SOCKET_BINDING_DEFAULT_INTERFACE)
-                .end();
+                .append(SOCKET_BINDING_DEFAULT_INTERFACE);
 
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
                 .append(model -> {
@@ -245,24 +240,18 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(STATUS)
                 .append(RUNNING_MODE)
                 .append(SERVER_STATE)
-                .append(SUSPEND_STATE)
-                .end();
+                .append(SUSPEND_STATE);
 
-        // @formatter:off
         previewBuilder()
-            .section().rememberAs(HOST_ATTRIBUTES_SECTION)
-                .addAll(hostAttributes)
-            .end()
-            .section().rememberAs(SERVER_GROUP_ATTRIBUTES_SECTION)
-                .addAll(serverGroupAttributes)
-            .end()
-            .section().rememberAs(SERVER_ATTRIBUTES_SECTION)
-                .addAll(serverAttributes)
-            .end();
-        // @formatter:on
-        hostAttributesSection = previewBuilder().referenceFor(HOST_ATTRIBUTES_SECTION);
-        serverGroupAttributesSection = previewBuilder().referenceFor(SERVER_GROUP_ATTRIBUTES_SECTION);
-        serverAttributesSection = previewBuilder().referenceFor(SERVER_ATTRIBUTES_SECTION);
+                .add(hostAttributesSection = section()
+                        .addAll(hostAttributes)
+                        .asElement())
+                .add(serverGroupAttributesSection = section()
+                        .addAll(serverGroupAttributes)
+                        .asElement())
+                .add(serverAttributesSection = section()
+                        .addAll(serverAttributes)
+                        .asElement());
     }
 
     private <T extends NamedNode> String lazyToken(String tlc, T model,
@@ -282,10 +271,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
         // remember selection
-        Element element = Browser.getDocument().querySelector("." + topology + " ." + selected);
-        String hostName = element != null ? String.valueOf(element.getDataset().at("host")) : null;
-        String serverGroupName = element != null ? String.valueOf(element.getDataset().at("serverGroup")) : null;
-        String serverName = element != null ? String.valueOf(element.getDataset().at("server")) : null;
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector("." + topology + " ." + selected);
+        String hostName = element != null ? String.valueOf(element.dataset.get("host")) : null;
+        String serverGroupName = element != null ? String.valueOf(element.dataset.get("serverGroup")) : null;
+        String serverName = element != null ? String.valueOf(element.dataset.get("server")) : null;
 
         clearSelected();
         Elements.setVisible(loadingSection, false);
@@ -293,14 +282,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         hideDetails();
 
         // show the loading indicator if the dmr operation takes too long
-        int timeoutHandle = Browser.getWindow()
-                .setTimeout(() -> Elements.setVisible(loadingSection, true), UIConstants.MEDIUM_TIMEOUT);
+        double timeoutHandle = DomGlobal.setTimeout((o) -> Elements.setVisible(loadingSection, true),
+                UIConstants.MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {
                     @Override
                     public void onFailure(final FunctionContext context) {
-                        Browser.getWindow().clearTimeout(timeoutHandle);
+                        DomGlobal.clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().topologyError(), context.getError()));
@@ -308,7 +297,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
-                        Browser.getWindow().clearTimeout(timeoutHandle);
+                        DomGlobal.clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
@@ -355,7 +344,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
-                        Document document = Browser.getDocument();
+                        elemental2.dom.Document document = DomGlobal.document;
 
                         Host host = context.get(TopologyFunctions.HOST);
                         ServerGroup serverGroup = context.get(TopologyFunctions.SERVER_GROUP);
@@ -396,189 +385,172 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     // ------------------------------------------------------ UI methods
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private Element buildTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
-        Elements.Builder builder = new Elements.Builder().table().css(topology);
+    private HTMLElement buildTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
+        HTMLTableElement table = table().css(topology).asElement();
 
         // <colgroup>
         double width = 100.0 / (serverGroups.size() + 1);
-        builder.start("colgroup").start("col").attr("width", String.valueOf(width) + "%").end();
+        HtmlContentBuilder<HTMLTableColElement> colgroup = colgroup()
+                .add(col().attr("width", String.valueOf(width) + "%"));
         for (int i = 0; i < serverGroups.size(); i++) {
-            builder.start("col").attr("width", String.valueOf(width) + "%").end();
+            colgroup.add(col().attr("width", String.valueOf(width) + "%"));
         }
-        builder.end();
+        table.appendChild(colgroup.asElement());
         // </colgroup>
 
-        // <thead> @formatter:off
-        builder.thead()
-            .tr()
-                .th().css(empty)
-                    .innerHtml(new SafeHtmlBuilder()
-                            .appendEscaped(Names.SERVER_GROUPS + " ")
-                            .appendHtmlConstant("&rarr;").appendHtmlConstant("<br/>")
-                            .appendEscaped(Names.HOSTS + " ")
-                            .appendHtmlConstant("&darr;").toSafeHtml())
-                .end();
-                for (ServerGroup serverGroup : serverGroups) {
-                    buildServerGroup(builder, serverGroup);
-                }
-            builder.end()
-        .end();
-        // </thead> @formatter:on
+        // <thead>
+        HtmlContentBuilder<HTMLTableSectionElement> thead = thead()
+                .add(tr()
+                        .add(th().css(empty)
+                                .innerHtml(new SafeHtmlBuilder()
+                                        .appendEscaped(Names.SERVER_GROUPS + " ")
+                                        .appendHtmlConstant("&rarr;").appendHtmlConstant("<br/>")
+                                        .appendEscaped(Names.HOSTS + " ")
+                                        .appendHtmlConstant("&darr;").toSafeHtml()))
+                        .addAll(serverGroups.stream().map(this::serverGroupElement).collect(toList())));
+        table.appendChild(thead.asElement());
+        // </thead>
 
-        // <tbody> @formatter:off
-        builder.tbody();
+        HTMLElement tbody = tbody().asElement();
         for (Host host : hosts) {
-            builder.tr();
-                buildHost(builder, host);
-                for (ServerGroup serverGroup : serverGroups) {
-                    List<Server> matchingServers =  servers.stream()
-                            .filter(sc -> host.getName().equals(sc.getHost()) && serverGroup.getName().equals(sc.getServerGroup()))
-                            .sorted(comparing(Server::getName))
-                            .collect(toList());
-                    if (matchingServers.isEmpty()) {
-                        builder.td().css(empty).end();
-                    } else {
-                        builder.td()
-                            .div().css(CSS.servers);
-                                for (Server srv : matchingServers) {
-                                    buildServer(builder, srv);
-                                }
-                            builder.end()
-                        .end();
-                    }
+            HTMLElement tr;
+            tbody.appendChild(tr = tr().asElement());
+            tr.appendChild(hostElement(host));
+            for (ServerGroup serverGroup : serverGroups) {
+                List<HTMLElement> matchingServers = servers.stream()
+                        .filter(sc -> host.getName().equals(sc.getHost()) &&
+                                serverGroup.getName().equals(sc.getServerGroup()))
+                        .sorted(comparing(Server::getName))
+                        .map(this::serverElement)
+                        .collect(toList());
+                if (matchingServers.isEmpty()) {
+                    tr.appendChild(td().css(empty).asElement());
+                } else {
+                    tr.appendChild(td()
+                            .add(div().css(CSS.servers)
+                                    .addAll(matchingServers))
+                            .asElement());
                 }
-            builder.end();
+            }
         }
-        builder.end();
+        table.appendChild(tbody);
         // </tbody> @formatter:on
 
-        return builder.end().build();
+        return table;
     }
 
-    private void buildHost(final Elements.Builder builder, final Host host) {
-        // @formatter:off
-        String hostDropDownId = Ids.host(host.getAddressName());
-        builder.th().css(rowHeader, statusCss(host))
+    private HTMLElement hostElement(final Host host) {
+        HTMLElement dropdown;
+        HTMLTableCellElement th = th()
+                .css(asList(rowHeader, statusCss(host)).toArray(new String[]{}))
                 .on(click, event -> hostDetails(host))
                 .data("host", host.getName())
-            .div().css(hostContainer)
-                // The dropdown is also added if there are no servers. Otherwise the heights of
-                // the cells w/ and w/o servers would be different.
-                .div().css(dropdown);
-                    if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
-                        builder.a()
-                            .id(hostDropDownId)
-                            .css(clickable, dropdownToggle, name)
-                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                            .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                            .title(host.getName());
-                            if (host.isDomainController()) {
-                                builder.span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).end();
-                            }
-                            builder.span().textContent(host.getName()).end()
-                        .end()
-                        .ul().css(dropdownMenu).attr(UIConstants.ROLE, UIConstants.MENU).aria(UIConstants.LABELLED_BY, hostDropDownId);
-                            hostActions(builder, host);
-                        builder.end();
-                    } else {
-                        builder.span().css(name).title(host.getName())
-                            .textContent(host.getName())
-                        .end();
-                    }
-                builder.end()
-            .end()
-        .end();
-        // @formatter:on
+                .add(div().css(hostContainer)
+                        .add(dropdown = div().css(CSS.dropdown).asElement()))
+                .asElement();
+
+        if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
+            HTMLElement a;
+            String hostDropDownId = Ids.host(host.getAddressName());
+            dropdown.appendChild(a = a()
+                    .id(hostDropDownId)
+                    .css(clickable, dropdownToggle, name)
+                    .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                    .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                    .title(host.getName())
+                    .asElement());
+            if (host.isDomainController()) {
+                a.appendChild(span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).asElement());
+            }
+            a.appendChild(span().textContent(host.getName()).asElement());
+            dropdown.appendChild(ul()
+                    .css(dropdownMenu)
+                    .attr(UIConstants.ROLE, UIConstants.MENU)
+                    .aria(UIConstants.LABELLED_BY, hostDropDownId)
+                    .addAll(hostActions(host))
+                    .asElement());
+        } else {
+            dropdown.appendChild(span().css(name).title(host.getName())
+                    .textContent(host.getName())
+                    .asElement());
+        }
+        return th;
     }
 
-    private Element hostElement(Host host) {
-        Elements.Builder builder = new Elements.Builder();
-        buildHost(builder, host);
-        return builder.build();
-    }
-
-    private void buildServerGroup(final Elements.Builder builder, final ServerGroup serverGroup) {
-        // @formatter:off
-        String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
-        builder.th()
+    private HTMLElement serverGroupElement(final ServerGroup serverGroup) {
+        HTMLElement dropdown;
+        HTMLTableCellElement element = th()
                 .on(click, event -> serverGroupDetails(serverGroup))
                 .data("serverGroup", serverGroup.getName())
-            .div().css(serverGroupContainer)
-                // The dropdown is also added if there are no servers. Otherwise the heights of
-                // the cells w/ and w/o servers would be different.
-                .div().css(dropdown);
-                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
-                        builder.a().id(serverGroupDropDownId)
-                            .css(clickable, dropdownToggle, name)
-                            .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                            .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                            .title(serverGroup.getName())
-                            .textContent(serverGroup.getName())
-                        .end()
-                        .ul().css(dropdownMenu)
-                                .attr(UIConstants.ROLE, UIConstants.MENU)
-                                .aria(UIConstants.LABELLED_BY, serverGroupDropDownId);
-                            serverGroupActions(builder, serverGroup);
-                        builder.end();
-                    } else {
-                        builder.span().css(name).title(serverGroup.getName())
-                            .textContent(serverGroup.getName())
-                        .end();
-                    }
-                builder.end()
-            .end()
-        .end();
-        // @formatter:on
+                .add(div().css(serverGroupContainer)
+                        .add(dropdown = div().css(CSS.dropdown).asElement()))
+                .asElement();
+
+        if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
+            String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
+            dropdown.appendChild(a()
+                    .id(serverGroupDropDownId)
+                    .css(clickable, dropdownToggle, name)
+                    .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                    .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                    .title(serverGroup.getName())
+                    .textContent(serverGroup.getName())
+                    .asElement());
+            dropdown.appendChild(ul()
+                    .css(dropdownMenu)
+                    .attr(UIConstants.ROLE, UIConstants.MENU)
+                    .aria(UIConstants.LABELLED_BY, serverGroupDropDownId)
+                    .addAll(serverGroupActions(serverGroup))
+                    .asElement());
+        } else {
+            dropdown.appendChild(span()
+                    .css(name)
+                    .title(serverGroup.getName())
+                    .textContent(serverGroup.getName())
+                    .asElement());
+        }
+        return element;
     }
 
-    private Element serverGroupElement(ServerGroup serverGroup) {
-        Elements.Builder builder = new Elements.Builder();
-        buildServerGroup(builder, serverGroup);
-        return builder.build();
-    }
-
-    private void buildServer(Elements.Builder builder, Server srv) {
-        // @formatter:off
-        builder.div()
+    private HTMLElement serverElement(Server srv) {
+        HTMLElement dropdown;
+        HTMLDivElement element = div()
                 .id(Ids.build(srv.getId(), CONTAINER))
-                .css(server, statusCss(srv))
+                .css(asList(server, statusCss(srv)).toArray(new String[]{}))
                 .data(SERVER, srv.getId())
                 .on(click, event -> serverDetails(srv))
-            .div().css(dropdown);
-                if (!serverActions.isPending(srv) && isAllowed(srv)) {
-                    builder.a()
-                        .id(srv.getId())
-                        .css(clickable, dropdownToggle, name)
-                        .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                        .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                        .title(srv.getName())
-                        .textContent(srv.getName())
-                    .end()
-                    .ul().css(dropdownMenu)
-                            .attr(UIConstants.ROLE, UIConstants.MENU)
-                            .aria(UIConstants.LABELLED_BY, srv.getId());
-                        serverActions(builder, srv);
-                    builder.end();
-                } else {
-                    builder.span().css(name).title(srv.getName())
-                        .textContent(srv.getName())
-                    .end();
-                }
-            builder.end()
-        .end();
-        // @formatter:on
-    }
+                .add(dropdown = div().css(CSS.dropdown).asElement())
+                .asElement();
 
-    private Element serverElement(Server server) {
-        Elements.Builder builder = new Elements.Builder();
-        buildServer(builder, server);
-        return builder.build();
+        if (!serverActions.isPending(srv) && isAllowed(srv)) {
+            dropdown.appendChild(a()
+                    .id(srv.getId())
+                    .css(clickable, dropdownToggle, name)
+                    .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                    .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                    .title(srv.getName())
+                    .textContent(srv.getName())
+                    .asElement());
+            dropdown.appendChild(ul()
+                    .css(dropdownMenu)
+                    .attr(UIConstants.ROLE, UIConstants.MENU)
+                    .aria(UIConstants.LABELLED_BY, srv.getId())
+                    .addAll(serverActions(srv))
+                    .asElement());
+        } else {
+            dropdown.appendChild(span()
+                    .css(name)
+                    .title(srv.getName())
+                    .textContent(srv.getName())
+                    .asElement());
+        }
+        return element;
     }
 
     private void replaceElement(Element existingElement, Supplier<Element> updateElement, Consumer<Element> select) {
         if (existingElement != null) {
-            boolean hasSelection = existingElement.getClassList().contains(selected);
-            Element parent = existingElement.getParentElement();
+            boolean hasSelection = existingElement.classList.contains(selected);
+            Element parent = (Element) existingElement.parentNode;
             if (parent != null) {
                 Element updatedElement = updateElement.get();
                 parent.replaceChild(updatedElement, existingElement);
@@ -590,9 +562,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void adjustTdHeight() {
-        NodeList servers = Browser.getDocument().querySelectorAll("." + topology + " ." + CSS.servers);
-        Elements.elements(servers).forEach(element ->
-                element.getStyle().setHeight(element.getParentElement().getOffsetHeight() - 1, PX));
+        NodeList<Element> servers = DomGlobal.document.querySelectorAll("." + topology + " ." + CSS.servers);
+        Elements.stream(servers)
+                .filter(htmlElements())
+                .map(asHtmlElement())
+                .forEach(element -> {
+                    HTMLElement parent = (HTMLElement) element.parentNode;
+                    element.style.height = height(px(parent.offsetHeight - 1));
+                });
     }
 
     private void hideDetails() {
@@ -602,35 +579,34 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void clearSelected() {
-        NodeList selectedNodes = Browser.getDocument().querySelectorAll("." + topology + " ." + selected);
-        Elements.elements(selectedNodes).forEach(element -> element.getClassList().remove(selected));
+        NodeList<Element> selectedNodes = DomGlobal.document.querySelectorAll("." + topology + " ." + selected);
+        Elements.elements(selectedNodes).forEach(element -> element.classList.remove(selected));
     }
 
-    private void actionLink(Elements.Builder builder, EventListener listener, String text) {
-        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
-                .a().css(clickable).on(click, listener).textContent(text).end()
-                .end();
+    private HTMLElement actionLink(EventCallbackFn<MouseEvent> listener, String text) {
+        return li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
+                .add(a().css(clickable).on(click, listener).textContent(text))
+                .asElement();
     }
 
     private void startProgress(String selector) {
-        Elements.stream(Browser.getDocument().querySelectorAll(selector))
-                .forEach(element -> element.getClassList().add(withProgress));
+        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+                .forEach(element -> element.classList.add(withProgress));
     }
 
     private void stopProgress(String selector) {
-        Elements.stream(Browser.getDocument().querySelectorAll(selector))
-                .forEach(element -> element.getClassList().remove(withProgress));
+        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+                .forEach(element -> element.classList.remove(withProgress));
     }
 
     private void disableDropdown(String id, String name) {
-        Element link = Browser.getDocument().getElementById(id);
+        Element link = DomGlobal.document.getElementById(id);
         if (link != null) {
-            Element parent = link.getParentElement();
-            Element ul = link.getNextElementSibling();
+            Element parent = (Element) link.parentNode;
+            Element ul = link.nextElementSibling;
             if (parent != null && ul != null) {
-                Element noLink = new Elements.Builder().span().css(CSS.name).title(name).textContent(name).end()
-                        .build();
-                parent.getClassList().remove("opened"); //NON-NLS
+                HTMLElement noLink = span().css(CSS.name).title(name).textContent(name).asElement();
+                parent.classList.remove("opened"); //NON-NLS
                 parent.replaceChild(noLink, link);
                 parent.removeChild(ul);
             }
@@ -638,7 +614,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private boolean isVisible() {
-        return Elements.isVisible(topologySection) && topologySection.getParentElement() != null;
+        return Elements.isVisible(topologySection) && topologySection.parentNode != null;
     }
 
 
@@ -646,9 +622,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void hostDetails(final Host host) {
         clearSelected();
-        Element element = Browser.getDocument().querySelector(hostSelector(host));
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(hostSelector(host));
         if (element != null) {
-            element.getClassList().add(selected);
+            element.classList.add(selected);
         }
 
         hostAttributes.refresh(host);
@@ -666,9 +642,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .isAllowed(Constraint.executable(AddressTemplate.of("/host=" + host.getAddressName()), RELOAD));
     }
 
-    private void hostActions(final Elements.Builder builder, final Host host) {
-        actionLink(builder, event -> hostActions.reload(host), resources.constants().reload());
-        actionLink(builder, event -> hostActions.restart(host), resources.constants().restart());
+    private List<HTMLElement> hostActions(final Host host) {
+        List<HTMLElement> actions = new ArrayList<>();
+        actions.add(actionLink(event -> hostActions.reload(host), resources.constants().reload()));
+        actions.add(actionLink(event -> hostActions.restart(host), resources.constants().restart()));
+        return actions;
     }
 
     private String[] statusCss(final Host host) {
@@ -710,9 +688,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverGroupDetails(final ServerGroup serverGroup) {
         clearSelected();
-        Element element = Browser.getDocument().querySelector(serverGroupSelector(serverGroup));
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverGroupSelector(serverGroup));
         if (element != null) {
-            element.getClassList().add(selected);
+            element.classList.add(selected);
         }
 
         serverGroupAttributes.refresh(serverGroup);
@@ -732,25 +710,28 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .isAllowed(constraints);
     }
 
-    private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
+    private List<HTMLElement> serverGroupActions(final ServerGroup serverGroup) {
+        List<HTMLElement> actions = new ArrayList<>();
+
         // Order is: reload, restart, suspend, resume, stop, start
         if (serverGroup.hasServers(Server::isStarted)) {
-            actionLink(builder, event -> serverGroupActions.reload(serverGroup), resources.constants().reload());
-            actionLink(builder, event -> serverGroupActions.restart(serverGroup), resources.constants().restart());
+            actions.add(actionLink(event -> serverGroupActions.reload(serverGroup), resources.constants().reload()));
+            actions.add(actionLink(event -> serverGroupActions.restart(serverGroup), resources.constants().restart()));
         }
         if (serverGroup.getServers(Server::isStarted).size() - serverGroup.getServers(Server::isSuspended).size() > 0) {
-            actionLink(builder, event -> serverGroupActions.suspend(serverGroup), resources.constants().suspend());
+            actions.add(actionLink(event -> serverGroupActions.suspend(serverGroup), resources.constants().suspend()));
         }
         if (serverGroup.hasServers(Server::isSuspended)) {
-            actionLink(builder, event -> serverGroupActions.resume(serverGroup),
-                    resources.constants().resume());
+            actions.add(actionLink(event -> serverGroupActions.resume(serverGroup), resources.constants().resume()));
         }
         if (serverGroup.hasServers(Server::isStarted)) {
-            actionLink(builder, event -> serverGroupActions.stop(serverGroup), resources.constants().stop());
+            actions.add(actionLink(event -> serverGroupActions.stop(serverGroup), resources.constants().stop()));
         }
         if (serverGroup.hasServers(server -> server.isStopped() || server.isFailed())) {
-            actionLink(builder, event -> serverGroupActions.start(serverGroup), resources.constants().start());
+            actions.add(actionLink(event -> serverGroupActions.start(serverGroup), resources.constants().start()));
         }
+
+        return actions;
     }
 
     @Override
@@ -782,9 +763,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverDetails(final Server server) {
         clearSelected();
-        Element element = Browser.getDocument().querySelector(serverSelector(server));
+        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverSelector(server));
         if (element != null) {
-            element.getClassList().add(selected);
+            element.classList.add(selected);
         }
 
         if (server.hasBootErrors()) {
@@ -815,22 +796,26 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         RELOAD));
     }
 
-    private void serverActions(final Elements.Builder builder, final Server server) {
+    private List<HTMLElement> serverActions(final Server server) {
+        List<HTMLElement> actions = new ArrayList<>();
+
         if (!server.isStarted()) {
-            actionLink(builder, event -> serverActions.start(server), resources.constants().start());
+            actions.add(actionLink(event -> serverActions.start(server), resources.constants().start()));
         } else {
             // Order is: reload, restart, (resume | suspend), stop
-            actionLink(builder, event -> serverActions.reload(server), resources.constants().reload());
-            actionLink(builder, event -> serverActions.restart(server), resources.constants().restart());
+            actions.add(actionLink(event -> serverActions.reload(server), resources.constants().reload()));
+            actions.add(actionLink(event -> serverActions.restart(server), resources.constants().restart()));
             if (server.isSuspended()) {
-                actionLink(builder, event -> serverActions.resume(server), resources.constants().resume());
+                actions.add(actionLink(event -> serverActions.resume(server), resources.constants().resume()));
             } else {
-                actionLink(builder, event -> serverActions.suspend(server), resources.constants().suspend());
+                actions.add(actionLink(event -> serverActions.suspend(server), resources.constants().suspend()));
             }
-            actionLink(builder, event -> serverActions.stop(server), resources.constants().stop());
+            actions.add(actionLink(event -> serverActions.stop(server), resources.constants().stop()));
         }
         // add kill link regardless of server state to kill servers which might show a wrong state
-        actionLink(builder, event -> serverActions.kill(server), resources.constants().kill());
+        actions.add(actionLink(event -> serverActions.kill(server), resources.constants().kill()));
+
+        return actions;
     }
 
     private String[] statusCss(final Server server) {

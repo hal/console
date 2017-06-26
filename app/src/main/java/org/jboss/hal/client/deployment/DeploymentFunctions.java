@@ -25,8 +25,8 @@ import javax.inject.Provider;
 
 import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.html.File;
-import elemental.html.FileList;
+import elemental2.dom.File;
+import elemental2.dom.FileList;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
@@ -37,13 +37,13 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -267,8 +267,7 @@ class DeploymentFunctions {
 
                     Server referenceServer = runningServers.get(0);
                     Operation operation = new Operation.Builder(referenceServer.getServerAddress(),
-                            READ_CHILDREN_RESOURCES_OPERATION
-                    )
+                            READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE, true)
@@ -484,7 +483,7 @@ class DeploymentFunctions {
             List<Function> functions = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).getName();
+                String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 functions.add(new CheckDeployment(dispatcher, filename));
                 functions.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
@@ -509,7 +508,7 @@ class DeploymentFunctions {
             List<Function> functions = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).getName();
+                String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 functions.add(new CheckDeployment(dispatcher, filename));
                 functions.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));

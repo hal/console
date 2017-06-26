@@ -20,9 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.SpanElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
@@ -49,6 +47,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
@@ -129,7 +128,7 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 if (item.hasTransactionSupport()) {
                     return ItemDisplay
                             .withSubtitle(item.getName(), item.get(TRANSACTION_SUPPORT).asString());
@@ -138,16 +137,10 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
             }
 
             @Override
-            public Element getIcon() {
-                SpanElement icon = null;
-                if (item.getAdapterType() == AdapterType.ARCHIVE) {
-                    icon = Browser.getDocument().createSpanElement();
-                    icon.setClassName(fontAwesome("archive"));
-                } else if (item.getAdapterType() == AdapterType.ARCHIVE) {
-                    icon = Browser.getDocument().createSpanElement();
-                    icon.setClassName(fontAwesome("cubes"));
-                }
-                return icon;
+            public HTMLElement getIcon() {
+                return item.getAdapterType() == AdapterType.ARCHIVE
+                        ? span().css(fontAwesome("archive")).asElement()
+                        : span().css(fontAwesome("cubes")).asElement();
             }
 
             @Override

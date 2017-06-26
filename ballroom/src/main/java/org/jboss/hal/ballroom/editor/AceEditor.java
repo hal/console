@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.ballroom.editor;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLPreElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.resources.CSS;
+
+import static org.jboss.gwt.elemento.core.Elements.pre;
 
 /**
  * @author Harald Pehl
@@ -30,7 +32,7 @@ public class AceEditor implements IsElement, Attachable {
 
     private final String id;
     private final Options options;
-    private final Element preElement;
+    private final HTMLPreElement preElement;
     private Editor editor;
     private ModeList modeList;
 
@@ -41,11 +43,11 @@ public class AceEditor implements IsElement, Attachable {
     public AceEditor(final String id, final Options options) {
         this.id = id;
         this.options = options;
-        this.preElement = new Elements.Builder().start("pre").id(id).css(CSS.editor).end().build();
+        this.preElement = pre().id(id).css(CSS.editor).asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return preElement;
     }
 

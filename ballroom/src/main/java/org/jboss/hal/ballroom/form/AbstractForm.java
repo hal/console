@@ -28,15 +28,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.events.EventListener;
-import elemental.events.KeyboardEvent;
-import elemental.html.DivElement;
-import elemental.html.HRElement;
-import elemental.html.SpanElement;
-import elemental.html.UListElement;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLHRElement;
+import elemental2.dom.HTMLUListElement;
+import elemental2.dom.KeyboardEvent;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
@@ -46,12 +46,16 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.form;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
@@ -71,15 +75,13 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String ERROR_MESSAGES = "errorMessages";
     private static final String MODEL_MUST_NOT_BE_UNDEFINED = "Model must not be undefined in ";
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
     private final StateMachine stateMachine;
     private final DataMapping<T> dataMapping;
-    private final LinkedHashMap<State, Element> panels;
+    private final LinkedHashMap<State, HTMLElement> panels;
     private final LinkedHashMap<String, FormItem> formItems;
     private final Set<String> unboundItems;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
@@ -89,10 +91,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private final EmptyState emptyState;
 
     protected FormLinks<T> formLinks;
-    private DivElement errorPanel;
-    private SpanElement errorMessage;
-    private UListElement errorMessages;
-    private EventListener exitEditWithEsc;
+    private HTMLDivElement errorPanel;
+    private HTMLElement errorMessage;
+    private HTMLUListElement errorMessages;
+    private EventCallbackFn<KeyboardEvent> escCallback;
+    private HandlerRegistration escRegistration;
 
     // accessible in subclasses
     protected SaveCallback<T> saveCallback;
@@ -144,11 +147,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     // ------------------------------------------------------ ui setup
 
     @Override
-    protected Element createElement() {
-
-        Element section = Browser.getDocument().createElement("section"); //NON-NLS
-        section.setId(id);
-        section.getClassList().add(formSection);
+    protected HTMLElement createElement() {
+        HTMLElement section = section().id(id).css(formSection).asElement();
 
         formLinks = new FormLinks<>(this, stateMachine, helpTexts,
                 event -> edit(getModel()),
@@ -168,17 +168,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 });
         section.appendChild(formLinks.asElement());
 
-        // @formatter:off
-        Elements.Builder errorPanelBuilder = new Elements.Builder()
-            .div().css(alert, alertDanger).rememberAs("errorPanel")
-                .span().css(Icons.ERROR).end()
-                .span().rememberAs(ERROR_MESSAGE).end()
-                .ul().rememberAs(ERROR_MESSAGES).end()
-            .end();
-        // @formatter:on
-        errorMessage = errorPanelBuilder.referenceFor(ERROR_MESSAGE);
-        errorMessages = errorPanelBuilder.referenceFor(ERROR_MESSAGES);
-        errorPanel = errorPanelBuilder.build();
+        errorPanel = div().css(alert, alertDanger)
+                .add(span().css(Icons.ERROR))
+                .add(errorMessage = span().asElement())
+                .add(errorMessages = ul().asElement())
+                .asElement();
         clearErrors();
 
         if (stateMachine.supports(EMPTY)) {
@@ -190,21 +184,18 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         if (stateMachine.supports(EDITING)) {
             panels.put(EDITING, editPanel());
         }
-        for (Element element : panels.values()) {
+        for (HTMLElement element : panels.values()) {
             section.appendChild(element);
         }
 
         if (stateMachine.supports(EDIT)) {
-            exitEditWithEsc = event -> {
-                if (event instanceof KeyboardEvent) {
-                    KeyboardEvent keyboardEvent = (KeyboardEvent) event;
-                    if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ESC &&
-                            stateMachine.current() == EDITING &&
-                            panels.get(EDITING) != null &&
-                            Elements.isVisible(panels.get(EDITING))) {
-                        keyboardEvent.preventDefault();
-                        cancel();
-                    }
+            escCallback = (KeyboardEvent event) -> {
+                if ("Escape".equals(event.key) && //NON-NLS
+                        stateMachine.current() == EDITING &&
+                        panels.get(EDITING) != null &&
+                        Elements.isVisible(panels.get(EDITING))) {
+                    event.preventDefault();
+                    cancel();
                 }
             };
         }
@@ -218,26 +209,27 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         return section;
     }
 
-    private Element viewPanel() {
-        Element viewPanel = new Elements.Builder()
-                .div().id(Ids.build(id, READONLY.name().toLowerCase())).css(form, formHorizontal, readonly)
-                .end().build();
+    private HTMLElement viewPanel() {
+        HTMLDivElement viewPanel = div()
+                .id(Ids.build(id, READONLY.name().toLowerCase()))
+                .css(form, formHorizontal, readonly)
+                .asElement();
         for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
             viewPanel.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
-                HRElement hr = Browser.getDocument().createHRElement();
-                hr.getClassList().add(separator);
+                HTMLHRElement hr = hr().css(separator).asElement();
                 viewPanel.appendChild(hr);
             }
         }
         return viewPanel;
     }
 
-    private Element editPanel() {
-        Element editPanel = new Elements.Builder()
-                .div().id(Ids.build(id, EDITING.name().toLowerCase())).css(form, formHorizontal, editing).end()
-                .build();
+    private HTMLElement editPanel() {
+        HTMLElement editPanel = div()
+                .id(Ids.build(id, EDITING.name().toLowerCase()))
+                .css(form, formHorizontal, editing)
+                .asElement();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
         for (FormItem formItem : getFormItems()) {
@@ -245,35 +237,23 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
             hasRequiredField = hasRequiredField || formItem.isRequired();
         }
         if (hasRequiredField) {
-            // @formatter:off
-            editPanel.appendChild(new Elements.Builder()
-                .div().css(formGroup)
-                    .div().css(halFormOffset)
-                        .span().css(helpBlock)
-                            .innerHtml(MESSAGES.requiredHelp())
-                        .end()
-                    .end()
-                .end()
-            .build());
-            // @formatter:on
+            editPanel.appendChild(div().css(formGroup)
+                    .add(div().css(halFormOffset)
+                            .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp())))
+                    .asElement());
         }
-
-        // @formatter:off
-        Element buttons = new Elements.Builder()
-            .div().css(formGroup, formButtons)
-                .div().css(halFormOffset)
-                    .div().css(pullRight)
-                        .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
-                            .textContent(CONSTANTS.cancel())
-                        .end()
-                        .button().css(btn, btnHal, btnPrimary).on(click, event -> save())
-                            .textContent(CONSTANTS.save())
-                        .end()
-                    .end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
+        HTMLElement buttons = div().css(formGroup, formButtons)
+                .add(div().css(halFormOffset)
+                        .add(div().css(pullRight)
+                                .add(button()
+                                        .css(btn, btnHal, btnDefault)
+                                        .textContent(CONSTANTS.cancel())
+                                        .on(click, event -> cancel()))
+                                .add(button()
+                                        .css(btn, btnHal, btnPrimary)
+                                        .textContent(CONSTANTS.save())
+                                        .on(click, event -> save()))))
+                .asElement();
         editPanel.appendChild(buttons);
 
         return editPanel;
@@ -385,6 +365,24 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 } else {
                     changed.put(entry.getKey(), formItem.getValue());
                 }
+            }
+        }
+        return changed;
+    }
+
+    /**
+     * Enumerates all attributes and values of this form, regardless if they were modified or not.
+     *
+     * @return The updated model as a Map<String, Object>
+     */
+    public Map<String, Object> getUpdatedModel() {
+        Map<String, Object> changed = new HashMap<>();
+        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
+            FormItem formItem = entry.getValue();
+            if (formItem.isExpressionValue()) {
+                changed.put(entry.getKey(), formItem.getExpressionValue());
+            } else {
+                changed.put(entry.getKey(), formItem.getValue());
             }
         }
         return changed;
@@ -514,19 +512,18 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         switch (state) {
             case EMPTY:
             case READONLY:
-                if (exitEditWithEsc != null && panels.get(EDITING) != null) {
-                    panels.get(EDITING).removeEventListener("keyup", exitEditWithEsc); //NON-NLS
+                if (escRegistration != null && panels.get(EDITING) != null) {
+                    escRegistration.removeHandler();
                 }
                 break;
 
             case EDITING:
                 if (!formItems.isEmpty()) {
-                    Browser.getWindow()
-                            .setTimeout(() -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
+                    DomGlobal.setTimeout((o) -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
                 }
-                if (exitEditWithEsc != null && panels.get(EDITING) != null) {
+                if (escCallback != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC
-                    panels.get(EDITING).setOnkeyup(exitEditWithEsc);
+                    escRegistration = bind(panels.get(EDITING), keyup, escCallback);
                 }
                 break;
         }
@@ -616,7 +613,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         for (FormItem formItem : getFormItems()) {
             formItem.clearError();
         }
-        errorMessage.setInnerText("");
+        errorMessage.textContent = "";
         Elements.removeChildrenFrom(errorMessages);
         Elements.setVisible(errorPanel, false);
     }
@@ -624,12 +621,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private void showErrors(List<String> messages) {
         if (!messages.isEmpty()) {
             if (messages.size() == 1) {
-                errorMessage.setInnerText(messages.get(0));
+                errorMessage.textContent = messages.get(0);
                 Elements.removeChildrenFrom(errorMessages);
             } else {
-                errorMessage.setInnerText(CONSTANTS.formErrors());
+                errorMessage.textContent = CONSTANTS.formErrors();
                 for (String message : messages) {
-                    errorMessages.appendChild(new Elements.Builder().li().textContent(message).end().build());
+                    errorMessages.appendChild(li().textContent(message).asElement());
                 }
             }
             Elements.setVisible(errorPanel, true);

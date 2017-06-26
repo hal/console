@@ -17,11 +17,12 @@ package org.jboss.hal.core.finder;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 
 /**
@@ -31,16 +32,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
  */
 public class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
-    private static final String CONTENT_ELEMENT = "contentElement";
-
     public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation rrd) {
         super(header);
-        previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
-        Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
+        HTMLElement content = section().asElement();
+        previewBuilder().add(content);
         dispatcher.execute(rrd, result -> {
             if (result.hasDefined(DESCRIPTION)) {
                 SafeHtml html = SafeHtmlUtils.fromSafeConstant(result.get(DESCRIPTION).asString());
-                content.setInnerHTML(html.asString());
+                content.innerHTML = html.asString();
             }
         });
     }

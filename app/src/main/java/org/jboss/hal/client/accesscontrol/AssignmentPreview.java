@@ -16,12 +16,16 @@
 package org.jboss.hal.client.accesscontrol;
 
 import com.google.gwt.resources.client.ExternalTextResource;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
+
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 
 /**
  * @author Harald Pehl
@@ -39,17 +43,17 @@ class AssignmentPreview extends PreviewContent<Assignment> {
                 : null);
         // @formatter:on
 
-        Element roleDescription = Browser.getDocument().createElement("p"); //NON-NLS
+        HTMLElement roleDescription = p().asElement();
         String roleName = role.isScoped() ? role.getBaseRole().getName() : role.getName();
         ExternalTextResource resource = resources.preview("rbac" + roleName);
         Previews.innerHtml(roleDescription, resource);
         previewBuilder().add(roleDescription);
 
-        previewBuilder().h(2).textContent(resources.constants().membership()).end()
-                .p()
-                .span().textContent(resources.constants().membershipOfRole() + " ").end()
-                .a().attr("href", tokens.role(role)).textContent(role.getName()).end()
-                .span().textContent(".").end()
-                .end();
+        previewBuilder()
+                .add(h(2).textContent(resources.constants().membership()))
+                .add(p()
+                        .add(span().textContent(resources.constants().membershipOfRole() + " "))
+                        .add(a(tokens.role(role)).textContent(role.getName()))
+                        .add(span().textContent(".")));
     }
 }

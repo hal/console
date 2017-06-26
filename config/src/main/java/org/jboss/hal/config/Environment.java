@@ -24,14 +24,12 @@ import org.jboss.hal.config.semver.Version;
 
 /**
  * Instance holding information about the console and its environment.
- * An instance of this interface is generated using deferred binding.
- * Most of the information is updated by the bootstrap code of the console.
  */
 @JsType
 public interface Environment {
 
     /**
-     * The HAL version taken form the Maven POM.
+     * @return the HAL version.
      */
     @JsProperty
     Version getHalVersion();
@@ -39,14 +37,12 @@ public interface Environment {
     @JsIgnore
     Build getHalBuild();
 
-    /**
-     * The configured locales in the GWT module.
-     *
-     * @return the list of supported locales
-     */
     @JsIgnore
     List<String> getLocales();
 
+    /**
+     * @return information about the server instance.
+     */
     @JsProperty
     InstanceInfo getInstanceInfo();
 
@@ -55,36 +51,51 @@ public interface Environment {
             String releaseName, String releaseVersion,
             String serverName);
 
-    @JsProperty
+    @JsIgnore
     OperationMode getOperationMode();
 
+    /**
+     * @return true for standalone mode, false otherwise.
+     */
     @JsProperty
     boolean isStandalone();
 
     @JsIgnore
     void setOperationMode(OperationMode operationMode);
 
+    /**
+     * @return the name of the domain controller (DC).
+     */
     @JsProperty
     String getDomainController();
 
     @JsIgnore
     void setDomainController(String domainController);
 
+    /**
+     * @return the management model version.
+     */
     @JsProperty
     Version getManagementVersion();
 
     @JsIgnore
     void setManagementVersion(Version version);
 
-    @JsProperty
+    @JsIgnore
     AccessControlProvider getAccessControlProvider();
 
     @JsIgnore
     void setAccessControlProvider(AccessControlProvider accessControlProvider);
 
+    /**
+     * @return true if SSO is used, false otherwise.
+     */
     @JsProperty
     boolean isSingleSignOn();
 
+    /**
+     * @return the standard and scoped roles.
+     */
     @JsProperty
     Roles getRoles();
 }

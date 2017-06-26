@@ -25,17 +25,17 @@ public interface UIConstants {
     /**
      * The time in milliseconds after one modal dialog is closed and the next one is shown.
      */
-    int SHORT_TIMEOUT = 111;
+    double SHORT_TIMEOUT = 111;
 
     /**
      * The timeout for long running operations / actions before some kind of loading indicator is shown
      */
-    int MEDIUM_TIMEOUT = 333;
+    double MEDIUM_TIMEOUT = 333;
 
     /**
      * The timeout until a non-sticky message is hidden
      */
-    int MESSAGE_TIMEOUT = 6000; // ms
+    double MESSAGE_TIMEOUT = 6000; // ms
 
     long RELOAD_MESSAGE_ID = 5102007;
     long RESTART_MESSAGE_ID = 1102010;
@@ -77,6 +77,7 @@ public interface UIConstants {
     String READONLY = "readonly";
     String ROLE = "role";
     String SHOWN_MODAL = "shown.bs.modal";
+    String TAB = "tab";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
     String TARGET = "target";

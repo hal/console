@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Pages;
@@ -34,6 +33,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.CSS.columnAction;
@@ -43,7 +45,7 @@ import static org.jboss.hal.resources.CSS.columnAction;
  *
  * @author Claudio Miranda
  */
-class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresenter> {
+class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     static final String REMOTE_SITE_ID = Ids.build(Ids.JGROUPS_REMOTE_SITE, Ids.PAGE_SUFFIX);
     private static final String STACK_ID = Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGE_SUFFIX);
@@ -106,15 +108,11 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
                         .build())
                 .build();
 
-        // @formatter:off
-        Element section = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.STACK).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement section = section()
+                .add(h(1).textContent(Names.STACK))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(table)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
         remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE), tableButtonFactory,
@@ -149,7 +147,7 @@ class StackElement implements IsElement, Attachable, HasPresenter<JGroupsPresent
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return innerPages.asElement();
     }
 

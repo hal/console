@@ -23,7 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Represents the RBAC related payload from the {@code r-r-d} operation.
+ * Represents the RBAC related payload from the read-resource-description operation.
  *
  * @author Harald Pehl
  */
@@ -96,28 +96,49 @@ public class SecurityContext extends ModelNode {
         set(payload);
     }
 
+    /**
+     * @return whether the security context is readable
+     */
     @JsProperty
     public boolean isReadable() {
         return get(READ).asBoolean();
     }
 
+    /**
+     * @return whether the security context is writable
+     */
     @JsProperty
     public boolean isWritable() {
         return get(WRITE).asBoolean();
     }
 
+    /**
+     * @param attribute The attribute to check.
+     *
+     * @return whether the attribute is readable
+     */
     public boolean isReadable(final String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
                 get(ATTRIBUTES).get(attribute).get(READ).asBoolean();
     }
 
+    /**
+     * @param attribute The attribute to check.
+     *
+     * @return whether the attribute is writable
+     */
     public boolean isWritable(final String attribute) {
         return hasDefined(ATTRIBUTES) &&
                 get(ATTRIBUTES).hasDefined(attribute) &&
                 get(ATTRIBUTES).get(attribute).get(WRITE).asBoolean();
     }
 
+    /**
+     * @param operation The operation to check.
+     *
+     * @return whether the operation is executable
+     */
     public boolean isExecutable(String operation) {
         return hasDefined(OPERATIONS) &&
                 get(OPERATIONS).hasDefined(operation) &&

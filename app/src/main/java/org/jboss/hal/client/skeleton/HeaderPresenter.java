@@ -21,9 +21,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.Location;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -59,11 +58,11 @@ import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent.ProcessStateHandler;
 import org.jboss.hal.dmr.dispatch.ServerState;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -72,6 +71,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
+import static elemental2.dom.DomGlobal.alert;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
@@ -179,7 +180,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return getView().asElement();
     }
 
@@ -288,19 +289,16 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        Location location = Browser.getWindow().getLocation();
-        String url = Endpoints.getBaseUrl() + location.getPathname() + "?" + EndpointManager.CONNECT_PARAMETER;
-        Browser.getWindow().getLocation().assign(url);
+        String url = Endpoints.getBaseUrl() + "?" + EndpointManager.CONNECT_PARAMETER;
+        DomGlobal.location.assign(url);
     }
 
     void logout() {
         if (environment.isSingleSignOn()) {
-            Browser.getWindow().alert(Names.NYI);
+            alert(Names.NYI);
         } else {
-            Element p = Browser.getDocument().createElement("p"); //NON-NLS
-            p.setInnerHTML(resources.messages().closeToLogout().asString());
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
-                    .add(p)
+                    .add(p().innerHtml(resources.messages().closeToLogout()).asElement())
                     .primary(resources.constants().ok(), () -> true)
                     .build();
             dialog.show();
@@ -379,7 +377,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, role);
-                    Browser.getWindow().getLocation().reload();
+                    DomGlobal.location.reload();
                 });
     }
 
@@ -387,7 +385,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().clearRunAsTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, null);
-                    Browser.getWindow().getLocation().reload();
+                    DomGlobal.location.reload();
                 });
     }
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.NumberSelectItem;
 import org.jboss.hal.config.Environment;
@@ -48,7 +48,6 @@ class SettingsDialog {
     private static final SettingsResources RESOURCES = GWT.create(SettingsResources.class);
 
     private final Settings settings;
-    private final ModelNodeForm<ModelNode> form;
     private final ModifyResourceDialog dialog;
     private final boolean multipleLocales;
     private boolean changes;
@@ -75,22 +74,21 @@ class SettingsDialog {
             attributes.add(LOCALE.key());
         }
         attributes.add(PAGE_LENGTH.key());
-        form = new ModelNodeForm.Builder<>(Ids.SETTINGS_FORM, metadata)
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SETTINGS_FORM, metadata)
                 .include(attributes)
                 .customFormItem(PAGE_LENGTH.key(),
                         attributeDescription -> new NumberSelectItem(PAGE_LENGTH.key(), new long[]{10, 20, 50}))
                 .build();
 
         dialog = new ModifyResourceDialog(resources.constants().settings(), form,
-                (form, changedValues) -> {
+                (f, changedValues) -> {
                     changedValues.forEach((key, value) -> settings.set(Key.from(key), value));
                     changes = !changedValues.isEmpty();
                 },
                 () -> {
                     if (changes) {
                         DialogFactory.showConfirmation(resources.constants().settings(),
-                                resources.messages().reloadSettings(),
-                                () -> Browser.getWindow().getLocation().reload());
+                                resources.messages().reloadSettings(), DomGlobal.location::reload);
                     }
                 });
     }

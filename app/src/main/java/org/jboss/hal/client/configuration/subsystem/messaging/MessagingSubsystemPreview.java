@@ -39,8 +39,7 @@ class MessagingSubsystemPreview extends PreviewContent<StaticItem> {
         this.crud = crud;
         this.attributes = new PreviewAttributes<>(new ModelNode(),
                 asList("global-client-scheduled-thread-pool-max-size",
-                        "global-client-thread-pool-max-size"))
-                .end();
+                        "global-client-thread-pool-max-size"));
 
         previewBuilder().addAll(attributes);
     }

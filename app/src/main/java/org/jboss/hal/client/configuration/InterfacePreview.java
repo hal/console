@@ -20,23 +20,23 @@ import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
@@ -47,18 +47,17 @@ class InterfacePreview extends PreviewContent<NamedNode> {
 
     private final Dispatcher dispatcher;
     private final Places places;
-    private final Element links;
+    private final HTMLElement links;
 
     InterfacePreview(NamedNode interfce, Dispatcher dispatcher, Places places) {
         super(interfce.getName());
         this.dispatcher = dispatcher;
         this.places = places;
-        this.links = new Elements.Builder().span().end().build();
+        this.links = span().asElement();
 
         PreviewAttributes<NamedNode> attributes = new PreviewAttributes<>(interfce)
                 .append(INET_ADDRESS)
-                .append(model -> new PreviewAttributes.PreviewAttribute(Names.SOCKET_BINDING_GROUPS, links))
-                .end();
+                .append(model -> new PreviewAttributes.PreviewAttribute(Names.SOCKET_BINDING_GROUPS, links));
         previewBuilder().addAll(attributes);
     }
 
@@ -92,9 +91,9 @@ class InterfacePreview extends PreviewContent<NamedNode> {
                         html.appendEscaped(", ");
                     }
                 }
-                links.setInnerHTML(html.toSafeHtml().asString());
+                links.innerHTML = html.toSafeHtml().asString();
             } else {
-                links.setTextContent(Names.NOT_AVAILABLE);
+                links.textContent = Names.NOT_AVAILABLE;
             }
         });
     }

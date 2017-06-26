@@ -16,19 +16,20 @@
 package org.jboss.hal.ballroom.listview;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -39,8 +40,8 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class ListItem<T> implements IsElement {
 
-    private final Element root;
-    private final Map<String, Element> actions;
+    private final HTMLElement root;
+    private final Map<String, HTMLElement> actions;
 
     final String id;
     final T item;
@@ -51,135 +52,144 @@ class ListItem<T> implements IsElement {
         this.item = item;
         this.actions = new HashMap<>();
 
+        // root and checkbox
         String css = listGroupItem;
         if (display.stacked()) {
             css = css + " " + listViewPfStacked;
         }
-        Elements.Builder builder = new Elements.Builder().div().css(css).id(id);
-
+        root = div().id(id).css(css).asElement();
         if (checkbox) {
-            builder.div().css(listViewPfCheckbox).input(InputType.checkbox).on(click, event -> {
-                InputElement element = (InputElement) event.getTarget();
-                listView.select(ListItem.this, element.isChecked());
-            }).end();
+            root.appendChild(div().css(listViewPfCheckbox)
+                    .add(input(InputType.checkbox)
+                            .on(click, event -> {
+                                HTMLInputElement element = (HTMLInputElement) event.target;
+                                listView.select(ListItem.this, element.checked);
+                            }))
+                    .asElement());
+        } else {
+            bind(root, click, event -> listView.select(this, true));
         }
 
+        // actions
         if (!display.actions().isEmpty()) {
-            builder.div().css(listViewPfActions);
+            HTMLElement actionsContainer = div().css(listViewPfActions).asElement();
+            root.appendChild(actionsContainer);
+
             int index = 0;
-            for (Iterator<ItemAction<T>> iterator = display.actions().iterator(); iterator.hasNext(); ) {
-                ItemAction<T> action = iterator.next();
+            for (ItemAction<T> action : display.actions()) {
+                HTMLElement actionElement;
                 String actionId = Ids.build(this.id, action.id);
 
                 if (index == 0) {
                     // first action is a button
-                    builder.button()
+                    actionsContainer.appendChild(actionElement = button()
                             .id(actionId)
-                            .rememberAs(actionId)
                             .css(btn, btnDefault)
-                            .on(click, event -> action.handler.execute(item))
                             .textContent(action.title)
-                            .end();
+                            .on(click, event -> action.handler.execute(item))
+                            .asElement());
                 } else {
                     // remaining actions are inside the kebab menu
+                    HTMLUListElement ul = null;
                     if (index == 1) {
                         String id = Ids.build(display.getId(), "kebab", "menu");
-                        // @formatter:off
-                        builder.div().css(dropdown, pullRight, dropdownKebabPf)
-                            .button().css(btn, btnLink, dropdownToggle)
-                                .id(id)
-                                .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
-                                .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
-                                .aria(UIConstants.EXPANDED, UIConstants.TRUE)
-                                .span().css(fontAwesome("ellipsis-v")).end()
-                                .add("br")
-                            .end()
-                            .ul().css(dropdownMenu, dropdownMenuRight).aria(UIConstants.LABELLED_BY, id);
-                        // @formatter:on
+                        actionsContainer.appendChild(
+                                div().css(dropdown, pullRight, dropdownKebabPf)
+                                        .add(button()
+                                                .id(id)
+                                                .css(btn, btnLink, dropdownToggle)
+                                                .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                                                .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
+                                                .aria(UIConstants.EXPANDED, UIConstants.TRUE)
+                                                .add(span().css(fontAwesome("ellipsis-v"))))
+                                        .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
+                                                .aria(UIConstants.LABELLED_BY, id)
+                                                .asElement())
+                                        .asElement());
                     }
-                    builder.li().rememberAs(actionId).a()
-                            .css(clickable)
-                            .on(click, (event -> action.handler.execute(item)))
-                            .textContent(action.title)
-                            .end().end();
-
-                    if (!iterator.hasNext()) {
-                        builder.end().end(); // </ul> && </div.dropdown>
-                    }
+                    //noinspection ConstantConditions
+                    ul.appendChild(actionElement = li()
+                            .add(a().css(clickable)
+                                    .textContent(action.title)
+                                    .on(click, (event -> action.handler.execute(item))))
+                            .asElement());
                 }
 
-                actions.put(action.id, builder.referenceFor(actionId));
+                this.actions.put(action.id, actionElement);
                 index++;
             }
-            builder.end();
         }
 
-        builder.div().css(listViewPfMainInfo);
+        // main info and status
+        HTMLElement mainInfo = div().css(listViewPfMainInfo).asElement();
+        root.appendChild(mainInfo);
         if (display.status() != null) {
-            builder.div().css(listViewPfLeft).add(display.status()).end();
+            mainInfo.appendChild(div().css(listViewPfLeft)
+                    .add(display.status())
+                    .asElement());
         }
 
-        builder.div().css(listViewPfBody).div().css(listViewPfDescription);
+        // body
+        //     description
+        //         heading, text
+        //     additional-info
+        //         item, item, ...
+        HTMLElement body = div().css(listViewPfBody).asElement();
+        mainInfo.appendChild(body);
 
-        // item.title == list view heading
-        builder.div().css(listGroupItemHeading);
+        HTMLElement description = div().css(listViewPfDescription).asElement();
+        body.appendChild(description);
+
+        HTMLElement heading = div().css(listGroupItemHeading).asElement();
+        description.appendChild(heading);
         if (display.getTitleElements() != null) {
-            for (Element element : display.getTitleElements().asElements()) {
-                builder.add(element);
+            for (HTMLElement element : display.getTitleElements().asElements()) {
+                heading.appendChild(element);
             }
-        } else {
-            builder.textContent(display.getTitle());
+        } else if (!Strings.isNullOrEmpty(display.getTitle())) {
+            heading.textContent = display.getTitle();
         }
-        builder.end(); // </div.listGroupItemHeading>
 
-        // item.description == list view text
-        builder.div().css(listGroupItemText);
+        HTMLElement text = div().css(listGroupItemText).asElement();
+        description.appendChild(text);
         if (display.getDescriptionElements() != null) {
-            for (Element element : display.getDescriptionElements().asElements()) {
-                builder.add(element);
+            for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                text.appendChild(element);
             }
         } else if (!Strings.isNullOrEmpty(display.getDescription())) {
-            builder.textContent(display.getDescription());
+            text.textContent = display.getDescription();
         }
-        builder.end(); // </div.listGroupItemText>
-        builder.end(); // </div.listViewPfDescription>
 
+        // additional info
         if (display.getAdditionalInfo() != null && !Iterables.isEmpty(display.getAdditionalInfo().asElements())) {
-            builder.div().css(listViewPfAdditionalInfo);
-            for (Element element : display.getAdditionalInfo().asElements()) {
-                if (!element.getClassList().contains(listViewPfAdditionalInfoItem)) {
-                    element.getClassList().add(listViewPfAdditionalInfoItem);
+            HTMLElement additionalInfos = div().css(listViewPfAdditionalInfo).asElement();
+            body.appendChild(additionalInfos);
+
+            for (HTMLElement additionalInfo : display.getAdditionalInfo().asElements()) {
+                if (!additionalInfo.classList.contains(listViewPfAdditionalInfoItem)) {
+                    additionalInfo.classList.add(listViewPfAdditionalInfoItem);
                 }
-                builder.add(element);
+                additionalInfos.appendChild(additionalInfo);
             }
-            builder.end();
-        }
-
-        builder.end(); // </div.listViewPfBody>
-        builder.end(); // </div.listViewPfMainInfo>
-
-        root = builder.end().build();
-        if (!checkbox) {
-            root.setOnclick(event -> listView.select(this, true));
         }
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
     void enableAction(final String actionId) {
-        Element action = actions.get(actionId);
+        HTMLElement action = actions.get(actionId);
         if (action != null) {
-            action.getClassList().remove(disabled);
+            action.classList.remove(disabled);
         }
     }
 
     void disableAction(final String actionId) {
-        Element action = actions.get(actionId);
+        HTMLElement action = actions.get(actionId);
         if (action != null) {
-            action.getClassList().add(disabled);
+            action.classList.add(disabled);
         }
     }
 }

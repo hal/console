@@ -30,35 +30,35 @@ import static java.util.Collections.singletonList;
 /**
  * @author Harald Pehl
  */
-public class HaPolicyPreview extends PreviewContent<StaticItem> {
+class HaPolicyPreview extends PreviewContent<StaticItem> {
 
     @SuppressWarnings("DuplicateStringLiteralInspection") @NonNls
     private static final Map<HaPolicy, PreviewAttributes<ModelNode>> ATTRIBUTES =
             new ImmutableMap.Builder<HaPolicy, PreviewAttributes<ModelNode>>()
                     .put(HaPolicy.LIVE_ONLY, new PreviewAttributes<>(new ModelNode(),
                             asList("scale-down", "scale-down-cluster-name", "scale-down-connectors",
-                                    "scale-down-discovery-group", "scale-down-group-name")).end())
+                                    "scale-down-discovery-group", "scale-down-group-name")))
                     .put(HaPolicy.REPLICATION_COLOCATED, new PreviewAttributes<>(new ModelNode(),
                             asList("backup-port-offset", "backup-request-retries", "backup-request-retry-interval",
-                                    "max-backups")).end())
+                                    "max-backups")))
                     .put(HaPolicy.REPLICATION_MASTER, new PreviewAttributes<>(new ModelNode(),
-                            asList("cluster-name", "group-name")).end())
+                            asList("cluster-name", "group-name")))
                     .put(HaPolicy.REPLICATION_SLAVE, new PreviewAttributes<>(new ModelNode(),
                             asList("cluster-name", "group-name", "scale-down-cluster-name", "scale-down-connectors",
-                                    "scale-down-discovery-group", "scale-down-group-name")).end())
+                                    "scale-down-discovery-group", "scale-down-group-name")))
 
                     .put(HaPolicy.SHARED_STORE_COLOCATED, new PreviewAttributes<>(new ModelNode(),
                             asList("backup-port-offset", "backup-request-retries", "backup-request-retry-interval",
-                                    "max-backups")).end())
+                                    "max-backups")))
                     .put(HaPolicy.SHARED_STORE_MASTER, new PreviewAttributes<>(new ModelNode(),
-                            singletonList("failover-on-server-shutdown")).end())
+                            singletonList("failover-on-server-shutdown")))
                     .put(HaPolicy.SHARED_STORE_SLAVE, new PreviewAttributes<>(new ModelNode(),
                             asList("scale-down-cluster-name", "scale-down-group-name", "scale-down-connectors",
-                                    "scale-down-discovery-group")).end())
+                                    "scale-down-discovery-group")))
                     .build();
 
 
-    public HaPolicyPreview(final HaPolicy haPolicy, final ModelNode modelNode) {
+    HaPolicyPreview(final HaPolicy haPolicy, final ModelNode modelNode) {
         super(haPolicy.type);
         if (ATTRIBUTES.containsKey(haPolicy)) {
             PreviewAttributes<ModelNode> attributes = ATTRIBUTES.get(haPolicy);

@@ -23,9 +23,7 @@ import javax.inject.Inject;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gwt.core.client.GWT;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -43,7 +41,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
@@ -54,8 +55,6 @@ import static org.jboss.hal.resources.CSS.*;
 @SuppressWarnings({"HardCodedStringLiteral", "ResultOfMethodCallIgnored"})
 public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
-    private static final String HEADER_ELEMENT = "headerElement";
-    private static final String LEAD_ELEMENT = "leadElement";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static LinkedListMultimap<String, String> mainAttributes = LinkedListMultimap.create();
 
@@ -115,8 +114,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     private final List<Form<JpaStatistic>> mainForms;
     private final Map<String, Table<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
-    private final Element headerElement;
-    private final Element leadElement;
+    private final HTMLElement headerElement;
+    private final HTMLElement leadElement;
     private JpaPresenter presenter;
 
     @Inject
@@ -147,30 +146,22 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             mainAttributesTabs.add(Ids.build(baseId, Ids.TAB_SUFFIX, sectionId), section, form.asElement());
         }
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .section()
-                .h(1).rememberAs(HEADER_ELEMENT).end()
-                .p().css(lead).rememberAs(LEAD_ELEMENT).end()
-                .p().css(clearfix)
-                    .span().textContent(metadata.getDescription().getDescription()).end()
-                    .a().css(clickable, pullRight).on(click, event -> refresh())
-                        .span().css(fontAwesome("refresh"), marginRight5).end()
-                        .span().textContent(resources.constants().refresh()).end()
-                    .end()
-                .end()
+        HTMLElement section = section()
+                .add(headerElement = h(1).asElement())
+                .add(leadElement = p().css(lead).asElement())
+                .add(p().css(clearfix)
+                        .add(span().textContent(metadata.getDescription().getDescription())
+                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                                        .add(span().textContent(resources.constants().refresh())))))
                 .add(mainAttributesTabs)
-            .end();
-        // @formatter:on
-
-        headerElement = builder.referenceFor(HEADER_ELEMENT);
-        leadElement = builder.referenceFor(LEAD_ELEMENT);
+                .asElement();
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
-                fontAwesome("list-ul"), builder.<Element>build());
+                fontAwesome("list-ul"), section);
 
         // child resources
         buildChildPanel(baseId, AddressTemplates.ENTITY_TEMPLATE, "entity");
@@ -183,17 +174,12 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         navigation.addPrimary(Ids.JPA_RUNTIME_COLLECTION_ENTRY, Names.COLLECTION, fontAwesome("tasks"),
                 buildChildPanel(baseId, AddressTemplates.COLLECTION_TEMPLATE, Names.COLLECTION));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
-    private Element buildChildPanel(String baseId, AddressTemplate template, String title) {
+    private HTMLElement buildChildPanel(String baseId, AddressTemplate template, String title) {
         String resource = template.lastName();
         Metadata metadata = metadataRegistry.lookup(template);
 
@@ -213,22 +199,16 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         childTables.put(resource, table);
         childForms.put(resource, form);
 
-        // @formatter:off
-        return new Elements.Builder()
-            .section()
-                .h(1).textContent(title).end()
-                .p().css(clearfix)
-                    .span().textContent(metadata.getDescription().getDescription()).end()
-                    .a().css(clickable, pullRight).on(click, event -> refresh())
-                        .span().css(fontAwesome("refresh"), marginRight5).end()
-                        .span().textContent(resources.constants().refresh()).end()
-                    .end()
-                .end()
+        return section()
+                .add(h(1).textContent(title))
+                .add(p().css(clearfix)
+                    .add(span().textContent(metadata.getDescription().getDescription()))
+                    .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                        .add(span().textContent(resources.constants().refresh()))))
                 .add(table.asElement())
                 .add(form.asElement())
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
     }
 
     @Override
@@ -252,8 +232,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     @Override
     public void update(final JpaStatistic statistic) {
-        headerElement.setTextContent(statistic.getName());
-        leadElement.setTextContent(statistic.getDeployment());
+        headerElement.textContent = statistic.getName();
+        leadElement.textContent = statistic.getDeployment();
 
         mainForms.forEach(form -> form.view(statistic));
 

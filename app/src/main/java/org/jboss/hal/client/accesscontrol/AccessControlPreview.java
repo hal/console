@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
@@ -26,12 +26,12 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.section;
+
 /**
  * @author Harald Pehl
  */
 class AccessControlPreview extends PreviewContent<Void> {
-
-    private static final String CONTENT_ELEMENT = "contentElement";
 
     private final Environment environment;
     private final Alert warning;
@@ -43,9 +43,9 @@ class AccessControlPreview extends PreviewContent<Void> {
                 resources.constants().enableRbac(),
                 event -> accessControl.switchProvider());
 
+        HTMLElement content;
         previewBuilder().add(warning);
-        previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
-        Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
+        previewBuilder().add(content = section().asElement());
         Previews.innerHtml(content, resources.previews().rbacOverview());
 
         update(null);

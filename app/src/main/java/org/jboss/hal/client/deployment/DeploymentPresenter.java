@@ -21,7 +21,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.config.Environment;
@@ -59,7 +60,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
         @Override
         public void update(Void whatever) {
             if (environment.isStandalone()) {
-                Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                         JsHelper.supportsAdvancedUpload());
             }
         }

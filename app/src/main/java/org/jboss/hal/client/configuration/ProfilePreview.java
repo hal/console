@@ -21,22 +21,22 @@ import java.util.stream.Collectors;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -48,8 +48,8 @@ class ProfilePreview extends PreviewContent<NamedNode> {
     private final FinderPathFactory finderPathFactory;
     private final Places places;
     private final Resources resources;
-    private final Element includesElement;
-    private final Element serverGroupsElement;
+    private final HTMLElement includesElement;
+    private final HTMLElement serverGroupsElement;
 
     ProfilePreview(final Dispatcher dispatcher, FinderPathFactory finderPathFactory, final Places places,
             final Resources resources, final NamedNode profile) {
@@ -59,9 +59,11 @@ class ProfilePreview extends PreviewContent<NamedNode> {
         this.places = places;
         this.resources = resources;
 
-        includesElement = Browser.getDocument().createElement("p"); //NON-NLS
-        serverGroupsElement = Browser.getDocument().createElement("p"); //NON-NLS
-        previewBuilder().add(includesElement).add(serverGroupsElement);
+        includesElement = p().asElement();
+        serverGroupsElement = p().asElement();
+        previewBuilder()
+                .add(includesElement)
+                .add(serverGroupsElement);
     }
 
     @Override
@@ -70,7 +72,7 @@ class ProfilePreview extends PreviewContent<NamedNode> {
             String includes = item.get(INCLUDES).asList().stream()
                     .map(ModelNode::asString)
                     .collect(joining(", "));
-            includesElement.setTextContent(resources.messages().profileIncludes(includes));
+            includesElement.textContent = resources.messages().profileIncludes(includes);
             Elements.setVisible(includesElement, true);
 
         } else {
@@ -99,11 +101,11 @@ class ProfilePreview extends PreviewContent<NamedNode> {
                         html.appendEscaped(", ");
                     }
                 }
-                serverGroupsElement.setInnerHTML(
-                        resources.messages().profileUsedInServerGroups(html.toSafeHtml()).asString());
+                serverGroupsElement.innerHTML = resources.messages()
+                        .profileUsedInServerGroups(html.toSafeHtml())
+                        .asString();
             } else {
-                serverGroupsElement.setInnerHTML(resources.messages().profileNotUsedInServerGroups().asString());
-
+                serverGroupsElement.innerHTML = resources.messages().profileNotUsedInServerGroups().asString();
             }
         });
     }

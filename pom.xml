@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.8.2</version>
+    <version>0.9.0</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <url>http://hal.github.io/</url>
@@ -111,6 +111,7 @@
         <module>config</module>
         <module>dmr</module>
         <module>fraction</module>
+        <module>json</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
@@ -160,6 +161,26 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <debug>true</debug>
+                    <detectLinks>true</detectLinks>
+                    <excludePackageNames>org.jboss.hal.processor:org.jboss.hal.processor.mbui</excludePackageNames>
+                    <links>
+                        <link>http://www.gwtproject.org/javadoc/latest/</link>
+                    </links>
+                    <tags>
+                        <tag>
+                            <name>example</name>
+                            <placement>tcmf</placement>
+                            <head>Example</head>
+                        </tag>
+                    </tags>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -253,6 +274,7 @@
             </releases>
         </repository>
     </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>sonatype-plugins</id>

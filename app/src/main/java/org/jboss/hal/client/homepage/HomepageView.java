@@ -19,10 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import javax.inject.Inject;
 
-import elemental.client.Browser;
-import elemental.dom.Document;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
@@ -32,6 +29,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.eapHomeRow;
@@ -52,36 +50,28 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         boolean su = ac.isSuperUserOrAdministrator();
         String name = environment.getInstanceInfo().productName();
 
-        Document document = Browser.getDocument();
         Iterable<HomepageSection> sections;
-        Element header;
-        Element deployments;
-        Element configuration;
-        Element runtime;
-        Element accessControl = document.createDivElement(); // to get rid of warning "might not be initialized"
-        Element patching = document.createDivElement();
-        Element help;
+        HTMLElement header;
+        HTMLElement deployments;
+        HTMLElement configuration;
+        HTMLElement runtime;
+        HTMLElement accessControl = div().asElement(); // to get rid of warning "might not be initialized"
+        HTMLElement patching = div().asElement();
+        HTMLElement help;
 
         if (community) {
-            header = new Elements.Builder()
-                    .div().css(eapHomeTitle)
-                    .h(1).textContent(resources.theme().getFullName()).end()
-                    .end().build();
+            header = div().css(eapHomeTitle)
+                    .add(h(1).textContent(resources.theme().getFullName()))
+                    .asElement();
         } else {
-            // @formatter:off
-            header = new Elements.Builder()
-                .div().css(eapHomeTitle)
-                    .p()
-                        .span().textContent(resources.constants().homepageNewToEap() + " ").end()
-                        .a()
-                            .css(clickable)
-                            .on(click, event -> presenter.launchGuidedTour())
-                            .textContent(resources.constants().homepageTakeATour())
-                        .end()
-                    .end()
-                    .h(1).textContent(resources.theme().getFullName()).end()
-                .end().build();
-            // @formatter:on
+            header = div().css(eapHomeTitle)
+                    .add(p()
+                            .add(span().textContent(resources.constants().homepageNewToEap() + " "))
+                            .add(a().css(clickable)
+                                    .on(click, event -> presenter.launchGuidedTour())
+                                    .textContent(resources.constants().homepageTakeATour())))
+                    .add(h(1).textContent(resources.theme().getFullName()))
+                    .asElement();
         }
 
         if (standalone) {
@@ -230,28 +220,28 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         }
 
         help = HomepageHelp.create(environment, resources).asElement();
-        Elements.Builder rootBuilder = new Elements.Builder().div()
-                .div().css(eapHomeRow)
-                .add(header)
-                .add(deployments)
-                .add(configuration)
-                .end();
+
+        HTMLElement root = div()
+                .add(div().css(eapHomeRow)
+                    .add(header)
+                    .add(deployments)
+                    .add(configuration))
+                .asElement();
         if (su) {
-            rootBuilder.div().css(eapHomeRow)
+            root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
                     .add(accessControl)
-                    .end()
-                    .div().css(eapHomeRow)
+                    .asElement());
+            root.appendChild(div().css(eapHomeRow)
                     .add(patching)
                     .add(help)
-                    .end();
+                    .asElement());
         } else {
-            rootBuilder.div().css(eapHomeRow)
+            root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
                     .add(help)
-                    .end();
+                    .asElement());
         }
-        Element root = rootBuilder.end().build();
         initElement(root);
     }
 

@@ -22,6 +22,7 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType.ARCHIVE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
@@ -37,19 +38,18 @@ class ResourceAdapterPreview extends PreviewContent<ResourceAdapter> {
 
         AdapterType adapterType = resourceAdapter.getAdapterType();
         if (adapterType == ARCHIVE) {
-            previewBuilder().p().innerHtml(
-                    resources.messages().resourceAdapterProvidedBy(adapterType.text(), resourceAdapter.getArchive()))
-                    .end();
+            previewBuilder().add(p()
+                    .innerHtml(resources.messages()
+                            .resourceAdapterProvidedBy(adapterType.text(), resourceAdapter.getArchive())));
 
         } else if (adapterType == MODULE) {
-            previewBuilder().p().innerHtml(
-                    resources.messages().resourceAdapterProvidedBy(adapterType.text(), resourceAdapter.getModule()))
-                    .end();
+            previewBuilder().add(p()
+                    .innerHtml(resources.messages()
+                            .resourceAdapterProvidedBy(adapterType.text(), resourceAdapter.getModule())));
         }
 
         PreviewAttributes<ResourceAdapter> attributes = new PreviewAttributes<>(resourceAdapter,
-                Arrays.asList(STATISTICS_ENABLED, TRANSACTION_SUPPORT))
-                .end();
+                Arrays.asList(STATISTICS_ENABLED, TRANSACTION_SUPPORT));
         previewBuilder().addAll(attributes);
     }
 }

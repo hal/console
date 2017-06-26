@@ -42,6 +42,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +52,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * Metadata processor which processes the required resources attached to tokens and stores the retrieved metadata in
- * the related registries. In addition you can call {@link #lookup(AddressTemplate, Progress, MetadataCallback)} to get
- * and dynamically create the metadata attached to a specific address template.
+ * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
+ * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.
  *
  * @author Harald Pehl
  */
@@ -207,8 +207,16 @@ public class MetadataProcessor {
         void onMetadata(Metadata metadata);
     }
 
+    /**
+     * Reads the metadata for the template, stores it in the registry and passes it to the callback. If the metadata is
+     * already in the registry it's passed directly to the callback.
+     *
+     * @param template The address template to lookup.
+     * @param callback The callback which receives the metadata.
+     */
     @JsMethod(name = "lookup")
-    public void jsLookup(Object template, JsMetadataCallback callback) {
+    public void jsLookup(@EsParam("AddressTemplate|String") Object template,
+            @EsParam("function(metadata: Metadata)") JsMetadataCallback callback) {
         MetadataCallback mc = new MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
@@ -226,7 +234,7 @@ public class MetadataProcessor {
             lookup((AddressTemplate) template, Progress.NOOP, mc);
         } else {
             throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use MetadataProcessor((AddressTemplate|String), function(Metadata))");
+                    "Illegal 1st argument: Use MetadataProcessor((AddressTemplate|string), function(Metadata))");
         }
     }
 }

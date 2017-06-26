@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import elemental.js.json.JsJsonObject;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.json.JsonObject;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +67,8 @@ abstract class ReadChildrenProcessor extends AbstractResultProcessor<ReadChildre
     }
 
     @Override
-    JsArrayOf<JsJsonObject> asJson(final List<ReadChildrenResult> results) {
-        JsArrayOf<JsJsonObject> array = JsArrayOf.create();
+    Array<JsonObject> asJson(final List<ReadChildrenResult> results) {
+        Array<JsonObject> array = new Array<>();
         results.forEach(result -> array.push(result.asJson()));
         return array;
     }

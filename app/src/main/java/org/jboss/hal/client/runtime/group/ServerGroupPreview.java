@@ -56,8 +56,7 @@ class ServerGroupPreview extends PreviewContent<ServerGroup> {
                 .append(PROFILE, profileHref)
                 .append(SOCKET_BINDING_GROUP, sbgHref)
                 .append(SOCKET_BINDING_PORT_OFFSET)
-                .append(SOCKET_BINDING_DEFAULT_INTERFACE)
-                .end();
+                .append(SOCKET_BINDING_DEFAULT_INTERFACE);
         previewBuilder().addAll(attributes);
     }
 }

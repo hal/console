@@ -18,9 +18,14 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.change;
+import static org.jboss.gwt.elemento.core.EventType.keyup;
+import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.formControl;
@@ -45,7 +50,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
     private static class TextBoxEditingAppearance extends EditingAppearance<String> {
 
-        TextBoxEditingAppearance(elemental.html.InputElement inputElement) {
+        TextBoxEditingAppearance(HTMLInputElement inputElement) {
             super(EnumSet.allOf(Decoration.class), inputElement);
         }
 
@@ -56,17 +61,17 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
         @Override
         public void showValue(final String value) {
-            inputElement.setValue(value);
+            inputElement.value = value;
         }
 
         @Override
         public void showExpression(final String expression) {
-            inputElement.setValue(expression);
+            inputElement.value = expression;
         }
 
         @Override
         public void clearValue() {
-            inputElement.setValue("");
+            inputElement.value = "";
         }
     }
 
@@ -86,20 +91,19 @@ public class TextBoxItem extends AbstractFormItem<String> {
         addAppearance(Form.State.READONLY, new TextBoxReadOnlyAppearance());
 
         // editing appearance
-        elemental.html.InputElement inputElement = Browser.getDocument().createInputElement();
-        inputElement.setType("text"); //NON-NLS
-        inputElement.getClassList().add(formControl);
+        HTMLInputElement inputElement = input(text)
+                .css(formControl)
+                .asElement();
 
-        inputElement.setOnchange(event -> {
-            String value = inputElement.getValue();
-            if (hasExpressionScheme(value)) {
-                modifyExpressionValue(value);
+        bind(inputElement, change, event -> {
+            if (hasExpressionScheme(inputElement.value)) {
+                modifyExpressionValue(inputElement.value);
             } else {
-                modifyValue(value);
+                modifyValue(inputElement.value);
             }
         });
-        inputElement.setOnkeyup(event -> {
-            toggleExpressionSupport(inputElement.getValue());
+        bind(inputElement, keyup, event -> {
+            toggleExpressionSupport(inputElement.value);
             inputElement.focus();
         });
 

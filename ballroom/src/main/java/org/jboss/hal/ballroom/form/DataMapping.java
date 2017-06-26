@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import org.jboss.hal.dmr.ModelNode;
+
 /**
  * Takes care of the mapping between form fields and the model.
  *
@@ -26,7 +28,12 @@ public interface DataMapping<T> {
 
     void populateFormItems(T model, Form<T> form);
 
+    void populateFormItem(final String id, String name, final ModelNode attributeDescription,
+            final ModelNode value, final FormItem formItem);
+
     void clearFormItems(Form<T> form);
 
     void persistModel(T model, Form<T> form);
+
+    void persistModel(String id, T model, final Iterable<FormItem> formItems);
 }

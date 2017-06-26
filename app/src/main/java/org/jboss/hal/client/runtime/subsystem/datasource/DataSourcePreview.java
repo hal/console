@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
@@ -29,13 +29,13 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -43,6 +43,10 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
@@ -58,10 +62,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class DataSourcePreview extends PreviewContent<DataSource> {
 
-    private static final String REFRESH_ELEMENT = "refreshElement";
-    private static final String POOL_HEADER = "poolHeader";
-    private static final String CACHE_HEADER = "jdbcHeader";
-
     private final Server server;
     private final DataSource dataSource;
     private final Environment environment;
@@ -73,11 +73,11 @@ class DataSourcePreview extends PreviewContent<DataSource> {
     private final Alert needsReloadWarning;
     private final Alert needsRestartWarning;
     private final Alert disabledWarning;
-    private final Element refresh;
-    private final Element poolHeader;
+    private final HTMLElement refresh;
+    private final HTMLElement poolHeader;
     private final Utilization activeConnections;
     private final Utilization maxUsedConnections;
-    private final Element cacheHeader;
+    private final HTMLElement cacheHeader;
     private final Utilization hitCount;
     private final Utilization missCount;
 
@@ -131,34 +131,31 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         missCount = new Utilization(resources.constants().missCount(), resources.constants().count(),
                 environment.isStandalone(), false);
 
-        // @formatter:off
         previewBuilder()
-            .add(noStatistics)
-            .add(needsReloadWarning)
-            .add(needsRestartWarning)
-            .add(disabledWarning)
-            .div().css(clearfix)
-                .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight5).end()
-                    .span().textContent(resources.constants().refresh()).end()
-                .end()
-            .end()
-            .h(2).rememberAs(POOL_HEADER).css(underline).textContent(resources.constants().connectionPool()).end()
-            .add(activeConnections)
-            .add(maxUsedConnections)
-            .h(2).rememberAs(CACHE_HEADER).css(underline).textContent(resources.constants().preparedStatementCache()).end()
-            .add(hitCount)
-            .add(missCount);
-        // @formatter:on
+                .add(noStatistics)
+                .add(needsReloadWarning)
+                .add(needsRestartWarning)
+                .add(disabledWarning)
+                .add(div().css(clearfix)
+                        .add(refresh = a().css(clickable, pullRight)
+                                .on(click, event -> update(null))
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))
+                                .asElement()))
+                .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).asElement())
+                .add(activeConnections)
+                .add(maxUsedConnections)
+                .add(cacheHeader = h(2).css(underline)
+                        .textContent(resources.constants().preparedStatementCache())
+                        .asElement())
+                .add(hitCount)
+                .add(missCount);
 
         // to prevent flickering we initially hide everything
         Elements.setVisible(noStatistics.asElement(), false);
-        needsReloadWarning.asElement().getClassList().add(hidden);
-        needsRestartWarning.asElement().getClassList().add(hidden);
-        disabledWarning.asElement().getClassList().add(hidden);
-        refresh = previewBuilder().referenceFor(REFRESH_ELEMENT);
-        poolHeader = previewBuilder().referenceFor(POOL_HEADER);
-        cacheHeader = previewBuilder().referenceFor(CACHE_HEADER);
+        needsReloadWarning.asElement().classList.add(hidden);
+        needsRestartWarning.asElement().classList.add(hidden);
+        disabledWarning.asElement().classList.add(hidden);
     }
 
     @Override
@@ -204,12 +201,12 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
             // Do not simply hide the links, but add the hidden CSS class.
             // Important when constraints for the links are processed later.
-            needsReloadWarning.asElement().getClassList().add(hidden);
-            needsRestartWarning.asElement().getClassList().add(hidden);
-            disabledWarning.asElement().getClassList().add(hidden);
+            needsReloadWarning.asElement().classList.add(hidden);
+            needsRestartWarning.asElement().classList.add(hidden);
+            disabledWarning.asElement().classList.add(hidden);
             if (statisticsEnabled) {
                 if (!dataSource.isEnabled()) {
-                    disabledWarning.asElement().getClassList().remove(hidden);
+                    disabledWarning.asElement().classList.remove(hidden);
                 } else {
                     Elements.toggle(needsReloadWarning.asElement(), hidden, !server.needsReload());
                     Elements.toggle(needsRestartWarning.asElement(), hidden, !server.needsRestart());

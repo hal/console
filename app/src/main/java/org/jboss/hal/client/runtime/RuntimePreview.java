@@ -16,7 +16,7 @@
 package org.jboss.hal.client.runtime;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
@@ -35,9 +35,9 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     protected static final String RESTART_LINK = "restart-link";
 
     protected final Resources resources;
-    protected Element alertContainer;
-    protected Element alertIcon;
-    protected Element alertText;
+    protected HTMLElement alertContainer;
+    protected HTMLElement alertIcon;
+    protected HTMLElement alertText;
 
     protected RuntimePreview(final String header, final String lead, final Resources resources) {
         super(header, lead);
@@ -45,63 +45,63 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     }
 
     protected void adminOnly(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertInfo);
-        alertIcon.setClassName(Icons.LOCK);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertInfo;
+        alertIcon.className = Icons.LOCK;
+        alertText.innerHTML = message.asString();
     }
 
     protected void starting(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertInfo);
-        alertIcon.setClassName(Icons.DISABLED);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertInfo;
+        alertIcon.className = Icons.DISABLED;
+        alertText.innerHTML = message.asString();
     }
 
     protected void pending(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertInfo);
-        alertIcon.setClassName(Icons.UNKNOWN);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertInfo;
+        alertIcon.className = Icons.UNKNOWN;
+        alertText.innerHTML = message.asString();
     }
 
     protected void suspended(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertSuspended);
-        alertIcon.setClassName(Icons.PAUSE);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertSuspended;
+        alertIcon.className = Icons.PAUSE;
+        alertText.innerHTML = message.asString();
     }
 
     protected void needsReload(SafeHtml message) {
         warning();
-        alertText.setInnerHTML(message.asString());
+        alertText.innerHTML = message.asString();
     }
 
     protected void needsRestart(SafeHtml message) {
         warning();
-        alertText.setInnerHTML(message.asString());
+        alertText.innerHTML = message.asString();
     }
 
     protected void running(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertSuccess);
-        alertIcon.setClassName(Icons.OK);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertSuccess;
+        alertIcon.className = Icons.OK;
+        alertText.innerHTML = message.asString();
     }
 
     protected void unknown(SafeHtml message) {
-        alertContainer.setClassName(alert + " " + alertWarning);
-        alertIcon.setClassName(Icons.UNKNOWN);
-        alertText.setInnerHTML(message.asString());
+        alertContainer.className = alert + " " + alertWarning;
+        alertIcon.className = Icons.UNKNOWN;
+        alertText.innerHTML = message.asString();
     }
 
     private void warning() {
-        alertContainer.setClassName(alert + " " + alertWarning);
-        alertIcon.setClassName(Icons.WARNING);
+        alertContainer.className = alert + " " + alertWarning;
+        alertIcon.className = Icons.WARNING;
     }
 
     private void error() {
-        alertContainer.setClassName(alert + " " + alertDanger);
-        alertIcon.setClassName(Icons.ERROR);
+        alertContainer.className = alert + " " + alertDanger;
+        alertIcon.className = Icons.ERROR;
     }
 
     protected void error(SafeHtml message) {
         error();
-        alertText.setInnerHTML(message.asString());
+        alertText.innerHTML = message.asString();
     }
 }

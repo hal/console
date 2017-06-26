@@ -17,11 +17,11 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
@@ -59,16 +59,16 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
                                         .collect(toList());
                                 response.response(JsHelper.asJsArray(items));
                             } else {
-                                response.response(JsArrayOf.create());
+                                response.response(new Array<>());
                             }
                         },
                         (op, failure) -> {
                             logger.error(ERROR_MESSAGE, capability, template, failure);
-                            response.response(JsArrayOf.create());
+                            response.response(new Array<>());
                         },
                         (op, exception) -> {
                             logger.error(ERROR_MESSAGE, capability, template, exception.getMessage());
-                            response.response(JsArrayOf.create());
+                            response.response(new Array<>());
                         }))
                 .build();
 

@@ -27,7 +27,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
 import static org.jboss.hal.resources.Urls.UPLOAD;
 
 /**
- * Class for getting absolute URLs to the different endpoints used in HAL.
+ * Provides access to the endpoints used in HAL.
  *
  * @author Harald Pehl
  */
@@ -65,6 +65,7 @@ public class Endpoints {
         useBase(getBaseUrl());
     }
 
+    @JsIgnore
     public void useBase(final String baseUrl) {
         String safeUrl = baseUrl;
         if (baseUrl.endsWith("/")) {
@@ -76,21 +77,34 @@ public class Endpoints {
         sameOrigin = baseUrl.equals(getBaseUrl());
     }
 
+    /**
+     * @return the endpoint used to execute management operations.
+     */
     @JsProperty(name = "dmr")
     public String dmr() {
         return dmr;
     }
 
+    /**
+     * @return the endpoint used for file uploads.
+     */
     @JsProperty(name = "upload")
     public String upload() {
         return upload;
     }
 
+    /**
+     * @return {string} the endpoint used for logout.
+     */
     @JsIgnore
     public String logout() {
         return logout;
     }
 
+    /**
+     * @return true if the console is served from a WildFly / EAP instance, false if it runs standalone and
+     * connected to an arbitrary management endpoint.
+     */
     @JsProperty(name = "sameOrigin")
     public boolean isSameOrigin() {
         return sameOrigin;

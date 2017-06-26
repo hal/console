@@ -18,9 +18,10 @@ package org.jboss.hal.meta.security;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.dom.NodeList;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.UIConstants;
 
@@ -49,7 +50,7 @@ public class ElementGuard {
 
         @Override
         public boolean test(final Element element) {
-            return element != null && !element.getClassList().contains(hidden);
+            return element != null && !element.classList.contains(hidden);
         }
     }
 
@@ -69,10 +70,13 @@ public class ElementGuard {
 
         @Override
         public void accept(final Element element) {
-            String data = String.valueOf(element.getDataset().at(UIConstants.CONSTRAINT));
-            if (data != null) {
-                Constraints constraints = Constraints.parse(data);
-                Elements.toggle(element, rbacHidden, !authorisationDecision.isAllowed(constraints));
+            if (element instanceof HTMLElement) {
+                HTMLElement htmlElement = (HTMLElement) element;
+                String data = String.valueOf(htmlElement.dataset.get(UIConstants.CONSTRAINT));
+                if (data != null) {
+                    Constraints constraints = Constraints.parse(data);
+                    Elements.toggle(htmlElement, rbacHidden, !authorisationDecision.isAllowed(constraints));
+                }
             }
         }
     }
@@ -82,21 +86,21 @@ public class ElementGuard {
      * Adds the {@link org.jboss.hal.resources.CSS#rbacHidden} CSS class if {@code condition == true}, removes it
      * otherwise.
      */
-    public static void toggle(Element element, boolean condition) {
+    public static void toggle(HTMLElement element, boolean condition) {
         if (new Visible().test(element)) {
             Elements.toggle(element, rbacHidden, condition);
         }
     }
 
     public static void processElements(AuthorisationDecision authorisationDecision, String selector) {
-        processElements(authorisationDecision, Browser.getDocument().querySelectorAll(selector));
+        processElements(authorisationDecision, DomGlobal.document.querySelectorAll(selector));
     }
 
-    public static void processElements(AuthorisationDecision authorisationDecision, Element element) {
+    public static void processElements(AuthorisationDecision authorisationDecision, HTMLElement element) {
         processElements(authorisationDecision, element.querySelectorAll("[" + data(UIConstants.CONSTRAINT + "]")));
     }
 
-    public static void processElements(AuthorisationDecision authorisationDecision, NodeList elements) {
+    private static void processElements(AuthorisationDecision authorisationDecision, NodeList<Element> elements) {
         Elements.stream(elements)
                 .filter(new Visible()) // prevent that hidden elements become visible by Toggle()
                 .forEach(new Toggle(authorisationDecision));

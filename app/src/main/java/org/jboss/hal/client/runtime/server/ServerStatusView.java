@@ -20,11 +20,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Splitter;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.PreListItem;
@@ -45,6 +43,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -55,8 +58,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  * @author Harald Pehl
  */
 public class ServerStatusView extends HalViewImpl implements ServerStatusPresenter.MyView {
-
-    private static final String HEADER_ELEMENT = "headerElement";
 
     private static final String[] MAIN_ATTRIBUTES = {
             NAME,
@@ -80,7 +81,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
     private final Form<ModelNode> mainAttributes;
     private final Form<ModelNode> bootstrapAttributes;
     private final Table<Property> systemProperties;
-    private final Element headerElement;
+    private final HTMLElement headerElement;
 
     @Inject
     public ServerStatusView(final MetadataRegistry metadataRegistry, final Resources resources) {
@@ -118,49 +119,36 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
 
         registerAttachable(mainAttributes, bootstrapAttributes, systemProperties);
 
-        // @formatter:off
-        Elements.Builder mainAttributesBuilder = new Elements.Builder()
-            .section()
-                .h(1).rememberAs(HEADER_ELEMENT).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
-                .add(mainAttributes)
-            .end();
-        headerElement = mainAttributesBuilder.referenceFor(HEADER_ELEMENT);
+        HTMLElement mainAttributes = section()
+                .add(headerElement = h(1).asElement())
+                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(this.mainAttributes)
+                .asElement();
 
-        Element bootstrapSection =  new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.BOOTSTRAP).end()
+        HTMLElement bootstrapSection = section()
+                .add(h(1).textContent(Names.BOOTSTRAP))
                 .add(bootstrapAttributes)
-            .end()
-        .build();
+                .asElement();
 
-        Element systemPropertiesSection =  new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.SYSTEM_PROPERTIES).end()
+        HTMLElement systemPropertiesSection = section()
+                .add(h(1).textContent(Names.SYSTEM_PROPERTIES))
                 .add(systemProperties)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
-                fontAwesome("list-ul"), mainAttributesBuilder.<Element>build());
+                fontAwesome("list-ul"), mainAttributes);
         navigation
                 .addPrimary(Ids.SERVER_STATUS_BOOTSTRAP_ENTRY, Names.BOOTSTRAP, fontAwesome("play"), bootstrapSection);
         navigation
                 .addPrimary(Ids.SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY, Names.SYSTEM_PROPERTIES, pfIcon("resource-pool"),
                         systemPropertiesSection);
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override
@@ -172,7 +160,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .map(p -> p.getValue().asString())
                 .orElse(":");
 
-        headerElement.setTextContent(modelNode.get(NAME).asString());
+        headerElement.textContent = modelNode.get(NAME).asString();
 
         mainAttributes.view(modelNode);
         mainAttributes.<String>getFormItem(START_TIME)

@@ -31,8 +31,7 @@ class SecurityDomainPreview extends PreviewContent<SecurityDomain> {
         super(securityDomain.getName());
 
         PreviewAttributes<SecurityDomain> attributes = new PreviewAttributes<>(securityDomain,
-                Collections.singletonList(CACHE_TYPE))
-                .end();
+                Collections.singletonList(CACHE_TYPE));
         previewBuilder().addAll(attributes);
     }
 }

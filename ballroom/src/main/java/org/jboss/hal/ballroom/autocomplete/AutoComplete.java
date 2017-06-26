@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
 import elemental.events.Event;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
+import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 
@@ -88,8 +90,8 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void showAll() {
-        Element element = Browser.getDocument().getElementById(formItem().getId(EDITING));
-        Browser.getWindow().setTimeout(() -> {
+        Element element = DomGlobal.document.getElementById(formItem().getId(EDITING));
+        DomGlobal.setTimeout((o) -> {
             element.blur();
             triggerEvent(element, Event.KEYUP, "", 0); // to reset 'last_val' in autoComplete.js
             triggerEvent(element, Event.KEYUP, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
@@ -114,7 +116,9 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void close() {
-        Elements.stream(Browser.getDocument().querySelectorAll(autocompleteSuggestions))
+        Elements.stream(DomGlobal.document.querySelectorAll(autocompleteSuggestions))
+                .filter(htmlElements())
+                .map(asHtmlElement())
                 .filter(Elements::isVisible)
                 .forEach(element -> Elements.setVisible(element, false));
     }

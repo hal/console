@@ -18,7 +18,7 @@ package org.jboss.hal.meta.description;
 import java.util.Collections;
 import java.util.List;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
@@ -27,16 +27,17 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.spi.EsReturn;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Represents the result of a read-resource-description operation for one specific resource.
+ * Contains the resource and attribute descriptions from the read-resource-description operation.
  *
  * @author Harald Pehl
  */
-@JsType
+@JsType(namespace = "hal.meta")
 public class ResourceDescription extends ModelNode {
 
     @JsIgnore
@@ -44,6 +45,9 @@ public class ResourceDescription extends ModelNode {
         set(payload);
     }
 
+    /**
+     * @return the resource description
+     */
     @JsProperty
     public String getDescription() {
         return get(DESCRIPTION).asString();
@@ -165,30 +169,42 @@ public class ResourceDescription extends ModelNode {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return the attribute descriptions
+     */
     @JsMethod(name = "getAttributes")
-    public JsArrayOf<Property> jsGetAttributes() {
+    @EsReturn("Property[]")
+    public Array<Property> jsGetAttributes() {
         List<Property> attributes = getAttributes(ATTRIBUTES);
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : attributes) {
             array.push(t);
         }
         return array;
     }
 
+    /**
+     * @return the request properties of the add operation
+     */
     @JsMethod(name = "getRequestProperties")
-    public JsArrayOf<Property> jsGetRequestProperties() {
+    @EsReturn("Property[]")
+    public Array<Property> jsGetRequestProperties() {
         List<Property> attributes = getAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES);
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : attributes) {
             array.push(t);
         }
         return array;
     }
 
+    /**
+     * @return the operation descriptions
+     */
     @JsProperty(name = "operations")
-    public JsArrayOf<Property> jsOperations() {
+    @EsReturn("Property[]")
+    public Array<Property> jsOperations() {
         List<Property> operations = getOperations();
-        JsArrayOf<Property> array = JsArrayOf.create();
+        Array<Property> array = new Array<>();
         for (Property t : operations) {
             array.push(t);
         }

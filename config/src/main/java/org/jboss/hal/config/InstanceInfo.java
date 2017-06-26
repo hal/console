@@ -21,6 +21,9 @@ import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Names;
 
 /**
+ * Contains information about the server instance the console is connected to or loaded from (taken from the root
+ * resource).
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -41,26 +44,41 @@ public class InstanceInfo {
         this.serverName = Names.NOT_AVAILABLE;
     }
 
+    /**
+     * @return the product name.
+     */
     @JsProperty(name = "productName")
     public String productName() {
         return productName;
     }
 
+    /**
+     * @return the product version.
+     */
     @JsProperty(name = "productVersion")
     public String productVersion() {
         return productVersion;
     }
 
+    /**
+     * @return the release name.
+     */
     @JsProperty(name = "releaseName")
     public String releaseName() {
         return releaseName;
     }
 
+    /**
+     * @return the release version.
+     */
     @JsProperty(name = "releaseVersion")
     public String releaseVersion() {
         return releaseVersion;
     }
 
+    /**
+     * @return the server name.
+     */
     @JsProperty(name = "serverName")
     public String serverName() {
         return serverName;

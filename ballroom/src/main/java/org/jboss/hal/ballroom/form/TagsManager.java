@@ -17,11 +17,9 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.js.events.JsEvent;
-import elemental.js.html.JsInt16Array;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.Event;
+import elemental2.dom.HTMLInputElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
@@ -45,7 +43,7 @@ class TagsManager {
         /**
          * @param cst (c)omma (s)eparated (t)ags
          */
-        void onRefresh(JsEvent event, String cst);
+        void onRefresh(Event event, String cst);
     }
 
 
@@ -60,7 +58,7 @@ class TagsManager {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        JsInt16Array delimiters;
+        Array<Integer> delimiters;
         String tagsContainer;
         String tagClass;
         public Validator validator;
@@ -73,7 +71,7 @@ class TagsManager {
 
         public static Options get() {
             Options options = new Options();
-            options.delimiters = (JsInt16Array) Browser.getWindow().newInt16Array(1);
+            options.delimiters = new Array<>();
             options.delimiters.setAt(0, ENTER);
             options.tagClass = tagManagerTag;
             options.validator = null;
@@ -86,12 +84,12 @@ class TagsManager {
     public static class Bridge {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge element(Element element);
+        public native static Bridge element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
 
         @JsMethod(name = TAGS_MANAGER)
-        public native JsArrayOf<String> tagsManagerGetTags(String getTags);
+        public native Array<String> tagsManagerGetTags(String getTags);
 
         @JsMethod(name = TAGS_MANAGER)
         public native void tagsManagerRemoveTags(String removeTags);

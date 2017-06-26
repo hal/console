@@ -15,8 +15,9 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -24,6 +25,10 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -34,50 +39,35 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
 
-    private static final String MESSAGES_HEADER = "messagesHeader";
-    private static final String PANEL_HEADER = "panelHeader";
-    private static final String PANEL_BODY = "panelBody";
     private static final int SIZE = 50;
 
     private final Resources resources;
-    private final Element messagesHeader;
-    private final Element panelBody;
-    private final Element root;
+    private final HTMLElement messagesHeader;
+    private final HTMLElement panelBody;
+    private final HTMLElement root;
     private HeaderPresenter presenter;
 
     MessageSink(Resources resources) {
+        HTMLElement panelHeader, clear;
+
         this.resources = resources;
+        this.root = div().css(drawerPf, drawerPfHal, drawerPfNotificationsNonClickable, hide)
+                .add(div().css(drawerPfTitle)
+                        .add(messagesHeader = h(3).css(textCenter)
+                                .textContent(resources.messages().messages(0)).asElement()))
+                .add(div().css(panelGroup)
+                        .add(div().css(panel, panelDefault)
+                                .add(panelHeader = div().css(panelHeading).asElement())
+                                .add(div().css(panelCollapse, collapse, in)
+                                        .add(panelBody = div().css(CSS.panelBody)
+                                                .add(div().css(drawerPfAction)
+                                                        .add(clear = button(resources.constants().clearMessages())
+                                                                .css(btn, btnLink, btnBlock, clickable)
+                                                                .asElement()))
+                                                .asElement()))))
+                .asElement();
 
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(drawerPf, drawerPfHal, drawerPfNotificationsNonClickable, hide)
-                .div().css(drawerPfTitle)
-                    .h(3).css(textCenter).rememberAs(MESSAGES_HEADER)
-                        .textContent(resources.messages().messages(0))
-                    .end()
-                .end()
-                .div().css(panelGroup)
-                    .div().css(panel, panelDefault)
-                        .div().css(panelHeading).rememberAs(PANEL_HEADER).end()
-                        .div().css(panelCollapse, collapse, in)
-                            .div().css(CSS.panelBody).rememberAs(PANEL_BODY).end()
-                            .div().css(drawerPfAction)
-                                .button().css(btn, btnLink, btnBlock, clickable)
-                                    .textContent(resources.constants().clearMessages())
-                                    .on(click, event -> presenter.clearMessages())
-                                .end()
-                            .end()
-                        .end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        messagesHeader = builder.referenceFor(MESSAGES_HEADER);
-        Element panelHeader = builder.referenceFor(PANEL_HEADER);
-        panelBody = builder.referenceFor(PANEL_BODY);
-        root = builder.build();
-
+        bind(clear, click, event -> presenter.clearMessages());
         Elements.setVisible(panelHeader, false); // not used
     }
 
@@ -87,22 +77,22 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
     void add(Message message) {
         MessageSinkElement element = new MessageSinkElement(this, message, resources);
-        panelBody.insertBefore(element.asElement(), panelBody.getFirstElementChild());
-        int messageCount = panelBody.getChildElementCount();
+        panelBody.insertBefore(element.asElement(), panelBody.firstElementChild);
+        int messageCount = (int) panelBody.childElementCount;
         if (messageCount > SIZE) {
-            panelBody.removeChild(panelBody.getLastElementChild());
+            panelBody.removeChild(panelBody.lastElementChild);
         }
         updateHeader();
     }
 
     void remove(String id) {
-        Element element = Browser.getDocument().getElementById(id);
+        Element element = DomGlobal.document.getElementById(id);
         Elements.failSafeRemove(panelBody, element);
         updateHeader();
     }
@@ -113,6 +103,6 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     private void updateHeader() {
-        messagesHeader.setTextContent(resources.messages().messages(panelBody.getChildElementCount()));
+        messagesHeader.textContent = resources.messages().messages((int) panelBody.childElementCount);
     }
 }

@@ -206,7 +206,7 @@ package org.jboss.hal.core.mbui.form;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
@@ -224,7 +224,7 @@ public class TestableFormItem implements FormItem<String> {
     TestableFormItem(final String name) {this.name = name;}
 
     @Override
-    public Element asElement(final Form.State state) {
+    public HTMLElement asElement(final Form.State state) {
         return null;
     }
 

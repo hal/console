@@ -22,7 +22,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -131,7 +131,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             }
 
             @Override
-            public Element asElement() {
+            public HTMLElement asElement() {
                 return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 

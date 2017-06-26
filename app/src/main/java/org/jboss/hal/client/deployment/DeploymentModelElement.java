@@ -17,8 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.EmptyState;
@@ -27,6 +26,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.client.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -44,7 +44,7 @@ class DeploymentModelElement implements HasElements {
     private final ModelBrowser modelBrowser;
     private final Resources resources;
     private final EmptyState notEnabled;
-    private final List<Element> elements;
+    private final List<HTMLElement> elements;
 
     DeploymentModelElement(final ModelBrowser modelBrowser, final Resources resources) {
         this.modelBrowser = modelBrowser;
@@ -53,15 +53,14 @@ class DeploymentModelElement implements HasElements {
         notEnabled = new EmptyState.Builder(resources.constants().notEnabled())
                 .icon(fontAwesome(stopCircleO))
                 .build();
-        notEnabled.asElement().getClassList().add(marginTopLarge);
+        notEnabled.asElement().classList.add(marginTopLarge);
         Elements.setVisible(notEnabled.asElement(), false);
 
-        elements = Lists.newArrayList(modelBrowser.asElements());
-        elements.add(notEnabled.asElement());
+        elements = asList(modelBrowser.asElement(), notEnabled.asElement());
     }
 
     @Override
-    public Iterable<Element> asElements() {
+    public Iterable<HTMLElement> asElements() {
         return elements;
     }
 
@@ -72,7 +71,7 @@ class DeploymentModelElement implements HasElements {
     void update(Deployment deployment, Callback enableAction) {
         boolean active = deployment.getStatus() == OK;
         Elements.setVisible(notEnabled.asElement(), !active);
-        modelBrowser.asElements().forEach(element -> Elements.setVisible(element, active));
+        Elements.setVisible(modelBrowser.asElement(), active);
 
         if (active) {
             ResourceAddress address = deployment.getReferenceServer().getServerAddress()

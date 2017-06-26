@@ -23,19 +23,19 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -80,7 +80,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     private final Resources resources;
     private String logFileName;
     private LogFile logFile;
-    private int intervalHandle;
+    private double intervalHandle;
 
     @Inject
     public LogFilePresenter(final EventBus eventBus,
@@ -125,7 +125,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     @Override
     protected void reload() {
         if (logFileName != null) {
-            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
+            double handle = DomGlobal.setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -137,7 +137,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                     .build();
             dispatcher.execute(new Composite(logFileOp, contentOp),
                     (CompositeResult result) -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         logFile = new LogFile(logFileName, result.step(0).get(RESULT));
                         List<ModelNode> linesRead = result.step(1).get(RESULT).asList();
                         String content = linesRead.stream().map(ModelNode::asString)
@@ -145,12 +145,12 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                         getView().show(logFile, linesRead.size(), content);
                     },
                     (operation, failure) -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), failure));
                     },
                     (operation, exception) -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
                     });
@@ -162,7 +162,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     void reloadFile() {
         if (logFile != null) {
             int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
-            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
+            double handle = DomGlobal.setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             //noinspection HardCodedStringLiteral
             Operation operation = new Operation.Builder(address, "read-log-file")
@@ -170,18 +170,18 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                     .param("tail", true)
                     .build();
             dispatcher.execute(operation, result -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         List<ModelNode> linesRead = result.asList();
                         String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
                         getView().refresh(linesRead.size(), content);
                     },
                     (op, failure) -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), failure));
                     },
                     (op, exception) -> {
-                        Browser.getWindow().clearTimeout(handle);
+                        DomGlobal.clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
                     });
@@ -194,10 +194,10 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFile != null) {
             if (on) {
                 if (!inTailMode()) {
-                    intervalHandle = Browser.getWindow().setInterval(this::reloadFile, REFRESH_INTERVAL);
+                    intervalHandle = DomGlobal.setInterval((o) -> reloadFile(), REFRESH_INTERVAL);
                 }
             } else {
-                Browser.getWindow().clearInterval(intervalHandle);
+                DomGlobal.clearInterval(intervalHandle);
                 intervalHandle = -1;
                 reloadFile();
             }

@@ -16,7 +16,7 @@
 package org.jboss.hal.client.deployment.wizard;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 
 /**
@@ -32,7 +32,7 @@ abstract class UploadStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return uploadElement.asElement();
     }
 

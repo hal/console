@@ -19,10 +19,10 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import elemental.client.Browser;
-import elemental.html.SelectElement;
+import elemental2.dom.HTMLSelectElement;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
+import static org.jboss.gwt.elemento.core.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
@@ -52,7 +52,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
     private class MultiSelectBoxEditingAppearance extends SelectBoxEditingAppearance<List<String>> {
 
-        MultiSelectBoxEditingAppearance(final SelectElement selectElement, final List<String> options) {
+        MultiSelectBoxEditingAppearance(final HTMLSelectElement selectElement, final List<String> options) {
             super(selectElement, options, true);
         }
 
@@ -86,7 +86,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
                 if (attached) {
                     Multi.element(selectElement).setValue(Collections.emptyList());
                 } else {
-                    selectElement.setValue("");
+                    selectElement.value = "";
                 }
             }
         }
@@ -100,10 +100,12 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         addAppearance(Form.State.READONLY, new MultiSelectBoxReadOnlyAppearance());
 
         // editing appearance
-        elemental.html.SelectElement selectElement = Browser.getDocument().createSelectElement();
-        selectElement.setSize(1);
-        selectElement.setMultiple(true);
-
+        HTMLSelectElement selectElement = select()
+                .apply(select -> {
+                    select.size = 1;
+                    select.multiple = true;
+                })
+                .asElement();
         addAppearance(Form.State.EDITING, new MultiSelectBoxEditingAppearance(selectElement, options));
     }
 

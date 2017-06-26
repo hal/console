@@ -39,6 +39,6 @@ class JmsBridgePreview extends PreviewContent<NamedNode> {
                 "source-connection-factory",
                 "source-destination",
                 "target-connection-factory",
-                "target-destination")).end());
+                "target-destination")));
     }
 }

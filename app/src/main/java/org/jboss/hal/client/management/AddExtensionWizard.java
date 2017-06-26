@@ -17,9 +17,8 @@ package org.jboss.hal.client.management;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import elemental.json.JsonObject;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.wizard.AsyncStep;
@@ -34,6 +33,7 @@ import org.jboss.hal.core.extension.InstalledExtensionResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.json.JsonObject;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -83,7 +83,7 @@ class AddExtensionWizard {
 
             urlItem = new TextBoxItem(ModelDescriptionConstants.URL);
             urlItem.setRequired(true);
-            ((InputElement) urlItem.asElement(Form.State.EDITING)).setType("url"); //NON-NLS
+            ((HTMLInputElement) urlItem.asElement(Form.State.EDITING)).type = "url"; //NON-NLS
             form = new ModelNodeForm.Builder<>(Ids.EXTENSION_URL_FORM, Metadata.empty())
                     .unboundFormItem(urlItem, 0, resources.messages().extensionUrl())
                     .addOnly()
@@ -91,7 +91,7 @@ class AddExtensionWizard {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return form.asElement();
         }
 
@@ -184,7 +184,7 @@ class AddExtensionWizard {
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return form.asElement();
         }
 

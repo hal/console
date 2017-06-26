@@ -16,186 +16,462 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import javax.inject.Inject;
 
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.spi.MbuiElement;
-import org.jboss.hal.spi.MbuiView;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Ids;
+
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-@MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
-public abstract class FactoriesView extends MbuiViewImpl<FactoriesPresenter>
-        implements FactoriesPresenter.MyView {
+public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyView, ElytronView {
 
-    public static FactoriesView create(final MbuiContext mbuiContext) {
-        return new Mbui_FactoriesView(mbuiContext);
-    }
+    // http factories
+    ResourceView aggregateHttpServerMechanismFactory;
+    ResourceView configurableHttpServerMechanismFactory;
+    ResourceView httpAuthenticationFactory;
+    ResourceView providerHttpServerMechanismFactory;
+    ResourceView serviceLoaderHttpServerMechanismFactory;
 
-    // @formatter:off
-    @MbuiElement("factories-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("factories-aggregate-http-server-mechanism-table") Table<NamedNode> aggregateHttpServerMechanismTable;
-    @MbuiElement("factories-aggregate-http-server-mechanism-form") Form<NamedNode> aggregateHttpServerMechanismForm;
-    @MbuiElement("factories-aggregate-sasl-server-table") Table<NamedNode> aggregateSaslServerTable;
-    @MbuiElement("factories-aggregate-sasl-server-form") Form<NamedNode> aggregateSaslServerForm;
-    @MbuiElement("factories-configurable-http-server-mechanism-table") Table<NamedNode> configurableHttpServerMechanismTable;
-    @MbuiElement("factories-configurable-http-server-mechanism-form") Form<NamedNode> configurableHttpServerMechanismForm;
-    @MbuiElement("factories-configurable-sasl-server-table") Table<NamedNode> configurableSaslServerTable;
-    @MbuiElement("factories-configurable-sasl-server-form") Form<NamedNode> configurableSaslServerForm;
-    @MbuiElement("factories-custom-credential-security-table") Table<NamedNode> customCredentialSecurityTable;
-    @MbuiElement("factories-custom-credential-security-form") Form<NamedNode> customCredentialSecurityForm;
-    @MbuiElement("factories-http-authentication-table") Table<NamedNode> httpAuthenticationTable;
-    @MbuiElement("factories-http-authentication-form") Form<NamedNode> httpAuthenticationForm;
-    @MbuiElement("factories-kerberos-security-table") Table<NamedNode> kerberosSecurityTable;
-    @MbuiElement("factories-kerberos-security-form") Form<NamedNode> kerberosSecurityForm;
-    @MbuiElement("factories-mechanism-provider-filtering-sasl-server-table") Table<NamedNode> mechanismProviderFilteringSaslServerTable;
-    @MbuiElement("factories-mechanism-provider-filtering-sasl-server-form") Form<NamedNode> mechanismProviderFilteringSaslServerForm;
-    @MbuiElement("factories-provider-http-server-mechanism-table") Table<NamedNode> providerHttpServerMechanismTable;
-    @MbuiElement("factories-provider-http-server-mechanism-form") Form<NamedNode> providerHttpServerMechanismForm;
-    @MbuiElement("factories-provider-sasl-server-table") Table<NamedNode> providerSaslServerTable;
-    @MbuiElement("factories-provider-sasl-server-form") Form<NamedNode> providerSaslServerForm;
-    @MbuiElement("factories-sasl-authentication-table") Table<NamedNode> saslAuthenticationTable;
-    @MbuiElement("factories-sasl-authentication-form") Form<NamedNode> saslAuthenticationForm;
-    @MbuiElement("factories-service-loader-http-server-mechanism-table") Table<NamedNode> serviceLoaderHttpServerMechanismTable;
-    @MbuiElement("factories-service-loader-http-server-mechanism-form") Form<NamedNode> serviceLoaderHttpServerMechanismForm;
-    @MbuiElement("factories-service-loader-sasl-server-table") Table<NamedNode> serviceLoaderSaslServerTable;
-    @MbuiElement("factories-service-loader-sasl-server-form") Form<NamedNode> serviceLoaderSaslServerForm;
+    // sasl factories
+    ResourceView aggregateSaslServerFactory;
+    ResourceView configurableSaslServerFactory;
+    ResourceView mechanismProviderFilteringSaslServerFactory;
+    ResourceView providerSaslServerFactory;
+    ResourceView saslAuthenticationFactory;
+    ResourceView serviceLoaderSaslServerFactory;
 
-    @MbuiElement("transformers-aggregate-table") Table<NamedNode> aggregatePrincipalTransformerTable;
-    @MbuiElement("transformers-aggregate-form") Form<NamedNode> aggregatePrincipalTransformerForm;
-    @MbuiElement("transformers-chained-table") Table<NamedNode> chainedPrincipalTransformerTable;
-    @MbuiElement("transformers-chained-form") Form<NamedNode> chainedPrincipalTransformerForm;
-    @MbuiElement("transformers-constant-table") Table<NamedNode> constantPrincipalTransformerTable;
-    @MbuiElement("transformers-constant-form") Form<NamedNode> constantPrincipalTransformerForm;
-    @MbuiElement("transformers-custom-table") Table<NamedNode> customPrincipalTransformerTable;
-    @MbuiElement("transformers-custom-form") Form<NamedNode> customPrincipalTransformerForm;
-    @MbuiElement("transformers-regex-table") Table<NamedNode> regexPrincipalTransformerTable;
-    @MbuiElement("transformers-regex-form") Form<NamedNode> regexPrincipalTransformerForm;
-    @MbuiElement("transformers-regex-validating-table") Table<NamedNode> regexValidatingPrincipalTransformerTable;
-    @MbuiElement("transformers-regex-validating-form") Form<NamedNode> regexValidatingPrincipalTransformerForm;
-    // @formatter:on
+    // other factories
+    ResourceView kerberosSecurityFactory;
+    ResourceView customCredentialSecurityFactory;
 
-    FactoriesView(final MbuiContext mbuiContext) {
-        super(mbuiContext);
+    // transformers
+    ResourceView aggregatePrincipalTransformer;
+    ResourceView chainedPrincipalTransformer;
+    ResourceView constantPrincipalTransformer;
+    ResourceView customPrincipalTransformer;
+    ResourceView regexPrincipalTransformer;
+    ResourceView regexValidatingPrincipalTransformer;
+
+    private FactoriesPresenter presenter;
+
+    @Inject
+    FactoriesView(final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory) {
+
+        VerticalNavigation navigation = new VerticalNavigation();
+        registerAttachable(navigation);
+
+        String primaryIdHttpFactories = "http-factories";
+        String primaryIdSaslFactories = "sasl-factories";
+        String primaryIdOtherFactories = "other-factories";
+        String primaryIdTransformers = "transformers";
+        navigation.addPrimary(primaryIdHttpFactories, "HTTP Factories", "fa fa-file-o");
+        navigation.addPrimary(primaryIdSaslFactories, "SASL Factories", "fa fa-exchange");
+        navigation.addPrimary(primaryIdOtherFactories, "Other Factories", "fa fa-desktop");
+        navigation.addPrimary(primaryIdTransformers, "Principal Transformers", "fa fa-archive");
+
+        // http factories
+        aggregateHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
+                Ids.ELYTRON_AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY, "Aggregate HTTP Server Mechanism",
+                AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        configurableHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdHttpFactories,
+                Ids.ELYTRON_CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY, "Configurable HTTP Server Mechanism",
+                CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("filters")
+                .create();
+
+        httpAuthenticationFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
+                Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, "HTTP Authentication Factory",
+                HTTP_AUTHENTICATION_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("mechanism-configurations")
+                .create();
+
+        providerHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
+                Ids.ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY, "Provider HTTP Server Mechanism",
+                PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        serviceLoaderHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
+                Ids.ELYTRON_SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY, "Service Loader HTTP Server Mechanism",
+                SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        // sasl factories
+        aggregateSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
+                Ids.ELYTRON_AGGREGATE_SASL_SERVER_FACTORY, "Aggregate SASL Server",
+                AGGREGATE_SASL_SERVER_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        configurableSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
+                Ids.ELYTRON_CONFIGURABLE_SASL_SERVER_FACTORY, "Configurable SASL Server",
+                CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("filters")
+                .create();
+
+        mechanismProviderFilteringSaslServerFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdSaslFactories,
+                Ids.ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY,
+                "Mechanism Provider Filtering SASL Server", MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS,
+                this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("filters")
+                .create();
+
+        providerSaslServerFactory = new ResourceView.Builder(tableButtonFactory, primaryIdSaslFactories,
+                Ids.ELYTRON_PROVIDER_SASL_SERVER_FACTORY, "Provider SASL Server", PROVIDER_SASL_SERVER_FACTORY_ADDRESS,
+                this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        saslAuthenticationFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdSaslFactories,
+                Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, "SASL Authentication", SASL_AUTHENTICATION_FACTORY_ADDRESS,
+                this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("mechanism-configurations")
+                .create();
+
+        serviceLoaderSaslServerFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdSaslFactories,
+                Ids.ELYTRON_SERVICE_LOADER_SASL_SERVER_FACTORY, "Service Loader SASL Server",
+                SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        // other factories
+        kerberosSecurityFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdOtherFactories,
+                Ids.ELYTRON_KERBEROS_SECURITY_FACTORY, "Kerberos Security", KERBEROS_SECURITY_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        customCredentialSecurityFactory = new ResourceView.Builder(tableButtonFactory,
+                primaryIdOtherFactories,
+                Ids.ELYTRON_CUSTOM_CREDENTIAL_SECURITY_FACTORY, "Custom Credential Security",
+                CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        // transformers
+        aggregatePrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_AGGREGATE_PRINCIPAL_TRANSFORMER, "Aggregate", AGGREGATE_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        chainedPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_CHAINED_PRINCIPAL_TRANSFORMER, "Chained", CHAINED_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        constantPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_CONSTANT_PRINCIPAL_TRANSFORMER, "Constant", CONSTANT_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        customPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_CUSTOM_PRINCIPAL_TRANSFORMER, "Custom", CUSTOM_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        regexPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_REGEX_PRINCIPAL_TRANSFORMER, "Regex", REGEX_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        regexValidatingPrincipalTransformer = new ResourceView.Builder(tableButtonFactory,
+                primaryIdTransformers,
+                Ids.ELYTRON_REGEX_VALIDATING_PRINCIPAL_TRANSFORMER, "Regex Validating",
+                REGEX_VALIDATING_TRANSFORMER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
+
+
     }
 
     @Override
+    public void attach() {
+        super.attach();
+
+        aggregateHttpServerMechanismFactory.bindTableToForm();
+        configurableHttpServerMechanismFactory.bindTableToForm();
+        httpAuthenticationFactory.bindTableToForm();
+        providerHttpServerMechanismFactory.bindTableToForm();
+        serviceLoaderHttpServerMechanismFactory.bindTableToForm();
+
+        // sasl factories
+        aggregateSaslServerFactory.bindTableToForm();
+        configurableSaslServerFactory.bindTableToForm();
+        mechanismProviderFilteringSaslServerFactory.bindTableToForm();
+        providerSaslServerFactory.bindTableToForm();
+        saslAuthenticationFactory.bindTableToForm();
+        serviceLoaderSaslServerFactory.bindTableToForm();
+
+        // other factories
+        kerberosSecurityFactory.bindTableToForm();
+        customCredentialSecurityFactory.bindTableToForm();
+
+        // transformers
+        aggregatePrincipalTransformer.bindTableToForm();
+        chainedPrincipalTransformer.bindTableToForm();
+        constantPrincipalTransformer.bindTableToForm();
+        customPrincipalTransformer.bindTableToForm();
+        regexPrincipalTransformer.bindTableToForm();
+        regexValidatingPrincipalTransformer.bindTableToForm();
+
+    }
+
+
+    @Override
     public void updateAggregateHttpServerMechanism(final List<NamedNode> model) {
-        aggregateHttpServerMechanismForm.clear();
-        aggregateHttpServerMechanismTable.update(model);
+        aggregateHttpServerMechanismFactory.getForm().clear();
+        aggregateHttpServerMechanismFactory.getTable().update(model);
     }
 
     @Override
     public void updateAggregateSaslServer(final List<NamedNode> model) {
-        aggregateSaslServerForm.clear();
-        aggregateSaslServerTable.update(model);
+        aggregateSaslServerFactory.getForm().clear();
+        aggregateSaslServerFactory.getTable().update(model);
     }
 
     @Override
     public void updateConfigurableHttpServerMechanism(final List<NamedNode> model) {
-        configurableHttpServerMechanismForm.clear();
-        configurableHttpServerMechanismTable.update(model);
+        configurableHttpServerMechanismFactory.getForm().clear();
+        configurableHttpServerMechanismFactory.getTable().update(model);
     }
 
     @Override
     public void updateConfigurableSaslServer(final List<NamedNode> model) {
-        configurableSaslServerForm.clear();
-        configurableSaslServerTable.update(model);
+        configurableSaslServerFactory.getForm().clear();
+        configurableSaslServerFactory.getTable().update(model);
     }
 
     @Override
     public void updateCustomCredentialSecurity(final List<NamedNode> model) {
-        customCredentialSecurityForm.clear();
-        customCredentialSecurityTable.update(model);
+        customCredentialSecurityFactory.getForm().clear();
+        customCredentialSecurityFactory.getTable().update(model);
     }
 
     @Override
     public void updateHttpAuthentication(final List<NamedNode> model) {
-        httpAuthenticationForm.clear();
-        httpAuthenticationTable.update(model);
+        httpAuthenticationFactory.getForm().clear();
+        httpAuthenticationFactory.getTable().update(model);
     }
 
     @Override
     public void updateKerberosSecurity(final List<NamedNode> model) {
-        kerberosSecurityForm.clear();
-        kerberosSecurityTable.update(model);
+        kerberosSecurityFactory.getForm().clear();
+        kerberosSecurityFactory.getTable().update(model);
     }
 
     @Override
     public void updateMechanismProviderFilteringSaslServer(final List<NamedNode> model) {
-        mechanismProviderFilteringSaslServerForm.clear();
-        mechanismProviderFilteringSaslServerTable.update(model);
+        mechanismProviderFilteringSaslServerFactory.getForm().clear();
+        mechanismProviderFilteringSaslServerFactory.getTable().update(model);
     }
 
     @Override
     public void updateProviderHttpServerMechanism(final List<NamedNode> model) {
-        providerHttpServerMechanismForm.clear();
-        providerHttpServerMechanismTable.update(model);
+        providerHttpServerMechanismFactory.getForm().clear();
+        providerHttpServerMechanismFactory.getTable().update(model);
     }
 
     @Override
     public void updateProviderSaslServer(final List<NamedNode> model) {
-        providerSaslServerForm.clear();
-        providerSaslServerTable.update(model);
+        providerSaslServerFactory.getForm().clear();
+        providerSaslServerFactory.getTable().update(model);
     }
 
     @Override
     public void updateSaslAuthentication(final List<NamedNode> model) {
-        saslAuthenticationForm.clear();
-        saslAuthenticationTable.update(model);
+        saslAuthenticationFactory.getForm().clear();
+        saslAuthenticationFactory.getTable().update(model);
     }
 
     @Override
     public void updateServiceLoaderHttpServerMechanism(final List<NamedNode> model) {
-        serviceLoaderHttpServerMechanismForm.clear();
-        serviceLoaderHttpServerMechanismTable.update(model);
+        serviceLoaderHttpServerMechanismFactory.getForm().clear();
+        serviceLoaderHttpServerMechanismFactory.getTable().update(model);
     }
 
     @Override
     public void updateServiceLoaderSaslServer(final List<NamedNode> model) {
-        serviceLoaderSaslServerForm.clear();
-        serviceLoaderSaslServerTable.update(model);
+        serviceLoaderSaslServerFactory.getForm().clear();
+        serviceLoaderSaslServerFactory.getTable().update(model);
     }
 
     @Override
     public void updateAggregatePrincipalTransformer(final List<NamedNode> model) {
-        aggregatePrincipalTransformerForm.clear();
-        aggregatePrincipalTransformerTable.update(model);
+        aggregatePrincipalTransformer.getForm().clear();
+        aggregatePrincipalTransformer.getTable().update(model);
     }
 
     @Override
     public void updateChainedPrincipalTransformer(final List<NamedNode> model) {
-        chainedPrincipalTransformerForm.clear();
-        chainedPrincipalTransformerTable.update(model);
+        chainedPrincipalTransformer.getForm().clear();
+        chainedPrincipalTransformer.getTable().update(model);
     }
 
     @Override
     public void updateConstantPrincipalTransformer(final List<NamedNode> model) {
-        constantPrincipalTransformerForm.clear();
-        constantPrincipalTransformerTable.update(model);
+        constantPrincipalTransformer.getForm().clear();
+        constantPrincipalTransformer.getTable().update(model);
     }
 
     @Override
     public void updateCustomPrincipalTransformer(final List<NamedNode> model) {
-        customPrincipalTransformerForm.clear();
-        customPrincipalTransformerTable.update(model);
+        customPrincipalTransformer.getForm().clear();
+        customPrincipalTransformer.getTable().update(model);
     }
 
     @Override
     public void updateRegexPrincipalTransformer(final List<NamedNode> model) {
-        regexPrincipalTransformerForm.clear();
-        regexPrincipalTransformerTable.update(model);
+        regexPrincipalTransformer.getForm().clear();
+        regexPrincipalTransformer.getTable().update(model);
     }
 
     @Override
     public void updateRegexValidatingPrincipalTransformer(final List<NamedNode> model) {
-        regexValidatingPrincipalTransformerForm.clear();
-        regexValidatingPrincipalTransformerTable.update(model);
+        regexValidatingPrincipalTransformer.getForm().clear();
+        regexValidatingPrincipalTransformer.getTable().update(model);
+    }
+
+    public void setPresenter(final FactoriesPresenter presenter) {
+        this.presenter = presenter;
+
+        aggregateHttpServerMechanismFactory.setPresenter(presenter);
+        configurableHttpServerMechanismFactory.setPresenter(presenter);
+        httpAuthenticationFactory.setPresenter(presenter);
+        providerHttpServerMechanismFactory.setPresenter(presenter);
+        serviceLoaderHttpServerMechanismFactory.setPresenter(presenter);
+
+        // sasl factories
+        aggregateSaslServerFactory.setPresenter(presenter);
+        configurableSaslServerFactory.setPresenter(presenter);
+        mechanismProviderFilteringSaslServerFactory.setPresenter(presenter);
+        providerSaslServerFactory.setPresenter(presenter);
+        saslAuthenticationFactory.setPresenter(presenter);
+        serviceLoaderSaslServerFactory.setPresenter(presenter);
+
+        // other factories
+        kerberosSecurityFactory.setPresenter(presenter);
+        customCredentialSecurityFactory.setPresenter(presenter);
+
+        // transformers
+        aggregatePrincipalTransformer.setPresenter(presenter);
+        chainedPrincipalTransformer.setPresenter(presenter);
+        constantPrincipalTransformer.setPresenter(presenter);
+        customPrincipalTransformer.setPresenter(presenter);
+        regexPrincipalTransformer.setPresenter(presenter);
+        regexValidatingPrincipalTransformer.setPresenter(presenter);
+    }
+
+    @Override
+    public void registerComponents(final Attachable first, final Attachable... rest) {
+        registerAttachable(first, rest);
     }
 }

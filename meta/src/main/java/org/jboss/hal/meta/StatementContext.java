@@ -21,6 +21,10 @@ import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
+/**
+ * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return
+ * null.
+ */
 @JsType
 public interface StatementContext {
 
@@ -68,6 +72,7 @@ public interface StatementContext {
     }
 
 
+    @JsIgnore
     StatementContext NOOP = new StatementContext() {
 
         @Override
@@ -124,21 +129,39 @@ public interface StatementContext {
     @JsIgnore
     String[] resolveTuple(String placeholder);
 
+    /**
+     * @return the domain controller
+     */
     @JsProperty(name = "domainController")
     String domainController();
 
+    /**
+     * @return the selected profile
+     */
     @JsProperty(name = "selectedProfile")
     String selectedProfile();
 
+    /**
+     * @return the selected server group
+     */
     @JsProperty(name = "selectedServerGroup")
     String selectedServerGroup();
 
+    /**
+     * @return the selected host
+     */
     @JsProperty(name = "selectedHost")
     String selectedHost();
 
+    /**
+     * @return the selected server config
+     */
     @JsProperty(name = "selectedServerConfig")
     String selectedServerConfig();
 
+    /**
+     * @return the selected server
+     */
     @JsProperty(name = "selectedServer")
     String selectedServer();
 }

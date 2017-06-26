@@ -17,25 +17,24 @@ package org.jboss.hal.ballroom;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
-import elemental.dom.Element;
-import elemental.events.KeyboardEvent;
-import elemental.events.KeyboardEvent.KeyCode;
-import elemental.html.InputElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
+import static org.jboss.gwt.elemento.core.InputType.search;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
-public class Search implements IsElement {
+public class Search implements IsElement<HTMLElement> {
 
     @FunctionalInterface
     public interface SearchHandler {
@@ -79,76 +78,70 @@ public class Search implements IsElement {
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String SEARCH_BOX = "searchBox";
-    private static final String CLEAR_SEARCH = "clearSearch";
 
-    private Element root;
-    private InputElement searchBox;
-    private Element clearSearch;
+    private HTMLElement root;
+    private HTMLInputElement searchBox;
+    private HTMLElement clearSearch;
 
     private Search(Builder builder) {
-        // @formatter:off
-        Elements.Builder eb = new Elements.Builder()
-            .div().css(halSearch, hasButton)
-                .div().css(formGroup, hasClear)
-                    .div().css(searchPfInputGroup)
-                        .label().attr("for", builder.id).css(srOnly)
-                            .textContent(CONSTANTS.search())
-                        .end()
-                        .input(InputType.search)
-                            .id(builder.id)
-                            .css(formControl)
-                            .rememberAs(SEARCH_BOX)
-                            .attr(UIConstants.PLACEHOLDER, CONSTANTS.search())
-                            .on(keyup, event -> {
-                                Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.getValue()));
-                                if (((KeyboardEvent) event).getKeyCode() == KeyCode.ENTER) {
-                                    builder.onSearch.search(searchBox.getValue());
-                                }
-                            })
-                        .button().rememberAs(CLEAR_SEARCH).css(clear).aria(UIConstants.HIDDEN, "true") //NON-NLS
-                            .on(click, event -> {
-                                clear();
-                                if (builder.onClear!= null) {
-                                    builder.onClear.execute();
-                                }
-                                focus();
-                            })
-                            .span().css(pfIcon("close")).end()
-                        .end()
-                    .end()
-                .end()
-                .div().css(formGroup, btnGroup)
-                    .button().css(btn, btnDefault).on(click, event -> builder.onSearch.search(searchBox.getValue()))
-                        .span().css(fontAwesome("search")).end()
-                    .end();
-                    if (builder.onPrevious != null) {
-                        eb.button().css(btn, btnDefault).on(click, event -> builder.onPrevious.search(searchBox.getValue()))
-                            .span().css(fontAwesome("angle-left")).end()
-                        .end();
-                    }
-                    if (builder.onNext != null) {
-                        eb.button().css(btn, btnDefault).on(click, event -> builder.onNext.search(searchBox.getValue()))
-                            .span().css(fontAwesome("angle-right")).end()
-                        .end();
-                    }
-                eb.end()
-            .end();
-        // @formatter:on
+        HTMLElement buttons;
+        root = div().css(halSearch, hasButton)
+                .add(div().css(formGroup, hasClear)
+                        .add(div().css(searchPfInputGroup)
+                                .add(label().css(srOnly)
+                                        .textContent(CONSTANTS.search())
+                                        .apply(label -> label.htmlFor = builder.id))
+                                .add(searchBox = input(search)
+                                        .id(builder.id)
+                                        .css(formControl)
+                                        .attr(UIConstants.PLACEHOLDER, CONSTANTS.search())
+                                        .on(keyup, event -> {
+                                            Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.value));
+                                            if ("Enter".equals(event.key)) { //NON-NLS
+                                                builder.onSearch.search(searchBox.value);
+                                            }
+                                        })
+                                        .asElement())
+                                .add(clearSearch = button().css(clear)
+                                        .aria(UIConstants.HIDDEN, "true") //NON-NLS
+                                        .on(click, event -> {
+                                            clear();
+                                            if (builder.onClear != null) {
+                                                builder.onClear.execute();
+                                            }
+                                            focus();
+                                        })
+                                        .add(span().css(pfIcon("close")))
+                                        .asElement())))
+                .add(buttons = div().css(formGroup, btnGroup)
+                        .add(button().css(btn, btnDefault)
+                                .on(click, event -> builder.onSearch.search(searchBox.value))
+                                .add(span().css(fontAwesome("search"))))
+                        .asElement())
+                .asElement();
 
-        this.searchBox = eb.referenceFor(SEARCH_BOX);
-        this.clearSearch = eb.referenceFor(CLEAR_SEARCH);
-        this.root = eb.build();
+        if (builder.onPrevious != null) {
+            buttons.appendChild(button().css(btn, btnDefault)
+                    .on(click, event -> builder.onPrevious.search(searchBox.value))
+                    .add(span().css(fontAwesome("angle-left")))
+                    .asElement());
+        }
+        if (builder.onNext != null) {
+            buttons.appendChild(button().css(btn, btnDefault)
+                    .on(click, event -> builder.onNext.search(searchBox.value))
+                    .add(span().css(fontAwesome("angle-right")))
+                    .asElement());
+        }
         Elements.setVisible(clearSearch, false);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
     public void clear() {
-        searchBox.setValue("");
+        searchBox.value = "";
         Elements.setVisible(clearSearch, false);
     }
 

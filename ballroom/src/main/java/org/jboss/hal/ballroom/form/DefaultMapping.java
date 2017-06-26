@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import org.jboss.hal.dmr.ModelNode;
+
 /**
  * @author Harald Pehl
  */
@@ -36,6 +38,12 @@ public class DefaultMapping<T> implements DataMapping<T> {
     }
 
     @Override
+    public void populateFormItem(final String id, String name, final ModelNode attributeDescription,
+            final ModelNode value, final FormItem formItem) {
+        // empty
+    }
+
+    @Override
     public void clearFormItems(final Form<T> form) {
         for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearValue();
@@ -44,6 +52,11 @@ public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override
     public void persistModel(final T model, final Form<T> form) {
+        // empty
+    }
+
+    @Override
+    public void persistModel(String id, final T model, final Iterable<FormItem> formItems) {
         // empty
     }
 }

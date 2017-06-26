@@ -20,23 +20,26 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -84,13 +87,11 @@ public class CacheContainerView extends HalViewImpl
         transport = new TransportElement(metadataRegistry, resources);
 
         navigation = new VerticalNavigation();
-        Element section = new Elements.Builder()
-                .section()
-                .h(1).textContent(Names.CONFIGURATION).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+        HTMLElement section = section()
+                .add(h(1).textContent(Names.CONFIGURATION))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(configurationForm)
-                .end()
-                .build();
+                .asElement();
         navigation.addPrimary(Ids.CACHE_CONTAINER_ENTRY, Names.CONFIGURATION, pfIcon("settings"), section);
 
         caches.forEach((cache, cacheElement) ->
@@ -112,14 +113,9 @@ public class CacheContainerView extends HalViewImpl
         threadPools.values().forEach(threadPoolElement -> registerAttachable(threadPoolElement));
         registerAttachable(transport);
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override

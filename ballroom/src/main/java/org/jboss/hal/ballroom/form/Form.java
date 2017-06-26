@@ -26,7 +26,7 @@ import org.jboss.hal.spi.Callback;
 
 /**
  * A form bound to a model using well defined states and operations. The form contains a list of form items which are
- * used to view and modify the attributes of the model. Form item can be bound or unbound. Bound form items show the
+ * used to view and modify the attributes of the model. Form items can be bound or unbound. Bound form items show the
  * attributes of the model (text input, check boxes or select boxes), whereas unbound form items have no relation to
  * the model (static text or buttons).
  *
@@ -34,7 +34,7 @@ import org.jboss.hal.spi.Callback;
  *
  * @author Harald Pehl
  */
-@JsType(namespace = "ui")
+@JsType(namespace = "hal.ui")
 public interface Form<T> extends IsElement, Attachable {
 
     // ------------------------------------------------------ states and operations
@@ -274,9 +274,13 @@ public interface Form<T> extends IsElement, Attachable {
     @JsIgnore
     Iterable<FormItem> getBoundFormItems();
 
-    /**
-     * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
-     */
+    @JsIgnore
+    Map<String, Object> getUpdatedModel();
+
+
+        /**
+         * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
+         */
     @JsIgnore
     void addFormValidation(FormValidation<T> formValidation);
 }

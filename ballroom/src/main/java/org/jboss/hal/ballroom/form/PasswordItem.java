@@ -18,11 +18,18 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.InputType.password;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
@@ -35,32 +42,30 @@ public class PasswordItem extends AbstractFormItem<String> {
     @SuppressWarnings({"ReplaceAllDot", "HardCodedStringLiteral"})
     private class PasswordReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
-        private Element peekLink;
+        private HTMLElement peekLink;
         private boolean hidden;
 
         @SuppressWarnings("DuplicateStringLiteralInspection")
         PasswordReadOnlyAppearance() {
             super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
             hidden = true;
-
-            peekLink = new Elements.Builder().span()
-                    .css(fontAwesome("eye"), clickable)
+            peekLink = span().css(fontAwesome("eye"), clickable)
                     .title(CONSTANTS.showSensitive())
                     .on(click, event -> {
                         if (hidden) {
-                            valueElement.setTextContent(getValue());
-                            peekLink.setTitle(CONSTANTS.hideSensitive());
-                            peekLink.getClassList().add("fa-eye-slash");
-                            peekLink.getClassList().remove("fa-eye");
+                            valueElement.textContent = getValue();
+                            peekLink.title = CONSTANTS.hideSensitive();
+                            peekLink.classList.add("fa-eye-slash");
+                            peekLink.classList.remove("fa-eye");
                         } else {
-                            valueElement.setTextContent(getValue().replaceAll(".", "\u25CF"));
-                            peekLink.setTitle(CONSTANTS.showSensitive());
-                            peekLink.getClassList().add("fa-eye");
-                            peekLink.getClassList().remove("fa-eye-slash");
+                            valueElement.textContent = getValue().replaceAll(".", "\u25CF");
+                            peekLink.title = CONSTANTS.showSensitive();
+                            peekLink.classList.add("fa-eye");
+                            peekLink.classList.remove("fa-eye-slash");
                         }
                         hidden = !hidden;
                     })
-                    .end().build();
+                    .asElement();
         }
 
         @Override
@@ -91,45 +96,34 @@ public class PasswordItem extends AbstractFormItem<String> {
 
     private class PasswordEditingAppearance extends EditingAppearance<String> {
 
-        private static final String PEEK_BUTTON = "peekButton";
-        private static final String PEEK_ICON = "peekIcon";
-
-        private Element peekButton;
-        private Element peekIcon;
+        private HTMLElement peekButton;
+        private HTMLElement peekIcon;
 
         @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-        PasswordEditingAppearance(elemental.html.InputElement inputElement) {
+        PasswordEditingAppearance(HTMLInputElement inputElement) {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), inputElement);
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .span().css(inputGroupBtn)
-                    .button().css(btn, btnDefault)
-                             .rememberAs(PEEK_BUTTON)
-                             .title(CONSTANTS.showSensitive())
-                             .on(click, event -> {
-                                 if ("password".equals(inputElement.getType())) {
-                                     inputElement.setType("text");
-                                     inputElement.focus();
-                                     peekButton.setTitle(CONSTANTS.hideSensitive());
-                                     peekIcon.getClassList().add("fa-eye-slash");
-                                     peekIcon.getClassList().remove("fa-eye");
+            HTMLElement peekContainer = span().css(inputGroupBtn)
+                    .add(peekButton = button().css(btn, btnDefault)
+                            .title(CONSTANTS.showSensitive())
+                            .on(click, event -> {
+                                if ("password".equals(inputElement.type)) {
+                                    inputElement.type = "text";
+                                    inputElement.focus();
+                                    peekButton.title = CONSTANTS.hideSensitive();
+                                    peekIcon.classList.add("fa-eye-slash");
+                                    peekIcon.classList.remove("fa-eye");
 
-                                 } else if ("text".equals(inputElement.getType())) {
-                                     inputElement.setType("password");
-                                     inputElement.focus();
-                                     peekButton.setTitle(CONSTANTS.showSensitive());
-                                     peekIcon.getClassList().add("fa-eye");
-                                     peekIcon.getClassList().remove("fa-eye-slash");
-                                 }
-                             })
-                        .start("i").css(fontAwesome("eye")).rememberAs(PEEK_ICON).end()
-                    .end()
-                .end();
-            // @formatter:on
-
-            peekButton = builder.referenceFor(PEEK_BUTTON);
-            peekIcon = builder.referenceFor(PEEK_ICON);
-            Element peekContainer = builder.build();
+                                } else if ("text".equals(inputElement.type)) {
+                                    inputElement.type = "password";
+                                    inputElement.focus();
+                                    peekButton.title = CONSTANTS.showSensitive();
+                                    peekIcon.classList.add("fa-eye");
+                                    peekIcon.classList.remove("fa-eye-slash");
+                                }
+                            })
+                            .add(peekIcon = i().css(fontAwesome("eye")).asElement())
+                            .asElement())
+                    .asElement();
 
             wrapInputElement();
             inputGroup.appendChild(peekContainer);
@@ -142,12 +136,12 @@ public class PasswordItem extends AbstractFormItem<String> {
 
         @Override
         public void showValue(final String value) {
-            inputElement.setValue(value);
+            inputElement.value = value;
         }
 
         @Override
         public void clearValue() {
-            inputElement.setValue("");
+            inputElement.value = "";
         }
     }
 
@@ -158,12 +152,9 @@ public class PasswordItem extends AbstractFormItem<String> {
         addAppearance(Form.State.READONLY, new PasswordReadOnlyAppearance());
 
         // editing appearance
-        elemental.html.InputElement inputElement = Browser.getDocument().createInputElement();
-        inputElement.setType("password"); //NON-NLS
-        inputElement.getClassList().add(formControl);
-        inputElement.setOnchange(event -> modifyValue(inputElement.getValue()));
-
+        HTMLInputElement inputElement = input(password).css(formControl).asElement();
         addAppearance(EDITING, new PasswordEditingAppearance(inputElement));
+        remember(bind(inputElement, change, event -> modifyValue(inputElement.value)));
     }
 
     @Override

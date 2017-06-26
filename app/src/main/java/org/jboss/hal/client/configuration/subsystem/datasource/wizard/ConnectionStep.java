@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -58,7 +58,7 @@ class ConnectionStep extends WizardStep<Context, State> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return form.asElement();
     }
 

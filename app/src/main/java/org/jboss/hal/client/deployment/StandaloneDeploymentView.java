@@ -17,8 +17,8 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.CSSProperties;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
@@ -30,7 +30,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.navTabsHal;
 
 /**
@@ -56,11 +56,12 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
             tabs = new Tabs()
                     .add(Ids.CONTENT_TAB, resources.constants().content(), browseContent.asElement())
                     .add(Ids.DEPLOYMENT_TAB, Names.MANAGEMENT_MODEL, deploymentModel.asElements());
-            tabs.asElement().querySelector("." + navTabsHal).getStyle().setMarginTop(0, PX);
+            ((HTMLElement) tabs.asElement().querySelector("." + navTabsHal)).style.marginTop =
+                    CSSProperties.MarginTopUnionType.of(0);
             initElement(tabs.asElement());
         } else {
             tabs = null;
-            Element root = Browser.getDocument().createDivElement();
+            HTMLElement root = div().asElement();
             deploymentModel.asElements().forEach(root::appendChild);
             initElement(root);
         }
@@ -72,9 +73,9 @@ public class StandaloneDeploymentView extends HalViewImpl implements StandaloneD
         if (supportsReadContent) {
             browseContent.attach();
 
-            Element ul = tabs.asElement().querySelector("ul." + navTabsHal);//NON-NLS
+            HTMLElement ul = (HTMLElement) tabs.asElement().querySelector("ul." + navTabsHal); //NON-NLS
             if (ul != null) {
-                int tabsHeight = ul.getOffsetHeight() + 5;
+                int tabsHeight = (int) (ul.offsetHeight + 5);
                 browseContent.setSurroundingHeight(tabsHeight);
                 deploymentModel.setSurroundingHeight(tabsHeight);
 

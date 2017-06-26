@@ -17,14 +17,18 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.events.EventListener;
-import elemental.html.ButtonElement;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.dmr.Deprecation;
 
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.resources.CSS.controlLabel;
@@ -60,29 +64,21 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     private static class ButtonEditingAppearance extends AbstractAppearance<Void> {
 
-        private final Element root;
-        private final ButtonElement button;
+        private final HTMLElement root;
+        private final HTMLButtonElement button;
 
-        ButtonEditingAppearance(ButtonElement button) {
+        ButtonEditingAppearance(HTMLButtonElement button) {
             super(EnumSet.of(DEPRECATED, ENABLED));
             this.button = button;
-
-            // @formatter:off
-            Elements.Builder builder = new Elements.Builder()
-                .div().css(formGroup)
-                    .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
-                    .div().css(halFormInput)
-                        .add(button)
-                    .end()
-                .end();
-            // @formatter:on
-
-            labelElement = builder.referenceFor(LABEL_ELEMENT);
-            root = builder.build();
+            this.root = div().css(formGroup)
+                    .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                    .add(div().css(halFormInput)
+                            .add(button))
+                    .asElement();
         }
 
         @Override
-        public Element asElement() {
+        public HTMLElement asElement() {
             return root;
         }
 
@@ -109,17 +105,17 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
         @Override
         public void setId(final String id) {
-            button.setId(id);
+            button.id = id;
         }
 
         @Override
         public void setName(final String name) {
-            button.setName(name);
+            button.name = name;
         }
 
         @Override
         public void setLabel(final String label) {
-            labelElement.setTextContent("");
+            labelElement.textContent = "";
         }
 
         @Override
@@ -131,7 +127,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
                     break;
 
                 case ENABLED:
-                    button.setDisabled(true);
+                    button.disabled = true;
                     break;
 
                 // not supported
@@ -155,7 +151,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
                     break;
 
                 case ENABLED:
-                    button.setDisabled(false);
+                    button.disabled = false;
                     break;
 
                 // not supported
@@ -171,12 +167,12 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
         @Override
         public int getTabIndex() {
-            return button.getTabIndex();
+            return (int) button.tabIndex;
         }
 
         @Override
         public void setAccessKey(final char key) {
-            button.setAccessKey(String.valueOf(key));
+            button.accessKey = String.valueOf(key);
         }
 
         @Override
@@ -190,21 +186,19 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
         @Override
         public void setTabIndex(final int index) {
-            button.setTabIndex(index);
+            button.tabIndex = index;
         }
     }
 
 
-    private final ButtonElement button;
+    private final HTMLButtonElement button;
 
     public ButtonItem(final String name, final String label) {
         super(name, label, null);
 
         addAppearance(Form.State.READONLY, new ButtonReadOnlyAppearance(label));
 
-        button = Browser.getDocument().createButtonElement();
-        button.setTextContent(label);
-        button.setClassName(Button.DEFAULT_CSS);
+        button = button().textContent(label).css(Button.DEFAULT_CSS).asElement();
         addAppearance(Form.State.EDITING, new ButtonEditingAppearance(button));
     }
 
@@ -218,7 +212,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
         return false;
     }
 
-    public void onClick(EventListener listener) {
-        button.setOnclick(listener);
+    public void onClick(EventCallbackFn<MouseEvent> listener) {
+        bind(button, click, listener);
     }
 }

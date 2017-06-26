@@ -16,156 +16,344 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import javax.inject.Inject;
 
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.core.mbui.MbuiContext;
-import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.spi.MbuiElement;
-import org.jboss.hal.spi.MbuiView;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
+
+import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-@MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
-public abstract class OtherSettingsView extends MbuiViewImpl<OtherSettingsPresenter>
-        implements OtherSettingsPresenter.MyView {
+public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView, ElytronView {
 
-    public static OtherSettingsView create(final MbuiContext mbuiContext) {
-        return new Mbui_OtherSettingsView(mbuiContext);
+    // stores
+    private ResourceView credentialStoreView;
+    private ResourceView filteringKeyStoreView;
+    private ResourceView keystoreView;
+    private ResourceView ldapKeyStoreView;
+
+    // ssl
+    private ResourceView aggregateProvidersView;
+    private ResourceView clientSslContextView;
+    private ResourceView keyManagerView;
+    private ResourceView providerLoaderView;
+    private ResourceView securityDomainView;
+    private ResourceView securityPropertyView;
+    private ResourceView serverSslContextView;
+    private ResourceView trustManagerView;
+
+    // authentication
+    private ResourceView authenticationContextView;
+    private ResourceView authenticationConfigurationView;
+
+    // dir context
+    private ResourceView dirContextView;
+
+    private OtherSettingsPresenter presenter;
+
+    @Inject
+    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
+
+        VerticalNavigation navigation = new VerticalNavigation();
+        registerAttachable(navigation);
+
+        String primaryIdStores = "stores-item";
+        String primaryIdSsl = "ssl-item";
+        String primaryIdAuth = "authentication-item";
+        String primaryIdDirCtx = "dir-context-item";
+        navigation.addPrimary(primaryIdStores, "Stores", "fa fa-exchange");
+        navigation.addPrimary(primaryIdSsl, "SSL", "fa fa-file-o");
+        navigation.addPrimary(primaryIdAuth, "Authentication", "fa fa-terminal");
+
+        credentialStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+                Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
+
+        filteringKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+                Ids.ELYTRON_FILTERING_KEY_STORE, "Filtering Key Store", FILTERING_KEY_STORE_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+
+        keystoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+                Ids.ELYTRON_KEY_STORE, "Key Store", KEY_STORE_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
+
+        CustomPropertiesItem newItemAttributes = new CustomPropertiesItem("new-item-attributes",
+                resources.messages().mappingHint(), " | ");
+        newItemAttributes.setPropertyValue(NAME, VALUE);
+        ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+                Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("new-item-template", asList(newItemAttributes))
+                .create();
+
+        aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_AGGREGATE_PROVIDERS, "Aggregate Providers", AGGREGATE_PROVIDERS_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        clientSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_CLIENT_SSL_CONTEXT, "Client SSL Context", CLIENT_SSL_CONTEXT_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        keyManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_KEY_MANAGER, "Key Manager", KEY_MANAGER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
+
+        providerLoaderView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_PROVIDER_LOADER, "Provider Loader", PROVIDER_LOADER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        serverSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_SERVER_SSL_CONTEXT, "Server SSL Context", SERVER_SSL_CONTEXT_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        securityDomainView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_SECURITY_DOMAIN, "Security Domain", SECURITY_DOMAIN_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("realms")
+                .create();
+
+        securityPropertyView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_SECURITY_PROPERTY, "Security Property", SECURITY_PROPERTY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        trustManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
+                Ids.ELYTRON_TRUST_MANAGER, "Trust Manager", TRUST_MANAGER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("certificate-revocation-list")
+                .create();
+
+        authenticationConfigurationView = new ResourceView.Builder(tableButtonFactory,
+                primaryIdAuth, Ids.ELYTRON_AUTHENTICATION_CONFIGURATION, "Authentication Configuration",
+                AUTHENTICATION_CONF_ADDRESS, this, () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
+
+        authenticationContextView = new ResourceView.Builder(tableButtonFactory, primaryIdAuth,
+                Ids.ELYTRON_AUTHENTICATION_CONTEXT, "Authentication Context", AUTHENTICATION_CONTEXT_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("match-rules")
+                .create();
+
+        dirContextView = new ResourceView.Builder(tableButtonFactory, primaryIdDirCtx,
+                Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .primaryLevel("fa fa-bug")
+                .create();
+
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
+
     }
 
-    // @formatter:off
-    @MbuiElement("other-vertical-navigation") VerticalNavigation navigation;
+    @Override
+    public void registerComponents(final Attachable first, final Attachable... rest) {
+        registerAttachable(first, rest);
+    }
 
-    @MbuiElement("other-key-store-table") Table<NamedNode> keyStoreTable;
-    @MbuiElement("other-key-store-form") Form<NamedNode> keyStoreForm;
-    @MbuiElement("other-key-managers-table") Table<NamedNode> keyManagersTable;
-    @MbuiElement("other-key-managers-form") Form<NamedNode> keyManagersForm;
-    @MbuiElement("other-server-ssl-context-table") Table<NamedNode> serverSslContextTable;
-    @MbuiElement("other-server-ssl-context-form") Form<NamedNode> serverSslContextForm;
-    @MbuiElement("other-client-ssl-context-table") Table<NamedNode> clientSslContextTable;
-    @MbuiElement("other-client-ssl-context-form") Form<NamedNode> clientSslContextForm;
-    @MbuiElement("other-trust-managers-table") Table<NamedNode> trustManagersTable;
-    @MbuiElement("other-trust-managers-form") Form<NamedNode> trustManagersForm;
-    @MbuiElement("other-credential-store-table") Table<NamedNode> credentialStoreTable;
-    @MbuiElement("other-credential-store-form") Form<NamedNode> credentialStoreForm;
-    @MbuiElement("other-filtering-key-store-table") Table<NamedNode> filteringKeyStoreTable;
-    @MbuiElement("other-filtering-key-store-form") Form<NamedNode> filteringKeyStoreForm;
-    @MbuiElement("other-ldap-key-store-table") Table<NamedNode> ldapKeyStoreTable;
-    @MbuiElement("other-ldap-key-store-form") Form<NamedNode> ldapKeyStoreForm;
-    @MbuiElement("other-provider-loader-table") Table<NamedNode> providerLoaderTable;
-    @MbuiElement("other-provider-loader-form") Form<NamedNode> providerLoaderForm;
-    @MbuiElement("other-aggregate-providers-table") Table<NamedNode> aggregateProvidersTable;
-    @MbuiElement("other-aggregate-providers-form") Form<NamedNode> aggregateProvidersForm;
-    @MbuiElement("other-security-domain-table") Table<NamedNode> securityDomainTable;
-    @MbuiElement("other-security-domain-form") Form<NamedNode> securityDomainForm;
-    @MbuiElement("other-security-property-table") Table<NamedNode> securityPropertyTable;
-    @MbuiElement("other-security-property-form") Form<NamedNode> securityPropertyForm;
-    @MbuiElement("other-dir-context-table") Table<NamedNode> dirContextTable;
-    @MbuiElement("other-dir-context-form") Form<NamedNode> dirContextForm;
-    @MbuiElement("other-authentication-context-table") Table<NamedNode> authenticationContextTable;
-    @MbuiElement("other-authentication-context-form") Form<NamedNode> authenticationContextForm;
-    @MbuiElement("other-authentication-configuration-table") Table<NamedNode> authenticationConfigurationTable;
-    @MbuiElement("other-authentication-configuration-form") Form<NamedNode> authenticationConfigurationForm;
+    @Override
+    public void attach() {
+        super.attach();
 
-    // @formatter:on
-
-    OtherSettingsView(final MbuiContext mbuiContext) {
-        super(mbuiContext);
+        credentialStoreView.bindTableToForm();
+        filteringKeyStoreView.bindTableToForm();
+        keystoreView.bindTableToForm();
+        ldapKeyStoreView.bindTableToForm();
+        aggregateProvidersView.bindTableToForm();
+        clientSslContextView.bindTableToForm();
+        keyManagerView.bindTableToForm();
+        providerLoaderView.bindTableToForm();
+        serverSslContextView.bindTableToForm();
+        securityDomainView.bindTableToForm();
+        securityPropertyView.bindTableToForm();
+        trustManagerView.bindTableToForm();
+        authenticationConfigurationView.bindTableToForm();
+        authenticationContextView.bindTableToForm();
+        dirContextView.bindTableToForm();
     }
 
     @Override
     public void updateKeyStore(final List<NamedNode> model) {
-        keyStoreForm.clear();
-        keyStoreTable.update(model);
+        keystoreView.update(model);
     }
 
     @Override
     public void updateKeyManagers(final List<NamedNode> model) {
-        keyManagersForm.clear();
-        keyManagersTable.update(model);
+        keyManagerView.update(model);
     }
 
     @Override
     public void updateServerSslContext(final List<NamedNode> model) {
-        serverSslContextForm.clear();
-        serverSslContextTable.update(model);
+        serverSslContextView.update(model);
     }
 
     @Override
     public void updateClientSslContext(final List<NamedNode> model) {
-        clientSslContextForm.clear();
-        clientSslContextTable.update(model);
+        clientSslContextView.update(model);
     }
 
     @Override
     public void updateTrustManagers(final List<NamedNode> model) {
-        trustManagersForm.clear();
-        trustManagersTable.update(model);
+        trustManagerView.update(model);
     }
 
     @Override
     public void updateCredentialStore(final List<NamedNode> model) {
-        credentialStoreForm.clear();
-        credentialStoreTable.update(model);
+        credentialStoreView.update(model);
     }
 
     @Override
     public void updateFilteringKeyStore(final List<NamedNode> model) {
-        filteringKeyStoreForm.clear();
-        filteringKeyStoreTable.update(model);
+        filteringKeyStoreView.update(model);
     }
 
     @Override
     public void updateLdapKeyStore(final List<NamedNode> model) {
-        ldapKeyStoreForm.clear();
-        ldapKeyStoreTable.update(model);
+        ldapKeyStoreView.update(model);
     }
 
 
     @Override
     public void updateProviderLoader(final List<NamedNode> model) {
-        providerLoaderForm.clear();
-        providerLoaderTable.update(model);
+        providerLoaderView.update(model);
     }
 
     @Override
     public void updateAggregateProviders(final List<NamedNode> model) {
-        aggregateProvidersForm.clear();
-        aggregateProvidersTable.update(model);
+        aggregateProvidersView.update(model);
     }
 
     @Override
     public void updateSecurityDomain(final List<NamedNode> model) {
-        securityDomainForm.clear();
-        securityDomainTable.update(model);
+        securityDomainView.update(model);
     }
 
     @Override
     public void updateSecurityProperty(final List<NamedNode> model) {
-        securityPropertyForm.clear();
-        securityPropertyTable.update(model);
+        securityPropertyView.update(model);
     }
 
     @Override
     public void updateDirContext(final List<NamedNode> model) {
-        dirContextForm.clear();
-        dirContextTable.update(model);
+        dirContextView.update(model);
     }
 
     @Override
     public void updateAuthenticationContext(final List<NamedNode> model) {
-        authenticationContextForm.clear();
-        authenticationContextTable.update(model);
+        authenticationContextView.update(model);
     }
 
     @Override
     public void updateAuthenticationConfiguration(final List<NamedNode> model) {
-        authenticationConfigurationForm.clear();
-        authenticationConfigurationTable.update(model);
+        authenticationConfigurationView.update(model);
+    }
+
+    @Override
+    public void setPresenter(final OtherSettingsPresenter presenter) {
+        this.presenter = presenter;
+
+        credentialStoreView.setPresenter(presenter);
+        filteringKeyStoreView.setPresenter(presenter);
+        keystoreView.setPresenter(presenter);
+        ldapKeyStoreView.setPresenter(presenter);
+        aggregateProvidersView.setPresenter(presenter);
+        clientSslContextView.setPresenter(presenter);
+        keyManagerView.setPresenter(presenter);
+        providerLoaderView.setPresenter(presenter);
+        serverSslContextView.setPresenter(presenter);
+        securityDomainView.setPresenter(presenter);
+        securityPropertyView.setPresenter(presenter);
+        trustManagerView.setPresenter(presenter);
+        authenticationConfigurationView.setPresenter(presenter);
+        authenticationContextView.setPresenter(presenter);
+        dirContextView.setPresenter(presenter);
     }
 }

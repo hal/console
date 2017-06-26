@@ -15,13 +15,17 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.events.EventListener;
-import elemental.html.ButtonElement;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
 
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnHal;
 
 /**
  * @author Harald Pehl
@@ -30,23 +34,21 @@ public class Button implements IsElement {
 
     public static final String DEFAULT_CSS = btn + " " + btnHal + " " + btnDefault;
 
-    protected final ButtonElement element;
+    protected final HTMLButtonElement element;
 
-    public Button(final String label, final EventListener listener) {
+    public Button(final String label, final EventCallbackFn<MouseEvent> listener) {
         this(label, DEFAULT_CSS, listener);
     }
 
-    public Button(final String label, final String css, final EventListener listener) {
-        element = Browser.getDocument().createButtonElement();
-        element.setInnerText(label);
+    public Button(final String label, final String css, final EventCallbackFn<MouseEvent> listener) {
+        element = button().textContent(label).on(click, listener).asElement();
         if (css != null) {
-            element.setClassName(css);
+            element.className = css;
         }
-        element.setOnclick(listener);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return element;
     }
 }

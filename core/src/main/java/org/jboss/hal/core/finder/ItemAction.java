@@ -18,7 +18,7 @@ package org.jboss.hal.core.finder;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 
@@ -30,7 +30,7 @@ public class ItemAction<T> {
     public static class Builder<T> {
 
         private String title;
-        private Element element;
+        private HTMLElement element;
         private ItemActionHandler<T> handler;
         private String href;
         private final Map<String, String> attributes;
@@ -50,7 +50,7 @@ public class ItemAction<T> {
             return this;
         }
 
-        public Builder<T> element(final Element element) {
+        public Builder<T> element(final HTMLElement element) {
             this.element = element;
             return this;
         }
@@ -90,7 +90,7 @@ public class ItemAction<T> {
 
 
     final String title;
-    final Element element;
+    final HTMLElement element;
     final ItemActionHandler<T> handler;
     final String href;
     final Map<String, String> attributes;

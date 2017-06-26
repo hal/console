@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.form.Form;
 /**
  * @author Harald Pehl
  */
-@JsType(namespace = "ui")
+@JsType(namespace = "hal.ui")
 public interface Table<T> extends IsElement, Attachable {
 
     /**

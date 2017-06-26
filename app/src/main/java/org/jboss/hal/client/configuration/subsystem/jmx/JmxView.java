@@ -20,10 +20,8 @@ import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -34,9 +32,9 @@ import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -46,6 +44,11 @@ import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
@@ -96,15 +99,11 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                         }))
                 .build();
 
-        // @formatter:off
-        Element configLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(Names.CONFIGURATION).end()
-                .p().textContent(configMetadata.getDescription().getDescription()).end()
+        HTMLElement configLayout = section()
+                .add(h(1).textContent(Names.CONFIGURATION))
+                .add(p().textContent(configMetadata.getDescription().getDescription()))
                 .add(configForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JMX_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(configForm);
@@ -149,15 +148,11 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                         }))
                 .build();
 
-        // @formatter:off
-        Element alLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(Names.AUDIT_LOG).end()
-                .p().textContent(alMetadata.getDescription().getDescription()).end()
+        HTMLElement alLayout = section()
+                .add(h(1).textContent(Names.AUDIT_LOG))
+                .add(p().textContent(alMetadata.getDescription().getDescription()))
                 .add(this.alForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JMX_AUDIT_LOG_ENTRY, Names.AUDIT_LOG, fontAwesome("file-text-o"), alLayout);
         registerAttachable(this.alForm);
@@ -190,32 +185,20 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                         }))
                 .build();
 
-        // @formatter:off
-        Element rcLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(type).end()
-                .p().textContent(rcMetadata.getDescription().getDescription()).end()
+        HTMLElement rcLayout = section()
+                .add(h(1).textContent(type))
+                .add(p().textContent(rcMetadata.getDescription().getDescription()))
                 .add(this.rcForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JMX_REMOTING_CONNECTOR_ENTRY, type, pfIcon("topology"), rcLayout);
         registerAttachable(this.rcForm);
 
         // ------------------------------------------------------ main layout
 
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .addAll(navigation.panes())
-                .end()
-            .end();
-        // @formatter:on
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override

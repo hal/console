@@ -18,8 +18,9 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental.client.Browser;
-import elemental.html.Storage;
+import elemental2.dom.DomGlobal;
+import elemental2.webstorage.Storage;
+import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
@@ -39,7 +40,7 @@ public class EndpointStorage {
     private final List<Endpoint> endpoints;
 
     public EndpointStorage() {
-        storage = Browser.getWindow().getLocalStorage();
+        storage = WebStorageWindow.of(DomGlobal.window).localStorage;
         endpoints = load();
     }
 

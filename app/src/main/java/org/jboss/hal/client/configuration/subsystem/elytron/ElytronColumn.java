@@ -77,18 +77,19 @@ public class ElytronColumn
                                 resources.previews().configurationElytronMappersDecoders()))
                         .build(),
 
+                new StaticItem.Builder(Names.OTHER_SETTINGS)
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
+                        .onPreview(new PreviewContent(Names.OTHER_SETTINGS,
+                                resources.previews().configurationElytronOtherSettings()))
+                        .build(),
+
                 new StaticItem.Builder(Names.SECURITY_REALMS)
                         .action(itemActionFactory.view(
                                 places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
                         .onPreview(new PreviewContent(Names.SECURITY_REALMS,
                                 resources.previews().configurationElytronSecurityRealms()))
-                        .build(),
-
-                new StaticItem.Builder(Names.OTHER_SETTINGS)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
-                        .onPreview(new PreviewContent(Names.OTHER_SETTINGS,
-                                resources.previews().configurationElytronOtherSettings()))
                         .build()
+
 
         );
         setItemsProvider((context, callback) -> callback.onSuccess(items));

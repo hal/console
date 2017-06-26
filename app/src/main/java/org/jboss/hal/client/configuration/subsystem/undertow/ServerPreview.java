@@ -32,6 +32,6 @@ class ServerPreview extends PreviewContent<NamedNode> {
         super(server.getName());
 
         previewBuilder()
-                .addAll(new PreviewAttributes<>(server, asList("default-host", SERVLET_CONTAINER)).end());
+                .addAll(new PreviewAttributes<>(server, asList("default-host", SERVLET_CONTAINER)));
     }
 }

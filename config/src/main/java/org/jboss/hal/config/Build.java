@@ -25,7 +25,7 @@ public enum Build {
         Build build = COMMUNITY;
         if (value != null) {
             try {
-                build = Build.valueOf(value);
+                build = Build.valueOf(value.toUpperCase());
             } catch (IllegalArgumentException ignore) {
                 // ignore
             }

@@ -44,8 +44,7 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
         PreviewAttributes<InstalledExtension> attributes = new PreviewAttributes<>(extension,
                 asList(NAME, VERSION, DESCRIPTION, URL, SCRIPT, STYLESHEETS, EXTENSION_POINT, AUTHOR, HOMEPAGE,
-                        LICENSE))
-                .end();
+                        LICENSE));
 
         previewBuilder()
                 .add(scriptOk)

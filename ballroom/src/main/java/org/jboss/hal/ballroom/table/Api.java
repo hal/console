@@ -18,9 +18,9 @@ package org.jboss.hal.ballroom.table;
 import java.util.Collections;
 import java.util.List;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
@@ -29,6 +29,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
+import static org.jboss.gwt.elemento.core.Elements.htmlElements;
+import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
@@ -142,7 +146,7 @@ class Api<T> {
     @JsFunction
     interface RowSelection<T> {
 
-        boolean select(int index, T data, Element tr);
+        boolean select(int index, T data, HTMLElement tr);
     }
 
 
@@ -237,7 +241,7 @@ class Api<T> {
     /**
      * Select rows by tr element. Chain the {@link #data()} to get the actual data.
      */
-    native Api<T> rows(Element tr);
+    native Api<T> rows(HTMLElement tr);
 
     /**
      * Select rows by using a function. Chain the {@link #data()} to get the actual data.
@@ -245,12 +249,12 @@ class Api<T> {
     native Api<T> rows(RowSelection<T> selection);
 
     /**
-     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(Element)} or {@link
+     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(HTMLElement)} or {@link
      * #rows(SelectorModifier)} selector methods.
      */
     native Api<T> select();
 
-    native JsArrayOf<T> toArray();
+    native Array<T> toArray();
 
 
     // ------------------------------------------------------ overlay methods
@@ -271,26 +275,30 @@ class Api<T> {
         Options<T> options = api.init();
         ColumnActions<T> columnActions = options.columnActions;
         if (columnActions != null && !columnActions.isEmpty()) {
-            Element table = Browser.getDocument().getElementById(options.id);
+            elemental2.dom.Element table = DomGlobal.document.getElementById(options.id);
             if (table != null) {
-                Elements.stream(table.querySelectorAll("." + columnAction)).forEach(link -> {
-                    ColumnAction<T> columnAction = columnActions.get(link.getId());
-                    if (columnAction != null) {
-                        link.setOnclick(event -> {
-                            event.stopPropagation();
-                            Element e = link; // find enclosing tr
-                            while (e != null && e != Browser.getDocument() && !"TR".equals(e.getTagName())) { //NON-NLS
-                                e = e.getParentElement();
-                            }
-                            if (e != null) {
-                                JsArrayOf<T> array = rows(e).data().toArray();
-                                if (!array.isEmpty()) {
-                                    columnAction.action(array.get(0));
-                                }
+                Elements.stream(table.querySelectorAll("." + columnAction))
+                        .filter(htmlElements())
+                        .map(asHtmlElement())
+                        .forEach(link -> {
+                            ColumnAction<T> columnAction = columnActions.get(link.id);
+                            if (columnAction != null) {
+                                bind(link, click, event -> {
+                                    event.stopPropagation();
+                                    HTMLElement e = link; // find enclosing tr
+                                    while (e != null && e != DomGlobal.document.body && !"tr".equalsIgnoreCase(
+                                            e.tagName)) {
+                                        e = (HTMLElement) e.parentNode;
+                                    }
+                                    if (e != null) {
+                                        Array<T> array = rows(e).data().toArray();
+                                        if (array.getLength() != 0) {
+                                            columnAction.action(array.getAt(0));
+                                        }
+                                    }
+                                });
                             }
                         });
-                    }
-                });
             }
         }
         return api;
@@ -308,8 +316,8 @@ class Api<T> {
     @JsOverlay
     final List<T> selectedRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
-        JsArrayOf<T> selection = rows(selectorModifier).data().toArray();
-        if (selection == null || selection.isEmpty()) {
+        Array<T> selection = rows(selectorModifier).data().toArray();
+        if (selection == null || selection.getLength() == 0) {
             return Collections.emptyList();
         }
         return asList(selection);

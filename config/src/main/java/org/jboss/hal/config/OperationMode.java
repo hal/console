@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.config;
 
-import jsinterop.annotations.JsType;
-
 /**
+ * Enum for the operation mode.
+ *
  * @author Harald Pehl
  */
-@JsType
 public enum OperationMode {
+
     SELF_CONTAINED, // WildFly Swarm
     STANDALONE,
     DOMAIN,

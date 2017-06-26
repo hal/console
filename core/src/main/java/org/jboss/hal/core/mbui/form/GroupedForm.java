@@ -26,7 +26,7 @@ import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -303,7 +303,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     // ------------------------------------------------------ element and attachable contract
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return tabs.asElement();
     }
 
@@ -452,6 +452,11 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         List<FormItem> formItems = new ArrayList<>();
         forms.forEach(form -> Iterables.addAll(formItems, form.getBoundFormItems()));
         return formItems;
+    }
+
+    @Override
+    public Map<String, Object> getUpdatedModel() {
+        return forms.get(0).getUpdatedModel();
     }
 
     @Override

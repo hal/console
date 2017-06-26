@@ -15,24 +15,24 @@
  */
 package org.jboss.hal.client.runtime.server;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.metric.Utilization;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
@@ -46,12 +46,12 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final Element osName;
-    private final Element osVersion;
-    private final Element processors;
-    private final Element jvm;
-    private final Element jvmVersion;
-    private final Element uptime;
+    private final HTMLElement osName;
+    private final HTMLElement osVersion;
+    private final HTMLElement processors;
+    private final HTMLElement jvm;
+    private final HTMLElement jvmVersion;
+    private final HTMLElement uptime;
     private final Utilization usedHeap;
     private final Utilization committedHeap;
     private final Utilization threads;
@@ -68,37 +68,25 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
                 true);
         this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 
-        // @formatter:off
         previewBuilder()
-            .p().css(lead)
-                .span().rememberAs(OS_NAME).end()
-                .span().rememberAs(OS_VERSION).end()
-                .span().rememberAs(PROCESSORS).end()
-                .add("br")
-                .span().rememberAs(JVM).end()
-                .span().rememberAs(JVM_VERSION).end()
-                .add("br")
-                .span().rememberAs(UPTIME).end()
-            .end()
-            .div().css(clearfix)
-                .a().css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight5).end()
-                    .span().textContent(resources.constants().refresh()).end()
-                .end()
-            .end()
-            .h(2).css(underline).textContent(Names.HEAP).end()
-            .add(usedHeap)
-            .add(committedHeap)
-            .h(2).css(underline).textContent(Names.THREADS).end()
-            .add(threads);
-        // @formatter:on
-
-        this.osName = previewBuilder().referenceFor(OS_NAME);
-        this.osVersion = previewBuilder().referenceFor(OS_VERSION);
-        this.processors = previewBuilder().referenceFor(PROCESSORS);
-        this.jvm = previewBuilder().referenceFor(JVM);
-        this.jvmVersion = previewBuilder().referenceFor(JVM_VERSION);
-        this.uptime = previewBuilder().referenceFor(UPTIME);
+                .add(p().css(lead)
+                        .add(osName = span().asElement())
+                        .add(osVersion = span().asElement())
+                        .add(processors = span().asElement())
+                        .add(br())
+                        .add(jvm = span().asElement())
+                        .add(jvmVersion = span().asElement())
+                        .add(br())
+                        .add(uptime = span().asElement()))
+                .add(div().css(clearfix)
+                        .add(a().css(clickable, pullRight).on(click, event -> update(null))
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))))
+                .add(h(2).css(underline).textContent(Names.HEAP))
+                .add(usedHeap)
+                .add(committedHeap)
+                .add(h(2).css(underline).textContent(Names.THREADS))
+                .add(threads);
     }
 
     @Override
@@ -129,17 +117,17 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         dispatcher.execute(new Composite(osOp, runtimeOp, memoryOp, threadingOp), (CompositeResult result) -> {
             // os
             ModelNode osNode = result.step(0).get(RESULT);
-            osName.setTextContent(osNode.get(NAME).asString());
-            osVersion.setTextContent(" " + osNode.get("version").asString());
-            processors.setTextContent(
-                    ", " + osNode.get("available-processors").asInt() + " " + resources.constants().processors());
+            osName.textContent = osNode.get(NAME).asString();
+            osVersion.textContent = " " + osNode.get("version").asString();
+            processors.textContent = ", " + osNode.get("available-processors").asInt() + " " + resources.constants()
+                    .processors();
 
             // runtime
             ModelNode runtimeNode = result.step(1).get(RESULT);
-            jvm.setTextContent(runtimeNode.get("vm-name").asString());
-            jvmVersion.setTextContent(" " + runtimeNode.get("spec-version").asString());
-            uptime.setTextContent(resources.messages().uptime(
-                    Format.humanReadableDuration(runtimeNode.get("uptime").asLong())));
+            jvm.textContent = runtimeNode.get("vm-name").asString();
+            jvmVersion.textContent = " " + runtimeNode.get("spec-version").asString();
+            uptime.textContent = resources.messages().uptime(
+                    Format.humanReadableDuration(runtimeNode.get("uptime").asLong()));
 
             // memory
             ModelNode heapMemoryNode = result.step(2).get(RESULT).get("heap-memory-usage");

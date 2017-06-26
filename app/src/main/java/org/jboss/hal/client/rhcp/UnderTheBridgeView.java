@@ -22,9 +22,8 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Maps;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -40,6 +39,11 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
+
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePresenter.MyView {
@@ -135,26 +139,19 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
             registerAttachable(form);
         }
 
-        // @formatter:off
-        Element layout = new LayoutBuilder()
-            .row()
-                .column()
-                    .header("Under The Bridge").end()
-                    .p().textContent(description.getDescription()).end()
-                    .p()
-                        .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +
-                                "this page, I came up with the idea for this demo while I was listening to ")
-                                .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
-                                .appendEscaped("Under The Bridge")
-                                .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
-                                .toSafeHtml())
-                    .end()
-                    .add(tabs.asElement())
-                .end()
-            .end()
-        .build();
-        // @formatter:on
-
+        HTMLElement layout = row()
+                .add(column()
+                        .add(header().textContent("Under the Bridge"))
+                        .add(p().textContent(description.getDescription()))
+                        .add(p().innerHtml(
+                                new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +
+                                        "this page, I came up with the idea for this demo while I was listening to ")
+                                        .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
+                                        .appendEscaped("Under The Bridge")
+                                        .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
+                                        .toSafeHtml()))
+                        .add(tabs))
+                .asElement();
         initElement(layout);
     }
 

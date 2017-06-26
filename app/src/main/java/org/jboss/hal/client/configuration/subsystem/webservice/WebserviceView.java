@@ -18,9 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -34,6 +32,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.WEBSERVICES_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.webservice.Config.CLIENT_CONFIG;
 import static org.jboss.hal.client.configuration.subsystem.webservice.Config.ENDPOINT_CONFIG;
@@ -60,15 +63,12 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
                 .onSave((form, changedValues) -> presenter.saveWebservicesConfiguration(changedValues))
                 .prepareReset(form -> presenter.resetWebservicesConfiguration(form, metadata))
                 .build();
-        // @formatter:off
-        Element webservicesSection = new Elements.Builder()
-            .section()
-                .h(1).textContent(Names.WEBSERVICES_CONFIGURATION).end()
-                .p().textContent(metadata.getDescription().getDescription()).end()
+
+        HTMLElement webservicesSection = section()
+                .add(h(1).textContent(Names.WEBSERVICES_CONFIGURATION))
+                .add(p().textContent(metadata.getDescription().getDescription()))
                 .add(webservicesForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         clientConfig = new ConfigElement(CLIENT_CONFIG, metadataRegistry, tableButtonFactory);
         endpointConfig = new ConfigElement(Config.ENDPOINT_CONFIG, metadataRegistry, tableButtonFactory);
@@ -84,14 +84,9 @@ public class WebserviceView extends HalViewImpl implements WebservicePresenter.M
 
         registerAttachables(asList(navigation, webservicesForm, clientConfig, endpointConfig));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override

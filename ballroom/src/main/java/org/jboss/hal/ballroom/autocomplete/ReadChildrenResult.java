@@ -18,8 +18,8 @@ package org.jboss.hal.ballroom.autocomplete;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import elemental.js.json.JsJsonArray;
-import elemental.js.json.JsJsonObject;
+import org.jboss.hal.json.JsonArray;
+import org.jboss.hal.json.JsonObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -45,13 +45,13 @@ class ReadChildrenResult {
         return name + " " + addresses;
     }
 
-    JsJsonObject asJson() {
-        JsJsonObject object = JsJsonObject.create();
+    JsonObject asJson() {
+        JsonObject object = JsonObject.create();
         object.put(NAME, name);
-        JsJsonArray addresses = (JsJsonArray) JsJsonArray.create();
+        JsonArray addresses = JsonArray.create();
         int i = 0;
         for (Map.Entry<String, String> entry : this.addresses.entrySet()) {
-            JsJsonObject keyValue = JsJsonObject.create();
+            JsonObject keyValue = JsonObject.create();
             keyValue.put(KEY, entry.getKey());
             keyValue.put(VALUE, entry.getValue());
             addresses.set(i, keyValue);

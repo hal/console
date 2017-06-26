@@ -15,15 +15,16 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.div;
 
 /**
  * @author Harald Pehl
@@ -51,7 +52,7 @@ public class Tree<T> implements IsElement, Attachable {
     private static final String CHANGED_EVENT = "changed.jstree";
 
     private final String id;
-    private final Element div;
+    private final HTMLElement div;
     private final Options options;
     private Bridge<T> bridge;
     private Api<T> api;
@@ -60,14 +61,14 @@ public class Tree<T> implements IsElement, Attachable {
     /**
      * Creates a tree with the specified root node. All other nodes are loaded on demand using the provided callback.
      */
+    @SuppressWarnings("unchecked")
     public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
         this.id = id;
-        this.div = Browser.getDocument().createDivElement();
-        this.div.setId(id);
+        this.div = div().id(id).asElement();
         this.options = initOptions();
         this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
-                JsArrayOf<Node<T>> rootNodes = JsArrayOf.create();
+                Array<Node<T>> rootNodes = new Array<>();
                 rootNodes.push(root);
                 callback.result(rootNodes);
             } else {
@@ -82,10 +83,9 @@ public class Tree<T> implements IsElement, Attachable {
      * <p>
      * If you use this constructor you must ensure that {@code T} can be turned into JSON.
      */
-    public Tree(final String id, final JsArrayOf<Node<T>> nodes) {
+    public Tree(final String id, final Array<Node<T>> nodes) {
         this.id = id;
-        this.div = Browser.getDocument().createDivElement();
-        this.div.setId(id);
+        this.div = div().id(id).asElement();
         this.options = initOptions();
         this.options.core.data = nodes;
     }
@@ -102,14 +102,14 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
         options.core.themes.url = false;
-        options.plugins = JsArrayOf.create();
+        options.plugins = new Array<>();
         options.plugins.push("search"); //NON-NLS
         options.plugins.push("wholerow"); //NON-NLS
         return options;
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return div;
     }
 
@@ -160,6 +160,6 @@ public class Tree<T> implements IsElement, Attachable {
             api().closeNode(id);
         }
         asElement().focus();
-        Browser.getDocument().getElementById(id).scrollIntoView(false);
+        DomGlobal.document.getElementById(id).scrollIntoView(false);
     }
 }

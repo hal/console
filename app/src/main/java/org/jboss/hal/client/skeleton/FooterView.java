@@ -17,11 +17,10 @@ package org.jboss.hal.client.skeleton;
 
 import javax.annotation.PostConstruct;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.DataElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.EventHandler;
-import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.gwt.elemento.template.DataElement;
+import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
@@ -62,19 +62,30 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     private Environment environment;
 
     @DataElement ProgressElement progress = new ProgressElement();
-    @DataElement Element halVersion;
-    @DataElement Element updateAvailable;
-    @DataElement Element macroRecorder;
-    @DataElement Element macroEditor;
-    @DataElement Element recordingContainer;
-    @DataElement Element steps;
-    @DataElement Element recording;
+    @DataElement HTMLElement halVersion;
+    @DataElement HTMLElement updateAvailable;
+    @DataElement HTMLElement showVersion;
+    @DataElement HTMLElement modelBrowser;
+    @DataElement HTMLElement expressionResolver;
+    @DataElement HTMLElement macroRecorder;
+    @DataElement HTMLElement macroEditor;
+    @DataElement HTMLElement recordingContainer;
+    @DataElement HTMLElement steps;
+    @DataElement HTMLElement recording;
+    @DataElement HTMLElement settings;
 
     @PostConstruct
     void init() {
         uiRegistry().register(progress);
         Elements.setVisible(recordingContainer, false);
         Elements.setVisible(updateAvailable, false);
+
+        bind(showVersion, click, event -> presenter.onShowVersion());
+        bind(modelBrowser, click, event -> presenter.onModelBrowser());
+        bind(expressionResolver, click, event -> presenter.onExpressionResolver());
+        bind(macroRecorder, click, event -> presenter.onMacroRecording());
+        bind(macroEditor, click, event -> presenter.onMacroEditor());
+        bind(settings, click, event -> presenter.onSettings());
     }
 
     @Override
@@ -84,7 +95,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
 
     public void updateEnvironment(Environment environment) {
         this.environment = environment;
-        halVersion.setInnerText(environment.getHalVersion().toString());
+        halVersion.textContent = environment.getHalVersion().toString();
     }
 
     @Override
@@ -94,10 +105,10 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
                     environment.getHalVersion(), version);
             String message = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
-            updateAvailable.setTitle(message);
-            updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, UIConstants.TOP);
-            updateAvailable.getDataset().setAt(UIConstants.CONTAINER, UIConstants.BODY);
+            updateAvailable.title = message;
+            updateAvailable.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            updateAvailable.dataset.set(UIConstants.PLACEMENT, UIConstants.TOP);
+            updateAvailable.dataset.set(UIConstants.CONTAINER, UIConstants.BODY);
             Tooltip.element(updateAvailable).init();
             Elements.setVisible(updateAvailable, true);
         }
@@ -105,52 +116,22 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
 
     @Override
     public void startRecording() {
-        macroRecorder.setTextContent(resources().constants().stopMacro());
-        macroEditor.getClassList().add(disabled);
+        macroRecorder.textContent = resources().constants().stopMacro();
+        macroEditor.classList.add(disabled);
         Elements.setVisible(recordingContainer, true);
-        recording.getClassList().add(pulse);
+        recording.classList.add(pulse);
     }
 
     @Override
     public void steps(final int size) {
-        steps.setTextContent(resources().messages().recordedOperations(size));
+        steps.textContent = resources().messages().recordedOperations(size);
     }
 
     @Override
     public void stopRecording() {
-        recording.getClassList().remove(pulse);
+        recording.classList.remove(pulse);
         Elements.setVisible(recordingContainer, false);
-        macroEditor.getClassList().remove(disabled);
-        macroRecorder.setTextContent(resources().constants().startMacro());
-    }
-
-    @EventHandler(element = "showVersion", on = click)
-    void onShowVersion() {
-        presenter.onShowVersion();
-    }
-
-    @EventHandler(element = "modelBrowser", on = click)
-    void onModelBrowser() {
-        presenter.onModelBrowser();
-    }
-
-    @EventHandler(element = "expressionResolver", on = click)
-    void onExpressionResolver() {
-        presenter.onExpressionResolver();
-    }
-
-    @EventHandler(element = "macroRecorder", on = click)
-    void onMacroRecorder() {
-        presenter.onMacroRecording();
-    }
-
-    @EventHandler(element = "macroEditor", on = click)
-    void onMacroEditor() {
-        presenter.onMacroEditor();
-    }
-
-    @EventHandler(element = "settings", on = click)
-    void onSettings() {
-        presenter.onSettings();
+        macroEditor.classList.remove(disabled);
+        macroRecorder.textContent = resources().constants().startMacro();
     }
 }

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
@@ -49,7 +49,7 @@ public class Clipboard {
 
     @JsConstructor
     @SuppressWarnings("UnusedParameters")
-    public Clipboard(Element element) {
+    public Clipboard(HTMLElement element) {
     }
 
     native void on(String event, ClipboardHandler handler);

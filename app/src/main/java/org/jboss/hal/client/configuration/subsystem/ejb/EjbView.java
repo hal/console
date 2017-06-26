@@ -17,8 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.ejb;
 
 import javax.annotation.PostConstruct;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -37,6 +36,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
@@ -125,14 +127,12 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     })
                     .build();
 
-            Element section = new Elements.Builder()
-                    .section()
-                    .h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN).end()
-                    .p().textContent(metadata.getDescription().getDescription()).end()
+            HTMLElement section = section()
+                    .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
+                    .add(p().textContent(metadata.getDescription().getDescription()))
                     .add(appSecurityDomainTable)
                     .add(appSecurityDomainForm)
-                    .end()
-                    .build();
+                    .asElement();
             navigation.insertPrimary(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
                     fontAwesome("link"), section);
         }

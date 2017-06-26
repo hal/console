@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Harald Pehl
@@ -79,6 +80,10 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
 
         public List<Content> getContent() {
             return content;
+        }
+
+        public List<Content> getHtmlContent() {
+            return content.stream().filter(c -> c.getHtml() != null).collect(toList());
         }
 
         void addContent(Content content) {

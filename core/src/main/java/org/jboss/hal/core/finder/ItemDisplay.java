@@ -18,14 +18,15 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.small;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.itemText;
 
 /**
@@ -73,7 +74,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default Element getIcon() {
+    default HTMLElement getIcon() {
         return null;
     }
 
@@ -100,7 +101,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return {@code null} by default
      */
-    default Element asElement() {
+    default HTMLElement asElement() {
         return null;
     }
 
@@ -113,11 +114,10 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      *
      * @return
      */
-    static Element withSubtitle(String title, String subtitle) {
-        return new Elements.Builder()
-                .span().css(itemText)
-                .span().textContent(title).end()
-                .start("small").css(CSS.subtitle).title(subtitle).textContent(subtitle).end()
-                .end().build();
+    static HTMLElement withSubtitle(String title, String subtitle) {
+        return span().css(itemText)
+                .add(span().textContent(title))
+                .add(small().css(CSS.subtitle).title(subtitle).textContent(subtitle))
+                .asElement();
     }
 }

@@ -31,7 +31,7 @@ public class ExpertModeView extends HalViewImpl implements ExpertModePresenter.M
     @Inject
     public ExpertModeView(ModelBrowser modelBrowser) {
         this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
+        initElement(modelBrowser);
     }
 
     @Override

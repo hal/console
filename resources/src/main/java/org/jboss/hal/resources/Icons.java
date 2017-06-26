@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.resources;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -48,57 +48,39 @@ public interface Icons {
 
     // ------------------------------------------------------ icon elements
 
-    static Element disabled() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(DISABLED);
-        return icon;
+    static HTMLElement disabled() {
+        return span().css(DISABLED).asElement();
     }
 
-    static Element error() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(ERROR);
-        return icon;
+    static HTMLElement error() {
+        return span().css(ERROR).asElement();
     }
 
-    static Element info() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(INFO);
-        return icon;
+    static HTMLElement info() {
+        return span().css(INFO).asElement();
     }
 
-    static Element lock() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(LOCK);
-        return icon;
+    static HTMLElement lock() {
+        return span().css(LOCK).asElement();
     }
 
-    static Element ok() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(OK);
-        return icon;
+    static HTMLElement ok() {
+        return span().css(OK).asElement();
     }
 
-    static Element pause() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(PAUSE);
-        return icon;
+    static HTMLElement pause() {
+        return span().css(PAUSE).asElement();
     }
 
-    static Element stopped() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(STOPPED);
-        return icon;
+    static HTMLElement stopped() {
+        return span().css(STOPPED).asElement();
     }
 
-    static Element warning() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(WARNING);
-        return icon;
+    static HTMLElement warning() {
+        return span().css(WARNING).asElement();
     }
 
-    static Element unknown() {
-        Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(UNKNOWN);
-        return icon;
+    static HTMLElement unknown() {
+        return span().css(UNKNOWN).asElement();
     }
 }

@@ -18,7 +18,8 @@ package org.jboss.hal.client.deployment;
 import java.util.Arrays;
 import javax.inject.Inject;
 
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.finder.Finder;
@@ -46,7 +47,7 @@ public class BrowseByColumn extends StaticItemColumn {
 
         @Override
         public void update(StaticItem item) {
-            Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+            Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                     JsHelper.supportsAdvancedUpload());
         }
     }

@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.metric.Utilization;
@@ -26,12 +26,16 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -43,14 +47,11 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class JpaPreview extends PreviewContent<JpaStatistic> {
 
-    private static final String REFRESH_ELEMENT = "refreshElement";
-    private static final String HEADER_ELEMENT = "headerElement";
-
     private final Dispatcher dispatcher;
     private final ResourceAddress address;
     private final EmptyState noStatistics;
-    private final Element refresh;
-    private final Element header;
+    private final HTMLElement refresh;
+    private final HTMLElement header;
     private final Utilization openedSessions;
     private final Utilization closedSessions;
 
@@ -78,23 +79,18 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
-        // @formatter:off
         previewBuilder()
-            .add(noStatistics)
-            .div().css(clearfix)
-                .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight5).end()
-                    .span().textContent(resources.constants().refresh()).end()
-                .end()
-            .end()
-            .h(2).rememberAs(HEADER_ELEMENT).css(underline).textContent(resources.constants().sessions()).end()
-            .add(openedSessions)
-            .add(closedSessions);
-        // @formatter:on
+                .add(noStatistics)
+                .add(div().css(clearfix)
+                        .add(refresh = a().css(clickable, pullRight).on(click, event -> update(null))
+                                .add(span().css(fontAwesome("refresh"), marginRight5))
+                                .add(span().textContent(resources.constants().refresh()))
+                                .asElement()))
+                .add(header = h(2).css(underline).textContent(resources.constants().sessions()).asElement())
+                .add(openedSessions)
+                .add(closedSessions);
 
         Elements.setVisible(noStatistics.asElement(), false);
-        header = previewBuilder().referenceFor(HEADER_ELEMENT);
-        refresh = previewBuilder().referenceFor(REFRESH_ELEMENT);
     }
 
     @Override

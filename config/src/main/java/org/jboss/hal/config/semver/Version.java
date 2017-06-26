@@ -30,15 +30,13 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
- * The {@code Version} class is the main class of the Java SemVer library.
- * <p>
- * This class implements the Facade design pattern.
- * It is also immutable, which makes the class thread-safe.
+ * Represents a version consisting of a major, minor and micro part.
  *
  * @author Zafar Khaja <zafarkhaja@gmail.com>
  * @since 0.1.0
  */
 @JsType(namespace = "hal.config")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Version implements Comparable<Version> {
 
     @JsIgnore
@@ -213,7 +211,7 @@ public class Version implements Comparable<Version> {
                 if (v1.build == MetadataVersion.NULL ||
                         v2.build == MetadataVersion.NULL
                         ) {
-                    /**
+                    /*
                      * Build metadata should have a higher precedence
                      * than the associated normal version which is the
                      * opposite compared to pre-release versions.
@@ -262,16 +260,11 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Creates a new instance of {@code Version} as a
-     * result of parsing the specified version string.
+     * Creates a new version as a result of parsing the specified version string.
      *
-     * @param version the version string to parse
+     * @param version The version string to parse
      *
-     * @return a new instance of the {@code Version} class
-     *
-     * @throws IllegalArgumentException     if the input string is {@code NULL} or empty
-     * @throws ParseException               when invalid version string is provided
-     * @throws UnexpectedCharacterException is a special case of {@code ParseException}
+     * @return a new version
      */
     public static Version valueOf(String version) {
         return VersionParser.parseValidSemVer(version);
@@ -468,9 +461,7 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Returns the major version number.
-     *
-     * @return the major version number
+     * @return the major version number.
      */
     @JsProperty(name = "major")
     public int getMajorVersion() {
@@ -478,9 +469,7 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Returns the minor version number.
-     *
-     * @return the minor version number
+     * @return the minor version number.
      */
     @JsProperty(name = "minor")
     public int getMinorVersion() {
@@ -488,9 +477,7 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Returns the patch version number.
-     *
-     * @return the patch version number
+     * @return the patch version number.
      */
     @JsProperty(name = "micro")
     public int getPatchVersion() {
@@ -600,6 +587,7 @@ public class Version implements Comparable<Version> {
      * @see #compareTo(Version other)
      */
     @Override
+    @JsIgnore
     public boolean equals(Object other) {
         if (this == other) {
             return true;
@@ -623,7 +611,7 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * {@inheritDoc}
+     * @return &lt;major&gt;.&lt;minor&gt;.&lt;micro&gt;
      */
     @Override
     public String toString() {
@@ -651,7 +639,6 @@ public class Version implements Comparable<Version> {
      * is less than, equal to or greater the the specified version
      *
      * @see #BUILD_AWARE_ORDER
-     * @see #compareWithBuildsTo(Version other)
      */
     @Override
     @JsIgnore
@@ -661,23 +648,5 @@ public class Version implements Comparable<Version> {
             result = preRelease.compareTo(other.preRelease);
         }
         return result;
-    }
-
-    /**
-     * Compare this version to the other version
-     * taking into account the build metadata.
-     * <p>
-     * The method makes use of the {@code Version.BUILD_AWARE_ORDER} comparator.
-     *
-     * @param other the other version to compare to
-     *
-     * @return integer result of comparison compatible with
-     * that of the {@code Comparable.compareTo} method
-     *
-     * @see #BUILD_AWARE_ORDER
-     */
-    @JsIgnore
-    public int compareWithBuildsTo(Version other) {
-        return BUILD_AWARE_ORDER.compare(this, other);
     }
 }

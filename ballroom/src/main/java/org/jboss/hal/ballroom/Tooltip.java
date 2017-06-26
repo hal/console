@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
@@ -29,7 +29,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class Tooltip {
 
     @JsMethod(namespace = GLOBAL, name = "$")
-    public native static Tooltip element(Element element);
+    public native static Tooltip element(HTMLElement element);
 
     @JsMethod(namespace = GLOBAL, name = "$")
     public native static Tooltip select(String selector);

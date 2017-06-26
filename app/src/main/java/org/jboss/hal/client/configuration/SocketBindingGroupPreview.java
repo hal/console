@@ -40,6 +40,7 @@ class SocketBindingGroupPreview extends PreviewContent<NamedNode> {
 
     private final PreviewAttributes<NamedNode> attributes;
 
+    @SuppressWarnings("HardCodedStringLiteral")
     SocketBindingGroupPreview(NamedNode socketBinding, Places places) {
         super(socketBinding.getName());
 
@@ -77,16 +78,14 @@ class SocketBindingGroupPreview extends PreviewContent<NamedNode> {
                     } else {
                         return new PreviewAttribute(Names.INCLUDES, Names.NOT_AVAILABLE);
                     }
-                })
-                .end();
+                });
         previewBuilder().addAll(attributes);
 
         PreviewAttributes<NamedNode> ports = new PreviewAttributes<>(socketBinding, Names.PORTS)
                 .append(model -> new PreviewAttribute(Names.HTTP, port(model, HTTP)))
                 .append(model -> new PreviewAttribute(Names.HTTPS, port(model, HTTPS)))
                 .append(model -> new PreviewAttribute(Names.MANAGEMENT, port(model, MANAGEMENT_HTTP)))
-                .append(model -> new PreviewAttribute(Names.SECURE_MANAGEMENT, port(model, MANAGEMENT_HTTPS)))
-                .end();
+                .append(model -> new PreviewAttribute(Names.SECURE_MANAGEMENT, port(model, MANAGEMENT_HTTPS)));
         previewBuilder().addAll(ports);
     }
 

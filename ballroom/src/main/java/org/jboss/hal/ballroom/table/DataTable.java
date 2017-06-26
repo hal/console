@@ -18,9 +18,9 @@ package org.jboss.hal.ballroom.table;
 import java.util.List;
 import java.util.function.Function;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.TableElement;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -30,8 +30,13 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.dataTable;
+import static org.jboss.hal.resources.CSS.hover;
+import static org.jboss.hal.resources.CSS.table;
+import static org.jboss.hal.resources.CSS.tableBordered;
+import static org.jboss.hal.resources.CSS.tableStriped;
 
 /**
  * Table element which implements the DataTables plugin for jQuery. Using the data table consists of multiple steps:
@@ -88,22 +93,21 @@ public class DataTable<T> implements Table<T> {
 
     private final String id;
     private final Options<T> options;
-    private final TableElement tableElement;
+    private final HTMLTableElement tableElement;
     private Api<T> api;
 
     public DataTable(final String id, final Options<T> options) {
         this.id = id;
         this.options = options;
-        this.tableElement = new Elements.Builder()
-                .start("table").id(id).css(dataTable, table, tableStriped, tableBordered, hover).end().build();
+        this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, hover).asElement();
         for (Api.Button<T> button : options.buttons.buttons) {
             button.table = this;
         }
     }
 
     @Override
-    public Element asElement() {
-        return api == null ? tableElement : Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
+    public HTMLElement asElement() {
+        return api == null ? tableElement : (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
     }
 
     /**
@@ -146,13 +150,13 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public void show() {
-        Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
+        HTMLElement wrapper = (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, true);
     }
 
     @Override
     public void hide() {
-        Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
+        HTMLElement wrapper = (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, false);
     }
 

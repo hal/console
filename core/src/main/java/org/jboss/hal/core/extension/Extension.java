@@ -18,9 +18,12 @@ package org.jboss.hal.core.extension;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
+import org.jboss.hal.spi.EsParam;
 import org.jetbrains.annotations.NonNls;
 
 /**
+ * Represents an extension written in JavaScript.
+ *
  * @author Harald Pehl
  */
 @JsType(namespace = "hal.core")
@@ -40,13 +43,31 @@ public class Extension {
         }
     }
 
+    /**
+     * Creates a header extension.
+     *
+     * @param name       A unique name of the extension.
+     * @param title      The title of the menu item in the header.
+     * @param entryPoint The entrypoint of the header extension.
+     *
+     * @return the extension which can be registered using the {@link ExtensionRegistry}.
+     */
     @JsMethod
-    public static Extension header(final String name, final String title, final JsCallback entryPoint) {
+    public static Extension header(String name, String title, @EsParam("function()") JsCallback entryPoint) {
         return new Extension(name, title, Point.HEADER, entryPoint);
     }
 
+    /**
+     * Creates a footer extension.
+     *
+     * @param name       A unique name of the extension.
+     * @param title      The title of the menu item in the footer.
+     * @param entryPoint The entrypoint of the footer extension.
+     *
+     * @return the extension which can be registered using the {@link ExtensionRegistry}.
+     */
     @JsMethod
-    public static Extension footer(final String name, final String title, final JsCallback entryPoint) {
+    public static Extension footer(String name, String title, @EsParam("function()") JsCallback entryPoint) {
         return new Extension(name, title, Point.FOOTER, entryPoint);
     }
 

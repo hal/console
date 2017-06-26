@@ -18,13 +18,19 @@ package org.jboss.hal.ballroom.form;
 import java.util.Set;
 
 import com.google.common.base.Strings;
-import elemental.dom.Element;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
@@ -61,52 +67,44 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     private static final String VALUE_CONTAINER = "valueContainer";
     private static final String VALUE_ELEMENT = "valueElement";
 
-    final Element valueContainer;
-    Element valueElement;
-    private final Element root;
-    private final Element hintElement;
-    private final Element defaultValue;
-    private final Element expressionLink;
-    private final Element restrictedMarker;
-    private Element peekLink;
+    final HTMLElement valueContainer;
+    HTMLElement valueElement;
+    private final HTMLElement root;
+    private final HTMLElement hintElement;
+    private final HTMLElement defaultValue;
+    private final HTMLElement expressionLink;
+    private final HTMLElement restrictedMarker;
+    private HTMLElement peekLink;
     private boolean masked;
     private String backupValue;
+    private HandlerRegistration expressionHandler;
 
     protected ReadOnlyAppearance(Set<Decoration> supportedDecorations) {
         super(supportedDecorations);
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(formGroup)
-                .label().css(controlLabel, halFormLabel).rememberAs(LABEL_ELEMENT).end()
-                .div().css(halFormInput)
-                    .p().css(formControlStatic).rememberAs(VALUE_CONTAINER)
-                        .span().rememberAs(VALUE_ELEMENT).end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        labelElement = builder.referenceFor(LABEL_ELEMENT);
-        valueContainer = builder.referenceFor(VALUE_CONTAINER);
-        valueElement = builder.referenceFor(VALUE_ELEMENT);
-        root = builder.build();
         masked = false;
 
-        hintElement = new Elements.Builder().span().css(hint).end().build();
-        defaultValue = new Elements.Builder().span()
+        root = div().css(formGroup)
+                .add(labelElement = label().css(controlLabel, halFormLabel).asElement())
+                .add(div().css(halFormInput)
+                        .add(valueContainer = p().css(formControlStatic)
+                                .add(valueElement = span().asElement())
+                                .asElement()))
+                .asElement();
+
+        hintElement = span().css(hint).asElement();
+        defaultValue = span()
                 .css(CSS.defaultValue)
                 .title(CONSTANTS.defaultValue())
-                .end().build();
-        expressionLink = new Elements.Builder().span()
+                .asElement();
+        expressionLink = span()
                 .css(CSS.fontAwesome("link"), clickable)
                 .title(CONSTANTS.resolveExpression())
-                .end().build();
-        restrictedMarker = new Elements.Builder().span()
-                .span().css(fontAwesome("lock"), marginRight5).aria(HIDDEN, TRUE).end()
-                .span().textContent(CONSTANTS.restricted()).end()
-                .end().build();
-        peekLink = new Elements.Builder().span()
+                .asElement();
+        restrictedMarker = span()
+                .add(span().css(fontAwesome("lock"), marginRight5).aria(HIDDEN, TRUE))
+                .add(span().textContent(CONSTANTS.restricted()))
+                .asElement();
+        peekLink = span()
                 .css(fontAwesome("eye"), clickable)
                 .title(CONSTANTS.showSensitive())
                 .on(click, event -> {
@@ -116,12 +114,12 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                         mask();
                     }
                 })
-                .end().build();
+                .asElement();
         Elements.setVisible(peekLink, false);
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
@@ -136,11 +134,11 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     @Override
     public void showValue(final T value) {
         String stringValue = asString(value);
-        valueElement.setTextContent(stringValue);
+        valueElement.textContent = stringValue;
         if (Strings.isNullOrEmpty(stringValue)) {
-            valueElement.getClassList().add(empty);
+            valueElement.classList.add(empty);
         } else {
-            valueElement.getClassList().remove(empty);
+            valueElement.classList.remove(empty);
         }
 
         if (isApplied(SENSITIVE)) {
@@ -155,8 +153,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
     @Override
     public void clearValue() {
-        valueElement.setTextContent("");
-        valueElement.getClassList().add(empty);
+        valueElement.textContent = "";
+        valueElement.classList.add(empty);
         if (isApplied(SENSITIVE)) {
             Elements.setVisible(peekLink, false);
         }
@@ -164,11 +162,11 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
     @Override
     public void showExpression(final String expression) {
-        valueElement.setTextContent(expression);
+        valueElement.textContent = expression;
         if (Strings.isNullOrEmpty(expression)) {
-            valueElement.getClassList().add(empty);
+            valueElement.classList.add(empty);
         } else {
-            valueElement.getClassList().remove(empty);
+            valueElement.classList.remove(empty);
         }
 
         if (isApplied(SENSITIVE)) {
@@ -183,20 +181,20 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
     @SuppressWarnings("HardCodedStringLiteral")
     private void mask() {
-        backupValue = valueElement.getTextContent();
-        valueElement.setTextContent(backupValue.replaceAll(".", "\u25CF"));
-        peekLink.setTitle(CONSTANTS.showSensitive());
-        peekLink.getClassList().add("fa-eye");
-        peekLink.getClassList().remove("fa-eye-slash");
+        backupValue = valueElement.textContent;
+        valueElement.textContent = backupValue.replaceAll(".", "\u25CF");
+        peekLink.title = CONSTANTS.showSensitive();
+        peekLink.classList.add("fa-eye");
+        peekLink.classList.remove("fa-eye-slash");
         masked = true;
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
     private void unmask() {
-        valueElement.setTextContent(Strings.nullToEmpty(backupValue));
-        peekLink.setTitle(CONSTANTS.hideSensitive());
-        peekLink.getClassList().add("fa-eye-slash");
-        peekLink.getClassList().remove("fa-eye");
+        valueElement.textContent = Strings.nullToEmpty(backupValue);
+        peekLink.title = CONSTANTS.hideSensitive();
+        peekLink.classList.add("fa-eye-slash");
+        peekLink.classList.remove("fa-eye");
         masked = false;
     }
 
@@ -208,7 +206,7 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         switch (decoration) {
 
             case DEFAULT:
-                defaultValue.setTextContent(String.valueOf(context));
+                defaultValue.textContent = String.valueOf(context);
                 if (isApplied(HINT)) {
                     valueContainer.insertBefore(defaultValue, hintElement);
                 } else {
@@ -222,8 +220,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 
             case EXPRESSION:
                 ExpressionContext ec = (ExpressionContext) context;
-                expressionLink.setOnclick(
-                        event -> ec.callback.resolveExpression(masked ? backupValue : valueElement.getTextContent()));
+                expressionHandler = bind(expressionLink, click,
+                        event -> ec.callback.resolveExpression(masked ? backupValue : valueElement.textContent));
                 if (isApplied(HINT)) {
                     valueContainer.insertBefore(expressionLink, hintElement);
                 } else {
@@ -232,12 +230,12 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 break;
 
             case HINT:
-                hintElement.setTextContent(String.valueOf(context));
+                hintElement.textContent = String.valueOf(context);
                 valueContainer.appendChild(hintElement);
                 break;
 
             case RESTRICTED:
-                valueElement.setTextContent("");
+                valueElement.textContent = "";
                 Elements.removeChildrenFrom(valueContainer);
                 valueContainer.appendChild(restrictedMarker);
                 break;
@@ -273,6 +271,10 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 break;
 
             case EXPRESSION:
+                if (expressionHandler != null) {
+                    expressionHandler.removeHandler();
+                    expressionHandler = null;
+                }
                 Elements.failSafeRemove(valueContainer, expressionLink);
                 break;
 
@@ -304,8 +306,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     @Override
     public void setId(final String id) {
         this.id = Ids.build(id, READONLY.name().toLowerCase());
-        root.getDataset().setAt(FORM_ITEM_GROUP, this.id);
-        valueElement.setId(this.id);
+        root.dataset.set(FORM_ITEM_GROUP, this.id);
+        valueElement.id = this.id;
     }
 
     @Override

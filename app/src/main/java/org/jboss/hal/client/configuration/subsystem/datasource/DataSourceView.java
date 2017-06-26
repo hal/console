@@ -21,9 +21,8 @@ import javax.inject.Inject;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.GroupedForm;
@@ -37,6 +36,10 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.BOTH;
@@ -52,7 +55,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
-    private static final String HEADER_ELEMENT = "headerElement";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static LinkedListMultimap<String, Attribute> attributes = LinkedListMultimap.create();
 
@@ -161,13 +163,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     private final Resources resources;
     private final Form<DataSource> nonXaForm;
     private final Form<DataSource> xaForm;
-    // private final List<Form<DataSource>> nonXaForms;
-    // private final List<Form<DataSource>> xaForms;
-    private final Element header;
-    private final Element nonXaInfo;
-    private final Element xaInfo;
-    // private final Tabs nonXaTabs;
-    // private final Tabs xaTabs;
+    private final HTMLElement header;
+    private final HTMLElement nonXaInfo;
+    private final HTMLElement xaInfo;
     private DataSourcePresenter presenter;
 
     @Inject
@@ -178,22 +176,16 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         Form.PrepareReset<DataSource> prepareReset = (f) -> presenter.resetDataSource(f);
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
-        nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
-                .build();
+        nonXaInfo = p().textContent(nonXaMeta.getDescription().getDescription()).asElement();
         GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
                 nonXaMeta)
                 .onSave(saveCallback)
                 .prepareReset(prepareReset);
 
         Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
-        xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();
+        xaInfo = p().textContent(xaMeta.getDescription().getDescription()).asElement();
         GroupedForm.Builder<DataSource> xaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.XA_DATA_SOURCE_FORM,
                 xaMeta).onSave(saveCallback);
-        // nonXaForms = new ArrayList<>();
-        // xaForms = new ArrayList<>();
-        // nonXaTabs = new Tabs();
-        // xaTabs = new Tabs();
-        // ModelNodeForm<DataSource> form;
 
         for (String group : attributes.keySet()) {
             String groupId = Ids.asId(group);
@@ -208,14 +200,6 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                     .include(nonXaNames)
                     .end();
 
-            // form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", groupId),
-            //         nonXaMeta)
-            //         .include(nonXaNames)
-            //         .onSave(saveCallback)
-            //         .build();
-            // nonXaForms.add(form);
-            // nonXaTabs.add(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "group", groupId), group, form.asElement());
-
             // xa form and tab
             List<String> xaNames = groupAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
@@ -224,35 +208,21 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
             xaFormBuilder.customGroup(groupId, group)
                     .include(xaNames)
                     .end();
-            // form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.XA_DATA_SOURCE, "form", groupId), xaMeta)
-            //         .include(xaNames)
-            //         .onSave(saveCallback)
-            //         .build();
-            // xaForms.add(form);
-            // xaTabs.add(Ids.build(Ids.XA_DATA_SOURCE, "group", groupId), group, form.asElement());
         }
 
         nonXaForm = nonXaFormBuilder.build();
         xaForm = xaFormBuilder.build();
-
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
-                    .add(nonXaInfo)
-                    .add(xaInfo)
-                    .add(nonXaForm.asElement())
-                    .add(xaForm.asElement())
-                .end()
-            .end();
-        // @formatter:on
-
-        Element root = layoutBuilder.build();
-        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
-        initElement(root);
+
+        initElement(row()
+                .add(column()
+                        .add(header = header().textContent(Names.DATASOURCE).asElement())
+                        .add(nonXaInfo)
+                        .add(xaInfo)
+                        .add(nonXaForm)
+                        .add(xaForm))
+                .asElement());
     }
 
     @Override
@@ -264,17 +234,11 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     public void clear(boolean xa) {
         showHide(xa);
         if (xa) {
-            header.setTextContent(Names.XA_DATASOURCE);
+            header.textContent = Names.XA_DATASOURCE;
             xaForm.clear();
-            // for (Form<DataSource> form : xaForms) {
-            //     form.clear();
-            // }
         } else {
-            header.setTextContent(Names.DATASOURCE);
+            header.textContent = Names.DATASOURCE;
             nonXaForm.clear();
-            // for (Form<DataSource> form : nonXaForms) {
-            //     form.clear();
-            // }
         }
     }
 
@@ -283,7 +247,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         // TODO Add a suggestion handler for the DRIVER_NAME field
         showHide(dataSource.isXa());
         //noinspection HardCodedStringLiteral
-        header.setInnerHTML(new SafeHtmlBuilder()
+        header.innerHTML = new SafeHtmlBuilder()
                 .appendEscaped(dataSource.getName())
                 .appendHtmlConstant("<small>")
                 .appendEscaped(" (")
@@ -291,17 +255,11 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled())
                 .appendEscaped(")")
                 .appendHtmlConstant("</small>")
-                .toSafeHtml().asString());
+                .toSafeHtml().asString();
         if (dataSource.isXa()) {
             xaForm.view(dataSource);
-            // for (Form<DataSource> form : xaForms) {
-            //     form.view(dataSource);
-            // }
         } else {
             nonXaForm.view(dataSource);
-            // for (Form<DataSource> form : nonXaForms) {
-            //     form.view(dataSource);
-            // }
         }
     }
 

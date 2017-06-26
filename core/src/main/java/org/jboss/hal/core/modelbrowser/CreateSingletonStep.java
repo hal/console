@@ -18,9 +18,7 @@ package org.jboss.hal.core.modelbrowser;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.DivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.PatternFly;
@@ -38,6 +36,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+
 /**
  * @author Harald Pehl
  */
@@ -47,7 +47,7 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
     private final Provider<Progress> progress;
     private final EventBus eventBus;
     private final Resources resources;
-    private final DivElement root;
+    private final HTMLElement root;
     private Form<ModelNode> form;
 
     CreateSingletonStep(final Node<Context> parent, final MetadataProcessor metadataProcessor,
@@ -57,11 +57,11 @@ class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
         this.progress = progress;
         this.eventBus = eventBus;
         this.resources = resources;
-        this.root = Browser.getDocument().createDivElement();
+        this.root = div().asElement();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 

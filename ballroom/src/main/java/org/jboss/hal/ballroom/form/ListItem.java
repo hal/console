@@ -19,19 +19,16 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Splitter;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
-import static org.jboss.hal.resources.CSS.disabled;
-import static org.jboss.hal.resources.CSS.formControl;
-import static org.jboss.hal.resources.CSS.hasError;
-import static org.jboss.hal.resources.CSS.tagManagerContainer;
-import static org.jboss.hal.resources.CSS.tags;
+import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.uniqueId;
 
 /**
@@ -59,25 +56,21 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
     private class ListEditingAppearance extends EditingAppearance<List<String>> {
 
-        private final Element tagsContainer;
+        private final HTMLElement tagsContainer;
 
-        ListEditingAppearance(InputElement inputElement) {
+        ListEditingAppearance(HTMLInputElement inputElement) {
             super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS), inputElement);
 
-            // @formatter:off
-            tagsContainer = new Elements.Builder()
-                .div()
-                    .id(Ids.build("tags", "container", uniqueId())).css(tagManagerContainer)
-                .end()
-            .build();
-            // @formatter:on
+            tagsContainer = div().css(tagManagerContainer)
+                    .id(Ids.build("tags", "container", uniqueId()))
+                    .asElement();
 
-            helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setInnerHTML(MESSAGES.listHint().asString());
+            helpBlock.classList.add(CSS.hint);
+            helpBlock.innerHTML = MESSAGES.listHint().asString();
 
             inputContainer.appendChild(tagsContainer);
             inputContainer.appendChild(helpBlock);
-            inputGroup.getClassList().add(tags);
+            inputGroup.classList.add(tags);
         }
 
         @Override
@@ -89,7 +82,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
         public void attach() {
             super.attach();
             TagsManager.Options options = TagsManager.Defaults.get();
-            options.tagsContainer = "#" + tagsContainer.getId();
+            options.tagsContainer = "#" + tagsContainer.id;
 
             TagsManager.Bridge bridge = TagsManager.Bridge.element(inputElement);
             bridge.tagsManager(options);
@@ -107,7 +100,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
             if (attached) {
                 TagsManager.Bridge.element(inputElement).setTags(value);
             } else {
-                inputElement.setValue(asString(value));
+                inputElement.value = asString(value);
             }
         }
 
@@ -121,7 +114,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
             if (attached) {
                 TagsManager.Bridge.element(inputElement).removeAll();
             } else {
-                inputElement.setValue("");
+                inputElement.value = "";
             }
         }
 
@@ -136,27 +129,27 @@ public class ListItem extends AbstractFormItem<List<String>> {
         @Override
         void applyEnabled() {
             super.applyEnabled();
-            inputContainer.getClassList().remove(disabled);
+            inputContainer.classList.remove(disabled);
         }
 
         @Override
         void unapplyEnabled() {
             super.unapplyEnabled();
-            inputContainer.getClassList().add(disabled);
+            inputContainer.classList.add(disabled);
         }
 
         @Override
         void applyInvalid(final String errorMessage) {
-            root.getClassList().add(hasError);
-            helpBlock.getClassList().remove(CSS.hint);
-            helpBlock.setTextContent(errorMessage);
+            root.classList.add(hasError);
+            helpBlock.classList.remove(CSS.hint);
+            helpBlock.textContent = errorMessage;
         }
 
         @Override
         void unapplyInvalid() {
-            root.getClassList().remove(hasError);
-            helpBlock.getClassList().add(CSS.hint);
-            helpBlock.setInnerHTML(MESSAGES.listHint().asString());
+            root.classList.remove(hasError);
+            helpBlock.classList.add(CSS.hint);
+            helpBlock.innerHTML = MESSAGES.listHint().asString();
         }
     }
 
@@ -170,12 +163,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
         addAppearance(Form.State.READONLY, new ListReadOnlyAppearance());
 
         // editing appearance
-        InputElement inputElement = Browser.getDocument().createInputElement();
-        inputElement.setType("text"); //NON-NLS
-        inputElement.getClassList().add(formControl);
-        inputElement.getClassList().add(tags);
-
-        editingAppearance = new ListEditingAppearance(inputElement);
+        editingAppearance = new ListEditingAppearance(input(text).css(formControl, tags).asElement());
         addAppearance(Form.State.EDITING, editingAppearance);
     }
 

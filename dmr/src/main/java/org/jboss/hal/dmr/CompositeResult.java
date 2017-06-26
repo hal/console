@@ -20,12 +20,15 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import elemental.js.util.JsArrayOf;
+import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.spi.EsReturn;
 
 /**
+ * Represents the result of a composite operation.
+ *
  * @author Harald Pehl
  */
 @JsType
@@ -71,9 +74,15 @@ public class CompositeResult implements Iterable<ModelNode> {
         return steps.values().iterator();
     }
 
+    /**
+     * @return the number of steps
+     */
     @JsProperty(name = "size")
     public int size() {return steps.size();}
 
+    /**
+     * @return whether this composite result contains steps
+     */
     @JsProperty
     public boolean isEmpty() {return steps.isEmpty();}
 
@@ -85,9 +94,13 @@ public class CompositeResult implements Iterable<ModelNode> {
 
     // ------------------------------------------------------ JS methods
 
+    /**
+     * @return the steps of this composite result
+     */
     @JsProperty(name = "steps")
-    public JsArrayOf<ModelNode> jsSteps() {
-        JsArrayOf<ModelNode> array = JsArrayOf.create();
+    @EsReturn("ModelNode[]")
+    public Array<ModelNode> jsSteps() {
+        Array<ModelNode> array = new Array<>();
         for (ModelNode modelNode : steps.values()) {
             array.push(modelNode);
         }

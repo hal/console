@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -29,6 +29,10 @@ import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -49,89 +53,71 @@ public class Tabs implements IsElement {
     }
 
 
-    private static final String TABS = "tabs";
-    private static final String TAB = "tab";
-    private static final String PANES = "panes";
-
-    private final Element root;
-    private final Element tabs;
-    private final Element panes;
+    private final HTMLElement root;
+    private final HTMLElement tabs;
+    private final HTMLElement panes;
     private final Map<Integer, String> indexToId;
-    private final Map<String, Element> paneElements;
+    private final Map<String, HTMLElement> paneElements;
 
     public Tabs() {
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div()
-                .ul().css(nav, navTabs, navTabsPf, navTabsHal)
-                    .attr(UIConstants.ROLE, UIConstants.TABLIST)
-                    .rememberAs(TABS).end()
-                .div().css(tabContent).rememberAs(PANES).end()
-            .end();
-        // @formatter:on
+        root = div()
+                .add(tabs = ul()
+                        .css(nav, navTabs, navTabsPf, navTabsHal)
+                        .attr(UIConstants.ROLE, UIConstants.TABLIST)
+                        .asElement())
+                .add(panes = div().css(tabContent).asElement())
+                .asElement();
 
-        root = builder.build();
-        tabs = builder.referenceFor(TABS);
-        panes = builder.referenceFor(PANES);
         indexToId = new HashMap<>();
         paneElements = new HashMap<>();
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return root;
     }
 
-    public Tabs add(String id, String title, Element first, Element... rest) {
+    public Tabs add(String id, String title, HTMLElement first, HTMLElement... rest) {
         return add(id, title, elements(first, rest));
     }
 
-    public Tabs add(String id, String title, Iterable<Element> elements) {
-        int size = tabs.getChildElementCount();
-        if (size != panes.getChildElementCount()) {
+    public Tabs add(String id, String title, Iterable<HTMLElement> elements) {
+        int size = (int) tabs.childElementCount;
+        if (size != (int) panes.childElementCount) {
             throw new IllegalStateException(
-                    "Unbalanced containers: tabs(" + size + ") != panes(" + panes.getChildElementCount() + ")");
+                    "Unbalanced containers: tabs(" + size + ") != panes(" + panes.childElementCount + ")");
         }
         indexToId.put(size, id);
 
-        // @formatter:off
-        Element tab = new Elements.Builder()
-            .li().attr(UIConstants.ROLE, "presentation") //NON-NLS
-                .a("#" + id).aria(UIConstants.CONTROLS, id).attr(UIConstants.ROLE, TAB).data(UIConstants.TOGGLE, TAB)
-                    .on(click, event -> {
-                        event.preventDefault();
-                        showTab(id);
-                    })
-                    .textContent(title)
-                .end()
-            .end()
-        .build();
-
-        Element pane = new Elements.Builder()
-            .div()
-                .id(id)
-                .css(tabPane)
-                .attr(UIConstants.ROLE, "tabpanel") //NON-NLS
-            .end()
-        .build();
-        // @formatter:on
+        HTMLElement tab = li().attr(UIConstants.ROLE, "presentation") //NON-NLS
+                .add(a("#" + id)
+                        .aria(UIConstants.CONTROLS, id)
+                        .attr(UIConstants.ROLE, UIConstants.TAB)
+                        .data(UIConstants.TOGGLE, UIConstants.TAB)
+                        .on(click, event -> {
+                            event.preventDefault();
+                            showTab(id);
+                        })
+                        .textContent(title))
+                .asElement();
+        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").asElement(); //NON-NLS
 
         tabs.appendChild(tab);
         panes.appendChild(pane);
         paneElements.put(id, pane);
-        if (tabs.getChildren().getLength() == 1) {
-            tab.getClassList().add(active);
+        if (tabs.childNodes.getLength() == 1) {
+            tab.classList.add(active);
         }
-        if (panes.getChildren().getLength() == 1) {
-            pane.getClassList().add(active);
+        if (panes.childNodes.getLength() == 1) {
+            pane.classList.add(active);
         }
         fillPane(pane, elements);
 
         return this;
     }
 
-    private List<Element> elements(Element first, Element... rest) {
-        List<Element> elements = new ArrayList<>();
+    private List<HTMLElement> elements(HTMLElement first, HTMLElement... rest) {
+        List<HTMLElement> elements = new ArrayList<>();
         elements.add(first);
         if (rest != null) {
             elements.addAll(asList(rest));
@@ -139,8 +125,8 @@ public class Tabs implements IsElement {
         return elements;
     }
 
-    private void fillPane(Element pane, Iterable<Element> elements) {
-        for (Element element : elements) {
+    private void fillPane(HTMLElement pane, Iterable<HTMLElement> elements) {
+        for (HTMLElement element : elements) {
             pane.appendChild(element);
         }
     }
@@ -155,13 +141,13 @@ public class Tabs implements IsElement {
         }
     }
 
-    public void setContent(final int index, Element first, Element... rest) {
+    public void setContent(final int index, HTMLElement first, HTMLElement... rest) {
         setContent(indexToId.get(index), first, rest);
     }
 
-    public void setContent(final String id, Element first, Element... rest) {
+    public void setContent(final String id, HTMLElement first, HTMLElement... rest) {
         if (id != null) {
-            Element pane = paneElements.get(id);
+            HTMLElement pane = paneElements.get(id);
             if (pane != null) {
                 Elements.removeChildrenFrom(pane);
                 fillPane(pane, elements(first, rest));

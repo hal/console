@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.config.Environment;
@@ -56,7 +56,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     }
 
     @Override
-    public Element asElement() {
+    public HTMLElement asElement() {
         return form.asElement();
     }
 
@@ -69,7 +69,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
 
     @Override
     protected void onShow(final UploadContext context) {
-        String filename = context.file.getName();
+        String filename = context.file.name;
 
         form.edit(new ModelNode());
         nameItem.setValue(filename);

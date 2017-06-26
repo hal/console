@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -49,6 +47,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -130,15 +133,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         tabs.add(Ids.JCA_ARCHIVE_VALIDATION_TAB, avType, avForm.asElement());
         tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
 
-        // @formatter:off
-        Element configLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(Names.CONFIGURATION).end()
-                .p().textContent(resources.constants().jcaConfiguration()).end()
+        HTMLElement configLayout = div()
+                .add(h(1).textContent(Names.CONFIGURATION))
+                .add(p().textContent(resources.constants().jcaConfiguration()))
                 .add(tabs)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JCA_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
@@ -159,15 +158,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .prepareRemove(f -> presenter.removeSingleton(tracerType, TRACER_TEMPLATE, f))
                 .build();
 
-        // @formatter:off
-        Element tracerLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(tracerType).end()
-                .p().textContent(tracerMetadata.getDescription().getDescription()).end()
+        HTMLElement tracerLayout = div()
+                .add(h(1).textContent(tracerType))
+                .add(p().textContent(tracerMetadata.getDescription().getDescription()))
                 .add(tracerForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JCA_TRACER_ENTRY, tracerType, fontAwesome("bug"), tracerLayout);
         registerAttachable(tracerForm);
@@ -210,16 +205,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
                         Arrays.asList(WORKMANAGER_TEMPLATE, DISTRIBUTED_WORKMANAGER_TEMPLATE)));
 
-        // @formatter:off
-        Element bcLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(bcType).end()
-                .p().textContent(bcMetadata.getDescription().getDescription()).end()
+        HTMLElement bcLayout = div()
+                .add(h(1).textContent(bcType))
+                .add(p().textContent(bcMetadata.getDescription().getDescription()))
                 .add(bcTable)
                 .add(bcForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
@@ -244,15 +235,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
 
-        // @formatter:off
-        Element wmLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(wmType).end()
-                .p().textContent(wmMetadata.getDescription().getDescription()).end()
+        HTMLElement wmLayout = div()
+                .add(h(1).textContent(wmType))
+                .add(p().textContent(wmMetadata.getDescription().getDescription()))
                 .add(wmTable)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, tableButtonFactory, resources);
         registerAttachable(wmTpEditor);
@@ -300,16 +287,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 })
                 .build();
 
-        // @formatter:off
-        Element dwmLayout = new Elements.Builder()
-            .div()
-                .h(1).textContent(dwmType).end()
-                .p().textContent(dwmMetadata.getDescription().getDescription()).end()
+        HTMLElement dwmLayout = div()
+                .add(h(1).textContent(dwmType))
+                .add(p().textContent(dwmMetadata.getDescription().getDescription()))
                 .add(dwmTable)
                 .add(dwmForm)
-            .end()
-        .build();
-        // @formatter:on
+                .asElement();
 
         dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, tableButtonFactory,
                 resources);
@@ -326,17 +309,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         // ------------------------------------------------------ main layout
 
-        // @formatter:off
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .row()
-                .column()
-                    .addAll(navigation.panes())
-                .end()
-            .end();
-        // @formatter:on
-
-        Element root = layoutBuilder.build();
-        initElement(root);
+        initElement(row()
+                .add(column()
+                        .addAll(navigation.panes())));
     }
 
     @Override

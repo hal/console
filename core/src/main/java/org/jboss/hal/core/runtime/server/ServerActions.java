@@ -24,7 +24,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
+import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -36,12 +36,12 @@ import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -209,7 +209,7 @@ public class ServerActions {
                 resources.messages().restartStandaloneQuestion(server.getName()), () -> {
                     // execute the restart with a little delay to ensure the confirmation dialog is closed
                     // before the next dialog is opened (only one modal can be open at a time!)
-                    Browser.getWindow().setTimeout(() -> {
+                    DomGlobal.setTimeout((o) -> {
 
                         prepare(server, Action.RESTART);
                         BlockingDialog pendingDialog = DialogFactory
@@ -227,7 +227,7 @@ public class ServerActions {
                                             @Override
                                             public void onSuccess() {
                                                 // wait a little bit before event handlers try to use the restarted server
-                                                Browser.getWindow().setTimeout(() -> {
+                                                DomGlobal.setTimeout((o) -> {
                                                     pendingDialog.close();
                                                     finish(Server.STANDALONE, Result.SUCCESS, Message.success(
                                                             resources.messages()
