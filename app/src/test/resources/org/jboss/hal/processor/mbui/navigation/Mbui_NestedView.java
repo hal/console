@@ -6,9 +6,10 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.gwt.elemento.template.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -29,6 +30,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -39,7 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 final class Mbui_NestedView extends NestedView {
 
     private final Metadata metadata0;
-    private final Map<String, Element> handlebarElements;
+    private final Map<String, HTMLElement> handlebarElements;
 
     @SuppressWarnings("unchecked")
     Mbui_NestedView(MbuiContext mbuiContext) {
@@ -57,29 +61,24 @@ final class Mbui_NestedView extends NestedView {
         navigation = new VerticalNavigation();
         navigation.addPrimary("item", "Main Item", "fa fa-list-ul");
 
-        Elements.Builder subItemBuilder = new Elements.Builder()
-                .section()
-                .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                .rememberAs("html0")
-                .end()
+        HTMLElement html0;
+        HTMLElement subItemElement = section()
+                .add(html0 = div()
+                        .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
+                        .asElement())
                 .add(form)
-                .end();
-        Element subItemElement = subItemBuilder.build();
-        handlebarElements.put("html0", subItemBuilder.referenceFor("html0"));
+                .asElement();
+        handlebarElements.put("html0", html0);
         navigation.addSecondary("item", "sub-item", "Sub Item", subItemElement);
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .addAll(navigation.panes())
-                .end()
-                .end();
+        HTMLElement root = row()
+                .add(column()
+                        .addAll(navigation.panes()))
+                .asElement();
 
         registerAttachable(navigation);
         registerAttachable(form);
 
-        Element root = layoutBuilder.build();
         initElement(root);
     }
 

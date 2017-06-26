@@ -6,9 +6,10 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental.dom.Element;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.gwt.elemento.template.TemplateUtil;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -28,6 +29,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.hal.ballroom.LayoutBuilder.column;
+import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -38,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 final class Mbui_SuggestHandlerView extends SuggestHandlerView {
 
     private final Metadata metadata0;
-    private final Map<String, Element> handlebarElements;
+    private final Map<String, HTMLElement> handlebarElements;
 
     @SuppressWarnings("unchecked")
     Mbui_SuggestHandlerView(MbuiContext mbuiContext) {
@@ -62,21 +66,19 @@ final class Mbui_SuggestHandlerView extends SuggestHandlerView {
         form.getFormItem("bar").registerSuggestHandler(new ReadChildrenAutoComplete(
                 mbuiContext.dispatcher(), mbuiContext.statementContext(), formTemplates));
 
-        LayoutBuilder layoutBuilder = new LayoutBuilder()
-                .row()
-                .column()
-                .div()
-                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
-                .rememberAs("html0")
-                .end()
-                .add(form)
-                .end()
-                .end();
-        handlebarElements.put("html0", layoutBuilder.referenceFor("html0"));
+        HTMLElement html0;
+        HTMLElement root = row()
+                .add(column()
+                        .add(html0 = div()
+                                .innerHtml(SafeHtmlUtils.fromSafeConstant("<h1>Form</h1>"))
+                                .asElement())
+                        .add(form)
+                )
+                .asElement();
+        handlebarElements.put("html0", html0);
 
         registerAttachable(form);
 
-        Element root = layoutBuilder.build();
         initElement(root);
     }
 
