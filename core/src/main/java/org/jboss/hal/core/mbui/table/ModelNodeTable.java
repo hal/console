@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import elemental2.core.Array;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -28,7 +27,6 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.table.ButtonHandler;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -53,7 +51,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.ballroom.JsHelper.asJsArray;
+import static java.util.Arrays.asList;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -157,11 +155,11 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         @EsReturn("TableBuilder")
         public Builder<T> jsAdd(final String type,
                 @EsParam("AddressTemplate|string") Object template,
-                @EsParam("string[]") Array<String> attributes,
+                @EsParam("string[]") String[] attributes,
                 @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
             TableButtonFactory buttonFactory = Core.INSTANCE.tableButtonFactory();
             String id = Ids.build(Ids.uniqueId(), Ids.ADD_SUFFIX);
-            return button(buttonFactory.add(id, type, jsTemplate("add", template), JsHelper.asList(attributes),
+            return button(buttonFactory.add(id, type, jsTemplate("add", template), asList(attributes),
                     callback));
         }
 
@@ -204,8 +202,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
          */
         @JsMethod(name = "columns")
         @EsReturn("TableBuilder")
-        public Builder<T> jsColumns(@EsParam("string[]") Array<String> columns) {
-            return columns(JsHelper.asList(columns));
+        public Builder<T> jsColumns(@EsParam("string[]") String[] columns) {
+            return columns(asList(columns));
         }
 
         private AddressTemplate jsTemplate(String method, Object template) {
@@ -305,18 +303,22 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         return asElement();
     }
 
+    @SuppressWarnings("unchecked")
     @JsProperty(name = "rows")
-    public Array<T> jsRows() {
-        return asJsArray(getRows());
+    public T[] jsRows() {
+        List<T> rows = getRows();
+        return rows.toArray((T[]) new Object[rows.size()]);
     }
 
+    @SuppressWarnings("unchecked")
     @JsProperty(name = "selectedRows")
-    public Array<T> jsSelectedRows() {
-        return asJsArray(selectedRows());
+    public T[] jsSelectedRows() {
+        List<T> rows = selectedRows();
+        return rows.toArray((T[]) new Object[rows.size()]);
     }
 
     @JsMethod(name = "update")
-    public void jsUpdate(Array<T> rows) {
-        update(JsHelper.asList(rows));
+    public void jsUpdate(T[] rows) {
+        update(asList(rows));
     }
 }

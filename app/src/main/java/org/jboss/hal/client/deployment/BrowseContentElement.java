@@ -424,7 +424,7 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void selectNode(SelectionContext<ContentEntry> selection) {
-        if (selection.selected.getLength() != 0) {
+        if (selection.selected.length != 0) {
             if (selection.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
                 deploymentPreview();
 

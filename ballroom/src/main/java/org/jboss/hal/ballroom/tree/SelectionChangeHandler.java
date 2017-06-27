@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
 import elemental2.dom.Event;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
@@ -35,7 +34,7 @@ public interface SelectionChangeHandler<T> {
         public String action;
         public Api<T> api;
         public Node<T> node;
-        public Array<String> selected;
+        public String[] selected;
     }
 
     /**

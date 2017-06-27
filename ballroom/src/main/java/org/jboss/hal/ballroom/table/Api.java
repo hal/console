@@ -18,7 +18,6 @@ package org.jboss.hal.ballroom.table;
 import java.util.Collections;
 import java.util.List;
 
-import elemental2.core.Array;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
@@ -28,12 +27,12 @@ import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
 import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
@@ -254,7 +253,7 @@ class Api<T> {
      */
     native Api<T> select();
 
-    native Array<T> toArray();
+    native T[] toArray();
 
 
     // ------------------------------------------------------ overlay methods
@@ -291,9 +290,9 @@ class Api<T> {
                                         e = (HTMLElement) e.parentNode;
                                     }
                                     if (e != null) {
-                                        Array<T> array = rows(e).data().toArray();
-                                        if (array.getLength() != 0) {
-                                            columnAction.action(array.getAt(0));
+                                        T[] array = rows(e).data().toArray();
+                                        if (array.length != 0) {
+                                            columnAction.action(array[0]);
                                         }
                                     }
                                 });
@@ -316,8 +315,8 @@ class Api<T> {
     @JsOverlay
     final List<T> selectedRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
-        Array<T> selection = rows(selectorModifier).data().toArray();
-        if (selection == null || selection.getLength() == 0) {
+        T[] selection = rows(selectorModifier).data().toArray();
+        if (selection == null || selection.length == 0) {
             return Collections.emptyList();
         }
         return asList(selection);

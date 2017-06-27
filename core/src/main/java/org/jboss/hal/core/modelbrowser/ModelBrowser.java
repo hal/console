@@ -25,7 +25,6 @@ import javax.inject.Provider;
 
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -64,10 +63,11 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
@@ -106,7 +106,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             this.node = child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
-            this.parents = child == null ? Collections.emptyList() : asList(child.parents);
+            this.parents = child == null ? emptyList() : asList(child.parents);
             if (!parents.isEmpty()) {
                 Collections.reverse(parents);
                 parents.remove(0); // get rif of the artificial root
@@ -236,13 +236,14 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         childrenPanel.attach();
     }
 
+    @SuppressWarnings("unchecked")
     private void emptyTree() {
         Context context = new Context(ResourceAddress.root(), Collections.emptySet());
         Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
                 .asyncFolder()
                 .build();
 
-        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Array<>()));
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(new Node[0]));
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
         tree.attach();
@@ -334,15 +335,15 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             return;
         }
 
-        filter.disabled = context.selected.getLength() == 0 ||
+        filter.disabled = context.selected.length == 0 ||
                 !context.node.data.isFullyQualified() ||
                 context.node.id.equals(MODEL_BROWSER_ROOT);
-        refresh.disabled = context.selected.getLength() == 0;
-        collapse.disabled = context.selected.getLength() == 0;
+        refresh.disabled = context.selected.length == 0;
+        collapse.disabled = context.selected.length == 0;
 
         resourcePanel.hide();
         childrenPanel.hide();
-        if (context.selected.getLength() == 0) {
+        if (context.selected.length == 0) {
             updateBreadcrumb(null);
         } else {
             updateNode(context.node);

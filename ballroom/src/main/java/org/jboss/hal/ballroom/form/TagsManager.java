@@ -17,16 +17,14 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.List;
 
-import elemental2.core.Array;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.JsHelper;
 
-import static elemental.events.KeyboardEvent.KeyCode.ENTER;
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.CSS.tagManagerTag;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
@@ -58,7 +56,7 @@ class TagsManager {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        Array<Integer> delimiters;
+        int[] delimiters;
         String tagsContainer;
         String tagClass;
         public Validator validator;
@@ -71,8 +69,10 @@ class TagsManager {
 
         public static Options get() {
             Options options = new Options();
-            options.delimiters = new Array<>();
-            options.delimiters.setAt(0, ENTER);
+            options.delimiters = new int[]{13}; // enter
+            // options.delimiters.setAt(0, 44); // comma
+            // options.delimiters.setAt(0, 9); // tab
+            // options.delimiters.setAt(0, 13); // enter
             options.tagClass = tagManagerTag;
             options.validator = null;
             return options;
@@ -89,7 +89,7 @@ class TagsManager {
         public native void on(String event, RefreshListener refreshListener);
 
         @JsMethod(name = TAGS_MANAGER)
-        public native Array<String> tagsManagerGetTags(String getTags);
+        public native String[] tagsManagerGetTags(String getTags);
 
         @JsMethod(name = TAGS_MANAGER)
         public native void tagsManagerRemoveTags(String removeTags);
@@ -110,7 +110,7 @@ class TagsManager {
 
         @JsOverlay
         public final List<String> getTags() {
-            return JsHelper.asList(tagsManagerGetTags(TAGS));
+            return asList(tagsManagerGetTags(TAGS));
         }
 
         @JsOverlay

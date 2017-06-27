@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.dmr;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import elemental2.core.Array;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -247,8 +246,9 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafeList")
     @EsReturn("ModelNode[]")
-    public static Array<ModelNode> jsFailSafeList(final ModelNode modelNode, final String path) {
-        return asJsArray(failSafeList(modelNode, path));
+    public static ModelNode[] jsFailSafeList(final ModelNode modelNode, final String path) {
+        List<ModelNode> nodes = failSafeList(modelNode, path);
+        return nodes.toArray(new ModelNode[nodes.size()]);
     }
 
     /**
@@ -262,8 +262,9 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "failSafePropertyList")
     @EsReturn("Property[]")
-    public static Array<Property> jsFailSafePropertyList(final ModelNode modelNode, final String path) {
-        return asJsArray(failSafePropertyList(modelNode, path));
+    public static Property[] jsFailSafePropertyList(final ModelNode modelNode, final String path) {
+        List<Property> properties = failSafePropertyList(modelNode, path);
+        return properties.toArray(new Property[properties.size()]);
     }
 
     /**
@@ -275,28 +276,7 @@ public final class ModelNodeHelper {
      */
     @JsMethod(name = "asNamedNodes")
     @EsReturn("NamedNode[]")
-    public static Array<NamedNode> jsAsNamedNodes(@EsParam("Property[]") Array<Property> properties) {
-        return asJsArray(asNamedNodes(asList(properties)));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Array<T> asJsArray(List<T> list) {
-        Array<T> array = new Array<>();
-        for (T t : list) {
-            array.push(t);
-        }
-        return array;
-    }
-
-    @SuppressWarnings("Duplicates")
-    private static <T> List<T> asList(Array<T> array) {
-        if (array != null) {
-            List<T> list = new ArrayList<>(array.getLength());
-            for (int i = 0; i < array.getLength(); i++) {
-                list.add(array.getAt(i));
-            }
-            return list;
-        }
-        return new ArrayList<>(); // Do not replace with Collections.emptyList()!
+    public static NamedNode[] jsAsNamedNodes(@EsParam("Property[]") Property[] properties) {
+        return Arrays.stream(properties).map(NamedNode::new).toArray(NamedNode[]::new);
     }
 }

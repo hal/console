@@ -42,8 +42,8 @@ public class InstalledExtension extends NamedNode {
         for (String key : json.keys()) {
             if (STYLESHEETS.equals(key)) {
                 JsonArray array = json.getArray(STYLESHEETS);
-                for (int i = 0; i < array.length(); i++) {
-                    node.get(key).add(array.getString(i));
+                for (int j = 0; j < array.length(); j++) {
+                    node.get(key).add(array.getString(j));
                 }
             } else {
                 node.get(key).set(json.getString(key));

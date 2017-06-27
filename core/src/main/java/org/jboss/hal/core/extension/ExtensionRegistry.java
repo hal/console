@@ -26,7 +26,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLHeadElement;
@@ -36,7 +35,6 @@ import elemental2.dom.XMLHttpRequest;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Point;
@@ -118,7 +116,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @JsIgnore
     public void inject(final String script, final List<String> stylesheets) {
-        jsInject(script, JsHelper.asJsArray(stylesheets));
+        jsInject(script, stylesheets.toArray(new String[stylesheets.size()]));
     }
 
     @Override
@@ -204,14 +202,14 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
      */
     @JsMethod(name = "inject")
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public void jsInject(String script, @EsParam("string[]") Array<String> stylesheets) {
+    public void jsInject(String script, @EsParam("string[]") String[] stylesheets) {
         HTMLHeadElement head = DomGlobal.document.head;
 
-        if (stylesheets != null && stylesheets.getLength() != 0) {
-            for (int i = 0; i < stylesheets.getLength(); i++) {
+        if (stylesheets != null && stylesheets.length != 0) {
+            for (String stylesheet : stylesheets) {
                 HTMLLinkElement linkElement = (HTMLLinkElement) DomGlobal.document.createElement("link");
                 linkElement.rel = "stylesheet";
-                linkElement.href = stylesheets.getAt(i);
+                linkElement.href = stylesheet;
                 head.appendChild(linkElement);
             }
         }

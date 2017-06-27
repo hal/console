@@ -15,17 +15,12 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import java.util.List;
-
-import elemental2.core.Array;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPENDENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUGGEST_CAPABILITIES;
@@ -52,23 +47,23 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
                 (query, response) -> dispatcher.execute(operation,
                         result -> {
                             if (result.isDefined()) {
-                                List<String> items = result.asList().stream()
+                                String[] items = result.asList().stream()
                                         .map(ModelNode::asString)
                                         .filter(value -> SHOW_ALL_VALUE.equals(query) ||
                                                 value.toLowerCase().contains(query.toLowerCase()))
-                                        .collect(toList());
-                                response.response(JsHelper.asJsArray(items));
+                                        .toArray(String[]::new);
+                                response.response(items);
                             } else {
-                                response.response(new Array<>());
+                                response.response(new String[0]);
                             }
                         },
                         (op, failure) -> {
                             logger.error(ERROR_MESSAGE, capability, template, failure);
-                            response.response(new Array<>());
+                            response.response(new String[0]);
                         },
                         (op, exception) -> {
                             logger.error(ERROR_MESSAGE, capability, template, exception.getMessage());
-                            response.response(new Array<>());
+                            response.response(new String[0]);
                         }))
                 .build();
 

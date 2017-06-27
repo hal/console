@@ -161,7 +161,7 @@ public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> {
             if (!"ready".equals(selectionContext.action)) {
-                boolean hasSelection = selectionContext.selected.getLength() != 0;
+                boolean hasSelection = selectionContext.selected.length != 0;
                 boolean validSelection = hasSelection && selectionContext.node.data.hasDetails;
                 Elements.setVisible(hint, !validSelection);
                 Elements.setVisible(details.asElement(), validSelection);

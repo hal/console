@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental2.core.Array;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -48,6 +47,6 @@ public class Options<T> {
     }
 
 
-    public Array<String> plugins;
+    public String[] plugins;
     public Core<T> core;
 }

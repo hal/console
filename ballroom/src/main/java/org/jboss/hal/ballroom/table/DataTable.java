@@ -25,10 +25,10 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.form.Form;
 import org.jetbrains.annotations.NonNls;
 
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
@@ -100,8 +100,10 @@ public class DataTable<T> implements Table<T> {
         this.id = id;
         this.options = options;
         this.tableElement = table().id(id).css(dataTable, table, tableStriped, tableBordered, hover).asElement();
-        for (Api.Button<T> button : options.buttons.buttons) {
-            button.table = this;
+        if (options.buttons != null && options.buttons.buttons != null) {
+            for (Api.Button<T> button : options.buttons.buttons) {
+                button.table = this;
+            }
         }
     }
 
@@ -203,7 +205,7 @@ public class DataTable<T> implements Table<T> {
     @Override
     public List<T> getRows() {
         SelectorModifier selectorModifier = new SelectorModifierBuilder().page(SelectorModifier.Page.all).build();
-        return JsHelper.asList(api().rows(selectorModifier).data().toArray());
+        return asList(api().rows(selectorModifier).data().toArray());
     }
 
     @Override

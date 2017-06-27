@@ -68,8 +68,7 @@ public class Tree<T> implements IsElement, Attachable {
         this.options = initOptions();
         this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
-                Array<Node<T>> rootNodes = new Array<>();
-                rootNodes.push(root);
+                Node<T>[] rootNodes = new Node[]{root};
                 callback.result(rootNodes);
             } else {
                 data.load(node, callback);
@@ -102,9 +101,7 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
         options.core.themes.url = false;
-        options.plugins = new Array<>();
-        options.plugins.push("search"); //NON-NLS
-        options.plugins.push("wholerow"); //NON-NLS
+        options.plugins = new String[]{"search", "wholerow"}; //NON-NLS
         return options;
     }
 

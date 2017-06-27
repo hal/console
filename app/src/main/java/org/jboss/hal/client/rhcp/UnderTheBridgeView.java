@@ -40,7 +40,7 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -141,7 +141,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
 
         HTMLElement layout = row()
                 .add(column()
-                        .add(header().textContent("Under the Bridge"))
+                        .add(h(1).textContent("Under the Bridge"))
                         .add(p().textContent(description.getDescription()))
                         .add(p().innerHtml(
                                 new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +

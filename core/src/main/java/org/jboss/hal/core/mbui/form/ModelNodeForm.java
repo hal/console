@@ -16,7 +16,6 @@
 package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.core.Array;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -71,15 +69,16 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.ballroom.JsHelper.asJsMap;
-import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -144,7 +143,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         @JsIgnore
         public Builder<T> include(final String[] attributes) {
-            includes.addAll(Arrays.asList(attributes));
+            includes.addAll(asList(attributes));
             return this;
         }
 
@@ -162,7 +161,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         @JsIgnore
         public Builder<T> exclude(final String[] attributes) {
-            excludes.addAll(Arrays.asList(attributes));
+            excludes.addAll(asList(attributes));
             return this;
         }
 
@@ -405,14 +404,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         /** Includes the specified attributes */
         @JsMethod(name = "include")
         @EsReturn("FormBuilder")
-        public Builder<T> jsInclude(Array<String> attributes) {
+        public Builder<T> jsInclude(@EsParam("string[]") String[] attributes) {
             return include(asList(attributes));
         }
 
         /** Excludes the specified attributes */
         @JsMethod(name = "exclude")
         @EsReturn("FormBuilder")
-        public Builder<T> jsExclude(Array<String> attributes) {
+        public Builder<T> jsExclude(@EsParam("string[]") String[] attributes) {
             return exclude(asList(attributes));
         }
 

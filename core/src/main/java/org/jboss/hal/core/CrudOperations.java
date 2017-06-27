@@ -26,7 +26,6 @@ import javax.inject.Provider;
 import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.Array;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
@@ -60,6 +59,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -1394,7 +1394,7 @@ public class CrudOperations {
     @JsFunction
     public interface JsReadChildrenCallback {
 
-        void execute(Array<Property> children);
+        void execute(Property[] children);
     }
 
     /**
@@ -1411,26 +1411,26 @@ public class CrudOperations {
     @JsMethod(name = "addDialog")
     public void jsAddDialog(String type,
             @EsParam("AddressTemplate|ResourceAddress|string") Object address,
-            @EsParam("string[]") Array<String> attributes,
+            @EsParam("string[]") String[] attributes,
             @EsParam("function(name: string, address: ResourceAddress)") AddCallback callback) {
 
         String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
         if (address instanceof AddressTemplate) {
             if (attributes != null) {
-                add(id, type, ((AddressTemplate) address), JsHelper.asList(attributes), callback);
+                add(id, type, ((AddressTemplate) address), asList(attributes), callback);
             } else {
                 add(id, type, ((AddressTemplate) address), callback);
             }
         } else if (address instanceof ResourceAddress) {
             AddressTemplate template = AddressTemplate.of(((ResourceAddress) address));
             if (attributes != null) {
-                add(id, type, template, JsHelper.asList(attributes), callback);
+                add(id, type, template, asList(attributes), callback);
             } else {
                 add(id, type, template, callback);
             }
         } else if (address instanceof String) {
             if (attributes != null) {
-                add(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
+                add(id, type, (AddressTemplate.of((String) address)), asList(attributes), callback);
             } else {
                 add(id, type, (AddressTemplate.of((String) address)), callback);
             }
@@ -1481,26 +1481,26 @@ public class CrudOperations {
      */
     @JsMethod(name = "addSingletonDialog")
     public void jsAddSingletonDialog(String type, Object address,
-            @EsParam("string[]") Array<String> attributes,
+            @EsParam("string[]") String[] attributes,
             @EsParam("function(address: ResourceAddress)") AddSingletonCallback callback) {
 
         String id = Ids.build(type, Ids.ADD_SUFFIX, Ids.uniqueId());
         if (address instanceof AddressTemplate) {
             if (attributes != null) {
-                addSingleton(id, type, ((AddressTemplate) address), JsHelper.asList(attributes), callback);
+                addSingleton(id, type, ((AddressTemplate) address), asList(attributes), callback);
             } else {
                 addSingleton(id, type, ((AddressTemplate) address), callback);
             }
         } else if (address instanceof ResourceAddress) {
             AddressTemplate template = AddressTemplate.of(((ResourceAddress) address));
             if (attributes != null) {
-                addSingleton(id, type, template, JsHelper.asList(attributes), callback);
+                addSingleton(id, type, template, asList(attributes), callback);
             } else {
                 addSingleton(id, type, template, callback);
             }
         } else if (address instanceof String) {
             if (attributes != null) {
-                addSingleton(id, type, (AddressTemplate.of((String) address)), JsHelper.asList(attributes), callback);
+                addSingleton(id, type, (AddressTemplate.of((String) address)), asList(attributes), callback);
             } else {
                 addSingleton(id, type, (AddressTemplate.of((String) address)), callback);
             }
@@ -1593,7 +1593,7 @@ public class CrudOperations {
     public void jsReadChildren(@EsParam("AddressTemplate|ResourceAddress|string") Object address, String childType,
             @EsParam("function(children: Property[])") JsReadChildrenCallback callback) {
 
-        ReadChildrenCallback rcc = children -> callback.execute(JsHelper.asJsArray(children));
+        ReadChildrenCallback rcc = children -> callback.execute(children.toArray(new Property[children.size()]));
         if (address instanceof AddressTemplate) {
             readChildren((AddressTemplate) address, childType, rcc);
         } else if (address instanceof ResourceAddress) {

@@ -17,10 +17,6 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.JsHelper;
-
-import static java.util.stream.Collectors.toList;
-
 /**
  * @author Harald Pehl
  */
@@ -28,10 +24,10 @@ public class StaticAutoComplete extends AutoComplete {
 
     public StaticAutoComplete(final List<String> values) {
         Options options = new OptionsBuilder<String>((query, response) -> {
-            List<String> matches = values.stream()
+            String[] matches = values.stream()
                     .filter(value -> SHOW_ALL_VALUE.equals(query) || value.toLowerCase().contains(query.toLowerCase()))
-                    .collect(toList());
-            response.response(JsHelper.asJsArray(matches));
+                    .toArray(String[]::new);
+            response.response(matches);
         }).build();
         init(options);
     }

@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental2.core.Array;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
@@ -83,12 +82,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 result -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(new Array<>());
+                                    response.response(new JsonObject[0]);
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(new Array<>());
+                                    response.response(new JsonObject[0]);
                                 });
 
                     } else {
@@ -96,12 +95,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 (CompositeResult result) -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(new Array<>());
+                                    response.response(new JsonObject[0]);
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(new Array<>());
+                                    response.response(new JsonObject[0]);
                                 });
                     }
                 })
