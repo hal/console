@@ -27,6 +27,7 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
+import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.gwt.elemento.core.InputType.text;
@@ -62,6 +63,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private final FormItemValidation<Boolean> expressionValidation;
         private Boolean backup;
         private HandlerRegistration expressionHandler;
+        private HandlerRegistration resolveHandler;
 
 
         // ------------------------------------------------------ ui code
@@ -103,6 +105,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     .on(click, event -> switchToExpressionMode())
                     .add(i().css(fontAwesome("link")))
                     .asElement();
+            expressionHandler = bind(expressionModeInput, change,
+                    event -> modifyExpressionValue(expressionModeInput.value));
 
             // it's types to boolean, but used to validate the expression
             this.expressionValidation = value -> {
@@ -138,6 +142,12 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         public void detach() {
             super.detach();
             if (attached) {
+                if (expressionHandler != null) {
+                    expressionHandler.removeHandler();
+                }
+                if (resolveHandler != null) {
+                    resolveHandler.removeHandler();
+                }
                 inputElement.classList.remove(bootstrapSwitch);
                 SwitchBridge.Bridge.element(inputElement).destroy();
             }
@@ -177,7 +187,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         // ------------------------------------------------------ decorations
 
-
         @Override
         void applyDefault(final String defaultValue) {
             if (attached) {
@@ -191,16 +200,18 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         protected void applyExpression(final ExpressionContext expressionContext) {
             Elements.failSafeRemove(inputContainer, normalModeContainer);
             Elements.lazyAppend(inputContainer, expressionModeContainer);
-            expressionHandler = bind(resolveExpressionButton, click,
-                    event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
+            if (resolveHandler != null) {
+                resolveHandler = bind(resolveExpressionButton, click,
+                        event -> expressionContext.callback.resolveExpression(expressionModeInput.value));
+            }
             addValidationHandler(expressionValidation);
         }
 
         @Override
         void unapplyExpression() {
-            if (expressionHandler != null) {
-                expressionHandler.removeHandler();
-                expressionHandler = null;
+            if (resolveHandler != null) {
+                resolveHandler.removeHandler();
+                resolveHandler = null;
             }
             Elements.failSafeRemove(inputContainer, expressionModeContainer);
             Elements.lazyAppend(inputContainer, normalModeContainer);
