@@ -16,12 +16,14 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.google.common.base.Splitter;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
@@ -49,6 +51,7 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -60,9 +63,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class ResourceView implements HasPresenter<ElytronPresenter> {
-
-    public static final String HAL_INDEX = "hal_index";
+public class ResourceView2 implements HasPresenter<ElytronPresenter> {
 
     public static class Builder {
 
@@ -128,11 +129,24 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
             return this;
         }
 
-        public ResourceView build() {
-            return new ResourceView(this);
+        public ResourceView2 build() {
+            return new ResourceView2(this);
         }
 
     }
+
+
+    private static class PageBean {
+
+        private String attribute;
+        private ButtonHandler<NamedNode> tableAddButtonHandler;
+
+        public PageBean(final String attribute, final ButtonHandler<NamedNode> tableAddButtonHandler) {
+            this.attribute = attribute;
+            this.tableAddButtonHandler = tableAddButtonHandler;
+        }
+    }
+
 
     private Table<NamedNode> table;
     private Form<NamedNode> form;
@@ -141,8 +155,8 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     private Metadata metadata;
     private Map<String, List<FormItem>> includesComplexAttributes = new HashMap<>();
     private Map<String, ModelNodeForm<NamedNode>> complexAttributeForms = new HashMap<>();
-    private Map<String, ButtonHandler<NamedNode>> includesComplexAttributesPages = new HashMap<>();
-    private Map<String, ResourceView> complexAttributesPages = new HashMap<>();
+    private List<PageBean> includesComplexAttributesPages = new ArrayList<>();
+    private Map<String, ResourceView2> complexAttributesPages = new HashMap<>();
     private Builder builder;
     private String primaryLevelIcon;
     private Pages pages;
@@ -150,7 +164,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     private boolean subPage;
     private String selectedParentResource;
 
-    private ResourceView(Builder builder) {
+    private ResourceView2(Builder builder) {
         this.builder = builder;
 
         if (builder.metadataRegistry != null) {
@@ -166,7 +180,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      *
      * @param icon The string of the icon, example: <pre>"fa fa-file-o"</pre>
      */
-    public ResourceView primaryLevel(String icon) {
+    public ResourceView2 primaryLevel(String icon) {
         primaryLevelIcon = icon;
         return this;
     }
@@ -177,12 +191,12 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      *
      * @param complexAttributeName The OBJECT attribute name.
      */
-    public ResourceView addComplexAttributeAsTab(String complexAttributeName) {
+    public ResourceView2 addComplexAttributeAsTab(String complexAttributeName) {
         includesComplexAttributes.put(complexAttributeName, Collections.emptyList());
         return this;
     }
 
-    public ResourceView markAsSubPage() {
+    public ResourceView2 markAsSubPage() {
         subPage = true;
         return this;
     }
@@ -195,7 +209,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      * @param complexAttributeName The OBJECT attribute name.
      * @param unboundFormItems     The list of custom form items.
      */
-    public ResourceView addComplexAttributeAsTab(String complexAttributeName, List<FormItem> unboundFormItems) {
+    public ResourceView2 addComplexAttributeAsTab(String complexAttributeName, List<FormItem> unboundFormItems) {
         includesComplexAttributes.put(complexAttributeName, unboundFormItems);
         return this;
     }
@@ -205,7 +219,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      *
      * @return
      */
-    public ResourceView addComplexAttributeAsPage(String complexAttributeName) {
+    public ResourceView2 addComplexAttributeAsPage(String complexAttributeName) {
         addComplexAttributeAsPage(complexAttributeName, null);
         return this;
     }
@@ -217,16 +231,16 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      *
      * @return
      */
-    public ResourceView addComplexAttributeAsPage(String complexAttributeName,
+    public ResourceView2 addComplexAttributeAsPage(String complexAttributeName,
             final ButtonHandler<NamedNode> tableAddButtonHandler) {
-        includesComplexAttributesPages.put(complexAttributeName, tableAddButtonHandler);
+        includesComplexAttributesPages.add(new PageBean(complexAttributeName, tableAddButtonHandler));
         return this;
     }
 
-    public ResourceView create() {
-        this.form = createForm(builder.id, metadata, builder.title);
-        ModelNodeTable.Builder<NamedNode> tableBuilder = createTable(Ids.build(builder.primaryId, builder.id), metadata,
-                builder.template, builder.title, builder.tableButtonFactory);
+    public ResourceView2 create() {
+        this.form = createForm(builder.id, metadata, builder.title, builder.template);
+        ModelNodeTable.Builder<NamedNode> tableBuilder = createTable(builder.id, metadata, builder.template,
+                builder.title, builder.tableButtonFactory);
 
         // must initialize tabs instance as it is used in an inner class
         final Tabs tabs = new Tabs();
@@ -238,55 +252,25 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
         // create the form to support the complex attribute as tab
         includesComplexAttributes.forEach((attribute, unboundFormItems) -> {
-            // check if the attribute is in enhanced syntax attribute1.attribute2
-            final String attributeName = attribute.indexOf('.') > -1 ? attribute.substring(attribute.indexOf(".") + 1) : attribute;
-            String complexAttributeLabel = new LabelBuilder().label(attributeName);
-            String _path = ATTRIBUTES;
-            // if is an enhanced syntax, the path to search for attributes must consider the additional attribute
-            if (attribute.contains("."))
-                _path = ATTRIBUTES + "/" + attribute.substring(0, attribute.indexOf(".")) + "/" + VALUE_TYPE;
-            ModelNode attributeDescription = metadata.getDescription().findAttribute(_path, attributeName).getValue();
+            String complexAttributeLabel = new LabelBuilder().label(attribute);
+            ModelNode attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute).getValue();
             ModelNodeForm.Builder<NamedNode> formBuilder = new ComplexAttributeForm(builder.id, metadata,
                     attribute).builder();
 
             // only adds the "reset" button if the complex attribute is nillable=true
             boolean enableReset = attributeDescription.get(NILLABLE).asBoolean();
             if (enableReset) {
-                formBuilder.prepareReset(form -> {
-                    if (table.hasSelection()) {
-                        String complexAttributeName = attribute;
-                        // if on a sub-page, it means there are two complex attributes attribute_1 of type LIST
-                        // and attribute_2 that is the complex attribute we want to reset.
-                        // this way the complex attribute name will be assembled in the following form:
-                        // attribute_1[index].attribute_2
-                        // one example of this scenario is jdbc-realm of elytron subsystem, it contains principal-query
-                        // as attribute of type LIST and nested bcrypt-mapper of type OBJECT
-                        if (subPage)
-                            complexAttributeName = builder.id + "[" + table.selectedRow().getName() + "]." + attribute;
-
-                        // if on a sub-page the resource name was set as selectedParentResource
-                        String resourceName = subPage ? selectedParentResource : table.selectedRow().getName();
-                        this.presenter.resetComplexAttribute(complexAttributeLabel, resourceName, complexAttributeName,
-                                metadata, () -> presenter.reload());
-                    }
-                });
+                Set<String> attributeToReset = new HashSet<>();
+                attributeToReset.add(attribute);
+                formBuilder.prepareReset(form -> this.presenter
+                        .resetComplexAttribute(complexAttributeLabel, table.selectedRow().getName(), builder.template,
+                                attributeToReset,
+                                metadata, () -> presenter.reload()));
             }
 
             formBuilder.onSave((form, changedValues) -> {
-                String complexAttributeName = attribute;
-                // if on a sub-page, it means there are two complex attributes attribute_1 of type LIST
-                // and attribute_2 that is the complex attribute we want to reset.
-                // this way the complex attribute name will be assembled in the following form:
-                // attribute_1[index].attribute_2
-                // one example of this scenario is jdbc-realm of elytron subsystem, it contains principal-query
-                // as attribute of type LIST and nested bcrypt-mapper of type OBJECT
-                if (subPage)
-                    complexAttributeName = builder.id + "[" + table.selectedRow().getName() + "]." + attribute;
-
-                // if on a sub-page the resource name was set as selectedParentResource
-                String resourceName = subPage ? selectedParentResource : table.selectedRow().getName();
-
-                this.presenter.saveComplexForm(complexAttributeLabel, resourceName, complexAttributeName,
+                this.presenter.saveComplexForm(complexAttributeLabel, table.selectedRow().getName(), attribute,
+                        builder.template,
                         form.getUpdatedModel(), metadata);
             });
 
@@ -305,45 +289,30 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
 
         // create the page to support the list of complex attribute
-
-        includesComplexAttributesPages.forEach((attribute, tableAddButtonHandler) -> {
-            //String attribute = pageBean.attribute;
+        includesComplexAttributesPages.forEach(pageBean -> {
+            String attribute = pageBean.attribute;
             ModelNode attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute).getValue();
             boolean listType = attributeDescription.get(ModelDescriptionConstants.TYPE).asType().equals(ModelType.LIST);
             if (listType) {
                 String complexAttributeLabel = new LabelBuilder().label(attribute);
                 tableBuilder.column(complexAttributeLabel, row -> showPage(attribute));
-                // this repackaged metadata is used on the Attributes form, so only the nested attributes are used
                 Metadata _metadataComplexAttribute = metadata.repackageComplexAttribute(attribute, false, false, true);
-
-                // this repackaged metadata is used to add a new complex object as part of the parent complex attribute
-                // of type LIST, this repackaged description must use the operations/add/request-properties path
                 Metadata _metadataComplexAttributeReq = metadata.repackageComplexAttribute(attribute, true, false,
                         false);
 
-                if (tableAddButtonHandler == null) {
-                    tableAddButtonHandler = table1 ->
-                        // lazy load the parent resource name from the map
-                        presenter.launchAddDialog( s -> {
-                            return complexAttributesPages.get(attribute).selectedParentResource;
-                        }, attribute, _metadataComplexAttributeReq, complexAttributeLabel);
+                if (pageBean.tableAddButtonHandler == null) {
+                    pageBean.tableAddButtonHandler = table1 ->
+                            presenter.launchAddDialog(builder.template, s -> {
+                                return complexAttributesPages.get(attribute).selectedParentResource;
+                            }, pageBean.attribute, _metadataComplexAttributeReq, complexAttributeLabel);
                 }
 
-                ResourceView subResource = new ResourceView.Builder(builder.tableButtonFactory, builder.id, attribute,
+                ResourceView2 subResource = new ResourceView2.Builder(builder.tableButtonFactory, builder.id, attribute,
                         complexAttributeLabel, builder.template, builder.elytronView, () -> presenter.reload())
                         .setMetadata(_metadataComplexAttribute)
-                        .setTableAddButtonHandler(tableAddButtonHandler)
+                        .setTableAddButtonHandler(pageBean.tableAddButtonHandler)
                         .build()
                         .markAsSubPage();
-
-                // if the attributes list contains any nested attribute of type OBJECT it is added as a tab
-                _metadataComplexAttribute.getDescription().get(ATTRIBUTES).asPropertyList().forEach(property -> {
-                    String attribute2 = property.getName();
-                    boolean objectType = ModelType.OBJECT.equals(property.getValue().get(TYPE).asType());
-                    if (objectType) {
-                        subResource.addComplexAttributeAsTab(attribute2);
-                    }
-                });
 
                 complexAttributesPages.put(attribute, subResource);
             }
@@ -365,7 +334,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         pages = new Pages(idPage, elementLayout);
         complexAttributesPages.forEach((attribute, subResource) -> {
             String complexAttributeLabel = new LabelBuilder().label(attribute);
-            ResourceView _subResourceView = subResource.create();
+            ResourceView2 _subResourceView = subResource.create();
             String idSubPage = Ids.build(attribute, Ids.PAGE_SUFFIX);
             pagesId.put(attribute, idSubPage);
             pages.addPage(idPage, idSubPage,
@@ -413,6 +382,14 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         if (table.hasSelection()) { pages.showPage(pagesId.get(attribute)); }
     }
 
+    public Collection<ModelNodeForm<NamedNode>> getComplexAttributeForms() {
+        return complexAttributeForms.values();
+    }
+
+    public ModelNodeForm<NamedNode> getComplexAttributeForm(String complexAttributeName) {
+        return complexAttributeForms.get(complexAttributeName);
+    }
+
     public void bindTableToForm() {
         table.bindForm(form);
 
@@ -424,23 +401,23 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 // bind the table item to the complex attribute forms
                 complexAttributeForms.forEach((attribute, complexForm) -> {
 
-                    // check if the attribute is in enhanced syntax attribute1.attribute2
-                    List<String>  enhancedAttribute = Splitter.on(".").splitToList(attribute);
-                    ModelNode nodeValue;
-                    if (attribute.contains(".")) {
-                        nodeValue = selectedTableItem.get(enhancedAttribute.get(0)).get(enhancedAttribute.get(1));
-                    } else {
-                        nodeValue = selectedTableItem.get(attribute);
-                    }
-                    complexForm.view(new NamedNode(nodeValue));
+                    complexForm.view(new NamedNode(selectedTableItem.get(attribute)));
 
                     // update unbound form items
                     this.includesComplexAttributes.forEach((complexAttribute, formItems) -> {
                         formItems.forEach(formItem -> {
+
                             if (selectedTableItem.get(attribute).hasDefined(formItem.getName())) {
-                                formItem.setValue(selectedTableItem.get(attribute).get(formItem.getName()));
-                            } else {
-                                formItem.clearValue();
+                                // this special handling is necessary as the NewItemAttributesItem may provide
+                                // a different key,value attribute names.
+                                if (formItem instanceof NewItemAttributesItem) {
+                                    NewItemAttributesItem niaItem = (NewItemAttributesItem) formItem;
+                                    ModelNode niaNode = selectedTableItem.get(attribute).get(formItem.getName());
+
+                                    niaItem.setValue(niaNode);
+                                } else {
+                                    formItem.clearValue();
+                                }
                             }
                         });
                     });
@@ -452,33 +429,15 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                     _subResource.selectedParentResource = selectedTableItem.getName();
                     if (selectedTableItem.hasDefined(attribute)) {
                         _subResource.bindTableToForm();
-                        List<ModelNode> modelList = selectedTableItem.get(attribute).asList();
-
-                        List<NamedNode> subModel = new ArrayList<>(modelList.size());
-
-                        boolean modelHasNameAttribute = _subResource.metadata.getDescription().get(ATTRIBUTES).hasDefined(NAME);
-                        // as the model doesn't contains a "name" attribute we will use an index to identify it
-                        // create NamedNode with index based name, as it will be later used to correctly identify
-                        // the item in the table, when removing or modifying the attributes.
-                        for (int i = 0; i < modelList.size(); i++) {
-                            ModelNode node = modelList.get(i);
-                            node.get(HAL_INDEX).set(i);
-                            String _name = modelHasNameAttribute ? node.get(NAME).asString() : String.valueOf(i);
-                            NamedNode nn = new NamedNode(_name, node);
-                            subModel.add(nn);
-                        }
-                        _subResource.table.update(subModel);
-                    } else {
-                        _subResource.form.clear();
+                        List<ModelNode> modelNodes = selectedTableItem.get(attribute).asList();
+                        List<NamedNode> aa = modelNodes.stream().map(NamedNode::new).collect(toList());
+                        _subResource.getTable().update(aa);
                     }
                 });
             } else {
                 this.form.clear();
                 complexAttributeForms.forEach((attribute, complexForm) -> complexForm.clear());
-                complexAttributesPages.forEach((attribute, resourceView) -> {
-                    resourceView.table.clear();
-                    resourceView.form.clear();
-                });
+                complexAttributesPages.forEach((attribute, resourceView) -> resourceView.table.clear());
             }
         });
 
@@ -490,16 +449,17 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         complexAttributesPages.forEach((attribute, resourceView) -> resourceView.setPresenter(presenter));
     }
 
-    private ModelNodeForm<NamedNode> createForm(String id, Metadata metadata, String title) {
-        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(id, Ids.FORM_SUFFIX), metadata)
+    private ModelNodeForm<NamedNode> createForm(String id, Metadata metadata, String title, AddressTemplate template) {
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(id, Ids.FORM_SUFFIX),
+                metadata)
                 .onSave((_form, changedValues) -> {
                     if (subPage) {
-                        // on a sub page the save form must consider the resource name and the complex attribute, it is
-                        // is represented as builder.id
-                        presenter.saveFormPage(selectedParentResource, builder.id, metadata, _form.getModel(), changedValues);
+                        // TODO use write-attribute with index based on complex attribute
+                        // write-attribute(name=match-rules[idx],value{})
+                        //presenter.listAdd(title, selectedParentResource, id, template, changedValues, metadata);
                     } else {
                         String name = table.selectedRow().getName();
-                        presenter.saveForm(title, name, changedValues, metadata);
+                        presenter.saveForm(title, name, template, changedValues, metadata);
                     }
                 })
                 .build();
@@ -538,16 +498,23 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
         Button<NamedNode> remove;
         if (subPage) {
-            // on a sub-page, it is used the list-remove operation on an index of a complex attribute.
             remove = tableButtonFactory.remove(builder.template, _table -> {
-                NamedNode selectedModel = _table.selectedRow();
-                // the index is the NamedNode name
-                int index = selectedModel.remove(HAL_INDEX).asInt();
-                presenter.listRemove(title, selectedParentResource, builder.id, index, template);
+
+                String name = _table.selectedRow().getName();
+                // if the resource doesn't contain a NAME attribute, use the model node value to display
+                if (UNDEFINED.equals(name.substring(0, UNDEFINED.length()))) {
+                    name = _table.selectedRow().asModelNode().asString();
+                }
+
+                // TODO: implement the table.api.selectedRowIndex()
+                int index = 0;
+                presenter.listRemove(title, selectedParentResource, id, index, template);
+
             });
         } else {
             remove = tableButtonFactory.remove(title, template, _table -> _table.selectedRow().getName(),
                     builder.tableRemoveCallback);
+
         }
 
         ModelNodeTable.Builder<NamedNode> tableBuilder = new ModelNodeTable.Builder<NamedNode>(
@@ -556,19 +523,15 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 .button(remove);
 
         if (subPage) {
-            // on a sub-page there is no need for an attribute named "name", so we inpect all attributes of the
-            // complex attribute and add all of them as columns of the table, if they are not LIST or OBJECT
             metadata.getDescription().get(ATTRIBUTES).asPropertyList().forEach(property -> {
                 String attribute = property.getName();
-                boolean simpleTypes = !ModelType.OBJECT.equals(property.getValue().get(TYPE).asType());
-                simpleTypes = simpleTypes && !ModelType.LIST.equals(property.getValue().get(TYPE).asType());
-                if (simpleTypes)
-                    tableBuilder.column(attribute,
+                tableBuilder.column(attribute,
                         (cell, type, row, meta) -> row.hasDefined(attribute) ? row.get(attribute).asString() : "");
             });
         } else {
             tableBuilder.column(NAME, (cell, type, row, meta) -> row.getName());
         }
+
         return tableBuilder;
     }
 

@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
@@ -75,6 +76,49 @@ public class Metadata {
         this.securityContext = securityContext;
         this.description = description;
         this.capabilities = capabilities;
+    }
+
+    @JsIgnore
+    public Metadata forComplexAttribute(String name) {
+        ModelNode payload = new ModelNode();
+        payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
+
+        Property complexAttribute = description.findAttribute(ATTRIBUTES, name);
+        if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {
+            complexAttribute.getValue().get(VALUE_TYPE).asPropertyList().forEach(nestedAttribute -> {
+                String nestedName = name + "." + nestedAttribute.getName();
+                payload.get(ATTRIBUTES).get(nestedName).set(nestedAttribute.getValue());
+            });
+        }
+
+        SecurityContext parentContext = this.securityContext.get();
+        SecurityContext attributeContext = new SecurityContext(new ModelNode()) {
+            @Override
+            public boolean isReadable() {
+                return parentContext.isReadable(name);
+            }
+
+            @Override
+            public boolean isWritable() {
+                return parentContext.isWritable(name);
+            }
+
+            @Override
+            public boolean isReadable(final String attribute) {
+                return isReadable(); // if the complex attribute is readable all nested attributes are readable as well
+            }
+
+            @Override
+            public boolean isWritable(final String attribute) {
+                return isWritable(); // if the complex attribute is writable all nested attributes are writable as well
+            }
+
+            @Override
+            public boolean isExecutable(final String operation) {
+                return parentContext.isExecutable(operation);
+            }
+        };
+        return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
     }
 
     // @formatter:off

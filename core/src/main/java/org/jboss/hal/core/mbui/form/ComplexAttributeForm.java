@@ -20,19 +20,19 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 
 /**
- *
+ * Form for the attributes of a complex attribute (type {@code OBJECT}
  * A helper class to create ModelNodeForm that uses an OBJECT attribute that contains other nested attributes, the
  * metadata is re-constructed to repackage the nested attributes in the attributes path.
  *
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class ComplexAttributeModelNodeForm {
+public class ComplexAttributeForm {
 
     private Metadata metadata;
     private String parentId;
     private String complexAttributeName;
 
-    public ComplexAttributeModelNodeForm(String parentId, Metadata metadata, String complexAttributeName) {
+    public ComplexAttributeForm(String parentId, Metadata metadata, String complexAttributeName) {
         this.parentId = parentId;
         this.complexAttributeName = complexAttributeName;
         this.metadata = metadata.repackageComplexAttribute(complexAttributeName, false, false, true);
