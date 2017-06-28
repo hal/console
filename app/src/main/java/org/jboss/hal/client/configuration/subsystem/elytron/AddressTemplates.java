@@ -150,7 +150,7 @@ interface AddressTemplates {
     public static final AddressTemplate CUSTOM_ROLE_DECODER_ADDRESS = AddressTemplate.of(CUSTOM_ROLE_DECODER);
     public static final AddressTemplate SIMPLE_ROLE_DECODER_ADDRESS = AddressTemplate.of(SIMPLE_ROLE_DECODER);
 
-    // ======== other settings: authentication, stores, dir-context, SSL
+    // ======== other settings: authentication, stores, dir-context, SSL, logs
 
     public static final String KEY_STORE = ELYTRON_SUBSYSTEM + "/key-store=*";
     public static final String KEY_MANAGER = ELYTRON_SUBSYSTEM + "/key-manager=*";
@@ -163,10 +163,13 @@ interface AddressTemplates {
     public static final String PROVIDER_LOADER = ELYTRON_SUBSYSTEM + "/provider-loader=*";
     public static final String AGGREGATE_PROVIDERS = ELYTRON_SUBSYSTEM + "/aggregate-providers=*";
     public static final String SECURITY_DOMAIN = ELYTRON_SUBSYSTEM + "/security-domain=*";
-    public static final String SECURITY_PROPERTY = ELYTRON_SUBSYSTEM + "/security-property=*";
     public static final String DIR_CONTEXT = ELYTRON_SUBSYSTEM + "/dir-context=*";
     public static final String AUTHENTICATION_CONTEXT = ELYTRON_SUBSYSTEM + "/authentication-context=*";
     public static final String AUTHENTICATION_CONF = ELYTRON_SUBSYSTEM + "/authentication-configuration=*";
+    public static final String FILE_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/file-audit-log=*";
+    public static final String SIZE_FILE_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/size-rotating-file-audit-log=*";
+    public static final String PERIODIC_FILE_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/periodic-rotating-file-audit-log=*";
+    public static final String SYSLOG_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/syslog-audit-log=*";
 
     public static final AddressTemplate KEY_STORE_ADDRESS = AddressTemplate.of(KEY_STORE);
     public static final AddressTemplate KEY_MANAGER_ADDRESS = AddressTemplate.of(KEY_MANAGER);
@@ -180,9 +183,14 @@ interface AddressTemplates {
     public static final AddressTemplate AGGREGATE_PROVIDERS_ADDRESS = AddressTemplate.of(AGGREGATE_PROVIDERS);
 
     public static final AddressTemplate SECURITY_DOMAIN_ADDRESS = AddressTemplate.of(SECURITY_DOMAIN);
-    public static final AddressTemplate SECURITY_PROPERTY_ADDRESS = AddressTemplate.of(SECURITY_PROPERTY);
     public static final AddressTemplate DIR_CONTEXT_ADDRESS = AddressTemplate.of(DIR_CONTEXT);
     public static final AddressTemplate AUTHENTICATION_CONTEXT_ADDRESS = AddressTemplate.of(AUTHENTICATION_CONTEXT);
     public static final AddressTemplate AUTHENTICATION_CONF_ADDRESS = AddressTemplate.of(AUTHENTICATION_CONF);
+
+    public static final AddressTemplate FILE_AUDIT_LOG_ADDRESS = AddressTemplate.of(FILE_AUDIT_LOG);
+    public static final AddressTemplate SIZE_FILE_AUDIT_LOG_ADDRESS = AddressTemplate.of(SIZE_FILE_AUDIT_LOG);
+    public static final AddressTemplate PERIODIC_FILE_AUDIT_LOG_ADDRESS = AddressTemplate.of(PERIODIC_FILE_AUDIT_LOG);
+    public static final AddressTemplate SYSLOG_AUDIT_LOG_ADDRESS = AddressTemplate.of(SYSLOG_AUDIT_LOG);
+
     // @formatter:on
 }

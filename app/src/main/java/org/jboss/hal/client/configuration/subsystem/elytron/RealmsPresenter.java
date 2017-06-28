@@ -15,18 +15,23 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -35,10 +40,14 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -48,11 +57,15 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 
@@ -92,6 +105,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
     // @formatter:on
 
+    private EventBus eventBus;
+    private Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -103,12 +118,15 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             final RealmsPresenter.MyView view,
             final RealmsPresenter.MyProxy proxy,
             final Finder finder,
+            final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
@@ -215,48 +233,100 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     @Override
-    public void saveForm(final String title, final String name, final AddressTemplate template,
-            final Map<String, Object> changedValues, final Metadata metadata) {
+    public void saveForm(final String title, final String name, final Map<String, Object> changedValues,
+            final Metadata metadata) {
 
-        ResourceAddress address = template.resolve(statementContext, name);
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
         crud.save(title, name, address, changedValues, metadata, () -> reload());
     }
 
     @Override
-    public void saveComplexForm(final String title, final String name, String complexAttributeName, final AddressTemplate template,
+    public void saveComplexForm(final String title, final String name, String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
 
-        ResourceAddress address = template.resolve(statementContext, name);
-        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        String type = new LabelBuilder().label(metadata.getTemplate().lastName());
+        crud.save(type, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
-    public void listAdd(final String title, final String name, String complexAttributeName, final AddressTemplate template,
-            final Map<String, Object> changedValues, final Metadata metadata) {
-
-        ResourceAddress address = template.resolve(statementContext, name);
-        crud.listAdd(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+    public void saveFormPage(String resource, String listAttributeName, Metadata metadata,
+            NamedNode payload, Map<String, Object> changedValues) {
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resource);
+        OperationFactory operationFactory = new OperationFactory(
+                name -> listAttributeName + "[" + payload.getName() + "]." + name);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        dispatcher.execute(operations, (CompositeResult result) -> {
+            String type = new LabelBuilder().label(metadata.getTemplate().lastName()) + ": " + resource;
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifySingleResourceSuccess(type)));
+            reload();
+        });
     }
 
+
     @Override
-    public void resetComplexAttribute(final String type, final String name, final AddressTemplate template,
-            final Set<String> attributes,
+    public void resetComplexAttribute(final String type, final String name, final String attribute,
             final Metadata metadata, final Callback callback) {
 
-        ResourceAddress address = template.resolve(statementContext, name);
-        crud.reset(type, name, address, attributes, metadata, callback);
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        // check if the attribute to reset is in enhanced syntax form: attribute.attribute2
+        if (attribute.contains(".")) {
+
+            Operation operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
+                    .param(NAME, attribute)
+                    .build();
+
+            SafeHtml question = resources.messages().resetConfirmationQuestion(type);
+            DialogFactory.showConfirmation(
+                resources.messages().resetConfirmationTitle(type), question,
+                () -> dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(eventBus, Message.success(resources.messages().resetResourceSuccess(type, name)));
+                    reload();
+            }));
+
+
+        } else {
+            Set<String> attributeToReset = new HashSet<>();
+            attributeToReset.add(attribute);
+            crud.reset(type, name, address, attributeToReset, metadata, callback);
+        }
     }
 
     public void launchOnAddJDBCRealm() {
 
+        String complexAttributeName = "principal-query";
+        String id = Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
+        Metadata metadata = metadataRegistry.lookup(JDBC_REALM_ADDRESS);
+        metadata = metadata.repackageComplexAttribute(complexAttributeName, true, true, true);
+        AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle("JDBC Realm"),
+                metadata, (name, payload) -> {
+
+                ModelNode nestedAttrs = new ModelNode();
+                // as the "principal-query" attribute description is repackaged in the root node
+                // it needs to be re-assembled as a nested attribute of "principal-query"
+                payload.asPropertyList().forEach(property -> {
+                    String _name = property.getName();
+                    if (complexAttributeName.equals(_name.substring(0, complexAttributeName.length()))) {
+                        _name = _name.substring(complexAttributeName.length() + 1);
+                        nestedAttrs.get(_name).set(property.getValue());
+                        payload.remove(property.getName());
+                    }
+                });
+                payload.get(complexAttributeName).add(nestedAttrs);
+
+                crud.add("JDBC Realm", name, JDBC_REALM_ADDRESS, payload, (name1, address) -> reload());
+        });
+        dialog.show();
+
     }
 
     @Override
-    public void launchAddDialog(AddressTemplate template, Function<String,String> resourceNameFunction, String complexAttributeName,
+    public void launchAddDialog(Function<String,String> resourceNameFunction, String complexAttributeName,
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = template.resolve(statementContext, resourceNameFunction.apply(null));
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()

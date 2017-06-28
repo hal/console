@@ -23,11 +23,8 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -57,11 +54,8 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
     private RealmsPresenter presenter;
 
     @Inject
-    public RealmsView(final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public RealmsView(final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -124,12 +118,12 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
 
         jdbcRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_JDBC_REALM, "JDBC Realm", JDBC_REALM_ADDRESS, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
-                .build()
-                .addComplexAttributeAsPage("principal-query")
-                .create();
+            .setNavigation(navigation)
+            .setMetadataRegistry(metadataRegistry)
+            .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
+            .build()
+            .addComplexAttributeAsPage("principal-query")
+            .create();
 
         keystoreRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_KEYSTORE_REALM, "Keystore Realm", KEYSTORE_REALM_ADDRESS, this, () -> presenter.reload())
@@ -139,10 +133,6 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
                 .build()
                 .create();
 
-        // TODO: implement support to add attr1.attr2 enhanced syntax
-        //ldapRealmView.addComplexAttributeAsTab("identity-mapping.user-password-mapper", true);
-        //ldapRealmView.addComplexAttributeAsTab("identity-mapping.otp-credential-mapper", true);
-        //ldapRealmView.addComplexAttributeAsTab("identity-mapping.x509-credential-mapper", true);
         ldapRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_LDAP_REALM, "LDAP Realm", LDAP_REALM_ADDRESS, this, () -> presenter.reload())
                 .setNavigation(navigation)
@@ -150,7 +140,10 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
                 .setTableAddButtonHandler(table -> presenter.addLDAPRealm())
                 .build()
                 .addComplexAttributeAsTab("identity-mapping")
-                .create();
+                .addComplexAttributeAsTab("identity-mapping.user-password-mapper")
+            .addComplexAttributeAsTab("identity-mapping.otp-credential-mapper")
+            .addComplexAttributeAsTab("identity-mapping.x509-credential-mapper")
+            .create();
 
         propertiesRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
                 Ids.ELYTRON_PROPERTIES_REALM, "Properties Realm", PROPERTIES_REALM_ADDRESS, this,
