@@ -170,6 +170,8 @@ interface AddressTemplates {
     public static final String SIZE_FILE_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/size-rotating-file-audit-log=*";
     public static final String PERIODIC_FILE_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/periodic-rotating-file-audit-log=*";
     public static final String SYSLOG_AUDIT_LOG = ELYTRON_SUBSYSTEM + "/syslog-audit-log=*";
+    public static final String POLICY = ELYTRON_SUBSYSTEM + "/policy=*";
+    public static final String AGGREGATE_SECURITY_EVENT_LISTENER = ELYTRON_SUBSYSTEM + "/aggregate-security-event-listener=*";
 
     public static final AddressTemplate KEY_STORE_ADDRESS = AddressTemplate.of(KEY_STORE);
     public static final AddressTemplate KEY_MANAGER_ADDRESS = AddressTemplate.of(KEY_MANAGER);
@@ -191,6 +193,8 @@ interface AddressTemplates {
     public static final AddressTemplate SIZE_FILE_AUDIT_LOG_ADDRESS = AddressTemplate.of(SIZE_FILE_AUDIT_LOG);
     public static final AddressTemplate PERIODIC_FILE_AUDIT_LOG_ADDRESS = AddressTemplate.of(PERIODIC_FILE_AUDIT_LOG);
     public static final AddressTemplate SYSLOG_AUDIT_LOG_ADDRESS = AddressTemplate.of(SYSLOG_AUDIT_LOG);
+    public static final AddressTemplate POLICY_ADDRESS = AddressTemplate.of(POLICY);
+    public static final AddressTemplate AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS = AddressTemplate.of(AGGREGATE_SECURITY_EVENT_LISTENER);
 
     // @formatter:on
 }

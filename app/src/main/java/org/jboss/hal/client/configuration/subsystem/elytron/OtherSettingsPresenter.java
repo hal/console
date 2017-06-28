@@ -73,7 +73,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         KEY_STORE, KEY_MANAGER, SERVER_SSL_CONTEXT, CLIENT_SSL_CONTEXT, TRUST_MANAGER, CREDENTIAL_STORE,
         FILTERING_KEY_STORE, LDAP_KEY_STORE, PROVIDER_LOADER, AGGREGATE_PROVIDERS, SECURITY_DOMAIN,
         DIR_CONTEXT, AUTHENTICATION_CONTEXT, AUTHENTICATION_CONF, FILE_AUDIT_LOG, SIZE_FILE_AUDIT_LOG,
-        PERIODIC_FILE_AUDIT_LOG, SYSLOG_AUDIT_LOG
+        PERIODIC_FILE_AUDIT_LOG, SYSLOG_AUDIT_LOG, POLICY, AGGREGATE_SECURITY_EVENT_LISTENER
     })
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
@@ -97,6 +97,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         void updateSizeFileAuditLog(List<NamedNode> model);
         void updatePeriodicFileAuditLog(List<NamedNode> model);
         void updateSyslogAuditLog(List<NamedNode> model);
+        void updatePolicy(List<NamedNode> model);
+        void updateAggregateSecurityEventListener(List<NamedNode> model);
     }
     // @formatter:on
 
@@ -164,7 +166,9 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 "file-audit-log",
                 "size-rotating-file-audit-log",
                 "periodic-rotating-file-audit-log",
-                "syslog-audit-log"
+                "syslog-audit-log",
+                "policy",
+                "aggregate-security-event-listener"
                 ),
                 result -> {
                     // @formatter:off
@@ -187,6 +191,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateSizeFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updatePeriodicFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateSyslogAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updatePolicy(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAggregateSecurityEventListener(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // @formatter:on
                 });
     }

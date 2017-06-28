@@ -18,13 +18,18 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Messages;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -58,6 +63,10 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     // dir context
     private ResourceView dirContextView;
 
+    // policy
+    private ResourceView policyView;
+    private ResourceView aggregateSecurityEventListenerView;
+
     // logs
     private ResourceView fileAuditLogView;
     private ResourceView sizeFileAuditLogView;
@@ -65,6 +74,9 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private ResourceView syslogAuditLogView;
 
     private OtherSettingsPresenter presenter;
+
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
 
     @Inject
     OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory) {
@@ -75,12 +87,13 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         String primaryIdStores = "stores-item";
         String primaryIdSsl = "ssl-item";
         String primaryIdAuth = "authentication-item";
-        String primaryIdDirCtx = "dir-context-item";
         String primaryIdLogs = "logs-item";
+        String primaryIdOther = "other-item";
         navigation.addPrimary(primaryIdStores, "Stores", "fa fa-exchange");
         navigation.addPrimary(primaryIdSsl, "SSL", "fa fa-file-o");
         navigation.addPrimary(primaryIdAuth, "Authentication", "fa fa-terminal");
         navigation.addPrimary(primaryIdLogs, "Logs", "fa fa-folder-o");
+        navigation.addPrimary(primaryIdOther, "Other Settings", "fa fa-address-card-o");
 
         credentialStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_ADDRESS, this,
@@ -209,17 +222,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .addComplexAttributeAsPage("match-rules")
                 .create();
 
-        dirContextView = new ResourceView.Builder(tableButtonFactory, primaryIdDirCtx,
-                Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_ADDRESS, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .addComplexAttributeAsTab("credential-reference")
-                .primaryLevel("fa fa-bug")
-                .create();
-
         fileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
                 Ids.ELYTRON_FILE_AUDIT_LOG, "File Audit Log", FILE_AUDIT_LOG_ADDRESS, this,
                 () -> presenter.reload())
@@ -256,6 +258,48 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .build()
                 .create();
 
+        aggregateSecurityEventListenerView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
+                Ids.ELYTRON_AGGREGATE_SECURITY_EVENT_LISTENER, "Aggregate Security Event Listener",
+                AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+        aggregateSecurityEventListenerView.getForm().addFormValidation(form -> {
+            FormItem<NamedNode> item = form.getFormItem("security-event-listeners");
+            List<String> valueList = (List<String>) item.getValue();
+            if (valueList.size() < 2) {
+                item.showError(MESSAGES.validationAtLeast("2"));
+                return ValidationResult.invalid(CONSTANTS.formErrors());
+            }
+            return ValidationResult.OK;
+        });
+
+        // other settings
+
+        policyView = new ResourceView.Builder(tableButtonFactory, primaryIdOther,
+                Ids.ELYTRON_POLICY, "Policy", POLICY_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsPage("jacc-policy")
+                .addComplexAttributeAsPage("custom-policy")
+                .create();
+
+        dirContextView = new ResourceView.Builder(tableButtonFactory, primaryIdOther,
+                Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("credential-reference")
+                .create();
+
         initElement(row()
                 .add(column()
                         .addAll(navigation.panes())));
@@ -289,6 +333,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         sizeFileAuditLogView.bindTableToForm();
         periodicFileAuditLogView.bindTableToForm();
         syslogAuditLogView.bindTableToForm();
+        policyView.bindTableToForm();
+        aggregateSecurityEventListenerView.bindTableToForm();
     }
 
     @Override
@@ -383,6 +429,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     }
 
     @Override
+    public void updatePolicy(final List<NamedNode> model) {
+        policyView.update(model);
+    }
+
+    @Override
+    public void updateAggregateSecurityEventListener(final List<NamedNode> model) {
+        aggregateSecurityEventListenerView.update(model);
+    }
+
+    @Override
     public void setPresenter(final OtherSettingsPresenter presenter) {
         this.presenter = presenter;
 
@@ -404,5 +460,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         sizeFileAuditLogView.setPresenter(presenter);
         periodicFileAuditLogView.setPresenter(presenter);
         syslogAuditLogView.setPresenter(presenter);
+        policyView.setPresenter(presenter);
+        aggregateSecurityEventListenerView.setPresenter(presenter);
     }
 }

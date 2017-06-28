@@ -209,6 +209,8 @@ public interface Ids {
     String ELYTRON_AUTHENTICATION_CONTEXT = build(ELYTRON, "authentication-context");
     String ELYTRON_AUTHENTICATION_CONFIGURATION = build(ELYTRON, "authentication-configuration");
     String ELYTRON_DIR_CONTEXT = build(ELYTRON, "dir-context");
+    String ELYTRON_POLICY = build(ELYTRON, "policy");
+    String ELYTRON_AGGREGATE_SECURITY_EVENT_LISTENER = build(ELYTRON, "aggregate-security-event-listener");
 
     String ELYTRON_AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY  = build(ELYTRON, "aggregate-http-server-mechanism-factory");
     String ELYTRON_AGGREGATE_SASL_SERVER_FACTORY  = build(ELYTRON, "aggregate-sasl-server-factory");
