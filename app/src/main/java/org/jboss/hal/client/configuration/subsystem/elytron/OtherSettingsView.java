@@ -48,7 +48,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private ResourceView keyManagerView;
     private ResourceView providerLoaderView;
     private ResourceView securityDomainView;
-    private ResourceView securityPropertyView;
     private ResourceView serverSslContextView;
     private ResourceView trustManagerView;
 
@@ -58,6 +57,12 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
     // dir context
     private ResourceView dirContextView;
+
+    // logs
+    private ResourceView fileAuditLogView;
+    private ResourceView sizeFileAuditLogView;
+    private ResourceView periodicFileAuditLogView;
+    private ResourceView syslogAuditLogView;
 
     private OtherSettingsPresenter presenter;
 
@@ -71,9 +76,11 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         String primaryIdSsl = "ssl-item";
         String primaryIdAuth = "authentication-item";
         String primaryIdDirCtx = "dir-context-item";
+        String primaryIdLogs = "logs-item";
         navigation.addPrimary(primaryIdStores, "Stores", "fa fa-exchange");
         navigation.addPrimary(primaryIdSsl, "SSL", "fa fa-file-o");
         navigation.addPrimary(primaryIdAuth, "Authentication", "fa fa-terminal");
+        navigation.addPrimary(primaryIdLogs, "Logs", "fa fa-folder-o");
 
         credentialStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_ADDRESS, this,
@@ -172,15 +179,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .addComplexAttributeAsPage("realms")
                 .create();
 
-        securityPropertyView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_SECURITY_PROPERTY, "Security Property", SECURITY_PROPERTY_ADDRESS, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
-
         trustManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
                 Ids.ELYTRON_TRUST_MANAGER, "Trust Manager", TRUST_MANAGER_ADDRESS, this,
                 () -> presenter.reload())
@@ -222,6 +220,42 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .primaryLevel("fa fa-bug")
                 .create();
 
+        fileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
+                Ids.ELYTRON_FILE_AUDIT_LOG, "File Audit Log", FILE_AUDIT_LOG_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        sizeFileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
+                Ids.ELYTRON_SIZE_AUDIT_LOG, "File Size Audit Log", SIZE_FILE_AUDIT_LOG_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        periodicFileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
+                Ids.ELYTRON_PERIODIC_AUDIT_LOG, "File Periodic Audit Log", PERIODIC_FILE_AUDIT_LOG_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
+        syslogAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
+                Ids.ELYTRON_SYSLOG_AUDIT_LOG, "Syslog Audit Log", SYSLOG_AUDIT_LOG_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .create();
+
         initElement(row()
                 .add(column()
                         .addAll(navigation.panes())));
@@ -247,11 +281,14 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         providerLoaderView.bindTableToForm();
         serverSslContextView.bindTableToForm();
         securityDomainView.bindTableToForm();
-        securityPropertyView.bindTableToForm();
         trustManagerView.bindTableToForm();
         authenticationConfigurationView.bindTableToForm();
         authenticationContextView.bindTableToForm();
         dirContextView.bindTableToForm();
+        fileAuditLogView.bindTableToForm();
+        sizeFileAuditLogView.bindTableToForm();
+        periodicFileAuditLogView.bindTableToForm();
+        syslogAuditLogView.bindTableToForm();
     }
 
     @Override
@@ -311,11 +348,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     }
 
     @Override
-    public void updateSecurityProperty(final List<NamedNode> model) {
-        securityPropertyView.update(model);
-    }
-
-    @Override
     public void updateDirContext(final List<NamedNode> model) {
         dirContextView.update(model);
     }
@@ -328,6 +360,26 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     @Override
     public void updateAuthenticationConfiguration(final List<NamedNode> model) {
         authenticationConfigurationView.update(model);
+    }
+
+    @Override
+    public void updateFileAuditLog(final List<NamedNode> model) {
+        fileAuditLogView.update(model);
+    }
+
+    @Override
+    public void updateSizeFileAuditLog(final List<NamedNode> model) {
+        sizeFileAuditLogView.update(model);
+    }
+
+    @Override
+    public void updatePeriodicFileAuditLog(final List<NamedNode> model) {
+        periodicFileAuditLogView.update(model);
+    }
+
+    @Override
+    public void updateSyslogAuditLog(final List<NamedNode> model) {
+        syslogAuditLogView.update(model);
     }
 
     @Override
@@ -344,10 +396,13 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         providerLoaderView.setPresenter(presenter);
         serverSslContextView.setPresenter(presenter);
         securityDomainView.setPresenter(presenter);
-        securityPropertyView.setPresenter(presenter);
         trustManagerView.setPresenter(presenter);
         authenticationConfigurationView.setPresenter(presenter);
         authenticationContextView.setPresenter(presenter);
         dirContextView.setPresenter(presenter);
+        fileAuditLogView.setPresenter(presenter);
+        sizeFileAuditLogView.setPresenter(presenter);
+        periodicFileAuditLogView.setPresenter(presenter);
+        syslogAuditLogView.setPresenter(presenter);
     }
 }

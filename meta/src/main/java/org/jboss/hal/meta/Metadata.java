@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.List;
 import java.util.function.Supplier;
 
+import com.google.common.base.Splitter;
 import com.google.gwt.resources.client.TextResource;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
@@ -159,27 +161,43 @@ public class Metadata {
      *
      * @return A new Metadata with the repackaged attributes.
      */
-    // @formatter:on
     @JsIgnore
     public Metadata repackageComplexAttribute(String complexAttributeName, boolean fromRequestProperties,
             boolean prefixComplexAttribute, boolean appendRequestProperties) {
 
         ModelNode nestedDescription = new ModelNode();
         ModelNode nestedAttributes;
+
+        boolean enhancedSyntax = complexAttributeName.indexOf(".") > -1;
+        List<String> enhancedAttribute = Splitter.on(".").splitToList(complexAttributeName);
+        String attributeFirst = enhancedSyntax ? enhancedAttribute.get(0) : null;
+        String attributeSecond = enhancedSyntax ? enhancedAttribute.get(1) : null;
+
+
         if (fromRequestProperties) {
-            // the attributes are appended, as the request-properties attribute are used to add a new resource, the
-            // attributes should be appended instead of replaced.
-            nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES)
-                    .get(complexAttributeName).get(VALUE_TYPE);
+            if (enhancedSyntax)
+                nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(VALUE_TYPE);
+            else
+                nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(complexAttributeName).get(VALUE_TYPE);
+
+
             if (appendRequestProperties) {
-                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES)
-                        .set(this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
+                // the attributes are appended, as the request-properties attribute are used to add a new resource, the
+                // attributes should be appended instead of replaced.
+                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).set(this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
             }
         } else {
-            nestedAttributes = this.description.get(ATTRIBUTES).get(complexAttributeName).get(VALUE_TYPE);
+            if (enhancedSyntax)
+                nestedAttributes = this.description.get(ATTRIBUTES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(VALUE_TYPE);
+            else
+                nestedAttributes = this.description.get(ATTRIBUTES).get(complexAttributeName).get(VALUE_TYPE);
         }
-        nestedDescription.get(DESCRIPTION)
-                .set(this.description.get(ATTRIBUTES).get(complexAttributeName).get(DESCRIPTION));
+
+        if (enhancedSyntax)
+            nestedDescription.get(DESCRIPTION).set(this.description.get(ATTRIBUTES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(DESCRIPTION));
+        else
+            nestedDescription.get(DESCRIPTION).set(this.description.get(ATTRIBUTES).get(complexAttributeName).get(DESCRIPTION));
+
         for (Property prop : nestedAttributes.asPropertyList()) {
             // rename the nested attributes to prefix them with the complex attribute name
             // as the child nested attribute may exist in other child nested attributes
@@ -187,7 +205,10 @@ public class Metadata {
             // both contains "path" and "relative-to" nested attributes.
             String newName = prop.getName();
             if (prefixComplexAttribute) {
-                newName = complexAttributeName + "-" + prop.getName();
+                if (enhancedSyntax)
+                    newName = attributeSecond + "-" + prop.getName();
+                else
+                    newName = complexAttributeName + "-" + prop.getName();
             }
 
             if (fromRequestProperties) {
@@ -212,22 +233,25 @@ public class Metadata {
 
             @Override
             public boolean isReadable(final String attribute) {
-                return securityContext.get().isReadable(complexAttributeName);
+                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
+                return securityContext.get().isReadable(_name);
             }
 
             @Override
             public boolean isWritable(final String attribute) {
-                return securityContext.get().isWritable(complexAttributeName);
+                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
+                return securityContext.get().isWritable(_name);
             }
 
             @Override
             public boolean isExecutable(final String operation) {
-                return securityContext.get().isExecutable(complexAttributeName);
+                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
+                return securityContext.get().isExecutable(_name);
             }
         };
-
         return new Metadata(template, () -> sc, new ResourceDescription(nestedDescription), capabilities);
     }
+    // @formatter:on
 
     @JsIgnore
     public Metadata customResourceDescription(ResourceDescription resourceDescription) {

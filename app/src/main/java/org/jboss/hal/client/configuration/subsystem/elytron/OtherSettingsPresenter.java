@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -35,18 +37,22 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
@@ -65,8 +71,9 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @ProxyCodeSplit
     @Requires(value ={
         KEY_STORE, KEY_MANAGER, SERVER_SSL_CONTEXT, CLIENT_SSL_CONTEXT, TRUST_MANAGER, CREDENTIAL_STORE,
-        FILTERING_KEY_STORE, LDAP_KEY_STORE, PROVIDER_LOADER, AGGREGATE_PROVIDERS, SECURITY_DOMAIN, SECURITY_PROPERTY,
-        DIR_CONTEXT, AUTHENTICATION_CONTEXT, AUTHENTICATION_CONF
+        FILTERING_KEY_STORE, LDAP_KEY_STORE, PROVIDER_LOADER, AGGREGATE_PROVIDERS, SECURITY_DOMAIN,
+        DIR_CONTEXT, AUTHENTICATION_CONTEXT, AUTHENTICATION_CONF, FILE_AUDIT_LOG, SIZE_FILE_AUDIT_LOG,
+        PERIODIC_FILE_AUDIT_LOG, SYSLOG_AUDIT_LOG
     })
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
@@ -83,18 +90,20 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         void updateProviderLoader(List<NamedNode> model);
         void updateAggregateProviders(List<NamedNode> model);
         void updateSecurityDomain(List<NamedNode> model);
-        void updateSecurityProperty(List<NamedNode> model);
         void updateDirContext(List<NamedNode> model);
         void updateAuthenticationContext(List<NamedNode> model);
         void updateAuthenticationConfiguration(List<NamedNode> model);
+        void updateFileAuditLog(List<NamedNode> model);
+        void updateSizeFileAuditLog(List<NamedNode> model);
+        void updatePeriodicFileAuditLog(List<NamedNode> model);
+        void updateSyslogAuditLog(List<NamedNode> model);
     }
     // @formatter:on
 
-    private EventBus eventBus;
+    private Dispatcher dispatcher;
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private MetadataRegistry metadataRegistry;
     private final Resources resources;
 
     @Inject
@@ -102,17 +111,16 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             final OtherSettingsPresenter.MyView view,
             final OtherSettingsPresenter.MyProxy proxy,
             final Finder finder,
+            final Dispatcher dispatcher,
             final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
-        this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
         this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
 
@@ -150,55 +158,67 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 "provider-loader",
                 "aggregate-providers",
                 "security-domain",
-                "security-property",
                 "dir-context",
                 "authentication-context",
-                "authentication-configuration"
+                "authentication-configuration",
+                "file-audit-log",
+                "size-rotating-file-audit-log",
+                "periodic-rotating-file-audit-log",
+                "syslog-audit-log"
                 ),
                 result -> {
                     // @formatter:off
-                    getView().updateKeyStore(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
-                    getView().updateKeyManagers(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateServerSslContext(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateClientSslContext(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateTrustManagers(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
-                    getView().updateCredentialStore(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
-                    getView().updateFilteringKeyStore(asNamedNodes(result.step(6).get(RESULT).asPropertyList()));
-                    getView().updateLdapKeyStore(asNamedNodes(result.step(7).get(RESULT).asPropertyList()));
-                    getView().updateProviderLoader(asNamedNodes(result.step(8).get(RESULT).asPropertyList()));
-                    getView().updateAggregateProviders(asNamedNodes(result.step(9).get(RESULT).asPropertyList()));
-                    getView().updateSecurityDomain(asNamedNodes(result.step(10).get(RESULT).asPropertyList()));
-                    getView().updateSecurityProperty(asNamedNodes(result.step(11).get(RESULT).asPropertyList()));
-                    getView().updateDirContext(asNamedNodes(result.step(12).get(RESULT).asPropertyList()));
-                    getView().updateAuthenticationContext(asNamedNodes(result.step(13).get(RESULT).asPropertyList()));
-                    getView().updateAuthenticationConfiguration(asNamedNodes(result.step(14).get(RESULT).asPropertyList()));
+                    int i = 0;
+                    getView().updateKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateKeyManagers(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateServerSslContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateClientSslContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateTrustManagers(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateFilteringKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateLdapKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateProviderLoader(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAggregateProviders(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSecurityDomain(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateDirContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAuthenticationContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAuthenticationConfiguration(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSizeFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updatePeriodicFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSyslogAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // @formatter:on
                 });
     }
 
     @Override
-    public void saveForm(final String title, final String name, final AddressTemplate template,
-            final Map<String, Object> changedValues, final Metadata metadata) {
+    public void saveForm(final String title, final String name, final Map<String, Object> changedValues,
+            final Metadata metadata) {
 
-        ResourceAddress address = template.resolve(statementContext, name);
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
         crud.save(title, name, address, changedValues, metadata, () -> reload());
     }
 
     @Override
-    public void saveComplexForm(final String title, final String name, String complexAttributeName, final AddressTemplate template,
+    public void saveComplexForm(final String title, final String name, String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
 
-        ResourceAddress address = template.resolve(statementContext, name);
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
         crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
-    public void listAdd(final String title, final String name, String complexAttributeName,
-            final AddressTemplate template,
-            final Map<String, Object> changedValues, final Metadata metadata) {
-
-        ResourceAddress address = template.resolve(statementContext, name);
-        crud.listAdd(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+    public void saveFormPage(String resource, String listAttributeName, Metadata metadata,
+            NamedNode payload, Map<String, Object> changedValues) {
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resource);
+        OperationFactory operationFactory = new OperationFactory(
+                name -> listAttributeName + "[" + payload.getName() + "]." + name);
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        dispatcher.execute(operations, (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifySingleResourceSuccess(Names.CLIENT_MAPPING)));
+            reload();
+        });
     }
 
     @Override
@@ -211,25 +231,29 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
 
     @Override
-    public void resetComplexAttribute(final String type, final String name, final AddressTemplate template,
-            final Set<String> attributes, final Metadata metadata, final Callback callback) {
-        ResourceAddress address = template.resolve(statementContext, name);
-        crud.reset(type, type + " from " + name, address, attributes, metadata, callback);
+    public void resetComplexAttribute(final String type, final String name, final String attribute,
+            final Metadata metadata, final Callback callback) {
+
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        Set<String> attributeToReset = new HashSet<>();
+        attributeToReset.add(attribute);
+        crud.reset(type, name, address, attributeToReset, metadata, callback);
     }
 
     @Override
-    public void launchAddDialog(AddressTemplate template, Function<String, String> resourceNameFunction, String complexAttributeName,
+    public void launchAddDialog(Function<String, String> resourceNameFunction, String complexAttributeName,
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = template.resolve(statementContext, resourceNameFunction.apply(null));
+        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .build();
 
-        AddResourceDialog dialog = new AddResourceDialog(title, form,
-                (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
+        AddResourceDialog.Callback callback = (name, model) -> crud
+                .listAdd(title, name, complexAttributeName, address, model, () -> reload());
+        AddResourceDialog dialog = new AddResourceDialog(title, form, callback);
         dialog.show();
     }
 

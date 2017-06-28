@@ -205,7 +205,6 @@ public interface Ids {
     String ELYTRON_PROVIDER_LOADER = build(ELYTRON, "provider-loader");
     String ELYTRON_SERVER_SSL_CONTEXT = build(ELYTRON, "server-ssl-context");
     String ELYTRON_SECURITY_DOMAIN = build(ELYTRON, "security-domain");
-    String ELYTRON_SECURITY_PROPERTY = build(ELYTRON, "security-property");
     String ELYTRON_TRUST_MANAGER = build(ELYTRON, "trust-manager");
     String ELYTRON_AUTHENTICATION_CONTEXT = build(ELYTRON, "authentication-context");
     String ELYTRON_AUTHENTICATION_CONFIGURATION = build(ELYTRON, "authentication-configuration");
@@ -248,6 +247,11 @@ public interface Ids {
     String ELYTRON_SIMPLE_PERMISSION_MAPPER  = build(ELYTRON, "simple-permission-mapper");
     String ELYTRON_SIMPLE_ROLE_DECODER  = build(ELYTRON, "simple-role-decoder");
     String ELYTRON_X500_ATTRIBUTE_PRINCIPAL_DECODER  = build(ELYTRON, "x500-attribute-principal-decoder");
+
+    String ELYTRON_FILE_AUDIT_LOG  = build(ELYTRON, "file-audit-log");
+    String ELYTRON_SIZE_AUDIT_LOG  = build(ELYTRON, "size-rotating-file-audit-log");
+    String ELYTRON_PERIODIC_AUDIT_LOG  = build(ELYTRON, "periodic-rotating-file-audit-log");
+    String ELYTRON_SYSLOG_AUDIT_LOG  = build(ELYTRON, "syslog-audit-log");
 
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
