@@ -23,7 +23,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
@@ -47,6 +46,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -169,7 +169,7 @@ public class HostPresenter
             if (hostNameChanged) {
                 DialogFactory.showConfirmation(resources.constants().hostNameChanged(),
                         resources.messages().hostNameChanged(),
-                        () -> DomGlobal.window.location.reload());
+                        () -> window.location.reload());
             }
         });
     }

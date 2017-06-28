@@ -25,14 +25,11 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -65,8 +62,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private OtherSettingsPresenter presenter;
 
     @Inject
-    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -109,9 +105,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .addComplexAttributeAsTab("credential-reference")
                 .create();
 
-        CustomPropertiesItem newItemAttributes = new CustomPropertiesItem("new-item-attributes",
-                resources.messages().mappingHint(), " | ");
-        newItemAttributes.setPropertyValue(NAME, VALUE);
+        NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
         ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
                 () -> presenter.reload())
@@ -119,7 +113,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .setMetadataRegistry(metadataRegistry)
                 .setTableAddCallback((name, address) -> presenter.reload())
                 .build()
-                .addComplexAttributeAsTab("new-item-template", asList(newItemAttributes))
+                .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
                 .create();
 
         aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,

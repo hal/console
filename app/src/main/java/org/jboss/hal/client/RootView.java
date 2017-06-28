@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.ViewImpl;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
@@ -64,10 +64,9 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
-                HTMLElement body = DomGlobal.document.body;
-                body.appendChild(slots.get(SLOT_HEADER_CONTENT));
-                body.appendChild(rootContainer);
-                body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
+                document.body.appendChild(slots.get(SLOT_HEADER_CONTENT));
+                document.body.appendChild(rootContainer);
+                document.body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
                 initialized = true;
             }
 

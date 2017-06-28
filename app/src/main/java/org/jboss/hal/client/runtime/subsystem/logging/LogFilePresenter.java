@@ -44,6 +44,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static elemental2.dom.DomGlobal.clearInterval;
+import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.setInterval;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
@@ -125,7 +129,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     @Override
     protected void reload() {
         if (logFileName != null) {
-            double handle = DomGlobal.setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
+            double handle = setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -137,7 +141,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                     .build();
             dispatcher.execute(new Composite(logFileOp, contentOp),
                     (CompositeResult result) -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         logFile = new LogFile(logFileName, result.step(0).get(RESULT));
                         List<ModelNode> linesRead = result.step(1).get(RESULT).asList();
                         String content = linesRead.stream().map(ModelNode::asString)
@@ -145,12 +149,12 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                         getView().show(logFile, linesRead.size(), content);
                     },
                     (operation, failure) -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), failure));
                     },
                     (operation, exception) -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
                     });
@@ -162,7 +166,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     void reloadFile() {
         if (logFile != null) {
             int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
-            double handle = DomGlobal.setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
+            double handle = setTimeout((o) -> getView().loading(), UIConstants.MEDIUM_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             //noinspection HardCodedStringLiteral
             Operation operation = new Operation.Builder(address, "read-log-file")
@@ -170,18 +174,18 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                     .param("tail", true)
                     .build();
             dispatcher.execute(operation, result -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         List<ModelNode> linesRead = result.asList();
                         String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
                         getView().refresh(linesRead.size(), content);
                     },
                     (op, failure) -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), failure));
                     },
                     (op, exception) -> {
-                        DomGlobal.clearTimeout(handle);
+                        clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
                     });
@@ -194,10 +198,10 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         if (logFile != null) {
             if (on) {
                 if (!inTailMode()) {
-                    intervalHandle = DomGlobal.setInterval((o) -> reloadFile(), REFRESH_INTERVAL);
+                    intervalHandle = setInterval((o) -> reloadFile(), REFRESH_INTERVAL);
                 }
             } else {
-                DomGlobal.clearInterval(intervalHandle);
+                clearInterval(intervalHandle);
                 intervalHandle = -1;
                 reloadFile();
             }

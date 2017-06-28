@@ -18,18 +18,14 @@ package org.jboss.hal.ballroom.table;
 import java.util.List;
 import java.util.function.Function;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableElement;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.form.Form;
-import org.jetbrains.annotations.NonNls;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
-import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.dataTable;
@@ -73,19 +69,6 @@ import static org.jboss.hal.resources.CSS.tableStriped;
  */
 public class DataTable<T> implements Table<T> {
 
-    @JsType(isNative = true)
-    static class Bridge<T> {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        native static <T> Bridge<T> select(@NonNls String selector);
-
-        @JsMethod(name = "DataTable")
-        native Api<T> dataTable(Options options);
-    }
-
-
-    // ------------------------------------------------------ instance & lifecycle
-
     private static final String DESELECT = "deselect";
     private static final String ROW = "row";
     private static final String SELECT = "select";
@@ -109,7 +92,7 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public HTMLElement asElement() {
-        return api == null ? tableElement : (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
+        return api == null ? tableElement : (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
     }
 
     /**
@@ -121,7 +104,7 @@ public class DataTable<T> implements Table<T> {
     public void attach() {
         if (api == null) {
             options.id = id;
-            api = Bridge.<T>select("#" + id).dataTable(options);
+            api = Api.<T>select("#" + id).dataTable(options);
         }
     }
 
@@ -152,13 +135,13 @@ public class DataTable<T> implements Table<T> {
 
     @Override
     public void show() {
-        HTMLElement wrapper = (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
+        HTMLElement wrapper = (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, true);
     }
 
     @Override
     public void hide() {
-        HTMLElement wrapper = (HTMLElement) DomGlobal.document.getElementById(id + WRAPPER_SUFFIX);
+        HTMLElement wrapper = (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, false);
     }
 

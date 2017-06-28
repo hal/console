@@ -52,7 +52,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -148,6 +147,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         }
     }
 
+
     private Table<NamedNode> table;
     private Form<NamedNode> form;
     private ElytronPresenter presenter;
@@ -215,8 +215,8 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     }
 
     /**
-     *
      * @param complexAttributeName The complex attribute name.
+     *
      * @return
      */
     public ResourceView addComplexAttributeAsPage(String complexAttributeName) {
@@ -225,12 +225,14 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     }
 
     /**
+     * @param complexAttributeName  The complex attribute name.
+     * @param tableAddButtonHandler Call to save the add payload or the launch of a custom dialog for the nested
+     *                              resource.
      *
-     * @param complexAttributeName The complex attribute name.
-     * @param tableAddButtonHandler Call to save the add payload or the launch of a custom dialog for the nested resource.
      * @return
      */
-    public ResourceView addComplexAttributeAsPage(String complexAttributeName, final ButtonHandler<NamedNode> tableAddButtonHandler) {
+    public ResourceView addComplexAttributeAsPage(String complexAttributeName,
+            final ButtonHandler<NamedNode> tableAddButtonHandler) {
         includesComplexAttributesPages.add(new PageBean(complexAttributeName, tableAddButtonHandler));
         return this;
     }
@@ -295,13 +297,14 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 String complexAttributeLabel = new LabelBuilder().label(attribute);
                 tableBuilder.column(complexAttributeLabel, row -> showPage(attribute));
                 Metadata _metadataComplexAttribute = metadata.repackageComplexAttribute(attribute, false, false, true);
-                Metadata _metadataComplexAttributeReq = metadata.repackageComplexAttribute(attribute, true, false, false);
+                Metadata _metadataComplexAttributeReq = metadata.repackageComplexAttribute(attribute, true, false,
+                        false);
 
                 if (pageBean.tableAddButtonHandler == null) {
                     pageBean.tableAddButtonHandler = table1 ->
-                        presenter.launchAddDialog(builder.template, s -> {
-                            return complexAttributesPages.get(attribute).selectedParentResource;
-                        }, pageBean.attribute, _metadataComplexAttributeReq, complexAttributeLabel);
+                            presenter.launchAddDialog(builder.template, s -> {
+                                return complexAttributesPages.get(attribute).selectedParentResource;
+                            }, pageBean.attribute, _metadataComplexAttributeReq, complexAttributeLabel);
                 }
 
                 ResourceView subResource = new ResourceView.Builder(builder.tableButtonFactory, builder.id, attribute,
@@ -376,8 +379,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     }
 
     public void showPage(String attribute) {
-        if (table.hasSelection())
-            pages.showPage(pagesId.get(attribute));
+        if (table.hasSelection()) { pages.showPage(pagesId.get(attribute)); }
     }
 
     public Collection<ModelNodeForm<NamedNode>> getComplexAttributeForms() {
@@ -406,21 +408,16 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                         formItems.forEach(formItem -> {
 
                             if (selectedTableItem.get(attribute).hasDefined(formItem.getName())) {
-                                // this special handling is necessary as the CustomPropertiesItem may provide
+                                // this special handling is necessary as the NewItemAttributesItem may provide
                                 // a different key,value attribute names.
-                                if (formItem instanceof CustomPropertiesItem) {
-                                    CustomPropertiesItem cp = (CustomPropertiesItem) formItem;
-                                    Map<String, String> mappings = selectedTableItem.get(attribute)
-                                            .get(formItem.getName())
-                                            .asList().stream()
-                                            .collect(toMap(node -> node.get(cp.getKeyName()).asString(),
-                                                    node -> node.get(cp.getValueName()).asString()
-                                                            .replaceAll("\\[|\"|\\]", "")));
-                                    cp.setValue(mappings);
+                                if (formItem instanceof NewItemAttributesItem) {
+                                    NewItemAttributesItem niaItem = (NewItemAttributesItem) formItem;
+                                    ModelNode niaNode = selectedTableItem.get(attribute).get(formItem.getName());
+
+                                    niaItem.setValue(niaNode);
                                 } else {
                                     formItem.clearValue();
                                 }
-
                             }
                         });
                     });
@@ -469,7 +466,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
         return form;
     }
 
-    private HTMLElement createElementLayout(String title,  Metadata metadata, Table<NamedNode> table,
+    private HTMLElement createElementLayout(String title, Metadata metadata, Table<NamedNode> table,
             Form<NamedNode> form) {
         return div()
                 .add(h(1).textContent(title))
@@ -479,7 +476,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 .asElement();
     }
 
-    private HTMLElement createElementLayout(String title,  Metadata metadata, Table<NamedNode> table, Tabs tabs) {
+    private HTMLElement createElementLayout(String title, Metadata metadata, Table<NamedNode> table, Tabs tabs) {
         return div()
                 .add(h(1).textContent(title))
                 .add(p().textContent(metadata.getDescription().getDescription()))
@@ -505,8 +502,9 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
                 String name = _table.selectedRow().getName();
                 // if the resource doesn't contain a NAME attribute, use the model node value to display
-                if (UNDEFINED.equals(name.substring(0, UNDEFINED.length())))
+                if (UNDEFINED.equals(name.substring(0, UNDEFINED.length()))) {
                     name = _table.selectedRow().asModelNode().asString();
+                }
 
                 // TODO: implement the table.api.selectedRowIndex()
                 int index = 0;
@@ -528,7 +526,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
             metadata.getDescription().get(ATTRIBUTES).asPropertyList().forEach(property -> {
                 String attribute = property.getName();
                 tableBuilder.column(attribute,
-                    (cell, type, row, meta) -> row.hasDefined(attribute) ? row.get(attribute).asString() : "");
+                        (cell, type, row, meta) -> row.hasDefined(attribute) ? row.get(attribute).asString() : "");
             });
         } else {
             tableBuilder.column(NAME, (cell, type, row, meta) -> row.getName());

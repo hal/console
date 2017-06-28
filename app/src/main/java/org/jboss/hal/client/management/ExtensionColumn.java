@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.extension.Extension;
@@ -42,6 +41,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static elemental2.dom.DomGlobal.window;
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.core.extension.Extension.Point.CUSTOM;
@@ -156,7 +156,7 @@ public class ExtensionColumn extends FinderColumn<InstalledExtension> {
                     Message message = Message.success(
                             resources.messages().removeExtensionSuccess(),
                             resources.constants().reload(),
-                            () -> DomGlobal.window.location.reload(), true);
+                            () -> window.location.reload(), true);
                     MessageEvent.fire(eventBus, message);
                     refresh(RefreshMode.CLEAR_SELECTION);
                 });

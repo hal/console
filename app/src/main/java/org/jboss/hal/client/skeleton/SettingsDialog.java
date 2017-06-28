@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.NumberSelectItem;
 import org.jboss.hal.config.Environment;
@@ -33,6 +32,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static elemental2.dom.DomGlobal.window;
 import static java.util.Comparator.naturalOrder;
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
@@ -88,7 +88,7 @@ class SettingsDialog {
                 () -> {
                     if (changes) {
                         DialogFactory.showConfirmation(resources.constants().settings(),
-                                resources.messages().reloadSettings(), DomGlobal.location::reload);
+                                resources.messages().reloadSettings(), window.location::reload);
                     }
                 });
     }

@@ -18,7 +18,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental2.dom.DomGlobal;
 import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
@@ -26,6 +25,8 @@ import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static elemental2.dom.DomGlobal.window;
 
 /**
  * Registry for the management endpoints which uses the local storage of the browser.
@@ -40,7 +41,7 @@ public class EndpointStorage {
     private final List<Endpoint> endpoints;
 
     public EndpointStorage() {
-        storage = WebStorageWindow.of(DomGlobal.window).localStorage;
+        storage = WebStorageWindow.of(window).localStorage;
         endpoints = load();
     }
 

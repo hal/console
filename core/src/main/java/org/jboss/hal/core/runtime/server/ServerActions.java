@@ -55,6 +55,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
@@ -209,7 +210,7 @@ public class ServerActions {
                 resources.messages().restartStandaloneQuestion(server.getName()), () -> {
                     // execute the restart with a little delay to ensure the confirmation dialog is closed
                     // before the next dialog is opened (only one modal can be open at a time!)
-                    DomGlobal.setTimeout((o) -> {
+                    setTimeout((o) -> {
 
                         prepare(server, Action.RESTART);
                         BlockingDialog pendingDialog = DialogFactory
@@ -227,7 +228,7 @@ public class ServerActions {
                                             @Override
                                             public void onSuccess() {
                                                 // wait a little bit before event handlers try to use the restarted server
-                                                DomGlobal.setTimeout((o) -> {
+                                                setTimeout((o) -> {
                                                     pendingDialog.close();
                                                     finish(Server.STANDALONE, Result.SUCCESS, Message.success(
                                                             resources.messages()

@@ -48,6 +48,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -198,7 +200,7 @@ class BrowseContentElement implements IsElement, Attachable {
                 .icon(Icons.UNKNOWN)
                 .description(resources.constants().unsupportedFileTypeDescription())
                 .primaryAction(resources.constants().download(),
-                        () -> DomGlobal.window.location.assign(downloadUrl((tree.api().getSelected().data))))
+                        () -> window.location.assign(downloadUrl((tree.api().getSelected().data))))
                 .secondaryAction(resources.constants().viewInEditor(), () -> {
                     viewInEditor(tree.api().getSelected().data);
                 })
@@ -272,7 +274,7 @@ class BrowseContentElement implements IsElement, Attachable {
         editor.getEditor().$blockScrolling = 1;
         adjustHeight();
         adjustEditorHeight();
-        DomGlobal.window.onresize = event -> {
+        window.onresize = event -> {
             adjustEditorHeight();
             return null;
         };
@@ -352,7 +354,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
         deploymentPreview.setHeader(content);
         deploymentPreview.setPrimaryAction(resources.constants().download(),
-                () -> DomGlobal.window.location.assign(downloadUrl(null)));
+                () -> window.location.assign(downloadUrl(null)));
     }
 
     private void directory() {
@@ -419,7 +421,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     .setTitle(resources.constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
+            setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 

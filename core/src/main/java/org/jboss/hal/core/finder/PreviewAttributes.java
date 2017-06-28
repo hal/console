@@ -41,6 +41,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -237,12 +238,12 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             PreviewAttributeFunction<T> function = entry.getValue();
             PreviewAttribute previewAttribute = function.labelValue(model);
 
-            Element label = DomGlobal.document.getElementById(labelId);
+            Element label = document.getElementById(labelId);
             if (label != null) {
                 label.textContent = previewAttribute.label;
             }
 
-            HTMLElement valueContainer = (HTMLElement) DomGlobal.document.getElementById(valueId);
+            HTMLElement valueContainer = (HTMLElement) document.getElementById(valueId);
             if (valueContainer != null) {
                 if (previewAttribute.elements != null) {
                     Elements.removeChildrenFrom(valueContainer);

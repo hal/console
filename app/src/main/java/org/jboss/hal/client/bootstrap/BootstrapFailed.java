@@ -17,7 +17,6 @@ package org.jboss.hal.client.bootstrap;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -25,6 +24,7 @@ import org.jboss.gwt.elemento.template.DataElement;
 import org.jboss.gwt.elemento.template.Templated;
 import org.jboss.hal.config.Endpoints;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.resources.CSS.bootstrapError;
 
 @Templated
@@ -45,7 +45,7 @@ public abstract class BootstrapFailed implements IsElement {
 
     @PostConstruct
     void init() {
-        DomGlobal.document.documentElement.classList.add(bootstrapError);
+        document.documentElement.classList.add(bootstrapError);
         errorHolder.textContent = error();
         Elements.setVisible(allowedOriginServer, !endpoints().isSameOrigin());
         Elements.setVisible(allowedOriginConfig, !endpoints().isSameOrigin());

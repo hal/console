@@ -30,9 +30,19 @@ import static org.jboss.hal.resources.CSS.tagManagerTag;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * @author Harald Pehl
+ * Java wrapper for <a href="https://github.com/max-favilli/tagmanager">Tags Manager</a>.
+ *
+ * @see <a href="https://github.com/max-favilli/tagmanager">https://github.com/max-favilli/tagmanager</a>
  */
-class TagsManager {
+public class TagsManager {
+
+    @JsFunction
+    @FunctionalInterface
+    public interface Validator {
+
+        boolean validate(String tag);
+    }
+
 
     @JsFunction
     @FunctionalInterface
@@ -42,14 +52,6 @@ class TagsManager {
          * @param cst (c)omma (s)eparated (t)ags
          */
         void onRefresh(Event event, String cst);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    interface Validator {
-
-        boolean validate(String tag);
     }
 
 
@@ -70,9 +72,6 @@ class TagsManager {
         public static Options get() {
             Options options = new Options();
             options.delimiters = new int[]{13}; // enter
-            // options.delimiters.setAt(0, 44); // comma
-            // options.delimiters.setAt(0, 9); // tab
-            // options.delimiters.setAt(0, 13); // enter
             options.tagClass = tagManagerTag;
             options.validator = null;
             return options;
@@ -81,10 +80,10 @@ class TagsManager {
 
 
     @JsType(isNative = true)
-    public static class Bridge {
+    public static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge element(HTMLInputElement element);
+        public native static Api element(HTMLInputElement element);
 
         public native void on(String event, RefreshListener refreshListener);
 

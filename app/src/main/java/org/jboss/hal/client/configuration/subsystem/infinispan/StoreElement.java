@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.CSSProperties.WidthUnionType;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -49,6 +48,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.bootstrapSelect;
 import static org.jboss.hal.resources.CSS.btnGroup;
 import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.width;
 
 /**
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
@@ -230,7 +230,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private void autoWidth(HTMLElement element) {
         HTMLElement select = (HTMLElement) element.querySelector("." + btnGroup + "." + bootstrapSelect);
         if (select != null) {
-            select.style.width = WidthUnionType.of("auto"); //NON-NLS
+            select.style.width = width("auto"); //NON-NLS
         }
     }
 

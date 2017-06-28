@@ -18,15 +18,17 @@ package org.jboss.hal.ballroom.table;
 import java.util.Collections;
 import java.util.List;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
+import org.jetbrains.annotations.NonNls;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
@@ -48,6 +50,15 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true)
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 class Api<T> {
+
+    // ------------------------------------------------------ initialization
+
+    @JsMethod(namespace = GLOBAL, name = "$")
+    native static <T> Api<T> select(@NonNls String selector);
+
+    @JsMethod(name = "DataTable")
+    native Api<T> dataTable(Options options);
+
 
     // ------------------------------------------------------ button(s)
 
@@ -274,7 +285,7 @@ class Api<T> {
         Options<T> options = api.init();
         ColumnActions<T> columnActions = options.columnActions;
         if (columnActions != null && !columnActions.isEmpty()) {
-            elemental2.dom.Element table = DomGlobal.document.getElementById(options.id);
+            elemental2.dom.Element table = document.getElementById(options.id);
             if (table != null) {
                 Elements.stream(table.querySelectorAll("." + columnAction))
                         .filter(htmlElements())
@@ -285,7 +296,7 @@ class Api<T> {
                                 bind(link, click, event -> {
                                     event.stopPropagation();
                                     HTMLElement e = link; // find enclosing tr
-                                    while (e != null && e != DomGlobal.document.body && !"tr".equalsIgnoreCase(
+                                    while (e != null && e != document.body && !"tr".equalsIgnoreCase(
                                             e.tagName)) {
                                         e = (HTMLElement) e.parentNode;
                                     }

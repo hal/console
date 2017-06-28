@@ -21,7 +21,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -72,6 +71,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
 import static elemental2.dom.DomGlobal.alert;
+import static elemental2.dom.DomGlobal.location;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
@@ -290,7 +291,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     void reconnect() {
         String url = Endpoints.getBaseUrl() + "?" + EndpointManager.CONNECT_PARAMETER;
-        DomGlobal.location.assign(url);
+        window.location.assign(url);
     }
 
     void logout() {
@@ -377,7 +378,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().runAsRoleTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, role);
-                    DomGlobal.location.reload();
+                    location.reload();
                 });
     }
 
@@ -385,7 +386,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         DialogFactory.showConfirmation(resources.constants().clearRunAsTitle(),
                 resources.messages().reloadSettings(), () -> {
                     settings.set(RUN_AS, null);
-                    DomGlobal.location.reload();
+                    location.reload();
                 });
     }
 

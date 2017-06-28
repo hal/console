@@ -31,6 +31,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.mouseout;
@@ -59,7 +62,7 @@ class MessagePanel implements IsElement {
         this.messageIds = new HashMap<>();
         this.stickyMessages = new HashMap<>();
         this.root = div().css(toastNotificationsListPf).asElement();
-        DomGlobal.document.body.appendChild(root);
+        document.body.appendChild(root);
     }
 
     @Override
@@ -98,19 +101,19 @@ class MessagePanel implements IsElement {
 
 
     private void startMessageTimeout(String id) {
-        double timeoutHandle = DomGlobal.setTimeout((o) -> remove(id), MESSAGE_TIMEOUT);
+        double timeoutHandle = setTimeout((o) -> remove(id), MESSAGE_TIMEOUT);
         messageIds.put(id, timeoutHandle);
     }
 
     private void stopMessageTimeout(String id) {
         if (messageIds.containsKey(id)) {
-            DomGlobal.clearTimeout(messageIds.get(id));
+            clearTimeout(messageIds.get(id));
             messageIds.remove(id);
         }
     }
 
     private void remove(String id) {
-        Element element = DomGlobal.document.getElementById(id);
+        Element element = document.getElementById(id);
         Elements.failSafeRemove(root, element);
         messageIds.remove(id);
     }

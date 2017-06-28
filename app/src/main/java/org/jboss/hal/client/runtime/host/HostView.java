@@ -31,6 +31,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
@@ -65,7 +66,7 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     public void updateHost(final Host host) {
         hostConfigurationForm.view(host);
         hostConfigurationForm.getFormItem(NAME).unmask(); // makes no sense that this is sensitive
-        HTMLElement element = (HTMLElement) DomGlobal.document.getElementById("host-configuration-title");
+        HTMLElement element = (HTMLElement) document.getElementById("host-configuration-title");
         if (element != null) {
             element.innerHTML = new SafeHtmlBuilder()
                     .appendEscaped(host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER)

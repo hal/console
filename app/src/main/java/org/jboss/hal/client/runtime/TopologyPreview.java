@@ -29,7 +29,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -92,6 +91,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static com.google.common.collect.Lists.asList;
+import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -271,7 +273,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
         // remember selection
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector("." + topology + " ." + selected);
+        HTMLElement element = (HTMLElement) document.querySelector("." + topology + " ." + selected);
         String hostName = element != null ? String.valueOf(element.dataset.get("host")) : null;
         String serverGroupName = element != null ? String.valueOf(element.dataset.get("serverGroup")) : null;
         String serverName = element != null ? String.valueOf(element.dataset.get("server")) : null;
@@ -282,14 +284,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         hideDetails();
 
         // show the loading indicator if the dmr operation takes too long
-        double timeoutHandle = DomGlobal.setTimeout((o) -> Elements.setVisible(loadingSection, true),
+        double timeoutHandle = setTimeout((o) -> Elements.setVisible(loadingSection, true),
                 UIConstants.MEDIUM_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {
                     @Override
                     public void onFailure(final FunctionContext context) {
-                        DomGlobal.clearTimeout(timeoutHandle);
+                        clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().topologyError(), context.getError()));
@@ -297,7 +299,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
-                        DomGlobal.clearTimeout(timeoutHandle);
+                        clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
@@ -344,8 +346,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
-                        elemental2.dom.Document document = DomGlobal.document;
-
                         Host host = context.get(TopologyFunctions.HOST);
                         ServerGroup serverGroup = context.get(TopologyFunctions.SERVER_GROUP);
                         if (host != null && serverGroup != null) {
@@ -562,7 +562,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void adjustTdHeight() {
-        NodeList<Element> servers = DomGlobal.document.querySelectorAll("." + topology + " ." + CSS.servers);
+        NodeList<Element> servers = document.querySelectorAll("." + topology + " ." + CSS.servers);
         Elements.stream(servers)
                 .filter(htmlElements())
                 .map(asHtmlElement())
@@ -579,7 +579,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void clearSelected() {
-        NodeList<Element> selectedNodes = DomGlobal.document.querySelectorAll("." + topology + " ." + selected);
+        NodeList<Element> selectedNodes = document.querySelectorAll("." + topology + " ." + selected);
         Elements.elements(selectedNodes).forEach(element -> element.classList.remove(selected));
     }
 
@@ -590,17 +590,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void startProgress(String selector) {
-        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+        Elements.stream(document.querySelectorAll(selector))
                 .forEach(element -> element.classList.add(withProgress));
     }
 
     private void stopProgress(String selector) {
-        Elements.stream(DomGlobal.document.querySelectorAll(selector))
+        Elements.stream(document.querySelectorAll(selector))
                 .forEach(element -> element.classList.remove(withProgress));
     }
 
     private void disableDropdown(String id, String name) {
-        Element link = DomGlobal.document.getElementById(id);
+        Element link = document.getElementById(id);
         if (link != null) {
             Element parent = (Element) link.parentNode;
             Element ul = link.nextElementSibling;
@@ -622,7 +622,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void hostDetails(final Host host) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(hostSelector(host));
+        HTMLElement element = (HTMLElement) document.querySelector(hostSelector(host));
         if (element != null) {
             element.classList.add(selected);
         }
@@ -688,7 +688,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverGroupDetails(final ServerGroup serverGroup) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverGroupSelector(serverGroup));
+        HTMLElement element = (HTMLElement) document.querySelector(serverGroupSelector(serverGroup));
         if (element != null) {
             element.classList.add(selected);
         }
@@ -763,7 +763,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverDetails(final Server server) {
         clearSelected();
-        HTMLElement element = (HTMLElement) DomGlobal.document.querySelector(serverSelector(server));
+        HTMLElement element = (HTMLElement) document.querySelector(serverSelector(server));
         if (element != null) {
             element.classList.add(selected);
         }

@@ -16,13 +16,13 @@
 package org.jboss.hal.ballroom.tree;
 
 import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 
+import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.div;
 
@@ -157,6 +157,6 @@ public class Tree<T> implements IsElement, Attachable {
             api().closeNode(id);
         }
         asElement().focus();
-        DomGlobal.document.getElementById(id).scrollIntoView(false);
+        document.getElementById(id).scrollIntoView(false);
     }
 }

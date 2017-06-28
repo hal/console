@@ -45,6 +45,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
@@ -519,7 +520,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
             case EDITING:
                 if (!formItems.isEmpty()) {
-                    DomGlobal.setTimeout((o) -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
+                    setTimeout((o) -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
                 }
                 if (escCallback != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC

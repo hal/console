@@ -23,7 +23,6 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -53,6 +52,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
@@ -166,7 +166,7 @@ public class HostActions {
 
                             // execute the reload with a little delay to ensure the confirmation dialog is closed
                             // before the next dialog is opened (only one modal can be open at a time!)
-                            DomGlobal.setTimeout((o) -> {
+                            setTimeout((o) -> {
 
                                 if (host.isDomainController()) {
                                     domainControllerOperation(host, operation, reloadTimeout(host),
@@ -212,7 +212,7 @@ public class HostActions {
         DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
-            DomGlobal.setTimeout((o) -> {
+            setTimeout((o) -> {
 
                 prepare(host, host.getServers(), Action.RESTART);
                 Operation operation = new Operation.Builder(host.getAddress(), SHUTDOWN)
@@ -250,7 +250,7 @@ public class HostActions {
                     @Override
                     public void onSuccess() {
                         // wait a little bit before event handlers try to use the reloaded / restarted domain controller
-                        DomGlobal.setTimeout((o) -> {
+                        setTimeout((o) -> {
                             pendingDialog.close();
                             finish(host, servers, Result.SUCCESS, Message.success(successMessage));
                         }, 666);

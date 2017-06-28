@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.config.Endpoints;
@@ -29,6 +28,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jetbrains.annotations.NonNls;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
@@ -43,7 +43,7 @@ class AboutDialog {
     private static final String SELECTOR_ID = "#" + Ids.ABOUT_MODAL;
 
     AboutDialog(final Environment environment, final Endpoints endpoints, final Resources resources) {
-        if (DomGlobal.document.getElementById(Ids.ABOUT_MODAL) == null) {
+        if (document.getElementById(Ids.ABOUT_MODAL) == null) {
             ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder()
                     .put(resources.constants().productName(), failSafe(environment.getInstanceInfo().productName()))
                     .put(resources.constants().productVersion(),
@@ -87,7 +87,7 @@ class AboutDialog {
                                     .add(div().css(modalFooter)
                                             .add(img(resources.theme().logos().about().getSafeUri().asString())))))
                     .asElement();
-            DomGlobal.document.body.appendChild(about);
+            document.body.appendChild(about);
         }
     }
 

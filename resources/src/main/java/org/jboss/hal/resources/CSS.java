@@ -18,6 +18,7 @@ package org.jboss.hal.resources;
 import java.util.Arrays;
 
 import elemental2.dom.CSSProperties.HeightUnionType;
+import elemental2.dom.CSSProperties.WidthUnionType;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
@@ -389,6 +390,10 @@ public interface CSS {
 
     static HeightUnionType height(Object height) {
         return HeightUnionType.of(height);
+    }
+
+    static WidthUnionType width(Object height) {
+        return WidthUnionType.of(height);
     }
 
     static String px(int value) {

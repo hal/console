@@ -17,7 +17,6 @@ package org.jboss.hal.ballroom.metric;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental2.dom.CSSProperties.WidthUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
@@ -117,7 +116,7 @@ public class Utilization implements IsElement {
 
             valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
             valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            valueBar.style.width = WidthUnionType.of(String.valueOf(currentPercent) + "%");
+            valueBar.style.width = width(String.valueOf(currentPercent) + "%");
             Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
             //noinspection HardCodedStringLiteral
             valueElement.innerHTML = new SafeHtmlBuilder()
@@ -129,7 +128,7 @@ public class Utilization implements IsElement {
 
             remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
             remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.style.width = WidthUnionType.of(String.valueOf(remainingPercent) +"%");
+            remainingBar.style.width = width(String.valueOf(remainingPercent) +"%");
             Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
             remainingElement.textContent = MESSAGES.available(remainingPercent);
 

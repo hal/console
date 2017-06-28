@@ -48,6 +48,11 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         }
 
         @Override
+        public String getFilterData() {
+            return item.getKeywords().isEmpty() ? null : String.join(" ", item.getKeywords());
+        }
+
+        @Override
         public String nextColumn() {
             return item.getNextColumn();
         }
@@ -58,7 +63,8 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         super(new Builder<StaticItem>(finder, id, title)
                 .itemRenderer(StaticItemDisplay::new)
                 .initialItems(items)
-                .onPreview(StaticItem::getPreviewContent));
+                .onPreview(StaticItem::getPreviewContent)
+                .withFilter(items.stream().anyMatch(i -> !i.getKeywords().isEmpty())));
     }
 
     public StaticItemColumn(final Finder finder, final String id, final String title,

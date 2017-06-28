@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -111,7 +112,7 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
 
     @JsIgnore
     public boolean verifyScript(final String script) {
-        return DomGlobal.document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
+        return document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
     }
 
     @JsIgnore
@@ -124,10 +125,10 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @SuppressWarnings("HardCodedStringLiteral")
     public void onApplicationReady(final ApplicationReadyEvent event) {
         ready = true;
-        headerDropdown = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
-        headerExtensions = DomGlobal.document.getElementById(Ids.HEADER_EXTENSIONS);
-        footerDropdown = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
-        footerExtensions = DomGlobal.document.getElementById(Ids.FOOTER_EXTENSIONS);
+        headerDropdown = document.getElementById(Ids.HEADER_EXTENSIONS_DROPDOWN);
+        headerExtensions = document.getElementById(Ids.HEADER_EXTENSIONS);
+        footerDropdown = document.getElementById(Ids.FOOTER_EXTENSIONS_DROPDOWN);
+        footerExtensions = document.getElementById(Ids.FOOTER_EXTENSIONS);
 
         while (!queue.isEmpty()) {
             failSafeApply(queue.poll());
@@ -203,17 +204,17 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
     @JsMethod(name = "inject")
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public void jsInject(String script, @EsParam("string[]") String[] stylesheets) {
-        HTMLHeadElement head = DomGlobal.document.head;
+        HTMLHeadElement head = document.head;
 
         if (stylesheets != null && stylesheets.length != 0) {
             for (String stylesheet : stylesheets) {
-                HTMLLinkElement linkElement = (HTMLLinkElement) DomGlobal.document.createElement("link");
+                HTMLLinkElement linkElement = (HTMLLinkElement) document.createElement("link");
                 linkElement.rel = "stylesheet";
                 linkElement.href = stylesheet;
                 head.appendChild(linkElement);
             }
         }
-        HTMLScriptElement scriptElement = (HTMLScriptElement) DomGlobal.document.createElement("script");
+        HTMLScriptElement scriptElement = (HTMLScriptElement) document.createElement("script");
         scriptElement.src = script;
         scriptElement.setAttribute("async", true);
         head.appendChild(scriptElement);

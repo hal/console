@@ -80,6 +80,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.alert;
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -421,7 +422,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
             return Optional.empty();
         });
-        HTMLElement addButton = (HTMLElement) DomGlobal.document.getElementById(Ids.SERVER_ADD);
+        HTMLElement addButton = (HTMLElement) document.getElementById(Ids.SERVER_ADD);
         ElementGuard.toggle(addButton, !ad.isAllowed(Constraint.executable(serverConfigTemplate(host), ADD)));
     }
 

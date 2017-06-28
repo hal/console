@@ -135,7 +135,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         public void attach() {
             super.attach();
             inputElement.classList.add(bootstrapSwitch);
-            SwitchBridge.Bridge.element(inputElement).onChange((event, state) -> modifyValue(state));
+            SwitchBridge.Api.element(inputElement).onChange((event, state) -> modifyValue(state));
         }
 
         @Override
@@ -149,7 +149,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                     resolveHandler.removeHandler();
                 }
                 inputElement.classList.remove(bootstrapSwitch);
-                SwitchBridge.Bridge.element(inputElement).destroy();
+                SwitchBridge.Api.element(inputElement).destroy();
             }
         }
 
@@ -164,7 +164,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void showValue(final Boolean value) {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(value);
+                SwitchBridge.Api.element(inputElement).setValue(value);
             } else {
                 inputElement.checked = value;
             }
@@ -178,7 +178,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(false);
+                SwitchBridge.Api.element(inputElement).setValue(false);
             } else {
                 inputElement.checked = false;
             }
@@ -190,7 +190,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         void applyDefault(final String defaultValue) {
             if (attached) {
-                SwitchBridge.Bridge.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
+                SwitchBridge.Api.element(inputElement).setValue(Boolean.parseBoolean(defaultValue));
             } else {
                 inputElement.checked = Boolean.parseBoolean(defaultValue);
             }

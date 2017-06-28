@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.window;
+
 /**
  * @author Harald Pehl
  */
@@ -42,7 +44,7 @@ public class ExtensionStorage {
     private final Map<String, InstalledExtension> extensions;
 
     public ExtensionStorage() {
-        this.storage = WebStorageWindow.of(DomGlobal.window).localStorage;
+        this.storage = WebStorageWindow.of(window).localStorage;
         this.extensions = load();
     }
 

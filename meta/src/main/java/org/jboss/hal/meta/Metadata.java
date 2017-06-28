@@ -114,12 +114,13 @@ public class Metadata {
      *                  "required" => false,
      *                  "nillable" => true,
      *              }
-     *      },
-     *
+     *          }
+     *      }
+     * }
      * </pre>
      * <p>
      * After this method is called the resource description contains
-     * * <pre>
+     * <pre>
      *     The resource-description for subsystem=elytron/properties-realm
      * "attributes" => {
      *      "case-sensitive" => {
@@ -147,15 +148,14 @@ public class Metadata {
      * },
      * </pre>
      *
-     * @param complexAttributeName   The complex attribute name
-     * @param fromRequestProperties  If the attributes should be loaded from operations/add/request-properties path or
-     *                               attributes path. If is true, the attributes from request-properties path will be
-     *                               appended, if false, the list of attributes will replace the main attributes path.
-     * @param prefixComplexAttribute If the repackaged attribute names should be prefixed with the complex attribute
-     *                               name,
-     *                               as in the above example.
+     * @param complexAttributeName    The complex attribute name
+     * @param fromRequestProperties   If the attributes should be loaded from operations/add/request-properties path or
+     *                                attributes path. If is true, the attributes from request-properties path will be
+     *                                appended, if false, the list of attributes will replace the main attributes path.
+     * @param prefixComplexAttribute  If the repackaged attribute names should be prefixed with the complex attribute
+     *                                name, as in the above example.
      * @param appendRequestProperties when appendRequestProperties and fromRequestProperties is true, the attributes
-     *                                  are appended instead of replaced.
+     *                                are appended instead of replaced.
      *
      * @return A new Metadata with the repackaged attributes.
      */

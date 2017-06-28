@@ -18,6 +18,10 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NonNls;
+
+import static java.util.Arrays.asList;
+
 /**
  * A customizable finder item useful when you need full control over each and every item.
  *
@@ -29,6 +33,7 @@ public class StaticItem {
 
         private final String title;
         private final List<ItemAction<StaticItem>> actions;
+        private final List<String> keywords;
         private String id;
         private PreviewContent previewContent;
         private String nextColumn;
@@ -36,6 +41,7 @@ public class StaticItem {
         public Builder(final String title) {
             this.title = title;
             this.actions = new ArrayList<>();
+            this.keywords = new ArrayList<>();
             this.previewContent = new PreviewContent(title);
         }
 
@@ -51,6 +57,14 @@ public class StaticItem {
 
         public Builder action(ItemAction<StaticItem> itemAction) {
             actions.add(itemAction);
+            return this;
+        }
+
+        public Builder keywords(@NonNls String first, @NonNls String... rest) {
+            keywords.add(first);
+            if (rest != null) {
+                keywords.addAll(asList(rest));
+            }
             return this;
         }
 
@@ -72,6 +86,7 @@ public class StaticItem {
 
     private final String title;
     private final List<ItemAction<StaticItem>> actions;
+    private final List<String> keywords;
     private final String nextColumn;
     private final PreviewContent previewContent;
     private String id;
@@ -80,6 +95,7 @@ public class StaticItem {
         this.id = builder.id;
         this.title = builder.title;
         this.actions = builder.actions;
+        this.keywords = builder.keywords;
         this.nextColumn = builder.nextColumn;
         this.previewContent = builder.previewContent;
     }
@@ -90,6 +106,10 @@ public class StaticItem {
 
     public List<ItemAction<StaticItem>> getActions() {
         return actions;
+    }
+
+    public List<String> getKeywords() {
+        return keywords;
     }
 
     public PreviewContent getPreviewContent() {

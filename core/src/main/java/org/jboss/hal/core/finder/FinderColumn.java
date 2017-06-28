@@ -136,7 +136,11 @@ public class FinderColumn<T> implements IsElement, Attachable {
         }
 
         public Builder<T> withFilter() {
-            this.withFilter = true;
+            return withFilter(true);
+        }
+
+        public Builder<T> withFilter(boolean yesNo) {
+            this.withFilter = yesNo;
             return this;
         }
 

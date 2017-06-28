@@ -25,6 +25,8 @@ import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.window;
+
 /**
  * @author Harald Pehl
  */
@@ -35,7 +37,7 @@ class FinderColumnStorage {
 
     FinderColumnStorage(final String id) {
         this.pinnedId = Ids.build(Ids.STORAGE_PREFIX, id, "pinned");
-        this.storage = WebStorageWindow.of(DomGlobal.window).localStorage;
+        this.storage = WebStorageWindow.of(window).localStorage;
     }
 
     void pinItem(String id) {

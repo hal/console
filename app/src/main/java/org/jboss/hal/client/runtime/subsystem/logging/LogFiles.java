@@ -31,6 +31,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
+import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -69,7 +70,7 @@ public class LogFiles {
     }
 
     public void download(String logFile) {
-        DomGlobal.window.open(downloadUrl(logFile), "", "");
+        window.open(downloadUrl(logFile), "", "");
     }
 
     String downloadUrl(String name) {

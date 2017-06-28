@@ -38,6 +38,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.window;
+
 /**
  * @author Harald Pehl
  */
@@ -71,14 +74,14 @@ public class HalBootstrapper implements Bootstrapper {
     public void onBootstrap() {
         // event for users of the JS API
         elemental2.dom.Event event = new elemental2.dom.Event("halReady"); //NON-NLS
-        DomGlobal.window.dispatchEvent(event);
+        window.dispatchEvent(event);
 
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
                 LoadingPanel.get().off();
                 logger.error("Bootstrap error: {}", context.getError());
-                DomGlobal.document.body.appendChild(BootstrapFailed.create(context.getError(), endpoints).asElement());
+                document.body.appendChild(BootstrapFailed.create(context.getError(), endpoints).asElement());
             }
 
             @Override

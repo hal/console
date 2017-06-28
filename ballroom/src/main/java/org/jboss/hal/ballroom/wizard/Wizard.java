@@ -37,6 +37,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -236,7 +237,7 @@ public class Wizard<C, S extends Enum<S>> {
                                                 .asElement()))))
                 .asElement();
 
-        DomGlobal.document.body.appendChild(root);
+        document.body.appendChild(root);
         initEventHandler();
     }
 

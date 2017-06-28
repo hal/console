@@ -18,7 +18,6 @@ package org.jboss.hal.client.tools;
 import java.util.List;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -39,6 +38,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.button;
@@ -145,7 +146,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
         super.attach();
         adjustHeight();
         adjustEditorHeight();
-        DomGlobal.window.onresize = event -> {
+        window.onresize = event -> {
             adjustEditorHeight();
             return null;
         };
@@ -211,7 +212,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                     .setTitle(resources.constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
+            setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 }

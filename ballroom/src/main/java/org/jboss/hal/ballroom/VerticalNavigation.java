@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
@@ -37,6 +36,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.toList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -64,10 +64,10 @@ import static org.jboss.hal.resources.CSS.*;
 public class VerticalNavigation implements Attachable {
 
     @JsType(isNative = true)
-    static class Bridge {
+    static class Api {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge select();
+        public native static Api select();
 
         public native void setupVerticalNavigation(boolean handleItemSelections);
     }
@@ -146,8 +146,8 @@ public class VerticalNavigation implements Attachable {
     }
 
     private static void init() {
-        rootContainer = (HTMLElement) DomGlobal.document.getElementById(Ids.ROOT_CONTAINER);
-        DomGlobal.document.body.insertBefore(root, rootContainer);
+        rootContainer = (HTMLElement) document.getElementById(Ids.ROOT_CONTAINER);
+        document.body.insertBefore(root, rootContainer);
     }
 
     private LinkedHashMap<String, Entry> entries;
@@ -177,7 +177,7 @@ public class VerticalNavigation implements Attachable {
                 .forEach(entry -> ul.appendChild(entry.asElement()));
         Elements.setVisible(root, true);
 
-        Bridge.select().setupVerticalNavigation(true);
+        Api.select().setupVerticalNavigation(true);
         showInitial();
     }
 

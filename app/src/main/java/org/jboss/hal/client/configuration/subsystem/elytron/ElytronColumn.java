@@ -54,13 +54,15 @@ public class ElytronColumn
         super(new Builder<StaticItem>(finder, Ids.ELYTRON, resources.constants().settings())
                 .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
                 .onPreview(StaticItem::getPreviewContent)
-                .useFirstActionAsBreadcrumbHandler());
+                .useFirstActionAsBreadcrumbHandler()
+                .withFilter());
 
         List<StaticItem> items = asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
                         .id(Ids.ELYTRON)
                         .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON).build()))
                         .onPreview(new ElytronSubsystemPreview(crud, resources))
+                        .keywords("global", "settings")
                         .build(),
 
                 new StaticItem.Builder(Names.FACTORIES_TRANSFORMERS)
@@ -68,6 +70,7 @@ public class ElytronColumn
                                 places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
                         .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,
                                 resources.previews().configurationElytronFactories()))
+                        .keywords("factory", "transformer", "http", "sasl", "kerberos", "principal")
                         .build(),
 
                 new StaticItem.Builder(Names.MAPPERS_DECODERS)
@@ -75,12 +78,14 @@ public class ElytronColumn
                                 places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
                         .onPreview(new PreviewContent(Names.MAPPERS_DECODERS,
                                 resources.previews().configurationElytronMappersDecoders()))
+                        .keywords("mapper", "decoder", "role", "permission", "principal")
                         .build(),
 
                 new StaticItem.Builder(Names.OTHER_SETTINGS)
                         .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
                         .onPreview(new PreviewContent(Names.OTHER_SETTINGS,
                                 resources.previews().configurationElytronOtherSettings()))
+                        .keywords("store", "ssl", "authentication", "ldap")
                         .build(),
 
                 new StaticItem.Builder(Names.SECURITY_REALMS)
@@ -88,6 +93,7 @@ public class ElytronColumn
                                 places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
                         .onPreview(new PreviewContent(Names.SECURITY_REALMS,
                                 resources.previews().configurationElytronSecurityRealms()))
+                        .keywords("realm")
                         .build()
 
 

@@ -25,6 +25,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -92,7 +93,7 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
     }
 
     void remove(String id) {
-        Element element = DomGlobal.document.getElementById(id);
+        Element element = document.getElementById(id);
         Elements.failSafeRemove(panelBody, element);
         updateHeader();
     }

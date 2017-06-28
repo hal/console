@@ -16,7 +16,6 @@
 package org.jboss.hal.ballroom.autocomplete;
 
 import elemental.events.Event;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
@@ -30,6 +29,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
 import static org.jboss.gwt.elemento.core.Elements.htmlElements;
@@ -45,12 +46,11 @@ import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 public class AutoComplete implements SuggestHandler, Attachable {
 
     @JsType(isNative = true, namespace = GLOBAL, name = "autoComplete")
-    static class Bridge {
+    static class Api {
 
         @JsConstructor
         @SuppressWarnings("UnusedParameters")
-        Bridge(Options options) {
-        }
+        Api(Options options) {}
 
         @JsMethod
         private native void destroy();
@@ -60,7 +60,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
     @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
     private FormItem formItem;
-    private Bridge bridge;
+    private Api api;
     private Options options;
 
     protected void init(Options options) {
@@ -69,29 +69,29 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void attach() {
-        if (bridge == null) {
+        if (api == null) {
             options.selector = formItemSelector();
             options.onSelect = (event, item, renderedItem) -> {
                 if (formItem() instanceof AbstractFormItem) {
                     ((AbstractFormItem) formItem()).onSuggest(item);
                 }
             };
-            bridge = new Bridge(options);
+            api = new Api(options);
         }
     }
 
     @Override
     public void detach() {
-        if (bridge != null) {
-            bridge.destroy();
-            bridge = null;
+        if (api != null) {
+            api.destroy();
+            api = null;
         }
     }
 
     @Override
     public void showAll() {
-        Element element = DomGlobal.document.getElementById(formItem().getId(EDITING));
-        DomGlobal.setTimeout((o) -> {
+        Element element = document.getElementById(formItem().getId(EDITING));
+        setTimeout((o) -> {
             element.blur();
             triggerEvent(element, Event.KEYUP, "", 0); // to reset 'last_val' in autoComplete.js
             triggerEvent(element, Event.KEYUP, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
@@ -116,7 +116,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void close() {
-        Elements.stream(DomGlobal.document.querySelectorAll(autocompleteSuggestions))
+        Elements.stream(document.querySelectorAll(autocompleteSuggestions))
                 .filter(htmlElements())
                 .map(asHtmlElement())
                 .filter(Elements::isVisible)

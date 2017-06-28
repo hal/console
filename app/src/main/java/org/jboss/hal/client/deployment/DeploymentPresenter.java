@@ -35,6 +35,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static elemental2.dom.DomGlobal.document;
+
 /**
  * @author Harald Pehl
  */
@@ -60,7 +62,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
         @Override
         public void update(Void whatever) {
             if (environment.isStandalone()) {
-                Elements.setVisible((HTMLElement) DomGlobal.document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                Elements.setVisible((HTMLElement) document.getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                         JsHelper.supportsAdvancedUpload());
             }
         }

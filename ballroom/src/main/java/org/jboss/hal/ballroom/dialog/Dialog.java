@@ -44,6 +44,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -330,7 +331,7 @@ public class Dialog implements IsElement {
                         .asElement())
                 .asElement();
 
-        DomGlobal.document.body.appendChild(root);
+        document.body.appendChild(root);
         initEventHandler();
     }
 

@@ -19,7 +19,6 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.template.DataElement;
@@ -41,6 +40,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.setTimeout;
+import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -122,7 +124,7 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
                     .setTitle(resources().constants().copied())
                     .show()
                     .onHide(() -> tooltip.setTitle(resources().constants().copyToClipboard()));
-            DomGlobal.setTimeout((o) -> tooltip.hide(), 1000);
+            setTimeout((o) -> tooltip.hide(), 1000);
         }
     }
 
@@ -130,14 +132,14 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     public void attach() {
         super.attach();
 
-        SwitchBridge.Bridge.element(tailMode).onChange((event, state) -> presenter.toggleTailMode(state));
+        SwitchBridge.Api.element(tailMode).onChange((event, state) -> presenter.toggleTailMode(state));
 
         editor.getEditor().$blockScrolling = 1;
         editor.getEditor().setTheme("ace/theme/logfile"); //NON-NLS
         editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
 
         adjustEditorHeight();
-        DomGlobal.window.onresize = event -> {
+        window.onresize = event -> {
             adjustEditorHeight();
             return null;
         };
@@ -203,8 +205,8 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
     @Override
     public int visibleLines() {
         int lineHeight = 15;
-        HTMLElement lineElement = (HTMLElement) DomGlobal.document
-                .querySelector("#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
+        HTMLElement lineElement = (HTMLElement) document.querySelector(
+                "#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
         if (lineElement != null) {
             lineHeight = (int) lineElement.offsetHeight;
         }

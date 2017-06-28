@@ -35,13 +35,12 @@
 package org.jboss.hal.ballroom;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.CSSProperties.WidthUnionType;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Progress;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -100,12 +99,12 @@ public class ProgressElement implements IsElement, Progress {
             progressBarElement.classList.remove(progressBarStriped);
             progressBarElement.classList.remove(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "0");
-            progressBarElement.style.width = WidthUnionType.of("0px"); //NON-NLS
+            progressBarElement.style.width = width(0); //NON-NLS
         } else {
             progressBarElement.classList.add(progressBarStriped);
             progressBarElement.classList.add(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "100");
-            progressBarElement.style.width = WidthUnionType.of("100%");
+            progressBarElement.style.width = width("100%");
         }
         Elements.setVisible(root, true);
     }
@@ -117,7 +116,7 @@ public class ProgressElement implements IsElement, Progress {
                 value++;
                 double percent = min(round(((double) value / (double) max) * 100.0), 100.0);
                 progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(percent));
-                progressBarElement.style.width = WidthUnionType.of(String.valueOf(percent) + "%");
+                progressBarElement.style.width = width(String.valueOf(percent) + "%");
             }
         }
     }
@@ -125,6 +124,6 @@ public class ProgressElement implements IsElement, Progress {
     @Override
     public void finish() {
         // give the user a chance to see that we're finished
-        DomGlobal.setTimeout((o) -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
+        setTimeout((o) -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
     }
 }

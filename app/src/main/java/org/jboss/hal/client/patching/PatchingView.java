@@ -18,7 +18,7 @@ package org.jboss.hal.client.patching;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -31,7 +31,7 @@ public class PatchingView extends HalViewImpl implements PatchingPresenter.MyVie
     public PatchingView() {
         initElement(row()
                 .add(column()
-                        .add(header().textContent(Names.PATCHING))
+                        .add(h(1).textContent(Names.PATCHING))
                         .add(p().textContent(Names.NYI)))
                 .asElement());
     }

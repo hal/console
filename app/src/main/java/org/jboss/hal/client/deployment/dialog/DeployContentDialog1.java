@@ -151,7 +151,7 @@ public class DeployContentDialog1 {
                     .map(usg -> usg.serverGroup)
                     .collect(toList());
             if (deployCallback != null) {
-                deployCallback.deploy(content, serverGroups, SwitchBridge.Bridge.element(enable).getValue());
+                deployCallback.deploy(content, serverGroups, SwitchBridge.Api.element(enable).getValue());
             } else if (undeployCallback != null) {
                 undeployCallback.undeploy(content, serverGroups);
             }
@@ -164,6 +164,6 @@ public class DeployContentDialog1 {
         Elements.setVisible(noServerGroupSelected.asElement(), false);
         Elements.setVisible(enableContainer, deployCallback != null);
         table.update(serverGroups);
-        SwitchBridge.Bridge.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(false);
     }
 }

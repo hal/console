@@ -104,7 +104,7 @@ public class DeployContentDialog2 {
         Elements.setVisible(noContentSelected.asElement(), !hasSelection);
         if (hasSelection) {
             List<Content> content = table.selectedRows();
-            deployCallback.deploy(serverGroup, content, SwitchBridge.Bridge.element(enable).getValue());
+            deployCallback.deploy(serverGroup, content, SwitchBridge.Api.element(enable).getValue());
         }
         return hasSelection;
     }
@@ -113,6 +113,6 @@ public class DeployContentDialog2 {
         dialog.show();
         Elements.setVisible(noContentSelected.asElement(), false);
         table.update(content);
-        SwitchBridge.Bridge.element(enable).setValue(false);
+        SwitchBridge.Api.element(enable).setValue(false);
     }
 }
