@@ -43,7 +43,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private ResourceView credentialStoreView;
     private ResourceView filteringKeyStoreView;
     private ResourceView keystoreView;
-    private ResourceView2 ldapKeyStoreView;
+    private ResourceView ldapKeyStoreView;
 
     // ssl
     private ResourceView aggregateProvidersView;
@@ -122,7 +122,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
-        ldapKeyStoreView = new ResourceView2.Builder(tableButtonFactory, primaryIdStores,
+        ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
                 Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)

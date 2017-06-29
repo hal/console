@@ -27,6 +27,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import org.jboss.hal.dmr.Property;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
+
 /**
  * Generates human readable labels from terms used in the management model.
  *
@@ -67,7 +69,9 @@ public class LabelBuilder {
             .build();
 
     public String label(final Property property) {
-        return label(property.getName());
+        return property.getValue().hasDefined(HAL_LABEL)
+                ? label(property.getValue().get(HAL_LABEL).asString())
+                : label(property.getName());
     }
 
     public String label(final String name) {

@@ -186,6 +186,7 @@ public interface ModelDescriptionConstants {
     String GROUPING_HANDLER = "grouping-handler";
 
     String HA_POLICY = "ha-policy";
+    String HAL_LABEL = "hal-label";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
