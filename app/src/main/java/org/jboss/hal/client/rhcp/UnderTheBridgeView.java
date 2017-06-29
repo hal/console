@@ -130,7 +130,7 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
         AddressTemplate template = AddressTemplate.of(
                 environment.isStandalone() ? "/subsystem=*" : "/profile=full-ha/subsystem=*");
         for (ModelNodeForm<ModelNode> form : forms) {
-            for (FormItem item : form.getFormItems()) {
+            for (FormItem item : form.getBoundFormItems()) {
                 if (item.getName().contains("-suggestion")) {
                     item.registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
                             template));
