@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.elytron;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -27,9 +26,8 @@ import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Messages;
+import org.jboss.hal.resources.Resources;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -75,11 +73,9 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
     private OtherSettingsPresenter presenter;
 
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-
     @Inject
-    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory) {
+    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory, final
+            Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -271,8 +267,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
             FormItem<NamedNode> item = form.getFormItem("security-event-listeners");
             List<String> valueList = (List<String>) item.getValue();
             if (valueList.size() < 2) {
-                item.showError(MESSAGES.validationAtLeast("2"));
-                return ValidationResult.invalid(CONSTANTS.formErrors());
+                item.showError(resources.messages().validationAtLeast("2"));
+                return ValidationResult.invalid(resources.constants().formErrors());
             }
             return ValidationResult.OK;
         });

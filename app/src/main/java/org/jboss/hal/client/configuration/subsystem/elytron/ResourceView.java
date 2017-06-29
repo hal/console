@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import com.google.common.base.Splitter;
 import elemental2.dom.HTMLElement;
@@ -50,7 +49,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 
-import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -63,6 +61,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 public class ResourceView implements HasPresenter<ElytronPresenter> {
+
+    public static final String HAL_INDEX = "hal_index";
 
     public static class Builder {
 
@@ -134,19 +134,6 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
     }
 
-
-    private static class PageBean {
-
-        private String attribute;
-        private ButtonHandler<NamedNode> tableAddButtonHandler;
-
-        public PageBean(final String attribute, final ButtonHandler<NamedNode> tableAddButtonHandler) {
-            this.attribute = attribute;
-            this.tableAddButtonHandler = tableAddButtonHandler;
-        }
-    }
-
-
     private Table<NamedNode> table;
     private Form<NamedNode> form;
     private ElytronPresenter presenter;
@@ -154,7 +141,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
     private Metadata metadata;
     private Map<String, List<FormItem>> includesComplexAttributes = new HashMap<>();
     private Map<String, ModelNodeForm<NamedNode>> complexAttributeForms = new HashMap<>();
-    private List<PageBean> includesComplexAttributesPages = new ArrayList<>();
+    private Map<String, ButtonHandler<NamedNode>> includesComplexAttributesPages = new HashMap<>();
     private Map<String, ResourceView> complexAttributesPages = new HashMap<>();
     private Builder builder;
     private String primaryLevelIcon;
@@ -232,7 +219,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      */
     public ResourceView addComplexAttributeAsPage(String complexAttributeName,
             final ButtonHandler<NamedNode> tableAddButtonHandler) {
-        includesComplexAttributesPages.add(new PageBean(complexAttributeName, tableAddButtonHandler));
+        includesComplexAttributesPages.put(complexAttributeName, tableAddButtonHandler);
         return this;
     }
 
@@ -318,8 +305,9 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
 
 
         // create the page to support the list of complex attribute
-        includesComplexAttributesPages.forEach(pageBean -> {
-            String attribute = pageBean.attribute;
+
+        includesComplexAttributesPages.forEach((attribute, tableAddButtonHandler) -> {
+            //String attribute = pageBean.attribute;
             ModelNode attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute).getValue();
             boolean listType = attributeDescription.get(ModelDescriptionConstants.TYPE).asType().equals(ModelType.LIST);
             if (listType) {
@@ -333,8 +321,8 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 Metadata _metadataComplexAttributeReq = metadata.repackageComplexAttribute(attribute, true, false,
                         false);
 
-                if (pageBean.tableAddButtonHandler == null) {
-                    pageBean.tableAddButtonHandler = table1 ->
+                if (tableAddButtonHandler == null) {
+                    tableAddButtonHandler = table1 ->
                         // lazy load the parent resource name from the map
                         presenter.launchAddDialog( s -> {
                             return complexAttributesPages.get(attribute).selectedParentResource;
@@ -344,7 +332,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                 ResourceView subResource = new ResourceView.Builder(builder.tableButtonFactory, builder.id, attribute,
                         complexAttributeLabel, builder.template, builder.elytronView, () -> presenter.reload())
                         .setMetadata(_metadataComplexAttribute)
-                        .setTableAddButtonHandler(pageBean.tableAddButtonHandler)
+                        .setTableAddButtonHandler(tableAddButtonHandler)
                         .build()
                         .markAsSubPage();
 
@@ -449,18 +437,10 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                     // update unbound form items
                     this.includesComplexAttributes.forEach((complexAttribute, formItems) -> {
                         formItems.forEach(formItem -> {
-
                             if (selectedTableItem.get(attribute).hasDefined(formItem.getName())) {
-                                // this special handling is necessary as the NewItemAttributesItem may provide
-                                // a different key,value attribute names.
-                                if (formItem instanceof NewItemAttributesItem) {
-                                    NewItemAttributesItem niaItem = (NewItemAttributesItem) formItem;
-                                    ModelNode niaNode = selectedTableItem.get(attribute).get(formItem.getName());
-
-                                    niaItem.setValue(niaNode);
-                                } else {
-                                    formItem.clearValue();
-                                }
+                                formItem.setValue(selectedTableItem.get(attribute).get(formItem.getName()));
+                            } else {
+                                formItem.clearValue();
                             }
                         });
                     });
@@ -474,13 +454,20 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
                         _subResource.bindTableToForm();
                         List<ModelNode> modelList = selectedTableItem.get(attribute).asList();
 
-                        // create NamedNode with index based name, as it will be later used to correctly identify
-                        // the item in the table
-                        List<NamedNode> indexNodes = IntStream.range(0, modelList.size())
-                                .mapToObj(i -> new NamedNode(String.valueOf(i), modelList.get(i)))
-                                .collect(toList());
+                        List<NamedNode> subModel = new ArrayList<>(modelList.size());
 
-                        _subResource.table.update(indexNodes);
+                        boolean modelHasNameAttribute = _subResource.metadata.getDescription().get(ATTRIBUTES).hasDefined(NAME);
+                        // as the model doesn't contains a "name" attribute we will use an index to identify it
+                        // create NamedNode with index based name, as it will be later used to correctly identify
+                        // the item in the table, when removing or modifying the attributes.
+                        for (int i = 0; i < modelList.size(); i++) {
+                            ModelNode node = modelList.get(i);
+                            node.get(HAL_INDEX).set(i);
+                            String _name = modelHasNameAttribute ? node.get(NAME).asString() : String.valueOf(i);
+                            NamedNode nn = new NamedNode(_name, node);
+                            subModel.add(nn);
+                        }
+                        _subResource.table.update(subModel);
                     } else {
                         _subResource.form.clear();
                     }
@@ -555,7 +542,7 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
             remove = tableButtonFactory.remove(builder.template, _table -> {
                 NamedNode selectedModel = _table.selectedRow();
                 // the index is the NamedNode name
-                int index = Integer.parseInt(selectedModel.getName());
+                int index = selectedModel.remove(HAL_INDEX).asInt();
                 presenter.listRemove(title, selectedParentResource, builder.id, index, template);
             });
         } else {
