@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental.events.Event;
-import elemental2.dom.Element;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.KeyboardEvent;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -89,29 +89,23 @@ public class AutoComplete implements SuggestHandler, Attachable {
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     public void showAll() {
-        Element element = document.getElementById(formItem().getId(EDITING));
+        HTMLInputElement element = (HTMLInputElement) document.getElementById(formItem().getId(EDITING));
         setTimeout((o) -> {
             element.blur();
-            triggerEvent(element, Event.KEYUP, "", 0); // to reset 'last_val' in autoComplete.js
-            triggerEvent(element, Event.KEYUP, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
+            KeyboardEvent event = new KeyboardEvent("keyup");
+            triggerEvent(element, event, "", 0); // to reset 'last_val' in autoComplete.js
+            triggerEvent(element, event, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
             element.focus();
         }, 351); // timeout must be > 350, which is used in autoComplete.js
     }
 
-    private native void triggerEvent(Element element, String type, String key, int keyCode) /*-{
+    private native void triggerEvent(HTMLInputElement element, KeyboardEvent event, String key, int keyCode) /*-{
         element.value = key;
-        if ($doc.createEvent) {
-            event = new Event(type);
-            event.keyCode = keyCode;
-            event.which = keyCode;
-            element.dispatchEvent(event);
-        } else {
-            event = $doc.createEventObject();
-            event.keyCode = keyCode;
-            event.which = keyCode;
-            element.fireEvent("on" + type, event);
-        }
+        event.keyCode = keyCode;
+        event.which = keyCode;
+        element.dispatchEvent(event);
     }-*/;
 
     @Override
