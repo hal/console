@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLHRElement;
@@ -83,6 +83,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private final StateMachine stateMachine;
     private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, HTMLElement> panels;
+    // Contains *all* form items. Do not use this field directly.
+    // Instead use getFormItems() or getBoundFormItems()
     private final LinkedHashMap<String, FormItem> formItems;
     private final Set<String> unboundItems;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
@@ -326,7 +328,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
             dataMapping.newModel(model, this);
         } else {
             dataMapping.populateFormItems(model, this);
-            getBoundFormItems().forEach(formItem -> formItem.setModified(false));
+            for (FormItem formItem : getBoundFormItems()) {
+                formItem.setModified(false);
+            }
         }
     }
 
@@ -358,13 +362,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     protected Map<String, Object> getChangedValues() {
         Map<String, Object> changed = new HashMap<>();
-        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
-            FormItem formItem = entry.getValue();
+        for (FormItem formItem : getBoundFormItems()) {
             if (formItem.isModified()) {
                 if (formItem.isExpressionValue()) {
-                    changed.put(entry.getKey(), formItem.getExpressionValue());
+                    changed.put(formItem.getName(), formItem.getExpressionValue());
                 } else {
-                    changed.put(entry.getKey(), formItem.getValue());
+                    changed.put(formItem.getName(), formItem.getValue());
                 }
             }
         }
@@ -378,12 +381,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
      */
     public Map<String, Object> getUpdatedModel() {
         Map<String, Object> changed = new HashMap<>();
-        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
-            FormItem formItem = entry.getValue();
+        for (FormItem formItem : getBoundFormItems()) {
             if (formItem.isExpressionValue()) {
-                changed.put(entry.getKey(), formItem.getExpressionValue());
+                changed.put(formItem.getName(), formItem.getExpressionValue());
             } else {
-                changed.put(entry.getKey(), formItem.getValue());
+                changed.put(formItem.getName(), formItem.getValue());
             }
         }
         return changed;
@@ -519,7 +521,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 break;
 
             case EDITING:
-                if (!formItems.isEmpty()) {
+                if (!Iterables.isEmpty(getFormItems())) {
                     setTimeout((o) -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
                 }
                 if (escCallback != null && panels.get(EDITING) != null) {
@@ -569,15 +571,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     @Override
     public Iterable<FormItem> getFormItems() {
         return ImmutableList.copyOf(formItems.values());
-    }
-
-    public boolean isModified() {
-        for (FormItem formItem : getFormItems()) {
-            if (formItem.isModified()) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

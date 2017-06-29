@@ -537,7 +537,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // requires & alternatives
         Set<String> processedAlternatives = new HashSet<>();
-        getFormItems().forEach((FormItem formItem) -> {
+        for (FormItem formItem : getBoundFormItems()) {
             String name = formItem.getName();
 
             // requires
@@ -575,7 +575,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
                 processedAlternatives.addAll(uniqueAlternatives);
             }
-        });
+        }
     }
 
     @Override
@@ -606,10 +606,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             case READONLY:
             case EDITING:
                 // change restricted and enabled state
-                getBoundFormItems().forEach(formItem -> {
+                for (FormItem formItem : getBoundFormItems()) {
                     formItem.setRestricted(!securityContext.isReadable(formItem.getName()));
                     formItem.setEnabled(securityContext.isWritable(formItem.getName()));
-                });
+                }
                 break;
         }
 
@@ -624,7 +624,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @Override
     protected void prepareEditState() {
         super.prepareEditState();
-        getFormItems().forEach(this::evalRequires);
+        getBoundFormItems().forEach(this::evalRequires);
     }
 
     private void evalRequires(FormItem formItem) {
