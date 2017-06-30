@@ -365,6 +365,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String unknownResourceDetails(String address, String reason);
     String uptime(String uptime);
     String used(double value);
+    String validationAtLeast(String val);
 
     String view(String type);
 

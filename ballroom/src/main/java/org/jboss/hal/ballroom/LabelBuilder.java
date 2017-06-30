@@ -42,6 +42,7 @@ public class LabelBuilder {
             .put("ejb3", "EJB3")
             .put("http", "HTTP")
             .put("http2", "HTTP/2")
+            .put("jacc", "JACC")
             .put("jaxrs", "JAX-RS")
             .put("jdbc", "JDBC")
             .put("jca", "JCA")
