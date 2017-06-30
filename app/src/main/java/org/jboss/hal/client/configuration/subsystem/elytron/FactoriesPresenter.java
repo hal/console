@@ -58,6 +58,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -222,12 +223,15 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     public void saveFormPage(String resource, String listAttributeName, Metadata metadata,
             NamedNode payload, Map<String, Object> changedValues) {
         ResourceAddress address = metadata.getTemplate().resolve(statementContext, resource);
+        // the HAL_INDEX is an index added by HAL to properly identify each lis item, as lists may not contain
+        // a proper name identifier. The HAL_INDEX is added in ResourceView.bindTableToForm method and follow the
+        // HAL_INDEX usage.
         OperationFactory operationFactory = new OperationFactory(
-                name -> listAttributeName + "[" + payload.getName() + "]." + name);
+                name -> listAttributeName + "[" + payload.get(HAL_INDEX).asInt() + "]." + name);
         Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
         dispatcher.execute(operations, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifySingleResourceSuccess(Names.CLIENT_MAPPING)));
+                    Message.success(resources.messages().modifySingleResourceSuccess(address.lastName())));
             reload();
         });
     }
