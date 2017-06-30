@@ -61,6 +61,13 @@ public class OperationFactory {
         this(null);
     }
 
+    /**
+     * Creates a new instance with the specified name function. Use this constructor if you want to create change sets
+     * for complex attributes and need to adopt the {@code NAME} parameters of the DMR operations.
+     *
+     * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this
+     *               class.
+     */
     public OperationFactory(final Function<String, String> nameFn) {
         this.nameFn = nameFn;
     }
@@ -174,10 +181,10 @@ public class OperationFactory {
      * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION
      * write-attribute} operation.
      *
-     * @param address   the fq address used for the operations
-     * @param changeSet the changed values
+     * @param address              the fq address used for the operations
+     * @param changeSet            the changed values
      * @param complexAttributeName the complex attribute name
-     * @param metadata  the metadata which should contain the attribute definitions of the change-set
+     * @param metadata             the metadata which should contain the attribute definitions of the change-set
      */
     public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
             String complexAttributeName, final Metadata metadata) {
@@ -195,9 +202,9 @@ public class OperationFactory {
         });
 
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
+                .param(NAME, complexAttributeName)
+                .param(VALUE, payload)
+                .build();
 
         return new Composite(operation);
     }
@@ -206,10 +213,10 @@ public class OperationFactory {
      * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
      * list-add} operation.
      *
-     * @param address   the fq address used for the operations
-     * @param changeSet the changed values
+     * @param address              the fq address used for the operations
+     * @param changeSet            the changed values
      * @param complexAttributeName the complex attribute name
-     * @param metadata  the metadata which should contain the attribute definitions of the change-set
+     * @param metadata             the metadata which should contain the attribute definitions of the change-set
      */
     public Composite fromListChangeSet(final ResourceAddress address, final Map<String, Object> changeSet,
             String complexAttributeName, final Metadata metadata) {
@@ -227,9 +234,9 @@ public class OperationFactory {
         });
 
         Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
+                .param(NAME, complexAttributeName)
+                .param(VALUE, payload)
+                .build();
 
         return new Composite(operation);
     }
@@ -238,16 +245,16 @@ public class OperationFactory {
      * Turns a change-set into a operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#LIST_ADD_OPERATION
      * list-add} operation.
      *
-     * @param address   the fq address used for the operations
+     * @param address              the fq address used for the operations
      * @param complexAttributeName the complex attribute name
      */
     public Composite fromListChangeSet(final ResourceAddress address, final ModelNode payload,
             String complexAttributeName) {
 
         Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
-                            .param(NAME, complexAttributeName)
-                            .param(VALUE, payload)
-                            .build();
+                .param(NAME, complexAttributeName)
+                .param(VALUE, payload)
+                .build();
 
         return new Composite(operation);
     }
@@ -366,10 +373,9 @@ public class OperationFactory {
         ModelNode valueNode = new ModelNode();
 
         String _attributesPath;
-        if (complexAttribute != null)
+        if (complexAttribute != null) {
             _attributesPath = ATTRIBUTES + "/" + complexAttribute + "/" + VALUE_TYPE;
-        else
-            _attributesPath = ATTRIBUTES;
+        } else { _attributesPath = ATTRIBUTES; }
 
         Property attribute = resourceDescription.findAttribute(_attributesPath, name);
         if (attribute != null) {
@@ -379,10 +385,10 @@ public class OperationFactory {
                     attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
                     Expression.isExpression(stringValue)) {
                 valueNode.setExpression(stringValue);
+
             } else {
                 ModelType type = attributeDescription.get(TYPE).asType();
                 try {
-
                     switch (type) {
                         case BIG_DECIMAL:
                             valueNode.set(BigDecimal.valueOf(Double.parseDouble(stringValue)));
@@ -406,17 +412,21 @@ public class OperationFactory {
                             valueNode.set(Long.valueOf(stringValue).intValue());
                             break;
                         case LIST: {
-                            ModelType valueType = attributeDescription.hasDefined(VALUE_TYPE)
-                                    ? attributeDescription.get(VALUE_TYPE).asType()
-                                    : ModelType.UNDEFINED;
-                            if (valueType == ModelType.STRING) {
-                                valueNode.clear();
-                                List l = (List) value;
-                                for (Object o : l) { valueNode.add(String.valueOf(o)); }
-                            } else {
-                                valueNode = null;
-                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                        type);
+                            ModelNode valueType = attributeDescription.get(VALUE_TYPE);
+                            switch (valueType.getType()) {
+                                case STRING:
+                                    valueNode.clear();
+                                    List l = (List) value;
+                                    for (Object o : l) { valueNode.add(String.valueOf(o)); }
+                                    break;
+                                case OBJECT:
+                                    valueNode = (ModelNode) value;
+                                    break;
+                                default:
+                                    valueNode = null;
+                                    logger.error("Unsupported value type {} for attribute {} of type {}",
+                                            valueType, name, type);
+                                    break;
                             }
                             break;
                         }
@@ -424,22 +434,22 @@ public class OperationFactory {
                             valueNode.set(Long.parseLong(stringValue));
                             break;
                         case OBJECT:
-
-                            ModelType valueType = attributeDescription.get(VALUE_TYPE).getType();
-
-                            boolean stringValueType = valueType.equals(ModelType.TYPE)
-                                    && attributeDescription.get(VALUE_TYPE).asType().equals(ModelType.STRING);
-
-                            if (stringValueType) {
-                                Map map = (Map) value;
-                                for (Object k : map.keySet()) {
-                                    valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
-                                }
-                            } else if (valueType.equals(ModelType.OBJECT)) {
-                                valueNode = (ModelNode) value;
-                            } else {
-                                logger.error("Unsupported value type {} for attribute {} of type {}", valueType, name,
-                                        type);
+                            ModelNode valueType = attributeDescription.get(VALUE_TYPE);
+                            switch (valueType.getType()) {
+                                case STRING:
+                                    Map map = (Map) value;
+                                    for (Object k : map.keySet()) {
+                                        valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+                                    }
+                                    break;
+                                case OBJECT:
+                                    valueNode = (ModelNode) value;
+                                    break;
+                                default:
+                                    valueNode = null;
+                                    logger.error("Unsupported value type {} for attribute {} of type {}",
+                                            valueType, name, type);
+                                    break;
                             }
                             break;
                         case STRING:

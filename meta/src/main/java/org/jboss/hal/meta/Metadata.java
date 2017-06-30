@@ -79,6 +79,11 @@ public class Metadata {
     }
 
     @JsIgnore
+    public Metadata forComplexAttribute(String name) {
+        return forComplexAttribute(name, false);
+    }
+
+    @JsIgnore
     public Metadata forComplexAttribute(String name, boolean prefixComplexAttribute) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
@@ -86,17 +91,16 @@ public class Metadata {
         Property complexAttribute = description.findAttribute(ATTRIBUTES, name);
         if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {
             complexAttribute.getValue().get(VALUE_TYPE).asPropertyList().forEach(nestedProperty -> {
-                // The nested name must *always* use the dot notation,
+                // The nested name is *always* just the nested property name,
                 // since it's used when building the DMR operations
-                String nestedName = name + "." + nestedProperty.getName();
-                // The name which is used for the label can be prefixed with the complex attribute name
-                // (if prefixComplexAttribute == true), is stored as an artificial attribute and
-                // picked up by LabelBuilder.label(Property)
-                String label = prefixComplexAttribute
-                        ? name + "-" + nestedProperty.getName()
-                        : nestedProperty.getName();
+                String nestedName = nestedProperty.getName();
                 ModelNode nestedDescription = nestedProperty.getValue();
-                nestedDescription.get(HAL_LABEL).set(label);
+                // The name which is used for the label can be prefixed with the complex attribute name.
+                // If prefixComplexAttribute == true), it is stored as an artificial attribute and picked
+                // up by LabelBuilder.label(Property)
+                if (prefixComplexAttribute) {
+                    nestedDescription.get(HAL_LABEL).set(name + "-" + nestedProperty.getName());
+                }
                 payload.get(ATTRIBUTES).get(nestedName).set(nestedDescription);
             });
         }

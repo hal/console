@@ -147,6 +147,8 @@ public interface Names {
     String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
 
+    String LDAP_KEY_STORE = "LDAP Key Store";
+    String LDAP_KEY_STORES = "LDAP Key Stores";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOCAL_CACHE = "Local Cache";
@@ -175,6 +177,7 @@ public interface Names {
     String MODULE = "Module";
 
     String NAME = "Name";
+    String NEW_ITEM_TEMPLATE = "New Item Template";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 

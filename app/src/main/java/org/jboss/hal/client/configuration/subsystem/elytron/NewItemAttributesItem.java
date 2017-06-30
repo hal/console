@@ -21,6 +21,7 @@ import java.util.List;
 import com.google.common.base.Splitter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
@@ -29,10 +30,12 @@ import org.jboss.hal.ballroom.form.TagsMapping;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Messages;
 
+import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
@@ -40,8 +43,9 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
+        private static final String VALUE_SEPARATOR = ":";
         private static final RegExp REGEX = RegExp.compile(
-                "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/\\|]+)$"); //NON-NLS
+                "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/" + VALUE_SEPARATOR + "]+)$"); //NON-NLS
 
         @Override
         public Validator validator() {
@@ -59,8 +63,8 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
                         .split(cst)
                         .forEach((key, value) -> {
                             ModelNode kv = new ModelNode();
-                            kv.get(NAME, key);
-                            for (String v : value.split("\\|")) {
+                            kv.get(NAME).set(key);
+                            for (String v : value.split(VALUE_SEPARATOR)) {
                                 kv.get(VALUE).add(v);
                             }
                             result.add(kv);
@@ -78,7 +82,7 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
             return value.asList().stream()
                     .map(kv -> kv.get(NAME).asString() + "=" + kv.get(VALUE).asList().stream()
                             .map(ModelNode::asString)
-                            .collect(joining("|")))
+                            .collect(joining(VALUE_SEPARATOR)))
                     .collect(toList());
         }
 
@@ -88,10 +92,10 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
                 return "";
             }
             return value.asList().stream()
-                    .map(kv -> kv.get(NAME).asString() + "=" + kv.get(VALUE).asList().stream()
+                    .map(kv -> kv.get(NAME).asString() + " \u21D2 " + kv.get(VALUE).asList().stream()
                             .map(ModelNode::asString)
-                            .collect(joining("|")))
-                    .collect(joining(", "));
+                            .collect(joining(VALUE_SEPARATOR)))
+                    .collect(joining("\n"));
         }
     }
 
@@ -102,6 +106,13 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
     NewItemAttributesItem() {
         super("new-item-attributes", new LabelBuilder().label("new-item-attributes"), MESSAGES.newItemAttributesHint(),
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
+        element.style.whiteSpace = "pre";
     }
 
     @Override

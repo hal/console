@@ -137,6 +137,7 @@ public interface ModelDescriptionConstants {
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
+    String DIR_CONTEXT = "dir-context";
     String DIVERT = "divert";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
@@ -240,6 +241,7 @@ public interface ModelDescriptionConstants {
     String KILL = "kill";
 
     String LAUNCH_TYPE = "launch-type";
+    String LDAP_KEY_STORE = "ldap-key-store";
     String LEVEL = "level";
     String LICENSE = "license";
     String LINES = "lines";
@@ -284,6 +286,10 @@ public interface ModelDescriptionConstants {
     String MULTICAST_PORT = "multicast-port";
 
     String NAME = "name";
+    String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
+    String NEW_ITEM_PATH = "new-item-path";
+    String NEW_ITEM_RDN = "new-item-rdn";
+    String NEW_ITEM_TEMPLATE = "new-item-template";
     String NILLABLE = "nillable";
     String NONE = "none";
     String NOT = "not";
@@ -388,7 +394,7 @@ public interface ModelDescriptionConstants {
 
     String SASL_PROTOCOL = "sasl-protocol";
     String SCRIPT = "script";
-    //String SECURITY = "security-elytron";
+    String SEARCH_PATH = "search-path";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
