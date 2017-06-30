@@ -27,6 +27,7 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -75,8 +76,9 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private OtherSettingsPresenter presenter;
 
     @Inject
-    OtherSettingsView(final MetadataRegistry metadataRegistry, final TableButtonFactory tableButtonFactory, final
-            Resources resources) {
+    OtherSettingsView(final StatementContext statementContext, final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory, final
+    Resources resources) {
 
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
@@ -124,16 +126,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS);
-        ldapKeyStoreElement = new LdapKeyStoreElement(metadata, tableButtonFactory, resources);
-                // new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-                // Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
-                // () -> presenter.reload())
-                // .setNavigation(navigation)
-                // .setMetadataRegistry(metadataRegistry)
-                // .setTableAddCallback((name, address) -> presenter.reload())
-                // .build()
-                // .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
-                // .create();
+        ldapKeyStoreElement = new LdapKeyStoreElement(statementContext, metadata, tableButtonFactory, resources);
+        // new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+        // Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
+        // () -> presenter.reload())
+        // .setNavigation(navigation)
+        // .setMetadataRegistry(metadataRegistry)
+        // .setTableAddCallback((name, address) -> presenter.reload())
+        // .build()
+        // .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
+        // .create();
         navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
                 ldapKeyStoreElement.asElement());
 

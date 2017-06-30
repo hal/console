@@ -29,7 +29,10 @@ import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -43,17 +46,14 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
-    private final Metadata metadata;
     private final Table<NamedNode> table;
     private final Form<NamedNode> attributes;
     private final Form<ModelNode> newItemTemplate;
     private final HTMLElement root;
     private OtherSettingsPresenter presenter;
 
-    public LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
-        this.metadata = metadata;
-
+    public LdapKeyStoreElement(final StatementContext statementContext, final Metadata metadata,
+            final TableButtonFactory tableButtonFactory, final Resources resources) {
         this.table = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_TABLE,
                 metadata)
                 .button(tableButtonFactory.add(Ids.ELYTRON_LDAP_KEY_STORE_ADD, Names.LDAP_KEY_STORE,
@@ -67,14 +67,29 @@ public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, 
         this.attributes = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_FORM, metadata)
                 .onSave(((form, changedValues) -> presenter.saveLdapKeyStore(form.getModel().getName(), changedValues)))
                 .build();
-        Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE, false);
+
+        Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE);
         this.newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM,
                 nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .unsorted()
                 .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
+                .singleton(
+                        () -> {
+                            Operation operation = null;
+                            if (table.selectedRow() != null) {
+                                ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(statementContext,
+                                        table.selectedRow().getName());
+                                operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                        .param(NAME, NEW_ITEM_TEMPLATE)
+                                        .build();
+                            }
+                            return operation;
+                        },
+                        () -> presenter.addNewItemTemplate(table.selectedRow().getName()))
                 .onSave((form, changedValues) -> presenter.saveNewItemTemplate(table.selectedRow().getName(),
                         changedValues))
+                .prepareReset(form -> presenter.resetNewItemTemplate(table.selectedRow().getName(), form))
                 .build();
 
         Tabs tabs = new Tabs();

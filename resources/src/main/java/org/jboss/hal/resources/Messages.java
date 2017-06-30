@@ -259,6 +259,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredMarker();
     String requires(String requires);
     String resetConfirmationTitle(String type);
+    SafeHtml resetComplexAttributeConfirmationQuestion(String name);
+    SafeHtml resetComplexAttributeSuccess(String name);
     SafeHtml resetConfirmationQuestion(String name);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();

@@ -16,14 +16,22 @@
 package org.jboss.hal.core;
 
 import java.util.Map;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import jsinterop.annotations.JsIgnore;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -34,6 +42,13 @@ import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 /**
  * Class to create, read, update and delete complex attributes. This class mirrors some of the methods from {@link
@@ -69,6 +84,69 @@ public class ComplexAttributeOperations {
     }
 
 
+    // ------------------------------------------------------ (c)reate with dialog
+
+    /**
+     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required
+     * attributes. When clicking "Add", a new complex attribute created and written to the specified resource.
+     * After the resource has been updated, a success message is fired and the specified callback is executed.
+     *
+     * @param id               the id used for the add resource dialog
+     * @param resource         the resource name
+     * @param complexAttribute the name of the complex attribute
+     * @param template         the address template which is resolved against the current statement context and the
+     *                         resource name to get the resource address for the operation
+     * @param callback         the callback executed after the resource has been added
+     */
+    @JsIgnore
+    public void add(final String id, final String resource, final String complexAttribute,
+            final AddressTemplate template, final Callback callback) {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+            @Override
+            public void onMetadata(final Metadata metadata) {
+                String type = labelBuilder.label(complexAttribute);
+                Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
+                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, caMetadata)
+                        .addOnly()
+                        .requiredOnly()
+                        .build();
+                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), form,
+                        (name, model) -> add(resource, complexAttribute, template, model, callback));
+                dialog.show();
+            }
+        });
+    }
+
+
+    // ------------------------------------------------------ (c)reate operation
+
+    /**
+     * Writes the payload of the complext attribute to the specified resource. After the resource has been updated,
+     * a success message is fired and the specified callback is executed.
+     *
+     * @param resource         the resource name
+     * @param complexAttribute the name of the complex attribute
+     * @param template         the address template which is resolved against the current statement context and the
+     *                         resource name to get the resource address for the operation
+     * @param payload          the optional payload for the complex attribute (may be null or undefined)
+     * @param callback         the callback executed after the resource has been added
+     */
+    @JsIgnore
+    public void add(final String resource, final String complexAttribute, final AddressTemplate template,
+            @Nullable final ModelNode payload, final Callback callback) {
+        ResourceAddress address = template.resolve(statementContext, resource);
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                .param(NAME, complexAttribute)
+                .param(VALUE, payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            String type = labelBuilder.label(complexAttribute);
+            MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
+            callback.execute();
+        });
+    }
+
+
     // ------------------------------------------------------ (u)pdate using address
 
     /**
@@ -85,14 +163,14 @@ public class ComplexAttributeOperations {
      * @param callback         the callback executed after the resource has been saved
      */
     @JsIgnore
-    public void save(String resource, String complexAttribute, final AddressTemplate template,
+    public void save(final String resource, final String complexAttribute, final AddressTemplate template,
             final Map<String, Object> changedValues, final Callback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(final Metadata metadata) {
                 ResourceAddress address = template.resolve(statementContext, resource);
-                Metadata caMeta = metadata.forComplexAttribute(complexAttribute);
-                save(complexAttribute, address, changedValues, caMeta, callback);
+                Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
+                save(complexAttribute, address, changedValues, caMetadata, callback);
             }
         });
     }
@@ -113,11 +191,42 @@ public class ComplexAttributeOperations {
      * @param callback         the callback executed after the resource has been saved
      */
     @JsIgnore
-    public void save(String complexAttribute, final ResourceAddress address, final Map<String, Object> changedValues,
-            final Metadata metadata, final Callback callback) {
+    public void save(final String complexAttribute, final ResourceAddress address,
+            final Map<String, Object> changedValues, final Metadata metadata, final Callback callback) {
         Composite operations = operationFactory(complexAttribute).fromChangeSet(address, changedValues, metadata);
         crud.save(operations, resources.messages().modifySingleResourceSuccess(labelBuilder.label(complexAttribute)),
                 callback);
+    }
+
+
+    // ------------------------------------------------------ (u) reset using template
+
+    /**
+     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and
+     * the specified callback is executed.
+     *
+     * @param resource         the resource name
+     * @param complexAttribute the name of the complex attribute
+     * @param template         the address template which is resolved against the current statement context and the
+     *                         resource name to get the resource address for the operation
+     * @param callback         the callback executed after the complex attribute has been undefined
+     */
+    @JsIgnore
+    public void reset(final String resource, final String complexAttribute, final AddressTemplate template,
+            final Callback callback) {
+        String type = labelBuilder.label(complexAttribute);
+        ResourceAddress address = template.resolve(statementContext, resource);
+        Operation operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
+                .param(NAME, complexAttribute)
+                .build();
+        SafeHtml question = resources.messages().resetComplexAttributeConfirmationQuestion(type);
+        DialogFactory.showConfirmation(
+                resources.messages().resetConfirmationTitle(type), question,
+                () -> dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().resetComplexAttributeSuccess(type)));
+                    callback.execute();
+                }));
     }
 
 

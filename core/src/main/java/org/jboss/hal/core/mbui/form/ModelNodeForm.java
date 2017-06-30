@@ -588,7 +588,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             asElement().appendChild(alert.asElement());
         }
         if (singleton && ping != null && ping.get() != null) {
-            Core.INSTANCE.dispatcher().execute(ping.get(), result -> flip(READONLY), (op, failure) -> flip(EMPTY));
+            Core.INSTANCE.dispatcher().execute(ping.get(),
+                    result -> {
+                        if (!result.isDefined()) {
+                            flip(EMPTY);
+                        } else {
+                            flip(READONLY);
+                        }
+                    }, (op, failure) -> flip(EMPTY));
         }
     }
 

@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
@@ -290,8 +291,23 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 this::reloadLdapKeyStores);
     }
 
+    void addNewItemTemplate(final String ldapKeyStore) {
+        ca.add(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_ADD, ldapKeyStore, NEW_ITEM_TEMPLATE,
+                AddressTemplates.LDAP_KEY_STORE_ADDRESS, this::reloadLdapKeyStores);
+    }
+
     void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
         ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS, changedValues,
                 this::reloadLdapKeyStores);
+    }
+
+    void resetNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
+        ca.reset(ldapKeyStore, NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+                new FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reloadLdapKeyStores();
+                    }
+                });
     }
 }
