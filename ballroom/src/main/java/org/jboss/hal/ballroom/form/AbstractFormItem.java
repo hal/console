@@ -39,6 +39,7 @@ import org.jboss.hal.dmr.Deprecation;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
 /**
  * Base class for all form item implementations. Contains central logic for handling (default) values, various flags,
@@ -361,10 +362,22 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         if (isRequired()) {
             return true;
         }
-        if (isUndefined()) {
-            return false;
+
+        if (!validationHandlers.isEmpty()) {
+            // if there's a validation handler with ValidationRule == ALWAYS,
+            // we need to validate for sure, otherwise we only need to validate
+            // if the form item is modified
+            if (validationHandlers.stream().anyMatch(vh -> vh.validateIf() == ALWAYS)) {
+                return true;
+            } else {
+                // only validation handler with ValidationRule == IF_MODIFIED,
+                // return true if the form item is defined && modified
+                return !isUndefined() && isModified();
+            }
         }
-        return (isModified() && !validationHandlers.isEmpty());
+
+        // no validation handlers - no need to validate
+        return false;
     }
 
     @Override
