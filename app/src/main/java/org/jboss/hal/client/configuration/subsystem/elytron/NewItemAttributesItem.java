@@ -112,7 +112,9 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
     public void attach() {
         super.attach();
         HTMLElement element = (HTMLElement) document.getElementById(getId(READONLY));
-        element.style.whiteSpace = "pre";
+        if (element != null) {
+            element.style.whiteSpace = "pre";
+        }
     }
 
     @Override

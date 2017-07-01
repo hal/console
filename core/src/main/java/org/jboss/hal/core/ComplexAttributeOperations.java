@@ -51,34 +51,34 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 /**
- * Class to create, read, update and delete complex attributes. This class mirrors some of the methods from {@link
- * CrudOperations}.
+ * Class to create, read, update and delete complex attributes. This class mirrors and delegates to some of the methods
+ * from {@link CrudOperations}.
  */
 public class ComplexAttributeOperations {
 
+    private final CrudOperations crud;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
     private final StatementContext statementContext;
-    private final CrudOperations crud;
     private final Resources resources;
     private final LabelBuilder labelBuilder;
 
     @Inject
-    public ComplexAttributeOperations(final EventBus eventBus,
+    public ComplexAttributeOperations(final CrudOperations crud,
+            final EventBus eventBus,
             final Dispatcher dispatcher,
             final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
             final StatementContext statementContext,
-            final CrudOperations crud,
             final Resources resources) {
+        this.crud = crud;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.statementContext = statementContext;
-        this.crud = crud;
         this.resources = resources;
         this.labelBuilder = new LabelBuilder();
     }
@@ -199,7 +199,7 @@ public class ComplexAttributeOperations {
     }
 
 
-    // ------------------------------------------------------ (u) reset using template
+    // ------------------------------------------------------ (d)elete using template
 
     /**
      * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and
@@ -212,16 +212,16 @@ public class ComplexAttributeOperations {
      * @param callback         the callback executed after the complex attribute has been undefined
      */
     @JsIgnore
-    public void reset(final String resource, final String complexAttribute, final AddressTemplate template,
+    public void remove(final String resource, final String complexAttribute, final AddressTemplate template,
             final Callback callback) {
         String type = labelBuilder.label(complexAttribute);
         ResourceAddress address = template.resolve(statementContext, resource);
         Operation operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, complexAttribute)
                 .build();
-        SafeHtml question = resources.messages().resetComplexAttributeConfirmationQuestion(type);
+        SafeHtml question = resources.messages().removeConfirmationQuestion(type);
         DialogFactory.showConfirmation(
-                resources.messages().resetConfirmationTitle(type), question,
+                resources.messages().removeConfirmationTitle(type), question,
                 () -> dispatcher.execute(operation, result -> {
                     MessageEvent.fire(eventBus,
                             Message.success(resources.messages().resetComplexAttributeSuccess(type)));

@@ -80,10 +80,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
 
-    // all form items share the same event bus
-    private static final EventBus EVENT_BUS = new SimpleEventBus();
-
-
     private String name;
     private final String label;
     private final String hint;
@@ -100,8 +96,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private Deprecation deprecation;
 
     private Form form;
-    private final Map<State, Appearance<T>> appearances;
     private SuggestHandler suggestHandler;
+    private final EventBus eventBus;
+    private final Map<State, Appearance<T>> appearances;
     private final List<FormItemValidation<T>> validationHandlers;
     private final List<ResolveExpressionHandler> resolveExpressionHandlers;
     private final List<com.google.web.bindery.event.shared.HandlerRegistration> handlers;
@@ -122,8 +119,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.expressionAllowed = true;
         this.deprecation = null;
 
-        this.appearances = new HashMap<>();
         this.suggestHandler = null;
+        this.eventBus = new SimpleEventBus();
+        this.appearances = new HashMap<>();
         this.validationHandlers = new LinkedList<>();
         this.validationHandlers.addAll(defaultValidationHandlers());
         this.resolveExpressionHandlers = new LinkedList<>();
@@ -332,12 +330,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void fireEvent(final GwtEvent<?> gwtEvent) {
-        EVENT_BUS.fireEvent(gwtEvent);
+        eventBus.fireEvent(gwtEvent);
     }
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> valueChangeHandler) {
-        return EVENT_BUS.addHandler(ValueChangeEvent.getType(), valueChangeHandler);
+        return eventBus.addHandler(ValueChangeEvent.getType(), valueChangeHandler);
     }
 
     @Override

@@ -89,7 +89,7 @@ public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, 
                         () -> presenter.addNewItemTemplate(table.selectedRow().getName()))
                 .onSave((form, changedValues) -> presenter.saveNewItemTemplate(table.selectedRow().getName(),
                         changedValues))
-                .prepareReset(form -> presenter.resetNewItemTemplate(table.selectedRow().getName(), form))
+                .prepareRemove(form -> presenter.removeNewItemTemplate(table.selectedRow().getName(), form))
                 .build();
 
         Tabs tabs = new Tabs();

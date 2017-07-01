@@ -435,6 +435,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final Map<String, ModelNode> attributeMetadata;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
+    // private final List<HandlerRegistration> handlers;
     private Metadata metadata;
 
     @SuppressWarnings("unchecked")
@@ -456,6 +457,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         this.resourceDescription = builder.metadata.getDescription();
         this.attributePath = builder.attributePath;
         this.metadata = builder.metadata;
+        // this.handlers = new ArrayList<>();
 
         List<Property> properties = new ArrayList<>();
         List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
@@ -535,22 +537,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
         }
 
-        // requires & alternatives
+        // alternatives
         Set<String> processedAlternatives = new HashSet<>();
         for (FormItem formItem : getBoundFormItems()) {
             String name = formItem.getName();
 
-            // requires
-            List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                    .map(this::getFormItem)
-                    .filter(Objects::nonNull)
-                    .collect(toList());
-            if (!requires.isEmpty()) {
-                formItem.addValueChangeHandler(
-                        event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
-            }
-
-            // alternatives
             List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
             HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
             uniqueAlternatives.add(name);
@@ -582,11 +573,31 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @JsMethod
     public void attach() {
         super.attach();
+
         if (Iterables.isEmpty(getFormItems())) {
             Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(alert.asElement());
         }
+
+        // TODO Does this really add value?
+        // requires
+        // for (FormItem formItem : getBoundFormItems()) {
+        //     String name = formItem.getName();
+        //     List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
+        //             .map(this::getFormItem)
+        //             .filter(Objects::nonNull)
+        //             .collect(toList());
+        //     if (!requires.isEmpty()) {
+        //         //noinspection unchecked
+        //         handlers.add(formItem.addValueChangeHandler(
+        //                 event -> requires.forEach(rf -> {
+        //                     boolean notEmptyOrDefault = !isEmptyOrDefault(formItem);
+        //                     rf.setEnabled(notEmptyOrDefault);
+        //                 })));
+        //     }
+        // }
+
         if (singleton && ping != null && ping.get() != null) {
             Core.INSTANCE.dispatcher().execute(ping.get(),
                     result -> {
@@ -597,6 +608,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                         }
                     }, (op, failure) -> flip(EMPTY));
         }
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        // for (HandlerRegistration handler : handlers) {
+        //     handler.removeHandler();
+        // }
     }
 
     @Override
