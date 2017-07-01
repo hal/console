@@ -1,6 +1,8 @@
 css
 fonts
-img
+img/32px.png
+img/40px.png
+img/throbber.gif
 js/*
 favicon.ico
 apple-touch-icon.png
