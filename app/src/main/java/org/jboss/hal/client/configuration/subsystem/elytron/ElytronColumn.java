@@ -60,13 +60,14 @@ public class ElytronColumn
         List<StaticItem> items = asList(
                 new StaticItem.Builder(resources.constants().globalSettings())
                         .id(Ids.ELYTRON)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON).build()))
+                        .action(itemActionFactory.viewAndMonitor(Ids.ELYTRON,
+                                places.selectedProfile(NameTokens.ELYTRON).build()))
                         .onPreview(new ElytronSubsystemPreview(crud, resources))
                         .keywords("global", "settings")
                         .build(),
 
                 new StaticItem.Builder(Names.FACTORIES_TRANSFORMERS)
-                        .action(itemActionFactory.view(
+                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.FACTORIES_TRANSFORMERS),
                                 places.selectedProfile(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS).build()))
                         .onPreview(new PreviewContent(Names.FACTORIES_TRANSFORMERS,
                                 resources.previews().configurationElytronFactories()))
@@ -74,7 +75,7 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.MAPPERS_DECODERS)
-                        .action(itemActionFactory.view(
+                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.MAPPERS_DECODERS),
                                 places.selectedProfile(NameTokens.ELYTRON_MAPPERS_DECODERS).build()))
                         .onPreview(new PreviewContent(Names.MAPPERS_DECODERS,
                                 resources.previews().configurationElytronMappersDecoders()))
@@ -82,14 +83,15 @@ public class ElytronColumn
                         .build(),
 
                 new StaticItem.Builder(Names.OTHER_SETTINGS)
-                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
+                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.OTHER_SETTINGS),
+                                places.selectedProfile(NameTokens.ELYTRON_OTHER).build()))
                         .onPreview(new PreviewContent(Names.OTHER_SETTINGS,
                                 resources.previews().configurationElytronOtherSettings()))
                         .keywords("store", "ssl", "authentication", "ldap")
                         .build(),
 
                 new StaticItem.Builder(Names.SECURITY_REALMS)
-                        .action(itemActionFactory.view(
+                        .action(itemActionFactory.viewAndMonitor(Ids.asId(Names.SECURITY_REALMS),
                                 places.selectedProfile(NameTokens.ELYTRON_SECURITY_REALMS).build()))
                         .onPreview(new PreviewContent(Names.SECURITY_REALMS,
                                 resources.previews().configurationElytronSecurityRealms()))

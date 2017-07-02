@@ -205,6 +205,10 @@ public interface Ids {
     String ELYTRON_FILESYSTEM_REALM = build(ELYTRON, "filesystem-realm");
     String ELYTRON_FILTERING_KEY_STORE = build(ELYTRON, "filtering-key-store");
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = build(ELYTRON, "http-authentication-factory");
+    String ELYTRON_HTTP_AUTHENTICATION_FACTORY_ADD = build(ELYTRON, "http-authentication-factory", ADD_SUFFIX);
+    String ELYTRON_HTTP_AUTHENTICATION_FACTORY_FORM = build(ELYTRON, "http-authentication-factory", FORM_SUFFIX);
+    String ELYTRON_HTTP_AUTHENTICATION_FACTORY_PAGE = build(ELYTRON, "http-authentication-factory", PAGE_SUFFIX);
+    String ELYTRON_HTTP_AUTHENTICATION_FACTORY_TABLE = build(ELYTRON, "http-authentication-factory", TABLE_SUFFIX);
     String ELYTRON_IDENTITY_REALM = build(ELYTRON, "identity-realm");
     String ELYTRON_JDBC_REALM = build(ELYTRON, "jdbc-realm");
     String ELYTRON_KERBEROS_SECURITY_FACTORY = build(ELYTRON, "kerberos-security-factory");
@@ -224,6 +228,17 @@ public interface Ids {
     String ELYTRON_LDAP_KEY_STORE_TABLE = build(ELYTRON_LDAP_KEY_STORE, FORM_SUFFIX);
     String ELYTRON_LDAP_REALM = build(ELYTRON, "ldap-realm");
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = build(ELYTRON, "mapped-regex-realm-mapper");
+    String ELYTRON_MECHANISM_CONFIGURATIONS = build(ELYTRON, "mechanism-configurations");
+    String ELYTRON_MECHANISM_CONFIGURATIONS_ADD = build(ELYTRON, "mechanism-configurations", ADD_SUFFIX);
+    String ELYTRON_MECHANISM_CONFIGURATIONS_FORM = build(ELYTRON, "mechanism-configurations", FORM_SUFFIX);
+    String ELYTRON_MECHANISM_CONFIGURATIONS_PAGE = build(ELYTRON, "mechanism-configurations", PAGE_SUFFIX);
+    String ELYTRON_MECHANISM_CONFIGURATIONS_TABLE = build(ELYTRON, "mechanism-configurations", TABLE_SUFFIX);
+    String ELYTRON_MECHANISM_REALM_CONFIGURATIONS = build(ELYTRON, "mechanism-realm-configurations");
+    String ELYTRON_MECHANISM_REALM_CONFIGURATIONS_ADD = build(ELYTRON, "mechanism-realm-configurations", ADD_SUFFIX);
+    String ELYTRON_MECHANISM_REALM_CONFIGURATIONS_FORM = build(ELYTRON, "mechanism-realm-configurations", FORM_SUFFIX);
+    String ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE = build(ELYTRON, "mechanism-realm-configurations", PAGE_SUFFIX);
+    String ELYTRON_MECHANISM_REALM_CONFIGURATIONS_TABLE = build(ELYTRON, "mechanism-realm-configurations",
+            TABLE_SUFFIX);
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = build(ELYTRON,
             "mechanism-provider-filtering-sasl-server-factory");
     String ELYTRON_POLICY = build(ELYTRON, "policy");

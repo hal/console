@@ -625,7 +625,7 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate using template
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * Writes the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -651,7 +651,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * Writes the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -680,7 +680,7 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate using address
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * Writes the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -700,7 +700,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified attribute in the resource. After the resource has been saved a standard
+     * Writes the changed values to the specified attribute in the resource. After the resource has been saved a standard
      * success message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -721,7 +721,7 @@ public class CrudOperations {
     }
 
     /**
-     * Add the changed values to the specified attribute of type LIST in the resource. After the resource has been
+     * Adds the changed values to the specified attribute of type LIST in the resource. After the resource has been
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -744,7 +744,7 @@ public class CrudOperations {
     }
 
     /**
-     * Add the changed values to the specified attribute of type LIST in the resource. After the resource has been
+     * Adds the changed values to the specified attribute of type LIST in the resource. After the resource has been
      * saved a standard success message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -765,7 +765,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * Writes the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
@@ -786,7 +786,7 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate using operation
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved a standard success message
+     * Writes the changed values to the specified resource. After the resource has been saved a standard success message
      * is fired and the specified callback is executed.
      * <p>
      * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
@@ -803,7 +803,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified resource. After the resource has been saved the specified success
+     * Writes the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      * <p>
      * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
@@ -830,7 +830,7 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate singleton using template
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success
      * message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
@@ -852,7 +852,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success
      * message is fired and the specified callback is executed.
      *
      * @param template       the address template which is resolved against the current statement context to get the
@@ -876,7 +876,7 @@ public class CrudOperations {
     // ------------------------------------------------------ (u)pdate singleton using address
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success
      * message is fired and the specified callback is executed.
      *
      * @param type          the human readable resource type used in the success message
@@ -893,7 +893,7 @@ public class CrudOperations {
     }
 
     /**
-     * Write the changed values to the specified singleton resource. After the resource has been saved a success
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success
      * message is fired and the specified callback is executed.
      *
      * @param address        the fq address for the operation

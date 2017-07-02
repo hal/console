@@ -187,6 +187,7 @@ public interface ModelDescriptionConstants {
     String GROUPING_HANDLER = "grouping-handler";
 
     String HA_POLICY = "ha-policy";
+    String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
@@ -194,11 +195,13 @@ public interface ModelDescriptionConstants {
     String HEADER_NAME = "header-name";
     String HOMEPAGE = "homepage";
     String HOST = "host";
+    String HOST_NAME = "host-name";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
     String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
+    String HTTP_AUTNETICATION_FACTORY = "http-authentication-factory";
     String HTTP_CONNECTOR = "http-connector";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
@@ -272,6 +275,9 @@ public interface ModelDescriptionConstants {
     String MASTER = "master";
     String MAX = "max";
     String MAX_THREADS = "max-threads";
+    String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
+    String MECHANISM_NAME = "mechanism-name";
+    String MECHANISM_REALM_CONFIGURATIONS = "mechanism-realm-configurations";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIME_MAPPING = "mime-mapping";
@@ -347,6 +353,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REALM_NAME = "realm-name";
     String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";

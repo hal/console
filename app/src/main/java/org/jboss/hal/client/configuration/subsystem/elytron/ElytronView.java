@@ -33,5 +33,4 @@ public interface ElytronView {
      * @param rest
      */
     void registerComponents(Attachable first, Attachable... rest);
-
 }

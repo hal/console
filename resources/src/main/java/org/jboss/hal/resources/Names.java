@@ -120,6 +120,7 @@ public interface Names {
     String HOSTS = "Hosts";
     String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
+    String HTTP_AUTHENTICATION_FACTORY = "HTTP Authentication Factory";
     String HTTP_CONNECTOR = "HTTP Connector";
     String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
     String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
@@ -148,7 +149,6 @@ public interface Names {
     String JSP = "JSP";
 
     String LDAP_KEY_STORE = "LDAP Key Store";
-    String LDAP_KEY_STORES = "LDAP Key Stores";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOCAL_CACHE = "Local Cache";
@@ -170,6 +170,9 @@ public interface Names {
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
     String MB = "MB";
+    String MECHANISM_CONFIGURATION = "Mechanism Configuration";
+    String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
+    String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
     String MIME_MAPPING = "Mime Mapping";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";

@@ -205,6 +205,9 @@ public class ResourceView implements HasPresenter<ElytronPresenter> {
      *
      * @return
      */
+    // TODO If this is used in a view with the same complexAttributeName
+    // TODO an exception is thrown in AutoComplete.detach!
+    // See FactoriesView and search for '.addComplexAttributeAsPage("mechanism-configurations")'
     public ResourceView addComplexAttributeAsPage(String complexAttributeName) {
         addComplexAttributeAsPage(complexAttributeName, null);
         return this;

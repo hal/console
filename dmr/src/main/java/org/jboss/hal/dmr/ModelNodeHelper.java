@@ -33,6 +33,7 @@ import org.jboss.hal.spi.EsReturn;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
@@ -112,15 +113,6 @@ public final class ModelNodeHelper {
         return result.isDefined() ? result.asPropertyList() : Collections.emptyList();
     }
 
-    /**
-     * Turns a list of properties into a list of named model nodes which contains a {@link
-     * ModelDescriptionConstants#NAME} key with the properties name.
-     */
-    @JsIgnore
-    public static List<NamedNode> asNamedNodes(List<Property> properties) {
-        return properties.stream().map(NamedNode::new).collect(toList());
-    }
-
     @JsIgnore
     public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Supplier<T> supplier,
             T defaultValue) {
@@ -133,6 +125,24 @@ public final class ModelNodeHelper {
             }
         }
         return result;
+    }
+
+    @JsIgnore
+    public static void storeIndex(List<ModelNode> modelNodes) {
+        int index = 0;
+        for (ModelNode modelNode : modelNodes) {
+            modelNode.get(HAL_INDEX).set(index);
+            index++;
+        }
+    }
+
+    /**
+     * Turns a list of properties into a list of named model nodes which contains a {@link
+     * ModelDescriptionConstants#NAME} key with the properties name.
+     */
+    @JsIgnore
+    public static List<NamedNode> asNamedNodes(List<Property> properties) {
+        return properties.stream().map(NamedNode::new).collect(toList());
     }
 
     /**

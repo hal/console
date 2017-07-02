@@ -23,8 +23,10 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -39,6 +41,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     ResourceView aggregateHttpServerMechanismFactory;
     ResourceView configurableHttpServerMechanismFactory;
     ResourceView httpAuthenticationFactory;
+    private HttpAuthenticationFactoryElement httpAuthenticationFactoryElement;
     ResourceView providerHttpServerMechanismFactory;
     ResourceView serviceLoaderHttpServerMechanismFactory;
 
@@ -114,6 +117,11 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 .addComplexAttributeAsPage("mechanism-configurations")
                 .create();
 
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS);
+        httpAuthenticationFactoryElement = new HttpAuthenticationFactoryElement(metadata, tableButtonFactory);
+        navigation.addSecondary(primaryIdHttpFactories, Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY,
+                Names.HTTP_AUTHENTICATION_FACTORY + "2", httpAuthenticationFactoryElement.asElement());
+
         providerHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,
                 Ids.ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY, "Provider HTTP Server Mechanism",
                 PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS, this,
@@ -188,7 +196,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 .setMetadataRegistry(metadataRegistry)
                 .setTableAddCallback((name, address) -> presenter.reload())
                 .build()
-                .addComplexAttributeAsPage("mechanism-configurations")
+                // .addComplexAttributeAsPage("mechanism-configurations")
                 .create();
 
         serviceLoaderSaslServerFactory = new ResourceView.Builder(tableButtonFactory,
@@ -300,6 +308,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
         aggregateHttpServerMechanismFactory.bindTableToForm();
         configurableHttpServerMechanismFactory.bindTableToForm();
         httpAuthenticationFactory.bindTableToForm();
+        httpAuthenticationFactoryElement.attach();
         providerHttpServerMechanismFactory.bindTableToForm();
         serviceLoaderHttpServerMechanismFactory.bindTableToForm();
 
@@ -360,6 +369,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     public void updateHttpAuthentication(final List<NamedNode> model) {
         httpAuthenticationFactory.getForm().clear();
         httpAuthenticationFactory.getTable().update(model);
+        httpAuthenticationFactoryElement.update(model);
     }
 
     @Override
@@ -446,6 +456,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
         aggregateHttpServerMechanismFactory.setPresenter(presenter);
         configurableHttpServerMechanismFactory.setPresenter(presenter);
         httpAuthenticationFactory.setPresenter(presenter);
+        httpAuthenticationFactoryElement.setPresenter(presenter);
         providerHttpServerMechanismFactory.setPresenter(presenter);
         serviceLoaderHttpServerMechanismFactory.setPresenter(presenter);
 

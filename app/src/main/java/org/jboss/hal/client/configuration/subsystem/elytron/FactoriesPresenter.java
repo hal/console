@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -59,6 +60,8 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_AUTNETICATION_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MECHANISM_CONFIGURATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -107,6 +110,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     // @formatter:on
 
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
@@ -119,6 +123,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             final FactoriesPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
             final MetadataRegistry metadataRegistry,
@@ -126,6 +131,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
+        this.ca = ca;
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
@@ -237,7 +243,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
 
-    public void resetComplexAttribute(final String type, final String name,  final String attribute,
+    public void resetComplexAttribute(final String type, final String name, final String attribute,
             final Metadata metadata, final Callback callback) {
 
         ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
@@ -245,8 +251,9 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         attributeToReset.add(attribute);
         crud.reset(type, name, address, attributeToReset, metadata, callback);
     }
+
     @Override
-    public void launchAddDialog(Function<String,String> resourceNameFunction, String complexAttributeName,
+    public void launchAddDialog(Function<String, String> resourceNameFunction, String complexAttributeName,
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
@@ -269,4 +276,45 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
     }
 
+
+    // ------------------------------------------------------ HTTP authentication factory
+
+    void reloadHttpAuthenticationFactories() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, HTTP_AUTNETICATION_FACTORY,
+                children -> getView().updateHttpAuthentication(asNamedNodes(children)));
+    }
+
+    void saveHttpAuthenticationFactory(Form<NamedNode> form, Map<String, Object> changedValues) {
+        crud.save(Names.HTTP_AUTHENTICATION_FACTORY, form.getModel().getName(),
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    void addMechanismConfiguration(String httpAuthenticationFactory) {
+        ca.listAdd(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_ADD, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, this::reloadHttpAuthenticationFactories);
+    }
+
+    void saveMechanismConfiguration(String httpAuthenticationFactory, int index,
+            Map<String, Object> changedValues) {
+        ca.save(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, index,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    void removeMechanismConfiguration(String httpAuthenticationFactory, int index) {
+        ca.remove(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, this::reloadHttpAuthenticationFactories);
+    }
+
+    void addMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration) {
+    }
+
+    void saveMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration,
+            Form<ModelNode> form, Map<String, Object> changedValues) {
+    }
+
+    void removeMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration,
+            String mechanismRealmConfiguration) {
+    }
 }

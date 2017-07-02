@@ -32,6 +32,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
@@ -45,6 +46,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
     private ResourceView credentialStoreView;
     private ResourceView filteringKeyStoreView;
     private ResourceView keystoreView;
+    private ResourceView ldapKeyStoreView;
     private LdapKeyStoreElement ldapKeyStoreElement;
 
     // ssl
@@ -124,19 +126,20 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .addComplexAttributeAsTab("credential-reference")
                 .create();
 
-        // NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
+        NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
+        ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
+                Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
+                () -> presenter.reload())
+                .setNavigation(navigation)
+                .setMetadataRegistry(metadataRegistry)
+                .setTableAddCallback((name, address) -> presenter.reload())
+                .build()
+                .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
+                .create();
+
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS);
         ldapKeyStoreElement = new LdapKeyStoreElement(statementContext, metadata, tableButtonFactory, resources);
-        // new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-        // Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
-        // () -> presenter.reload())
-        // .setNavigation(navigation)
-        // .setMetadataRegistry(metadataRegistry)
-        // .setTableAddCallback((name, address) -> presenter.reload())
-        // .build()
-        // .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
-        // .create();
-        navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
+        navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE + "2",
                 ldapKeyStoreElement.asElement());
 
         aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
@@ -321,6 +324,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         credentialStoreView.bindTableToForm();
         filteringKeyStoreView.bindTableToForm();
         keystoreView.bindTableToForm();
+        ldapKeyStoreView.bindTableToForm();
         ldapKeyStoreElement.attach();
         aggregateProvidersView.bindTableToForm();
         clientSslContextView.bindTableToForm();
@@ -377,9 +381,9 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
     @Override
     public void updateLdapKeyStore(final List<NamedNode> model) {
+        ldapKeyStoreView.update(model);
         ldapKeyStoreElement.update(model);
     }
-
 
     @Override
     public void updateProviderLoader(final List<NamedNode> model) {
@@ -448,6 +452,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         credentialStoreView.setPresenter(presenter);
         filteringKeyStoreView.setPresenter(presenter);
         keystoreView.setPresenter(presenter);
+        ldapKeyStoreView.setPresenter(presenter);
         ldapKeyStoreElement.setPresenter(presenter);
         aggregateProvidersView.setPresenter(presenter);
         clientSslContextView.setPresenter(presenter);

@@ -44,7 +44,7 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
+class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
     private final Table<NamedNode> table;
     private final Form<NamedNode> attributes;
@@ -52,9 +52,9 @@ public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, 
     private final HTMLElement root;
     private OtherSettingsPresenter presenter;
 
-    public LdapKeyStoreElement(final StatementContext statementContext, final Metadata metadata,
+    LdapKeyStoreElement(final StatementContext statementContext, final Metadata metadata,
             final TableButtonFactory tableButtonFactory, final Resources resources) {
-        this.table = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_TABLE,
+        table = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_TABLE,
                 metadata)
                 .button(tableButtonFactory.add(Ids.ELYTRON_LDAP_KEY_STORE_ADD, Names.LDAP_KEY_STORE,
                         metadata.getTemplate(), asList(DIR_CONTEXT, SEARCH_PATH),
@@ -64,21 +64,22 @@ public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, 
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        this.attributes = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_FORM, metadata)
+        attributes = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_FORM, metadata)
                 .onSave(((form, changedValues) -> presenter.saveLdapKeyStore(form.getModel().getName(), changedValues)))
                 .build();
 
         Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE);
-        this.newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM,
+        newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM,
                 nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
-                .unsorted()
                 .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
+                .unsorted()
                 .singleton(
                         () -> {
                             Operation operation = null;
                             if (table.selectedRow() != null) {
-                                ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(statementContext,
+                                ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(
+                                        statementContext,
                                         table.selectedRow().getName());
                                 operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                                         .param(NAME, NEW_ITEM_TEMPLATE)
@@ -93,12 +94,12 @@ public class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, 
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_TAB, resources.constants().attribute(), attributes.asElement());
+        tabs.add(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_TAB, resources.constants().attributes(), attributes.asElement());
         tabs.add(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_TAB, Names.NEW_ITEM_TEMPLATE,
                 newItemTemplate.asElement());
 
-        this.root = section()
-                .add(h(1).textContent(Names.LDAP_KEY_STORES))
+        root = section()
+                .add(h(1).textContent(Names.LDAP_KEY_STORE))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .addAll(table, tabs)
                 .asElement();
