@@ -53,6 +53,8 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     private FactoriesPresenter presenter;
     private String selectedFactory;
     private String selectedMc;
+    private int mcIndex;
+    private int mrcIndex;
 
     HttpAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
         // HTTP authentication factory
@@ -79,8 +81,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .button(tableButtonFactory.add(mcMetadata.getTemplate(),
                         table -> presenter.addMechanismConfiguration(selectedFactory)))
                 .button(tableButtonFactory.remove(mcMetadata.getTemplate(),
-                        table -> presenter.removeMechanismConfiguration(selectedFactory,
-                                table.selectedRow().get(HAL_INDEX).asInt())))
+                        table -> presenter.removeMechanismConfiguration(selectedFactory, mcIndex)))
                 .column(MECHANISM_NAME)
                 .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
                         "20em") //NON-NLS
@@ -99,15 +100,14 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
         mrcTable = new ModelNodeTable.Builder<>(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_TABLE, mrcMetadata)
                 .button(tableButtonFactory.add(mrcMetadata.getTemplate(),
-                        table -> presenter.addMechanismRealmConfiguration(selectedFactory, selectedMc)))
+                        table -> presenter.addMechanismRealmConfiguration(selectedFactory, mcIndex)))
                 .button(tableButtonFactory.remove(mrcMetadata.getTemplate(),
-                        table -> presenter.removeMechanismRealmConfiguration(selectedFactory, selectedMc,
-                                table.selectedRow().get(REALM_NAME).asString())))
+                        table -> presenter.removeMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
                 .column(REALM_NAME)
                 .build();
         mrcForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_FORM, mrcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveMechanismRealmConfiguration(selectedFactory, selectedMc,
-                        form, changedValues)))
+                .onSave(((form, changedValues) -> presenter.saveMechanismRealmConfiguration(selectedFactory, mcIndex,
+                        mrcIndex, changedValues)))
                 .build();
         HTMLElement mrcSection = section()
                 .add(h(1).textContent(Names.MECHANISM_REALM_CONFIGURATIONS))
@@ -144,6 +144,11 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         mrcTable.attach();
         mrcForm.attach();
         mrcTable.bindForm(mrcForm);
+        mrcTable.onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                mrcIndex = table.selectedRow().get(HAL_INDEX).asInt();
+            }
+        });
     }
 
     @Override
@@ -154,6 +159,25 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     void update(List<NamedNode> nodes) {
         factoryForm.clear();
         factoryTable.update(nodes);
+
+        if (Ids.ELYTRON_MECHANISM_CONFIGURATIONS_PAGE.equals(pages.getCurrentId())) {
+            nodes.stream()
+                    .filter(factory -> selectedFactory.equals(factory.getName()))
+                    .findFirst()
+                    .ifPresent(this::showMechanismConfiguration);
+        } else if (Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE.equals(pages.getCurrentId())) {
+            nodes.stream()
+                    .filter(factory -> selectedFactory.equals(factory.getName()))
+                    .findFirst()
+                    .ifPresent(node -> {
+                        List<ModelNode> mcNodes = failSafeList(node, MECHANISM_CONFIGURATIONS);
+                        storeIndex(mcNodes);
+                        mcNodes.stream()
+                                .filter(mc -> selectedMc.equals(mc.get(MECHANISM_NAME).asString()))
+                                .findFirst()
+                                .ifPresent(this::showMechanismRealmConfiguration);
+                    });
+        }
     }
 
     private void showMechanismConfiguration(final NamedNode httpAuthenticationFactory) {
@@ -167,7 +191,9 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
     private void showMechanismRealmConfiguration(final ModelNode mechanismConfiguration) {
         selectedMc = mechanismConfiguration.get(MECHANISM_NAME).asString();
+        mcIndex = mechanismConfiguration.get(HAL_INDEX).asInt();
         List<ModelNode> mrcNodes = failSafeList(mechanismConfiguration, MECHANISM_REALM_CONFIGURATIONS);
+        storeIndex(mrcNodes);
         mrcForm.clear();
         mrcTable.update(mrcNodes, modelNode -> modelNode.get(REALM_NAME).asString());
         pages.showPage(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE);

@@ -172,6 +172,7 @@ public interface Names {
     String MB = "MB";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
+    String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
     String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
     String MIME_MAPPING = "Mime Mapping";
     String MISSING_DEPENDENCIES = "Missing Dependencies";

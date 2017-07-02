@@ -176,6 +176,19 @@ public class Pages implements IsElement {
         }
     }
 
+    public String getCurrentId() {
+        if (Elements.isVisible(mainPage)) {
+            return mainId;
+        } else {
+            for (Map.Entry<String, Page> entry : pages.entrySet()) {
+                if (Elements.isVisible(entry.getValue().asElement())) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+    }
+
     @Override
     public HTMLElement asElement() {
         return root;

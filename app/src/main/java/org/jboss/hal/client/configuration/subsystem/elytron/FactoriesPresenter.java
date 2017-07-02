@@ -58,11 +58,10 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_AUTNETICATION_FACTORY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MECHANISM_CONFIGURATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
@@ -292,29 +291,54 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
 
     void addMechanismConfiguration(String httpAuthenticationFactory) {
         ca.listAdd(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_ADD, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
-                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, this::reloadHttpAuthenticationFactories);
+                Names.MECHANISM_CONFIGURATION, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                singletonList(MECHANISM_NAME), this::reloadHttpAuthenticationFactories);
     }
 
     void saveMechanismConfiguration(String httpAuthenticationFactory, int index,
             Map<String, Object> changedValues) {
-        ca.save(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, index,
+        ca.save(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
                 this::reloadHttpAuthenticationFactories);
     }
 
     void removeMechanismConfiguration(String httpAuthenticationFactory, int index) {
-        ca.remove(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
+        ca.remove(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, this::reloadHttpAuthenticationFactories);
     }
 
-    void addMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration) {
+    void addMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS)
+                .forComplexAttribute(MECHANISM_CONFIGURATIONS)
+                .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_ADD, metadata)
+                .addOnly()
+                .requiredOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.MECHANISM_REALM_CONFIGURATION), form,
+                (name, model) -> ca.listAdd(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex),
+                        Names.MECHANISM_REALM_CONFIGURATION, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                        model, this::reloadHttpAuthenticationFactories));
+        dialog.show();
     }
 
-    void saveMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration,
-            Form<ModelNode> form, Map<String, Object> changedValues) {
+    void saveMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+            Map<String, Object> changedValues) {
+        ca.save(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
     }
 
-    void removeMechanismRealmConfiguration(String httpAuthenticationFactory, String mechanismConfiguration,
-            String mechanismRealmConfiguration) {
+    void removeMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex,
+            int mechanismRealmIndex) {
+        ca.remove(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    private String mrcComplexAttribute(int mechanismIndex) {
+        return MECHANISM_CONFIGURATIONS + "[" + mechanismIndex + "]." + MECHANISM_REALM_CONFIGURATIONS;
     }
 }

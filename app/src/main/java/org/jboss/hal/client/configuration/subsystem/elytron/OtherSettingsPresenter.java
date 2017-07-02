@@ -306,17 +306,17 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .build();
         String type = new LabelBuilder().label(NEW_ITEM_TEMPLATE);
         new AddResourceDialog(resources.messages().addResourceTitle(type), form, (name, model) ->
-                ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS, model,
-                        this::reloadLdapKeyStores)).show();
+                ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
+                        AddressTemplates.LDAP_KEY_STORE_ADDRESS, model, this::reloadLdapKeyStores)).show();
     }
 
     void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
-        ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS, changedValues,
-                this::reloadLdapKeyStores);
+        ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+                changedValues, this::reloadLdapKeyStores);
     }
 
     void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
-        ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+        ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(final Form<ModelNode> form) {

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -28,7 +27,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.user.client.ui.Focusable;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -207,11 +205,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.unapply(decoration));
     }
 
-    private Optional<Appearance<T>> appearance(State state) {
+    private Appearance<T> appearance(State state) {
         if (appearances.containsKey(state)) {
-            return Optional.of(appearances.get(state));
+            return appearances.get(state);
         }
-        return Optional.empty();
+        return null;
     }
 
 
@@ -219,7 +217,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public String getId(final State state) {
-        return appearance(state).map(Appearance::getId).orElse(null);
+        Appearance<T> appearance = appearance(state);
+        return appearance != null ? appearance.getId() : null;
     }
 
     @Override
@@ -565,26 +564,32 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public int getTabIndex() {
-        Optional<Appearance<T>> appearance = appearance(State.EDITING);
-        return appearance.map(Focusable::getTabIndex).orElse(-1);
+        Appearance<T> appearance = appearance(State.EDITING);
+        return appearance != null ? appearance.getTabIndex() : -1;
     }
 
     @Override
     public void setTabIndex(final int index) {
-        Optional<Appearance<T>> appearance = appearance(State.EDITING);
-        appearance.ifPresent((Appearance<T> a) -> a.setTabIndex(index));
+        Appearance<T> appearance = appearance(State.EDITING);
+        if (appearance != null) {
+            appearance.setTabIndex(index);
+        }
     }
 
     @Override
     public void setAccessKey(final char accessKey) {
-        Optional<Appearance<T>> appearance = appearance(State.EDITING);
-        appearance.ifPresent((Appearance<T> a) -> a.setAccessKey(accessKey));
+        Appearance<T> appearance = appearance(State.EDITING);
+        if (appearance != null) {
+            appearance.setAccessKey(accessKey);
+        }
     }
 
     @Override
     public void setFocus(final boolean focus) {
-        Optional<Appearance<T>> appearance = appearance(State.EDITING);
-        appearance.ifPresent((Appearance<T> a) -> a.setFocus(focus));
+        Appearance<T> appearance = appearance(State.EDITING);
+        if (appearance != null) {
+            appearance.setFocus(focus);
+        }
     }
 
     @Override
