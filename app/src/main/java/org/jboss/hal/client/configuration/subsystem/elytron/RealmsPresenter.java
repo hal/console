@@ -480,6 +480,19 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 });
     }
 
+    void addAttributeMapping(final String jdbcRealm, final int pqIndex) {
+
+    }
+
+    void saveAttributeMapping(final String jdbcRealm, final int pqIndex, final int amIndex,
+            final Map<String, Object> changedValues) {
+
+    }
+
+    void removeAttributeMapping(final String jdbcRealm, final int pqIndex, final int amIndex) {
+
+    }
+
     private String keyMapperAttribute(int pqIndex, String keyMapper) {
         return PRINCIPAL_QUERY + "[" + pqIndex + "]." + keyMapper;
     }

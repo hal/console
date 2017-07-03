@@ -65,6 +65,7 @@ public interface ModelDescriptionConstants {
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE_GROUP = "attribute-group";
+    String ATTRIBUTE_MAPPING = "attribute-mapping";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
