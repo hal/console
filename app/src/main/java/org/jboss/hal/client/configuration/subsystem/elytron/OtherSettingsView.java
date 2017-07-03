@@ -139,7 +139,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS);
         ldapKeyStoreElement = new LdapKeyStoreElement(statementContext, metadata, tableButtonFactory, resources);
-        navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE + "2",
+        navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE + "2", Names.LDAP_KEY_STORE + "2",
                 ldapKeyStoreElement.asElement());
 
         aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,

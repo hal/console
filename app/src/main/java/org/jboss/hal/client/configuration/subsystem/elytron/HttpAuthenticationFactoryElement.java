@@ -59,8 +59,9 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     HttpAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
         // HTTP authentication factory
         factoryTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_TABLE, metadata)
-                .button(tableButtonFactory.add(Ids.ELYTRON_LDAP_KEY_STORE_ADD, Names.HTTP_AUTHENTICATION_FACTORY,
-                        metadata.getTemplate(), (n, a) -> presenter.reloadHttpAuthenticationFactories()))
+                .button(tableButtonFactory.add(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_ADD,
+                        Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
+                        (n, a) -> presenter.reloadHttpAuthenticationFactories()))
                 .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())

@@ -119,7 +119,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
 
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS);
         httpAuthenticationFactoryElement = new HttpAuthenticationFactoryElement(metadata, tableButtonFactory);
-        navigation.addSecondary(primaryIdHttpFactories, Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY,
+        navigation.addSecondary(primaryIdHttpFactories, Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY + "2",
                 Names.HTTP_AUTHENTICATION_FACTORY + "2", httpAuthenticationFactoryElement.asElement());
 
         providerHttpServerMechanismFactory = new ResourceView.Builder(tableButtonFactory, primaryIdHttpFactories,

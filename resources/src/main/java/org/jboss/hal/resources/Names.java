@@ -140,6 +140,7 @@ public interface Names {
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JDBC_REALM = "JDBC Realm";
     String JGROUPS = "JGroups";
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
@@ -199,6 +200,7 @@ public interface Names {
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
+    String PRINCIPAL_QUERY = "Principal Query";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String PROTOCOL = "Protocol";

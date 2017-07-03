@@ -211,6 +211,9 @@ public interface Ids {
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY_TABLE = build(ELYTRON, "http-authentication-factory", TABLE_SUFFIX);
     String ELYTRON_IDENTITY_REALM = build(ELYTRON, "identity-realm");
     String ELYTRON_JDBC_REALM = build(ELYTRON, "jdbc-realm");
+    String ELYTRON_JDBC_REALM_ADD = build(ELYTRON_JDBC_REALM, ADD_SUFFIX);
+    String ELYTRON_JDBC_REALM_PAGE = build(ELYTRON_JDBC_REALM, PAGE_SUFFIX);
+    String ELYTRON_JDBC_REALM_TABLE = build(ELYTRON_JDBC_REALM, TABLE_SUFFIX);
     String ELYTRON_KERBEROS_SECURITY_FACTORY = build(ELYTRON, "kerberos-security-factory");
     String ELYTRON_KEY_MANAGER = build(ELYTRON, "key-manager");
     String ELYTRON_KEY_STORE = build(ELYTRON, "key-store");
@@ -241,6 +244,9 @@ public interface Ids {
             TABLE_SUFFIX);
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = build(ELYTRON,
             "mechanism-provider-filtering-sasl-server-factory");
+    String ELYTRON_PRINCIPAL_QUERY = build(ELYTRON, "principal-query");
+    String ELYTRON_PRINCIPAL_QUERY_PAGE = build(ELYTRON_PRINCIPAL_QUERY, PAGE_SUFFIX);
+    String ELYTRON_PRINCIPAL_QUERY_TABLE = build(ELYTRON_PRINCIPAL_QUERY, TABLE_SUFFIX);
     String ELYTRON_POLICY = build(ELYTRON, "policy");
     String ELYTRON_PROPERTIES_REALM = build(ELYTRON, "properties-realm");
     String ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = build(ELYTRON, "provider-http-server-mechanism-factory");

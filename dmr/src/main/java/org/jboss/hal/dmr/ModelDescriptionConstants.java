@@ -231,6 +231,7 @@ public interface ModelDescriptionConstants {
     String JCA = "jca";
     String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
+    String JDBC_REALM = "jdbc-realm";
     String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_QUEUE = "jms-queue";
@@ -323,6 +324,7 @@ public interface ModelDescriptionConstants {
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREFIX = "prefix";
+    String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
@@ -432,6 +434,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOURCE_NETWORK = "source-network";
+    String SQL = "sql";
     String SHUTDOWN = "shutdown";
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";
