@@ -124,6 +124,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .columns(TO, INDEX)
                 .build();
         amForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING_FORM, amMetadata)
+                .include(TO, INDEX)
                 .onSave((form, changedValues) -> presenter.saveAttributeMapping(selectedJdbcRealm, pqIndex, amIndex,
                         changedValues))
                 .build();
@@ -224,9 +225,14 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
             nodes.stream()
                     .filter(jdbcRealm -> selectedJdbcRealm.equals(jdbcRealm.getName()))
                     .findFirst()
-                    .ifPresent(node -> {
-                        List<ModelNode> pqNodes = failSafeList(node, PRINCIPAL_QUERY);
+                    .ifPresent(jdbcRealm -> {
+                        List<ModelNode> pqNodes = failSafeList(jdbcRealm, PRINCIPAL_QUERY);
                         storeIndex(pqNodes);
+                        for (Form<ModelNode> form : keyMappers.values()) {
+                            form.clear();
+                        }
+                        pqTable.update(pqNodes,
+                                node -> Ids.build(node.get(SQL).asString(), node.get(DATA_SOURCE).asString()));
                         pqNodes.stream()
                                 // TODO Is it safe to assume that the SQL is unique across the principal queries?
                                 .filter(pq -> selectedPrincipalQuery.equals(pq.get(SQL).asString()))
@@ -249,10 +255,11 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
     private void showAttributeMappings(final ModelNode principalQuery) {
         selectedPrincipalQuery = principalQuery.get(SQL).asString();
+        pqIndex = principalQuery.get(HAL_INDEX).asInt();
         List<ModelNode> amNodes = failSafeList(principalQuery, ATTRIBUTE_MAPPING);
         storeIndex(amNodes);
         amForm.clear();
-        amTable.update(amNodes, node -> Ids.build(node.get(TO).asString(), String.valueOf(node.get(INDEX).asString())));
+        amTable.update(amNodes, node -> Ids.build(node.get(TO).asString(), String.valueOf(node.get(INDEX).asInt())));
         pages.showPage(Ids.ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING_PAGE);
     }
 }

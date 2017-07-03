@@ -170,9 +170,11 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
             nodes.stream()
                     .filter(factory -> selectedFactory.equals(factory.getName()))
                     .findFirst()
-                    .ifPresent(node -> {
-                        List<ModelNode> mcNodes = failSafeList(node, MECHANISM_CONFIGURATIONS);
+                    .ifPresent(factory -> {
+                        List<ModelNode> mcNodes = failSafeList(factory, MECHANISM_CONFIGURATIONS);
                         storeIndex(mcNodes);
+                        mcForm.clear();
+                        mcTable.update(mcNodes, modelNode -> modelNode.get(MECHANISM_NAME).asString());
                         mcNodes.stream()
                                 .filter(mc -> selectedMc.equals(mc.get(MECHANISM_NAME).asString()))
                                 .findFirst()

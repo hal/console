@@ -392,22 +392,22 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         dialog.show();
     }
 
-    void addPrincipalQuery(final String jdbcRealm) {
+    void addPrincipalQuery(String jdbcRealm) {
         ca.listAdd(Ids.ELYTRON_PRINCIPAL_QUERY_ADD, jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY,
                 AddressTemplates.JDBC_REALM_ADDRESS, this::reloadJdbcRealms);
     }
 
-    void savePrincipalQuery(final String jdbcRealm, final int pqIndex, final Map<String, Object> changedValues) {
+    void savePrincipalQuery(String jdbcRealm, int pqIndex, Map<String, Object> changedValues) {
         ca.save(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
                 changedValues, this::reloadJdbcRealms);
     }
 
-    void removePrincipalQuery(final String jdbcRealm, final int pqIndex) {
+    void removePrincipalQuery(String jdbcRealm, int pqIndex) {
         ca.remove(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
                 this::reloadJdbcRealms);
     }
 
-    void addKeyMapper(final String jdbcRealm, final ModelNode principalQuery, final int pqIndex,
+    void addKeyMapper(String jdbcRealm, ModelNode principalQuery, int pqIndex,
             final String keyMapper) {
         // WFLYELY00034: A principal query can only have a single key mapper
         boolean moreThanOne = false;
@@ -439,7 +439,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         }
     }
 
-    Operation pingKeyMapper(final String jdbcRealm, final ModelNode principalQuery, final String keyMapper) {
+    Operation pingKeyMapper(String jdbcRealm, ModelNode principalQuery, String keyMapper) {
         ResourceAddress address = AddressTemplates.JDBC_REALM_ADDRESS.resolve(statementContext, jdbcRealm);
         int pqIndex = principalQuery.get(HAL_INDEX).asInt();
         return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
@@ -447,14 +447,13 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .build();
     }
 
-    void saveKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper,
-            final Map<String, Object> changedValues) {
+    void saveKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Map<String, Object> changedValues) {
         String type = new LabelBuilder().label(keyMapper);
         ca.save(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
                 changedValues, this::reloadJdbcRealms);
     }
 
-    void resetKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper, final Form<ModelNode> form) {
+    void resetKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Form<ModelNode> form) {
         String type = new LabelBuilder().label(keyMapper);
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
                 .forComplexAttribute(PRINCIPAL_QUERY)
@@ -468,8 +467,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 });
     }
 
-    void removeKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper,
-            final Form<ModelNode> form) {
+    void removeKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Form<ModelNode> form) {
         String type = new LabelBuilder().label(keyMapper);
         ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
                 new Form.FinishRemove<ModelNode>(form) {
@@ -480,20 +478,36 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 });
     }
 
-    void addAttributeMapping(final String jdbcRealm, final int pqIndex) {
-
+    void addAttributeMapping(String jdbcRealm, int pqIndex) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+                .forComplexAttribute(PRINCIPAL_QUERY)
+                .forComplexAttribute(ATTRIBUTE_MAPPING);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING_ADD, metadata)
+                .addOnly()
+                .include(TO, INDEX)
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
+                form, (name, model) -> ca.listAdd(jdbcRealm, attributeMappingAttribute(pqIndex),
+                Names.ATTRIBUTE_MAPPING, AddressTemplates.JDBC_REALM_ADDRESS, model, this::reloadJdbcRealms));
+        dialog.show();
     }
 
-    void saveAttributeMapping(final String jdbcRealm, final int pqIndex, final int amIndex,
+    void saveAttributeMapping(String jdbcRealm, int pqIndex, int amIndex,
             final Map<String, Object> changedValues) {
-
+        ca.save(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
+                AddressTemplates.JDBC_REALM_ADDRESS, changedValues, this::reloadJdbcRealms);
     }
 
-    void removeAttributeMapping(final String jdbcRealm, final int pqIndex, final int amIndex) {
-
+    void removeAttributeMapping(String jdbcRealm, int pqIndex, int amIndex) {
+        ca.remove(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
+                AddressTemplates.JDBC_REALM_ADDRESS, this::reloadJdbcRealms);
     }
 
     private String keyMapperAttribute(int pqIndex, String keyMapper) {
         return PRINCIPAL_QUERY + "[" + pqIndex + "]." + keyMapper;
+    }
+
+    private String attributeMappingAttribute(int pqIndex) {
+        return PRINCIPAL_QUERY + "[" + pqIndex + "]." + ATTRIBUTE_MAPPING;
     }
 }
