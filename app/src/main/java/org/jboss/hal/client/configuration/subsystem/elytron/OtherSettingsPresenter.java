@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -308,6 +309,13 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         new AddResourceDialog(resources.messages().addResourceTitle(type), form, (name, model) ->
                 ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
                         AddressTemplates.LDAP_KEY_STORE_ADDRESS, model, this::reloadLdapKeyStores)).show();
+    }
+
+    Operation pingNewItemTemplate(final String ldapKeyStore) {
+        ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(statementContext, ldapKeyStore);
+        return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, NEW_ITEM_TEMPLATE)
+                .build();
     }
 
     void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {

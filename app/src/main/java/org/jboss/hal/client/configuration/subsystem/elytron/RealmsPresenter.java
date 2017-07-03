@@ -70,6 +70,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 
 /**
@@ -107,6 +108,14 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     }
     // @formatter:on
+
+    final static String[] KEY_MAPPERS = new String[]{
+            "clear-password-mapper",
+            "bcrypt-mapper",
+            "salted-simple-digest-mapper",
+            "simple-digest-mapper",
+            "scram-mapper"
+    };
 
     private EventBus eventBus;
     private Dispatcher dispatcher;
@@ -398,46 +407,71 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 this::reloadJdbcRealms);
     }
 
-    void addPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute) {
+    void addKeyMapper(final String jdbcRealm, final ModelNode principalQuery, final int pqIndex,
+            final String keyMapper) {
+        // WFLYELY00034: A principal query can only have a single key mapper
+        boolean moreThanOne = false;
+        for (String km : KEY_MAPPERS) {
+            if (failSafeGet(principalQuery, km).isDefined()) {
+                moreThanOne = true;
+                break;
+            }
+        }
+
+        if (moreThanOne) {
+            MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().moreThanOneKeyMapperForPrincipalQuery()));
+
+        } else {
+            String type = new LabelBuilder().label(keyMapper);
+            Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+                    .forComplexAttribute(PRINCIPAL_QUERY)
+                    .forComplexAttribute(keyMapper);
+            String id = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                    .addOnly()
+                    .requiredOnly()
+                    .build();
+            AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), form,
+                    (name, model) -> ca.add(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type,
+                            AddressTemplates.JDBC_REALM_ADDRESS, model, RealmsPresenter.this::reloadJdbcRealms));
+            dialog.show();
+        }
+    }
+
+    Operation pingKeyMapper(final String jdbcRealm, final ModelNode principalQuery, final String keyMapper) {
+        ResourceAddress address = AddressTemplates.JDBC_REALM_ADDRESS.resolve(statementContext, jdbcRealm);
+        int pqIndex = principalQuery.get(HAL_INDEX).asInt();
+        return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, keyMapperAttribute(pqIndex, keyMapper))
+                .build();
+    }
+
+    void saveKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper,
+            final Map<String, Object> changedValues) {
+        String type = new LabelBuilder().label(keyMapper);
+        ca.save(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
+                changedValues, this::reloadJdbcRealms);
+    }
+
+    void resetKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper, final Form<ModelNode> form) {
+        String type = new LabelBuilder().label(keyMapper);
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
                 .forComplexAttribute(PRINCIPAL_QUERY)
-                .forComplexAttribute(complexAttribute);
-        String id = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, complexAttribute, Ids.ADD_SUFFIX);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                .addOnly()
-                .requiredOnly()
-                .build();
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(complexAttribute), form,
-                (name, model) -> ca.add(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
-                        new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS, model,
-                        RealmsPresenter.this::reloadJdbcRealms));
-        dialog.show();
+                .forComplexAttribute(keyMapper);
+        ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS, metadata,
+                form, new Form.FinishReset<ModelNode>(form) {
+                    @Override
+                    public void afterReset(final Form<ModelNode> form) {
+                        reloadJdbcRealms();
+                    }
+                });
     }
 
-    Operation pingPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex,
-            final String complexAttribute) {
-        ResourceAddress address = AddressTemplates.JDBC_REALM_ADDRESS.resolve(statementContext, jdbcRealm);
-        return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                .param(NAME, principalQueryComplexAttribute(pqIndex, complexAttribute))
-                .build();
-    }
-
-    void savePrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
-            final Map<String, Object> changedValues) {
-        ca.save(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
-                new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS, changedValues,
-                this::reloadJdbcRealms);
-    }
-
-    void resetPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
+    void removeKeyMapper(final String jdbcRealm, final int pqIndex, final String keyMapper,
             final Form<ModelNode> form) {
-    }
-
-    void removePrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
-            final Form<ModelNode> form) {
-        ca.remove(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
-                new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS,
+        String type = new LabelBuilder().label(keyMapper);
+        ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(final Form<ModelNode> form) {
@@ -446,7 +480,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 });
     }
 
-    private String principalQueryComplexAttribute(int pqIndex, String complexAttribute) {
-        return PRINCIPAL_QUERY + "[" + pqIndex + "]." + complexAttribute;
+    private String keyMapperAttribute(int pqIndex, String keyMapper) {
+        return PRINCIPAL_QUERY + "[" + pqIndex + "]." + keyMapper;
     }
 }

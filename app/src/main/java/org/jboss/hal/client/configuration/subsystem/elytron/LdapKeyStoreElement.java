@@ -29,10 +29,7 @@ import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -52,8 +49,8 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
     private final HTMLElement root;
     private OtherSettingsPresenter presenter;
 
-    LdapKeyStoreElement(final StatementContext statementContext, final Metadata metadata,
-            final TableButtonFactory tableButtonFactory, final Resources resources) {
+    LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
         table = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_TABLE,
                 metadata)
                 .button(tableButtonFactory.add(Ids.ELYTRON_LDAP_KEY_STORE_ADD, Names.LDAP_KEY_STORE,
@@ -69,23 +66,16 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .build();
 
         Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE);
-        newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM,
-                nitMetadata)
+        newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM, nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
                 .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
                 .unsorted()
                 .singleton(
                         () -> {
-                            Operation operation = null;
-                            if (table.selectedRow() != null) {
-                                ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(
-                                        statementContext,
-                                        table.selectedRow().getName());
-                                operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                        .param(NAME, NEW_ITEM_TEMPLATE)
-                                        .build();
+                            if (table.hasSelection()) {
+                                return presenter.pingNewItemTemplate(table.selectedRow().getName());
                             }
-                            return operation;
+                            return null;
                         },
                         () -> presenter.addNewItemTemplate(table.selectedRow().getName()))
                 .onSave((form, changedValues) -> presenter.saveNewItemTemplate(table.selectedRow().getName(),

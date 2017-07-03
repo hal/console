@@ -915,7 +915,7 @@ public class CrudOperations {
      * Undefines all non required attributes in the specified form. After the resource has been undefined a standard
      * success message is fired and the specified callback is executed.
      * <p>
-     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
      * @param type     the human readable resource type used in the success message
      * @param name     the resource name
@@ -939,7 +939,7 @@ public class CrudOperations {
      * Undefines all non required attributes in the specified form. After the resource has been undefined the specified
      * success message is fired and the specified callback is executed.
      * <p>
-     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
      * @param type           the human readable resource type used in the success message
      * @param name           the resource name
@@ -1009,7 +1009,7 @@ public class CrudOperations {
      * Undefines all non required attributes in the specified form. After the resource has been undefined a standard
      * success message is fired and the specified callback is executed.
      * <p>
-     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
      * @param type     the human readable resource type used in the success message
      * @param name     the resource name
@@ -1032,7 +1032,7 @@ public class CrudOperations {
      * Undefines all non required attributes in the specified form. After the resource has been undefined the specified
      * success message is fired and the specified callback is executed.
      * <p>
-     * If the set contains only required attributes, a warning message is fired and the specified callback is executed.
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
      * @param type           the human readable resource type used in the success message
      * @param name           the resource name

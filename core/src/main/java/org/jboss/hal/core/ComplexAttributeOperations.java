@@ -16,6 +16,7 @@
 package org.jboss.hal.core;
 
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,9 +27,12 @@ import com.google.web.bindery.event.shared.EventBus;
 import jsinterop.annotations.JsIgnore;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -45,6 +49,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -339,6 +345,73 @@ public class ComplexAttributeOperations {
         Composite operations = operationFactory(complexAttribute, index).fromChangeSet(address, changedValues,
                 metadata);
         crud.save(operations, resources.messages().modifySingleResourceSuccess(type), callback);
+    }
+
+
+    // ------------------------------------------------------ (u) reset using template
+
+    /**
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
+     * been undefined a standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param resource         the resource name
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param template         the address template which is resolved against the current statement context and the
+     *                         resource name to get the resource address for the operation
+     * @param form             the form which should be reset
+     * @param callback         the callback executed after the resource has been saved
+     */
+    @JsIgnore
+    public <T> void reset(final String resource, final String complexAttribute, final String type,
+            final AddressTemplate template, final Form<T> form, final Callback callback) {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+            @Override
+            public void onMetadata(final Metadata metadata) {
+                Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
+                reset(resource, complexAttribute, type, template, caMetadata, form, callback);
+            }
+        });
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
+     * been undefined a standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param resource         the resource name
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param template         the address template which is resolved against the current statement context and the
+     *                         resource name to get the resource address for the operation
+     * @param form             the form which should be reset
+     * @param callback         the callback executed after the resource has been saved
+     */
+    @JsIgnore
+    public <T> void reset(final String resource, final String complexAttribute, final String type,
+            final AddressTemplate template, final Metadata metadata, final Form<T> form, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+
+        ResourceAddress address = template.resolve(statementContext, resource);
+        Composite composite = operationFactory(complexAttribute).resetResource(address, attributes, metadata);
+        if (composite.isEmpty()) {
+            MessageEvent.fire(eventBus, Message.warning(resources.messages().noReset()));
+            callback.execute();
+        } else {
+            DialogFactory.showConfirmation(
+                    resources.messages().resetConfirmationTitle(type),
+                    resources.messages().resetSingletonConfirmationQuestion(),
+                    () -> dispatcher.execute(composite, (CompositeResult result) -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().resetSingletonSuccess(type)));
+                        callback.execute();
+                    }));
+        }
     }
 
 

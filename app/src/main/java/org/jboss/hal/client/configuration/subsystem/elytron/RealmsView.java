@@ -44,7 +44,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
     private ResourceView customRealmView;
     private ResourceView filesystemRealmView;
     private ResourceView identityRealmView;
-    private ResourceView jdbcRealmView;
+    // private ResourceView jdbcRealmView;
     private JdbcRealmElement jdbcRealmElement;
     private ResourceView keystoreRealmView;
     private ResourceView ldapRealmView;
@@ -121,18 +121,18 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
                 .build()
                 .create();
 
-        jdbcRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_JDBC_REALM, "JDBC Realm", JDBC_REALM_ADDRESS, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
-                .build()
-                .addComplexAttributeAsPage("principal-query")
-                .create();
+        // jdbcRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
+        //         Ids.ELYTRON_JDBC_REALM, "JDBC Realm", JDBC_REALM_ADDRESS, this, () -> presenter.reload())
+        //         .setNavigation(navigation)
+        //         .setMetadataRegistry(metadataRegistry)
+        //         .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
+        //         .build()
+        //         .addComplexAttributeAsPage("principal-query")
+        //         .create();
 
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS);
         jdbcRealmElement = new JdbcRealmElement(metadata, tableButtonFactory, resources);
-        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_JDBC_REALM + "2", Names.JDBC_REALM + "2",
+        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_JDBC_REALM + "2", Names.JDBC_REALM,
                 jdbcRealmElement.asElement());
 
         keystoreRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
@@ -238,7 +238,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         customRealmView.bindTableToForm();
         filesystemRealmView.bindTableToForm();
         identityRealmView.bindTableToForm();
-        jdbcRealmView.bindTableToForm();
+        // jdbcRealmView.bindTableToForm();
         jdbcRealmElement.attach();
         keystoreRealmView.bindTableToForm();
         ldapRealmView.bindTableToForm();
@@ -289,8 +289,8 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
 
     @Override
     public void updateJdbcRealm(final List<NamedNode> model) {
-        jdbcRealmView.getForm().clear();
-        jdbcRealmView.getTable().update(model);
+        // jdbcRealmView.getForm().clear();
+        // jdbcRealmView.getTable().update(model);
         jdbcRealmElement.update(model);
     }
 
@@ -351,7 +351,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         customRealmView.setPresenter(presenter);
         filesystemRealmView.setPresenter(presenter);
         identityRealmView.setPresenter(presenter);
-        jdbcRealmView.setPresenter(presenter);
+        // jdbcRealmView.setPresenter(presenter);
         jdbcRealmElement.setPresenter(presenter);
         keystoreRealmView.setPresenter(presenter);
         ldapRealmView.setPresenter(presenter);
