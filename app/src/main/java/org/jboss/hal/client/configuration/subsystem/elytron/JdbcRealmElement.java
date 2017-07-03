@@ -21,6 +21,7 @@ import java.util.List;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -35,6 +36,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -70,18 +72,31 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
 
         Metadata pqMetadata = metadata.forComplexAttribute(PRINCIPAL_QUERY);
         pqTable = new ModelNodeTable.Builder<>(Ids.ELYTRON_PRINCIPAL_QUERY_TABLE, pqMetadata)
+                .button(tableButtonFactory.add(pqMetadata.getTemplate(),
+                        table -> presenter.addPrincipalQuery(selectedJdbcRealm)))
+                .button(tableButtonFactory.remove(pqMetadata.getTemplate(),
+                        table -> presenter.removePrincipalQuery(selectedJdbcRealm, pqIndex)))
                 .columns(SQL, DATA_SOURCE)
                 .build();
+
+        Tabs tabs = new Tabs();
         pqForms = new ArrayList<>();
-        String formId = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, "attributes", Ids.FORM_SUFFIX);
+
         String tabId = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, "attributes", Ids.TAB_SUFFIX);
+        String formId = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, "attributes", Ids.FORM_SUFFIX);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(formId, pqMetadata)
                 .include(SQL, DATA_SOURCE)
-                .onSave((f, changedValues) -> presenter.savePrincipalQuery(pqIndex, changedValues))
+                .onSave((f, changedValues) -> presenter.savePrincipalQuery(selectedJdbcRealm, pqIndex, changedValues))
                 .build();
-        pqForms.add(form);
-        Tabs tabs = new Tabs();
         tabs.add(tabId, resources.constants().attributes(), form.asElement());
+        pqForms.add(form);
+
+        addPqComplexForm(tabs, pqForms, pqMetadata, "clear-password-mapper");
+        addPqComplexForm(tabs, pqForms, pqMetadata, "bcrypt-mapper");
+        addPqComplexForm(tabs, pqForms, pqMetadata, "salted-simple-digest-mapper");
+        addPqComplexForm(tabs, pqForms, pqMetadata, "simple-digest-mapper");
+        addPqComplexForm(tabs, pqForms, pqMetadata, "scram-mapper");
+
         HTMLElement pqSection = section()
                 .add(h(1).textContent(Names.PRINCIPAL_QUERY))
                 .add(p().textContent(pqMetadata.getDescription().getDescription()))
@@ -93,6 +108,28 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 () -> Names.JDBC_REALM + ": " + selectedJdbcRealm,
                 () -> Names.PRINCIPAL_QUERY,
                 pqSection);
+    }
+
+    private void addPqComplexForm(Tabs tabs, List<Form<ModelNode>> forms, final Metadata metadata,
+            @NonNls String complexAttribute) {
+        String title = new LabelBuilder().label(complexAttribute);
+        String tabId = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, complexAttribute, Ids.TAB_SUFFIX);
+        String formId = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, complexAttribute, Ids.FORM_SUFFIX);
+        Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(formId, caMetadata)
+                .onSave((f, changedValues) -> presenter.savePrincipalQueryComplexAttribute(selectedJdbcRealm, pqIndex,
+                        complexAttribute, changedValues))
+                .singleton(
+                        () -> presenter.pingPrincipalQueryComplexAttribute(selectedJdbcRealm, pqIndex,
+                                complexAttribute),
+                        () -> presenter.addPrincipalQueryComplexAttribute(selectedJdbcRealm, pqIndex, complexAttribute))
+                .prepareReset(f -> presenter.resetPrincipalQueryComplexAttribute(selectedJdbcRealm, pqIndex,
+                        complexAttribute, f))
+                .prepareRemove(f -> presenter.removePrincipalQueryComplexAttribute(selectedJdbcRealm, pqIndex,
+                        complexAttribute, f))
+                .build();
+        forms.add(form);
+        tabs.add(tabId, title, form.asElement());
     }
 
     @Override

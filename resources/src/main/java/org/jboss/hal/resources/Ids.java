@@ -245,6 +245,7 @@ public interface Ids {
     String ELYTRON_MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = build(ELYTRON,
             "mechanism-provider-filtering-sasl-server-factory");
     String ELYTRON_PRINCIPAL_QUERY = build(ELYTRON, "principal-query");
+    String ELYTRON_PRINCIPAL_QUERY_ADD = build(ELYTRON_PRINCIPAL_QUERY, ADD_SUFFIX);
     String ELYTRON_PRINCIPAL_QUERY_PAGE = build(ELYTRON_PRINCIPAL_QUERY, PAGE_SUFFIX);
     String ELYTRON_PRINCIPAL_QUERY_TABLE = build(ELYTRON_PRINCIPAL_QUERY, TABLE_SUFFIX);
     String ELYTRON_POLICY = build(ELYTRON, "policy");

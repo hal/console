@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -65,11 +66,9 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JDBC_REALM;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PRINCIPAL_QUERY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 
@@ -112,6 +111,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private EventBus eventBus;
     private Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private MetadataRegistry metadataRegistry;
@@ -124,6 +124,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             final Finder finder,
             final Dispatcher dispatcher,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
@@ -132,6 +133,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.crud = crud;
+        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
@@ -365,22 +367,86 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     void addJdbcRealm() {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
                 .forComplexAttribute(PRINCIPAL_QUERY);
+        NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ADD, metadata)
                 .addOnly()
                 .requiredOnly()
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.JDBC_REALM), form,
                 (n1, model) -> {
                     ModelNode payload = new ModelNode();
                     payload.get(PRINCIPAL_QUERY).add(model);
-                    crud.add(Names.JDBC_REALM, n1, AddressTemplates.JDBC_REALM_ADDRESS, payload,
+                    crud.add(Names.JDBC_REALM, nameItem.getValue(), AddressTemplates.JDBC_REALM_ADDRESS, payload,
                             (n2, address) -> reloadJdbcRealms());
                 });
         dialog.show();
     }
 
-    void savePrincipalQuery(final int pqIndex, final Map<String, Object> changedValues) {
+    void addPrincipalQuery(final String jdbcRealm) {
+        ca.listAdd(Ids.ELYTRON_PRINCIPAL_QUERY_ADD, jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY,
+                AddressTemplates.JDBC_REALM_ADDRESS, this::reloadJdbcRealms);
+    }
 
+    void savePrincipalQuery(final String jdbcRealm, final int pqIndex, final Map<String, Object> changedValues) {
+        ca.save(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
+                changedValues, this::reloadJdbcRealms);
+    }
+
+    void removePrincipalQuery(final String jdbcRealm, final int pqIndex) {
+        ca.remove(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
+                this::reloadJdbcRealms);
+    }
+
+    void addPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+                .forComplexAttribute(PRINCIPAL_QUERY)
+                .forComplexAttribute(complexAttribute);
+        String id = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, complexAttribute, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .requiredOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(complexAttribute), form,
+                (name, model) -> ca.add(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
+                        new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS, model,
+                        RealmsPresenter.this::reloadJdbcRealms));
+        dialog.show();
+    }
+
+    Operation pingPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex,
+            final String complexAttribute) {
+        ResourceAddress address = AddressTemplates.JDBC_REALM_ADDRESS.resolve(statementContext, jdbcRealm);
+        return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, principalQueryComplexAttribute(pqIndex, complexAttribute))
+                .build();
+    }
+
+    void savePrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
+            final Map<String, Object> changedValues) {
+        ca.save(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
+                new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS, changedValues,
+                this::reloadJdbcRealms);
+    }
+
+    void resetPrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
+            final Form<ModelNode> form) {
+    }
+
+    void removePrincipalQueryComplexAttribute(final String jdbcRealm, final int pqIndex, final String complexAttribute,
+            final Form<ModelNode> form) {
+        ca.remove(jdbcRealm, principalQueryComplexAttribute(pqIndex, complexAttribute),
+                new LabelBuilder().label(complexAttribute), AddressTemplates.JDBC_REALM_ADDRESS,
+                new Form.FinishRemove<ModelNode>(form) {
+                    @Override
+                    public void afterRemove(final Form<ModelNode> form) {
+                        reloadJdbcRealms();
+                    }
+                });
+    }
+
+    private String principalQueryComplexAttribute(int pqIndex, String complexAttribute) {
+        return PRINCIPAL_QUERY + "[" + pqIndex + "]." + complexAttribute;
     }
 }
