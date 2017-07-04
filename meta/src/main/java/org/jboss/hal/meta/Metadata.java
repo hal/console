@@ -84,7 +84,7 @@ public class Metadata {
     }
 
     @JsIgnore
-    public Metadata forComplexAttribute(String name, boolean prefixComplexAttribute) {
+    public Metadata forComplexAttribute(String name, boolean prefixLabel) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
 
@@ -98,7 +98,7 @@ public class Metadata {
                 // The name which is used for the label can be prefixed with the complex attribute name.
                 // If prefixComplexAttribute == true), it is stored as an artificial attribute and picked
                 // up by LabelBuilder.label(Property)
-                if (prefixComplexAttribute) {
+                if (prefixLabel) {
                     nestedDescription.get(HAL_LABEL).set(name + "-" + nestedProperty.getName());
                 }
                 payload.get(ATTRIBUTES).get(nestedName).set(nestedDescription);
