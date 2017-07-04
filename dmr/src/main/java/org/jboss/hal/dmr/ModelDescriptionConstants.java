@@ -111,6 +111,7 @@ public interface ModelDescriptionConstants {
     String CONNECTORS = "connectors";
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
+    String CONSTANT_PERMISSION_MAPPER = "constant-permission-mapper";
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";

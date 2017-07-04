@@ -318,6 +318,29 @@ public class VerticalNavigation implements Attachable {
         return addSecondary(primaryId, id, text, new Pane(id, element));
     }
 
+    /**
+     * Inserts a secondary navigation entry <em>before</em> the specified entry. If {@code beforeId} is {@code null},
+     * the entry is inserted as last entry. If there's not entry with id {@code beforeId}, an error message is logged
+     * and no entry is inserted.
+     * <p>
+     * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
+     * {@linkplain #attach() attached}.
+     */
+    public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
+        Entry primaryEntry = entries.get(primaryId);
+        if (primaryEntry != null) {
+            if (beforeId == null) {
+                // as last entry
+                addSecondary(primaryId, id, text, new Pane(id, element));
+
+            } else {
+            }
+
+        } else {
+            logger.error("Unable to find primary navigation entry for id '{}'", primaryId);
+        }
+    }
+
     private VerticalNavigation addSecondary(String primaryId, String id, String text, Pane pane) {
         Entry primaryEntry = entries.get(primaryId);
 

@@ -15,5 +15,35 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.Map;
+
+import org.jboss.hal.core.ComplexAttributeOperations;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.CrudOperations.AddCallback;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.spi.Callback;
+
 public interface ResourceWithComplexAttribute {
+
+    CrudOperations crud();
+
+    ComplexAttributeOperations ca();
+
+    default void add(String id, String type, AddressTemplate template, AddCallback callback) {
+        crud().add(id, type, template, callback);
+    }
+
+    default void save(String type, String name, AddressTemplate template, Map<String, Object> changedValues,
+            Callback callback) {
+        crud().save(type, name, template, changedValues, callback);
+    }
+
+    default void remove(String type, String name, AddressTemplate template, Callback callback) {
+        crud().remove(type, name, template, callback);
+    }
+
+    default void addComplexObject(String id, String resource, String complexAttribute, String type,
+            AddressTemplate template, Callback callback) {
+
+    }
 }

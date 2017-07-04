@@ -193,6 +193,7 @@ public interface Ids {
     String ELYTRON_CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY = build(ELYTRON,
             "configurable-http-server-mechanism-factory");
     String ELYTRON_CONFIGURABLE_SASL_SERVER_FACTORY = build(ELYTRON, "configurable-sasl-server-factory");
+    String ELYTRON_CONSTANT_PERMISSION_MAPPER = build(ELYTRON, "constant-permission-mapper");
     String ELYTRON_CONSTANT_PRINCIPAL_TRANSFORMER = build(ELYTRON, "constant-principal-transformer");
     String ELYTRON_CONSTANT_REALM_MAPPER = build(ELYTRON, "constant-realm-mapper");
     String ELYTRON_CREDENTIAL_STORE = build(ELYTRON, "credential-store");

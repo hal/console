@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -23,8 +24,16 @@ import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_PERMISSION_MAPPER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -51,8 +60,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-aggregate-role-mapper-form") Form<NamedNode> aggregateRoleMapperForm;
     @MbuiElement("mappers-decoders-concatenating-principal-decoder-table") Table<NamedNode> concatenatingPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-concatenating-principal-decoder-form") Form<NamedNode> concatenatingPrincipalDecoderForm;
-    @MbuiElement("mappers-decoders-constant-permission-mapper-table") Table<NamedNode> constantPermissionMapperTable;
-    @MbuiElement("mappers-decoders-constant-permission-mapper-form") Form<NamedNode> constantPermissionMapperForm;
+    // @MbuiElement("mappers-decoders-constant-permission-mapper-table") Table<NamedNode> constantPermissionMapperTable;
+    // @MbuiElement("mappers-decoders-constant-permission-mapper-form") Form<NamedNode> constantPermissionMapperForm;
     @MbuiElement("mappers-decoders-constant-principal-decoder-table") Table<NamedNode> constantPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-constant-principal-decoder-form") Form<NamedNode> constantPrincipalDecoderForm;
     @MbuiElement("mappers-decoders-constant-role-mapper-table") Table<NamedNode> constantRoleMapperTable;
@@ -69,6 +78,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-logical-permission-mapper-form") Form<NamedNode> logicalPermissionMapperForm;
     @MbuiElement("mappers-decoders-logical-role-mapper-table") Table<NamedNode> logicalRoleMapperTable;
     @MbuiElement("mappers-decoders-logical-role-mapper-form") Form<NamedNode> logicalRoleMapperForm;
+    // TODO Replace with custom element
     @MbuiElement("mappers-decoders-simple-permission-mapper-table") Table<NamedNode> simplePermissionMapperTable;
     @MbuiElement("mappers-decoders-simple-permission-mapper-form") Form<NamedNode> simplePermissionMapperForm;
     @MbuiElement("mappers-decoders-simple-role-decoder-table") Table<NamedNode> simpleRoleDecoderTable;
@@ -77,13 +87,31 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
     // @formatter:on
 
+    ResourceElement constantPermissionMapperElement;
+
     MapperDecoderView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+    }
+
+    @PostConstruct
+    void init() {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.CONSTANT_PERMISSION_MAPPER_ADDRESS);
+        constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
+                CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
+                .setComplexListAttribute(TYPE, asList(CLASS_NAME, MODULE),
+                        modelNode -> Ids.build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
+                .build();
+        navigation.insertSecondary("mappers-decoders-permission-mapper-item",
+                "mappers-decoders-constant-permission-mapper-item",
+                "mappers-decoders-constant-principal-decoder",
+                "Constant Permission Mapper",
+                constantPermissionMapperElement.asElement());
     }
 
     @Override
     public void attach() {
         super.attach();
+        constantPermissionMapperElement.attach();
     }
 
     @Override
@@ -118,8 +146,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
     @Override
     public void updateConstantPermissionMapper(final List<NamedNode> model) {
-        constantPermissionMapperForm.clear();
-        constantPermissionMapperTable.update(model);
+        constantPermissionMapperElement.update(model);
     }
 
     @Override

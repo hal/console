@@ -21,6 +21,7 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -40,6 +41,7 @@ public class MbuiContext {
 
     private final Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final PropertiesOperations po;
     private final Environment environment;
     private final EventBus eventBus;
@@ -54,6 +56,7 @@ public class MbuiContext {
     public MbuiContext(final CrudOperations crud,
             final PropertiesOperations po,
             final Dispatcher dispatcher,
+            final ComplexAttributeOperations ca,
             final Environment environment,
             final EventBus eventBus,
             final MetadataRegistry metadataRegistry,
@@ -64,6 +67,7 @@ public class MbuiContext {
             final TableButtonFactory tableButtonFactory) {
         this.crud = crud;
         this.po = po;
+        this.ca = ca;
         this.environment = environment;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -77,6 +81,10 @@ public class MbuiContext {
 
     public CrudOperations crud() {
         return crud;
+    }
+
+    public ComplexAttributeOperations ca() {
+        return ca;
     }
 
     public PropertiesOperations po() {
