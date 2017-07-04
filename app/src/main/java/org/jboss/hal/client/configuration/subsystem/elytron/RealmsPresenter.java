@@ -46,9 +46,9 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -181,7 +181,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 (name, model) -> {
                     // once the model is posted, it must be correctly assembled as the attributes are not correct,
                     // related to the r-r-d
-                    ModelNodeHelper.reassembleComplexAttribute(complexAttributeName, model, true);
+                    reassembleComplexAttribute(complexAttributeName, model, true);
                     ResourceAddress address = LDAP_REALM_ADDRESS.resolve(statementContext, name);
                     crud.add(Names.ELYTRON_LDAP_REALM, name, address, model, (name1, address1) -> reload());
                 }).show();
@@ -200,11 +200,75 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         new AddResourceDialog(Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX),
                 resources.messages().addResourceTitle(Names.ELYTRON_PROPERTIES_REALM), nestedMetadata,
                 (name, model) -> {
-                    ModelNodeHelper.reassembleComplexAttribute(complexAttributeName, model, true);
+                    reassembleComplexAttribute(complexAttributeName, model, true);
                     ResourceAddress address = PROPERTIES_REALM_ADDRESS.resolve(statementContext, name);
                     crud.add(Names.ELYTRON_PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
                 }).show();
 
+    }
+
+    /**
+     * Given a model as
+     * <pre>
+     * {
+     *   other-attr: "value1"
+     *   complexAttr-name1: "some value 1",
+     *   complexAttr-name2: "some value 2"
+     * }
+     * </pre>
+     * This method extracts the complex attribute name and adds the nested attributes into the complex attribute.
+     * If createComplexAttribute=true, the resulting model node is:
+     *
+     * <pre>
+     * {
+     *   other-attr: "value1"
+     *   complexAttr: {
+     *     name1: "some value 1",
+     *     name2: "some value 2"
+     *     }
+     * }
+     * </pre>
+     *
+     * If createComplexAttribute=false, the resulting model node is:
+     *
+     * <pre>
+     * {
+     *   other-attr: "value1"
+     *   name1: "some value 1",
+     *   name2: "some value 2"
+     * }
+     * </pre>
+     *
+     * @param complexAttributeName The complex attribute name
+     * @param model The model
+     * @param createComplexAttribute Control if the resulting model should add the complex attribute name, see above example.
+     *
+     */
+    private static void reassembleComplexAttribute(String complexAttributeName, ModelNode model,
+            boolean createComplexAttribute) {
+        if (model.isDefined()) {
+            for (Property property : model.asPropertyList()) {
+                String pName = property.getName();
+
+                String nestedAttrName;
+
+                boolean propertyRepackagedName = pName.length() > complexAttributeName.length()
+                        && complexAttributeName.equals(pName.substring(0, complexAttributeName.length()));
+
+                if (propertyRepackagedName) {
+                    nestedAttrName = pName.substring(complexAttributeName.length() + 1);
+                } else {
+                    continue;
+                }
+
+                if (createComplexAttribute) {
+                    model.get(complexAttributeName).get(nestedAttrName).set(property.getValue());
+                    model.remove(pName);
+                } else {
+                    model.get(nestedAttrName).set(property.getValue());
+                }
+            }
+        }
     }
 
     @Override
