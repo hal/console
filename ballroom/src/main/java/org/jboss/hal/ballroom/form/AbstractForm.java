@@ -375,23 +375,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Enumerates all attributes and values of this form, regardless if they were modified or not.
-     *
-     * @return The updated model as a Map<String, Object>
-     */
-    public Map<String, Object> getUpdatedModel() {
-        Map<String, Object> changed = new HashMap<>();
-        for (FormItem formItem : getBoundFormItems()) {
-            if (formItem.isExpressionValue()) {
-                changed.put(formItem.getName(), formItem.getExpressionValue());
-            } else {
-                changed.put(formItem.getName(), formItem.getValue());
-            }
-        }
-        return changed;
-    }
-
-    /**
      * Executes the {@link Operation#CANCEL} operation and calls the registered
      * {@linkplain CancelCallback cancel callback} (if any).
      */
