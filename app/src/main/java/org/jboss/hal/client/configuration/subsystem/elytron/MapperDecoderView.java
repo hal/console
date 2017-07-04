@@ -23,6 +23,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
@@ -60,8 +61,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-aggregate-role-mapper-form") Form<NamedNode> aggregateRoleMapperForm;
     @MbuiElement("mappers-decoders-concatenating-principal-decoder-table") Table<NamedNode> concatenatingPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-concatenating-principal-decoder-form") Form<NamedNode> concatenatingPrincipalDecoderForm;
-    // @MbuiElement("mappers-decoders-constant-permission-mapper-table") Table<NamedNode> constantPermissionMapperTable;
-    // @MbuiElement("mappers-decoders-constant-permission-mapper-form") Form<NamedNode> constantPermissionMapperForm;
+    ResourceElement constantPermissionMapperElement;
     @MbuiElement("mappers-decoders-constant-principal-decoder-table") Table<NamedNode> constantPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-constant-principal-decoder-form") Form<NamedNode> constantPrincipalDecoderForm;
     @MbuiElement("mappers-decoders-constant-role-mapper-table") Table<NamedNode> constantRoleMapperTable;
@@ -78,7 +78,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-logical-permission-mapper-form") Form<NamedNode> logicalPermissionMapperForm;
     @MbuiElement("mappers-decoders-logical-role-mapper-table") Table<NamedNode> logicalRoleMapperTable;
     @MbuiElement("mappers-decoders-logical-role-mapper-form") Form<NamedNode> logicalRoleMapperForm;
-    // TODO Replace with custom element
+    // TODO Replace 'simple-permission-mapper' with custom element
     @MbuiElement("mappers-decoders-simple-permission-mapper-table") Table<NamedNode> simplePermissionMapperTable;
     @MbuiElement("mappers-decoders-simple-permission-mapper-form") Form<NamedNode> simplePermissionMapperForm;
     @MbuiElement("mappers-decoders-simple-role-decoder-table") Table<NamedNode> simpleRoleDecoderTable;
@@ -87,7 +87,6 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
     // @formatter:on
 
-    ResourceElement constantPermissionMapperElement;
 
     MapperDecoderView(final MbuiContext mbuiContext) {
         super(mbuiContext);

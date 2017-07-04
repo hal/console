@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.elytron;
+package org.jboss.hal.core.mbui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -61,7 +60,25 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 
-class ResourceElement implements IsElement<HTMLElement>, Attachable {
+/**
+ * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one
+ * complex attribute of type {@code LIST}.
+ *
+ * <p>This class provides the following features:</p>
+ * <ul>
+ * <li>Table for the main resource with add and remove buttons.</li>
+ * <li>Form with all simple configuration attributes of the main resource.</li>
+ * <li>A tab for each complex attribute of type {@code OBJECT}. The tab contains a form to add, save, reset and remove
+ * the complex attribute.</li>
+ * <li>If there's a complex attribute of type {@code LIST}, the table contains a link to a sub-page. The sub-page
+ * contains a table and a form to CRUD the elements of the complex attribute. Only simple attributes in the complex
+ * attribute of type {@code LIST} are supported.</li>
+ * <li>All CRUD actions are delegated to {@link CrudOperations} and {@link ComplexAttributeOperations}</li>
+ * </ul>
+ *
+ * <p>Multiple complex attributes of type {@code LIST} or nested complex attributes are not supported.</p>
+ */
+public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
     private static class ComplexObjectAttribute {
 
@@ -97,18 +114,18 @@ class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     mbuiContext.resources());
         }
 
-        public Builder(String baseId, String resource, Metadata metadata,
-                CrudOperations crud, ComplexAttributeOperations ca, TableButtonFactory tableButtonFactory,
-                Resources resources) {
+        public Builder(String baseId, String resource, Metadata metadata, CrudOperations crud,
+                ComplexAttributeOperations ca, TableButtonFactory tableButtonFactory, Resources resources) {
             this.baseId = baseId;
             this.resource = resource;
-            this.type = new LabelBuilder().label(resource);
-            this.crud = crud;
-            this.ca = ca;
             this.columns = new ArrayList<>();
             this.metadata = metadata;
+            this.crud = crud;
+            this.ca = ca;
             this.tableButtonFactory = tableButtonFactory;
             this.resources = resources;
+
+            this.type = new LabelBuilder().label(resource);
             this.coAttributes = new ArrayList<>();
             this.clAttribute = null;
             this.clColumns = new ArrayList<>();
@@ -116,33 +133,52 @@ class ResourceElement implements IsElement<HTMLElement>, Attachable {
             this.callback = () -> alert(Names.NYI);
         }
 
+        /**
+         * Overrides the human readable type of the main resource which is built by default using the {@link
+         * LabelBuilder}.
+         */
         public Builder type(String type) {
             this.type = type;
             return this;
         }
 
+        /** Columns for the main table. */
         public Builder columns(@NonNls String first, @NonNls String... rest) {
             columns.addAll(Lists.asList(first, rest));
             return this;
         }
 
+        /**
+         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the
+         * complex attribute.
+         */
         public Builder addComplexObjectAttribute(String name, Supplier<Operation> ping) {
             coAttributes.add(new ComplexObjectAttribute(name, ping));
             return this;
         }
 
+        /** Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified column. */
         public Builder setComplexListAttribute(String name, String column) {
             return setComplexListAttribute(name, singletonList(column), null);
         }
 
+        /**
+         * Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified column and
+         * use the identifier to maintain  the selection after updating the entries.
+         */
         public Builder setComplexListAttribute(String name, String column, Function<ModelNode, String> identifier) {
             return setComplexListAttribute(name, singletonList(column), identifier);
         }
 
+        /** Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified columns. */
         public Builder setComplexListAttribute(String name, Iterable<String> columns) {
             return setComplexListAttribute(name, columns, null);
         }
 
+        /**
+         * Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified columns and
+         * use the identifier to maintain  the selection after updating the entries.
+         */
         public Builder setComplexListAttribute(String name, Iterable<String> columns,
                 Function<ModelNode, String> identifier) {
             clAttribute = name;
@@ -151,6 +187,7 @@ class ResourceElement implements IsElement<HTMLElement>, Attachable {
             return this;
         }
 
+        /** Defines the callback which is used after all CRUD actions. */
         public Builder onCrud(Callback callback) {
             this.callback = callback;
             return this;
@@ -344,7 +381,7 @@ class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
     }
 
-    void update(List<NamedNode> nodes) {
+    public void update(List<NamedNode> nodes) {
         form.clear();
         table.update(nodes);
 
