@@ -177,7 +177,7 @@ public final class ModelNodeHelper {
         return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
 
-    
+
     private ModelNodeHelper() {}
 
 
