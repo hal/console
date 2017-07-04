@@ -260,10 +260,11 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     @Override
     public void saveComplexForm(final String title, final String name, String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
-
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
         String type = new LabelBuilder().label(metadata.getTemplate().lastName());
-        crud.save(type, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+        ca.save(name, complexAttributeName, type, metadata.getTemplate(), changedValues, this::reload);
+
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        // crud.save(type, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
@@ -346,23 +347,24 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .build();
 
+        // AddResourceDialog dialog = new AddResourceDialog(title, form,
+        //         (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
         AddResourceDialog dialog = new AddResourceDialog(title, form,
-                (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
+                (name, model) -> ca.listAdd(resourceNameFunction.apply(null), complexAttributeName, title,
+                        metadata.getTemplate(), model, this::reload));
         dialog.show();
     }
 
     @Override
     public void listRemove(String title, String resourceName, String complexAttributeName, int index,
             AddressTemplate template) {
-
-        ResourceAddress address = template.resolve(statementContext, resourceName);
-        crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
+        ca.remove(resourceName, complexAttributeName, title, index, template, this::reload);
     }
 
 

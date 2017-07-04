@@ -224,9 +224,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @Override
     public void saveComplexForm(final String title, final String name, String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
+        ca.save(name, complexAttributeName, title, metadata.getTemplate(), changedValues, this::reload);
 
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        // crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
@@ -249,9 +250,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @Override
     public void listRemove(String title, String resourceName, String complexAttributeName, int index,
             AddressTemplate template) {
-
-        ResourceAddress address = template.resolve(statementContext, resourceName);
-        crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
+        ca.remove(resourceName, complexAttributeName, title, index, template, this::reload);
     }
 
 
@@ -270,14 +269,16 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .build();
 
-        AddResourceDialog.Callback callback = (name, model) -> crud
-                .listAdd(title, name, complexAttributeName, address, model, () -> reload());
+        // AddResourceDialog.Callback callback = (name, model) -> crud
+        //         .listAdd(title, name, complexAttributeName, address, model, () -> reload());
+        AddResourceDialog.Callback callback = (name, model) -> ca.listAdd(resourceNameFunction.apply(null),
+                complexAttributeName, title, metadata.getTemplate(), model, this::reload);
         AddResourceDialog dialog = new AddResourceDialog(title, form, callback);
         dialog.show();
     }

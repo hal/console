@@ -700,71 +700,6 @@ public class CrudOperations {
     }
 
     /**
-     * Writes the changed values to the specified attribute in the resource. After the resource has been saved a standard
-     * success message is fired and the specified callback is executed.
-     * <p>
-     * If the change set is empty, a warning message is fired and the specified callback is executed.
-     *
-     * @param type                 the human readable resource type used in the success message
-     * @param name                 the resource name
-     * @param complexAttributeName The complex attribute name
-     * @param address              the fq address for the operation
-     * @param changedValues        the changed values / payload for the operation
-     * @param metadata             the metadata of the attributes in the change set
-     * @param callback             the callback executed after the resource has been saved
-     */
-    @JsIgnore
-    public void save(final String type, final String name, String complexAttributeName, final ResourceAddress address,
-            final Map<String, Object> changedValues, final Metadata metadata, final Callback callback) {
-        Composite operations = operationFactory.fromChangeSet(address, changedValues, complexAttributeName, metadata);
-        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
-    }
-
-    /**
-     * Adds the changed values to the specified attribute of type LIST in the resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
-     * <p>
-     * If the change set is empty, a warning message is fired and the specified callback is executed.
-     *
-     * @param type                 the human readable resource type used in the success message
-     * @param name                 the resource name
-     * @param complexAttributeName The complex attribute name
-     * @param address              the fq address for the operation
-     * @param changedValues        the changed values / payload for the operation
-     * @param metadata             the metadata of the attributes in the change set
-     * @param callback             the callback executed after the resource has been saved
-     */
-    @JsIgnore
-    public void listAdd(final String type, final String name, String complexAttributeName,
-            final ResourceAddress address,
-            final Map<String, Object> changedValues, final Metadata metadata, final Callback callback) {
-        Composite operations = operationFactory
-                .fromListChangeSet(address, changedValues, complexAttributeName, metadata);
-        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
-    }
-
-    /**
-     * Adds the changed values to the specified attribute of type LIST in the resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
-     * <p>
-     * If the change set is empty, a warning message is fired and the specified callback is executed.
-     *
-     * @param type                 the human readable resource type used in the success message
-     * @param name                 the resource name
-     * @param complexAttributeName The complex attribute name
-     * @param address              the fq address for the operation
-     * @param payload              the payload
-     * @param callback             the callback executed after the resource has been saved
-     */
-    @JsIgnore
-    public void listAdd(final String type, final String name, String complexAttributeName,
-            final ResourceAddress address,
-            final ModelNode payload, final Callback callback) {
-        Composite operations = operationFactory.fromListChangeSet(address, payload, complexAttributeName);
-        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
-    }
-
-    /**
      * Writes the changed values to the specified resource. After the resource has been saved the specified success
      * message is fired and the specified callback is executed.
      * <p>
@@ -1338,38 +1273,6 @@ public class CrudOperations {
 
         DialogFactory.showConfirmation(title, question, () -> {
             Operation operation = new Operation.Builder(address, REMOVE).build();
-            dispatcher.execute(operation, result -> {
-                MessageEvent.fire(eventBus, Message.success(success));
-                callback.execute();
-            });
-        });
-    }
-
-    /**
-     * Shows a confirmation dialog and removes the object item from the complex attribute of type LIST, represented by
-     * its index. After the item has been removed a success message is fired and the specified callback is executed.
-     *
-     * @param type                 the human readable resource type used in the success message
-     * @param name                 the resource name
-     * @param complexAttributeName the complex attribute name
-     * @param index                the list index to remove the item
-     * @param name                 the resource name
-     * @param address              the fq address for the {@code remove} operation
-     * @param callback             the callback executed after the resource has been removed
-     */
-    @JsIgnore
-    public void listRemove(final String type, final String name, String complexAttributeName, int index,
-            final ResourceAddress address, final Callback callback) {
-
-        String title = resources.messages().removeConfirmationTitle(type);
-        SafeHtml question = resources.messages().removeConfirmationQuestion(type + " at index " + index); //NON-NLS
-        SafeHtml success = resources.messages().removeResourceSuccess(type, name);
-
-        DialogFactory.showConfirmation(title, question, () -> {
-            Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
-                    .param(NAME, complexAttributeName)
-                    .param(INDEX, index)
-                    .build();
             dispatcher.execute(operation, result -> {
                 MessageEvent.fire(eventBus, Message.success(success));
                 callback.execute();
