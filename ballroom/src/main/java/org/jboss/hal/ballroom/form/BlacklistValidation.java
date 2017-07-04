@@ -19,6 +19,8 @@ import java.util.SortedSet;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+import com.google.gwt.core.client.GWT;
+import org.jboss.hal.resources.Messages;
 
 import static java.util.Arrays.asList;
 
@@ -27,6 +29,8 @@ import static java.util.Arrays.asList;
  */
 public class BlacklistValidation
         implements FormItemValidation<Object> { // needs to be <Object> because it's used in generated code
+
+    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private final SortedSet<String> blacklist;
 

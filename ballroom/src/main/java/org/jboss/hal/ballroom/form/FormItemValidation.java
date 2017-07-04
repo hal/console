@@ -35,10 +35,6 @@
 
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Messages;
-
 /**
  * Simple form item validation handler
  *
@@ -49,9 +45,6 @@ import org.jboss.hal.resources.Messages;
 public interface FormItemValidation<T> {
 
     enum ValidationRule {IF_MODIFIED, ALWAYS}
-
-    Constants CONSTANTS = GWT.create(Constants.class);
-    Messages MESSAGES = GWT.create(Messages.class);
 
     default ValidationRule validateIf() {
         return ValidationRule.IF_MODIFIED;

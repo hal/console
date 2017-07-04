@@ -75,8 +75,6 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-simple-role-decoder-form") Form<NamedNode> simpleRoleDecoderForm;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-table") Table<NamedNode> x500AttributePrincipalDecoderTable;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
-
-
     // @formatter:on
 
     MapperDecoderView(final MbuiContext mbuiContext) {
@@ -87,7 +85,6 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void attach() {
         super.attach();
     }
-
 
     @Override
     public void updateAddPrefixRoleMapper(final List<NamedNode> model) {
@@ -123,7 +120,6 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void updateConstantPermissionMapper(final List<NamedNode> model) {
         constantPermissionMapperForm.clear();
         constantPermissionMapperTable.update(model);
-
     }
 
     @Override

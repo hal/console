@@ -19,7 +19,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLInputElement;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.input;
@@ -118,6 +121,9 @@ public class NumberItem extends AbstractFormItem<Long> {
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
     public static final long MAX_SAFE_LONG = 9007199254740991L;
+
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private final HTMLInputElement inputElement;
     private long min;

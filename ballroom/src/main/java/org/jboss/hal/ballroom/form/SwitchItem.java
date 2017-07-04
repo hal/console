@@ -18,11 +18,13 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 
 import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -111,7 +113,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             // it's types to boolean, but used to validate the expression
             this.expressionValidation = value -> {
                 if (!hasExpressionScheme(expressionModeInput.value)) {
-                    return ValidationResult.invalid(FormItemValidation.CONSTANTS.invalidExpression());
+                    return ValidationResult.invalid(CONSTANTS.invalidExpression());
                 }
                 return ValidationResult.OK;
             };
@@ -284,6 +286,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         }
     }
 
+
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
 
     private final SwitchEditingAppearance editingAppearance;
 
