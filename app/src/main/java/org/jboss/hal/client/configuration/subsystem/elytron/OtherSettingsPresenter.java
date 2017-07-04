@@ -26,7 +26,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -39,12 +41,15 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -57,8 +62,12 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 
@@ -105,8 +114,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     private Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
 
     @Inject
@@ -116,14 +127,18 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             final Finder finder,
             final Dispatcher dispatcher,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
+        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
 
@@ -209,9 +224,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @Override
     public void saveComplexForm(final String title, final String name, String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
+        ca.save(name, complexAttributeName, title, metadata.getTemplate(), changedValues, this::reload);
 
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        // crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
@@ -234,9 +250,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @Override
     public void listRemove(String title, String resourceName, String complexAttributeName, int index,
             AddressTemplate template) {
-
-        ResourceAddress address = template.resolve(statementContext, resourceName);
-        crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
+        ca.remove(resourceName, complexAttributeName, title, index, template, this::reload);
     }
 
 
@@ -255,16 +269,68 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .build();
 
-        AddResourceDialog.Callback callback = (name, model) -> crud
-                .listAdd(title, name, complexAttributeName, address, model, () -> reload());
+        // AddResourceDialog.Callback callback = (name, model) -> crud
+        //         .listAdd(title, name, complexAttributeName, address, model, () -> reload());
+        AddResourceDialog.Callback callback = (name, model) -> ca.listAdd(resourceNameFunction.apply(null),
+                complexAttributeName, title, metadata.getTemplate(), model, this::reload);
         AddResourceDialog dialog = new AddResourceDialog(title, form, callback);
         dialog.show();
     }
 
+
+    // ------------------------------------------------------ LDAP key store
+
+    void reloadLdapKeyStores() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, ModelDescriptionConstants.LDAP_KEY_STORE,
+                children -> getView().updateLdapKeyStore(asNamedNodes(children)));
+    }
+
+    void saveLdapKeyStore(final String name, final Map<String, Object> changedValues) {
+        crud.save(Names.LDAP_KEY_STORE, name, AddressTemplates.LDAP_KEY_STORE_ADDRESS, changedValues,
+                this::reloadLdapKeyStores);
+    }
+
+    void addNewItemTemplate(final String ldapKeyStore) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS)
+                .forComplexAttribute(NEW_ITEM_TEMPLATE);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_ADD,
+                metadata)
+                .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
+                .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
+                .unsorted()
+                .addOnly()
+                .build();
+        String type = new LabelBuilder().label(NEW_ITEM_TEMPLATE);
+        new AddResourceDialog(resources.messages().addResourceTitle(type), form, (name, model) ->
+                ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
+                        AddressTemplates.LDAP_KEY_STORE_ADDRESS, model, this::reloadLdapKeyStores)).show();
+    }
+
+    Operation pingNewItemTemplate(final String ldapKeyStore) {
+        ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(statementContext, ldapKeyStore);
+        return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, NEW_ITEM_TEMPLATE)
+                .build();
+    }
+
+    void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
+        ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+                changedValues, this::reloadLdapKeyStores);
+    }
+
+    void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
+        ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+                new Form.FinishRemove<ModelNode>(form) {
+                    @Override
+                    public void afterRemove(final Form<ModelNode> form) {
+                        reloadLdapKeyStores();
+                    }
+                });
+    }
 }

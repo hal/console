@@ -65,6 +65,7 @@ public interface ModelDescriptionConstants {
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTE_GROUP = "attribute-group";
+    String ATTRIBUTE_MAPPING = "attribute-mapping";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
@@ -137,6 +138,7 @@ public interface ModelDescriptionConstants {
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
+    String DIR_CONTEXT = "dir-context";
     String DIVERT = "divert";
     String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
@@ -186,17 +188,21 @@ public interface ModelDescriptionConstants {
     String GROUPING_HANDLER = "grouping-handler";
 
     String HA_POLICY = "ha-policy";
+    String HAL_INDEX = "hal-index";
+    String HAL_LABEL = "hal-label";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
     String HOMEPAGE = "homepage";
     String HOST = "host";
+    String HOST_NAME = "host-name";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
     String HTTP = "http";
     String HTTP_ACCEPTOR = "http-acceptor";
+    String HTTP_AUTNETICATION_FACTORY = "http-authentication-factory";
     String HTTP_CONNECTOR = "http-connector";
     String HTTP_INVOKER = "http-invoker";
     String HTTP_LISTENER = "http-listener";
@@ -226,6 +232,7 @@ public interface ModelDescriptionConstants {
     String JCA = "jca";
     String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
+    String JDBC_REALM = "jdbc-realm";
     String JGROUPS = "jgroups";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_QUEUE = "jms-queue";
@@ -239,6 +246,7 @@ public interface ModelDescriptionConstants {
     String KILL = "kill";
 
     String LAUNCH_TYPE = "launch-type";
+    String LDAP_KEY_STORE = "ldap-key-store";
     String LEVEL = "level";
     String LICENSE = "license";
     String LINES = "lines";
@@ -269,6 +277,9 @@ public interface ModelDescriptionConstants {
     String MASTER = "master";
     String MAX = "max";
     String MAX_THREADS = "max-threads";
+    String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
+    String MECHANISM_NAME = "mechanism-name";
+    String MECHANISM_REALM_CONFIGURATIONS = "mechanism-realm-configurations";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIME_MAPPING = "mime-mapping";
@@ -283,6 +294,10 @@ public interface ModelDescriptionConstants {
     String MULTICAST_PORT = "multicast-port";
 
     String NAME = "name";
+    String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
+    String NEW_ITEM_PATH = "new-item-path";
+    String NEW_ITEM_RDN = "new-item-rdn";
+    String NEW_ITEM_TEMPLATE = "new-item-template";
     String NILLABLE = "nillable";
     String NONE = "none";
     String NOT = "not";
@@ -310,6 +325,7 @@ public interface ModelDescriptionConstants {
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREFIX = "prefix";
+    String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
@@ -340,6 +356,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REALM_NAME = "realm-name";
     String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTE = "remote";
@@ -387,7 +404,7 @@ public interface ModelDescriptionConstants {
 
     String SASL_PROTOCOL = "sasl-protocol";
     String SCRIPT = "script";
-    //String SECURITY = "security-elytron";
+    String SEARCH_PATH = "search-path";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
@@ -418,6 +435,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOURCE_NETWORK = "source-network";
+    String SQL = "sql";
     String SHUTDOWN = "shutdown";
     String SINGLE_SIGN_ON = "single-sign-on";
     String SLAVE = "slave";

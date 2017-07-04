@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -57,9 +58,10 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
@@ -107,6 +109,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     // @formatter:on
 
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
@@ -119,6 +122,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             final FactoriesPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
             final MetadataRegistry metadataRegistry,
@@ -126,6 +130,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
+        this.ca = ca;
         this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
@@ -215,8 +220,10 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     public void saveComplexForm(final String title, final String name, final String complexAttributeName,
             final Map<String, Object> changedValues, final Metadata metadata) {
 
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
+        ca.save(name, complexAttributeName, title, metadata.getTemplate(), changedValues, this::reload);
+
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
+        // crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
     }
 
     @Override
@@ -237,7 +244,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
 
-    public void resetComplexAttribute(final String type, final String name,  final String attribute,
+    public void resetComplexAttribute(final String type, final String name, final String attribute,
             final Metadata metadata, final Callback callback) {
 
         ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
@@ -245,28 +252,96 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         attributeToReset.add(attribute);
         crud.reset(type, name, address, attributeToReset, metadata, callback);
     }
+
     @Override
-    public void launchAddDialog(Function<String,String> resourceNameFunction, String complexAttributeName,
+    public void launchAddDialog(Function<String, String> resourceNameFunction, String complexAttributeName,
             Metadata metadata, String title) {
 
         String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
+        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .fromRequestProperties()
                 .build();
 
+        // AddResourceDialog dialog = new AddResourceDialog(title, form,
+        //         (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
         AddResourceDialog dialog = new AddResourceDialog(title, form,
-                (name, model) -> crud.listAdd(title, name, complexAttributeName, address, model, () -> reload()));
+                (name, model) -> ca.listAdd(resourceNameFunction.apply(null), complexAttributeName, title,
+                        metadata.getTemplate(), model, this::reload));
         dialog.show();
     }
 
     @Override
     public void listRemove(String title, String resourceName, String complexAttributeName, int index,
             AddressTemplate template) {
-
-        ResourceAddress address = template.resolve(statementContext, resourceName);
-        crud.listRemove(title, resourceName, complexAttributeName, index, address, () -> reload());
+        ca.remove(resourceName, complexAttributeName, title, index, template, this::reload);
     }
 
+
+    // ------------------------------------------------------ HTTP authentication factory
+
+    void reloadHttpAuthenticationFactories() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, HTTP_AUTNETICATION_FACTORY,
+                children -> getView().updateHttpAuthentication(asNamedNodes(children)));
+    }
+
+    void saveHttpAuthenticationFactory(Form<NamedNode> form, Map<String, Object> changedValues) {
+        crud.save(Names.HTTP_AUTHENTICATION_FACTORY, form.getModel().getName(),
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    void addMechanismConfiguration(String httpAuthenticationFactory) {
+        ca.listAdd(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_ADD, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
+                Names.MECHANISM_CONFIGURATION, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                singletonList(MECHANISM_NAME), this::reloadHttpAuthenticationFactories);
+    }
+
+    void saveMechanismConfiguration(String httpAuthenticationFactory, int index,
+            Map<String, Object> changedValues) {
+        ca.save(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    void removeMechanismConfiguration(String httpAuthenticationFactory, int index) {
+        ca.remove(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, this::reloadHttpAuthenticationFactories);
+    }
+
+    void addMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS)
+                .forComplexAttribute(MECHANISM_CONFIGURATIONS)
+                .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_ADD, metadata)
+                .addOnly()
+                .requiredOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.MECHANISM_REALM_CONFIGURATION), form,
+                (name, model) -> ca.listAdd(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex),
+                        Names.MECHANISM_REALM_CONFIGURATION, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                        model, this::reloadHttpAuthenticationFactories));
+        dialog.show();
+    }
+
+    void saveMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+            Map<String, Object> changedValues) {
+        ca.save(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS, changedValues,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    void removeMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex,
+            int mechanismRealmIndex) {
+        ca.remove(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_ADDRESS,
+                this::reloadHttpAuthenticationFactories);
+    }
+
+    private String mrcComplexAttribute(int mechanismIndex) {
+        return MECHANISM_CONFIGURATIONS + "[" + mechanismIndex + "]." + MECHANISM_REALM_CONFIGURATIONS;
+    }
 }

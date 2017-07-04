@@ -50,6 +50,7 @@ public class CoreModule extends AbstractGinModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
+        bind(ComplexAttributeOperations.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);
         bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler

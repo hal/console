@@ -13,24 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.core.mvp.HasPresenter;
 
-/**
- * This class is a wrapper around calls to HalViewImpl that are protected,
- *
- * @author Claudio Miranda <claudio@redhat.com>
- */
-public interface ElytronView {
+// TODO Replacement for ResourceView
+class ResourceElement<P> implements IsElement<HTMLElement>, Attachable, HasPresenter<P> {
 
-    /**
-     *
-     * Call to HalViewImpl.registerAttachable(first, rest);
-     *
-     * @param first
-     * @param rest
-     */
-    void registerComponents(Attachable first, Attachable... rest);
+    private final HTMLElement root;
+    private P presenter;
+
+    ResourceElement() {
+        root = null;
+    }
+
+    @Override
+    public HTMLElement asElement() {
+        return root;
+    }
+
+    @Override
+    public void attach() {
+
+    }
+
+    @Override
+    public void setPresenter(final P presenter) {
+        this.presenter = presenter;
+    }
 }

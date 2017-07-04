@@ -137,6 +137,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public B column(String link, ColumnAction<T> columnAction) {
+        return column(link, columnAction, "10em");
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    public B column(String link, ColumnAction<T> columnAction, String width) {
         assertNoOptions();
 
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
@@ -147,7 +152,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
                 })
                 .orderable(false)
                 .searchable(false)
-                .width("10em")
+                .width(width)
                 .build();
         this.columns.add(column);
         return that();

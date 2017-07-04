@@ -29,10 +29,10 @@ public interface Names {
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
     String AJP_LISTENER = "AJP Listener";
-    String ALLOWED_ORIGIN = "allowed-origin";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
     String ASYNC_OPERATIONS = "Async Operations";
+    String ATTRIBUTE_MAPPING = "Attribute Mapping";
     String AUDIT_LOG = "Audit Log";
     String AUDIT_MODULE = "Audit Module";
     String AUTHENTICATION_MODULE = "Authentication Module";
@@ -120,6 +120,7 @@ public interface Names {
     String HOSTS = "Hosts";
     String HTTP = "HTTP";
     String HTTP_ACCEPTOR = "HTTP Acceptor";
+    String HTTP_AUTHENTICATION_FACTORY = "HTTP Authentication Factory";
     String HTTP_CONNECTOR = "HTTP Connector";
     String HTTP_CONNECTOR_SECURITY = "HTTP Connector Security";
     String HTTP_CONNECTOR_SECURITY_POLICY = "HTTP Connector Security Policy";
@@ -139,6 +140,7 @@ public interface Names {
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JDBC_REALM = "JDBC Realm";
     String JGROUPS = "JGroups";
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
@@ -147,6 +149,7 @@ public interface Names {
     String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
 
+    String LDAP_KEY_STORE = "LDAP Key Store";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOCAL_CACHE = "Local Cache";
@@ -168,6 +171,10 @@ public interface Names {
     String MAPPING_MODULE = "Mapping Module";
     String MASTER = "Master";
     String MB = "MB";
+    String MECHANISM_CONFIGURATION = "Mechanism Configuration";
+    String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
+    String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
+    String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
     String MIME_MAPPING = "Mime Mapping";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
@@ -175,6 +182,7 @@ public interface Names {
     String MODULE = "Module";
 
     String NAME = "Name";
+    String NEW_ITEM_TEMPLATE = "New Item Template";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
@@ -192,6 +200,7 @@ public interface Names {
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
+    String PRINCIPAL_QUERY = "Principal Query";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String PROTOCOL = "Protocol";

@@ -127,18 +127,6 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
         }
 
         @Override
-        void applyEnabled() {
-            super.applyEnabled();
-            inputContainer.classList.remove(disabled);
-        }
-
-        @Override
-        void unapplyEnabled() {
-            super.unapplyEnabled();
-            inputContainer.classList.add(disabled);
-        }
-
-        @Override
         void applyInvalid(final String errorMessage) {
             root.classList.add(hasError);
             helpBlock.classList.remove(CSS.hint);

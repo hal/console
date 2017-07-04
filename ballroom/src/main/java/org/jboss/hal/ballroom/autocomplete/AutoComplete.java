@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
+import elemental2.dom.Element;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.KeyboardEvent;
 import jsinterop.annotations.JsConstructor;
@@ -82,7 +83,8 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void detach() {
-        if (api != null) {
+        Element element = document.getElementById(formItem().getId(EDITING));
+        if (api != null && element != null) {
             api.destroy();
             api = null;
         }
@@ -92,13 +94,15 @@ public class AutoComplete implements SuggestHandler, Attachable {
     @SuppressWarnings("HardCodedStringLiteral")
     public void showAll() {
         HTMLInputElement element = (HTMLInputElement) document.getElementById(formItem().getId(EDITING));
-        setTimeout((o) -> {
-            element.blur();
-            KeyboardEvent event = new KeyboardEvent("keyup");
-            triggerEvent(element, event, "", 0); // to reset 'last_val' in autoComplete.js
-            triggerEvent(element, event, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
-            element.focus();
-        }, 351); // timeout must be > 350, which is used in autoComplete.js
+        if (element != null) {
+            setTimeout((o) -> {
+                element.blur();
+                KeyboardEvent event = new KeyboardEvent("keyup");
+                triggerEvent(element, event, "", 0); // to reset 'last_val' in autoComplete.js
+                triggerEvent(element, event, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
+                element.focus();
+            }, 351); // timeout must be > 350, which is used in autoComplete.js
+        }
     }
 
     private native void triggerEvent(HTMLInputElement element, KeyboardEvent event, String key, int keyCode) /*-{

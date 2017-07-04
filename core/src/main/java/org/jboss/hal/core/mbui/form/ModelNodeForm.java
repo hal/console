@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -56,7 +55,6 @@ import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -82,6 +80,8 @@ import static org.jboss.hal.ballroom.JsHelper.asJsMap;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 /**
  * @author Harald Pehl
@@ -535,19 +535,26 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
         }
 
-        // requires & alternatives
+        // create form validations from requires and alternatives
         Set<String> processedAlternatives = new HashSet<>();
         for (FormItem formItem : getBoundFormItems()) {
             String name = formItem.getName();
 
-            // requires
-            List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                    .map(this::getFormItem)
-                    .filter(Objects::nonNull)
-                    .collect(toList());
-            if (!requires.isEmpty()) {
-                formItem.addValueChangeHandler(
-                        event -> requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem))));
+            ModelNode attributeDescription = attributeMetadata.get(name);
+            if (attributeDescription != null) {
+                boolean required = failSafeBoolean(attributeDescription, REQUIRED);
+                if (!required) {
+                    // Required form items already have a form item validation.
+                    // We only need form items which are *not* required, but require other items.
+                    if (attributeDescription.hasDefined(REQUIRES)) {
+                        List<String> requires = failSafeList(attributeDescription, REQUIRES).stream()
+                                .map(ModelNode::asString)
+                                .collect(toList());
+                        if (!requires.isEmpty()) {
+                            formItem.addValidationHandler(new RequiresValidation(requires, this, CONSTANTS, MESSAGES));
+                        }
+                    }
+                }
             }
 
             // alternatives
@@ -560,7 +567,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                 Set<String> requiredAlternatives = new HashSet<>();
                 uniqueAlternatives.forEach(alternative -> {
                     ModelNode attribute = attributeMetadata.getOrDefault(alternative, new ModelNode());
-                    if (ModelNodeHelper.failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
+                    if (failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
                         requiredAlternatives.add(alternative);
                     }
                 });
@@ -582,13 +589,22 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @JsMethod
     public void attach() {
         super.attach();
+
         if (Iterables.isEmpty(getFormItems())) {
             Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(alert.asElement());
         }
+
         if (singleton && ping != null && ping.get() != null) {
-            Core.INSTANCE.dispatcher().execute(ping.get(), result -> flip(READONLY), (op, failure) -> flip(EMPTY));
+            Core.INSTANCE.dispatcher().execute(ping.get(),
+                    result -> {
+                        if (!result.isDefined()) {
+                            flip(EMPTY);
+                        } else {
+                            flip(READONLY);
+                        }
+                    }, (op, failure) -> flip(EMPTY));
         }
     }
 
@@ -624,18 +640,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     @Override
     protected void prepareEditState() {
         super.prepareEditState();
-        getBoundFormItems().forEach(this::evalRequires);
-    }
-
-    private void evalRequires(FormItem formItem) {
-        String name = formItem.getName();
-        List<FormItem> requires = resourceDescription.findRequires(attributePath, name).stream()
-                .map(this::getFormItem)
-                .filter(Objects::nonNull)
-                .collect(toList());
-        if (!requires.isEmpty()) {
-            requires.forEach(rf -> rf.setEnabled(!isEmptyOrDefault(formItem)));
-        }
     }
 
     @Override

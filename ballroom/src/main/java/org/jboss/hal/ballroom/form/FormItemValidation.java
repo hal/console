@@ -48,8 +48,14 @@ import org.jboss.hal.resources.Messages;
 @FunctionalInterface
 public interface FormItemValidation<T> {
 
+    enum ValidationRule {IF_MODIFIED, ALWAYS}
+
     Constants CONSTANTS = GWT.create(Constants.class);
     Messages MESSAGES = GWT.create(Messages.class);
+
+    default ValidationRule validateIf() {
+        return ValidationRule.IF_MODIFIED;
+    }
 
     ValidationResult validate(T value);
 }
