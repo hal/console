@@ -77,7 +77,6 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 Ids.build(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY.baseId, Ids.ENTRY_SUFFIX),
                 "Aggregate HTTP Server Mechanism");
 
-
         addResourceElement(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY,
                 CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.resource,

@@ -41,7 +41,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.collect.Sets.intersection;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -101,7 +100,8 @@ public class OperationFactory {
         allAlternatives.forEach((attribute, alternatives) -> {
 
             logger.debug("Alternatives resolution for {} -> [{}]", attribute, String.join(", ", alternatives));
-            Set<String> intersection = intersection(new HashSet<>(alternatives), changeSet.keySet()).immutableCopy();
+            HashSet<String> intersection = new HashSet<>(alternatives);
+            intersection.retainAll(changeSet.keySet());
             if (intersection.isEmpty()) {
 
                 // the easy part: no conflicts

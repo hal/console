@@ -115,8 +115,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             REGEX_VALIDATING_PRINCIPAL_TRANSFORMER,
             SASL_AUTHENTICATION_FACTORY,
             SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY,
-            SERVICE_LOADER_SASL_SERVER_FACTORY
-    );
+            SERVICE_LOADER_SASL_SERVER_FACTORY);
 
 
     private final CrudOperations crud;
