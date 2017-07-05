@@ -31,10 +31,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_PERMISSION_MAPPER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -97,20 +94,19 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.CONSTANT_PERMISSION_MAPPER_ADDRESS);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
-                .setComplexListAttribute(TYPE, asList(CLASS_NAME, MODULE),
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
                         modelNode -> Ids.build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
+                .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
                 .build();
+
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
-                "mappers-decoders-constant-permission-mapper-item",
-                "mappers-decoders-constant-principal-decoder",
+                Ids.build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, Ids.ENTRY_SUFFIX),
+                "mappers-decoders-custom-permission-mapper-item",
                 "Constant Permission Mapper",
                 constantPermissionMapperElement.asElement());
-    }
 
-    @Override
-    public void attach() {
-        super.attach();
-        constantPermissionMapperElement.attach();
+        registerAttachable(constantPermissionMapperElement);
     }
 
     @Override

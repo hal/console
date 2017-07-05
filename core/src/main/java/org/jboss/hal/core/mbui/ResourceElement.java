@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mbui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -32,6 +32,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -96,16 +97,17 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         private final String baseId;
         private final String resource;
-        private final List<String> columns;
         private final Metadata metadata;
         private final CrudOperations crud;
         private final ComplexAttributeOperations ca;
         private final TableButtonFactory tableButtonFactory;
         private final Resources resources;
+        private final ModelNodeTable.Builder<NamedNode> tableBuilder;
         private String type;
         private List<ComplexObjectAttribute> coAttributes; // co = complex object
         private String clAttribute; // cl = complex list
         private final List<String> clColumns;
+        private final List<String> clAddAttributes;
         private Function<ModelNode, String> clIdentifier;
         private Callback callback;
 
@@ -118,17 +120,18 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 ComplexAttributeOperations ca, TableButtonFactory tableButtonFactory, Resources resources) {
             this.baseId = baseId;
             this.resource = resource;
-            this.columns = new ArrayList<>();
             this.metadata = metadata;
             this.crud = crud;
             this.ca = ca;
             this.tableButtonFactory = tableButtonFactory;
             this.resources = resources;
 
+            this.tableBuilder = new ModelNodeTable.Builder<>(Ids.build(baseId, Ids.TABLE_SUFFIX), metadata);
             this.type = new LabelBuilder().label(resource);
             this.coAttributes = new ArrayList<>();
             this.clAttribute = null;
             this.clColumns = new ArrayList<>();
+            this.clAddAttributes = new ArrayList<>();
             this.clIdentifier = null;
             this.callback = () -> alert(Names.NYI);
         }
@@ -144,7 +147,12 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         /** Columns for the main table. */
         public Builder columns(@NonNls String first, @NonNls String... rest) {
-            columns.addAll(Lists.asList(first, rest));
+            tableBuilder.columns(first, rest);
+            return this;
+        }
+
+        public Builder column(String name, Column.RenderCallback<NamedNode, ?> render) {
+            tableBuilder.column(name, render);
             return this;
         }
 
@@ -157,32 +165,97 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             return this;
         }
 
-        /** Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified column. */
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name   The name of the complex attribute
+         * @param column The column for the table on the sub-page
+         */
         public Builder setComplexListAttribute(String name, String column) {
-            return setComplexListAttribute(name, singletonList(column), null);
+            return setComplexListAttribute(name, singletonList(column), Collections.emptyList(), null);
         }
 
         /**
-         * Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified column and
-         * use the identifier to maintain  the selection after updating the entries.
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param column        The column for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         */
+        public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes) {
+            return setComplexListAttribute(name, singletonList(column), addAttributes, null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name       The name of the complex attribute
+         * @param column     The column for the table on the sub-page
+         * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, String column, Function<ModelNode, String> identifier) {
-            return setComplexListAttribute(name, singletonList(column), identifier);
-        }
-
-        /** Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified columns. */
-        public Builder setComplexListAttribute(String name, Iterable<String> columns) {
-            return setComplexListAttribute(name, columns, null);
+            return setComplexListAttribute(name, singletonList(column), Collections.emptyList(), identifier);
         }
 
         /**
-         * Sets the complex attribute of type {@code LIST}. The table on the sub-page contains the specified columns and
-         * use the identifier to maintain  the selection after updating the entries.
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param column        The column for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         * @param identifier    function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes,
+                Function<ModelNode, String> identifier) {
+            return setComplexListAttribute(name, singletonList(column), addAttributes, identifier);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name    The name of the complex attribute
+         * @param columns The columns for the table on the sub-page
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns) {
+            return setComplexListAttribute(name, columns, Collections.emptyList(), null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param columns       The columns for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns, Iterable<String> addAttributes) {
+            return setComplexListAttribute(name, columns, addAttributes, null);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name       The name of the complex attribute
+         * @param columns    The columns for the table on the sub-page
+         * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, Iterable<String> columns,
                 Function<ModelNode, String> identifier) {
+            return setComplexListAttribute(name, columns, Collections.emptyList(), identifier);
+        }
+
+        /**
+         * Sets the complex attribute of type {@code LIST}.
+         *
+         * @param name          The name of the complex attribute
+         * @param columns       The columns for the table on the sub-page
+         * @param addAttributes attributes for the add resource dialog
+         * @param identifier    function to maintain the selection after updating the table entries
+         */
+        public Builder setComplexListAttribute(String name, Iterable<String> columns,
+                Iterable<String> addAttributes, Function<ModelNode, String> identifier) {
             clAttribute = name;
             Iterables.addAll(clColumns, columns);
+            Iterables.addAll(clAddAttributes, addAttributes);
             clIdentifier = identifier;
             return this;
         }
@@ -220,19 +293,17 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         LabelBuilder labelBuilder = new LabelBuilder();
 
         // main table and form
-        ModelNodeTable.Builder<NamedNode> tableBuilder = new ModelNodeTable.Builder<NamedNode>(
-                Ids.build(builder.baseId, Ids.TABLE_SUFFIX), builder.metadata)
+        builder.tableBuilder
                 .button(builder.tableButtonFactory.add(builder.metadata.getTemplate(),
                         table -> builder.crud.add(Ids.build(builder.baseId, Ids.ADD_SUFFIX), builder.type,
                                 builder.metadata.getTemplate(), (name, address) -> builder.callback.execute())))
                 .button(builder.tableButtonFactory.remove(builder.metadata.getTemplate(),
                         table -> builder.crud.remove(builder.type, table.selectedRow().getName(),
-                                builder.metadata.getTemplate(), builder.callback)))
-                .columns(builder.columns);
+                                builder.metadata.getTemplate(), builder.callback)));
         if (builder.clAttribute != null) {
-            tableBuilder.column(labelBuilder.label(builder.clAttribute), this::showComplexList);
+            builder.tableBuilder.column(labelBuilder.label(builder.clAttribute), this::showComplexList);
         }
-        table = tableBuilder.build();
+        table = builder.tableBuilder.build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM_SUFFIX), builder.metadata)
                 .onSave((f, changedValues) -> builder.crud.save(builder.type, f.getModel().getName(),
@@ -308,7 +379,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                     .button(builder.tableButtonFactory.add(metadata.getTemplate(),
                             table -> builder.ca.listAdd(Ids.build(builder.baseId, builder.clAttribute, Ids.ADD_SUFFIX),
                                     selectedResource, builder.clAttribute, labelBuilder.label(builder.clAttribute),
-                                    metadata.getTemplate(), builder.callback)))
+                                    metadata.getTemplate(), builder.clAddAttributes, builder.callback)))
                     .button(builder.tableButtonFactory.remove(metadata.getTemplate(),
                             table -> builder.ca.remove(selectedResource, builder.clAttribute,
                                     labelBuilder.label(builder.clAttribute), clIndex, metadata.getTemplate(),
@@ -400,15 +471,15 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         List<ModelNode> clNodes = failSafeList(node, builder.clAttribute);
         storeIndex(clNodes);
 
-        if (clTable != null && clForm != null) {
+        if (clTable != null && clForm != null && pages != null) {
             clForm.clear();
             if (builder.clIdentifier != null) {
                 clTable.update(clNodes, builder.clIdentifier);
             } else {
                 clTable.update(clNodes);
             }
+            pages.showPage(complexListPageId());
         }
-        pages.showPage(complexListPageId());
     }
 
     private String mainPageId() {

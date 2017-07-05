@@ -106,7 +106,9 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     public void attach() {
         if (!attached) {
             PatternFly.initComponents();
-            attachables.forEach(Attachable::attach);
+            for (Attachable attachable : attachables) {
+                attachable.attach();
+            }
             attached = true;
         }
     }
@@ -114,7 +116,9 @@ public abstract class HalViewImpl extends ViewImpl implements HalView {
     @Override
     public void detach() {
         if (attached) {
-            attachables.forEach(Attachable::detach);
+            for (Attachable attachable : attachables) {
+                attachable.detach();
+            }
             attached = false;
         }
     }

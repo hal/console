@@ -50,9 +50,10 @@ import static org.jboss.hal.resources.CSS.*;
  * <p>
  * The vertical navigation consists of two parts:
  * <ol>
- * <li>The actual menu / navigation entries which are child elements of the vertical navigation</li>
- * <li>The panes which visibility is controlled by the vertical navigation, but which are <strong>not</strong> children
- * of the vertical navigation. The panes are typically children of the root container.</li>
+ * <li>Entries: The actual menu / navigation entries which are child elements of the vertical navigation</li>
+ * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically
+ * children
+ * of the root container. Their visibility is controlled by the vertical navigation.</li>
  * </ol>
  * <p>
  * The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
@@ -61,6 +62,8 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
+// TODO Simplify: Replace linked collections. The order of entries and panes should not matter, only the order
+// TODO of elements in the DOM matters! This should simplify the insert*() methods.
 public class VerticalNavigation implements Attachable {
 
     @JsType(isNative = true)
@@ -250,6 +253,7 @@ public class VerticalNavigation implements Attachable {
 
         } else {
             if (entries.containsKey(beforeId)) {
+                // TODO Could be simplified: The order of panes does not matter, only the order of entries matters
                 LinkedHashMap<String, Entry> reshuffledEntries = new LinkedHashMap<>();
                 LinkedHashMap<String, Pane> reshuffledPanes = new LinkedHashMap<>();
                 Iterator<String> entryIterator = entries.keySet().iterator();
@@ -315,7 +319,7 @@ public class VerticalNavigation implements Attachable {
     // ------------------------------------------------------ add secondary items
 
     public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
-        return addSecondary(primaryId, id, text, new Pane(id, element));
+        return addSecondary(entries, panes, primaryId, id, text, new Pane(id, element));
     }
 
     /**
@@ -329,11 +333,20 @@ public class VerticalNavigation implements Attachable {
     public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
         Entry primaryEntry = entries.get(primaryId);
         if (primaryEntry != null) {
+
+            // The order of panes does not matter.
+            Pane pane = new Pane(id, element);
+            Pane lastPane = panes.values().iterator().next();
+            lastPane.asElement().parentNode.appendChild(pane.asElement());
+
+            // The order of entries does matter
             if (beforeId == null) {
                 // as last entry
-                addSecondary(primaryId, id, text, new Pane(id, element));
+                addSecondary(entries, panes, primaryId, id, text, pane);
 
             } else {
+                // TODO insert instead of add!
+                addSecondary(entries, panes, primaryId, id, text, pane);
             }
 
         } else {
@@ -341,7 +354,8 @@ public class VerticalNavigation implements Attachable {
         }
     }
 
-    private VerticalNavigation addSecondary(String primaryId, String id, String text, Pane pane) {
+    private VerticalNavigation addSecondary(LinkedHashMap<String, Entry> entries, LinkedHashMap<String, Pane> panes,
+            String primaryId, String id, String text, Pane pane) {
         Entry primaryEntry = entries.get(primaryId);
 
         if (primaryEntry != null) {

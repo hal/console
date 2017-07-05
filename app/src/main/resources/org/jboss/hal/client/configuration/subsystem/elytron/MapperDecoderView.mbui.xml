@@ -183,7 +183,7 @@
         <!-- ================== -->
 
         <item id="mappers-decoders-permission-mapper-item" title="Permission Mapper" icon="fa fa-exchange">
-            <!-- constant-permission-mapper is setup in the view -->
+            <!-- sub-item for 'constant-permission-mapper' is created in MapperDecoderView.init() -->
             <sub-item id="mappers-decoders-custom-permission-mapper-item" title="Custom Permission Mapper">
                 <metadata address="/{selected.profile}/subsystem=elytron/custom-permission-mapper=*">
                     <h1>Custom Permission Mapper</h1>

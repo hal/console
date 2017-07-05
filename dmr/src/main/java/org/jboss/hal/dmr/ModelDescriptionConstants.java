@@ -314,6 +314,7 @@ public interface ModelDescriptionConstants {
     String PASSWORD = "password";
     String PATH = "path";
     String PATTERN = "pattern";
+    String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";
     String POLICY = "policy";

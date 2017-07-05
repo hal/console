@@ -180,7 +180,7 @@ public class ComplexAttributeOperations {
                         .addOnly()
                         .requiredOnly();
                 if (!Iterables.isEmpty(attributes)) {
-                    builder.include(attributes);
+                    builder.include(attributes).unsorted();
                 }
                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type),
                         builder.build(), callback);
