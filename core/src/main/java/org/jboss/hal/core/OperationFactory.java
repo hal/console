@@ -285,7 +285,6 @@ public class OperationFactory {
 
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
-
         ModelNode valueNode = new ModelNode();
 
         Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
@@ -323,21 +322,22 @@ public class OperationFactory {
                             valueNode.set(Long.valueOf(stringValue).intValue());
                             break;
                         case LIST: {
-                            ModelNode valueType = attributeDescription.get(VALUE_TYPE);
-                            switch (valueType.getType()) {
-                                case STRING:
+                            ModelNode valueTypeNode = attributeDescription.get(VALUE_TYPE);
+                            ModelType typeOfValueType = valueTypeNode.getType();
+                            if (typeOfValueType == ModelType.TYPE) {
+                                ModelType valueType = attributeDescription.get(VALUE_TYPE).asType();
+                                if (valueType == ModelType.STRING) {
                                     valueNode.clear();
                                     List l = (List) value;
                                     for (Object o : l) { valueNode.add(String.valueOf(o)); }
-                                    break;
-                                case OBJECT:
-                                    valueNode = (ModelNode) value;
-                                    break;
-                                default:
-                                    valueNode = null;
+                                } else {
                                     logger.error("Unsupported value type {} for attribute {} of type {}",
                                             valueType, name, type);
-                                    break;
+                                }
+                            } else if (typeOfValueType == ModelType.OBJECT) {
+                                valueNode = (ModelNode) value;
+                            } else {
+                                logger.error("Unsupported value type for attribute {} of type {}", name, type);
                             }
                             break;
                         }
@@ -345,22 +345,24 @@ public class OperationFactory {
                             valueNode.set(Long.parseLong(stringValue));
                             break;
                         case OBJECT:
-                            ModelNode valueType = attributeDescription.get(VALUE_TYPE);
-                            switch (valueType.getType()) {
-                                case STRING:
+                            ModelNode valueTypeNode = attributeDescription.get(VALUE_TYPE);
+                            ModelType typeOfValueType = valueTypeNode.getType();
+                            if (typeOfValueType == ModelType.TYPE) {
+                                ModelType valueType = attributeDescription.get(VALUE_TYPE).asType();
+                                if (valueType == ModelType.STRING) {
+                                    valueNode.clear();
                                     Map map = (Map) value;
                                     for (Object k : map.keySet()) {
                                         valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
                                     }
-                                    break;
-                                case OBJECT:
-                                    valueNode = (ModelNode) value;
-                                    break;
-                                default:
-                                    valueNode = null;
+                                } else {
                                     logger.error("Unsupported value type {} for attribute {} of type {}",
                                             valueType, name, type);
-                                    break;
+                                }
+                            } else if (typeOfValueType == ModelType.OBJECT) {
+                                valueNode = (ModelNode) value;
+                            } else {
+                                logger.error("Unsupported value type for attribute {} of type {}", name, type);
                             }
                             break;
                         case STRING:
