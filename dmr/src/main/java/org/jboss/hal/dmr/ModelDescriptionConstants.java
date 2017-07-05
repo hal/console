@@ -243,6 +243,7 @@ public interface ModelDescriptionConstants {
     String HTTPS_LISTENER = "https-listener";
     String ID_COLUMN = "id-column";
     String IDENTITY_REALM = "identity-realm";
+    String IDENTITY_MAPPING = "identity-mapping";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
@@ -330,6 +331,7 @@ public interface ModelDescriptionConstants {
     String MULTICAST_ADDRESS = "multicast-address";
     String MULTICAST_PORT = "multicast-port";
     String NAME = "name";
+    String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
     String NEW_ITEM_RDN = "new-item-rdn";
@@ -343,6 +345,8 @@ public interface ModelDescriptionConstants {
     String OPERATIONS = "operations";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
+    String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
+
     String PARTITION_HANDLING = "partition-handling";
     String PASSWORD = "password";
     String PATH = "path";
@@ -543,6 +547,7 @@ public interface ModelDescriptionConstants {
     String UNIT = "unit";
     String URL = "url";
     String USER_NAME = "user-name";
+    String USER_PASSWORD_MAPPER = "user-password-mapper";
     String USERNAME = "username";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
@@ -561,5 +566,6 @@ public interface ModelDescriptionConstants {
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
+    String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
 }
 

@@ -108,6 +108,11 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
     }
 
+    NewItemAttributesItem(String attribute) {
+        super(attribute, new LabelBuilder().label(attribute), MESSAGES.newItemAttributesHint(),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
+    }
+
     @Override
     public void attach() {
         super.attach();

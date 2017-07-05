@@ -88,7 +88,6 @@ public interface Names {
 
     String EE = "EE";
     String ELYTRON = "Elytron";
-    String ELYTRON_LDAP_REALM = "LDAP Realm";
     String ELYTRON_PROPERTIES_REALM = "Properties Realm";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
@@ -129,6 +128,8 @@ public interface Names {
     String HTTPS = "HTTPS";
     String HTTPS_LISTENER = "HTTPS Listener";
 
+    String IDENTITY_ATTRIBUTE_MAPPING = "Identity Attribute Mapping";
+    String IDENTITY_MAPPING = "Identity Mapping";
     String IN_VM_ACCEPTOR = "In VM Acceptor";
     String IN_VM_CONNECTOR = "In VM Connector";
     String INBOUND = "Inbound";
@@ -150,6 +151,7 @@ public interface Names {
     String JSP = "JSP";
 
     String LDAP_KEY_STORE = "LDAP Key Store";
+    String LDAP_REALM = "LDAP Realm";
     String LISTENER = "Listener";
     String LIVE_ONLY = "Live Only";
     String LOCAL_CACHE = "Local Cache";
@@ -190,6 +192,7 @@ public interface Names {
     String OTHER_SETTINGS = "Other Settings";
     String OUTBOUND_LOCAL = "Outbound Local";
     String OUTBOUND_REMOTE = "Outbound Remote";
+    String OTP_CREDENTIAL_MAPPER = "OTP Credential Mapper";
 
     String PARTITION_HANDLING = "Partition Handling";
     String PATCHING = "Patching";
@@ -271,6 +274,7 @@ public interface Names {
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String URL = "URL";
+    String USER_PASSWORD_MAPPER = "User Password Mapper";
 
     String VALUE = "Value";
 
@@ -282,4 +286,5 @@ public interface Names {
     String WRITE_THROUGH = "Write Through";
 
     String XA_DATASOURCE = "XA Datasource";
+    String X509_CREDENTIAL_MAPPER = "X509 Credential Mapper";
 }

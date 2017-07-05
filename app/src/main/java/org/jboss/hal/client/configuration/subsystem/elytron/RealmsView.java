@@ -15,54 +15,46 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
  */
-public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, ElytronView {
+public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
 
-    private ResourceView aggregateRealmView;
-    private ResourceView cachingRealmView;
-    private ResourceView customModifiableRealmView;
-    private ResourceView customRealmView;
-    private ResourceView filesystemRealmView;
-    private ResourceView identityRealmView;
-    // private ResourceView jdbcRealmView;
+
+    private final Map<String, ResourceElement> elements;
     private JdbcRealmElement jdbcRealmElement;
-    private ResourceView keystoreRealmView;
-    private ResourceView ldapRealmView;
-    private ResourceView propertiesRealmView;
-    private ResourceView tokenRealmView;
-    private ResourceView constantRealmMapperView;
-    private ResourceView customRealmMapperView;
-    private ResourceView mappedRegexRealmView;
-    private ResourceView simpleRegexRealmView;
-
+    private LdapRealmElement ldapRealmElement;
     private RealmsPresenter presenter;
+    private VerticalNavigation navigation;
 
     @Inject
-    public RealmsView(final MetadataRegistry metadataRegistry,
-            final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+    public RealmsView(final MbuiContext mbuiContext) {
 
-        VerticalNavigation navigation = new VerticalNavigation();
+        elements = new HashMap<>();
+        navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         String primaryIdSecurityRealm = "security-realm-item";
@@ -70,149 +62,152 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
         navigation.addPrimary(primaryIdSecurityRealm, "Security Realm", "fa fa-file-o");
         navigation.addPrimary(primaryIdRealmMapper, "Realm Mappers", "fa fa-desktop");
 
+        // ========= security realm
 
-        aggregateRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_AGGREGATE_REALM, "Aggregate Realm", AGGREGATE_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(AGGREGATE_REALM,
+                AGGREGATE_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(AGGREGATE_REALM.resource,
+                                nodes -> updateResourceElement(AGGREGATE_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(AGGREGATE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Aggregate Realm");
 
-        cachingRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CACHING_REALM, "Caching Realm", CACHING_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(CACHING_REALM,
+                CACHING_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(CACHING_REALM.resource,
+                                nodes -> updateResourceElement(CACHING_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(CACHING_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Caching Realm");
 
-        customModifiableRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CUSTOM_MODIFIABLE_REALM, "Custom Modifiable Realm", CUSTOM_MODIFIABLE_REALM_TEMPLATE, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(CUSTOM_MODIFIABLE_REALM,
+                CUSTOM_MODIFIABLE_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(CUSTOM_MODIFIABLE_REALM.resource,
+                                nodes -> updateResourceElement(CUSTOM_MODIFIABLE_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(CUSTOM_MODIFIABLE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Custom Modifiable Realm");
 
-        customRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_CUSTOM_REALM, "Custom Realm", CUSTOM_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(CUSTOM_REALM,
+                CUSTOM_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(CUSTOM_REALM.resource,
+                                nodes -> updateResourceElement(CUSTOM_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(CUSTOM_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Custom Realm");
 
-        filesystemRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_FILESYSTEM_REALM, "Filesystem Realm", FILESYSTEM_REALM_TEMPLATE, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(FILESYSTEM_REALM,
+                FILESYSTEM_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(FILESYSTEM_REALM.resource,
+                                nodes -> updateResourceElement(FILESYSTEM_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(FILESYSTEM_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Filesystem Realm");
 
-        identityRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_IDENTITY_REALM, "Identity Realm", IDENTITY_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(IDENTITY_REALM,
+                IDENTITY_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(IDENTITY_REALM.resource,
+                                nodes -> updateResourceElement(IDENTITY_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(IDENTITY_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Identity Realm");
 
-        // jdbcRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-        //         Ids.ELYTRON_JDBC_REALM, "JDBC Realm", JDBC_REALM_ADDRESS, this, () -> presenter.reload())
-        //         .setNavigation(navigation)
-        //         .setMetadataRegistry(metadataRegistry)
-        //         .setTableAddButtonHandler(table -> presenter.launchOnAddJDBCRealm())
-        //         .build()
-        //         .addComplexAttributeAsPage("principal-query")
-        //         .create();
-
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE);
-        jdbcRealmElement = new JdbcRealmElement(metadata, tableButtonFactory, resources);
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.JDBC_REALM_TEMPLATE);
+        jdbcRealmElement = new JdbcRealmElement(metadata, mbuiContext.tableButtonFactory(), mbuiContext.resources());
+        registerAttachable(jdbcRealmElement);
         navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_JDBC_REALM + "2", Names.JDBC_REALM,
                 jdbcRealmElement.asElement());
 
-        keystoreRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_KEY_STORE_REALM, "Keystore Realm", KEY_STORE_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(KEY_STORE_REALM,
+                KEY_STORE_REALM.resourceElement(mbuiContext,
+                        () -> presenter.reload(KEY_STORE_REALM.resource,
+                                nodes -> updateResourceElement(KEY_STORE_REALM.resource, nodes))),
+                primaryIdSecurityRealm,
+                Ids.build(KEY_STORE_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Key Store Realm");
 
-        ldapRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_LDAP_REALM, "LDAP Realm", LDAP_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddButtonHandler(table -> presenter.addLDAPRealm())
-                .build()
-                .addComplexAttributeAsTab("identity-mapping")
-                .addComplexAttributeAsTab("identity-mapping.user-password-mapper")
-                .addComplexAttributeAsTab("identity-mapping.otp-credential-mapper")
-                .addComplexAttributeAsTab("identity-mapping.x509-credential-mapper")
-                .create();
+        Metadata mtLdapRealm = mbuiContext.metadataRegistry().lookup(AddressTemplates.LDAP_REALM_TEMPLATE);
+        ldapRealmElement = new LdapRealmElement(mtLdapRealm, mbuiContext.tableButtonFactory(), mbuiContext.resources());
+        registerAttachable(ldapRealmElement);
+        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_LDAP_REALM + "3", Names.LDAP_REALM,
+                ldapRealmElement.asElement());
 
-        propertiesRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_PROPERTIES_REALM, "Properties Realm", PROPERTIES_REALM_TEMPLATE, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddButtonHandler(table -> presenter.addPropertiesRealm())
-                .build()
-                .addComplexAttributeAsTab("users-properties")
-                .addComplexAttributeAsTab("groups-properties")
-                .create();
 
-        tokenRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdSecurityRealm,
-                Ids.ELYTRON_TOKEN_REALM, "Token Realm", TOKEN_REALM_TEMPLATE, this, () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .addComplexAttributeAsTab("jwt")
-                .addComplexAttributeAsTab("oauth2-introspection")
-                .create();
+        addResourceElement(PROPERTIES_REALM,
+                PROPERTIES_REALM.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(PROPERTIES_REALM.resource,
+                                nodes -> updateResourceElement(PROPERTIES_REALM.resource, nodes)))
+                .addComplexObjectAttribute("groups-properties", () -> {
+                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
+                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                            .param(NAME, "groups-properties")
+                            .build();
+                })
+                .addComplexObjectAttribute("users-properties", () -> {
+                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
+                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                            .param(NAME, "users-properties")
+                            .build();
+                })
+                .build(),
+                primaryIdSecurityRealm,
+                Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Properties Realm");
 
-        constantRealmMapperView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_CONSTANT_REALM_MAPPER, "Constant Realm Mapper", CONSTANT_REALM_MAPPER_TEMPLATE, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(TOKEN_REALM,
+                TOKEN_REALM.resourceElementBuilder(mbuiContext,
+                        () -> presenter.reload(TOKEN_REALM.resource,
+                                nodes -> updateResourceElement(TOKEN_REALM.resource, nodes)))
+                .addComplexObjectAttribute("jwt", () -> {
+                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
+                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                            .param(NAME, "jwt")
+                            .build();
+                })
+                .addComplexObjectAttribute("oauth2-introspection", () -> {
+                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
+                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                            .param(NAME, "oauth2-introspection")
+                            .build();
+                })
+                .build(),
+                primaryIdSecurityRealm,
+                Ids.build(TOKEN_REALM.baseId, Ids.ENTRY_SUFFIX),
+                "Token Realm");
 
-        customRealmMapperView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_CUSTOM_REALM_MAPPER, "Custom Realm Mapper", CUSTOM_REALM_MAPPER_TEMPLATE, this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        // =========== realm mapper
 
-        mappedRegexRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_MAPPED_REGEX_REALM_MAPPER, "Mapped Regex Realm Mapper", MAPPED_REGEX_REALM_MAPPER_TEMPLATE,
-                this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(CONSTANT_REALM_MAPPER,
+                CONSTANT_REALM_MAPPER.resourceElement(mbuiContext,
+                        () -> presenter.reload(CONSTANT_REALM_MAPPER.resource,
+                                nodes -> updateResourceElement(CONSTANT_REALM_MAPPER.resource, nodes))),
+                primaryIdRealmMapper,
+                Ids.build(CONSTANT_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                "Constant Realm Mapper");
 
-        simpleRegexRealmView = new ResourceView.Builder(tableButtonFactory, primaryIdRealmMapper,
-                Ids.ELYTRON_SIMPLE_REGEX_REALM_MAPPER, "Simple Regex Realm Mapper", SIMPLE_REGEX_REALM_MAPPER_TEMPLATE,
-                this,
-                () -> presenter.reload())
-                .setNavigation(navigation)
-                .setMetadataRegistry(metadataRegistry)
-                .setTableAddCallback((name, address) -> presenter.reload())
-                .build()
-                .create();
+        addResourceElement(CUSTOM_REALM_MAPPER,
+                CUSTOM_REALM_MAPPER.resourceElement(mbuiContext,
+                        () -> presenter.reload(CUSTOM_REALM_MAPPER.resource,
+                                nodes -> updateResourceElement(CUSTOM_REALM_MAPPER.resource, nodes))),
+                primaryIdRealmMapper,
+                Ids.build(CUSTOM_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                "Custom Realm Mapper");
+
+        addResourceElement(MAPPED_REGEX_REALM_MAPPER,
+                MAPPED_REGEX_REALM_MAPPER.resourceElement(mbuiContext,
+                        () -> presenter.reload(MAPPED_REGEX_REALM_MAPPER.resource,
+                                nodes -> updateResourceElement(MAPPED_REGEX_REALM_MAPPER.resource, nodes))),
+                primaryIdRealmMapper,
+                Ids.build(MAPPED_REGEX_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                "Mapped Regex Realm Mapper");
+
+        addResourceElement(SIMPLE_REGEX_REALM_MAPPER,
+                SIMPLE_REGEX_REALM_MAPPER.resourceElement(mbuiContext,
+                        () -> presenter.reload(SIMPLE_REGEX_REALM_MAPPER.resource,
+                                nodes -> updateResourceElement(SIMPLE_REGEX_REALM_MAPPER.resource, nodes))),
+                primaryIdRealmMapper,
+                Ids.build(SIMPLE_REGEX_REALM_MAPPER.baseId, Ids.ENTRY_SUFFIX),
+                "Simple Regex Realm Mapper");
 
         initElement(row()
                 .add(column()
@@ -220,146 +215,36 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView, E
 
     }
 
-    private void showJDBCRealmsPage(final String s, final String name) {
-    }
-
-    @Override
-    public void registerComponents(final Attachable first, final Attachable... rest) {
-        registerAttachable(first, rest);
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-
-        aggregateRealmView.bindTableToForm();
-        cachingRealmView.bindTableToForm();
-        customModifiableRealmView.bindTableToForm();
-        customRealmView.bindTableToForm();
-        filesystemRealmView.bindTableToForm();
-        identityRealmView.bindTableToForm();
-        // jdbcRealmView.bindTableToForm();
-        jdbcRealmElement.attach();
-        keystoreRealmView.bindTableToForm();
-        ldapRealmView.bindTableToForm();
-        propertiesRealmView.bindTableToForm();
-        tokenRealmView.bindTableToForm();
-        constantRealmMapperView.bindTableToForm();
-        customRealmMapperView.bindTableToForm();
-        mappedRegexRealmView.bindTableToForm();
-        simpleRegexRealmView.bindTableToForm();
+    private void addResourceElement(ElytronResource resource, ResourceElement element,
+            String primaryId, String secondaryId, @NonNls String text) {
+        elements.put(resource.resource, element);
+        registerAttachable(element);
+        navigation.addSecondary(primaryId, secondaryId, text, element.asElement());
     }
 
 
     @Override
-    public void updateAggregateRealm(final List<NamedNode> model) {
-        aggregateRealmView.getForm().clear();
-        aggregateRealmView.getTable().update(model);
+    public void updateResourceElement(String resource, List<NamedNode> nodes) {
+        ResourceElement resourceElement = elements.get(resource);
+        if (resourceElement != null) {
+            resourceElement.update(nodes);
+        }
     }
 
     @Override
-    public void updateCachingRealm(final List<NamedNode> model) {
-        cachingRealmView.getForm().clear();
-        cachingRealmView.getTable().update(model);
+    public void updateJdbcRealm(final List<NamedNode> nodes) {
+        jdbcRealmElement.update(nodes);
     }
 
     @Override
-    public void updateCustomModifiableRealm(final List<NamedNode> model) {
-        customModifiableRealmView.getForm().clear();
-        customModifiableRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateCustomRealm(final List<NamedNode> model) {
-        customRealmView.getForm().clear();
-        customRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateFilesystemRealm(final List<NamedNode> model) {
-        filesystemRealmView.getForm().clear();
-        filesystemRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateIdentityRealm(final List<NamedNode> model) {
-        identityRealmView.getForm().clear();
-        identityRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateJdbcRealm(final List<NamedNode> model) {
-        // jdbcRealmView.getForm().clear();
-        // jdbcRealmView.getTable().update(model);
-        jdbcRealmElement.update(model);
-    }
-
-    @Override
-    public void updateKeyStoreRealm(final List<NamedNode> model) {
-        keystoreRealmView.getForm().clear();
-        keystoreRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateLdapRealm(final List<NamedNode> model) {
-        ldapRealmView.getForm().clear();
-        ldapRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updatePropertiesRealm(final List<NamedNode> model) {
-        propertiesRealmView.getForm().clear();
-        propertiesRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateTokenRealm(final List<NamedNode> model) {
-        tokenRealmView.getForm().clear();
-        tokenRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateConstantRealmMapper(final List<NamedNode> model) {
-        constantRealmMapperView.getForm().clear();
-        constantRealmMapperView.getTable().update(model);
-    }
-
-    @Override
-    public void updateCustomRealmMapper(final List<NamedNode> model) {
-        customRealmMapperView.getForm().clear();
-        customRealmMapperView.getTable().update(model);
-    }
-
-    @Override
-    public void updateMappedRegexRealmMapper(final List<NamedNode> model) {
-        mappedRegexRealmView.getForm().clear();
-        mappedRegexRealmView.getTable().update(model);
-    }
-
-    @Override
-    public void updateSimpleRegexRealmMapper(final List<NamedNode> model) {
-        simpleRegexRealmView.getForm().clear();
-        simpleRegexRealmView.getTable().update(model);
+    public void updateLdapRealm(final List<NamedNode> nodes) {
+        ldapRealmElement.update(nodes);
     }
 
     @Override
     public void setPresenter(final RealmsPresenter presenter) {
         this.presenter = presenter;
-        aggregateRealmView.setPresenter(presenter);
-        cachingRealmView.setPresenter(presenter);
-        customModifiableRealmView.setPresenter(presenter);
-        customRealmView.setPresenter(presenter);
-        filesystemRealmView.setPresenter(presenter);
-        identityRealmView.setPresenter(presenter);
-        // jdbcRealmView.setPresenter(presenter);
         jdbcRealmElement.setPresenter(presenter);
-        keystoreRealmView.setPresenter(presenter);
-        ldapRealmView.setPresenter(presenter);
-        propertiesRealmView.setPresenter(presenter);
-        tokenRealmView.setPresenter(presenter);
-        constantRealmMapperView.setPresenter(presenter);
-        customRealmMapperView.setPresenter(presenter);
-        mappedRegexRealmView.setPresenter(presenter);
-        simpleRegexRealmView.setPresenter(presenter);
+        ldapRealmElement.setPresenter(presenter);
     }
 }

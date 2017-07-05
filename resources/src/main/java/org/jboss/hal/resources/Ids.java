@@ -213,7 +213,6 @@ public interface Ids {
     String ELYTRON_CUSTOM_ROLE_DECODER = build(ELYTRON, "custom-role-decoder");
     String ELYTRON_CUSTOM_ROLE_MAPPER = build(ELYTRON, "custom-role-mapper");
     String ELYTRON_DIR_CONTEXT = build(ELYTRON, "dir-context");
-    String ELYTRON_FILE_AUDIT_LOG = build(ELYTRON, "file-audit-log");
     String ELYTRON_FILESYSTEM_REALM = build(ELYTRON, "filesystem-realm");
     String ELYTRON_FILTERING_KEY_STORE = build(ELYTRON, "filtering-key-store");
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY = build(ELYTRON, "http-authentication-factory");
@@ -222,6 +221,12 @@ public interface Ids {
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY_PAGE = build(ELYTRON, "http-authentication-factory", PAGE_SUFFIX);
     String ELYTRON_HTTP_AUTHENTICATION_FACTORY_TABLE = build(ELYTRON, "http-authentication-factory", TABLE_SUFFIX);
     String ELYTRON_IDENTITY_REALM = build(ELYTRON, "identity-realm");
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING = build(ELYTRON, "identity-attribute-mapping");
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_ADD = build(ELYTRON, "identity-attribute-mapping", ADD_SUFFIX);
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_FORM = build(ELYTRON, "identity-attribute-mapping", FORM_SUFFIX);
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_PAGE = build(ELYTRON, "identity-attribute-mapping", PAGE_SUFFIX);
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_TAB = build(ELYTRON, "identity-attribute-mapping", TAB_SUFFIX);
+    String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_TABLE = build(ELYTRON, "identity-attribute-mapping", TABLE_SUFFIX);
     String ELYTRON_JDBC_REALM = build(ELYTRON, "jdbc-realm");
     String ELYTRON_JDBC_REALM_ADD = build(ELYTRON_JDBC_REALM, ADD_SUFFIX);
     String ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING = build(ELYTRON_JDBC_REALM, "attribute-mapping");
@@ -246,6 +251,11 @@ public interface Ids {
     String ELYTRON_LDAP_REALM = build(ELYTRON, "ldap-realm");
     String ELYTRON_LOGICAL_PERMISSION_MAPPER = build(ELYTRON, "logical-permission-mapper");
     String ELYTRON_LOGICAL_ROLE_MAPPER = build(ELYTRON, "logical-role-mapper");
+    String ELYTRON_LDAP_REALM_ADD = build(ELYTRON, "ldap-realm", ADD_SUFFIX);
+    String ELYTRON_LDAP_REALM_FORM = build(ELYTRON, "ldap-realm", FORM_SUFFIX);
+    String ELYTRON_LDAP_REALM_PAGE = build(ELYTRON, "ldap-realm", PAGE_SUFFIX);
+    String ELYTRON_LDAP_REALM_TAB = build(ELYTRON, "ldap-realm", TAB_SUFFIX);
+    String ELYTRON_LDAP_REALM_TABLE = build(ELYTRON, "ldap-realm", TABLE_SUFFIX);
     String ELYTRON_MAPPED_REGEX_REALM_MAPPER = build(ELYTRON, "mapped-regex-realm-mapper");
     String ELYTRON_MECHANISM_CONFIGURATIONS = build(ELYTRON, "mechanism-configurations");
     String ELYTRON_MECHANISM_CONFIGURATIONS_ADD = build(ELYTRON_MECHANISM_CONFIGURATIONS, ADD_SUFFIX);
@@ -279,6 +289,11 @@ public interface Ids {
     String ELYTRON_SIMPLE_PERMISSION_MAPPER = build(ELYTRON, "simple-permission-mapper");
     String ELYTRON_SIMPLE_REGEX_REALM_MAPPER = build(ELYTRON, "single-regex-realm-mapper");
     String ELYTRON_SIMPLE_ROLE_DECODER = build(ELYTRON, "simple-role-decoder");
+    String ELYTRON_USER_PASSWORD_MAPPER_TAB = build(ELYTRON, ELYTRON_LDAP_REALM, "user-password-mapper", TAB_SUFFIX);
+    String ELYTRON_OTP_CREDENTIAL_MAPPER_TAB = build(ELYTRON, ELYTRON_LDAP_REALM, "otp-credential-mapper", TAB_SUFFIX);
+    String ELYTRON_X509_CREDENTIAL_MAPPER_TAB = build(ELYTRON, ELYTRON_LDAP_REALM, "x509-credential-mapper", TAB_SUFFIX);
+
+    String ELYTRON_FILE_AUDIT_LOG = build(ELYTRON, "file-audit-log");
     String ELYTRON_SIZE_AUDIT_LOG = build(ELYTRON, "size-rotating-file-audit-log");
     String ELYTRON_SIZE_ROTATING_FILE_AUDIT_LOG = build(ELYTRON, "size-rotating-file-audit-log");
     String ELYTRON_SYSLOG_AUDIT_LOG = build(ELYTRON, "syslog-audit-log");
