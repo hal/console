@@ -66,7 +66,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JDBC_REALM;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JDBC_REALM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -82,9 +82,9 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     // @formatter:off
     @ProxyCodeSplit
     @Requires(value ={
-        PROPERTIES_REALM, FILESYSTEM_REALM, CACHING_REALM, JDBC_REALM, LDAP_REALM, KEYSTORE_REALM, AGGREGATE_REALM,
-        CUSTOM_MODIFIABLE_REALM, CUSTOM_REALM, IDENTITY_REALM, TOKEN_REALM, MAPPED_REGEX_REALM_MAPPER,
-        SIMPLE_REGEX_REALM_MAPPER, CUSTOM_REALM_MAPPER, CONSTANT_REALM_MAPPER
+        PROPERTIES_REALM_ADDRESS, FILESYSTEM_REALM_ADDRESS, CACHING_REALM_ADDRESS, JDBC_REALM_ADDRESS, LDAP_REALM_ADDRESS, KEY_STORE_REALM_ADDRESS, AGGREGATE_REALM_ADDRESS,
+        CUSTOM_MODIFIABLE_REALM_ADDRESS, CUSTOM_REALM_ADDRESS, IDENTITY_REALM_ADDRESS, TOKEN_REALM_ADDRESS, MAPPED_REGEX_REALM_MAPPER_ADDRESS,
+        SIMPLE_REGEX_REALM_MAPPER_ADDRESS, CUSTOM_REALM_MAPPER_ADDRESS, CONSTANT_REALM_MAPPER_ADDRESS
     })
     @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
     public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
@@ -157,7 +157,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     @Override
     public ResourceAddress resourceAddress() {
-        return ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        return ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     public void addLDAPRealm() {
 
-        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_ADDRESS);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE);
 
         // repackage "identity-mapping" as it is a required attribute to be displayed in the form of the ADD dialog.
         String complexAttributeName = "identity-mapping";
@@ -182,7 +182,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                     // once the model is posted, it must be correctly assembled as the attributes are not correct,
                     // related to the r-r-d
                     reassembleComplexAttribute(complexAttributeName, model, true);
-                    ResourceAddress address = LDAP_REALM_ADDRESS.resolve(statementContext, name);
+                    ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, name);
                     crud.add(Names.ELYTRON_LDAP_REALM, name, address, model, (name1, address1) -> reload());
                 }).show();
 
@@ -190,7 +190,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     public void addPropertiesRealm() {
 
-        Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_ADDRESS);
+        Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
 
         // repackage "users-properties" as it is a required attribute to be displayed in the form of the ADD dialog.
         String complexAttributeName = "users-properties";
@@ -201,7 +201,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 resources.messages().addResourceTitle(Names.ELYTRON_PROPERTIES_REALM), nestedMetadata,
                 (name, model) -> {
                     reassembleComplexAttribute(complexAttributeName, model, true);
-                    ResourceAddress address = PROPERTIES_REALM_ADDRESS.resolve(statementContext, name);
+                    ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, name);
                     crud.add(Names.ELYTRON_PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
                 }).show();
 
@@ -274,7 +274,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     @Override
     public void reload() {
 
-        ResourceAddress address = ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
                 "aggregate-realm",
                 "caching-realm",
@@ -382,7 +382,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
         String complexAttributeName = "principal-query";
         String id = Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        Metadata metadata = metadataRegistry.lookup(JDBC_REALM_ADDRESS);
+        Metadata metadata = metadataRegistry.lookup(JDBC_REALM_TEMPLATE);
         metadata = metadata.repackageComplexAttribute(complexAttributeName, true, true, true);
         AddResourceDialog dialog = new AddResourceDialog(id, resources.messages().addResourceTitle("JDBC Realm"),
                 metadata, (name, payload) -> {
@@ -400,7 +400,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             });
             payload.get(complexAttributeName).add(nestedAttrs);
 
-            crud.add("JDBC Realm", name, JDBC_REALM_ADDRESS, payload, (name1, address) -> reload());
+            crud.add("JDBC Realm", name, JDBC_REALM_TEMPLATE, payload, (name1, address) -> reload());
         });
         dialog.show();
 
@@ -435,12 +435,12 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     // ------------------------------------------------------ JDBC realm
 
     void reloadJdbcRealms() {
-        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, ModelDescriptionConstants.JDBC_REALM,
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.JDBC_REALM,
                 children -> getView().updateJdbcRealm(asNamedNodes(children)));
     }
 
     void addJdbcRealm() {
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY);
         NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ADD, metadata)
@@ -452,7 +452,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 (n1, model) -> {
                     ModelNode payload = new ModelNode();
                     payload.get(PRINCIPAL_QUERY).add(model);
-                    crud.add(Names.JDBC_REALM, nameItem.getValue(), AddressTemplates.JDBC_REALM_ADDRESS, payload,
+                    crud.add(Names.JDBC_REALM, nameItem.getValue(), AddressTemplates.JDBC_REALM_TEMPLATE, payload,
                             (n2, address) -> reloadJdbcRealms());
                 });
         dialog.show();
@@ -460,16 +460,16 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void addPrincipalQuery(String jdbcRealm) {
         ca.listAdd(Ids.ELYTRON_PRINCIPAL_QUERY_ADD, jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY,
-                AddressTemplates.JDBC_REALM_ADDRESS, this::reloadJdbcRealms);
+                AddressTemplates.JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
     }
 
     void savePrincipalQuery(String jdbcRealm, int pqIndex, Map<String, Object> changedValues) {
-        ca.save(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
+        ca.save(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_TEMPLATE,
                 changedValues, this::reloadJdbcRealms);
     }
 
     void removePrincipalQuery(String jdbcRealm, int pqIndex) {
-        ca.remove(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_ADDRESS,
+        ca.remove(jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY, pqIndex, AddressTemplates.JDBC_REALM_TEMPLATE,
                 this::reloadJdbcRealms);
     }
 
@@ -490,7 +490,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
         } else {
             String type = new LabelBuilder().label(keyMapper);
-            Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+            Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                     .forComplexAttribute(PRINCIPAL_QUERY)
                     .forComplexAttribute(keyMapper);
             String id = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
@@ -500,13 +500,13 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                     .build();
             AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), form,
                     (name, model) -> ca.add(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type,
-                            AddressTemplates.JDBC_REALM_ADDRESS, model, RealmsPresenter.this::reloadJdbcRealms));
+                            AddressTemplates.JDBC_REALM_TEMPLATE, model, RealmsPresenter.this::reloadJdbcRealms));
             dialog.show();
         }
     }
 
     Operation pingKeyMapper(String jdbcRealm, ModelNode principalQuery, String keyMapper) {
-        ResourceAddress address = AddressTemplates.JDBC_REALM_ADDRESS.resolve(statementContext, jdbcRealm);
+        ResourceAddress address = AddressTemplates.JDBC_REALM_TEMPLATE.resolve(statementContext, jdbcRealm);
         int pqIndex = principalQuery.get(HAL_INDEX).asInt();
         return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, keyMapperAttribute(pqIndex, keyMapper))
@@ -515,16 +515,16 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void saveKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Map<String, Object> changedValues) {
         String type = new LabelBuilder().label(keyMapper);
-        ca.save(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
+        ca.save(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_TEMPLATE,
                 changedValues, this::reloadJdbcRealms);
     }
 
     void resetKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Form<ModelNode> form) {
         String type = new LabelBuilder().label(keyMapper);
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(keyMapper);
-        ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS, metadata,
+        ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_TEMPLATE, metadata,
                 form, new Form.FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(final Form<ModelNode> form) {
@@ -535,7 +535,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void removeKeyMapper(String jdbcRealm, int pqIndex, String keyMapper, Form<ModelNode> form) {
         String type = new LabelBuilder().label(keyMapper);
-        ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_ADDRESS,
+        ca.remove(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(final Form<ModelNode> form) {
@@ -545,7 +545,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addAttributeMapping(String jdbcRealm, int pqIndex) {
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_ADDRESS)
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING_ADD, metadata)
@@ -554,19 +554,19 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) -> ca.listAdd(jdbcRealm, attributeMappingAttribute(pqIndex),
-                Names.ATTRIBUTE_MAPPING, AddressTemplates.JDBC_REALM_ADDRESS, model, this::reloadJdbcRealms));
+                Names.ATTRIBUTE_MAPPING, AddressTemplates.JDBC_REALM_TEMPLATE, model, this::reloadJdbcRealms));
         dialog.show();
     }
 
     void saveAttributeMapping(String jdbcRealm, int pqIndex, int amIndex,
             final Map<String, Object> changedValues) {
         ca.save(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
-                AddressTemplates.JDBC_REALM_ADDRESS, changedValues, this::reloadJdbcRealms);
+                AddressTemplates.JDBC_REALM_TEMPLATE, changedValues, this::reloadJdbcRealms);
     }
 
     void removeAttributeMapping(String jdbcRealm, int pqIndex, int amIndex) {
         ca.remove(jdbcRealm, attributeMappingAttribute(pqIndex), Names.ATTRIBUTE_MAPPING, amIndex,
-                AddressTemplates.JDBC_REALM_ADDRESS, this::reloadJdbcRealms);
+                AddressTemplates.JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
     }
 
     private String keyMapperAttribute(int pqIndex, String keyMapper) {

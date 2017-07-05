@@ -55,12 +55,24 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(value ={
-        ADD_PREFIX_ROLE_MAPPER, ADD_SUFFIX_ROLE_MAPPER, AGGREGATE_ROLE_MAPPER, CONSTANT_ROLE_MAPPER, CUSTOM_ROLE_MAPPER,
-        LOGICAL_ROLE_MAPPER, SIMPLE_PERMISSION_MAPPER, LOGICAL_PERMISSION_MAPPER, CUSTOM_PERMISSION_MAPPER,
-        CONSTANT_PERMISSION_MAPPER, AGGREGATE_PRINCIPAL_DECODER, CONCATENATING_PRINCIPAL_DECODER,
-        CONSTANT_PRINCIPAL_DECODER, CUSTOM_PRINCIPAL_DECODER, X500_PRINCIPAL_DECODER, CUSTOM_ROLE_DECODER, SIMPLE_ROLE_DECODER
-        })
+    @Requires(value = {
+            ADD_PREFIX_ROLE_MAPPER_ADDRESS,
+            ADD_SUFFIX_ROLE_MAPPER_ADDRESS,
+            AGGREGATE_PRINCIPAL_DECODER_ADDRESS,
+            AGGREGATE_ROLE_MAPPER_ADDRESS,
+            CONCATENATING_PRINCIPAL_DECODER_ADDRESS,
+            CONSTANT_PERMISSION_MAPPER_ADDRESS,
+            CONSTANT_PRINCIPAL_DECODER_ADDRESS,
+            CONSTANT_ROLE_MAPPER_ADDRESS,
+            CUSTOM_PERMISSION_MAPPER_ADDRESS,
+            CUSTOM_PRINCIPAL_DECODER_ADDRESS,
+            CUSTOM_ROLE_DECODER_ADDRESS,
+            CUSTOM_ROLE_MAPPER_ADDRESS,
+            LOGICAL_PERMISSION_MAPPER,
+            LOGICAL_ROLE_MAPPER,
+            SIMPLE_PERMISSION_MAPPER_ADDRESS,
+            SIMPLE_ROLE_DECODER_ADDRESS,
+            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS,         })
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
 
@@ -120,7 +132,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        return ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -133,7 +145,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     @Override
     protected void reload() {
 
-        ResourceAddress address = ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
                 "add-prefix-role-mapper",
                 "add-suffix-role-mapper",
@@ -176,7 +188,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     }
 
     void reload(String resource, Consumer<List<NamedNode>> callback) {
-        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, resource,
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
     }
 }

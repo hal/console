@@ -91,7 +91,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
     @PostConstruct
     void init() {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.CONSTANT_PERMISSION_MAPPER_ADDRESS);
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
                 .column(NAME, (cell, type, row, meta) -> row.getName())

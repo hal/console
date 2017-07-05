@@ -59,7 +59,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * complex attributes as tabs.
  *
  * @author Claudio Miranda <claudio@redhat.com>
+ * @deprecated Replace with {@link org.jboss.hal.core.mbui.ResourceElement}
  */
+@Deprecated
 public class ResourceView implements HasPresenter<ElytronPresenter> {
 
     public static final String HAL_INDEX = "hal_index";

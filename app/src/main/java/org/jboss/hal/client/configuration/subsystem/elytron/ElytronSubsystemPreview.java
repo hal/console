@@ -49,6 +49,6 @@ class ElytronSubsystemPreview extends PreviewContent<StaticItem> {
 
     @Override
     public void update(final StaticItem item) {
-        crud.read(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, attributes::refresh);
+        crud.read(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, attributes::refresh);
     }
 }

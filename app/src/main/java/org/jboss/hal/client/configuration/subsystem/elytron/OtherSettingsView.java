@@ -94,7 +94,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         navigation.addPrimary(primaryIdOther, "Other Settings", "fa fa-address-card-o");
 
         credentialStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-                Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_ADDRESS, this,
+                Ids.ELYTRON_CREDENTIAL_STORE, "Credential Store", CREDENTIAL_STORE_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -104,7 +104,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         filteringKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-                Ids.ELYTRON_FILTERING_KEY_STORE, "Filtering Key Store", FILTERING_KEY_STORE_ADDRESS, this,
+                Ids.ELYTRON_FILTERING_KEY_STORE, "Filtering Key Store", FILTERING_KEY_STORE_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -114,7 +114,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
 
         keystoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-                Ids.ELYTRON_KEY_STORE, "Key Store", KEY_STORE_ADDRESS, this,
+                Ids.ELYTRON_KEY_STORE, "Key Store", KEY_STORE_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -125,7 +125,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         // NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
         // ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
-        //         Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_ADDRESS, this,
+        //         Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_TEMPLATE, this,
         //         () -> presenter.reload())
         //         .setNavigation(navigation)
         //         .setMetadataRegistry(metadataRegistry)
@@ -134,13 +134,13 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         //         .addComplexAttributeAsTab("new-item-template", singletonList(newItemAttributes))
         //         .create();
 
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS);
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE);
         ldapKeyStoreElement = new LdapKeyStoreElement(metadata, tableButtonFactory, resources);
         navigation.addSecondary(primaryIdStores, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
                 ldapKeyStoreElement.asElement());
 
         aggregateProvidersView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_AGGREGATE_PROVIDERS, "Aggregate Providers", AGGREGATE_PROVIDERS_ADDRESS, this,
+                Ids.ELYTRON_AGGREGATE_PROVIDERS, "Aggregate Providers", AGGREGATE_PROVIDERS_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -149,7 +149,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         clientSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_CLIENT_SSL_CONTEXT, "Client SSL Context", CLIENT_SSL_CONTEXT_ADDRESS, this,
+                Ids.ELYTRON_CLIENT_SSL_CONTEXT, "Client SSL Context", CLIENT_SSL_CONTEXT_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -158,7 +158,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         keyManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_KEY_MANAGER, "Key Manager", KEY_MANAGER_ADDRESS, this,
+                Ids.ELYTRON_KEY_MANAGER, "Key Manager", KEY_MANAGER_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -168,7 +168,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         providerLoaderView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_PROVIDER_LOADER, "Provider Loader", PROVIDER_LOADER_ADDRESS, this,
+                Ids.ELYTRON_PROVIDER_LOADER, "Provider Loader", PROVIDER_LOADER_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -177,7 +177,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         serverSslContextView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_SERVER_SSL_CONTEXT, "Server SSL Context", SERVER_SSL_CONTEXT_ADDRESS, this,
+                Ids.ELYTRON_SERVER_SSL_CONTEXT, "Server SSL Context", SERVER_SSL_CONTEXT_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -186,7 +186,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         securityDomainView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_SECURITY_DOMAIN, "Security Domain", SECURITY_DOMAIN_ADDRESS, this,
+                Ids.ELYTRON_SECURITY_DOMAIN, "Security Domain", SECURITY_DOMAIN_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -196,7 +196,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         trustManagerView = new ResourceView.Builder(tableButtonFactory, primaryIdSsl,
-                Ids.ELYTRON_TRUST_MANAGER, "Trust Manager", TRUST_MANAGER_ADDRESS, this,
+                Ids.ELYTRON_TRUST_MANAGER, "Trust Manager", TRUST_MANAGER_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -207,7 +207,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         authenticationConfigurationView = new ResourceView.Builder(tableButtonFactory,
                 primaryIdAuth, Ids.ELYTRON_AUTHENTICATION_CONFIGURATION, "Authentication Configuration",
-                AUTHENTICATION_CONF_ADDRESS, this, () -> presenter.reload())
+                AUTHENTICATION_CONFIGURATION_TEMPLATE, this, () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
                 .setTableAddCallback((name, address) -> presenter.reload())
@@ -216,7 +216,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         authenticationContextView = new ResourceView.Builder(tableButtonFactory, primaryIdAuth,
-                Ids.ELYTRON_AUTHENTICATION_CONTEXT, "Authentication Context", AUTHENTICATION_CONTEXT_ADDRESS, this,
+                Ids.ELYTRON_AUTHENTICATION_CONTEXT, "Authentication Context", AUTHENTICATION_CONTEXT_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -226,7 +226,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         fileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
-                Ids.ELYTRON_FILE_AUDIT_LOG, "File Audit Log", FILE_AUDIT_LOG_ADDRESS, this,
+                Ids.ELYTRON_FILE_AUDIT_LOG, "File Audit Log", FILE_AUDIT_LOG_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -235,7 +235,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         sizeFileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
-                Ids.ELYTRON_SIZE_AUDIT_LOG, "File Size Audit Log", SIZE_FILE_AUDIT_LOG_ADDRESS, this,
+                Ids.ELYTRON_SIZE_AUDIT_LOG, "File Size Audit Log", SIZE_ROTATING_FILE_AUDIT_LOG_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -244,7 +244,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         periodicFileAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
-                Ids.ELYTRON_PERIODIC_AUDIT_LOG, "File Periodic Audit Log", PERIODIC_FILE_AUDIT_LOG_ADDRESS, this,
+                Ids.ELYTRON_PERIODIC_AUDIT_LOG, "File Periodic Audit Log", PERIODIC_FILE_AUDIT_LOG_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -253,7 +253,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         syslogAuditLogView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
-                Ids.ELYTRON_SYSLOG_AUDIT_LOG, "Syslog Audit Log", SYSLOG_AUDIT_LOG_ADDRESS, this,
+                Ids.ELYTRON_SYSLOG_AUDIT_LOG, "Syslog Audit Log", SYSLOG_AUDIT_LOG_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -263,7 +263,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
         aggregateSecurityEventListenerView = new ResourceView.Builder(tableButtonFactory, primaryIdLogs,
                 Ids.ELYTRON_AGGREGATE_SECURITY_EVENT_LISTENER, "Aggregate Security Event Listener",
-                AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS, this,
+                AGGREGATE_SECURITY_EVENT_LISTENER_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -283,7 +283,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         // other settings
 
         policyView = new ResourceView.Builder(tableButtonFactory, primaryIdOther,
-                Ids.ELYTRON_POLICY, "Policy", POLICY_ADDRESS, this,
+                Ids.ELYTRON_POLICY, "Policy", POLICY_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)
@@ -294,7 +294,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .create();
 
         dirContextView = new ResourceView.Builder(tableButtonFactory, primaryIdOther,
-                Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_ADDRESS, this,
+                Ids.ELYTRON_DIR_CONTEXT, "Dir Context", DIR_CONTEXT_TEMPLATE, this,
                 () -> presenter.reload())
                 .setNavigation(navigation)
                 .setMetadataRegistry(metadataRegistry)

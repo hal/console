@@ -62,10 +62,10 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -80,10 +80,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     // @formatter:off
     @ProxyCodeSplit
     @Requires(value ={
-        KEY_STORE, KEY_MANAGER, SERVER_SSL_CONTEXT, CLIENT_SSL_CONTEXT, TRUST_MANAGER, CREDENTIAL_STORE,
-        FILTERING_KEY_STORE, LDAP_KEY_STORE, PROVIDER_LOADER, AGGREGATE_PROVIDERS, SECURITY_DOMAIN,
-        DIR_CONTEXT, AUTHENTICATION_CONTEXT, AUTHENTICATION_CONF, FILE_AUDIT_LOG, SIZE_FILE_AUDIT_LOG,
-        PERIODIC_FILE_AUDIT_LOG, SYSLOG_AUDIT_LOG, POLICY, AGGREGATE_SECURITY_EVENT_LISTENER
+        KEY_STORE_ADDRESS, KEY_MANAGER_ADDRESS, SERVER_SSL_CONTEXT_ADDRESS, CLIENT_SSL_CONTEXT_ADDRESS, TRUST_MANAGER_ADDRESS, CREDENTIAL_STORE_ADDRESS,
+        FILTERING_KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS, PROVIDER_LOADER_ADDRESS, AGGREGATE_PROVIDERS_ADDRESS, SECURITY_DOMAIN_ADDRESS,
+        DIR_CONTEXT_ADDRESS, AUTHENTICATION_CONTEXT_ADDRESS, AUTHENTICATION_CONFIGURATION_ADDRESS, FILE_AUDIT_LOG_ADDRESS, SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
+        PERIODIC_FILE_AUDIT_LOG_ADDRESS, SYSLOG_AUDIT_LOG_ADDRESS, POLICY_ADDRESS, AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS
     })
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
@@ -150,7 +150,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     @Override
     public ResourceAddress resourceAddress() {
-        return ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        return ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @Override
     public void reload() {
 
-        ResourceAddress address = ELYTRON_SUBSYSTEM_ADDRESS.resolve(statementContext);
+        ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
                 "key-store",
                 "key-manager",
@@ -287,17 +287,17 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     // ------------------------------------------------------ LDAP key store
 
     void reloadLdapKeyStores() {
-        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_ADDRESS, ModelDescriptionConstants.LDAP_KEY_STORE,
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.LDAP_KEY_STORE,
                 children -> getView().updateLdapKeyStore(asNamedNodes(children)));
     }
 
     void saveLdapKeyStore(final String name, final Map<String, Object> changedValues) {
-        crud.save(Names.LDAP_KEY_STORE, name, AddressTemplates.LDAP_KEY_STORE_ADDRESS, changedValues,
+        crud.save(Names.LDAP_KEY_STORE, name, AddressTemplates.LDAP_KEY_STORE_TEMPLATE, changedValues,
                 this::reloadLdapKeyStores);
     }
 
     void addNewItemTemplate(final String ldapKeyStore) {
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_ADDRESS)
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE)
                 .forComplexAttribute(NEW_ITEM_TEMPLATE);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_ADD,
                 metadata)
@@ -309,23 +309,23 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         String type = new LabelBuilder().label(NEW_ITEM_TEMPLATE);
         new AddResourceDialog(resources.messages().addResourceTitle(type), form, (name, model) ->
                 ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
-                        AddressTemplates.LDAP_KEY_STORE_ADDRESS, model, this::reloadLdapKeyStores)).show();
+                        AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores)).show();
     }
 
     Operation pingNewItemTemplate(final String ldapKeyStore) {
-        ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_ADDRESS.resolve(statementContext, ldapKeyStore);
+        ResourceAddress address = AddressTemplates.LDAP_KEY_STORE_TEMPLATE.resolve(statementContext, ldapKeyStore);
         return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, NEW_ITEM_TEMPLATE)
                 .build();
     }
 
     void saveNewItemTemplate(final String ldapKeyStore, final Map<String, Object> changedValues) {
-        ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+        ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 changedValues, this::reloadLdapKeyStores);
     }
 
     void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
-        ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_ADDRESS,
+        ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
                     @Override
                     public void afterRemove(final Form<ModelNode> form) {

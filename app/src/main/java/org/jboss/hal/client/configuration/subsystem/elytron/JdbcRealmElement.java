@@ -68,7 +68,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         // JDBC realm
         jdbcRealmTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_JDBC_REALM_TABLE, metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addJdbcRealm()))
-                .button(tableButtonFactory.remove(Names.JDBC_REALM, AddressTemplates.JDBC_REALM_ADDRESS,
+                .button(tableButtonFactory.remove(Names.JDBC_REALM, AddressTemplates.JDBC_REALM_TEMPLATE,
                         () -> presenter.reloadJdbcRealms()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(Names.PRINCIPAL_QUERY, this::showPrincipalQuery)
