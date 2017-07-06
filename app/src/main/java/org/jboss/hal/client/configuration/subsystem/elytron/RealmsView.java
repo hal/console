@@ -43,7 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATI
  */
 public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
 
-
     private final Map<String, ResourceElement> elements;
     private JdbcRealmElement jdbcRealmElement;
     private LdapRealmElement ldapRealmElement;
@@ -132,24 +131,25 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_LDAP_REALM + "3", Names.LDAP_REALM,
                 ldapRealmElement.asElement());
 
-
         addResourceElement(PROPERTIES_REALM,
                 PROPERTIES_REALM.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(PROPERTIES_REALM.resource,
                                 nodes -> updateResourceElement(PROPERTIES_REALM.resource, nodes)))
-                .addComplexObjectAttribute("groups-properties", () -> {
-                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, "groups-properties")
-                            .build();
-                })
-                .addComplexObjectAttribute("users-properties", () -> {
-                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, "users-properties")
-                            .build();
-                })
-                .build(),
+                        .addComplexObjectAttribute("groups-properties", () -> {
+                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
+                                    mbuiContext.statementContext(), "test");
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, "groups-properties")
+                                    .build();
+                        })
+                        .addComplexObjectAttribute("users-properties", () -> {
+                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
+                                    mbuiContext.statementContext(), "test");
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, "users-properties")
+                                    .build();
+                        })
+                        .build(),
                 primaryIdSecurityRealm,
                 Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),
                 "Properties Realm");
@@ -158,19 +158,21 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 TOKEN_REALM.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(TOKEN_REALM.resource,
                                 nodes -> updateResourceElement(TOKEN_REALM.resource, nodes)))
-                .addComplexObjectAttribute("jwt", () -> {
-                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, "jwt")
-                            .build();
-                })
-                .addComplexObjectAttribute("oauth2-introspection", () -> {
-                    ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(mbuiContext.statementContext(), "test");
-                    return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                            .param(NAME, "oauth2-introspection")
-                            .build();
-                })
-                .build(),
+                        .addComplexObjectAttribute("jwt", () -> {
+                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
+                                    mbuiContext.statementContext(), "test");
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, "jwt")
+                                    .build();
+                        })
+                        .addComplexObjectAttribute("oauth2-introspection", () -> {
+                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
+                                    mbuiContext.statementContext(), "test");
+                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
+                                    .param(NAME, "oauth2-introspection")
+                                    .build();
+                        })
+                        .build(),
                 primaryIdSecurityRealm,
                 Ids.build(TOKEN_REALM.baseId, Ids.ENTRY_SUFFIX),
                 "Token Realm");
@@ -221,7 +223,6 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         registerAttachable(element);
         navigation.addSecondary(primaryId, secondaryId, text, element.asElement());
     }
-
 
     @Override
     public void updateResourceElement(String resource, List<NamedNode> nodes) {
