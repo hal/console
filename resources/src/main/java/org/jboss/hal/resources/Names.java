@@ -72,6 +72,7 @@ public interface Names {
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
     String CUSTOM = "Custom";
+    String CUSTOM_POLICY = "Custom Policy";
 
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
@@ -137,6 +138,7 @@ public interface Names {
     String INTERFACES = "Interfaces";
     String INVALIDATION_CACHE = "Invalidation Cache";
 
+    String JACC_POLICY = "JACC Policy";
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
@@ -198,6 +200,7 @@ public interface Names {
     String PATHS = "Paths";
     String PATTERN = "Pattern";
     String PERSISTENCE = "Persistence";
+    String POLICY = "Policy";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";

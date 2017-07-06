@@ -143,6 +143,7 @@ public interface ModelDescriptionConstants {
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
     String CUSTOM_PERMISSION_MAPPER = "custom-permission-mapper";
+    String CUSTOM_POLICY = "custom-policy";
     String CUSTOM_PRINCIPAL_DECODER = "custom-principal-decoder";
     String CUSTOM_PRINCIPAL_TRANSFORMER = "custom-principal-transformer";
     String CUSTOM_REALM = "custom-realm";
@@ -262,6 +263,7 @@ public interface ModelDescriptionConstants {
     String INTERFACE = "interface";
     String IO = "io";
     String ITEM = "item";
+    String JACC_POLICY = "jacc-policy";
     String JCA = "jca";
     String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
