@@ -85,8 +85,8 @@ interface AddressTemplates {
 
     String LDAP_KEY_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/ldap-key-store=*";
     String LDAP_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/ldap-realm=*";
-    String LOGICAL_PERMISSION_MAPPER = ELYTRON_SUBSYSTEM_ADDRESS + "/logical-permission-mapper=*";
-    String LOGICAL_ROLE_MAPPER = ELYTRON_SUBSYSTEM_ADDRESS + "/logical-role-mapper=*";
+    String LOGICAL_PERMISSION_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/logical-permission-mapper=*";
+    String LOGICAL_ROLE_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/logical-role-mapper=*";
 
     String MAPPED_REGEX_REALM_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/mapped-regex-realm-mapper=*";
     String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/mechanism-provider-filtering-sasl-server-factory=*";
@@ -178,8 +178,8 @@ interface AddressTemplates {
 
     AddressTemplate LDAP_KEY_STORE_TEMPLATE = AddressTemplate.of(LDAP_KEY_STORE_ADDRESS);
     AddressTemplate LDAP_REALM_TEMPLATE = AddressTemplate.of(LDAP_REALM_ADDRESS);
-    AddressTemplate LOGICAL_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(LOGICAL_PERMISSION_MAPPER);
-    AddressTemplate LOGICAL_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(LOGICAL_ROLE_MAPPER);
+    AddressTemplate LOGICAL_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(LOGICAL_PERMISSION_MAPPER_ADDRESS);
+    AddressTemplate LOGICAL_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(LOGICAL_ROLE_MAPPER_ADDRESS);
 
     AddressTemplate MAPPED_REGEX_REALM_MAPPER_TEMPLATE = AddressTemplate.of(MAPPED_REGEX_REALM_MAPPER_ADDRESS);
     AddressTemplate MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS);

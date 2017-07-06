@@ -85,8 +85,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS,
             SASL_AUTHENTICATION_FACTORY_ADDRESS,
             SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS,
-    })
+            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS})
     @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
     public interface MyProxy extends ProxyPlace<FactoriesPresenter> {}
 
@@ -95,27 +94,6 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         void updateHttpAuthentication(List<NamedNode> nodes);
     }
     // @formatter:on
-
-    static final List<ElytronResource> RESOURCES = asList(
-            AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY,
-            AGGREGATE_PRINCIPAL_TRANSFORMER,
-            AGGREGATE_SASL_SERVER_FACTORY,
-            CHAINED_PRINCIPAL_TRANSFORMER,
-            CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY,
-            CONFIGURABLE_SASL_SERVER_FACTORY,
-            CONSTANT_PRINCIPAL_TRANSFORMER,
-            CUSTOM_CREDENTIAL_SECURITY_FACTORY,
-            CUSTOM_PRINCIPAL_TRANSFORMER,
-            HTTP_AUTHENTICATION_FACTORY,
-            KERBEROS_SECURITY_FACTORY,
-            MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY,
-            PROVIDER_HTTP_SERVER_MECHANISM_FACTORY,
-            PROVIDER_SASL_SERVER_FACTORY,
-            REGEX_PRINCIPAL_TRANSFORMER,
-            REGEX_VALIDATING_PRINCIPAL_TRANSFORMER,
-            SASL_AUTHENTICATION_FACTORY,
-            SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY,
-            SERVICE_LOADER_SASL_SERVER_FACTORY);
 
 
     private final CrudOperations crud;

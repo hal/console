@@ -32,8 +32,6 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -43,6 +41,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -68,11 +67,11 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             CUSTOM_PRINCIPAL_DECODER_ADDRESS,
             CUSTOM_ROLE_DECODER_ADDRESS,
             CUSTOM_ROLE_MAPPER_ADDRESS,
-            LOGICAL_PERMISSION_MAPPER,
-            LOGICAL_ROLE_MAPPER,
+            LOGICAL_PERMISSION_MAPPER_ADDRESS,
+            LOGICAL_ROLE_MAPPER_ADDRESS,
             SIMPLE_PERMISSION_MAPPER_ADDRESS,
             SIMPLE_ROLE_DECODER_ADDRESS,
-            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS,         })
+            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
 
@@ -98,9 +97,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     // @formatter:on
 
     private final CrudOperations crud;
-    private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
 
@@ -110,16 +107,12 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             final MapperDecoderPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
-            final Dispatcher dispatcher,
             final FinderPathFactory finderPathFactory,
-            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
-        this.dispatcher = dispatcher;
         this.finderPathFactory = finderPathFactory;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
     }
@@ -144,26 +137,25 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
 
     @Override
     protected void reload() {
-
         ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
-                "add-prefix-role-mapper",
-                "add-suffix-role-mapper",
-                "aggregate-principal-decoder",
-                "aggregate-role-mapper",
-                "concatenating-principal-decoder",
-                "constant-permission-mapper",
-                "constant-principal-decoder",
-                "constant-role-mapper",
-                "custom-permission-mapper",
-                "custom-principal-decoder",
-                "custom-role-decoder",
-                "custom-role-mapper",
-                "logical-permission-mapper",
-                "logical-role-mapper",
-                "simple-permission-mapper",
-                "simple-role-decoder",
-                "x500-attribute-principal-decoder"),
+                ADD_PREFIX_ROLE_MAPPER.resource,
+                ADD_SUFFIX_ROLE_MAPPER.resource,
+                AGGREGATE_PRINCIPAL_DECODER.resource,
+                AGGREGATE_ROLE_MAPPER.resource,
+                CONCATENATING_PRINCIPAL_DECODER.resource,
+                CONSTANT_PERMISSION_MAPPER.resource,
+                CONSTANT_PRINCIPAL_DECODER.resource,
+                CONSTANT_ROLE_MAPPER.resource,
+                CUSTOM_PERMISSION_MAPPER.resource,
+                CUSTOM_PRINCIPAL_DECODER.resource,
+                CUSTOM_ROLE_DECODER.resource,
+                CUSTOM_ROLE_MAPPER.resource,
+                LOGICAL_PERMISSION_MAPPER.resource,
+                LOGICAL_ROLE_MAPPER.resource,
+                SIMPLE_PERMISSION_MAPPER.resource,
+                SIMPLE_ROLE_DECODER.resource,
+                X500_ATTRIBUTE_PRINCIPAL_DECODER.resource),
                 result -> {
                     // @formatter:off
                     getView().updateAddPrefixRoleMapper(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
