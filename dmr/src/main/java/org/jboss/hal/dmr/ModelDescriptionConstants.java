@@ -137,6 +137,7 @@ public interface ModelDescriptionConstants {
     String CONTEXT_SERVICE = "context-service";
     String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
+    String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";
     String CUSTOM = "custom";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
