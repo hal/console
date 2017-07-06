@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -27,17 +28,19 @@ import org.jboss.hal.resources.Messages;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
-class RequiresValidation<T> implements FormItemValidation<T> {
+class RequiredByValidation<T> implements FormItemValidation<T> {
 
-    private final List<String> requires;
+    private final FormItem<T> formItem;
+    private final Collection<String> requiredBy;
     private final ModelNodeForm form;
     private final Constants constants;
     private final Messages messages;
     private final LabelBuilder labelBuilder;
 
-    RequiresValidation(final List<String> requires, final ModelNodeForm form,
+    RequiredByValidation(final FormItem<T> formItem, final Collection<String> requiredBy, final ModelNodeForm form,
             final Constants constants, final Messages messages) {
-        this.requires = requires;
+        this.formItem = formItem;
+        this.requiredBy = requiredBy;
         this.form = form;
         this.constants = constants;
         this.messages = messages;
@@ -51,18 +54,25 @@ class RequiresValidation<T> implements FormItemValidation<T> {
 
     @Override
     public ValidationResult validate(final T value) {
-        List<String> nonEmptyRequires = requires.stream()
+        List<String> nonEmptyRequiredBy = requiredBy.stream()
                 .filter(name -> {
                     FormItem formItem = form.getFormItem(name);
                     return formItem != null && !this.form.isEmptyOrDefault(formItem);
                 })
                 .map(labelBuilder::label)
                 .collect(toList());
-        if (nonEmptyRequires.isEmpty()) {
+
+        if (nonEmptyRequiredBy.isEmpty()) {
+            // if all required-by fields are empty, everything is fine
             return ValidationResult.OK;
         } else {
-            return ValidationResult.invalid(
-                    messages.nonEmptyRequires(labelBuilder.enumeration(nonEmptyRequires, constants.or())));
+            // but as soon as there's one non-empty required-by field, this form item must be non-empty as well!
+            if (formItem.isEmpty()) {
+                return ValidationResult.invalid(
+                        messages.nonEmptyRequires(labelBuilder.enumeration(nonEmptyRequiredBy, constants.or())));
+            } else {
+                return ValidationResult.OK;
+            }
         }
     }
 }

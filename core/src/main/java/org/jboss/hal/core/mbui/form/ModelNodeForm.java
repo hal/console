@@ -31,6 +31,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.thirdparty.guava.common.collect.HashMultimap;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -432,7 +433,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final boolean addOnly;
     private final boolean singleton;
     private final Supplier<org.jboss.hal.dmr.Operation> ping;
-    private final Map<String, ModelNode> attributeMetadata;
+    private final Map<String, ModelNode> attributeDescriptions;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
     private Metadata metadata;
@@ -484,7 +485,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             properties.addAll(filteredProperties);
             properties.sort(Comparator.comparing(Property::getName));
         }
-        this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
+        this.attributeDescriptions = properties.stream().collect(toMap(Property::getName, Property::getValue));
 
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -536,25 +537,24 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         // create form validations from requires and alternatives
+        HashMultimap<String, String> requires = HashMultimap.create();
         Set<String> processedAlternatives = new HashSet<>();
         for (FormItem formItem : getBoundFormItems()) {
             String name = formItem.getName();
 
-            ModelNode attributeDescription = attributeMetadata.get(name);
-            if (attributeDescription != null) {
-                boolean required = failSafeBoolean(attributeDescription, REQUIRED);
-                if (!required) {
-                    // Required form items already have a form item validation.
-                    // We only need form items which are *not* required, but require other items.
-                    if (attributeDescription.hasDefined(REQUIRES)) {
-                        List<String> requires = failSafeList(attributeDescription, REQUIRES).stream()
-                                .map(ModelNode::asString)
-                                .collect(toList());
-                        if (!requires.isEmpty()) {
-                            formItem.addValidationHandler(new RequiresValidation(requires, this, CONSTANTS, MESSAGES));
-                        }
-                    }
-                }
+            // requires (1)
+            ModelNode attributeDescription = attributeDescriptions.get(name);
+            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
+                // collect all attributes from the 'requires' list of this attribute
+                // which are not required themselves.
+                failSafeList(attributeDescription, REQUIRES).stream()
+                        .map(ModelNode::asString)
+                        .forEach(requiresName -> {
+                            ModelNode requiresDescription = attributeDescriptions.get(requiresName);
+                            if (requiresDescription != null && !failSafeBoolean(requiresDescription, REQUIRED)) {
+                                requires.put(requiresName, name);
+                            }
+                        });
             }
 
             // alternatives
@@ -566,7 +566,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
                 Set<String> requiredAlternatives = new HashSet<>();
                 uniqueAlternatives.forEach(alternative -> {
-                    ModelNode attribute = attributeMetadata.getOrDefault(alternative, new ModelNode());
+                    ModelNode attribute = attributeDescriptions.getOrDefault(alternative, new ModelNode());
                     if (failSafeBoolean(attribute, REQUIRED)) { // don't use 'nillable' here!
                         requiredAlternatives.add(alternative);
                     }
@@ -583,6 +583,15 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                 processedAlternatives.addAll(uniqueAlternatives);
             }
         }
+
+        // requires (2)
+        requires.asMap().forEach((name, requiredBy) -> {
+            FormItem<Object> formItem = getFormItem(name);
+            if (formItem != null) {
+                formItem.addValidationHandler(
+                        new RequiredByValidation<>(formItem, requiredBy, this, CONSTANTS, MESSAGES));
+            }
+        });
     }
 
     @Override
@@ -659,7 +668,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     protected Map<String, Object> getChangedValues() {
         Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
         writableChanges.entrySet().removeIf(entry -> {
-            ModelNode metadata = attributeMetadata.get(entry.getKey());
+            ModelNode metadata = attributeDescriptions.get(entry.getKey());
             return metadata != null && metadata.hasDefined(ACCESS_TYPE) && !READ_WRITE
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
@@ -669,7 +678,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     boolean isEmptyOrDefault(FormItem formItem) {
         String name = formItem.getName();
         Object value = formItem.getValue();
-        ModelNode attributeDescription = attributeMetadata.get(name);
+        ModelNode attributeDescription = attributeDescriptions.get(name);
         if (attributeDescription != null) {
             if (attributeDescription.hasDefined(DEFAULT)) {
                 return resourceDescription.isDefaultValue(attributePath, name, value);

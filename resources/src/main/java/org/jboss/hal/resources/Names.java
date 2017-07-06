@@ -88,7 +88,6 @@ public interface Names {
 
     String EE = "EE";
     String ELYTRON = "Elytron";
-    String ELYTRON_PROPERTIES_REALM = "Properties Realm";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
@@ -206,6 +205,7 @@ public interface Names {
     String PRINCIPAL_QUERY = "Principal Query";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
+    String PROPERTIES_REALM = "Properties Realm";
     String PROTOCOL = "Protocol";
 
     String QUERY = "Query";

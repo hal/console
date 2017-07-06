@@ -78,6 +78,32 @@ public class Metadata {
         this.capabilities = capabilities;
     }
 
+    /** Copies attributes from this description to the specified metadata */
+    @JsIgnore
+    public void copyAttribute(String attribute, Metadata destination) {
+        Property p = getDescription().findAttribute(ATTRIBUTES, attribute);
+        if (p != null) {
+            destination.getDescription().get(ATTRIBUTES).get(attribute).set(p.getValue());
+        }
+    }
+
+    /**
+     * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to
+     * another metadata. Without adjustment the copied attributes are read-only in the destination metadata.
+     */
+    public void makeWritable(String attribute) {
+        getSecurityContext().get(ATTRIBUTES).get(attribute).get(READ).set(true);
+        getSecurityContext().get(ATTRIBUTES).get(attribute).get(WRITE).set(true);
+    }
+
+    /** Shortcut for {@link #copyAttribute(String, Metadata)} and {@link #makeWritable(String)} */
+    public void copyComplexAttributeAtrributes(Iterable<String> attributes, Metadata destination) {
+        for (String attribute : attributes) {
+            copyAttribute(attribute, destination);
+            destination.makeWritable(attribute);
+        }
+    }
+
     @JsIgnore
     public Metadata forComplexAttribute(String name) {
         return forComplexAttribute(name, false);

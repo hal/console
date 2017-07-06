@@ -20,12 +20,8 @@ package org.jboss.hal.ballroom.form;
  */
 public class TestableBlacklistValidation extends BlacklistValidation {
 
-    public TestableBlacklistValidation(final String first, final String... rest) {
+    TestableBlacklistValidation(final String first, final String... rest) {
         super(first, rest);
-    }
-
-    public TestableBlacklistValidation(final Iterable<String> blacklist) {
-        super(blacklist);
     }
 
     @Override

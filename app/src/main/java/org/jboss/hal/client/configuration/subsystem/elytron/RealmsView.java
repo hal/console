@@ -111,7 +111,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         Metadata metadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.JDBC_REALM_TEMPLATE);
         jdbcRealmElement = new JdbcRealmElement(metadata, mbuiContext.tableButtonFactory(), mbuiContext.resources());
         registerAttachable(jdbcRealmElement);
-        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_JDBC_REALM + "2", Names.JDBC_REALM,
+        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_JDBC_REALM, Names.JDBC_REALM,
                 jdbcRealmElement.asElement());
 
         addResourceElement(KEY_STORE_REALM,
@@ -125,19 +125,20 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         Metadata mtLdapRealm = mbuiContext.metadataRegistry().lookup(AddressTemplates.LDAP_REALM_TEMPLATE);
         ldapRealmElement = new LdapRealmElement(mtLdapRealm, mbuiContext.tableButtonFactory(), mbuiContext.resources());
         registerAttachable(ldapRealmElement);
-        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_LDAP_REALM + "3", Names.LDAP_REALM,
+        navigation.addSecondary(primaryIdSecurityRealm, Ids.ELYTRON_LDAP_REALM, Names.LDAP_REALM,
                 ldapRealmElement.asElement());
 
         addResourceElement(PROPERTIES_REALM,
                 PROPERTIES_REALM.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(PROPERTIES_REALM.resource,
                                 nodes -> updateResourceElement(PROPERTIES_REALM.resource, nodes)))
+                        .onAdd(() -> presenter.addPropertiesRealm())
                         .addComplexObjectAttribute("groups-properties")
                         .addComplexObjectAttribute("users-properties")
                         .build(),
                 primaryIdSecurityRealm,
                 Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),
-                "Properties Realm");
+                Names.PROPERTIES_REALM);
 
         addResourceElement(TOKEN_REALM,
                 TOKEN_REALM.resourceElementBuilder(mbuiContext,

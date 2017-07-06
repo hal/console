@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -61,6 +62,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -515,22 +517,26 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     // ==== properties realm
 
-    public void addPropertiesRealm() {
-
+    void addPropertiesRealm() {
         Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
+        Metadata upMetadata = metadata.forComplexAttribute(USERS_PROPERTIES, true);
+        upMetadata.copyComplexAttributeAtrributes(asList(PATH, RELATIVE_TO), metadata);
 
-        // repackage "users-properties" as it is a required attribute to be displayed in the form of the ADD dialog.
-        String complexAttributeName = "users-properties";
-        // the repackaged attribute must be prefixed so, the user knowns where it comes from.
-        Metadata nestedMetadata = metadata.repackageComplexAttribute(complexAttributeName, true, true, true);
+        String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(new NameItem(), 0)
+                .include(PATH, RELATIVE_TO, GROUPS_ATTRIBUTE)
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
 
-        new AddResourceDialog(Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX),
-                resources.messages().addResourceTitle(Names.ELYTRON_PROPERTIES_REALM), nestedMetadata,
-                (name, model) -> {
-                    reassembleComplexAttribute(complexAttributeName, model, true);
-                    ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, name);
-                    crud.add(Names.ELYTRON_PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
-                }).show();
-
+        new AddResourceDialog(Names.PROPERTIES_REALM, form, (name, model) -> {
+            if (model != null) {
+                move(model, PATH, USERS_PROPERTIES + "/" + PATH);
+                move(model, RELATIVE_TO, USERS_PROPERTIES + "/" + RELATIVE_TO);
+            }
+            ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, name);
+            crud.add(Names.PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
+        }).show();
     }
 }

@@ -218,6 +218,7 @@ public interface ModelDescriptionConstants {
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
+    String GROUPS_ATTRIBUTE = "groups-attribute";
     String GROUPING_HANDLER = "grouping-handler";
     String HA_POLICY = "ha-policy";
     String HAL_INDEX = "hal-index";
@@ -548,6 +549,7 @@ public interface ModelDescriptionConstants {
     String URL = "url";
     String USER_NAME = "user-name";
     String USER_PASSWORD_MAPPER = "user-password-mapper";
+    String USERS_PROPERTIES = "users-properties";
     String USERNAME = "username";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
