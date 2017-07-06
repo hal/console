@@ -175,7 +175,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         userPasswordMapperForm.attach();
         otpCredentialMapperForm.attach();
         x509CredentialMapperForm.attach();
-        newIdentityAttributes.attach();
+        // newIdentityAttributes.attach();
 
         ldapRealmTable.bindForm(ldapRealmForm);
 
@@ -184,14 +184,14 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
             if (table.hasSelection()) {
                 NamedNode row = table.selectedRow();
                 if (row.get(IDENTITY_MAPPING).hasDefined(NEW_IDENTITY_ATTRIBUTES)) {
-                    newIdentityAttributes.setValue(row.get(IDENTITY_MAPPING).get(NEW_IDENTITY_ATTRIBUTES));
+                    // newIdentityAttributes.setValue(row.get(IDENTITY_MAPPING).get(NEW_IDENTITY_ATTRIBUTES));
                 }
                 identityMappingForm.view(new NamedNode(row.get(IDENTITY_MAPPING)));
                 userPasswordMapperForm.view(new NamedNode(row.get(IDENTITY_MAPPING).get(USER_PASSWORD_MAPPER)));
                 otpCredentialMapperForm.view(new NamedNode(row.get(IDENTITY_MAPPING).get(OTP_CREDENTIAL_MAPPER)));
                 x509CredentialMapperForm.view(new NamedNode(row.get(IDENTITY_MAPPING).get(X509_CREDENTIAL_MAPPER)));
             } else {
-                newIdentityAttributes.clearValue();
+                // newIdentityAttributes.clearValue();
                 userPasswordMapperForm.clear();
                 otpCredentialMapperForm.clear();
                 x509CredentialMapperForm.clear();
