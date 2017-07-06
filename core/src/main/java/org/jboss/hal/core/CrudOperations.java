@@ -268,10 +268,11 @@ public class CrudOperations {
     @JsIgnore
     public void add(final String name, final ResourceAddress address, @Nullable final ModelNode payload,
             final SafeHtml successMessage, final AddCallback callback) {
-        Operation operation = new Operation.Builder(address, ADD)
-                .payload(payload)
-                .build();
-        dispatcher.execute(operation, result -> {
+        Operation.Builder builder = new Operation.Builder(address, ADD);
+        if (payload != null && payload.isDefined()) {
+            builder.payload(payload);
+        }
+        dispatcher.execute(builder.build(), result -> {
             MessageEvent.fire(eventBus, Message.success(successMessage));
             callback.execute(name, address);
         });

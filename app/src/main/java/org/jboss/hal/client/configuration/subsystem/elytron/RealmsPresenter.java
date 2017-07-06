@@ -43,7 +43,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -94,7 +93,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateJdbcRealm(List<NamedNode> nodes);
         void updateLdapRealm(List<NamedNode> nodes);
-
     }
     // @formatter:on
 
@@ -113,8 +111,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
-    private EventBus eventBus;
-    private Dispatcher dispatcher;
     private MetadataRegistry metadataRegistry;
 
     @Inject
@@ -122,7 +118,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             final RealmsPresenter.MyView view,
             final RealmsPresenter.MyProxy proxy,
             final Finder finder,
-            final Dispatcher dispatcher,
             final CrudOperations crud,
             final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
@@ -130,8 +125,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
-        this.eventBus = eventBus;
-        this.dispatcher = dispatcher;
         this.crud = crud;
         this.ca = ca;
         this.finderPathFactory = finderPathFactory;
@@ -178,24 +171,36 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 ElytronResource.MAPPED_REGEX_REALM_MAPPER.resource,
                 ElytronResource.SIMPLE_REGEX_REALM_MAPPER.resource),
                 result -> {
-                    // @formatter:off
                     int i = 0;
-                    getView().updateResourceElement(ElytronResource.AGGREGATE_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.CACHING_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.CUSTOM_MODIFIABLE_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.CUSTOM_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.FILESYSTEM_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.IDENTITY_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.AGGREGATE_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CACHING_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CUSTOM_MODIFIABLE_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CUSTOM_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.FILESYSTEM_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.IDENTITY_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateJdbcRealm(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.KEY_STORE_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.KEY_STORE_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateLdapRealm(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.PROPERTIES_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.TOKEN_REALM.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.CONSTANT_REALM_MAPPER.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.CUSTOM_REALM_MAPPER.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.MAPPED_REGEX_REALM_MAPPER.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.SIMPLE_REGEX_REALM_MAPPER.resource,asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    // @formatter:on
+                    getView().updateResourceElement(ElytronResource.PROPERTIES_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.TOKEN_REALM.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CONSTANT_REALM_MAPPER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CUSTOM_REALM_MAPPER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.MAPPED_REGEX_REALM_MAPPER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    //noinspection UnusedAssignment
+                    getView().updateResourceElement(ElytronResource.SIMPLE_REGEX_REALM_MAPPER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                 });
     }
 
@@ -204,6 +209,12 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 children -> callback.accept(asNamedNodes(children)));
     }
 
+    void saveComplexForm(final String title, final String name, String complexAttributeName,
+            final Map<String, Object> changedValues, final Metadata metadata) {
+        String type = new LabelBuilder().label(metadata.getTemplate().lastName());
+        ca.save(name, complexAttributeName, type, metadata.getTemplate(), changedValues, this::reload);
+
+    }
 
     // ------------------------------------------------------ JDBC realm
 
@@ -297,8 +308,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(keyMapper);
-        ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_TEMPLATE, metadata,
-                form, new Form.FinishReset<ModelNode>(form) {
+        ca.reset(jdbcRealm, keyMapperAttribute(pqIndex, keyMapper), type, AddressTemplates.JDBC_REALM_TEMPLATE,
+                metadata, form, new Form.FinishReset<ModelNode>(form) {
                     @Override
                     public void afterReset(final Form<ModelNode> form) {
                         reloadJdbcRealms();

@@ -25,8 +25,6 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.ResourceElement;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -35,8 +33,6 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -50,6 +46,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
     private VerticalNavigation navigation;
 
     @Inject
+    @SuppressWarnings("HardCodedStringLiteral")
     public RealmsView(final MbuiContext mbuiContext) {
 
         elements = new HashMap<>();
@@ -135,20 +132,8 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 PROPERTIES_REALM.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(PROPERTIES_REALM.resource,
                                 nodes -> updateResourceElement(PROPERTIES_REALM.resource, nodes)))
-                        .addComplexObjectAttribute("groups-properties", () -> {
-                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
-                                    mbuiContext.statementContext(), "test");
-                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, "groups-properties")
-                                    .build();
-                        })
-                        .addComplexObjectAttribute("users-properties", () -> {
-                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
-                                    mbuiContext.statementContext(), "test");
-                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, "users-properties")
-                                    .build();
-                        })
+                        .addComplexObjectAttribute("groups-properties")
+                        .addComplexObjectAttribute("users-properties")
                         .build(),
                 primaryIdSecurityRealm,
                 Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),
@@ -158,20 +143,8 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 TOKEN_REALM.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(TOKEN_REALM.resource,
                                 nodes -> updateResourceElement(TOKEN_REALM.resource, nodes)))
-                        .addComplexObjectAttribute("jwt", () -> {
-                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
-                                    mbuiContext.statementContext(), "test");
-                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, "jwt")
-                                    .build();
-                        })
-                        .addComplexObjectAttribute("oauth2-introspection", () -> {
-                            ResourceAddress address = AddressTemplates.PROPERTIES_REALM_TEMPLATE.resolve(
-                                    mbuiContext.statementContext(), "test");
-                            return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, "oauth2-introspection")
-                                    .build();
-                        })
+                        .addComplexObjectAttribute("jwt")
+                        .addComplexObjectAttribute("oauth2-introspection")
                         .build(),
                 primaryIdSecurityRealm,
                 Ids.build(TOKEN_REALM.baseId, Ids.ENTRY_SUFFIX),

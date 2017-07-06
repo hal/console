@@ -220,9 +220,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
         List<ModelNode> iamNodes = failSafeList(resourceName, IDENTITY_MAPPING + "/" + ATTRIBUTE_MAPPING);
         storeIndex(iamNodes);
         iamForm.clear();
-        iamTable.update(iamNodes, modelNode -> modelNode.get("from").asString());
+        iamTable.update(iamNodes, modelNode -> modelNode.get(FROM).asString());
         pages.showPage(Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_PAGE);
     }
-
-
 }

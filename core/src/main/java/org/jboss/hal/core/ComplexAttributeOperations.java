@@ -210,7 +210,7 @@ public class ComplexAttributeOperations {
         ResourceAddress address = template.resolve(statementContext, resource);
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, complexAttribute)
-                .param(VALUE, payload)
+                .param(VALUE, payload == null ? new ModelNode().addEmptyObject() : payload)
                 .build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
@@ -236,7 +236,7 @@ public class ComplexAttributeOperations {
         ResourceAddress address = template.resolve(statementContext, resource);
         Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
                 .param(NAME, complexAttribute)
-                .param(VALUE, payload)
+                .param(VALUE, payload == null ? new ModelNode().addEmptyObject() : payload)
                 .build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));

@@ -218,8 +218,10 @@ public class Metadata {
      *                                are appended instead of replaced.
      *
      * @return A new Metadata with the repackaged attributes.
+     * @deprecated Try to replace with {@link #forComplexAttribute(String, boolean)}
      */
     @JsIgnore
+    @Deprecated
     public Metadata repackageComplexAttribute(String complexAttributeName, boolean fromRequestProperties,
             boolean prefixComplexAttribute, boolean appendRequestProperties) {
 
