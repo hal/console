@@ -34,6 +34,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -41,6 +42,9 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
+import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -49,23 +53,22 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
 
     private final Table<NamedNode> ldapRealmTable;
     private final Form<NamedNode> ldapRealmForm;
-    private final Form<NamedNode> identityMappingForm;
-    private final Form<NamedNode> userPasswordMapperForm;
-    private final Form<NamedNode> otpCredentialMapperForm;
-    private final Form<NamedNode> x509CredentialMapperForm;
+    private final Form<ModelNode> identityMappingForm;
+    private final Form<ModelNode> userPasswordMapperForm;
+    private final Form<ModelNode> otpCredentialMapperForm;
+    private final Form<ModelNode> x509CredentialMapperForm;
     private final Table<ModelNode> iamTable; // iam = identity mapping -> attribute-mapping
     private final Form<ModelNode> iamForm;
     private final Pages pages;
     private RealmsPresenter presenter;
     private String selectedLdapRealm;
-    private NewItemAttributesItem newIdentityAttributes;
     private String selectedIam;
     private int iamIndex;
 
     LdapRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
 
         // LDAP Realm
-        ldapRealmTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_TABLE, metadata)
+        ldapRealmTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addLdapRealm()))
                 .button(tableButtonFactory.remove(Names.LDAP_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapRealms()))
@@ -73,22 +76,20 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .column(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping, "15em") //NON-NLS
                 .build();
 
-        ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_FORM, metadata)
+        ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveLdapRealm(form, changedValues))
                 .build();
 
-        Metadata identMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
-        newIdentityAttributes = new NewItemAttributesItem("new-identity-attributes");
-        identityMappingForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_FORM, identMetadata)
-                .unboundFormItem(newIdentityAttributes)
-                .onSave((form, changedValues) -> presenter.saveComplexForm(Names.IDENTITY_MAPPING,
-                        ldapRealmTable.selectedRow().getName(), IDENTITY_MAPPING, changedValues, identMetadata))
+        Metadata identityMappingMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
+        identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM_SUFFIX), identityMappingMetadata)
+                .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
+                .onSave((form, changedValues) -> presenter.saveIdentityMapping(changedValues))
                 .build();
 
         Metadata userPwdMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(USER_PASSWORD_MAPPER);
-        userPasswordMapperForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_FORM, userPwdMetadata)
+        userPasswordMapperForm = new ModelNodeForm.Builder<>(id(USER_PASSWORD_MAPPER, FORM_SUFFIX), userPwdMetadata)
                 .onSave((form, changedValues) -> presenter.saveComplexForm(Names.USER_PASSWORD_MAPPER,
                         ldapRealmTable.selectedRow().getName(), IDENTITY_MAPPING + "." + USER_PASSWORD_MAPPER,
                         changedValues, userPwdMetadata))
@@ -96,26 +97,27 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
 
         Metadata otpMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(OTP_CREDENTIAL_MAPPER);
-        otpCredentialMapperForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_FORM, otpMetadata)
+        otpCredentialMapperForm = new ModelNodeForm.Builder<>(id(OTP_CREDENTIAL_MAPPER, FORM_SUFFIX), otpMetadata)
                 .onSave((form, changedValues) -> presenter.saveComplexForm(Names.OTP_CREDENTIAL_MAPPER,
                         ldapRealmTable.selectedRow().getName(), IDENTITY_MAPPING + "." + OTP_CREDENTIAL_MAPPER,
                         changedValues, otpMetadata))
                 .build();
 
-        Metadata x509Metadata = metadata.repackageComplexAttribute(IDENTITY_MAPPING + "." + X509_CREDENTIAL_MAPPER, false, false, false);
-        x509CredentialMapperForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_REALM_FORM, x509Metadata)
+        Metadata x509Metadata = metadata.repackageComplexAttribute(IDENTITY_MAPPING + "." + X509_CREDENTIAL_MAPPER,
+                false, false, false);
+        x509CredentialMapperForm = new ModelNodeForm.Builder<>(id(X509_CREDENTIAL_MAPPER, FORM_SUFFIX), x509Metadata)
                 .onSave((form, changedValues) -> presenter.saveComplexForm(Names.X509_CREDENTIAL_MAPPER,
                         ldapRealmTable.selectedRow().getName(), IDENTITY_MAPPING + "." + X509_CREDENTIAL_MAPPER,
                         changedValues, x509Metadata))
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.ELYTRON_LDAP_REALM_TAB, resources.constants().attributes(), ldapRealmForm.asElement());
-        tabs.add(Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_TAB, Names.IDENTITY_MAPPING, identityMappingForm.asElement());
-        tabs.add(Ids.ELYTRON_USER_PASSWORD_MAPPER_TAB, Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
-        tabs.add(Ids.ELYTRON_OTP_CREDENTIAL_MAPPER_TAB, Names.OTP_CREDENTIAL_MAPPER,
+        tabs.add(id(TAB_SUFFIX), resources.constants().attributes(), ldapRealmForm.asElement());
+        tabs.add(id(IDENTITY_MAPPING, TAB_SUFFIX), Names.IDENTITY_MAPPING, identityMappingForm.asElement());
+        tabs.add(id(USER_PASSWORD_MAPPER, TAB_SUFFIX), Names.USER_PASSWORD_MAPPER, userPasswordMapperForm.asElement());
+        tabs.add(id(OTP_CREDENTIAL_MAPPER, TAB_SUFFIX), Names.OTP_CREDENTIAL_MAPPER,
                 otpCredentialMapperForm.asElement());
-        tabs.add(Ids.ELYTRON_X509_CREDENTIAL_MAPPER_TAB, Names.X509_CREDENTIAL_MAPPER,
+        tabs.add(id(X509_CREDENTIAL_MAPPER, TAB_SUFFIX), Names.X509_CREDENTIAL_MAPPER,
                 x509CredentialMapperForm.asElement());
 
         HTMLElement ldapRealmSection = section()
@@ -154,6 +156,10 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 () -> Names.LDAP_REALM + ": " + selectedLdapRealm,
                 () -> Names.IDENTITY_ATTRIBUTE_MAPPING,
                 iamSection);
+    }
+
+    private String id(@NonNls String... ids) {
+        return Ids.build(Ids.ELYTRON_LDAP_REALM, ids);
     }
 
     @Override

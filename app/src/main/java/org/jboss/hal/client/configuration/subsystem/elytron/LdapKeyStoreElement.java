@@ -33,6 +33,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -40,6 +41,10 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
+import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
 
 class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
@@ -51,24 +56,23 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
 
     LdapKeyStoreElement(final Metadata metadata, final TableButtonFactory tableButtonFactory,
             final Resources resources) {
-        table = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_TABLE,
-                metadata)
-                .button(tableButtonFactory.add(Ids.ELYTRON_LDAP_KEY_STORE_ADD, Names.LDAP_KEY_STORE,
-                        metadata.getTemplate(), asList(DIR_CONTEXT, SEARCH_PATH),
-                        (n, a) -> presenter.reloadLdapKeyStores()))
+        table = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.LDAP_KEY_STORE, metadata.getTemplate(),
+                        asList(DIR_CONTEXT, SEARCH_PATH), (n, a) -> presenter.reloadLdapKeyStores()))
                 .button(tableButtonFactory.remove(Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapKeyStores()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .build();
 
-        attributes = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_FORM, metadata)
+        attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
                 .onSave(((form, changedValues) -> presenter.saveLdapKeyStore(form.getModel().getName(), changedValues)))
                 .build();
 
         Metadata nitMetadata = metadata.forComplexAttribute(NEW_ITEM_TEMPLATE);
-        newItemTemplate = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_FORM, nitMetadata)
+        newItemTemplate = new ModelNodeForm.Builder<>(id(NEW_ITEM_TEMPLATE, FORM_SUFFIX), nitMetadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
-                .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
+                .customFormItem(NEW_ITEM_ATTRIBUTES,
+                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES))
                 .unsorted()
                 .singleton(
                         () -> {
@@ -84,15 +88,18 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .build();
 
         Tabs tabs = new Tabs();
-        tabs.add(Ids.ELYTRON_LDAP_KEY_STORE_ATTRIBUTES_TAB, resources.constants().attributes(), attributes.asElement());
-        tabs.add(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_TAB, Names.NEW_ITEM_TEMPLATE,
-                newItemTemplate.asElement());
+        tabs.add(id(TAB_SUFFIX), resources.constants().attributes(), attributes.asElement());
+        tabs.add(id(NEW_ITEM_TEMPLATE, TAB_SUFFIX), Names.NEW_ITEM_TEMPLATE, newItemTemplate.asElement());
 
         root = section()
                 .add(h(1).textContent(Names.LDAP_KEY_STORE))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .addAll(table, tabs)
                 .asElement();
+    }
+
+    private String id(@NonNls String... ids) {
+        return Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, ids);
     }
 
     @Override

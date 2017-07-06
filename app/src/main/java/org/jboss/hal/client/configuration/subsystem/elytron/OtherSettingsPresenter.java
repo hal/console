@@ -62,10 +62,6 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -299,10 +295,11 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     void addNewItemTemplate(final String ldapKeyStore) {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_KEY_STORE_TEMPLATE)
                 .forComplexAttribute(NEW_ITEM_TEMPLATE);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_KEY_STORE_NEW_ITEM_TEMPLATE_ADD,
-                metadata)
+        String id = Ids.build(Ids.ELYTRON_LDAP_KEY_STORE, NEW_ITEM_TEMPLATE, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .include(NEW_ITEM_PATH, NEW_ITEM_RDN, NEW_ITEM_ATTRIBUTES)
-                .customFormItem(NEW_ITEM_ATTRIBUTES, (attributeDescription) -> new NewItemAttributesItem())
+                .customFormItem(NEW_ITEM_ATTRIBUTES,
+                        (attributeDescription) -> new MultiValueListItem(NEW_ITEM_ATTRIBUTES))
                 .unsorted()
                 .addOnly()
                 .build();

@@ -226,9 +226,10 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     }
 
     void addMechanismConfiguration(String httpAuthenticationFactory) {
-        ca.listAdd(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_ADD, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS,
-                Names.MECHANISM_CONFIGURATION, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE,
-                singletonList(MECHANISM_NAME), this::reloadHttpAuthenticationFactories);
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        ca.listAdd(id, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
+                AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
+                this::reloadHttpAuthenticationFactories);
     }
 
     void saveMechanismConfiguration(String httpAuthenticationFactory, int index,
@@ -247,8 +248,8 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_ADD, metadata)
+        String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .requiredOnly()
                 .build();

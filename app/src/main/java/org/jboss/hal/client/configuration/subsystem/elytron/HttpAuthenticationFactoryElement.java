@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -39,6 +40,11 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
+import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
+import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
+import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
 
 class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
@@ -58,16 +64,15 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
     HttpAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
         // HTTP authentication factory
-        factoryTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_TABLE, metadata)
-                .button(tableButtonFactory.add(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_ADD,
-                        Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
-                        (n, a) -> presenter.reloadHttpAuthenticationFactories()))
+        factoryTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
+                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.HTTP_AUTHENTICATION_FACTORY,
+                        metadata.getTemplate(), (n, a) -> presenter.reloadHttpAuthenticationFactories()))
                 .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration, "15em") //NON-NLS
                 .build();
-        factoryForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_FORM, metadata)
+        factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
                 .onSave((form, changedValues) -> presenter.saveHttpAuthenticationFactory(form, changedValues))
                 .build();
         HTMLElement factorySection = section()
@@ -78,7 +83,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         // mechanism configurations
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
-        mcTable = new ModelNodeTable.Builder<>(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_TABLE, mcMetadata)
+        mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TAB_SUFFIX), mcMetadata)
                 .button(tableButtonFactory.add(mcMetadata.getTemplate(),
                         table -> presenter.addMechanismConfiguration(selectedFactory)))
                 .button(tableButtonFactory.remove(mcMetadata.getTemplate(),
@@ -87,7 +92,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
                         "20em") //NON-NLS
                 .build();
-        mcForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_FORM, mcMetadata)
+        mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM_SUFFIX), mcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveMechanismConfiguration(selectedFactory,
                         form.getModel().get(HAL_INDEX).asInt(), changedValues)))
                 .build();
@@ -99,14 +104,14 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         // mechanism realm configurations
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
-        mrcTable = new ModelNodeTable.Builder<>(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_TABLE, mrcMetadata)
+        mrcTable = new ModelNodeTable.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, TABLE_SUFFIX), mrcMetadata)
                 .button(tableButtonFactory.add(mrcMetadata.getTemplate(),
                         table -> presenter.addMechanismRealmConfiguration(selectedFactory, mcIndex)))
                 .button(tableButtonFactory.remove(mrcMetadata.getTemplate(),
                         table -> presenter.removeMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
                 .column(REALM_NAME)
                 .build();
-        mrcForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_FORM, mrcMetadata)
+        mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM_SUFFIX), mrcMetadata)
                 .onSave(((form, changedValues) -> presenter.saveMechanismRealmConfiguration(selectedFactory, mcIndex,
                         mrcIndex, changedValues)))
                 .build();
@@ -116,15 +121,19 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                 .addAll(mrcTable, mrcForm)
                 .asElement();
 
-        pages = new Pages(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_PAGE, factorySection);
-        pages.addPage(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY_PAGE, Ids.ELYTRON_MECHANISM_CONFIGURATIONS_PAGE,
+        pages = new Pages(id(PAGE_SUFFIX), factorySection);
+        pages.addPage(id(PAGE_SUFFIX), id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX),
                 () -> Names.HTTP_AUTHENTICATION_FACTORY + ": " + selectedFactory,
                 () -> Names.MECHANISM_CONFIGURATIONS,
                 mcSection);
-        pages.addPage(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_PAGE, Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE,
+        pages.addPage(id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX), id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX),
                 () -> Names.MECHANISM_CONFIGURATIONS + ": " + selectedMc,
                 () -> Names.MECHANISM_REALM_CONFIGURATIONS,
                 mrcSection);
+    }
+
+    private String id(@NonNls String... ids) {
+        return Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, ids);
     }
 
     @Override
@@ -161,12 +170,12 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         factoryForm.clear();
         factoryTable.update(nodes);
 
-        if (Ids.ELYTRON_MECHANISM_CONFIGURATIONS_PAGE.equals(pages.getCurrentId())) {
+        if (id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(factory -> selectedFactory.equals(factory.getName()))
                     .findFirst()
                     .ifPresent(this::showMechanismConfiguration);
-        } else if (Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE.equals(pages.getCurrentId())) {
+        } else if (id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX).equals(pages.getCurrentId())) {
             nodes.stream()
                     .filter(factory -> selectedFactory.equals(factory.getName()))
                     .findFirst()
@@ -189,7 +198,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         storeIndex(mcNodes);
         mcForm.clear();
         mcTable.update(mcNodes, modelNode -> modelNode.get(MECHANISM_NAME).asString());
-        pages.showPage(Ids.ELYTRON_MECHANISM_CONFIGURATIONS_PAGE);
+        pages.showPage(id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX));
     }
 
     private void showMechanismRealmConfiguration(final ModelNode mechanismConfiguration) {
@@ -199,6 +208,6 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         storeIndex(mrcNodes);
         mrcForm.clear();
         mrcTable.update(mrcNodes, modelNode -> modelNode.get(REALM_NAME).asString());
-        pages.showPage(Ids.ELYTRON_MECHANISM_REALM_CONFIGURATIONS_PAGE);
+        pages.showPage(id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX));
     }
 }

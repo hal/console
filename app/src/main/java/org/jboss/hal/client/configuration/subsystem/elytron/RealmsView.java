@@ -41,8 +41,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.USERS_PROPERTIES;
 public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
 
     private final Map<String, ResourceElement> elements;
-    private JdbcRealmElement jdbcRealmElement;
-    private LdapRealmElement ldapRealmElement;
+    private final JdbcRealmElement jdbcRealmElement;
+    private final LdapRealmElement ldapRealmElement;
     private RealmsPresenter presenter;
     private VerticalNavigation navigation;
 

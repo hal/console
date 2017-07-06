@@ -39,7 +39,26 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
-class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem {
+/**
+ * Form item which is used for some attributes in the Elytron subsystem which are defined as
+ * <pre>
+ * "attribute-name" => {
+ *     "type" => LIST,
+ *     "value-type" => {
+ *         "name" => {
+ *             "type" => STRING,
+ *             "required" => true
+ *         },
+ *         "value" => {
+ *             "type" => LIST,
+ *             "required" => true,
+ *             "value-type" => STRING
+ *         }
+ *     }
+ * }
+ * </pre>
+ */
+class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
@@ -102,14 +121,8 @@ class NewItemAttributesItem extends TagsItem<ModelNode> implements ModelNodeItem
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    NewItemAttributesItem() {
-        super("new-item-attributes", new LabelBuilder().label("new-item-attributes"), MESSAGES.newItemAttributesHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
-    }
-
-    NewItemAttributesItem(String attribute) {
-        super(attribute, new LabelBuilder().label(attribute), MESSAGES.newItemAttributesHint(),
+    MultiValueListItem(String attribute) {
+        super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
     }
 

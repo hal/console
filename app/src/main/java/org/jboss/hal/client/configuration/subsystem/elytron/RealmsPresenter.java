@@ -229,7 +229,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ADD, metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.ELYTRON_JDBC_REALM, Ids.ADD_SUFFIX), metadata)
                 .addOnly()
                 .requiredOnly()
                 .unboundFormItem(nameItem, 0)
@@ -245,8 +245,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void addPrincipalQuery(String jdbcRealm) {
-        ca.listAdd(Ids.ELYTRON_PRINCIPAL_QUERY_ADD, jdbcRealm, PRINCIPAL_QUERY, Names.PRINCIPAL_QUERY,
-                AddressTemplates.JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
+        ca.listAdd(Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, Ids.ADD_SUFFIX), jdbcRealm, PRINCIPAL_QUERY,
+                Names.PRINCIPAL_QUERY, AddressTemplates.JDBC_REALM_TEMPLATE, this::reloadJdbcRealms);
     }
 
     void savePrincipalQuery(String jdbcRealm, int pqIndex, Map<String, Object> changedValues) {
@@ -279,7 +279,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                     .forComplexAttribute(PRINCIPAL_QUERY)
                     .forComplexAttribute(keyMapper);
-            String id = Ids.build(Ids.ELYTRON_PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
+            String id = Ids.build(Ids.ELYTRON_JDBC_REALM, PRINCIPAL_QUERY, keyMapper, Ids.ADD_SUFFIX);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                     .addOnly()
                     .requiredOnly()
@@ -334,7 +334,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JDBC_REALM_TEMPLATE)
                 .forComplexAttribute(PRINCIPAL_QUERY)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_JDBC_REALM_ATTRIBUTE_MAPPING_ADD, metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX), metadata)
                 .addOnly()
                 .include(TO, INDEX)
                 .build();
@@ -411,7 +412,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         dialog.show();
     }
 
-    // @formatter:off
     /**
      * Given a model as
      * <pre>
@@ -449,7 +449,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
      * @param createComplexAttribute Control if the resulting model should add the complex attribute name, see above
      *                               example.
      */
-    // @formatter:on
     private void reassembleComplexAttribute(String complexAttributeName, ModelNode model,
             boolean createComplexAttribute) {
         if (model.isDefined()) {
@@ -478,9 +477,11 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
     void saveLdapRealm(final Form<NamedNode> form, final Map<String, Object> changedValues) {
-        crud.save(Names.LDAP_REALM, form.getModel().getName(),
-                AddressTemplates.LDAP_REALM_TEMPLATE, changedValues,
+        crud.save(Names.LDAP_REALM, form.getModel().getName(), AddressTemplates.LDAP_REALM_TEMPLATE, changedValues,
                 this::reloadLdapRealms);
+    }
+
+    void saveIdentityMapping(Map<String, Object> changedValues) {
     }
 
     void addIdentityAttributeMapping(final String selectedLdapRealm) {
@@ -488,7 +489,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_ADD, caMetadata)
+                 Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_ADD, caMetadata)
                 .addOnly();
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),

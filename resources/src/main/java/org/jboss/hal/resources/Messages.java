@@ -187,8 +187,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moreThanOneCacheStore();
     String moreThanOneCacheStoreDetails();
     SafeHtml moreThanOneKeyMapperForPrincipalQuery();
+    SafeHtml multiValueListHint();
 
-    SafeHtml newItemAttributesHint();
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();

@@ -123,7 +123,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 .addComplexAttributeAsTab("credential-reference")
                 .create();
 
-        // NewItemAttributesItem newItemAttributes = new NewItemAttributesItem();
+        // MultiValueListItem newItemAttributes = new MultiValueListItem();
         // ldapKeyStoreView = new ResourceView.Builder(tableButtonFactory, primaryIdStores,
         //         Ids.ELYTRON_LDAP_KEY_STORE, "LDAP Key Store", LDAP_KEY_STORE_TEMPLATE, this,
         //         () -> presenter.reload())
