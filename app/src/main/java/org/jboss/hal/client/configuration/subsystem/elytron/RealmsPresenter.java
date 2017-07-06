@@ -523,9 +523,10 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         upMetadata.copyComplexAttributeAtrributes(asList(PATH, RELATIVE_TO), metadata);
 
         String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX);
+        NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .include(PATH, RELATIVE_TO, GROUPS_ATTRIBUTE)
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
@@ -535,8 +536,10 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 move(model, PATH, USERS_PROPERTIES + "/" + PATH);
                 move(model, RELATIVE_TO, USERS_PROPERTIES + "/" + RELATIVE_TO);
             }
-            ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, name);
-            crud.add(Names.PROPERTIES_REALM, name, address, model, (name1, address1) -> reload());
+            ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.PROPERTIES_REALM, name, address, model, (n, a) ->
+                    reload(PROPERTIES_REALM, nodes ->
+                            getView().updateResourceElement(PROPERTIES_REALM, nodes)));
         }).show();
     }
 }

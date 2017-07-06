@@ -181,30 +181,42 @@ public final class ModelNodeHelper {
     /** Moves an attribute to another destination. Both source and destination can be a paths. */
     public static void move(ModelNode modelNode, String source, String destination) {
         if (modelNode != null && Strings.emptyToNull(source) != null && Strings.emptyToNull(destination) != null) {
-            boolean sourceExists = false;
+            ModelNode value = null;
             ModelNode context = modelNode;
-            List<String> sourceNames = Splitter.on('/').omitEmptyStrings().trimResults().splitToList(source);
+            List<String> sourceNames = Splitter.on('/')
+                    .omitEmptyStrings()
+                    .trimResults()
+                    .splitToList(source);
             if (!sourceNames.isEmpty()) {
                 for (Iterator<String> iterator = sourceNames.iterator(); iterator.hasNext(); ) {
                     String name = iterator.next();
                     String safeName = decodeValue(name);
                     if (context.hasDefined(safeName)) {
-                        sourceExists = true;
                         if (iterator.hasNext()) {
                             context = context.get(safeName);
                         } else {
-                            context = context.remove(safeName);
+                            value = context.remove(safeName);
                             break;
                         }
-                    } else {
-                        sourceExists = false;
-                        break;
                     }
                 }
             }
-            if (sourceExists) {
-                ModelNode destinationNode = failSafeGet(modelNode, destination);
-                destinationNode.set(context);
+            if (value != null) {
+                context = modelNode;
+                List<String> destinationNames = Splitter.on('/')
+                        .omitEmptyStrings()
+                        .trimResults()
+                        .splitToList(destination);
+                for (Iterator<String> iterator = destinationNames.iterator(); iterator.hasNext(); ) {
+                    String name = iterator.next();
+                    String safeName = decodeValue(name);
+                    if (iterator.hasNext()) {
+                        context = context.get(safeName);
+                    } else {
+                        context.get(safeName).set(value);
+                        break;
+                    }
+                }
             }
         }
     }

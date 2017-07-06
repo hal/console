@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USERS_PROPERTIES;
 
 /**
  * @author Claudio Miranda <claudio@redhat.com>
@@ -134,7 +135,7 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                                 nodes -> updateResourceElement(PROPERTIES_REALM.resource, nodes)))
                         .onAdd(() -> presenter.addPropertiesRealm())
                         .addComplexObjectAttribute("groups-properties")
-                        .addComplexObjectAttribute("users-properties")
+                        .addComplexObjectAttribute(USERS_PROPERTIES)
                         .build(),
                 primaryIdSecurityRealm,
                 Ids.build(PROPERTIES_REALM.baseId, Ids.ENTRY_SUFFIX),

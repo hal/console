@@ -17,6 +17,7 @@ package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,11 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.thirdparty.guava.common.collect.HashMultimap;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsIgnore;
@@ -382,7 +383,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             } else if (readOnly) {
                 return new ReadOnlyStateMachine();
             } else if (singleton) {
-                return new SingletonStateMachine(prepareReset != null);
+                EnumSet<Operation> operations = EnumSet.allOf(Operation.class);
+                if (prepareReset == null) {
+                    operations.remove(Operation.RESET);
+                }
+                if (prepareRemove == null) {
+                    operations.remove(Operation.REMOVE);
+                }
+                return new SingletonStateMachine(operations);
             } else {
                 return new ExistingStateMachine(prepareReset != null);
             }
