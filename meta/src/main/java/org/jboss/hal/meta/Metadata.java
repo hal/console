@@ -104,7 +104,7 @@ public class Metadata {
 
     /**
      * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
-     * attribute.
+     * attribute. The resource description will only include the attributes but no operations!
      */
     @JsIgnore
     public Metadata forComplexAttribute(String name) {
@@ -113,7 +113,7 @@ public class Metadata {
 
     /**
      * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
-     * attribute.
+     * attribute. The resource description will only include the attributes but no operations!
      *
      * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name
      *                    of the complex attribute.
