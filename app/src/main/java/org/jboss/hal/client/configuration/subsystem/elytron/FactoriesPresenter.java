@@ -64,7 +64,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView, FactoriesPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
     @ProxyCodeSplit
     @Requires(value = {
             AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
@@ -89,6 +88,8 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
     public interface MyProxy extends ProxyPlace<FactoriesPresenter> {}
 
+
+    // @formatter:off
     public interface MyView extends MbuiView<FactoriesPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateHttpAuthentication(List<NamedNode> nodes);

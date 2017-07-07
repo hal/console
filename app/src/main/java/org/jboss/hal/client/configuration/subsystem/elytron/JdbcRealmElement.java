@@ -156,8 +156,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .singleton(
                         () -> {
                             if (pqTable.hasSelection()) {
-                                return presenter.pingKeyMapper(selectedJdbcRealm,
-                                        pqTable.selectedRow(), keyMapper);
+                                return presenter.pingKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), keyMapper);
                             }
                             return null;
                         },

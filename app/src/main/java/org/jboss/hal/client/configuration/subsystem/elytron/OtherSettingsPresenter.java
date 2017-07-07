@@ -73,7 +73,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode, ElytronPresenter {
 
-    // @formatter:off
     @ProxyCodeSplit
     @Requires(value ={
         KEY_STORE_ADDRESS, KEY_MANAGER_ADDRESS, SERVER_SSL_CONTEXT_ADDRESS, CLIENT_SSL_CONTEXT_ADDRESS, TRUST_MANAGER_ADDRESS, CREDENTIAL_STORE_ADDRESS,
@@ -84,6 +83,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
 
+    // @formatter:off
     public interface MyView extends MbuiView<OtherSettingsPresenter> {
         void updateKeyStore(List<NamedNode> model);
         void updateKeyManagers(List<NamedNode> model);

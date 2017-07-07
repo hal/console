@@ -66,6 +66,7 @@ public interface ModelDescriptionConstants {
     String AGGREGATE_SASL_SERVER_FACTORY = "aggregate-sasl-server-factory";
     String AGGREGATE_SECURITY_EVENT_LISTENER = "aggregate-security-event-listener";
     String AJP_LISTENER = "ajp-listener";
+    String ALLOW_BLANK_PASSWORD = "allow-blank-password";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
     String ALLOWED = "allowed";
     String ALLOWED_ORIGINS = "allowed-origins";
@@ -167,6 +168,7 @@ public interface ModelDescriptionConstants {
     String DESTINATION_ADDRESS = "destination-address";
     String DESTINATION_PORT = "destination-port";
     String DIR_CONTEXT = "dir-context";
+    String DIRECT_VERIFICATION = "direct-verification";
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
     String DISCOVERY_GROUP = "discovery-group";
@@ -389,6 +391,7 @@ public interface ModelDescriptionConstants {
     String QUEUE = "queue";
     String QUEUE_LENGTH = "queue-length";
     String QUEUE_NAME = "queue-name";
+    String RDN_IDENTIFIER = "rdn-identifier";
     String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_BOOT_ERRORS = "read-boot-errors";
@@ -452,6 +455,7 @@ public interface ModelDescriptionConstants {
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
     String SCRIPT = "script";
+    String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
@@ -547,6 +551,7 @@ public interface ModelDescriptionConstants {
     String UNDERTOW = "undertow";
     String UNIT = "unit";
     String URL = "url";
+    String USE_RECURSIVE_SEARCH = "use-recursive-search";
     String USER_NAME = "user-name";
     String USER_PASSWORD_MAPPER = "user-password-mapper";
     String USERS_PROPERTIES = "users-properties";

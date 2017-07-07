@@ -52,7 +52,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
     @ProxyCodeSplit
     @Requires(value = {
             ADD_PREFIX_ROLE_MAPPER_ADDRESS,
@@ -75,6 +74,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
 
+
+    // @formatter:off
     public interface MyView extends MbuiView<MapperDecoderPresenter> {
         void updateAddPrefixRoleMapper(List<NamedNode> model);
         void updateAddSuffixRoleMapper(List<NamedNode> model);
@@ -95,6 +96,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         void updateX500AttributePrincipalDecoder(List<NamedNode> model);
     }
     // @formatter:on
+
 
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;

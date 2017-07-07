@@ -42,8 +42,8 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -54,8 +54,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
@@ -70,7 +68,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    // @formatter:off
     @ProxyCodeSplit
     @Requires(value = {
             AGGREGATE_REALM_ADDRESS,
@@ -91,6 +88,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
     public interface MyProxy extends ProxyPlace<RealmsPresenter> {}
 
+
+    // @formatter:off
     public interface MyView extends MbuiView<RealmsPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateJdbcRealm(List<NamedNode> nodes);
@@ -106,7 +105,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             "simple-digest-mapper",
             "scram-mapper"
     };
-    @NonNls private static final org.slf4j.Logger logger = LoggerFactory.getLogger(RealmsPresenter.class);
+
 
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
@@ -211,12 +210,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 children -> callback.accept(asNamedNodes(children)));
     }
 
-    void saveComplexForm(final String title, final String name, String complexAttributeName,
-            final Map<String, Object> changedValues, final Metadata metadata) {
-        String type = new LabelBuilder().label(metadata.getTemplate().lastName());
-        ca.save(name, complexAttributeName, type, metadata.getTemplate(), changedValues, this::reload);
-
-    }
 
     // ------------------------------------------------------ JDBC realm
 
@@ -365,7 +358,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     }
 
 
-    // ============ LDAP Realm
+    // ------------------------------------------------------ LDAP Realm
 
     void reloadLdapRealms() {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.LDAP_REALM,
@@ -374,106 +367,29 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void addLdapRealm() {
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE);
+        Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING, true);
+        imMetadata.copyComplexAttributeAtrributes(asList(RDN_IDENTIFIER, SEARCH_BASE_DN, USE_RECURSIVE_SEARCH),
+                metadata);
 
-        // repackage "identity-mapping" as it is a required attribute to be displayed in the form of the ADD dialog.
-        // the repackaged attribute must be prefixed so, the user knowns where it comes from.
-        Metadata nestedMetadata = metadata.repackageComplexAttribute(IDENTITY_MAPPING, true, true, true);
-
-        new AddResourceDialog(Ids.ELYTRON_LDAP_REALM_ADD,
-                resources.messages().addResourceTitle(Names.LDAP_REALM), nestedMetadata,
-                (name, model) -> {
-                    // once the model is posted, it must be correctly assembled as the attributes are not correct,
-                    // related to the r-r-d
-                    reassembleComplexAttribute(IDENTITY_MAPPING, model, true);
-                    ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, name);
-                    crud.add(Names.LDAP_REALM, name, address, model, (name1, address1) -> reload());
-                }).show();
-
-    }
-
-    public void addLdapRealm2() {
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.LDAP_REALM_TEMPLATE)
-                .repackageComplexAttribute(IDENTITY_MAPPING, true, true, true);
         NameItem nameItem = new NameItem();
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_LDAP_REALM_ADD, metadata)
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
-                .fromRequestProperties()
-                .requiredOnly()
                 .unboundFormItem(nameItem, 0)
+                .include(DIR_CONTEXT, DIRECT_VERIFICATION, ALLOW_BLANK_PASSWORD, RDN_IDENTIFIER, SEARCH_BASE_DN,
+                        USE_RECURSIVE_SEARCH)
                 .build();
-        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.LDAP_REALM), form,
-                (n1, model) -> {
-                    ModelNode payload = new ModelNode();
-                    payload.get(IDENTITY_MAPPING).add(model);
-                    logger.info(" add ldap payload: " + payload);
-                    crud.add(Names.LDAP_REALM, nameItem.getValue(), AddressTemplates.LDAP_REALM_TEMPLATE, payload,
-                            (n2, address) -> reloadLdapRealms());
-                });
-        dialog.show();
-    }
 
-    /**
-     * Given a model as
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   complexAttr-name1: "some value 1",
-     *   complexAttr-name2: "some value 2"
-     * }
-     * </pre>
-     * This method extracts the complex attribute name and adds the nested attributes into the complex attribute.
-     * If createComplexAttribute=true, the resulting model node is:
-     * <p>
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   complexAttr: {
-     *     name1: "some value 1",
-     *     name2: "some value 2"
-     *     }
-     * }
-     * </pre>
-     * <p>
-     * If createComplexAttribute=false, the resulting model node is:
-     * <p>
-     * <pre>
-     * {
-     *   other-attr: "value1"
-     *   name1: "some value 1",
-     *   name2: "some value 2"
-     * }
-     * </pre>
-     *
-     * @param complexAttributeName   The complex attribute name
-     * @param model                  The model
-     * @param createComplexAttribute Control if the resulting model should add the complex attribute name, see above
-     *                               example.
-     */
-    private void reassembleComplexAttribute(String complexAttributeName, ModelNode model,
-            boolean createComplexAttribute) {
-        if (model.isDefined()) {
-            for (Property property : model.asPropertyList()) {
-                String pName = property.getName();
-
-                String nestedAttrName;
-
-                boolean propertyRepackagedName = pName.length() > complexAttributeName.length()
-                        && complexAttributeName.equals(pName.substring(0, complexAttributeName.length()));
-
-                if (propertyRepackagedName) {
-                    nestedAttrName = pName.substring(complexAttributeName.length() + 1);
-                } else {
-                    continue;
-                }
-
-                if (createComplexAttribute) {
-                    model.get(complexAttributeName).get(nestedAttrName).set(property.getValue());
-                    model.remove(pName);
-                } else {
-                    model.get(nestedAttrName).set(property.getValue());
-                }
-            }
-        }
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.IDENTITY_ATTRIBUTE_MAPPING), form,
+                (name, model) -> {
+                    if (model != null) {
+                        move(model, RDN_IDENTIFIER, IDENTITY_MAPPING + "/" + RDN_IDENTIFIER);
+                        move(model, SEARCH_BASE_DN, IDENTITY_MAPPING + "/" + SEARCH_BASE_DN);
+                        move(model, USE_RECURSIVE_SEARCH, IDENTITY_MAPPING + "/" + USE_RECURSIVE_SEARCH);
+                    }
+                    ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, nameItem.getValue());
+                    crud.add(Names.IDENTITY_ATTRIBUTE_MAPPING, name, address, model, (n, a) -> reloadLdapRealms());
+                }).show();
     }
 
     void saveLdapRealm(final Form<NamedNode> form, final Map<String, Object> changedValues) {
@@ -481,42 +397,42 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 this::reloadLdapRealms);
     }
 
-    void saveIdentityMapping(Map<String, Object> changedValues) {
+    void saveLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            AddressTemplate template, Map<String, Object> changedValues) {
+        ca.save(ldapRealm, complexAttribute, type, template, changedValues, this::reloadLdapRealms);
     }
 
     void addIdentityAttributeMapping(final String selectedLdapRealm) {
-        Metadata caMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+        Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
-        ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                 Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_ADD, caMetadata)
-                .addOnly();
-
+        String id = Ids.build(Ids.ELYTRON_LDAP_REALM, ATTRIBUTE_MAPPING, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, iamMetadata)
+                .addOnly()
+                .include(FROM, TO)
+                .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
-                builder.build(), (name, model) ->
+                form, (name, model) ->
                 ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
-                        Names.IDENTITY_ATTRIBUTE_MAPPING, LDAP_REALM_TEMPLATE, model, () -> reloadLdapRealms()));
+                        Names.IDENTITY_ATTRIBUTE_MAPPING, LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
-
-
-    }
-
-    void removeIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex) {
-        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING, Names.IDENTITY_ATTRIBUTE_MAPPING,
-                iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE, this::reloadLdapRealms);
     }
 
     void saveIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex,
             final Map<String, Object> changedValues) {
-
-        ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING, Names.IDENTITY_ATTRIBUTE_MAPPING,
-                iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE, changedValues,
-                this::reloadLdapRealms);
-
-
+        ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+                Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
+                changedValues, this::reloadLdapRealms);
     }
 
-    // ==== properties realm
+    void removeIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex) {
+        ca.remove(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
+                Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
+                this::reloadLdapRealms);
+    }
+
+
+    // ------------------------------------------------------  properties realm
 
     void addPropertiesRealm() {
         Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
@@ -532,7 +448,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
 
-        new AddResourceDialog(Names.PROPERTIES_REALM, form, (name, model) -> {
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.PROPERTIES_REALM), form, (name, model) -> {
             if (model != null) {
                 move(model, PATH, USERS_PROPERTIES + "/" + PATH);
                 move(model, RELATIVE_TO, USERS_PROPERTIES + "/" + RELATIVE_TO);
