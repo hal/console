@@ -15,10 +15,8 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.List;
 import java.util.function.Supplier;
 
-import com.google.common.base.Splitter;
 import com.google.gwt.resources.client.TextResource;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
@@ -104,11 +102,22 @@ public class Metadata {
         }
     }
 
+    /**
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
+     * attribute.
+     */
     @JsIgnore
     public Metadata forComplexAttribute(String name) {
         return forComplexAttribute(name, false);
     }
 
+    /**
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
+     * attribute.
+     *
+     * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name
+     *                    of the complex attribute.
+     */
     @JsIgnore
     public Metadata forComplexAttribute(String name, boolean prefixLabel) {
         ModelNode payload = new ModelNode();
@@ -160,184 +169,6 @@ public class Metadata {
         };
         return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
     }
-
-    // @formatter:off
-    /**
-     * Adds all attributes under a complex attribute to the main list of attributes, it also prefix those nested
-     * attributes
-     * with the complex attribute name. It serves the purpose to shows the attributes in the onAdd modal dialog to add
-     * a
-     * resource.
-     * <p>
-     * For example, the resource-description for subsystem=elytron/properties-realm is as below (they are cut for
-     * simplicity)
-     * <pre>
-     *
-     * "attributes" => {
-     *      "case-sensitive" => {
-     *          "type" => BOOLEAN,
-     *          "description" => "Case sensitivity of the properties realm. If case insensitive only lower usernames are
-     *              allowed.",
-     *      },
-     *      "groups-attribute" => {
-     *          "type" => STRING,
-     *          "description" => "The name of the attribute in the returned AuthorizationIdentity that should contain the group
-     *              membership information for the identity.",
-     *      },
-     *      "groups-properties" => {
-     *          "type" => OBJECT,
-     *          "description" => "The properties file containing the users and their groups.",
-     *          "value-type" => {
-     *              "path" => {
-     *                  "type" => STRING,
-     *                  "description" => "The path to the file containing the users and their groups.",
-     *                  "required" => true,
-     *                  "nillable" => false,
-     *              },
-     *              "relative-to" => {
-     *                  "type" => STRING,
-     *                  "description" => "The pre-defined path the path is relative to.",
-     *                  "required" => false,
-     *                  "nillable" => true,
-     *              }
-     *          }
-     *      }
-     * }
-     * </pre>
-     * <p>
-     * After this method is called the resource description contains
-     * <pre>
-     *     The resource-description for subsystem=elytron/properties-realm
-     * "attributes" => {
-     *      "case-sensitive" => {
-     *          "type" => BOOLEAN,
-     *          "description" => "Case sensitivity of the properties realm. If case insensitive only lower usernames are
-     *              allowed.",
-     *      },
-     *      "groups-attribute" => {
-     *          "type" => STRING,
-     *          "description" => "The name of the attribute in the returned AuthorizationIdentity that should contain the group
-     *              membership information for the identity.",
-     *      },
-     *      "groups-properties-path" => {
-     *          "type" => STRING,
-     *          "description" => "The path to the file containing the users and their groups.",
-     *          "required" => true,
-     *          "nillable" => false,
-     *      },
-     *      "groups-properties-relative-to" => {
-     *          "type" => STRING,
-     *          "description" => "The pre-defined path the path is relative to.",
-     *          "required" => false,
-     *          "nillable" => true,
-     *      }
-     * },
-     * </pre>
-     *
-     * @param complexAttributeName    The complex attribute name
-     * @param fromRequestProperties   If the attributes should be loaded from operations/add/request-properties path or
-     *                                attributes path. If is true, the attributes from request-properties path will be
-     *                                appended, if false, the list of attributes will replace the main attributes path.
-     * @param prefixComplexAttribute  If the repackaged attribute names should be prefixed with the complex attribute
-     *                                name, as in the above example.
-     * @param appendRequestProperties when appendRequestProperties and fromRequestProperties is true, the attributes
-     *                                are appended instead of replaced.
-     *
-     * @return A new Metadata with the repackaged attributes.
-     * @deprecated Try to replace with {@link #forComplexAttribute(String, boolean)}
-     */
-    @JsIgnore
-    @Deprecated
-    public Metadata repackageComplexAttribute(String complexAttributeName, boolean fromRequestProperties,
-            boolean prefixComplexAttribute, boolean appendRequestProperties) {
-
-        ModelNode nestedDescription = new ModelNode();
-        ModelNode nestedAttributes;
-
-        boolean enhancedSyntax = complexAttributeName.indexOf(".") > -1;
-        List<String> enhancedAttribute = Splitter.on(".").splitToList(complexAttributeName);
-        String attributeFirst = enhancedSyntax ? enhancedAttribute.get(0) : null;
-        String attributeSecond = enhancedSyntax ? enhancedAttribute.get(1) : null;
-
-
-        if (fromRequestProperties) {
-            if (enhancedSyntax)
-                nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(VALUE_TYPE);
-            else
-                nestedAttributes = this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(complexAttributeName).get(VALUE_TYPE);
-
-
-            if (appendRequestProperties) {
-                // the attributes are appended, as the request-properties attribute are used to add a new resource, the
-                // attributes should be appended instead of replaced.
-                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).set(this.description.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
-            }
-        } else {
-            if (enhancedSyntax)
-                nestedAttributes = this.description.get(ATTRIBUTES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(VALUE_TYPE);
-            else
-                nestedAttributes = this.description.get(ATTRIBUTES).get(complexAttributeName).get(VALUE_TYPE);
-        }
-
-        if (enhancedSyntax)
-            nestedDescription.get(DESCRIPTION).set(this.description.get(ATTRIBUTES).get(attributeFirst).get(VALUE_TYPE).get(attributeSecond).get(DESCRIPTION));
-        else
-            nestedDescription.get(DESCRIPTION).set(this.description.get(ATTRIBUTES).get(complexAttributeName).get(DESCRIPTION));
-
-        for (Property prop : nestedAttributes.asPropertyList()) {
-            // rename the nested attributes to prefix them with the complex attribute name
-            // as the child nested attribute may exist in other child nested attributes
-            // an example is users-properties and groups-properties in /subsystem=elytron/properties-realm=*
-            // both contains "path" and "relative-to" nested attributes.
-            String newName = prop.getName();
-            if (prefixComplexAttribute) {
-                if (enhancedSyntax)
-                    newName = attributeSecond + "-" + prop.getName();
-                else
-                    newName = complexAttributeName + "-" + prop.getName();
-            }
-
-            if (fromRequestProperties) {
-                nestedDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).get(newName).set(prop.getValue());
-            } else {
-                nestedDescription.get(ATTRIBUTES).get(newName).set(prop.getValue());
-            }
-        }
-
-        // delegates the security-context calls to check against the complex attribute, because the nested attributes
-        // lacks the access-control constraint,
-        SecurityContext sc = new SecurityContext(new ModelNode()) {
-            @Override
-            public boolean isReadable() {
-                return securityContext.get().isReadable();
-            }
-
-            @Override
-            public boolean isWritable() {
-                return securityContext.get().isWritable();
-            }
-
-            @Override
-            public boolean isReadable(final String attribute) {
-                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
-                return securityContext.get().isReadable(_name);
-            }
-
-            @Override
-            public boolean isWritable(final String attribute) {
-                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
-                return securityContext.get().isWritable(_name);
-            }
-
-            @Override
-            public boolean isExecutable(final String operation) {
-                String _name = enhancedSyntax ? attributeFirst : complexAttributeName;
-                return securityContext.get().isExecutable(_name);
-            }
-        };
-        return new Metadata(template, () -> sc, new ResourceDescription(nestedDescription), capabilities);
-    }
-    // @formatter:on
 
     @JsIgnore
     public Metadata customResourceDescription(ResourceDescription resourceDescription) {

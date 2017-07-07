@@ -402,6 +402,26 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         ca.save(ldapRealm, complexAttribute, type, template, changedValues, this::reloadLdapRealms);
     }
 
+    void resetLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            AddressTemplate template, Form<ModelNode> form) {
+        ca.reset(ldapRealm, complexAttribute, type, template, form, new Form.FinishReset<ModelNode>(form) {
+            @Override
+            public void afterReset(Form<ModelNode> form) {
+                reloadLdapRealms();
+            }
+        });
+    }
+
+    void removeLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            AddressTemplate template, Form<ModelNode> form) {
+        ca.remove(ldapRealm, complexAttribute, type, template, new Form.FinishRemove<ModelNode>(form) {
+            @Override
+            public void afterRemove(Form<ModelNode> form) {
+                reloadLdapRealms();
+            }
+        });
+    }
+
     void addIdentityAttributeMapping(final String selectedLdapRealm) {
         Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)

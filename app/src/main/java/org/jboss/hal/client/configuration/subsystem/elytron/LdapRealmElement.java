@@ -64,7 +64,6 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
     private final Pages pages;
     private RealmsPresenter presenter;
     private String selectedLdapRealm;
-    private String selectedIam;
     private int iamIndex;
 
     LdapRealmElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
@@ -87,33 +86,48 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
                 .onSave((form, changedValues) -> presenter.saveLdapRealmComplexAttribute(selectedLdapRealm,
                         IDENTITY_MAPPING, Names.IDENTITY_MAPPING, imMetadata.getTemplate(), changedValues))
+                .prepareReset(form -> presenter.resetLdapRealmComplexAttribute(selectedLdapRealm, IDENTITY_MAPPING,
+                        Names.IDENTITY_MAPPING, imMetadata.getTemplate(), form))
                 .build();
 
         Metadata upMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(USER_PASSWORD_MAPPER);
+        String upComplexAttribute = IDENTITY_MAPPING + "." + USER_PASSWORD_MAPPER;
         userPasswordMapperForm = new ModelNodeForm.Builder<>(id(USER_PASSWORD_MAPPER, FORM_SUFFIX), upMetadata)
                 .onSave((form, changedValues) -> presenter.saveLdapRealmComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING + "." + USER_PASSWORD_MAPPER, Names.USER_PASSWORD_MAPPER,
-                        upMetadata.getTemplate(), changedValues))
+                        upComplexAttribute, Names.USER_PASSWORD_MAPPER, upMetadata.getTemplate(), changedValues))
+                .prepareReset(form -> presenter.resetLdapRealmComplexAttribute(selectedLdapRealm, upComplexAttribute,
+                        Names.USER_PASSWORD_MAPPER, upMetadata.getTemplate(), form))
+                .prepareRemove(form -> presenter.removeLdapRealmComplexAttribute(selectedLdapRealm, upComplexAttribute,
+                        Names.USER_PASSWORD_MAPPER, upMetadata.getTemplate(), form))
                 .build();
 
         Metadata otpMetadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(OTP_CREDENTIAL_MAPPER);
+        String otpComplexAttribute = IDENTITY_MAPPING + "." + OTP_CREDENTIAL_MAPPER;
         otpCredentialMapperForm = new ModelNodeForm.Builder<>(id(OTP_CREDENTIAL_MAPPER, FORM_SUFFIX), otpMetadata)
                 .onSave((form, changedValues) -> presenter.saveLdapRealmComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING + "." + OTP_CREDENTIAL_MAPPER, Names.OTP_CREDENTIAL_MAPPER,
-                        otpMetadata.getTemplate(), changedValues))
+                        otpComplexAttribute, Names.OTP_CREDENTIAL_MAPPER, otpMetadata.getTemplate(), changedValues))
+                .prepareReset(form -> presenter.resetLdapRealmComplexAttribute(selectedLdapRealm, otpComplexAttribute,
+                        Names.OTP_CREDENTIAL_MAPPER, otpMetadata.getTemplate(), form))
+                .prepareRemove(form -> presenter.removeLdapRealmComplexAttribute(selectedLdapRealm, otpComplexAttribute,
+                        Names.OTP_CREDENTIAL_MAPPER, otpMetadata.getTemplate(), form))
                 .build();
 
         Metadata x509Metadata = metadata
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(X509_CREDENTIAL_MAPPER);
+        String x509ComplexAttribute = IDENTITY_MAPPING + "." + X509_CREDENTIAL_MAPPER;
         x509CredentialMapperForm = new ModelNodeForm.Builder<>(id(X509_CREDENTIAL_MAPPER, FORM_SUFFIX), x509Metadata)
                 .onSave((form, changedValues) -> presenter.saveLdapRealmComplexAttribute(selectedLdapRealm,
-                        IDENTITY_MAPPING + "." + X509_CREDENTIAL_MAPPER, Names.X509_CREDENTIAL_MAPPER,
-                        x509Metadata.getTemplate(), changedValues))
+                        x509ComplexAttribute, Names.X509_CREDENTIAL_MAPPER, x509Metadata.getTemplate(), changedValues))
+                .prepareReset(form -> presenter.resetLdapRealmComplexAttribute(selectedLdapRealm, x509ComplexAttribute,
+                        Names.X509_CREDENTIAL_MAPPER, x509Metadata.getTemplate(), form))
+                .prepareRemove(
+                        form -> presenter.removeLdapRealmComplexAttribute(selectedLdapRealm, x509ComplexAttribute,
+                                Names.X509_CREDENTIAL_MAPPER, x509Metadata.getTemplate(), form))
                 .build();
 
         Tabs tabs = new Tabs();
@@ -143,7 +157,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                         table -> presenter.removeIdentityAttributeMapping(selectedLdapRealm, iamIndex)))
                 .columns(FROM, TO)
                 .build();
-        iamForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_FORM, iamMetadata)
+        iamForm = new ModelNodeForm.Builder<>(id(ATTRIBUTE_MAPPING, FORM_SUFFIX), iamMetadata)
                 .onSave(((form, changedValues) -> presenter.saveIdentityAttributeMapping(selectedLdapRealm,
                         iamIndex, changedValues)))
                 .unsorted()
