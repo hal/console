@@ -689,7 +689,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         ModelNode attributeDescription = attributeDescriptions.get(name);
         if (attributeDescription != null) {
             if (attributeDescription.hasDefined(DEFAULT)) {
-                return resourceDescription.isDefaultValue(attributePath, name, value);
+                return resourceDescription.isDefaultValue(attributePath, name, value) || formItem.isEmpty();
             } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
                 return value == null || !(Boolean) value;
             } else {

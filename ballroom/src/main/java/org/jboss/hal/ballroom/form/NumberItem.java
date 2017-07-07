@@ -84,7 +84,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public ValidationResult validate(final Long value) {
-            if (!isExpressionValue()) {
+            if (!isExpressionValue() && !isEmpty()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
                     Long.parseLong(inputElement.value);
@@ -102,7 +102,7 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public ValidationResult validate(final Long value) {
-            if (!isExpressionValue()) {
+            if (!isExpressionValue() && !isEmpty()) {
                 if (value < min || value > max) {
                     return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));
                 }
@@ -149,10 +149,12 @@ public class NumberItem extends AbstractFormItem<Long> {
                         Long value = Long.parseLong(stringValue);
                         modifyValue(value);
                     } catch (NumberFormatException e) {
-                        // at least mark as modified and undefined
+                        // at least mark as modified and defined
                         setModified(true);
                         setUndefined(false);
                     }
+                } else {
+                    modifyValue(null);
                 }
             }
         }));

@@ -43,7 +43,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -408,45 +407,61 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 this::reloadLdapRealms);
     }
 
-    void addLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
-            AddressTemplate template) {
+    void addIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type) {
         String id = Ids.build(Ids.ELYTRON_LDAP_REALM, complexAttribute, Ids.ADD_SUFFIX);
-        ca.add(id, ldapRealm, complexAttribute, type, template, this::reloadLdapRealms);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+                .forComplexAttribute(IDENTITY_MAPPING)
+                .forComplexAttribute(complexAttribute);
+        boolean requiredAttributes = !metadata.getDescription().getRequiredAttributes(ATTRIBUTES).isEmpty();
+        ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly();
+        if (requiredAttributes) {
+            builder.requiredOnly();
+        }
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(type), builder.build(),
+                (name, model) -> ca.add(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type,
+                        LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
+        dialog.show();
     }
 
-    Operation pingLdapRealmComplexAttribute(String ldapRealm, String complexAttribute) {
+    Operation pingIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute) {
         if (ldapRealm != null) {
             ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
             return new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
-                    .param(NAME, complexAttribute)
+                    .param(NAME, IDENTITY_MAPPING + "." + complexAttribute)
                     .build();
         }
         return null;
     }
 
-    void saveLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
-            AddressTemplate template, Map<String, Object> changedValues) {
-        ca.save(ldapRealm, complexAttribute, type, template, changedValues, this::reloadLdapRealms);
+    void saveIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            Map<String, Object> changedValues) {
+        ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+                .forComplexAttribute(IDENTITY_MAPPING)
+                .forComplexAttribute(complexAttribute);
+        ca.save(IDENTITY_MAPPING + "." + complexAttribute, type, address, changedValues, metadata,
+                this::reloadLdapRealms);
     }
 
-    void resetLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
-            AddressTemplate template, Form<ModelNode> form) {
-        ca.reset(ldapRealm, complexAttribute, type, template, form, new Form.FinishReset<ModelNode>(form) {
-            @Override
-            public void afterReset(Form<ModelNode> form) {
-                reloadLdapRealms();
-            }
-        });
+    void resetIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            Form<ModelNode> form) {
+        ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, ldapRealm);
+        Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
+                .forComplexAttribute(IDENTITY_MAPPING)
+                .forComplexAttribute(complexAttribute);
+        ca.reset(IDENTITY_MAPPING + "." + complexAttribute, type, address, metadata, form, this::reloadLdapRealms);
     }
 
-    void removeLdapRealmComplexAttribute(String ldapRealm, String complexAttribute, String type,
-            AddressTemplate template, Form<ModelNode> form) {
-        ca.remove(ldapRealm, complexAttribute, type, template, new Form.FinishRemove<ModelNode>(form) {
-            @Override
-            public void afterRemove(Form<ModelNode> form) {
-                reloadLdapRealms();
-            }
-        });
+    void removeIdentityMappingComplexAttribute(String ldapRealm, String complexAttribute, String type,
+            Form<ModelNode> form) {
+        ca.remove(ldapRealm, IDENTITY_MAPPING + "." + complexAttribute, type, LDAP_REALM_TEMPLATE,
+                new Form.FinishRemove<ModelNode>(form) {
+                    @Override
+                    public void afterRemove(Form<ModelNode> form) {
+                        reloadLdapRealms();
+                    }
+                });
     }
 
     void addIdentityAttributeMapping(final String selectedLdapRealm) {
@@ -467,6 +482,9 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void saveIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex,
             final Map<String, Object> changedValues) {
+        // Workaround for "WFLYCTL0380: Attribute 'identity-mapping.attribute-mapping[n].filter' needs to be set or
+        // passed before attribute 'identity-mapping.attribute-mapping[n].search-recursive' can be correctly set"
+
         ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
                 Names.IDENTITY_ATTRIBUTE_MAPPING, iamIndex, AddressTemplates.LDAP_REALM_TEMPLATE,
                 changedValues, this::reloadLdapRealms);

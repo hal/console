@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -179,19 +178,12 @@ public class ComplexAttributeOperations {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
-                // there are complex attributes which none of them are required=true
-                // as there are no required attributes, all attributes are added to the form.
-                boolean anyRequiredAttribute = false;
-                for (Property property : caMetadata.getDescription().getAttributes(ATTRIBUTES)) {
-                    anyRequiredAttribute = property.getValue().get(REQUIRED).asBoolean();
-                    if (anyRequiredAttribute) {
-                        break;
-                    }
-
-                }
+                boolean requiredAttributes = !caMetadata.getDescription()
+                        .getRequiredAttributes(ATTRIBUTE_GROUP)
+                        .isEmpty();
                 ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, caMetadata)
                         .addOnly();
-                if (anyRequiredAttribute) {
+                if (requiredAttributes) {
                     builder.requiredOnly();
                 }
                 if (!Iterables.isEmpty(attributes)) {
@@ -414,6 +406,33 @@ public class ComplexAttributeOperations {
 
         ResourceAddress address = template.resolve(statementContext, resource);
         Composite composite = operationFactory(complexAttribute).resetResource(address, attributes, metadata);
+        reset(type, composite, callback);
+    }
+
+    /**
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
+     * been undefined a standard success message is fired and the specified callback is executed.
+     * <p>
+     * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
+     *
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param address          the fq address for the operation
+     * @param form             the form which should be reset
+     * @param callback         the callback executed after the resource has been saved
+     */
+    @JsIgnore
+    public <T> void reset(final String complexAttribute, final String type, final ResourceAddress address,
+            final Metadata metadata, final Form<T> form, final Callback callback) {
+        Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
+                .map(FormItem::getName)
+                .collect(toSet());
+
+        Composite composite = operationFactory(complexAttribute).resetResource(address, attributes, metadata);
+        reset(type, composite, callback);
+    }
+
+    private void reset(final String type, final Composite composite, final Callback callback) {
         if (composite.isEmpty()) {
             MessageEvent.fire(eventBus, Message.warning(resources.messages().noReset()));
             callback.execute();
