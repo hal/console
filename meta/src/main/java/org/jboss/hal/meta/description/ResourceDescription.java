@@ -152,12 +152,15 @@ public class ResourceDescription extends ModelNode {
 
     @JsIgnore
     public boolean isDefaultValue(final String path, final String name, final Object value) {
-        if (value != null) {
-            Property attribute = findAttribute(path, name);
-            if (attribute != null) {
-                if (attribute.getValue().hasDefined(DEFAULT)) {
-                    ModelType type = attribute.getValue().get(TYPE).asType();
-                    Object defaultValue = attribute.getValue().get(DEFAULT).as(type);
+        Property property = findAttribute(path, name);
+        if (property != null) {
+            ModelNode attribute = property.getValue();
+            if (attribute.hasDefined(DEFAULT)) {
+                if (value == null) {
+                    return true;
+                } else {
+                    ModelType type = attribute.get(TYPE).asType();
+                    Object defaultValue = attribute.get(DEFAULT).as(type);
                     return value.equals(defaultValue);
                 }
             }

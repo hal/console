@@ -154,12 +154,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
         Metadata keyMapperMetadata = metadata.forComplexAttribute(keyMapper);
         return new ModelNodeForm.Builder<>(id(PRINCIPAL_QUERY, keyMapper, FORM_SUFFIX), keyMapperMetadata)
                 .singleton(
-                        () -> {
-                            if (pqTable.hasSelection()) {
-                                return presenter.pingKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), keyMapper);
-                            }
-                            return null;
-                        },
+                        () -> presenter.pingKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), keyMapper),
                         () -> presenter.addKeyMapper(selectedJdbcRealm, pqTable.selectedRow(), pqIndex, keyMapper))
                 .onSave((f, changedValues) -> presenter.saveKeyMapper(selectedJdbcRealm, pqIndex,
                         keyMapper, changedValues))
