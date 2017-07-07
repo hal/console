@@ -464,6 +464,10 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 });
     }
 
+    // TODO Fix requires validation:
+    // If 'search-rekursive' which requires 'filter' and which defaults to true is not touched
+    // and 'filter' is set, the RequiredByValidation does not detect an validation error, because
+    // 'search-rekursive' isEmptyOrDefault()
     void addIdentityAttributeMapping(final String selectedLdapRealm) {
         Metadata iamMetadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
@@ -482,7 +486,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void saveIdentityAttributeMapping(final String selectedLdapRealm, final int iamIndex,
             final Map<String, Object> changedValues) {
-        // Workaround for "WFLYCTL0380: Attribute 'identity-mapping.attribute-mapping[n].filter' needs to be set or
         // passed before attribute 'identity-mapping.attribute-mapping[n].search-recursive' can be correctly set"
 
         ca.save(selectedLdapRealm, IDENTITY_MAPPING + "." + ATTRIBUTE_MAPPING,
