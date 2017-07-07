@@ -15,11 +15,9 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -30,24 +28,21 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -55,14 +50,12 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Callback;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.elytron.ResourceView.HAL_INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
@@ -71,7 +64,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  * @author Claudio Miranda <claudio@redhat.com>
  */
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
-        implements SupportsExpertMode, ElytronPresenter {
+        implements SupportsExpertMode {
 
     @ProxyCodeSplit
     @Requires(value ={
@@ -85,36 +78,19 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     // @formatter:off
     public interface MyView extends MbuiView<OtherSettingsPresenter> {
-        void updateKeyStore(List<NamedNode> model);
-        void updateKeyManagers(List<NamedNode> model);
-        void updateServerSslContext(List<NamedNode> model);
-        void updateClientSslContext(List<NamedNode> model);
-        void updateTrustManagers(List<NamedNode> model);
-        void updateCredentialStore(List<NamedNode> model);
-        void updateFilteringKeyStore(List<NamedNode> model);
+        void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateLdapKeyStore(List<NamedNode> model);
-        void updateProviderLoader(List<NamedNode> model);
-        void updateAggregateProviders(List<NamedNode> model);
-        void updateSecurityDomain(List<NamedNode> model);
-        void updateDirContext(List<NamedNode> model);
-        void updateAuthenticationContext(List<NamedNode> model);
-        void updateAuthenticationConfiguration(List<NamedNode> model);
-        void updateFileAuditLog(List<NamedNode> model);
-        void updateSizeFileAuditLog(List<NamedNode> model);
-        void updatePeriodicFileAuditLog(List<NamedNode> model);
-        void updateSyslogAuditLog(List<NamedNode> model);
         void updatePolicy(List<NamedNode> model);
-        void updateAggregateSecurityEventListener(List<NamedNode> model);
     }
+    @NonNls private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OtherSettingsPresenter.class);
     // @formatter:on
-
-    private Dispatcher dispatcher;
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
+    private Dispatcher dispatcher;
 
     @Inject
     public OtherSettingsPresenter(final EventBus eventBus,
@@ -161,124 +137,74 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
         ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
-                "key-store",
-                "key-manager",
-                "server-ssl-context",
-                "client-ssl-context",
-                "trust-manager",
-                "credential-store",
-                "filtering-key-store",
-                "ldap-key-store",
-                "provider-loader",
-                "aggregate-providers",
-                "security-domain",
-                "dir-context",
-                "authentication-context",
-                "authentication-configuration",
-                "file-audit-log",
-                "size-rotating-file-audit-log",
-                "periodic-rotating-file-audit-log",
-                "syslog-audit-log",
-                "policy",
-                "aggregate-security-event-listener"
+                ElytronResource.KEY_STORE.resource,
+                ElytronResource.KEY_MANAGER.resource,
+                ElytronResource.SERVER_SSL_CONTEXT.resource,
+                ElytronResource.CLIENT_SSL_CONTEXT.resource,
+                ElytronResource.TRUST_MANAGER.resource,
+                ElytronResource.CREDENTIAL_STORE.resource,
+                ElytronResource.FILTERING_KEY_STORE.resource,
+                ElytronResource.LDAP_KEY_STORE.resource,
+                ElytronResource.PROVIDER_LOADER.resource,
+                ElytronResource.AGGREGATE_PROVIDERS.resource,
+                ElytronResource.SECURITY_DOMAIN.resource,
+                ElytronResource.DIR_CONTEXT.resource,
+                ElytronResource.AUTHENTICATION_CONTEXT.resource,
+                ElytronResource.AUTHENTICATION_CONFIGURATION.resource,
+                ElytronResource.FILE_AUDIT_LOG.resource,
+                ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG.resource,
+                ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
+                ElytronResource.SYSLOG_AUDIT_LOG.resource,
+                ElytronResource.POLICY.resource,
+                ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource
                 ),
                 result -> {
-                    // @formatter:off
                     int i = 0;
-                    getView().updateKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateKeyManagers(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateServerSslContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateClientSslContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateTrustManagers(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateFilteringKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.KEY_STORE.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.KEY_MANAGER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SERVER_SSL_CONTEXT.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CLIENT_SSL_CONTEXT.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.TRUST_MANAGER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.CREDENTIAL_STORE.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.FILTERING_KEY_STORE.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateLdapKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateProviderLoader(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateAggregateProviders(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateSecurityDomain(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateDirContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateAuthenticationContext(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateAuthenticationConfiguration(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateSizeFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updatePeriodicFileAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateSyslogAuditLog(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.PROVIDER_LOADER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.AGGREGATE_PROVIDERS.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SECURITY_DOMAIN.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.DIR_CONTEXT.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.AUTHENTICATION_CONTEXT.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.AUTHENTICATION_CONFIGURATION.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.FILE_AUDIT_LOG.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updatePolicy(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateAggregateSecurityEventListener(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    // @formatter:on
+                    getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                 });
     }
 
-    @Override
-    public void saveForm(final String title, final String name, final Map<String, Object> changedValues,
-            final Metadata metadata) {
-
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        crud.save(title, name, address, changedValues, metadata, () -> reload());
+    void reload(String resource, Consumer<List<NamedNode>> callback) {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
+                children -> callback.accept(asNamedNodes(children)));
     }
-
-    @Override
-    public void saveComplexForm(final String title, final String name, String complexAttributeName,
-            final Map<String, Object> changedValues, final Metadata metadata) {
-        ca.save(name, complexAttributeName, title, metadata.getTemplate(), changedValues, this::reload);
-
-        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        // crud.save(title, name, complexAttributeName, address, changedValues, metadata, () -> reload());
-    }
-
-    @Override
-    public void saveFormPage(String resource, String listAttributeName, Metadata metadata,
-            NamedNode payload, Map<String, Object> changedValues) {
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, resource);
-        // the HAL_INDEX is an index added by HAL to properly identify each lis item, as lists may not contain
-        // a proper name identifier. The HAL_INDEX is added in ResourceView.bindTableToForm method and follow the
-        // HAL_INDEX usage.
-        OperationFactory operationFactory = new OperationFactory(
-                name -> listAttributeName + "[" + payload.get(HAL_INDEX).asInt() + "]." + name);
-        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-        dispatcher.execute(operations, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifySingleResourceSuccess(address.lastName())));
-            reload();
-        });
-    }
-
-    @Override
-    public void listRemove(String title, String resourceName, String complexAttributeName, int index,
-            AddressTemplate template) {
-        ca.remove(resourceName, complexAttributeName, title, index, template, this::reload);
-    }
-
-
-    @Override
-    public void resetComplexAttribute(final String type, final String name, final String attribute,
-            final Metadata metadata, final Callback callback) {
-
-        ResourceAddress address = metadata.getTemplate().resolve(statementContext, name);
-        Set<String> attributeToReset = new HashSet<>();
-        attributeToReset.add(attribute);
-        crud.reset(type, name, address, attributeToReset, metadata, callback);
-    }
-
-    @Override
-    public void launchAddDialog(Function<String, String> resourceNameFunction, String complexAttributeName,
-            Metadata metadata, String title) {
-
-        String id = Ids.build(complexAttributeName, Ids.FORM_SUFFIX, Ids.ADD_SUFFIX);
-        // ResourceAddress address = metadata.getTemplate().resolve(statementContext, resourceNameFunction.apply(null));
-
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                .fromRequestProperties()
-                .build();
-
-        // AddResourceDialog.Callback callback = (name, model) -> crud
-        //         .listAdd(title, name, complexAttributeName, address, model, () -> reload());
-        AddResourceDialog.Callback callback = (name, model) -> ca.listAdd(resourceNameFunction.apply(null),
-                complexAttributeName, title, metadata.getTemplate(), model, this::reload);
-        AddResourceDialog dialog = new AddResourceDialog(title, form, callback);
-        dialog.show();
-    }
-
 
     // ------------------------------------------------------ LDAP key store
 
@@ -321,6 +247,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 changedValues, this::reloadLdapKeyStores);
     }
 
+
     void removeNewItemTemplate(final String ldapKeyStore, final Form<ModelNode> form) {
         ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 new Form.FinishRemove<ModelNode>(form) {
@@ -329,5 +256,72 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                         reloadLdapKeyStores();
                     }
                 });
+    }
+
+    // -------------------------------------------- Policy
+
+    void addPolicy() {
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE);
+        String id = Ids.build(Ids.ELYTRON_POLICY, Ids.ADD_SUFFIX);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .requiredOnly()
+                .unboundFormItem(nameItem, 0)
+                .build();
+
+        new AddResourceDialog(Names.POLICY, form, (name, model) -> {
+            // sets the "default-policy" to the same name as the policy name as the default value is "policy"
+            // repackage the model because it is not possible to add a policy with no parameter see WFLY-9056
+            model.get("default-policy").set(nameItem.getValue());
+            ModelNode jaccPolicy = new ModelNode();
+            jaccPolicy.get(NAME).set(nameItem.getValue());
+            model.get(JACC_POLICY).add(jaccPolicy);
+            ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.POLICY, name, address, model, (n, a) -> reloadPolicy());
+        }).show();
+
+    }
+
+    public void savePolicy(final String name, final Map<String, Object> changedValues) {
+        crud.save(Names.POLICY, name, AddressTemplates.POLICY_TEMPLATE, changedValues, this::reloadPolicy);
+    }
+
+    public void reloadPolicy() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.POLICY,
+                children -> getView().updatePolicy(asNamedNodes(children)));
+    }
+
+    public void addCustomPolicy(final String selectedPolicyRealm) {
+        ca.listAdd(Ids.ELYTRON_CUSTOM_POLICY_ADD, selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY,
+                POLICY_TEMPLATE, asList(NAME, CLASS_NAME, MODULE), this::reloadPolicy);
+    }
+
+    public void removeCustomPolicy(final String selectedPolicyRealm, final int customPolicyIndex) {
+        ca.remove(selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY, customPolicyIndex, POLICY_TEMPLATE,
+                this::reloadPolicy);
+    }
+
+    public void saveCustomPolicy(final String selectedPolicyRealm, final int i,
+            final Map<String, Object> changedValues) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(CUSTOM_POLICY);
+        ca.save(CUSTOM_POLICY, Names.CUSTOM_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
+    }
+
+    public void addJaccPolicy(final String selectedPolicyRealm) {
+        ca.listAdd(Ids.ELYTRON_JACC_POLICY_ADD, selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY,
+                POLICY_TEMPLATE, asList(NAME, POLICY, "configuration-factory", MODULE), this::reloadPolicy);
+    }
+
+    public void removeJaccmPolicy(final String selectedPolicyRealm, final int jaccPolicyIndex) {
+        ca.remove(selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY, jaccPolicyIndex, POLICY_TEMPLATE,
+                this::reloadPolicy);
+    }
+
+    public void saveJaccPolicy(final String selectedPolicyRealm, final int i, final Map<String, Object> changedValues) {
+        ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
+        Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(JACC_POLICY);
+        ca.save(JACC_POLICY, Names.JACC_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
     }
 }

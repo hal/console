@@ -206,6 +206,11 @@ public interface Ids {
     String ELYTRON_CUSTOM_CREDENTIAL_SECURITY_FACTORY = build(ELYTRON, "custom-credential-security-factory");
     String ELYTRON_CUSTOM_MODIFIABLE_REALM = build(ELYTRON, "custom-modifiable-realm");
     String ELYTRON_CUSTOM_PERMISSION_MAPPER = build(ELYTRON, "custom-permission-mapper");
+    String ELYTRON_CUSTOM_POLICY = build(ELYTRON, "custom-policy");
+    String ELYTRON_CUSTOM_POLICY_ADD = build(ELYTRON, "custom-policy", ADD_SUFFIX);
+    String ELYTRON_CUSTOM_POLICY_FORM = build(ELYTRON, "custom-policy", FORM_SUFFIX);
+    String ELYTRON_CUSTOM_POLICY_PAGE = build(ELYTRON, "custom-policy", PAGE_SUFFIX);
+    String ELYTRON_CUSTOM_POLICY_TABLE = build(ELYTRON, "custom-policy", TABLE_SUFFIX);
     String ELYTRON_CUSTOM_PRINCIPAL_DECODER = build(ELYTRON, "custom-principal-decoder");
     String ELYTRON_CUSTOM_PRINCIPAL_TRANSFORMER = build(ELYTRON, "custom-principal-transformer");
     String ELYTRON_CUSTOM_REALM = build(ELYTRON, "custom-realm");
@@ -222,6 +227,11 @@ public interface Ids {
     String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_FORM = build(ELYTRON_IDENTITY_ATTRIBUTE_MAPPING, FORM_SUFFIX);
     String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_PAGE = build(ELYTRON_IDENTITY_ATTRIBUTE_MAPPING, PAGE_SUFFIX);
     String ELYTRON_IDENTITY_ATTRIBUTE_MAPPING_TABLE = build(ELYTRON_IDENTITY_ATTRIBUTE_MAPPING, TABLE_SUFFIX);
+    String ELYTRON_JACC_POLICY = build(ELYTRON, "jacc-policy");
+    String ELYTRON_JACC_POLICY_ADD = build(ELYTRON, "jacc-policy", ADD_SUFFIX);
+    String ELYTRON_JACC_POLICY_FORM = build(ELYTRON, "jacc-policy", FORM_SUFFIX);
+    String ELYTRON_JACC_POLICY_PAGE = build(ELYTRON, "jacc-policy", PAGE_SUFFIX);
+    String ELYTRON_JACC_POLICY_TABLE = build(ELYTRON, "jacc-policy", TABLE_SUFFIX);
     String ELYTRON_JDBC_REALM = build(ELYTRON, "jdbc-realm");
     String ELYTRON_KERBEROS_SECURITY_FACTORY = build(ELYTRON, "kerberos-security-factory");
     String ELYTRON_KEY_MANAGER = build(ELYTRON, "key-manager");
@@ -238,6 +248,10 @@ public interface Ids {
     String ELYTRON_PERIODIC_AUDIT_LOG = build(ELYTRON, "periodic-rotating-file-audit-log");
     String ELYTRON_PERIODIC_ROTATING_FILE_AUDIT_LOG = build(ELYTRON, "periodic-rotating-file-audit-log");
     String ELYTRON_POLICY = build(ELYTRON, "policy");
+    String ELYTRON_POLICY_FORM = build(ELYTRON, "policy", FORM_SUFFIX);
+    String ELYTRON_POLICY_PAGE = build(ELYTRON, "policy", PAGE_SUFFIX);
+    String ELYTRON_POLICY_TABLE = build(ELYTRON, "policy", TABLE_SUFFIX);
+    String ELYTRON_PRINCIPAL_QUERY = build(ELYTRON, "principal-query");
     String ELYTRON_PROPERTIES_REALM = build(ELYTRON, "properties-realm");
     String ELYTRON_PROVIDER_HTTP_SERVER_MECHANISM_FACTORY = build(ELYTRON, "provider-http-server-mechanism-factory");
     String ELYTRON_PROVIDER_LOADER = build(ELYTRON, "provider-loader");

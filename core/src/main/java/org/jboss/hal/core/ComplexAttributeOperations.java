@@ -35,6 +35,7 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -149,9 +150,11 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required
-     * attributes. When clicking "Add", a new model node is created and added to the complex attribute in the specified
-     * resource. After the resource has been updated, a success message is fired and the specified callback is executed.
+     * Opens an add-resource-dialog for the given complex attribute. If the resource contains required attributes, they
+     * are displayed, otherwise all attributes are displayed.
+     * When clicking "Add", a new model node is created and added to the complex attribute in the specified
+     * resource. After the resource has been updated, a success message is fired and the specified callback is
+     * executed.
      *
      * @param id               the id used for the add resource dialog
      * @param resource         the resource name
@@ -176,9 +179,21 @@ public class ComplexAttributeOperations {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
+                // there are complex attributes which none of them are required=true
+                // as there are no required attributes, all attributes are added to the form.
+                boolean anyRequiredAttribute = false;
+                for (Property property : caMetadata.getDescription().getAttributes(ATTRIBUTES)) {
+                    anyRequiredAttribute = property.getValue().get(REQUIRED).asBoolean();
+                    if (anyRequiredAttribute) {
+                        break;
+                    }
+
+                }
                 ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, caMetadata)
-                        .addOnly()
-                        .requiredOnly();
+                        .addOnly();
+                if (anyRequiredAttribute) {
+                    builder.requiredOnly();
+                }
                 if (!Iterables.isEmpty(attributes)) {
                     builder.include(attributes).unsorted();
                 }
