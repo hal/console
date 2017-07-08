@@ -51,6 +51,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_LOG = "access-log";
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
+    String ACTION = "action";
     String ADD = "add";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
@@ -358,6 +359,7 @@ public interface ModelDescriptionConstants {
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
+    String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";
@@ -372,6 +374,7 @@ public interface ModelDescriptionConstants {
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
+    String PRINCIPALS = "principals";
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
