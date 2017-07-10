@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import javax.inject.Inject;
 
@@ -23,15 +24,23 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -41,8 +50,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 
@@ -102,6 +110,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
+    private ComplexAttributeOperations ca;
+    private MetadataRegistry metadataRegistry;
 
     @Inject
     public MapperDecoderPresenter(final EventBus eventBus,
@@ -109,13 +119,17 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             final MapperDecoderPresenter.MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
+        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
 
@@ -141,42 +155,43 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     protected void reload() {
         ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         crud.readChildren(address, asList(
-                ADD_PREFIX_ROLE_MAPPER.resource,
-                ADD_SUFFIX_ROLE_MAPPER.resource,
-                AGGREGATE_PRINCIPAL_DECODER.resource,
-                AGGREGATE_ROLE_MAPPER.resource,
-                CONCATENATING_PRINCIPAL_DECODER.resource,
-                CONSTANT_PERMISSION_MAPPER.resource,
-                CONSTANT_PRINCIPAL_DECODER.resource,
-                CONSTANT_ROLE_MAPPER.resource,
-                CUSTOM_PERMISSION_MAPPER.resource,
-                CUSTOM_PRINCIPAL_DECODER.resource,
-                CUSTOM_ROLE_DECODER.resource,
-                CUSTOM_ROLE_MAPPER.resource,
-                LOGICAL_PERMISSION_MAPPER.resource,
-                LOGICAL_ROLE_MAPPER.resource,
-                SIMPLE_PERMISSION_MAPPER.resource,
-                SIMPLE_ROLE_DECODER.resource,
-                X500_ATTRIBUTE_PRINCIPAL_DECODER.resource),
+                ElytronResource.ADD_PREFIX_ROLE_MAPPER.resource,
+                ElytronResource.ADD_SUFFIX_ROLE_MAPPER.resource,
+                ElytronResource.AGGREGATE_PRINCIPAL_DECODER.resource,
+                ElytronResource.AGGREGATE_ROLE_MAPPER.resource,
+                ElytronResource.CONCATENATING_PRINCIPAL_DECODER.resource,
+                ElytronResource.CONSTANT_PERMISSION_MAPPER.resource,
+                ElytronResource.CONSTANT_PRINCIPAL_DECODER.resource,
+                ElytronResource.CONSTANT_ROLE_MAPPER.resource,
+                ElytronResource.CUSTOM_PERMISSION_MAPPER.resource,
+                ElytronResource.CUSTOM_PRINCIPAL_DECODER.resource,
+                ElytronResource.CUSTOM_ROLE_DECODER.resource,
+                ElytronResource.CUSTOM_ROLE_MAPPER.resource,
+                ElytronResource.LOGICAL_PERMISSION_MAPPER.resource,
+                ElytronResource.LOGICAL_ROLE_MAPPER.resource,
+                ElytronResource.SIMPLE_PERMISSION_MAPPER.resource,
+                ElytronResource.SIMPLE_ROLE_DECODER.resource,
+                ElytronResource.X500_ATTRIBUTE_PRINCIPAL_DECODER.resource),
                 result -> {
                     // @formatter:off
-                    getView().updateAddPrefixRoleMapper(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
-                    getView().updateAddSuffixRoleMapper(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateAggregatePrincipalDecoder(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateAggregateRoleMapper(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateConcatenatingPrincipalDecoder(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
-                    getView().updateConstantPermissionMapper(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
-                    getView().updateConstantPrincipalDecoder(asNamedNodes(result.step(6).get(RESULT).asPropertyList()));
-                    getView().updateConstantRoleMapper(asNamedNodes(result.step(7).get(RESULT).asPropertyList()));
-                    getView().updateCustomPermissionMapper(asNamedNodes(result.step(8).get(RESULT).asPropertyList()));
-                    getView().updateCustomPrincipalDecoder(asNamedNodes(result.step(9).get(RESULT).asPropertyList()));
-                    getView().updateCustomRoleDecoder(asNamedNodes(result.step(10).get(RESULT).asPropertyList()));
-                    getView().updateCustomRoleMapper(asNamedNodes(result.step(11).get(RESULT).asPropertyList()));
-                    getView().updateLogicalPermissionMapper(asNamedNodes(result.step(12).get(RESULT).asPropertyList()));
-                    getView().updateLogicalRoleMapper(asNamedNodes(result.step(13).get(RESULT).asPropertyList()));
-                    getView().updateSimplePermissionMapper(asNamedNodes(result.step(14).get(RESULT).asPropertyList()));
-                    getView().updateSimpleRoleDecoder(asNamedNodes(result.step(15).get(RESULT).asPropertyList()));
-                    getView().updateX500AttributePrincipalDecoder(asNamedNodes(result.step(16).get(RESULT).asPropertyList()));
+                    int i = 0;
+                    getView().updateAddPrefixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAddSuffixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAggregatePrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateAggregateRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateConcatenatingPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateConstantPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateConstantPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateConstantRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCustomPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCustomPrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCustomRoleDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateCustomRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateLogicalPermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateLogicalRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSimplePermissionMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSimpleRoleDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateX500AttributePrincipalDecoder(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     // @formatter:on
                 });
     }
@@ -185,4 +200,71 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
     }
+
+    // -------------------------------------------- Simple Permission Mapper
+
+    void reloadSimplePermissionMapper() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE,
+                ModelDescriptionConstants.SIMPLE_PERMISSION_MAPPER,
+                children -> getView().updateSimplePermissionMapper(asNamedNodes(children)));
+    }
+
+    public void saveSimplePermissionMapping(final String name, final Map<String, Object> changedValues) {
+        crud.save(Names.SIMPLE_PERMISSION_MAPPER, name, AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE,
+                changedValues, this::reloadSimplePermissionMapper);
+    }
+
+    public void addPermissionMappings(final String resource) {
+        ca.listAdd(Ids.ELYTRON_PERMISSION_MAPPINGS_ADD, resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS,
+                SIMPLE_PERMISSION_MAPPER_TEMPLATE, this::reloadSimplePermissionMapper);
+    }
+
+    public void removePermissionMappings(final String resource, final int index) {
+        ca.remove(resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS, index, SIMPLE_PERMISSION_MAPPER_TEMPLATE,
+                this::reloadSimplePermissionMapper);
+    }
+
+    public void savePermissionMappings(final String resource, final int i, final Map<String, Object> changedValues) {
+        ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);
+        Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
+                .forComplexAttribute(PERMISSION_MAPPINGS);
+        ca.save(PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS, i, address, changedValues, metadata,
+                this::reloadSimplePermissionMapper);
+    }
+
+    public void addPermissions(final String resource, final int pmIndex) {
+        Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
+                .forComplexAttribute(PERMISSION_MAPPINGS)
+                .forComplexAttribute(PERMISSIONS);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSIONS_ADD, metadata)
+                .addOnly()
+                //.include(TO, INDEX)
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.PERMISSIONS),
+                form, (name, model) -> ca.listAdd(resource, permissionsAttribute(pmIndex),
+                Names.PERMISSIONS, SIMPLE_PERMISSION_MAPPER_TEMPLATE, model, this::reloadSimplePermissionMapper));
+        dialog.show();
+    }
+
+    public void removePermissions(final String resource, final int pmIndex, final int permissionsIndex) {
+        ca.remove(resource, permissionsAttribute(pmIndex), Names.PERMISSIONS, permissionsIndex,
+                SIMPLE_PERMISSION_MAPPER_TEMPLATE,
+                this::reloadSimplePermissionMapper);
+    }
+
+    public void savePermissions(final String resource, final int pmIndex, final int permissionsIndex,
+            final Map<String, Object> changedValues) {
+
+        ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);
+        Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
+                .forComplexAttribute(PERMISSION_MAPPINGS)
+                .forComplexAttribute(PERMISSIONS);
+        ca.save(permissionsAttribute(pmIndex), Names.PERMISSIONS, permissionsIndex, address, changedValues, metadata,
+                this::reloadSimplePermissionMapper);
+    }
+
+    private String permissionsAttribute(int pmIndex) {
+        return PERMISSION_MAPPINGS + "[" + pmIndex + "]." + PERMISSIONS;
+    }
+
 }

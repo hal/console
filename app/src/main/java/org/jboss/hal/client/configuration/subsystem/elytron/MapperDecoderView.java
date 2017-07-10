@@ -75,9 +75,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-logical-permission-mapper-form") Form<NamedNode> logicalPermissionMapperForm;
     @MbuiElement("mappers-decoders-logical-role-mapper-table") Table<NamedNode> logicalRoleMapperTable;
     @MbuiElement("mappers-decoders-logical-role-mapper-form") Form<NamedNode> logicalRoleMapperForm;
-    // TODO Replace 'simple-permission-mapper' with custom element
-    @MbuiElement("mappers-decoders-simple-permission-mapper-table") Table<NamedNode> simplePermissionMapperTable;
-    @MbuiElement("mappers-decoders-simple-permission-mapper-form") Form<NamedNode> simplePermissionMapperForm;
+    private SimplePermissionMapperElement simplePermissionMapperElement;
     @MbuiElement("mappers-decoders-simple-role-decoder-table") Table<NamedNode> simpleRoleDecoderTable;
     @MbuiElement("mappers-decoders-simple-role-decoder-form") Form<NamedNode> simpleRoleDecoderForm;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-table") Table<NamedNode> x500AttributePrincipalDecoderTable;
@@ -107,6 +105,19 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 constantPermissionMapperElement.asElement());
 
         registerAttachable(constantPermissionMapperElement);
+
+        Metadata spmMetadata = mbuiContext.metadataRegistry()
+                .lookup(AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE);
+        simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata, mbuiContext.tableButtonFactory(),
+                mbuiContext.resources());
+
+        navigation.insertSecondary("mappers-decoders-permission-mapper-item",
+                Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ENTRY_SUFFIX),
+                "mappers-decoders-simple-permission-mapper-item",
+                "Simple Permission Mapper",
+                simplePermissionMapperElement.asElement());
+
+        registerAttachable(simplePermissionMapperElement);
     }
 
     @Override
@@ -194,8 +205,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
     @Override
     public void updateSimplePermissionMapper(final List<NamedNode> model) {
-        simplePermissionMapperForm.clear();
-        simplePermissionMapperTable.update(model);
+        simplePermissionMapperElement.update(model);
     }
 
     @Override
@@ -208,5 +218,11 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void updateX500AttributePrincipalDecoder(final List<NamedNode> model) {
         x500AttributePrincipalDecoderForm.clear();
         x500AttributePrincipalDecoderTable.update(model);
+    }
+
+    @Override
+    public void setPresenter(final MapperDecoderPresenter presenter) {
+        super.setPresenter(presenter);
+        simplePermissionMapperElement.setPresenter(presenter);
     }
 }

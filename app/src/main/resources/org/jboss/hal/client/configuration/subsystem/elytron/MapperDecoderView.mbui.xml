@@ -228,28 +228,6 @@
                     </form>
                 </metadata>
             </sub-item>
-            <sub-item id="mappers-decoders-simple-permission-mapper-item" title="Simple Permission Mapper">
-                <metadata address="/{selected.profile}/subsystem=elytron/simple-permission-mapper=*">
-                    <h1>Simple Permission Mapper</h1>
-                    <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="mappers-decoders-simple-permission-mapper-table" title="Simple Permission Mapper"
-                           form-ref="mappers-decoders-simple-permission-mapper-form">
-                        <actions>
-                            <action handler-ref="add-resource"/>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{table.selectedRow().getName()}}"/>
-                        </actions>
-                        <columns>
-                            <column name="name" value="{{row.getName()}}"/>
-                        </columns>
-                    </table>
-                    <form id="mappers-decoders-simple-permission-mapper-form" title="Simple Permission Mapper" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
-                        <attributes>
-                        </attributes>
-                    </form>
-                </metadata>
-            </sub-item>
         </item>
 
         <!-- ================= -->

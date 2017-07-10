@@ -200,6 +200,8 @@ public interface Names {
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN = "Pattern";
+    String PERMISSIONS = "Permissions";
+    String PERMISSION_MAPPINGS = "Permission Mappings";
     String PERSISTENCE = "Persistence";
     String POLICY = "Policy";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
@@ -248,6 +250,7 @@ public interface Names {
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
     String SHARED_STORE_MASTER = "Shared Store Master";
     String SHARED_STORE_SLAVE = "Shared Store Slave";
+    String SIMPLE_PERMISSION_MAPPER = "Simple Permission Mapper";
     String SINGLE_SIGN_ON = "Single Sign On";
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
