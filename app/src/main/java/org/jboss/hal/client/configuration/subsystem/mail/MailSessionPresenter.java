@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,6 +34,7 @@ import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -45,10 +47,10 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
@@ -89,6 +91,7 @@ public class MailSessionPresenter
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private String mailSessionName;
@@ -99,6 +102,7 @@ public class MailSessionPresenter
             final MyProxy proxy,
             final Finder finder,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
@@ -106,6 +110,7 @@ public class MailSessionPresenter
             final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
+        this.ca = ca;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
@@ -230,6 +235,12 @@ public class MailSessionPresenter
                 .resolve(statementContext);
         Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
         crud.save(Names.SERVER, mailServer, address, changedValues, metadata, this::reload);
+    }
+
+    ResourceAddress credentialReferenceTemplate(@Nullable String mailServer) {
+        return mailServer != null
+                ? SELECTED_MAIL_SESSION_TEMPLATE.append(SERVER + "=" + mailServer).resolve(statementContext)
+                : null;
     }
 
     void resetServer(final String mailServer, final Form<NamedNode> form) {

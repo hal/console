@@ -71,6 +71,7 @@ public interface Names {
     String COOKIES = "Cookies";
     String CORE_QUEUE = "Core Queue";
     String CRAWLER = "Crawler";
+    String CREDENTIAL_REFERENCE = "Credential Reference";
     String CUSTOM = "Custom";
     String CUSTOM_POLICY = "Custom Policy";
 

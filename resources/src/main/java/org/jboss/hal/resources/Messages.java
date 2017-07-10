@@ -80,6 +80,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentReplaced(@PluralCount int size);
     SafeHtml contentUndeployed(String name);
     SafeHtml contentUndeployedFromServerGroup(String name, String serverGroup);
+    SafeHtml credentialReferenceAddressError();
+    String credentialReferenceValidationError(String alternative);
     String currentOfTotal(long current, long total);
 
     SafeHtml dataSourceAddError();
@@ -367,7 +369,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String unknownResourceDetails(String address, String reason);
     String uptime(String uptime);
     String used(double value);
-    String validationAtLeast(String val);
 
     String view(String type);
 

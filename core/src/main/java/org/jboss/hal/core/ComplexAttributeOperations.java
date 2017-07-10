@@ -215,6 +215,22 @@ public class ComplexAttributeOperations {
     public void add(final String resource, final String complexAttribute, final String type,
             final AddressTemplate template, @Nullable final ModelNode payload, final Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
+        add(complexAttribute, type, address, payload, callback);
+    }
+
+    /**
+     * Writes the payload to the complex attribute in the specified resource. After the resource has been updated,
+     * a success message is fired and the specified callback is executed.
+     *
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param address          the fq address for the operation
+     * @param payload          the optional payload for the complex attribute (may be null or undefined)
+     * @param callback         the callback executed after the resource has been added
+     */
+    @JsIgnore
+    public void add(final String complexAttribute, final String type, final ResourceAddress address,
+            @Nullable final ModelNode payload, final Callback callback) {
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
                 .param(NAME, complexAttribute)
                 .param(VALUE, payload == null ? new ModelNode().addEmptyObject() : payload)
@@ -466,6 +482,21 @@ public class ComplexAttributeOperations {
     public void remove(final String resource, final String complexAttribute, final String type,
             final AddressTemplate template, final Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
+        remove(complexAttribute, type, address, callback);
+    }
+
+    /**
+     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and
+     * the specified callback is executed.
+     *
+     * @param complexAttribute the name of the complex attribute
+     * @param type             the human readable name of the complex attribute
+     * @param address          the fq address for the operation
+     * @param callback         the callback executed after the complex attribute has been undefined
+     */
+    @JsIgnore
+    public void remove(final String complexAttribute, final String type, final ResourceAddress address,
+            final Callback callback) {
         Operation operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, complexAttribute)
                 .build();

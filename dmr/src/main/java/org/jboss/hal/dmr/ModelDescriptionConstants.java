@@ -66,6 +66,7 @@ public interface ModelDescriptionConstants {
     String AGGREGATE_SASL_SERVER_FACTORY = "aggregate-sasl-server-factory";
     String AGGREGATE_SECURITY_EVENT_LISTENER = "aggregate-security-event-listener";
     String AJP_LISTENER = "ajp-listener";
+    String ALIAS = "alias";
     String ALLOW_BLANK_PASSWORD = "allow-blank-password";
     String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
     String ALLOWED = "allowed";
@@ -108,6 +109,7 @@ public interface ModelDescriptionConstants {
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
+    String CLEAR_TEXT = "clear-text";
     String CLIENT_CONFIG = "client-config";
     String CLIENT_MAPPINGS = "client-mappings";
     String CLIENT_SSL_CONTEXT = "client-ssl-context";
@@ -351,7 +353,6 @@ public interface ModelDescriptionConstants {
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
     String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
-
     String PARTITION_HANDLING = "partition-handling";
     String PASSWORD = "password";
     String PATH = "path";
