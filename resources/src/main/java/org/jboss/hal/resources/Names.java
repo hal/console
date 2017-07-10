@@ -237,6 +237,7 @@ public interface Names {
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
 
+    String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY_DOMAIN = "Security Domain";

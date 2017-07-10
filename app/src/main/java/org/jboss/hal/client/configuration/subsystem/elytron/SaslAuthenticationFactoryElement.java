@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * sasl://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,13 +40,12 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
-import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
-import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
-import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
-import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
+import static org.jboss.hal.resources.Ids.*;
 
-class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
+/**
+ * @author Claudio Miranda <claudio@redhat.com>
+ */
+class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
 
     private final Table<NamedNode> factoryTable;
@@ -62,21 +61,21 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     private int mcIndex;
     private int mrcIndex;
 
-    HttpAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
-        // HTTP authentication factory
+    SaslAuthenticationFactoryElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
+        // SASL authentication factory
         factoryTable = new ModelNodeTable.Builder<NamedNode>(id(TABLE_SUFFIX), metadata)
-                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.HTTP_AUTHENTICATION_FACTORY,
-                        metadata.getTemplate(), (n, a) -> presenter.reloadHttpAuthenticationFactories()))
-                .button(tableButtonFactory.remove(Names.HTTP_AUTHENTICATION_FACTORY, metadata.getTemplate(),
-                        (table) -> table.selectedRow().getName(), () -> presenter.reloadHttpAuthenticationFactories()))
+                .button(tableButtonFactory.add(id(ADD_SUFFIX), Names.SASL_AUTHENTICATION_FACTORY,
+                        metadata.getTemplate(), (n, a) -> presenter.reloadSaslAuthenticationFactories()))
+                .button(tableButtonFactory.remove(Names.SASL_AUTHENTICATION_FACTORY, metadata.getTemplate(),
+                        (table) -> table.selectedRow().getName(), () -> presenter.reloadSaslAuthenticationFactories()))
                 .column(NAME, (cell, type, row, meta) -> row.getName())
                 .column(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration, "15em") //NON-NLS
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM_SUFFIX), metadata)
-                .onSave((form, changedValues) -> presenter.saveHttpAuthenticationFactory(form, changedValues))
+                .onSave((form, changedValues) -> presenter.saveSaslAuthenticationFactory(form, changedValues))
                 .build();
         HTMLElement factorySection = section()
-                .add(h(1).textContent(Names.HTTP_AUTHENTICATION_FACTORY))
+                .add(h(1).textContent(Names.SASL_AUTHENTICATION_FACTORY))
                 .add(p().textContent(metadata.getDescription().getDescription()))
                 .addAll(factoryTable, factoryForm)
                 .asElement();
@@ -85,15 +84,15 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         Metadata mcMetadata = metadata.forComplexAttribute(MECHANISM_CONFIGURATIONS);
         mcTable = new ModelNodeTable.Builder<>(id(MECHANISM_CONFIGURATIONS, TAB_SUFFIX), mcMetadata)
                 .button(tableButtonFactory.add(mcMetadata.getTemplate(),
-                        table -> presenter.addHttpMechanismConfiguration(selectedFactory)))
+                        table -> presenter.addSaslMechanismConfiguration(selectedFactory)))
                 .button(tableButtonFactory.remove(mcMetadata.getTemplate(),
-                        table -> presenter.removeHttpMechanismConfiguration(selectedFactory, mcIndex)))
+                        table -> presenter.removeSaslMechanismConfiguration(selectedFactory, mcIndex)))
                 .column(MECHANISM_NAME)
                 .column(Names.MECHANISM_REALM_CONFIGURATIONS, this::showMechanismRealmConfiguration,
                         "20em") //NON-NLS
                 .build();
         mcForm = new ModelNodeForm.Builder<>(id(MECHANISM_CONFIGURATIONS, FORM_SUFFIX), mcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveHttpMechanismConfiguration(selectedFactory,
+                .onSave(((form, changedValues) -> presenter.saveSaslMechanismConfiguration(selectedFactory,
                         form.getModel().get(HAL_INDEX).asInt(), changedValues)))
                 .build();
         HTMLElement mcSection = section()
@@ -106,13 +105,13 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         Metadata mrcMetadata = mcMetadata.forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
         mrcTable = new ModelNodeTable.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, TABLE_SUFFIX), mrcMetadata)
                 .button(tableButtonFactory.add(mrcMetadata.getTemplate(),
-                        table -> presenter.addHttpMechanismRealmConfiguration(selectedFactory, mcIndex)))
+                        table -> presenter.addSaslMechanismRealmConfiguration(selectedFactory, mcIndex)))
                 .button(tableButtonFactory.remove(mrcMetadata.getTemplate(),
-                        table -> presenter.removeHttpMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
+                        table -> presenter.removeSaslMechanismRealmConfiguration(selectedFactory, mcIndex, mrcIndex)))
                 .column(REALM_NAME)
                 .build();
         mrcForm = new ModelNodeForm.Builder<>(id(MECHANISM_REALM_CONFIGURATIONS, FORM_SUFFIX), mrcMetadata)
-                .onSave(((form, changedValues) -> presenter.saveHttpMechanismRealmConfiguration(selectedFactory, mcIndex,
+                .onSave(((form, changedValues) -> presenter.saveSaslMechanismRealmConfiguration(selectedFactory, mcIndex,
                         mrcIndex, changedValues)))
                 .build();
         HTMLElement mrcSection = section()
@@ -123,7 +122,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
 
         pages = new Pages(id(PAGE_SUFFIX), factorySection);
         pages.addPage(id(PAGE_SUFFIX), id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX),
-                () -> Names.HTTP_AUTHENTICATION_FACTORY + ": " + selectedFactory,
+                () -> Names.SASL_AUTHENTICATION_FACTORY + ": " + selectedFactory,
                 () -> Names.MECHANISM_CONFIGURATIONS,
                 mcSection);
         pages.addPage(id(MECHANISM_CONFIGURATIONS, PAGE_SUFFIX), id(MECHANISM_REALM_CONFIGURATIONS, PAGE_SUFFIX),
@@ -133,7 +132,7 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
     }
 
     private String id(@NonNls String... ids) {
-        return Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, ids);
+        return Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, ids);
     }
 
     @Override
@@ -192,9 +191,9 @@ class HttpAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
         }
     }
 
-    private void showMechanismConfiguration(final NamedNode httpAuthenticationFactory) {
-        selectedFactory = httpAuthenticationFactory.getName();
-        List<ModelNode> mcNodes = failSafeList(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS);
+    private void showMechanismConfiguration(final NamedNode saslAuthenticationFactory) {
+        selectedFactory = saslAuthenticationFactory.getName();
+        List<ModelNode> mcNodes = failSafeList(saslAuthenticationFactory, MECHANISM_CONFIGURATIONS);
         storeIndex(mcNodes);
         mcForm.clear();
         mcTable.update(mcNodes, modelNode -> modelNode.get(MECHANISM_NAME).asString());

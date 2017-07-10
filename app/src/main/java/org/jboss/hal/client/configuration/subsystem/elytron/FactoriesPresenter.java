@@ -93,6 +93,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
     public interface MyView extends MbuiView<FactoriesPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
         void updateHttpAuthentication(List<NamedNode> nodes);
+        void updateSaslAuthentication(List<NamedNode> nodes);
     }
     // @formatter:on
 
@@ -197,8 +198,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
                             asNamedNodes(result.step(14).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(REGEX_VALIDATING_PRINCIPAL_TRANSFORMER.resource,
                             asNamedNodes(result.step(15).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(SASL_AUTHENTICATION_FACTORY.resource,
-                            asNamedNodes(result.step(16).get(RESULT).asPropertyList()));
+                    getView().updateSaslAuthentication(asNamedNodes(result.step(16).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY.resource,
                             asNamedNodes(result.step(17).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(SERVICE_LOADER_SASL_SERVER_FACTORY.resource,
@@ -216,7 +216,7 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
 
     void reloadHttpAuthenticationFactories() {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE,
-                ModelDescriptionConstants.HTTP_AUTNETICATION_FACTORY,
+                ModelDescriptionConstants.HTTP_AUTHENTICATION_FACTORY,
                 children -> getView().updateHttpAuthentication(asNamedNodes(children)));
     }
 
@@ -226,26 +226,26 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
                 this::reloadHttpAuthenticationFactories);
     }
 
-    void addMechanismConfiguration(String httpAuthenticationFactory) {
+    void addHttpMechanismConfiguration(String httpAuthenticationFactory) {
         String id = Ids.build(Ids.ELYTRON_HTTP_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
         ca.listAdd(id, httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
                 this::reloadHttpAuthenticationFactories);
     }
 
-    void saveMechanismConfiguration(String httpAuthenticationFactory, int index,
+    void saveHttpMechanismConfiguration(String httpAuthenticationFactory, int index,
             Map<String, Object> changedValues) {
         ca.save(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
                 this::reloadHttpAuthenticationFactories);
     }
 
-    void removeMechanismConfiguration(String httpAuthenticationFactory, int index) {
+    void removeHttpMechanismConfiguration(String httpAuthenticationFactory, int index) {
         ca.remove(httpAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
                 AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, this::reloadHttpAuthenticationFactories);
     }
 
-    void addMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex) {
+    void addHttpMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex) {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE)
                 .forComplexAttribute(MECHANISM_CONFIGURATIONS)
                 .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
@@ -262,14 +262,14 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         dialog.show();
     }
 
-    void saveMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+    void saveHttpMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
             Map<String, Object> changedValues) {
         ca.save(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
                 mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
                 this::reloadHttpAuthenticationFactories);
     }
 
-    void removeMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex,
+    void removeHttpMechanismRealmConfiguration(String httpAuthenticationFactory, int mechanismIndex,
             int mechanismRealmIndex) {
         ca.remove(httpAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
                 mechanismRealmIndex, AddressTemplates.HTTP_AUTHENTICATION_FACTORY_TEMPLATE,
@@ -278,5 +278,69 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
 
     private String mrcComplexAttribute(int mechanismIndex) {
         return MECHANISM_CONFIGURATIONS + "[" + mechanismIndex + "]." + MECHANISM_REALM_CONFIGURATIONS;
+    }
+
+    // ------------------------------------------------------ SASL authentication factory
+
+    void reloadSaslAuthenticationFactories() {
+        crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE,
+                ModelDescriptionConstants.SASL_AUTHENTICATION_FACTORY,
+                children -> getView().updateSaslAuthentication(asNamedNodes(children)));
+    }
+
+    void saveSaslAuthenticationFactory(Form<NamedNode> form, Map<String, Object> changedValues) {
+        crud.save(Names.SASL_AUTHENTICATION_FACTORY, form.getModel().getName(),
+                AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
+                this::reloadSaslAuthenticationFactories);
+    }
+
+    void addSaslMechanismConfiguration(String saslAuthenticationFactory) {
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        ca.listAdd(id, saslAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION,
+                AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, singletonList(MECHANISM_NAME),
+                this::reloadSaslAuthenticationFactories);
+    }
+
+    void saveSaslMechanismConfiguration(String saslAuthenticationFactory, int index,
+            Map<String, Object> changedValues) {
+        ca.save(saslAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
+                AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
+                this::reloadSaslAuthenticationFactories);
+    }
+
+    void removeSaslMechanismConfiguration(String saslAuthenticationFactory, int index) {
+        ca.remove(saslAuthenticationFactory, MECHANISM_CONFIGURATIONS, Names.MECHANISM_CONFIGURATION, index,
+                AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, this::reloadSaslAuthenticationFactories);
+    }
+
+    void addSaslMechanismRealmConfiguration(String saslAuthenticationFactory, int mechanismIndex) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE)
+                .forComplexAttribute(MECHANISM_CONFIGURATIONS)
+                .forComplexAttribute(MECHANISM_REALM_CONFIGURATIONS);
+        String id = Ids.build(Ids.ELYTRON_SASL_AUTHENTICATION_FACTORY, MECHANISM_REALM_CONFIGURATIONS, Ids.ADD_SUFFIX);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .requiredOnly()
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.MECHANISM_REALM_CONFIGURATION), form,
+                (name, model) -> ca.listAdd(saslAuthenticationFactory, mrcComplexAttribute(mechanismIndex),
+                        Names.MECHANISM_REALM_CONFIGURATION, AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE,
+                        model, this::reloadSaslAuthenticationFactories));
+        dialog.show();
+    }
+
+    void saveSaslMechanismRealmConfiguration(String saslAuthenticationFactory, int mechanismIndex, int mechanismRealmIndex,
+            Map<String, Object> changedValues) {
+        ca.save(saslAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, changedValues,
+                this::reloadSaslAuthenticationFactories);
+    }
+
+    void removeSaslMechanismRealmConfiguration(String saslAuthenticationFactory, int mechanismIndex,
+            int mechanismRealmIndex) {
+        ca.remove(saslAuthenticationFactory, mrcComplexAttribute(mechanismIndex), Names.MECHANISM_REALM_CONFIGURATION,
+                mechanismRealmIndex, AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE,
+                this::reloadSaslAuthenticationFactories);
     }
 }
