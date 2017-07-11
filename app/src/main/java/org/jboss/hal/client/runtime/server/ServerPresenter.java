@@ -29,12 +29,12 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -60,7 +60,11 @@ public class ServerPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_CONFIGURATION)
-    @Requires(value = {SERVER_CONFIG_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SYSTEM_PROPERTY_ADDRESS},
+    @Requires(value = {SERVER_CONFIG_ADDRESS,
+            INTERFACE_ADDRESS,
+            JVM_ADDRESS,
+            PATH_ADDRESS,
+            SYSTEM_PROPERTY_ADDRESS},
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 

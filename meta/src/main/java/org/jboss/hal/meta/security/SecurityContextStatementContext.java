@@ -45,11 +45,11 @@ public class SecurityContextStatementContext extends FilteringStatementContext {
                             case DOMAIN_CONTROLLER:
                             case SELECTED_HOST:
                             case SELECTED_GROUP:
+                            case SELECTED_SERVER:
                                 return delegate.resolveTuple(placeholder);
 
                             case SELECTED_PROFILE:
                             case SELECTED_SERVER_CONFIG:
-                            case SELECTED_SERVER:
                                 return new String[]{t.resource(), "*"};
                         }
                     }
