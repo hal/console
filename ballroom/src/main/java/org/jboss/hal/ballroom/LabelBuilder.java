@@ -60,6 +60,7 @@ public class LabelBuilder {
             .put("otp", "OTP")
             .put("rdn", "RDN")
             .put("sar", "SAR")
+            .put("sasl", "SASL")
             .put("sql", "SQL")
             .put("ssl", "SSL")
             .put("tcp", "TCP")

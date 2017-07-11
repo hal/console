@@ -47,6 +47,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     private final Map<String, ResourceElement> elements;
     private final VerticalNavigation navigation;
     private final HttpAuthenticationFactoryElement httpAuthenticationFactoryElement;
+    private final SaslAuthenticationFactoryElement saslAuthenticationFactoryElement;
     private FactoriesPresenter presenter;
 
     @Inject
@@ -159,7 +160,13 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                 Ids.build(PROVIDER_SASL_SERVER_FACTORY.baseId, Ids.ENTRY_SUFFIX),
                 "Provider SASL Server");
 
-        // TODO Custom element for ElytronResource.SASL_AUTHENTICATION_FACTORY
+        // SASL_AUTHENTICATION_FACTORY uses a custom element
+        Metadata metadataSaslAuthFactory = mbuiContext.metadataRegistry().lookup(SASL_AUTHENTICATION_FACTORY.template);
+        saslAuthenticationFactoryElement = new SaslAuthenticationFactoryElement(metadataSaslAuthFactory,
+                mbuiContext.tableButtonFactory());
+        registerAttachable(saslAuthenticationFactoryElement);
+        navigation.addSecondary(primaryIdSaslFactories, Ids.build(SASL_AUTHENTICATION_FACTORY.baseId, Ids.ENTRY_SUFFIX),
+                Names.SASL_AUTHENTICATION_FACTORY, saslAuthenticationFactoryElement.asElement());
 
         addResourceElement(SERVICE_LOADER_SASL_SERVER_FACTORY,
                 SERVICE_LOADER_SASL_SERVER_FACTORY.resourceElement(mbuiContext,
@@ -255,6 +262,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     public void setPresenter(final FactoriesPresenter presenter) {
         this.presenter = presenter;
         httpAuthenticationFactoryElement.setPresenter(presenter);
+        saslAuthenticationFactoryElement.setPresenter(presenter);
     }
 
     @Override
@@ -268,5 +276,10 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
     @Override
     public void updateHttpAuthentication(List<NamedNode> nodes) {
         httpAuthenticationFactoryElement.update(nodes);
+    }
+
+    @Override
+    public void updateSaslAuthentication(final List<NamedNode> nodes) {
+        saslAuthenticationFactoryElement.update(nodes);
     }
 }
