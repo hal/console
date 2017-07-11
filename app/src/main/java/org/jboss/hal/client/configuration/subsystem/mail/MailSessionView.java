@@ -30,6 +30,7 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.subsystem.elytron.CredentialReference;
+import org.jboss.hal.core.subsystem.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -66,7 +67,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     private final Form<MailSession> mailSessionForm;
     private final Table<NamedNode> serverTable;
     private final Form<NamedNode> serverForm;
-    private final Form<ModelNode> crForm;
+    private Form<ModelNode> crForm;
 
     private MailSessionPresenter presenter;
 
@@ -121,6 +122,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 .onSave((f, changedValues) -> presenter.saveServer(f.getModel().getName(), changedValues))
                 .prepareReset(f -> presenter.resetServer(f.getModel().getName(), f))
                 .build();
+        serverForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> crForm.getModel(), resources));
         serverForm.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
         registerAttachable(serverForm);

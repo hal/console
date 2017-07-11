@@ -28,6 +28,7 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.GroupedForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.subsystem.elytron.CredentialReference;
+import org.jboss.hal.core.subsystem.elytron.CredentialReference.AlternativeValidation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -244,7 +245,9 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         }
 
         nonXaForm = nonXaFormBuilder.build();
+        nonXaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> nonXaCrForm.getModel(), resources));
         xaForm = xaFormBuilder.build();
+        xaForm.addFormValidation(new AlternativeValidation<>(PASSWORD, () -> xaCrForm.getModel(), resources));
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
 

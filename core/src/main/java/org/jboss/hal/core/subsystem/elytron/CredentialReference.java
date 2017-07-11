@@ -23,6 +23,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
@@ -51,6 +52,36 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
  * resources across subsystems.
  */
 public class CredentialReference {
+
+    /**
+     * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is
+     * given.
+     */
+    public static class AlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+
+        private final String alternativeName;
+        private final Supplier<ModelNode> credentialReferenceValue;
+        private final Resources resources;
+
+        public AlternativeValidation(String alternativeName,
+                Supplier<ModelNode> credentialReferenceValue, Resources resources) {
+            this.alternativeName = alternativeName;
+            this.credentialReferenceValue = credentialReferenceValue;
+            this.resources = resources;
+        }
+
+        @Override
+        public ValidationResult validate(Form<T> form) {
+            FormItem<String> formItem = form.getFormItem(alternativeName);
+            if (!Strings.isNullOrEmpty(formItem.getValue()) && credentialReferenceValue.get().isDefined()) {
+                formItem.showError(resources.messages()
+                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
+                return ValidationResult.invalid(resources.messages().credentialReferenceConflict());
+            }
+            return ValidationResult.OK;
+        }
+    }
+
 
     private static class CrFormValidation implements FormValidation<ModelNode> {
 
@@ -94,13 +125,12 @@ public class CredentialReference {
      * singleton form to add, save, reset and remove the complex attribute.
      *
      * @param baseId           base ID used for the generated form and add resource dialog
-     * @param alternativeName  the name of the alternative attribute
-     * @param alternativeValue the value of the alternative attribute
      * @param metadata         the metadata of the resource which contains the {@code credential-reference}
      *                         attribute
+     * @param alternativeName  the name of the alternative attribute
+     * @param alternativeValue the value of the alternative attribute
      * @param address          the fully qualified address of the resource used for the CRUD actions
-     * @param callback         the callback executed after the {@code credential-reference} attributes has been
-     *                         added,
+     * @param callback         the callback executed after the {@code credential-reference} attributes has been added,
      *                         saved, reset or removed
      */
     public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,

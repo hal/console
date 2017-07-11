@@ -82,6 +82,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentUndeployedFromServerGroup(String name, String serverGroup);
     SafeHtml credentialReferenceAddConfirmation(String alternative);
     SafeHtml credentialReferenceAddressError();
+    String credentialReferenceConflict();
     String credentialReferenceValidationError(String alternative);
     String currentOfTotal(long current, long total);
 
