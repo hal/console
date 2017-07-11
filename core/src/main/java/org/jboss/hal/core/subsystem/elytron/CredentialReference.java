@@ -28,9 +28,12 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -72,14 +75,17 @@ public class CredentialReference {
     }
 
 
-    private final ComplexAttributeOperations ca;
     private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final ComplexAttributeOperations ca;
     private final Resources resources;
 
     @Inject
-    public CredentialReference(ComplexAttributeOperations ca, EventBus eventBus, Resources resources) {
-        this.ca = ca;
+    public CredentialReference(EventBus eventBus, Dispatcher dispatcher, ComplexAttributeOperations ca,
+            Resources resources) {
         this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
+        this.ca = ca;
         this.resources = resources;
     }
 
@@ -117,10 +123,11 @@ public class CredentialReference {
                                         resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                                         resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
                                         () -> setTimeout(
-                                                o -> addCredentialReference(baseId, crMetadata, address, callback),
+                                                o -> addCredentialReference(baseId, crMetadata, alternativeName,
+                                                        address, callback),
                                                 SHORT_TIMEOUT));
                             } else {
-                                addCredentialReference(baseId, crMetadata, address, callback);
+                                addCredentialReference(baseId, crMetadata, null, address, callback);
                             }
                         })
                 .onSave(((f, changedValues) -> {
@@ -168,8 +175,8 @@ public class CredentialReference {
         return form;
     }
 
-    private void addCredentialReference(String baseId, Metadata crMetadata, Supplier<ResourceAddress> address,
-            Callback callback) {
+    private void addCredentialReference(String baseId, Metadata crMetadata, String alternativeName,
+            Supplier<ResourceAddress> address, Callback callback) {
         ResourceAddress fqAddress = address.get();
         if (fqAddress != null) {
             String id = Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.ADD_SUFFIX);
@@ -179,8 +186,26 @@ public class CredentialReference {
                     .unsorted()
                     .build();
             new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                    form, (name, model) -> ca.add(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE,
-                    fqAddress, model, callback)).show();
+                    form, (name, model) -> {
+                if (alternativeName != null) {
+                    Operation undefine = new Operation.Builder(fqAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                            .param(NAME, alternativeName)
+                            .build();
+                    Operation write = new Operation.Builder(fqAddress, WRITE_ATTRIBUTE_OPERATION)
+                            .param(NAME, CREDENTIAL_REFERENCE)
+                            .param(VALUE, model)
+                            .build();
+                    dispatcher.execute(new Composite(undefine, write), (CompositeResult result) -> {
+                        MessageEvent.fire(eventBus, Message.success(
+                                resources.messages().addSingleResourceSuccess(Names.CREDENTIAL_REFERENCE)));
+                        callback.execute();
+                    });
+
+                } else {
+                    ca.add(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress, model, callback);
+                }
+            }).show();
+
         } else {
             MessageEvent.fire(eventBus,
                     Message.error(resources.messages().credentialReferenceAddressError()));
