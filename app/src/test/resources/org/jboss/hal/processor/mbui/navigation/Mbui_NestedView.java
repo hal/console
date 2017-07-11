@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
@@ -40,13 +41,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * WARNING! This class is generated. Do not modify.
  */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewProcessor")
-final class Mbui_NestedView extends NestedView {
+public final class Mbui_NestedView extends NestedView {
 
     private final Metadata metadata0;
     private final Map<String, HTMLElement> handlebarElements;
 
+    @Inject
     @SuppressWarnings("unchecked")
-    Mbui_NestedView(MbuiContext mbuiContext) {
+    public Mbui_NestedView(MbuiContext mbuiContext) {
         super(mbuiContext);
 
         AddressTemplate metadata0Template = AddressTemplate.of("/subsystem=foo");

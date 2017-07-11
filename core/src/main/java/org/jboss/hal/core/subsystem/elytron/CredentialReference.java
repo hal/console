@@ -45,7 +45,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * Provides building blocks for dealing with the {@code credential-reference} complex attribute used in several
  * resources across subsystems.
  */
-// TODO Add a way to validate the alternatives between 'credential-reference' and other attributes *across* forms
 public class CredentialReference {
 
     private static class MainFormValidation<T extends ModelNode> implements FormValidation<T> {
@@ -150,6 +149,8 @@ public class CredentialReference {
                                     .param(NAME, CREDENTIAL_REFERENCE).build() : null;
                         },
                         () -> {
+                            // TODO Add a confirmation dialog which resolves the conflict with the alternative
+                            // TODO attribute in the main resource.
                             ResourceAddress fqAddress = address.get();
                             if (fqAddress != null) {
                                 String id = Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.ADD_SUFFIX);

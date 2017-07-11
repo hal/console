@@ -88,10 +88,6 @@
             <artifactId>elemento-template</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-gin</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-all</artifactId>
             <exclusions>
