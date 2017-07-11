@@ -125,7 +125,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
         registerAttachable(serverForm);
 
-        crForm = cr.form(Ids.MAIL_SERVER, serverMetadata,
+        crForm = cr.form(Ids.MAIL_SERVER, serverMetadata, PASSWORD,
+                () -> serverForm.<String>getFormItem(PASSWORD).getValue(),
                 () -> presenter.credentialReferenceTemplate(
                         serverTable.hasSelection() ? serverTable.selectedRow().getName() : null),
                 () -> presenter.reload());

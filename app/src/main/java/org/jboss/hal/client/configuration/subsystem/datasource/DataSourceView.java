@@ -167,12 +167,12 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     private final Resources resources;
-    private final Form<DataSource> nonXaForm;
-    private final Form<DataSource> xaForm;
     private final HTMLElement header;
     private final HTMLElement nonXaInfo;
     private final HTMLElement xaInfo;
+    private Form<DataSource> nonXaForm;
     private Form<ModelNode> nonXaCrForm;
+    private Form<DataSource> xaForm;
     private Form<ModelNode> xaCrForm;
     private DataSourcePresenter presenter;
 
@@ -201,7 +201,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
             String xaId = Ids.build(Ids.XA_DATA_SOURCE, group);
 
             if (CREDENTIAL_REFERENCE.equals(group)) {
-                nonXaCrForm = credentialReference.form(nonXaId, nonXaMeta,
+                nonXaCrForm = credentialReference.form(nonXaId, nonXaMeta, PASSWORD,
+                        () -> nonXaForm.<String>getFormItem(PASSWORD).getValue(),
                         () -> presenter.resourceAddress(),
                         () -> presenter.reload());
                 registerAttachable(nonXaCrForm);
@@ -209,7 +210,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
                         .add(nonXaCrForm)
                         .end();
 
-                xaCrForm = credentialReference.form(Ids.XA_DATA_SOURCE, xaMeta,
+                xaCrForm = credentialReference.form(Ids.XA_DATA_SOURCE, xaMeta, PASSWORD,
+                        () -> xaForm.<String>getFormItem(PASSWORD).getValue(),
                         () -> presenter.resourceAddress(),
                         () -> presenter.reload());
                 registerAttachable(xaCrForm);
@@ -243,8 +245,6 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         nonXaForm = nonXaFormBuilder.build();
         xaForm = xaFormBuilder.build();
-        credentialReference.addValidation(nonXaForm, nonXaCrForm, PASSWORD);
-        credentialReference.addValidation(xaForm, xaCrForm, PASSWORD);
         registerAttachable(nonXaForm);
         registerAttachable(xaForm);
 

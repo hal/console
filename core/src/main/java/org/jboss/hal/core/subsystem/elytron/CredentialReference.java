@@ -21,8 +21,8 @@ import javax.inject.Inject;
 import com.google.common.base.Strings;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
@@ -39,7 +39,9 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
  * Provides building blocks for dealing with the {@code credential-reference} complex attribute used in several
@@ -47,73 +49,26 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class CredentialReference {
 
-    private static class MainFormValidation<T extends ModelNode> implements FormValidation<T> {
+    private static class CrFormValidation implements FormValidation<ModelNode> {
 
-        private final Form<T> mainForm;
-        private final Form<ModelNode> crForm;
+        private final String alternativeName;
+        private final Supplier<String> alternativeValue;
         private final Resources resources;
-        private final String crAlternative;
 
-        private MainFormValidation(Form<T> mainForm, Form<ModelNode> crForm, String crAlternative,
-                Resources resources) {
-            this.mainForm = mainForm;
-            this.crForm = crForm;
+        private CrFormValidation(String alternativeName, Supplier<String> alternativeValue, Resources resources) {
+            this.alternativeName = alternativeName;
+            this.alternativeValue = alternativeValue;
             this.resources = resources;
-            this.crAlternative = crAlternative;
-        }
-
-        @Override
-        public ValidationResult validate(Form<T> form) {
-            return CredentialReference.validate(mainForm, crForm, crAlternative, resources);
-        }
-    }
-
-
-    private static class CrFormValidation<T extends ModelNode> implements FormValidation<ModelNode> {
-
-        private final Form<T> mainForm;
-        private final Form<ModelNode> crForm;
-        private final Resources resources;
-        private final String crAlternative;
-
-        private CrFormValidation(Form<T> mainForm, Form<ModelNode> crForm, String crAlternative, Resources resources) {
-            this.mainForm = mainForm;
-            this.crForm = crForm;
-            this.resources = resources;
-            this.crAlternative = crAlternative;
         }
 
         @Override
         public ValidationResult validate(Form<ModelNode> form) {
-            return CredentialReference.validate(mainForm, crForm, crAlternative, resources);
+            if (alternativeName != null && alternativeValue != null && !Strings.isNullOrEmpty(alternativeValue.get())) {
+                ValidationResult.invalid(resources.messages()
+                        .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
+            }
+            return ValidationResult.OK;
         }
-    }
-
-
-    private static <T extends ModelNode> ValidationResult validate(Form<T> mainForm, Form<ModelNode> crForm,
-            String crAlternative, Resources resources) {
-        String crAlternativeValue = null;
-        FormItem<Object> formItem = mainForm.getFormItem(crAlternative);
-        if (formItem != null) {
-            crAlternativeValue = String.valueOf(formItem.getValue());
-        }
-        if (!Strings.isNullOrEmpty(crAlternativeValue) && crDefined(crForm)) {
-            ValidationResult.invalid(
-                    resources.messages().credentialReferenceValidationError(new LabelBuilder().label(crAlternative)));
-        }
-        return ValidationResult.OK;
-    }
-
-    private static boolean crDefined(Form<ModelNode> crForm) {
-        ModelNode model = crForm.getModel();
-        return isDefined(model, STORE) ||
-                isDefined(model, ALIAS) ||
-                isDefined(model, TYPE) ||
-                isDefined(model, CLEAR_TEXT);
-    }
-
-    private static boolean isDefined(ModelNode model, String attribute) {
-        return model.hasDefined(attribute) && !Strings.isNullOrEmpty(model.get(attribute).asString());
     }
 
 
@@ -132,42 +87,43 @@ public class CredentialReference {
      * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a
      * singleton form to add, save, reset and remove the complex attribute.
      *
-     * @param baseId   base ID used for the form and the add resource dialog
-     * @param metadata the metadata of the resource which contains the {@code credential-reference} attribute
-     * @param address  the fully qualified address of the resource
-     * @param callback the callback executed after the {@code credential-reference} attributes has been added, save,
-     *                 reset or removed
+     * @param baseId           base ID used for the generated form and add resource dialog
+     * @param alternativeName  the name of the alternative attribute
+     * @param alternativeValue the value of the alternative attribute
+     * @param metadata         the metadata of the resource which contains the {@code credential-reference}
+     *                         attribute
+     * @param address          the fully qualified address of the resource used for the CRUD actions
+     * @param callback         the callback executed after the {@code credential-reference} attributes has been
+     *                         added,
+     *                         saved, reset or removed
      */
-    public Form<ModelNode> form(String baseId, Metadata metadata, Supplier<ResourceAddress> address,
-            Callback callback) {
+    public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,
+            Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE);
-        return new ModelNodeForm.Builder<>(Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.FORM_SUFFIX), crMetadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.FORM_SUFFIX), crMetadata)
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
-                            return fqAddress != null ? new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
+                            return fqAddress != null ? new Operation.Builder(address.get(),
+                                    READ_ATTRIBUTE_OPERATION)
                                     .param(NAME, CREDENTIAL_REFERENCE).build() : null;
                         },
                         () -> {
-                            // TODO Add a confirmation dialog which resolves the conflict with the alternative
-                            // TODO attribute in the main resource.
-                            ResourceAddress fqAddress = address.get();
-                            if (fqAddress != null) {
-                                String id = Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.ADD_SUFFIX);
-                                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
-                                        .addOnly()
-                                        .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
-                                        .unsorted()
-                                        .build();
-                                new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                                        form, (name, model) -> ca.add(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE,
-                                        fqAddress, model, callback)).show();
+                            if (alternativeName != null && alternativeValue != null &&
+                                    !Strings.isNullOrEmpty(alternativeValue.get())) {
+                                String alternativeLabel = new LabelBuilder().label(alternativeName);
+                                DialogFactory.showConfirmation(
+                                        resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                                        resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
+                                        () -> setTimeout(
+                                                o -> addCredentialReference(baseId, crMetadata, address, callback),
+                                                SHORT_TIMEOUT));
                             } else {
-                                MessageEvent.fire(eventBus,
-                                        Message.error(resources.messages().credentialReferenceAddressError()));
+                                addCredentialReference(baseId, crMetadata, address, callback);
                             }
                         })
-                .onSave(((form, changedValues) -> {
+                .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {
                         ca.save(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqa, changedValues,
@@ -177,11 +133,11 @@ public class CredentialReference {
                                 Message.error(resources.messages().credentialReferenceAddressError()));
                     }
                 }))
-                .prepareReset(form -> {
+                .prepareReset(f -> {
                     ResourceAddress faAddress = address.get();
                     if (faAddress != null) {
-                        ca.reset(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, faAddress, crMetadata, form,
-                                new Form.FinishReset<ModelNode>(form) {
+                        ca.reset(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, faAddress, crMetadata, f,
+                                new Form.FinishReset<ModelNode>(f) {
                                     @Override
                                     public void afterReset(Form<ModelNode> form) {
                                         callback.execute();
@@ -192,11 +148,11 @@ public class CredentialReference {
                                 Message.error(resources.messages().credentialReferenceAddressError()));
                     }
                 })
-                .prepareRemove(form -> {
+                .prepareRemove(f -> {
                     ResourceAddress fqAddress = address.get();
                     if (fqAddress != null) {
                         ca.remove(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress,
-                                new Form.FinishRemove<ModelNode>(form) {
+                                new Form.FinishRemove<ModelNode>(f) {
                                     @Override
                                     public void afterRemove(Form<ModelNode> form) {
                                         callback.execute();
@@ -208,12 +164,26 @@ public class CredentialReference {
                     }
                 })
                 .build();
+        form.addFormValidation(new CrFormValidation(alternativeName, alternativeValue, resources));
+        return form;
     }
 
-    public <T extends ModelNode> void addValidation(Form<T> mainForm, Form<ModelNode> crForm, String crAlternative) {
-        if (mainForm.getFormItem(crAlternative) != null) {
-            mainForm.addFormValidation(new MainFormValidation<>(mainForm, crForm, crAlternative, resources));
-            crForm.addFormValidation(new CrFormValidation<>(mainForm, crForm, crAlternative, resources));
+    private void addCredentialReference(String baseId, Metadata crMetadata, Supplier<ResourceAddress> address,
+            Callback callback) {
+        ResourceAddress fqAddress = address.get();
+        if (fqAddress != null) {
+            String id = Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.ADD_SUFFIX);
+            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
+                    .addOnly()
+                    .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                    .unsorted()
+                    .build();
+            new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                    form, (name, model) -> ca.add(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE,
+                    fqAddress, model, callback)).show();
+        } else {
+            MessageEvent.fire(eventBus,
+                    Message.error(resources.messages().credentialReferenceAddressError()));
         }
     }
 }
