@@ -565,6 +565,12 @@ public interface Ids {
     String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+    String UNDERTOW_APP_SECURITY_DOMAIN = "undertow-application-security-domain";
+    String UNDERTOW_APP_SECURITY_DOMAIN_ADD = build(UNDERTOW_APP_SECURITY_DOMAIN, ADD_SUFFIX);
+    String UNDERTOW_APP_SECURITY_DOMAIN_ENTRY = build(UNDERTOW_APP_SECURITY_DOMAIN, ENTRY_SUFFIX);
+    String UNDERTOW_APP_SECURITY_DOMAIN_FORM = build(UNDERTOW_APP_SECURITY_DOMAIN, FORM_SUFFIX);
+    String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = build(UNDERTOW_APP_SECURITY_DOMAIN, REFRESH_SUFFIX);
+    String UNDERTOW_APP_SECURITY_DOMAIN_TAB = build(UNDERTOW_APP_SECURITY_DOMAIN, TABLE_SUFFIX);
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
     String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = build(UNDERTOW_HOST, "access-log");
@@ -615,6 +621,10 @@ public interface Ids {
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM = build(UNDERTOW_SERVLET_CONTAINER, "welcome-file", FORM_SUFFIX);
     String UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_TAB = build(UNDERTOW_SERVLET_CONTAINER, "welcome-file", TAB_SUFFIX);
     String UNDERTOW_SETTINGS = "undertow-settings";
+    String UNDERTOW_SINGLE_SIGN_ON = "undertow-single-sign-on";
+    String UNDERTOW_SINGLE_SIGN_ON_ADD = build(UNDERTOW_SINGLE_SIGN_ON, ADD_SUFFIX);
+    String UNDERTOW_SINGLE_SIGN_ON_FORM = build(UNDERTOW_SINGLE_SIGN_ON, FORM_SUFFIX);
+    String UNDERTOW_SINGLE_SIGN_ON_TAB = build(UNDERTOW_SINGLE_SIGN_ON, TABLE_SUFFIX);
     String UNMANAGED = "unmanaged";
     String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
     String UPLOAD = "upload";
@@ -716,6 +726,10 @@ public interface Ids {
 
     static String serverGroupServer(final String serverGroup, final String server) {
         return build(serverGroup, server);
+    }
+
+    static String undertowApplicationSecurityDomain(String name) {
+        return build(UNDERTOW_APP_SECURITY_DOMAIN, name);
     }
 
     static String undertowServer(String name) {

@@ -136,7 +136,7 @@ public class CredentialReference {
     public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(
+        ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.FORM_SUFFIX), crMetadata)
                 .singleton(
                         () -> {
@@ -184,23 +184,29 @@ public class CredentialReference {
                         MessageEvent.fire(eventBus,
                                 Message.error(resources.messages().credentialReferenceAddressError()));
                     }
-                })
-                .prepareRemove(f -> {
-                    ResourceAddress fqAddress = address.get();
-                    if (fqAddress != null) {
-                        ca.remove(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress,
-                                new Form.FinishRemove<ModelNode>(f) {
-                                    @Override
-                                    public void afterRemove(Form<ModelNode> form) {
-                                        callback.execute();
-                                    }
-                                });
-                    } else {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().credentialReferenceAddressError()));
-                    }
-                })
-                .build();
+                });
+
+        // some credential-reference attributes are nillable=false, so only nillable=true may be removed
+        if (crMetadata.getDescription().get(NILLABLE).asBoolean()) {
+            formBuilder.prepareRemove(f -> {
+                ResourceAddress fqAddress = address.get();
+                if (fqAddress != null) {
+                    ca.remove(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress,
+                            new Form.FinishRemove<ModelNode>(f) {
+                                @Override
+                                public void afterRemove(Form<ModelNode> form) {
+                                    callback.execute();
+                                }
+                            });
+                } else {
+                    MessageEvent.fire(eventBus,
+                            Message.error(resources.messages().credentialReferenceAddressError()));
+                }
+            });
+
+        }
+
+        Form<ModelNode> form = formBuilder.build();
         form.addFormValidation(new CrFormValidation(alternativeName, alternativeValue, resources));
         return form;
     }

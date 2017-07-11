@@ -122,6 +122,8 @@ public class Metadata {
     public Metadata forComplexAttribute(String name, boolean prefixLabel) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
+        payload.get(REQUIRED).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + REQUIRED));
+        payload.get(NILLABLE).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + NILLABLE));
 
         Property complexAttribute = description.findAttribute(ATTRIBUTES, name);
         if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {

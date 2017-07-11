@@ -99,6 +99,8 @@ import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPrese
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.transaction.Mbui_TransactionView;
 import org.jboss.hal.client.configuration.subsystem.transaction.TransactionPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainView;
 import org.jboss.hal.client.configuration.subsystem.undertow.BufferCachePresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.FilterPresenter;
 import org.jboss.hal.client.configuration.subsystem.undertow.HandlerPresenter;
@@ -205,6 +207,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 AccessControlPresenter.MyView.class,
                 AccessControlView.class,
                 AccessControlPresenter.MyProxy.class);
+
+        bindPresenter(ApplicationSecurityDomainPresenter.class,
+                ApplicationSecurityDomainPresenter.MyView.class,
+                ApplicationSecurityDomainView.class,
+                ApplicationSecurityDomainPresenter.MyProxy.class);
 
         bindPresenter(BatchPresenter.class,
                 BatchPresenter.MyView.class,

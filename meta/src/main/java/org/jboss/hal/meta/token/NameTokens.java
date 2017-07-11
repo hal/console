@@ -92,6 +92,7 @@ public interface NameTokens {
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
     String UNDERTOW = "undertow";
+    String UNDERTOW_APPLICATION_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
     String UNDERTOW_FILTER = "undertow-filter";
     String UNDERTOW_HANDLER = "undertow-handler";

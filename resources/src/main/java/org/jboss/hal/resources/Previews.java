@@ -169,6 +169,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/undertow.html")
     ExternalTextResource configurationUndertow();
 
+    @Source("previews/configuration/undertow-app-security-domain.html")
+    ExternalTextResource configurationUndertowApplicationSecurityDomain();
+
     @Source("previews/configuration/undertow-buffer-caches.html")
     ExternalTextResource configurationUndertowBufferCaches();
 

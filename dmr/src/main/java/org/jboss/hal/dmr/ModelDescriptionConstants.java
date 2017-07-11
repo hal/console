@@ -74,6 +74,7 @@ public interface ModelDescriptionConstants {
     String ALLOWED_ORIGINS = "allowed-origins";
     String ALTERNATIVES = "alternatives";
     String ANY = "any";
+    String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
     String ARCHIVE = "archive";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
@@ -282,6 +283,7 @@ public interface ModelDescriptionConstants {
     String JSP = "jsp";
     String JVM = "jvm";
     String KERBEROS_SECURITY_FACTORY = "kerberos-security-factory";
+    String KEY_ALIAS = "key-alias";
     String KEY_MANAGER = "key-manager";
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
@@ -484,6 +486,7 @@ public interface ModelDescriptionConstants {
     String SERVICES_MISSING_DEPENDENCIES = "services-missing-dependencies";
     String SERVICES_MISSING_TRANSITIVE_DEPENDENCIES = "services-missing-transitive-dependencies";
     String SERVLET_CONTAINER = "servlet-container";
+    String SETTING = "setting";
     String SESSION_COOKIE = "session-cookie";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";

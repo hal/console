@@ -28,6 +28,8 @@ import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRES
 interface AddressTemplates {
 
     String UNDERTOW_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=undertow";
+    String APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain=*";
+    String SINGLE_SIGN_ON_ADDRESS = APPLICATION_SECURITY_DOMAIN_ADDRESS + "/setting=single-sign-on";
     String BUFFER_CACHE_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/buffer-cache=*";
     String FILTER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/configuration=filter";
     String RESPONSE_HEADER_ADDRESS = FILTER_ADDRESS + "/response-header=*";
@@ -42,10 +44,14 @@ interface AddressTemplates {
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
 
     String SELECTED_SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
+    String SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain=" + SELECTION_EXPRESSION;
+    String SELECTED_SINGLE_SIGN_ON_ADDRESS = SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS + "/setting=single-sign-on";
     String SELECTED_HOST_ADDRESS = SELECTED_SERVER_ADDRESS + "/host={host}";
     String SELECTED_SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=" + SELECTION_EXPRESSION;
 
     AddressTemplate UNDERTOW_SUBSYSTEM_TEMPLATE = AddressTemplate.of(UNDERTOW_SUBSYSTEM_ADDRESS);
+    AddressTemplate APPLICATION_SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(APPLICATION_SECURITY_DOMAIN_ADDRESS);
+    AddressTemplate SINGLE_SIGN_ON_TEMPLATE = AddressTemplate.of(SINGLE_SIGN_ON_ADDRESS);
     AddressTemplate FILTER_TEMPLATE = AddressTemplate.of(FILTER_ADDRESS);
     AddressTemplate RESPONSE_HEADER_TEMPLATE = AddressTemplate.of(RESPONSE_HEADER_ADDRESS);
     AddressTemplate HANDLER_TEMPLATE = AddressTemplate.of(HANDLER_ADDRESS);
@@ -59,6 +65,10 @@ interface AddressTemplates {
     AddressTemplate SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SERVLET_CONTAINER_ADDRESS);
 
     AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
+    AddressTemplate SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE = AddressTemplate
+            .of(SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS);
+    AddressTemplate SELECTED_SINGLE_SIGN_ON_TEMPLATE = AddressTemplate
+            .of(SELECTED_SINGLE_SIGN_ON_ADDRESS);
     AddressTemplate SELECTED_HOST_TEMPLATE = AddressTemplate.of(SELECTED_HOST_ADDRESS);
     AddressTemplate SELECTED_SERVLET_CONTAINER_TEMPLATE = AddressTemplate.of(SELECTED_SERVLET_CONTAINER_ADDRESS);
 
