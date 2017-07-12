@@ -73,7 +73,7 @@ public class SecurityContextStatementContextTest {
     @Test
     public void selectedServer() throws Exception {
         ResourceAddress address = AddressTemplate.of("/host=master/{selected.server}/foo=bar").resolve(statementContext);
-        assertEquals("/host=master/server=*/foo=bar", address.toString());
+        assertEquals("/host=master/server=server-one/foo=bar", address.toString());
     }
 
     @Test
