@@ -160,9 +160,6 @@
                         <fileset>
                             <directory>src/main/resources/org/jboss/hal/public/js</directory>
                         </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/previews</directory>
-                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>

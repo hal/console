@@ -133,7 +133,10 @@ public class PreviewContent<T> implements HasElements, Attachable {
         String readableHeader = shorten(header);
         HtmlContentBuilder<HTMLHeadingElement> builder = h(1);
         if (!readableHeader.equals(header)) {
+            builder.textContent(readableHeader);
             builder.title(header);
+        } else {
+            builder.textContent(header);
         }
         return builder.asElement();
     }
