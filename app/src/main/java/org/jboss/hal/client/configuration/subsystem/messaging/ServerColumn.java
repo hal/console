@@ -60,7 +60,10 @@ public class ServerColumn extends FinderColumn<NamedNode> {
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER, Names.SERVER)
 
                 .columnAction(columnActionFactory.add(Ids.MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
-                        Ids::messagingServer))
+                        name -> {
+                            //noinspection Convert2MethodRef
+                            return Ids.messagingServer(name);
+                        }))
                 .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_REFRESH))
 
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
