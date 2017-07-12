@@ -1,0 +1,3 @@
+<p>Define singleton policies to configure the behavior of singleton deployments or to create singleton MSC services.</p>
+<p>A clustered singleton service, also known as a high-availability (HA) singleton, is a service deployed on multiple nodes in a cluster. The service is provided on only one of the nodes. The node running the singleton service is usually called the master node.</p>
+<p>When the master node either fails or shuts down, another master is selected from the remaining nodes and the service is restarted on the new master. Other than a brief interval when one master has stopped and another has yet to take over, the service is provided by one, but only one, node.</p>

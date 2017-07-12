@@ -55,6 +55,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/batch.html")
     ExternalTextResource configurationBatch();
 
+    @Source("previews/configuration/bean-validation.html")
+    ExternalTextResource configurationBeanValidation();
+
     @Source("previews/configuration/datasources.html")
     ExternalTextResource configurationDatasources();
 
@@ -85,6 +88,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/ejb3.html")
     ExternalTextResource configurationEjb3();
 
+    @Source("previews/configuration/iiop.html")
+    ExternalTextResource configurationIiop();
+
     @Source("previews/configuration/infinispan.html")
     ExternalTextResource configurationInfinispan();
 
@@ -94,11 +100,32 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/io.html")
     ExternalTextResource configurationIo();
 
+    @Source("previews/configuration/jax-rs.html")
+    ExternalTextResource configurationJaxRs();
+
+    @Source("previews/configuration/jca.html")
+    ExternalTextResource configurationJca();
+
+    @Source("previews/configuration/jdr.html")
+    ExternalTextResource configurationJdr();
+
     @Source("previews/configuration/jdbc-drivers.html")
     ExternalTextResource configurationJdbcDrivers();
 
     @Source("previews/configuration/jgroups.html")
     ExternalTextResource configurationJgroups();
+
+    @Source("previews/configuration/jmx.html")
+    ExternalTextResource configurationJmx();
+
+    @Source("previews/configuration/jpa.html")
+    ExternalTextResource configurationJpa();
+
+    @Source("previews/configuration/jsf.html")
+    ExternalTextResource configurationJsf();
+
+    @Source("previews/configuration/jsr77.html")
+    ExternalTextResource configurationJsr77();
 
     @Source("previews/configuration/logging.html")
     ExternalTextResource configurationLogging();
@@ -136,8 +163,14 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/modcluster.html")
     ExternalTextResource configurationModcluster();
 
+    @Source("previews/configuration/naming.html")
+    ExternalTextResource configurationNaming();
+
     @Source("previews/configuration/paths.html")
     ExternalTextResource configurationPaths();
+
+    @Source("previews/configuration/pojo.html")
+    ExternalTextResource configurationPojo();
 
     @Source("previews/configuration/profiles.html")
     ExternalTextResource configurationProfiles();
@@ -148,11 +181,23 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/resource-adapters.html")
     ExternalTextResource configurationResourceAdapters();
 
+    @Source("previews/configuration/request-controller.html")
+    ExternalTextResource configurationRequestController();
+
+    @Source("previews/configuration/sar.html")
+    ExternalTextResource configurationSar();
+
     @Source("previews/configuration/security-domains.html")
     ExternalTextResource configurationSecurityDomains();
 
     @Source("previews/configuration/security-elytron.html")
     ExternalTextResource configurationSecurityElytron();
+
+    @Source("previews/configuration/security-manager.html")
+    ExternalTextResource configurationSecurityManager();
+
+    @Source("previews/configuration/singleton.html")
+    ExternalTextResource configurationSingleton();
 
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource configurationSocketBindings();
@@ -165,6 +210,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource configurationSystemProperties();
+
+    @Source("previews/configuration/transactions.html")
+    ExternalTextResource configurationTransactions();
 
     @Source("previews/configuration/undertow.html")
     ExternalTextResource configurationUndertow();
@@ -189,6 +237,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/webservices.html")
     ExternalTextResource configurationWebservices();
+
+    @Source("previews/configuration/weld.html")
+    ExternalTextResource configurationWeld();
 
 
     // ------------------------------------------------------ deployments

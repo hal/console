@@ -45,6 +45,9 @@ public class Subsystems {
                 .token(NameTokens.BATCH_CONFIGURATION)
                 .preview(resources.previews().configurationBatch())
                 .build());
+        add(new SubsystemMetadata.Builder(BEAN_VALIDATION, "Bean Validation")
+                .preview(resources.previews().configurationBeanValidation())
+                .build());
         add(new SubsystemMetadata.Builder(DATASOURCES, Names.DATASOURCES_DRIVERS)
                 .nextColumn(Ids.DATA_SOURCE_DRIVER)
                 .preview(resources.previews().configurationDatasourcesDrivers())
@@ -61,9 +64,15 @@ public class Subsystems {
                 .token(NameTokens.EJB3)
                 .preview(resources.previews().configurationEjb3())
                 .build());
+        add(new SubsystemMetadata.Builder(ELYTRON, "Security")
+                .subtitle("Elytron")
+                .nextColumn(Ids.ELYTRON)
+                .preview(resources.previews().configurationSecurityElytron())
+                .build());
         add(new SubsystemMetadata.Builder(IIOP_OPENJDK, "IIOP")
                 .subtitle("OpenJDK")
                 .token(NameTokens.IIOP)
+                .preview(resources.previews().configurationIiop())
                 .build());
         add(new SubsystemMetadata.Builder(INFINISPAN, "Infinispan")
                 .nextColumn(Ids.CACHE_CONTAINER)
@@ -73,8 +82,15 @@ public class Subsystems {
                 .token(NameTokens.IO)
                 .preview(resources.previews().configurationIo())
                 .build());
+        add(new SubsystemMetadata.Builder(JAX_RS, "JAX-RS")
+                .preview(resources.previews().configurationJaxRs())
+                .build());
         add(new SubsystemMetadata.Builder(JCA, "JCA")
                 .token(NameTokens.JCA)
+                .preview(resources.previews().configurationJca())
+                .build());
+        add(new SubsystemMetadata.Builder(JDR, "JDR")
+                .preview(resources.previews().configurationJdr())
                 .build());
         add(new SubsystemMetadata.Builder(JGROUPS, "JGroups")
                 .token(NameTokens.JGROUPS)
@@ -82,9 +98,17 @@ public class Subsystems {
                 .build());
         add(new SubsystemMetadata.Builder(JMX, "JMX")
                 .token(NameTokens.JMX)
+                .preview(resources.previews().configurationJmx())
                 .build());
         add(new SubsystemMetadata.Builder(JPA, "JPA")
                 .token(NameTokens.JPA_CONFIGURATION)
+                .preview(resources.previews().configurationJpa())
+                .build());
+        add(new SubsystemMetadata.Builder(JSF, "JSF")
+                .preview(resources.previews().configurationJsf())
+                .build());
+        add(new SubsystemMetadata.Builder(JSR77, "JSR77")
+                .preview(resources.previews().configurationJsr77())
                 .build());
         add(new SubsystemMetadata.Builder(LOGGING, Names.LOGGING)
                 .nextColumn(Ids.LOGGING)
@@ -103,21 +127,26 @@ public class Subsystems {
                 .token(NameTokens.MODCLUSTER)
                 .preview(resources.previews().configurationModcluster())
                 .build());
+        add(new SubsystemMetadata.Builder(NAMING, "Naming")
+                .preview(resources.previews().configurationNaming())
+                .build());
+        add(new SubsystemMetadata.Builder(POJO, "Pojo")
+                .preview(resources.previews().configurationPojo())
+                .build());
         add(new SubsystemMetadata.Builder(REMOTING, "Remoting")
                 .token(NameTokens.REMOTING)
                 .preview(resources.previews().configurationRemoting())
                 .build());
         add(new SubsystemMetadata.Builder(REQUEST_CONTROLLER, "Request Controller")
                 .token(NameTokens.REQUEST_CONTROLLER)
+                .preview(resources.previews().configurationRequestController())
                 .build());
         add(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, "Resource Adapters")
                 .nextColumn(Ids.RESOURCE_ADAPTER)
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
-        add(new SubsystemMetadata.Builder(ELYTRON, "Security")
-                .subtitle("Elytron")
-                .nextColumn(Ids.ELYTRON)
-                .preview(resources.previews().configurationSecurityElytron())
+        add(new SubsystemMetadata.Builder(SAR, "SAR")
+                .preview(resources.previews().configurationSar())
                 .build());
         add(new SubsystemMetadata.Builder(SECURITY, "Security")
                 .subtitle("Legacy")
@@ -125,8 +154,15 @@ public class Subsystems {
                 .token(NameTokens.SECURITY_CONFIGURATION)
                 .preview(resources.previews().configurationSecurityDomains())
                 .build());
+        add(new SubsystemMetadata.Builder(SECURITY_MANAGER, "Security Manager")
+                .preview(resources.previews().configurationSecurityManager())
+                .build());
+        add(new SubsystemMetadata.Builder(SINGLETON, "Singleton")
+                .preview(resources.previews().configurationSingleton())
+                .build());
         add(new SubsystemMetadata.Builder(TRANSACTIONS, "Transactions")
                 .token(NameTokens.TRANSACTIONS)
+                .preview(resources.previews().configurationTransactions())
                 .build());
         add(new SubsystemMetadata.Builder(UNDERTOW, "Web")
                 .subtitle("Undertow")
@@ -136,6 +172,9 @@ public class Subsystems {
         add(new SubsystemMetadata.Builder(WEBSERVICES, "Web Services")
                 .token(NameTokens.WEBSERVICES)
                 .preview(resources.previews().configurationWebservices())
+                .build());
+        add(new SubsystemMetadata.Builder(WELD, "Weld")
+                .preview(resources.previews().configurationWeld())
                 .build());
     }
 

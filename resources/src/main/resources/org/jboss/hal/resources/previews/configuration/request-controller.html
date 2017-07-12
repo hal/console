@@ -1,0 +1,23 @@
+<p>JBoss EAP can be suspended or shut down gracefully. This allows active requests to complete normally, without accepting any new requests. A timeout value specifies how long that the suspend or shut down operation will wait for active requests to complete. While the server is suspended, management requests are still processed.</p>
+<p>Graceful shutdown is coordinated at a server-wide level, mostly focused on the entry points at which a request enters the server. The following subsystems support graceful shutdown:</p>
+<dl>
+    <dt>Undertow</dt>
+    <dd>The <code>undertow</code> subsystem will wait for all requests to finish.</dd>
+    <dt>Modcluster</dt>
+    <dd>The <code>modcluster</code> subsystem will notify the load balancer that the server is suspending in the
+        <code>PRE_SUSPEND</code> phase.
+    </dd>
+    <dt>EJB</dt>
+    <dd>The
+        <code>ejb3</code> subsystem will wait for all remote EJB requests and MDB message deliveries to finish. Delivery to MDBs is stopped in the
+        <code>PRE_SUSPEND</code> phase. EJB timers are suspended, and missed timers will be activated when the server is resumed.
+    </dd>
+    <dt>EE Concurrency</dt>
+    <dd>The server will wait for all active jobs to finish. All queued jobs will be skipped. Currently, since EE Concurrency does not have persistence, those queued jobs that were skipped will be lost.<br/>While the server is in a suspended state, scheduled tasks will continue to execute at their scheduled times but will throw a
+        <code>java.lang.IllegalStateException</code>. Once the server is resumed, scheduled tasks will continue to execute normally and in most cases, tasks will not need to be rescheduled.
+    </dd>
+    <dt>Batch</dt>
+    <dd>The server will stop all running jobs within the timeout period and defer all scheduled jobs.<br/>Graceful shutdown currently will not reject inbound remote distributed transactions or new inbound JMS messages. EE batch jobs and EE concurrency tasks scheduled by inflight activity are currently allowed to proceed. However, EE concurrency tasks submitted that pass the timeout window currently error when executed.
+    </dd>
+</dl>
+<p>Requests are tracked by the request-controller subsystem. Without this subsystem, suspend and resume capabilities are limited and the server will not wait for requests to complete before suspending or shutting down. However, if you do not need this capability, the request-controller subsystem can be removed for a small performance improvement.</p>

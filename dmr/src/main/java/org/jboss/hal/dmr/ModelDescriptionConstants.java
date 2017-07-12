@@ -91,6 +91,7 @@ public interface ModelDescriptionConstants {
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BATCH_SIZE = "batch-size";
+    String BEAN_VALIDATION = "bean-validation";
     String BEHIND = "behind";
     String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
@@ -269,7 +270,9 @@ public interface ModelDescriptionConstants {
     String IO = "io";
     String ITEM = "item";
     String JACC_POLICY = "jacc-policy";
+    String JAX_RS = "jaxrs";
     String JCA = "jca";
+    String JDR = "jdr";
     String JDBC = "jdbc";
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_REALM = "jdbc-realm";
@@ -280,7 +283,9 @@ public interface ModelDescriptionConstants {
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
+    String JSF = "jsf";
     String JSP = "jsp";
+    String JSR77 = "jsr77";
     String JVM = "jvm";
     String KERBEROS_SECURITY_FACTORY = "kerberos-security-factory";
     String KEY_ALIAS = "key-alias";
@@ -340,6 +345,7 @@ public interface ModelDescriptionConstants {
     String MULTICAST_ADDRESS = "multicast-address";
     String MULTICAST_PORT = "multicast-port";
     String NAME = "name";
+    String NAMING = "naming";
     String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
@@ -365,6 +371,7 @@ public interface ModelDescriptionConstants {
     String PERMISSIONS = "permissions";
     String PERSISTENCE = "persistence";
     String PERSISTENT_SESSIONS = "persistent-sessions";
+    String POJO = "pojo";
     String POLICY = "policy";
     String POLICY_MODULE = "policy-module";
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
@@ -459,6 +466,7 @@ public interface ModelDescriptionConstants {
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
+    String SAR = "sar";
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
     String SCRIPT = "script";
@@ -467,6 +475,7 @@ public interface ModelDescriptionConstants {
     String SECURE_SOCKET_BINDING = "secure-socket-binding";
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
+    String SECURITY_MANAGER = "security-manager";
     String SECURITY_REALM = "security-realm";
     String SECURITY_SETTING = "security-setting";
     String SELECT = "select";
@@ -497,6 +506,7 @@ public interface ModelDescriptionConstants {
     String SIMPLE_ROLE_DECODER = "simple-role-decoder";
     String SINCE = "since";
     String SINGLE_SIGN_ON = "single-sign-on";
+    String SINGLETON = "singleton";
     String SIZE_ROTATING_FILE_AUDIT_LOG = "size-rotating-file-audit-log";
     String SLAVE = "slave";
     String SMTP = "smtp";
@@ -571,6 +581,7 @@ public interface ModelDescriptionConstants {
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";
+    String WELD = "weld";
     String WHERE = "where";
     String WHOAMI = "whoami";
     String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
