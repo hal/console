@@ -40,7 +40,7 @@ public class Subsystems {
     public Subsystems(Resources resources) {
         subsystems = new HashMap<>();
 
-        add(new SubsystemMetadata.Builder(BATCH_JBERET, "Batch")
+        add(new SubsystemMetadata.Builder(BATCH_JBERET, Names.BATCH)
                 .subtitle("JBeret")
                 .token(NameTokens.BATCH_CONFIGURATION)
                 .preview(resources.previews().configurationBatch())

@@ -200,6 +200,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noContextForNormalMode();
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
+    SafeHtml noExecutions();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     String nonEmptyRequires(String fields);
@@ -217,7 +218,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
-    String patternMismatch(String pattern);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);

@@ -49,6 +49,8 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     private final List<Attachable> attachables;
     private final ElementsBuilder builder;
+    private final HTMLElement header;
+    private final HTMLElement lead;
 
     /**
      * Empty preview w/o content
@@ -59,9 +61,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     public PreviewContent(final String header, final String lead) {
         attachables = new ArrayList<>();
-        builder = elements().add(header(header));
+        builder = elements().add(this.header = header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(this.lead = p().css(CSS.lead).textContent(lead).asElement());
+        } else {
+            this.lead = null;
         }
     }
 
@@ -71,9 +75,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     public PreviewContent(final String header, final String lead, final SafeHtml html) {
         attachables = new ArrayList<>();
-        builder = elements().add(header(header));
+        builder = elements().add(this.header = header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(this.lead = p().css(CSS.lead).textContent(lead).asElement());
+        } else {
+            this.lead = null;
         }
 
         builder.add(section().innerHtml(html));
@@ -85,9 +91,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     public PreviewContent(final String header, final String lead, final HTMLElement first, final HTMLElement... rest) {
         attachables = new ArrayList<>();
-        builder = elements().add(header(header));
+        builder = elements().add(this.header = header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(this.lead = p().css(CSS.lead).textContent(lead).asElement());
+        } else {
+            this.lead = null;
         }
 
         HtmlContentBuilder<HTMLElement> section;
@@ -105,9 +113,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     public PreviewContent(final String header, final String lead, HasElements elements) {
         attachables = new ArrayList<>();
-        builder = elements().add(header(header));
+        builder = elements().add(this.header = header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(this.lead = p().css(CSS.lead).textContent(lead).asElement());
+        } else {
+            this.lead = null;
         }
         builder.add(section().addAll(elements));
     }
@@ -119,9 +129,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public PreviewContent(final String header, final String lead, final ExternalTextResource resource) {
         attachables = new ArrayList<>();
-        builder = elements().add(header(header));
+        builder = elements().add(this.header = header(header));
         if (lead != null) {
-            builder.add(p().css(CSS.lead).textContent(lead));
+            builder.add(this.lead = p().css(CSS.lead).textContent(lead).asElement());
+        } else {
+            this.lead = null;
         }
 
         HTMLElement section;
@@ -145,6 +157,22 @@ public class PreviewContent<T> implements HasElements, Attachable {
         return header.length() > MAX_HEADER_LENGTH
                 ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
                 : header;
+    }
+
+    protected void setHeader(String header) {
+        String readableHeader = shorten(header);
+        if (!readableHeader.equals(header)) {
+            this.header.textContent = readableHeader;
+            this.header.title = header;
+        } else {
+            this.header.textContent = header;
+        }
+    }
+
+    protected void setLead(String lead) {
+        if (this.lead != null) {
+            this.lead.textContent = lead;
+        }
     }
 
     protected ElementsBuilder previewBuilder() {

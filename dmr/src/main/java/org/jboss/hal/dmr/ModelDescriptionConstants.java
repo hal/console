@@ -91,6 +91,7 @@ public interface ModelDescriptionConstants {
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BATCH_SIZE = "batch-size";
+    String BATCH_STATUS = "batch-status";
     String BEAN_VALIDATION = "bean-validation";
     String BEHIND = "behind";
     String BINARY = "binary";
@@ -143,8 +144,10 @@ public interface ModelDescriptionConstants {
     String CONTEXT_SERVICE = "context-service";
     String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
+    String CREATE_TIME = "create-time";
     String CREDENTIAL_REFERENCE = "credential-reference";
     String CREDENTIAL_STORE = "credential-store";
+    String CURRENT_THREAD_COUNT = "current-thread-count";
     String CUSTOM = "custom";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY = "custom-credential-security-factory";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
@@ -163,6 +166,8 @@ public interface ModelDescriptionConstants {
     String DEFAULT_BINDINGS = "default-bindings";
     String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
+    String DEFAULT_JOB_REPOSITORY = "default-job-repository";
+    String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_INTERFACE = "default-interface";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
@@ -193,12 +198,14 @@ public interface ModelDescriptionConstants {
     String ELYTRON = "elytron";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
-    String ENABLING = "enabling";
+    String END_TIME = "end-time";
     String ENDPOINT_CONFIG = "endpoint-config";
     String EVICTION = "eviction";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
     String EXECUTE = "execute";
+    String EXECUTION = "execution";
+    String EXIT_STATUS = "exit-status";
     String EXPIRATION = "expiration";
     String EXPLODE = "explode";
     String EXPLODED = "exploded";
@@ -266,9 +273,10 @@ public interface ModelDescriptionConstants {
     String INDEX = "index";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
+    String INSTANCE_COUNT = "instance-count";
+    String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
     String IO = "io";
-    String ITEM = "item";
     String JACC_POLICY = "jacc-policy";
     String JAX_RS = "jaxrs";
     String JCA = "jca";
@@ -282,6 +290,7 @@ public interface ModelDescriptionConstants {
     String JMS_TOPIC = "jms-topic";
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
+    String JOB_XML_NAMES = "job-xml-names";
     String JPA = "jpa";
     String JSF = "jsf";
     String JSP = "jsp";
@@ -293,6 +302,8 @@ public interface ModelDescriptionConstants {
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
     String KILL = "kill";
+    String LARGEST_THREAD_COUNT = "largest-thread-count";
+    String LAST_UPDATED_TIME = "last-updated-time";
     String LAUNCH_TYPE = "launch-type";
     String LDAP_KEY_STORE = "ldap-key-store";
     String LDAP_REALM = "ldap-realm";
@@ -455,6 +466,7 @@ public interface ModelDescriptionConstants {
     String RESPONSE = "response";
     String RESPONSE_HEADERS = "response-headers";
     String RESTART = "restart";
+    String RESTART_JOBS_ON_RESUME = "restart-jobs-on-resume";
     String RESTART_REQUIRED = "restart-required";
     String RESTART_SERVERS = "restart-servers";
     String RESULT = "result";
@@ -463,6 +475,7 @@ public interface ModelDescriptionConstants {
     String ROLE = "role";
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
+    String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
@@ -523,6 +536,7 @@ public interface ModelDescriptionConstants {
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
     String START_SERVERS = "start-servers";
+    String START_TIME = "start-time";
     String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
     String STATISTICS_ENABLED = "statistics-enabled";

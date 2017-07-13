@@ -41,6 +41,7 @@ public interface Names {
     String BACKUP_FOR = "Backup For";
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
+    String BATCH = "Batch";
     String BINARY_JDBC = "Binary JDBC";
     String BINARY_TABLE = "Binary Table";
     String BOOT_ERRORS = "Boot Errors";
@@ -94,6 +95,7 @@ public interface Names {
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
+    String EXECUTIONS = "Executions";
     String EXPIRATION = "Expiration";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
@@ -147,6 +149,8 @@ public interface Names {
     String JGROUPS = "JGroups";
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
+    String JOB = "Job";
+    String JOBS = "Jobs";
     String JPA = "JPA";
     String JMS_QUEUE = "JMS Queue";
     String JMS_TOPIC = "JMS Topic";

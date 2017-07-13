@@ -35,15 +35,7 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TOGGLE;
 import static org.jboss.hal.resources.UIConstants.TOOLTIP;
 
-/**
- * @author Harald Pehl
- */
 public class Utilization implements IsElement {
-
-    private static final String VALUE_BAR = "value-progress-bar";
-    private static final String VALUE_ELEMENT = "value-element";
-    private static final String REMAINING_BAR = "remaining-progress-bar";
-    private static final String REMAINING_ELEMENT = "remaining-element";
 
     private static final String VALUE_MIN = "valuemin";
     private static final String VALUE_MAX = "valuemax";

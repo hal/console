@@ -386,6 +386,8 @@ public interface Ids {
     String JNDI_TREE = build(JNDI, "tree");
     String JNDI_TREE_APPLICATIONS_ROOT = build(JNDI_TREE, "applications-root");
     String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
+    String JOB = "job";
+    String JOB_REFRESH = build(JOB, REFRESH_SUFFIX);
     String JPA_RUNTIME = "jpa-runtime";
     String JPA_RUNTIME_COLLECTION_ENTRY = build(JPA_RUNTIME, "collection", ENTRY_SUFFIX);
     String JPA_RUNTIME_ENTITY_CACHE_ENTRY = build(JPA_RUNTIME, "entity-cache", ENTRY_SUFFIX);
@@ -679,6 +681,10 @@ public interface Ids {
 
     static String hostServer(final String host, final String server) {
         return build(host, server);
+    }
+
+    static String job(String name) {
+        return build(JOB, name);
     }
 
     static String jmsBridge(String name) {

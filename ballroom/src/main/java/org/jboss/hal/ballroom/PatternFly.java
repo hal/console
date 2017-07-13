@@ -28,17 +28,19 @@ import static org.jboss.hal.resources.CSS.selectpicker;
 @JsType(isNative = true)
 public class PatternFly {
 
-    /**
-     * Same as {@code initComponents(false, null)}
-     */
+    /** Convenience method for {@code Colors.get()} */
+    @JsOverlay
+    public static Colors colors() {
+        return Colors.get();
+    }
+
+    /** Same as {@code initComponents(false, null)} */
     @JsOverlay
     public static void initComponents() {
         init(null);
     }
 
-    /**
-     * Same as {@code initComponents(false, parent)}
-     */
+    /** Same as {@code initComponents(false, parent)} */
     @JsOverlay
     public static void initComponents(final String parent) {
         init(parent);

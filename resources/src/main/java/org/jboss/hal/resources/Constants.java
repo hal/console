@@ -37,6 +37,7 @@ package org.jboss.hal.resources;
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
+    String abandoned();
     String accessType();
     String action();
     String active();
@@ -73,6 +74,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String closed();
     String committed();
+    String completed();
+    String completedExecutions();
     String connectedTo();
     String connection();
     String connections();
@@ -136,6 +139,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String extensionProcessing();
 
     String failed();
+    String failedExecutions();
     String filter();
     String finish();
     String flushAll();
@@ -253,6 +257,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String kill();
 
+    String largest();
     String lastModified();
     String loading();
     String loadingPleaseWait();
@@ -285,6 +290,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noConfiguredMailServers();
     String noContentSelected();
     String noDetails();
+    String noExecutions();
     String noHaPolicy();
     String noItems();
     String noMacros();
@@ -392,6 +398,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String stop();
     String stopMacro();
     String stopped();
+    String stoppedExecution();
     String storage();
     String supportsExpressions();
     String suspend();

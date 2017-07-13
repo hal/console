@@ -19,6 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
+import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
@@ -67,20 +68,25 @@ public class ServerMonitorColumn extends StaticItemColumn {
                                     new ServerStatusPreview(environment, dispatcher, statementContext, resources))
                             .build(),
 
+                    new StaticItem.Builder(Names.BATCH)
+                            .nextColumn(Ids.JOB)
+                            .onPreview(new BatchPreview(dispatcher, statementContext, resources))
+                            .build(),
+
                     new StaticItem.Builder(Names.DATASOURCES)
                             .nextColumn(Ids.DATA_SOURCE_RUNTIME)
                             .onPreview(new PreviewContent(Names.DATASOURCES,
                                     resources.previews().runtimeDatasources()))
                             .build(),
 
-                    new StaticItem.Builder(Names.JPA)
-                            .nextColumn(Ids.JPA_RUNTIME)
-                            .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
-                            .build(),
-
                     new StaticItem.Builder(Names.JNDI)
                             .action(itemActionFactory.view(places.selectedServer(NameTokens.JNDI).build()))
                             .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
+                            .build(),
+
+                    new StaticItem.Builder(Names.JPA)
+                            .nextColumn(Ids.JPA_RUNTIME)
+                            .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
                             .build());
 
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
