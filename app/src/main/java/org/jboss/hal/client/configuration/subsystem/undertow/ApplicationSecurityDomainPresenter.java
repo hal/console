@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -63,8 +64,7 @@ import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 /**
  * @author Claudio Miranda
  */
-public class ApplicationSecurityDomainPresenter
-        extends
+public class ApplicationSecurityDomainPresenter extends
         ApplicationFinderPresenter<ApplicationSecurityDomainPresenter.MyView, ApplicationSecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {
 
@@ -79,8 +79,8 @@ public class ApplicationSecurityDomainPresenter
     }
     // @formatter:on
 
-    private final Dispatcher dispatcher;
     private final CrudOperations crud;
+    private final ComplexAttributeOperations ca;
     private final MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -95,13 +95,14 @@ public class ApplicationSecurityDomainPresenter
             final Finder finder,
             final Dispatcher dispatcher,
             final CrudOperations crud,
+            final ComplexAttributeOperations ca,
             final MetadataRegistry metadataRegistry,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
-        this.dispatcher = dispatcher;
         this.crud = crud;
+        this.ca = ca;
         this.metadataRegistry = metadataRegistry;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new FilteringStatementContext(statementContext,
@@ -185,7 +186,7 @@ public class ApplicationSecurityDomainPresenter
                 .build();
     }
 
-    public void addSingleSignOn() {
+    void addSingleSignOn() {
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
         crMetadata.copyComplexAttributeAtrributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
@@ -240,9 +241,15 @@ public class ApplicationSecurityDomainPresenter
         });
     }
 
-    ResourceAddress credentialReferenceTemplate() {
-        return SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
+    // ------------------------------------------------------ single sign-on credential-reference
+
+
+    void saveCredentialReference(final Map<String, Object> changedValues) {
+        ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
+        Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
+        ca.save(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, address, changedValues, metadata, this::reload);
     }
+
     // ------------------------------------------------------ getter
 
     StatementContext getStatementContext() {

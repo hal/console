@@ -83,6 +83,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml credentialReferenceAddConfirmation(String alternative);
     SafeHtml credentialReferenceAddressError();
     String credentialReferenceConflict();
+    String credentialReferenceParentNoResource(String parentResource);
     String credentialReferenceValidationError(String alternative);
     String currentOfTotal(long current, long total);
 
