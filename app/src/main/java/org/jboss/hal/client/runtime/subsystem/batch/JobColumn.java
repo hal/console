@@ -148,7 +148,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                         });
                         callback.onSuccess(jobs);
 
-                        // mark jobs w/ running executions
+                        // turn progress animation on/off
                         for (JobNode job : jobs) {
                             String jobId = Ids.job(job.getName());
                             if (job.getRunningExecutions() > 0) {

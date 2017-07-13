@@ -29,7 +29,7 @@ public interface UIConstants {
     double MEDIUM_TIMEOUT = 333;
 
     /** The default polling interval used for {@code setInterval()} */
-    double POLLING_INTERVAL = 555;
+    double POLLING_INTERVAL = 3333;
 
     /**
      * The timeout until a non-sticky message is hidden
