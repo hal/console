@@ -22,15 +22,14 @@ package org.jboss.hal.resources;
  */
 public interface UIConstants {
 
-    /**
-     * The time in milliseconds after one modal dialog is closed and the next one is shown.
-     */
+    /** The time in milliseconds after one modal dialog is closed and the next one is shown. */
     double SHORT_TIMEOUT = 111;
 
-    /**
-     * The timeout for long running operations / actions before some kind of loading indicator is shown
-     */
+    /** The timeout for long running operations / actions before some kind of loading indicator is shown */
     double MEDIUM_TIMEOUT = 333;
+
+    /** The default polling interval used for {@code setInterval()} */
+    double POLLING_INTERVAL = 555;
 
     /**
      * The timeout until a non-sticky message is hidden

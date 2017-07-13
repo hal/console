@@ -41,18 +41,17 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 class JobNode extends NamedNode {
 
-    private final ResourceAddress deployment;
+    private final ResourceAddress address;
+    private final String deployment;
     private final List<ExecutionNode> executions;
 
-    JobNode(ResourceAddress deployment, ModelNode modelNode) {
-        super(deployment.lastValue(), modelNode);
-        this.deployment = deployment;
+    JobNode(ResourceAddress address, ModelNode modelNode) {
+        super(address.lastValue(), modelNode);
+        this.address = address;
         this.executions = failSafePropertyList(modelNode, EXECUTION).stream().map(ExecutionNode::new).collect(toList());
-    }
 
-    String getDeployment() {
         StringBuilder name = new StringBuilder();
-        deployment.asList().forEach(segment -> {
+        address.asList().forEach(segment -> {
             if (segment.hasDefined(DEPLOYMENT)) {
                 name.append(segment.get(DEPLOYMENT).asString());
             }
@@ -60,7 +59,15 @@ class JobNode extends NamedNode {
                 name.append("#").append(segment.get(SUBDEPLOYMENT).asString());
             }
         });
-        return name.length() != 0 ? name.toString() : Names.NOT_AVAILABLE;
+        this.deployment = name.length() != 0 ? name.toString() : Names.NOT_AVAILABLE;
+    }
+
+    ResourceAddress getAddress() {
+        return address;
+    }
+
+    String getDeployment() {
+        return deployment;
     }
 
     int getInstanceCount() {

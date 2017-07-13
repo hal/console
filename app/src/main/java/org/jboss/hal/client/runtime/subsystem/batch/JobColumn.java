@@ -17,7 +17,9 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -43,13 +45,20 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
+import static elemental2.dom.DomGlobal.clearInterval;
+import static elemental2.dom.DomGlobal.setInterval;
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.SUBDEPLOYMENT_JOB_TEMPLATE;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 @AsyncColumn(Ids.JOB)
 public class JobColumn extends FinderColumn<JobNode> {
+
+    private final Dispatcher dispatcher;
+    private final Map<String, Double> intervalHandles;
 
     @Inject
     public JobColumn(Finder finder,
@@ -61,41 +70,6 @@ public class JobColumn extends FinderColumn<JobNode> {
 
         super(new Builder<JobNode>(finder, Ids.JOB, Names.JOB)
                 .columnAction(columnActionFactory.refresh(Ids.JOB_REFRESH))
-
-                .itemsProvider((context, callback) -> {
-                    Operation deploymentJobOperation = new Operation.Builder(
-                            DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
-                            READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build();
-                    Operation subdeploymentJobOperation = new Operation.Builder(
-                            SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
-                            READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build();
-                    dispatcher.execute(new Composite(deploymentJobOperation, subdeploymentJobOperation),
-                            (CompositeResult result) -> {
-                                List<JobNode> jobs = new ArrayList<>();
-                                result.step(0).get(RESULT).asList().forEach(node -> {
-                                    ResourceAddress deployment = new ResourceAddress(node.get(ADDRESS));
-                                    ModelNode job = node.get(RESULT);
-                                    jobs.add(new JobNode(deployment, job));
-                                });
-                                callback.onSuccess(jobs);
-
-                                // mark jobs w/ running executions
-                                for (JobNode job : jobs) {
-                                    if (job.getRunningExecutions() > 0) {
-                                        // TODO Add an interval which checks whether the execution has been completed
-                                        ItemMonitor.startProgress(Ids.job(job.getName()));
-                                    } else {
-                                        ItemMonitor.stopProgress(Ids.job(job.getName()));
-                                    }
-                                }
-                            });
-                })
 
                 .itemRenderer(item -> new ItemDisplay<JobNode>() {
                     @Override
@@ -147,10 +121,71 @@ public class JobColumn extends FinderColumn<JobNode> {
                 .showCount()
                 .withFilter()
         );
+
+        this.dispatcher = dispatcher;
+        this.intervalHandles = new HashMap<>();
+
+        setItemsProvider((context, callback) -> {
+            Operation deploymentJobOperation = new Operation.Builder(
+                    DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
+            Operation subdeploymentJobOperation = new Operation.Builder(
+                    SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
+                    READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
+            dispatcher.execute(new Composite(deploymentJobOperation, subdeploymentJobOperation),
+                    (CompositeResult result) -> {
+                        List<JobNode> jobs = new ArrayList<>();
+                        result.step(0).get(RESULT).asList().forEach(node -> {
+                            ResourceAddress deployment = new ResourceAddress(node.get(ADDRESS));
+                            ModelNode job = node.get(RESULT);
+                            jobs.add(new JobNode(deployment, job));
+                        });
+                        callback.onSuccess(jobs);
+
+                        // mark jobs w/ running executions
+                        for (JobNode job : jobs) {
+                            String jobId = Ids.job(job.getName());
+                            if (job.getRunningExecutions() > 0) {
+                                ItemMonitor.startProgress(jobId);
+                                intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
+                            } else {
+                                ItemMonitor.stopProgress(jobId);
+                            }
+                        }
+                    });
+        });
+    }
+
+    private void pollJob(JobNode job) {
+        Operation operation = new Operation.Builder(job.getAddress(), READ_ATTRIBUTE_OPERATION)
+                .param(NAME, RUNNING_EXECUTIONS)
+                .build();
+        String jobId = Ids.job(job.getName());
+        dispatcher.execute(operation,
+                result -> {
+                    if (result.asInt() == 0) {
+                        ItemMonitor.stopProgress(jobId);
+                        if (intervalHandles.containsKey(jobId)) {
+                            clearInterval(intervalHandles.get(jobId));
+                        }
+                        JobColumn.this.refresh(RESTORE_SELECTION);
+                    }
+                },
+                (o, failure) -> ItemMonitor.stopProgress(jobId),
+                (o, exception) -> ItemMonitor.stopProgress(jobId));
     }
 
     @Override
     public void detach() {
         super.detach();
+        for (Double handle : intervalHandles.values()) {
+            clearInterval(handle);
+        }
     }
 }
