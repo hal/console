@@ -275,6 +275,7 @@ public class Finder implements IsElement, Attachable {
         }
 
         root.insertBefore(column.asElement(), previewColumn);
+        column.attach();
         column.setItems(callback);
         resizePreview();
     }
@@ -314,8 +315,9 @@ public class Finder implements IsElement, Attachable {
             if (element == previewColumn) {
                 break;
             }
-            columns.remove(element.id);
+            FinderColumn removeColumn = columns.remove(element.id);
             iterator.remove();
+            removeColumn.detach();
         }
     }
 
@@ -331,8 +333,9 @@ public class Finder implements IsElement, Attachable {
                 break;
             }
             if (removeFromHere) {
-                columns.remove(element.id);
+                FinderColumn removeColumn = columns.remove(element.id);
                 iterator.remove();
+                removeColumn.detach();
             }
         }
         Elements.setVisible(column.asElement(), true);
@@ -441,6 +444,9 @@ public class Finder implements IsElement, Attachable {
         initialColumnsByToken.put(token, initialColumn);
         initialPreviewsByToken.put(token, initialPreview);
 
+        for (FinderColumn column : columns.values()) {
+            column.detach();
+        }
         columns.clear();
         while (root.firstChild != previewColumn) {
             root.removeChild(root.firstChild);

@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -58,7 +59,7 @@ public class JobColumn extends FinderColumn<JobNode> {
             StatementContext statementContext,
             Resources resources) {
 
-        super(new FinderColumn.Builder<JobNode>(finder, Ids.JOB, Names.JOB)
+        super(new Builder<JobNode>(finder, Ids.JOB, Names.JOB)
                 .columnAction(columnActionFactory.refresh(Ids.JOB_REFRESH))
 
                 .itemsProvider((context, callback) -> {
@@ -83,6 +84,16 @@ public class JobColumn extends FinderColumn<JobNode> {
                                     jobs.add(new JobNode(deployment, job));
                                 });
                                 callback.onSuccess(jobs);
+
+                                // mark jobs w/ running executions
+                                for (JobNode job : jobs) {
+                                    if (job.getRunningExecutions() > 0) {
+                                        // TODO Add an interval which checks whether the execution has been completed
+                                        ItemMonitor.startProgress(Ids.job(job.getName()));
+                                    } else {
+                                        ItemMonitor.stopProgress(Ids.job(job.getName()));
+                                    }
+                                }
                             });
                 })
 
@@ -136,5 +147,10 @@ public class JobColumn extends FinderColumn<JobNode> {
                 .showCount()
                 .withFilter()
         );
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
     }
 }

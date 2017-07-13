@@ -117,6 +117,7 @@ public class ContentColumn extends FinderColumn<Content> {
     private final EventBus eventBus;
     private final Provider<Progress> progress;
     private final MetadataRegistry metadataRegistry;
+    private final SecurityContextRegistry securityContextRegistry;
     private final Resources resources;
 
     @Inject
@@ -161,6 +162,7 @@ public class ContentColumn extends FinderColumn<Content> {
         this.eventBus = eventBus;
         this.progress = progress;
         this.metadataRegistry = metadataRegistry;
+        this.securityContextRegistry = securityContextRegistry;
         this.resources = resources;
 
         List<ColumnAction<Content>> addActions = new ArrayList<>();
@@ -267,7 +269,11 @@ public class ContentColumn extends FinderColumn<Content> {
                 return actions;
             }
         });
+    }
 
+    @Override
+    public void attach() {
+        super.attach();
         Constraints deployConstraints = Constraints.and(
                 Constraint.executable(AddressTemplate.ROOT, FULL_REPLACE_DEPLOYMENT),
                 Constraint.executable(CONTENT_TEMPLATE, ADD));

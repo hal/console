@@ -278,9 +278,6 @@ public class FinderColumn<T> implements IsElement, Attachable {
                         .asElement())
                 .asElement();
 
-        handlers.add(bind(root, keydown, this::onNavigation));
-        handlers.add(bind(hiddenColumns, click, event -> finder.revealHiddenColumns(FinderColumn.this)));
-
         // column actions
         List<ColumnAction<T>> allowedColumnActions = allowedActions(builder.columnActions);
         HtmlContentBuilder<HTMLDivElement> actionsBuilder = div();
@@ -307,8 +304,6 @@ public class FinderColumn<T> implements IsElement, Attachable {
                                     .asElement())
                             .add(span().css(inputGroupAddon, fontAwesome("search")).id(iconId))
                             .asElement());
-            handlers.add(bind(filterElement, keydown, this::onNavigation));
-            handlers.add(bind(filterElement, keyup, this::onFilter));
         } else {
             filterElement = null;
         }
@@ -408,7 +403,12 @@ public class FinderColumn<T> implements IsElement, Attachable {
 
     @Override
     public void attach() {
-        // noop
+        handlers.add(bind(root, keydown, this::onNavigation));
+        handlers.add(bind(hiddenColumns, click, event -> finder.revealHiddenColumns(FinderColumn.this)));
+        if (filterElement != null) {
+            handlers.add(bind(filterElement, keydown, this::onNavigation));
+            handlers.add(bind(filterElement, keyup, this::onFilter));
+        }
     }
 
     @Override

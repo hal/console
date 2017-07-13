@@ -221,6 +221,11 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
         setPreviewCallback(
                 deployment -> new StandaloneDeploymentPreview(StandaloneDeploymentColumn.this, deployment, resources));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources

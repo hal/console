@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_EXECUTIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -64,6 +65,10 @@ class JobNode extends NamedNode {
 
     int getInstanceCount() {
         return hasDefined(INSTANCE_COUNT) ? get(INSTANCE_COUNT).asInt() : 0;
+    }
+
+    int getRunningExecutions() {
+        return hasDefined(RUNNING_EXECUTIONS) ? get(RUNNING_EXECUTIONS).asInt() : 0;
     }
 
     boolean hasExecutions(BatchStatus status) {

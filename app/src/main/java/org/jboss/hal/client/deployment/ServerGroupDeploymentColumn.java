@@ -286,7 +286,11 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         });
 
         setPreviewCallback(item -> new ServerGroupDeploymentPreview(this, item, places, resources));
+    }
 
+    @Override
+    public void attach() {
+        super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.uploadAndDeploy(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, statementContext.selectedServerGroup(), resources));
