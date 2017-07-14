@@ -43,15 +43,15 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.CSS.lead;
+import static org.jboss.hal.resources.CSS.underline;
 
 /**
  * TODO The empty state action to enable statistics makes only sense in standalone mode or w/o RBAC enabled.
@@ -84,7 +84,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
     DataSourcePreview(final DataSourceColumn column, final Server server, final DataSource dataSource,
             final Environment environment, final Dispatcher dispatcher, final StatementContext statementContext,
             final ServerActions serverActions, final Resources resources) {
-        super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
+        super(dataSource.getName());
         this.server = server;
         this.dataSource = dataSource;
         this.environment = environment;
@@ -122,6 +122,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 resources.constants().enable(), event -> column.enableDataSource(dataSource),
                 Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), STATISTICS_ENABLED));
 
+        refresh = refreshLink(() -> update(null));
+
         activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(),
                 environment.isStandalone(), true);
         maxUsedConnections = new Utilization(resources.constants().maxUsed(), resources.constants().connections(),
@@ -132,16 +134,12 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 environment.isStandalone(), false);
 
         previewBuilder()
+                .withLast(element -> element.appendChild(refresh))
+                .add(p().css(lead).textContent(dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE))
                 .add(noStatistics)
                 .add(needsReloadWarning)
                 .add(needsRestartWarning)
                 .add(disabledWarning)
-                .add(div().css(clearfix)
-                        .add(refresh = a().css(clickable, pullRight)
-                                .on(click, event -> update(null))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh()))
-                                .asElement()))
                 .add(poolHeader = h(2).css(underline).textContent(resources.constants().connectionPool()).asElement())
                 .add(activeConnections)
                 .add(maxUsedConnections)

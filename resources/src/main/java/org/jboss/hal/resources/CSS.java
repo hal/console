@@ -298,6 +298,7 @@ public interface CSS {
     String server = "server";
     String servers = "servers";
     String serverGroupContainer = "server-group-container";
+    String smallLink = "small-link";
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";

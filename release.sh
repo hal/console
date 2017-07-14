@@ -27,7 +27,7 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Deploying hal.next
-mvn clean deploy -P prod,theme-hal,docker
+mvn clean deploy -P release,prod,theme-hal,docker
 
 # Publishing to gh-pages
 rm -rf /tmp/hal.next
@@ -44,10 +44,9 @@ cd ${ROOT}
 
 echo
 echo
-echo "+-----------------------------------------------------------+"
-echo "|                                                           |"
-echo "|  HAL.next successfully build, deployed and published.     |"
-echo "|  https://rawgit.com/hal/hal.next/site/apidocs/index.html  |"
-echo "|                                                           |"
-echo "+-----------------------------------------------------------+"
+echo "+----------------------------------+"
+echo "|                                  |"
+echo "|  HAL.next successfully released  |"
+echo "|                                  |"
+echo "+----------------------------------+"
 echo

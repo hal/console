@@ -91,12 +91,10 @@ public class JobColumn extends FinderColumn<JobNode> {
         super(new Builder<JobNode>(finder, Ids.JOB, Names.JOB)
                 .columnAction(columnActionFactory.refresh(Ids.JOB_REFRESH))
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(itm -> new JobPreview(itm, resources))
                 .showCount()
-                .withFilter()
-        );
-        this.eventBus = eventBus;
+                .withFilter());
 
+        this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
@@ -127,7 +125,7 @@ public class JobColumn extends FinderColumn<JobNode> {
 
                         // turn progress animation on/off
                         for (JobNode job : jobs) {
-                            String jobId = Ids.job(job.getName());
+                            String jobId = Ids.job(job.getDeployment(), job.getName());
                             if (job.getRunningExecutions() > 0) {
                                 ItemMonitor.startProgress(jobId);
                                 intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
@@ -141,7 +139,7 @@ public class JobColumn extends FinderColumn<JobNode> {
         setItemRenderer(item -> new ItemDisplay<JobNode>() {
             @Override
             public String getId() {
-                return Ids.job(item.getName());
+                return Ids.job(item.getDeployment(), item.getName());
             }
 
             @Override
@@ -202,13 +200,15 @@ public class JobColumn extends FinderColumn<JobNode> {
                 return actions;
             }
         });
+
+        setPreviewCallback(itm -> new JobPreview(this, itm, resources));
     }
 
     private void pollJob(JobNode job) {
         Operation operation = new Operation.Builder(job.getAddress(), READ_ATTRIBUTE_OPERATION)
                 .param(NAME, RUNNING_EXECUTIONS)
                 .build();
-        String jobId = Ids.job(job.getName());
+        String jobId = Ids.job(job.getDeployment(), job.getName());
         dispatcher.execute(operation,
                 result -> {
                     if (result.asInt() == 0) {

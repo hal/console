@@ -683,7 +683,7 @@ public interface Ids {
         return build(host, server);
     }
 
-    static String job(String name) {
+    static String job(String deployment, String name) {
         return build(JOB, name);
     }
 

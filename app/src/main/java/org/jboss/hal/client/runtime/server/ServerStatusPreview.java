@@ -31,12 +31,14 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.Elements.br;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.lead;
 
 /**
  * @author Harald Pehl
@@ -69,6 +71,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 
         previewBuilder()
+                .withLast(element -> element.appendChild(refreshLink(() -> update(null))))
                 .add(p().css(lead)
                         .add(osName = span().asElement())
                         .add(osVersion = span().asElement())
@@ -78,14 +81,10 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
                         .add(jvmVersion = span().asElement())
                         .add(br())
                         .add(uptime = span().asElement()))
-                .add(div().css(clearfix)
-                        .add(a().css(clickable, pullRight).on(click, event -> update(null))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh()))))
-                .add(h(2).css(underline).textContent(Names.HEAP))
+                .add(h(2).textContent(Names.HEAP))
                 .add(usedHeap)
                 .add(committedHeap)
-                .add(h(2).css(underline).textContent(Names.THREADS))
+                .add(h(2).textContent(Names.THREADS))
                 .add(threads);
     }
 

@@ -32,15 +32,11 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * @author Harald Pehl
@@ -74,19 +70,17 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
                 .build();
 
+        refresh = refreshLink(() -> update(null));
+
         openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
                 environment.isStandalone(), false);
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
         previewBuilder()
+                .withLast(element -> element.appendChild(refresh))
                 .add(noStatistics)
-                .add(div().css(clearfix)
-                        .add(refresh = a().css(clickable, pullRight).on(click, event -> update(null))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh()))
-                                .asElement()))
-                .add(header = h(2).css(underline).textContent(resources.constants().sessions()).asElement())
+                .add(header = h(2).textContent(resources.constants().sessions()).asElement())
                 .add(openedSessions)
                 .add(closedSessions);
 

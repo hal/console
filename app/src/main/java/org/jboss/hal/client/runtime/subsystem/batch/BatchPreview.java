@@ -53,7 +53,6 @@ public class BatchPreview extends PreviewContent<StaticItem> {
                 DEFAULT_JOB_REPOSITORY, DEFAULT_THREAD_POOL, RESTART_JOBS_ON_RESUME
         ));
 
-        previewBuilder().addAll(attributes);
         details = section()
                 .add(h(2, Names.THREADS))
                 .add(currentThreadCount = new Utilization(
@@ -61,7 +60,11 @@ public class BatchPreview extends PreviewContent<StaticItem> {
                 .add(largestThreadCount = new Utilization(
                         resources.constants().largest(), Names.THREADS, false, true))
                 .asElement();
-        previewBuilder().add(details);
+
+        previewBuilder()
+                .withLast(element -> element.appendChild(refreshLink(() -> update(null))))
+                .addAll(attributes)
+                .add(details);
         Elements.setVisible(details, false);
     }
 

@@ -24,7 +24,6 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -77,9 +76,7 @@ class LogFilePreview extends PreviewContent<LogFile> {
         previewBuilder()
                 .add(h(2).textContent(resources.constants().preview()))
                 .add(div().css(clearfix)
-                        .add(a().css(clickable, pullRight).on(click, event -> update(logFile))
-                                .add(span().css(fontAwesome("refresh"), marginRight5))
-                                .add(span().textContent(resources.constants().refresh())))
+                        .add(refreshLink(() -> update(logFile)))
                         .add(p().textContent(resources.messages().logFilePreview(PREVIEW_LINES))))
                 .add(preview = pre().css(logFilePreview).asElement());
     }
