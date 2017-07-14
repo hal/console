@@ -263,6 +263,7 @@ public interface Names {
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String SOURCE = "Source";
     String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
@@ -275,6 +276,7 @@ public interface Names {
     String SYSTEM_PROPERTIES = "System Properties";
     String SYSTEM_PROPERTY = "System Property";
 
+    String TARGET = "Target";
     String THREAD_POOL = "Thread Pool";
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
