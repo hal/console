@@ -61,8 +61,8 @@ public class BatchPreview extends PreviewContent<StaticItem> {
                         resources.constants().largest(), Names.THREADS, false, true))
                 .asElement();
 
+        getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
-                .withLast(element -> element.appendChild(refreshLink(() -> update(null))))
                 .addAll(attributes)
                 .add(details);
         Elements.setVisible(details, false);

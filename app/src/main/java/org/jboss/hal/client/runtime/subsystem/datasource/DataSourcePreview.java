@@ -44,13 +44,11 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.hidden;
-import static org.jboss.hal.resources.CSS.lead;
 import static org.jboss.hal.resources.CSS.underline;
 
 /**
@@ -84,7 +82,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
     DataSourcePreview(final DataSourceColumn column, final Server server, final DataSource dataSource,
             final Environment environment, final Dispatcher dispatcher, final StatementContext statementContext,
             final ServerActions serverActions, final Resources resources) {
-        super(dataSource.getName());
+        super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
         this.server = server;
         this.dataSource = dataSource;
         this.environment = environment;
@@ -122,8 +120,6 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 resources.constants().enable(), event -> column.enableDataSource(dataSource),
                 Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), STATISTICS_ENABLED));
 
-        refresh = refreshLink(() -> update(null));
-
         activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(),
                 environment.isStandalone(), true);
         maxUsedConnections = new Utilization(resources.constants().maxUsed(), resources.constants().connections(),
@@ -133,9 +129,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         missCount = new Utilization(resources.constants().missCount(), resources.constants().count(),
                 environment.isStandalone(), false);
 
+        getHeaderContainer().appendChild(refresh = refreshLink(() -> update(null)));
         previewBuilder()
-                .withLast(element -> element.appendChild(refresh))
-                .add(p().css(lead).textContent(dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE))
                 .add(noStatistics)
                 .add(needsReloadWarning)
                 .add(needsRestartWarning)

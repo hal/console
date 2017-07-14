@@ -70,15 +70,13 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
                 .build();
 
-        refresh = refreshLink(() -> update(null));
-
         openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
                 environment.isStandalone(), false);
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
+        getHeaderContainer().appendChild(refresh = refreshLink(() -> update(null)));
         previewBuilder()
-                .withLast(element -> element.appendChild(refresh))
                 .add(noStatistics)
                 .add(header = h(2).textContent(resources.constants().sessions()).asElement())
                 .add(openedSessions)

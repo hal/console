@@ -70,8 +70,8 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
                 true);
         this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 
+        getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         previewBuilder()
-                .withLast(element -> element.appendChild(refreshLink(() -> update(null))))
                 .add(p().css(lead)
                         .add(osName = span().asElement())
                         .add(osVersion = span().asElement())

@@ -60,7 +60,8 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     private final List<Attachable> attachables;
     private final ElementsBuilder builder;
-    private HTMLElement header;
+    private HTMLElement headerContainer;
+    private HTMLElement headerText;
     private HTMLElement lead;
 
 
@@ -149,6 +150,26 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     // ------------------------------------------------------ header & lead
 
+    protected void setHeader(String header) {
+        String readableHeader = shorten(header);
+        if (!readableHeader.equals(header)) {
+            this.headerText.textContent = readableHeader;
+            this.headerText.title = header;
+        } else {
+            this.headerText.textContent = header;
+        }
+    }
+
+    protected HTMLElement getHeaderContainer() {
+        return headerContainer;
+    }
+
+    protected void setLead(String lead) {
+        if (this.lead != null) {
+            this.lead.textContent = lead;
+        }
+    }
+
     private HTMLElement header(final String header) {
         String readableHeader = shorten(header);
         HtmlContentBuilder<HTMLElement> builder = span();
@@ -158,7 +179,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         } else {
             builder.textContent(header);
         }
-        return h(1).add(this.header = builder.asElement()).asElement(); // keep the extra element!
+        return this.headerContainer = h(1).add(this.headerText = builder.asElement()).asElement();
     }
 
     private String shorten(String header) {
@@ -168,25 +189,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
     }
 
     private HTMLElement lead(String lead) {
-        return p().css(CSS.lead)
-                .add(this.lead = span().textContent(lead).asElement()) // keep this extra element!
-                .asElement();
-    }
-
-    protected void setHeader(String header) {
-        String readableHeader = shorten(header);
-        if (!readableHeader.equals(header)) {
-            this.header.textContent = readableHeader;
-            this.header.title = header;
-        } else {
-            this.header.textContent = header;
-        }
-    }
-
-    protected void setLead(String lead) {
-        if (this.lead != null) {
-            this.lead.textContent = lead;
-        }
+        return this.lead = p().css(CSS.lead).textContent(lead).asElement();
     }
 
 

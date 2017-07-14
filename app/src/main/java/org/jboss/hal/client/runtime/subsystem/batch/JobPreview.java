@@ -24,13 +24,11 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.metric.Utilization;
 import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -47,7 +45,7 @@ class JobPreview extends PreviewContent<JobNode> {
     private final Utilization abandoned;
 
     JobPreview(JobColumn column, JobNode job, Resources resources) {
-        super(job.getName());
+        super(job.getName(), job.getDeployment());
 
         empty = new EmptyState.Builder(resources.constants().noExecutions())
                 .description(resources.messages().noExecutions())
@@ -62,12 +60,10 @@ class JobPreview extends PreviewContent<JobNode> {
         status = section()
                 .addAll(running, stopped, completed, failed, abandoned)
                 .asElement();
-
         Elements.setVisible(status, false);
-        previewBuilder()
-                .withLast(element -> element.appendChild(refreshLink(() -> column.refresh(RESTORE_SELECTION))))
-                .add(p().css(CSS.lead).textContent(job.getDeployment()))
-                .addAll(empty.asElement(), status);
+
+        getHeaderContainer().appendChild(refreshLink(() -> column.refresh(RESTORE_SELECTION)));
+        previewBuilder().addAll(empty.asElement(), status);
     }
 
     @Override
