@@ -95,7 +95,7 @@ public class Metadata {
     }
 
     /** Shortcut for {@link #copyAttribute(String, Metadata)} and {@link #makeWritable(String)} */
-    public void copyComplexAttributeAtrributes(Iterable<String> attributes, Metadata destination) {
+    public void copyComplexAttributeAttributes(Iterable<String> attributes, Metadata destination) {
         for (String attribute : attributes) {
             copyAttribute(attribute, destination);
             destination.makeWritable(attribute);
@@ -170,6 +170,41 @@ public class Metadata {
             }
         };
         return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
+    }
+
+    public Metadata forOperation(String name) {
+        ModelNode payload = new ModelNode();
+        payload.get(DESCRIPTION).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + DESCRIPTION));
+        payload.get(ATTRIBUTES).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + REQUEST_PROPERTIES));
+
+        SecurityContext parentContext = this.securityContext.get();
+        SecurityContext operationContext = new SecurityContext(new ModelNode()) {
+            @Override
+            public boolean isReadable() {
+                return parentContext.isExecutable(name);
+            }
+
+            @Override
+            public boolean isWritable() {
+                return parentContext.isExecutable(name);
+            }
+
+            @Override
+            public boolean isReadable(final String attribute) {
+                return isReadable(); // if the operation is executable all of its request properties are readable as well
+            }
+
+            @Override
+            public boolean isWritable(final String attribute) {
+                return isWritable(); // if the operation is executable all of its request properties are writable as well
+            }
+
+            @Override
+            public boolean isExecutable(final String operation) {
+                return parentContext.isExecutable(operation);
+            }
+        };
+        return new Metadata(template, () -> operationContext, new ResourceDescription(payload), capabilities);
     }
 
     @JsIgnore

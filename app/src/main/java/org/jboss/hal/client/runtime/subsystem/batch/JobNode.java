@@ -86,6 +86,10 @@ class JobNode extends NamedNode {
         return executions.stream().anyMatch(e -> status.contains(e.getBatchStatus()));
     }
 
+    List<ExecutionNode> getExecutions() {
+        return executions;
+    }
+
     Map<Integer, SortedSet<ExecutionNode>> byInstanceIdAllExecutions() {
         // first group by instance-id,
         // then sort multiple executions with the same instance id by last updated time

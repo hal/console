@@ -36,6 +36,7 @@ package org.jboss.hal.resources;
 
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import org.jboss.hal.spi.Message;
 
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
@@ -323,9 +324,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml sharedStoreStrategy();
     SafeHtml staleStatistics();
 
+    SafeHtml startJobSuccess(String job, long id);
+    SafeHtml startServerError(String name);
     SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);
-    SafeHtml startServerError(String name);
     SafeHtml startServerSuccess(String name);
 
     SafeHtml statisticsEnabled(String name);

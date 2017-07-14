@@ -189,7 +189,7 @@ public class ApplicationSecurityDomainPresenter extends
     void addSingleSignOn() {
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
-        crMetadata.copyComplexAttributeAtrributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
+        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
 
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SINGLE_SIGN_ON_ADD, metadata)
                 .addOnly()

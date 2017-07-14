@@ -32,9 +32,7 @@ import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.listGroup;
 import static org.jboss.hal.resources.CSS.listViewPf;
 
-/**
- * @author Harald Pehl
- */
+// TODO Add support for toolbar and pagination
 public class ListView<T> implements IsElement {
 
     private final String id;

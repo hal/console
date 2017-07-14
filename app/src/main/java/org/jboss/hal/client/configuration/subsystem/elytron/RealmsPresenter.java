@@ -371,7 +371,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     void addLdapRealm() {
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE);
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING, true);
-        imMetadata.copyComplexAttributeAtrributes(asList(RDN_IDENTIFIER, SEARCH_BASE_DN, USE_RECURSIVE_SEARCH),
+        imMetadata.copyComplexAttributeAttributes(asList(RDN_IDENTIFIER, SEARCH_BASE_DN, USE_RECURSIVE_SEARCH),
                 metadata);
 
         NameItem nameItem = new NameItem();
@@ -505,7 +505,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     void addPropertiesRealm() {
         Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
         Metadata upMetadata = metadata.forComplexAttribute(USERS_PROPERTIES, true);
-        upMetadata.copyComplexAttributeAtrributes(asList(PATH, RELATIVE_TO), metadata);
+        upMetadata.copyComplexAttributeAttributes(asList(PATH, RELATIVE_TO), metadata);
 
         String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD_SUFFIX);
         NameItem nameItem = new NameItem();

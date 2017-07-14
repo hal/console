@@ -20,12 +20,15 @@ import org.jboss.hal.meta.AddressTemplate;
 interface AddressTemplates {
 
     String BATCH_SUBSYSTEM_ADDRESS = "{selected.host}/{selected.server}/subsystem=batch-jberet";
-    String DEPLOYMENT_ADDRESS = "{selected.host}/{selected.server}/deployment=*/";
-    String JOB_ADDRESS = "/subsystem=batch-jberet/job=*";
-    String DEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + JOB_ADDRESS;
-    String SUBDEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + "/subdeployment=*" + JOB_ADDRESS;
+
+    String DEPLOYMENT_ADDRESS = "{selected.host}/{selected.server}/deployment=*";
+    String BATCH_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + "/subsystem=batch-jberet";
+    String BATCH_DEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + "/subsystem=batch-jberet/job=*";
+    String BATCH_SUBDEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + "/subdeployment=*/subsystem=batch-jberet/job=*";
 
     AddressTemplate BATCH_SUBSYSTEM_TEMPLATE = AddressTemplate.of(BATCH_SUBSYSTEM_ADDRESS);
-    AddressTemplate DEPLOYMENT_JOB_TEMPLATE = AddressTemplate.of(DEPLOYMENT_JOB_ADDRESS);
-    AddressTemplate SUBDEPLOYMENT_JOB_TEMPLATE = AddressTemplate.of(SUBDEPLOYMENT_JOB_ADDRESS);
+
+    AddressTemplate BATCH_DEPLOYMENT_TEMPLATE = AddressTemplate.of(BATCH_DEPLOYMENT_ADDRESS);
+    AddressTemplate BATCH_DEPLOYMENT_JOB_TEMPLATE = AddressTemplate.of(BATCH_DEPLOYMENT_JOB_ADDRESS);
+    AddressTemplate BATCH_SUBDEPLOYMENT_JOB_TEMPLATE = AddressTemplate.of(BATCH_SUBDEPLOYMENT_JOB_ADDRESS);
 }

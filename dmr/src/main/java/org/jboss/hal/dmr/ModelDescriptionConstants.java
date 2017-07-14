@@ -290,6 +290,7 @@ public interface ModelDescriptionConstants {
     String JMS_TOPIC = "jms-topic";
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
+    String JOB_XML_NAME = "job-xml-name";
     String JOB_XML_NAMES = "job-xml-names";
     String JPA = "jpa";
     String JSF = "jsf";
@@ -402,6 +403,7 @@ public interface ModelDescriptionConstants {
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
     String PROFILE_NAME = "profile-name";
+    String PROPERTIES = "properties";
     String PROPERTIES_REALM = "properties-realm";
     String PROPERTY = "property";
     String PROTOCOL = "protocol";
@@ -535,6 +537,7 @@ public interface ModelDescriptionConstants {
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
+    String START_JOB = "start-job";
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
     String STATE_TRANSFER = "state-transfer";

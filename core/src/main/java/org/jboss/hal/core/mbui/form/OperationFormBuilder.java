@@ -21,15 +21,8 @@ import java.util.LinkedHashSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jetbrains.annotations.NonNls;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 
 /**
  * @author Harald Pehl
@@ -65,14 +58,7 @@ public class OperationFormBuilder<T extends ModelNode> {
     }
 
     public ModelNodeForm<T> build() {
-        ModelNode modelNode = ModelNodeHelper.failSafeGet(metadata.getDescription(),
-                String.join("/", OPERATIONS, operation, REQUEST_PROPERTIES));
-        ModelNode repackaged = new ModelNode();
-        repackaged.get(ATTRIBUTES).set(modelNode);
-        ResourceDescription reloadDescription = new ResourceDescription(repackaged);
-        Metadata formMetadata = new Metadata(metadata.getTemplate(), () -> SecurityContext.RWX, reloadDescription,
-                metadata.getCapabilities());
-        return new ModelNodeForm.Builder<T>(id, formMetadata)
+        return new ModelNodeForm.Builder<T>(id, metadata.forOperation(operation))
                 .include(includes)
                 .addOnly()
                 .build();

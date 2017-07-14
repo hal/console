@@ -20,9 +20,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -31,109 +35,82 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.setInterval;
-import static java.util.Collections.singletonList;
-import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.DEPLOYMENT_JOB_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.SUBDEPLOYMENT_JOB_TEMPLATE;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBDEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 @AsyncColumn(Ids.JOB)
+@Requires(BATCH_DEPLOYMENT_ADDRESS)
 public class JobColumn extends FinderColumn<JobNode> {
 
+    private final EventBus eventBus;
     private final Dispatcher dispatcher;
+    private final MetadataRegistry metadataRegistry;
+    private final Resources resources;
     private final Map<String, Double> intervalHandles;
 
     @Inject
     public JobColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
+            EventBus eventBus,
             Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             Resources resources) {
 
         super(new Builder<JobNode>(finder, Ids.JOB, Names.JOB)
                 .columnAction(columnActionFactory.refresh(Ids.JOB_REFRESH))
-
-                .itemRenderer(item -> new ItemDisplay<JobNode>() {
-                    @Override
-                    public String getId() {
-                        return Ids.job(item.getName());
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-
-                    @Override
-                    public HTMLElement asElement() {
-                        return ItemDisplay.withSubtitle(item.getName(), item.getDeployment());
-                    }
-
-                    @Override
-                    public HTMLElement getIcon() {
-                        if (item.getInstanceCount() == 0) {
-                            return Icons.info();
-                        } else if (item.hasExecutions(EnumSet.of(BatchStatus.FAILED, BatchStatus.ABANDONED))) {
-                            return Icons.error();
-                        } else if (item.hasExecutions(BatchStatus.STOPPED)) {
-                            return Icons.warning();
-                        }
-                        return Icons.ok();
-                    }
-
-                    @Override
-                    public String getTooltip() {
-                        if (item.getInstanceCount() == 0) {
-                            return resources.constants().noExecutions();
-                        } else if (item.hasExecutions(EnumSet.of(BatchStatus.FAILED, BatchStatus.ABANDONED))) {
-                            return resources.constants().failedExecutions();
-                        } else if (item.hasExecutions(BatchStatus.STOPPED)) {
-                            return resources.constants().stoppedExecution();
-                        }
-                        return resources.constants().completedExecutions();
-                    }
-
-                    @Override
-                    public List<ItemAction<JobNode>> actions() {
-                        return singletonList(itemActionFactory.view(NameTokens.JOB, NAME, item.getName()));
-                    }
-                })
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(itm -> new JobPreview(itm, resources))
                 .showCount()
                 .withFilter()
         );
+        this.eventBus = eventBus;
 
         this.dispatcher = dispatcher;
+        this.metadataRegistry = metadataRegistry;
+        this.resources = resources;
         this.intervalHandles = new HashMap<>();
 
         setItemsProvider((context, callback) -> {
             Operation deploymentJobOperation = new Operation.Builder(
-                    DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
+                    BATCH_DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build();
             Operation subdeploymentJobOperation = new Operation.Builder(
-                    SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
+                    BATCH_SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
@@ -160,6 +137,71 @@ public class JobColumn extends FinderColumn<JobNode> {
                         }
                     });
         });
+
+        setItemRenderer(item -> new ItemDisplay<JobNode>() {
+            @Override
+            public String getId() {
+                return Ids.job(item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public String getFilterData() {
+                if (item.getInstanceCount() == 0) {
+                    return getTitle();
+                } else {
+                    Set<String> uniqueStatus = item.getExecutions().stream()
+                            .map(e -> e.getBatchStatus().name())
+                            .collect(toSet());
+                    return getTitle() + " " + uniqueStatus.stream().collect(joining(" "));
+                }
+            }
+
+            @Override
+            public HTMLElement asElement() {
+                return ItemDisplay.withSubtitle(item.getName(), item.getDeployment());
+            }
+
+            @Override
+            public HTMLElement getIcon() {
+                if (item.getInstanceCount() == 0) {
+                    return Icons.info();
+                } else if (item.hasExecutions(EnumSet.of(BatchStatus.FAILED, BatchStatus.ABANDONED))) {
+                    return Icons.error();
+                } else if (item.hasExecutions(BatchStatus.STOPPED)) {
+                    return Icons.warning();
+                }
+                return Icons.ok();
+            }
+
+            @Override
+            public String getTooltip() {
+                if (item.getInstanceCount() == 0) {
+                    return resources.constants().noExecutions();
+                } else if (item.hasExecutions(EnumSet.of(BatchStatus.FAILED, BatchStatus.ABANDONED))) {
+                    return resources.constants().failedExecutions();
+                } else if (item.hasExecutions(BatchStatus.STOPPED)) {
+                    return resources.constants().stoppedExecution();
+                }
+                return resources.constants().completedExecutions();
+            }
+
+            @Override
+            public List<ItemAction<JobNode>> actions() {
+                List<ItemAction<JobNode>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.JOB, NAME, item.getName()));
+                actions.add(new ItemAction.Builder<JobNode>()
+                        .title(resources.constants().start())
+                        .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_SERVERS))
+                        .handler(itm -> startJob(itm))
+                        .build());
+                return actions;
+            }
+        });
     }
 
     private void pollJob(JobNode job) {
@@ -179,6 +221,57 @@ public class JobColumn extends FinderColumn<JobNode> {
                 },
                 (o, failure) -> ItemMonitor.stopProgress(jobId),
                 (o, exception) -> ItemMonitor.stopProgress(jobId));
+    }
+
+    private void startJob(JobNode job) {
+        int xmlNames = job.get(JOB_XML_NAMES).asList().size();
+        Metadata metadata = metadataRegistry.lookup(BATCH_DEPLOYMENT_TEMPLATE);
+        Metadata operationMetadata = metadata.forOperation(START_JOB);
+        if (xmlNames > 1) {
+            operationMetadata.getDescription()
+                    .get(ATTRIBUTES)
+                    .get(JOB_XML_NAME)
+                    .get(ALLOWED).set(job.get(JOB_XML_NAMES));
+        } else {
+            operationMetadata.getDescription()
+                    .get(ATTRIBUTES)
+                    .get(JOB_XML_NAME)
+                    .get(ACCESS_TYPE).set(READ_ONLY);
+        }
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.JOB, START_JOB), operationMetadata)
+                .addOnly()
+                .unsorted()
+                .include(JOB_XML_NAME, PROPERTIES)
+                .build();
+        Dialog dialog = new Dialog.Builder(resources.constants().startJob())
+                .add(form.asElement())
+                .closeIcon(true)
+                .closeOnEsc(true)
+                .primary(resources.constants().start(), () -> {
+                    if (form.save()) {
+                        Operation operation = new Operation.Builder(job.getAddress().getParent(), START_JOB)
+                                .payload(form.getModel())
+                                .build();
+                        dispatcher.execute(operation, result -> {
+                            String xmlName = form.getModel().get(JOB_XML_NAME).asString();
+                            long executionId = result.asLong();
+                            MessageEvent.fire(eventBus,
+                                    Message.success(resources.messages().startJobSuccess(xmlName, executionId)));
+                            refresh(RESTORE_SELECTION);
+                        });
+                        return true;
+                    }
+                    return false;
+                })
+                .cancel()
+                .build();
+        dialog.registerAttachable(form);
+        dialog.show();
+        form.edit(new ModelNode());
+        if (xmlNames == 1) {
+            String xmlName = job.get(JOB_XML_NAMES).asList().get(0).asString();
+            form.getFormItem(JOB_XML_NAME).setValue(xmlName);
+        }
     }
 
     @Override

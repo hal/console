@@ -50,6 +50,7 @@ class JobPreview extends PreviewContent<JobNode> {
                 .description(resources.messages().noExecutions())
                 .build();
 
+        // TODO Replace with Donut
         running = new Utilization(resources.constants().running(), Names.EXECUTIONS, false, false);
         stopped = new Utilization(resources.constants().stopped(), Names.EXECUTIONS, false, false);
         completed = new Utilization(resources.constants().completed(), Names.EXECUTIONS, false, false);

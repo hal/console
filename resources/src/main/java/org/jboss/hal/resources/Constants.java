@@ -389,6 +389,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sizing();
     String specifyNames();
     String start();
+    String startJob();
     String starting();
     String startMacro();
     String statements();
