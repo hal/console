@@ -15,5 +15,72 @@
  */
 package org.jboss.hal.ballroom.metric;
 
-public class Donut {
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.IsElement;
+
+import static org.jboss.gwt.elemento.core.Elements.div;
+
+public class Donut implements IsElement<HTMLElement> {
+
+    public enum Size {
+        MEDIUM(new int[]{200, 171}, new int[]{251, 161}, new int[]{271, 191});
+
+        private final int[] noLegend;
+        private final int[] rightLegend;
+        private final int[] bottomLegend;
+
+        Size(int[] noLegend, int[] rightLegend, int[] bottomLegend) {
+            this.noLegend = noLegend;
+            this.rightLegend = rightLegend;
+            this.bottomLegend = bottomLegend;
+        }
+    }
+
+    public enum Legend {
+        NONE, LEFT, BOTTOM
+    }
+
+
+    public static class Builder {
+
+        private final String unit;
+        private Legend legend;
+        private Size size;
+
+        public Builder(String unit) {
+            this.unit = unit;
+            this.legend = Legend.NONE;
+            this.size = Size.MEDIUM;
+        }
+
+        public Builder add(String text, String color) {
+            return this;
+        }
+
+        public Builder size(Size size) {
+            this.size = size;
+            return this;
+        }
+
+        public Builder legend(Legend legend) {
+            this.legend = legend;
+            return this;
+        }
+
+        public Donut build() {
+            return new Donut(this);
+        }
+    }
+
+
+    private final HTMLElement root;
+
+    private Donut(Builder builder) {
+        this.root = div().asElement();
+    }
+
+    @Override
+    public HTMLElement asElement() {
+        return root;
+    }
 }
