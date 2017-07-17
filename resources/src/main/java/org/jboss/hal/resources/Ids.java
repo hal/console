@@ -372,7 +372,9 @@ public interface Ids {
     String JGROUPS_TRANSPORT_THREADPOOL_TIMER_TAB = build(JGROUPS, JGROUPS_TRANSPORT, "thread-pool-timer", TAB_SUFFIX);
     String JMS_BRIDGE = "jms-bridge";
     String JMS_BRIDGE_ADD = build(JMS_BRIDGE, ADD_SUFFIX);
+    String JMS_BRIDGE_FORM = build(JMS_BRIDGE, FORM_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
+    String JMS_BRIDGE_TAB = build(JMS_BRIDGE, TAB_SUFFIX);
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);

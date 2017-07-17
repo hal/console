@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tabs;
-import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
@@ -34,8 +33,6 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.APPLICATION_SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SINGLE_SIGN_ON_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
@@ -43,7 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SETTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SINGLE_SIGN_ON;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * @author Claudio Miranda
@@ -92,14 +88,10 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
                 .add(tabs)
                 .asElement();
 
-        VerticalNavigation navigation = new VerticalNavigation();
-        navigation.addPrimary(Ids.UNDERTOW_APP_SECURITY_DOMAIN_ENTRY, Names.APPLICATION_SECURITY_DOMAIN, pfIcon("settings"), htmlSection);
+        registerAttachable(configurationForm, ssoForm, crForm);
 
-        registerAttachable(navigation, configurationForm, ssoForm, crForm);
+        initElement(htmlSection);
 
-        initElement(row()
-                .add(column()
-                        .addAll(navigation.panes())));
     }
 
     private Form<ModelNode> credentialReferenceForm(Metadata metadata,

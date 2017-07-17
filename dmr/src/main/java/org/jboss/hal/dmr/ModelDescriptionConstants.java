@@ -530,7 +530,10 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOCKET_BINDING_REF = "socket-binding-ref";
+    String SOURCE = "source";
+    String SOURCE_CREDENTIAL_REFERENCE = "source-credential-reference";
     String SOURCE_NETWORK = "source-network";
+    String SOURCE_PASSWORD = "source-password";
     String SQL = "sql";
     String SSL_CONTEXT = "ssl-context";
     String STACK = "stack";
@@ -563,6 +566,9 @@ public interface ModelDescriptionConstants {
     String SYSTEM_PROPERTY = "system-property";
     String TABLE = "table";
     String TAIL = "tail";
+    String TARGET = "target";
+    String TARGET_CREDENTIAL_REFERENCE = "target-credential-reference";
+    String TARGET_PASSWORD = "target-password";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";

@@ -120,7 +120,7 @@ public class JmsBridgePresenter
     }
 
     @Override
-    protected void reload() {
+    public void reload() {
         crud.readRecursive(SELECTED_JMS_BRIDGE_TEMPLATE.resolve(statementContext),
                 result -> getView().update(new NamedNode(jmsBridgeName, result)));
     }
@@ -141,4 +141,5 @@ public class JmsBridgePresenter
                     }
                 });
     }
+
 }

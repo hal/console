@@ -135,15 +135,38 @@ public class CredentialReference {
      */
     public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE);
+
+        return form(baseId, metadata, CREDENTIAL_REFERENCE, alternativeName, alternativeValue, address, callback);
+    }
+
+
+    /**
+     * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a
+     * singleton form to add, save, reset and remove the complex attribute.
+     *
+     * @param baseId           base ID used for the generated form and add resource dialog
+     * @param metadata         the metadata of the resource which contains the {@code credential-reference}
+     *                         attribute
+     * @param crName           the name of the credential-reference complex attribute, defaults to "credential-reference"
+     * @param alternativeName  the name of the alternative attribute
+     * @param alternativeValue the value of the alternative attribute
+     * @param address          the fully qualified address of the resource used for the CRUD actions
+     * @param callback         the callback executed after the {@code credential-reference} attributes has been added,
+     *                         saved, reset or removed
+     */
+    public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
+            Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
+
+        final String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
+        Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
-                Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.FORM_SUFFIX), crMetadata)
+                Ids.build(baseId, credentialReferenceName, Ids.FORM_SUFFIX), crMetadata)
                 .singleton(
                         () -> {
                             ResourceAddress fqAddress = address.get();
                             return fqAddress != null ? new Operation.Builder(address.get(),
                                     READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, CREDENTIAL_REFERENCE).build() : null;
+                                    .param(NAME, credentialReferenceName).build() : null;
                         },
                         () -> {
                             if (alternativeName != null && alternativeValue != null &&
@@ -153,17 +176,17 @@ public class CredentialReference {
                                         resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                                         resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
                                         () -> setTimeout(
-                                                o -> addCredentialReference(baseId, crMetadata, alternativeName,
+                                                o -> addCredentialReference(baseId, crMetadata, credentialReferenceName, alternativeName,
                                                         address, callback),
                                                 SHORT_TIMEOUT));
                             } else {
-                                addCredentialReference(baseId, crMetadata, null, address, callback);
+                                addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address, callback);
                             }
                         })
                 .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {
-                        ca.save(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqa, changedValues,
+                        ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, changedValues,
                                 crMetadata, callback);
                     } else {
                         MessageEvent.fire(eventBus,
@@ -173,7 +196,7 @@ public class CredentialReference {
                 .prepareReset(f -> {
                     ResourceAddress faAddress = address.get();
                     if (faAddress != null) {
-                        ca.reset(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, faAddress, crMetadata, f,
+                        ca.reset(credentialReferenceName, Names.CREDENTIAL_REFERENCE, faAddress, crMetadata, f,
                                 new Form.FinishReset<ModelNode>(f) {
                                     @Override
                                     public void afterReset(Form<ModelNode> form) {
@@ -191,7 +214,7 @@ public class CredentialReference {
             formBuilder.prepareRemove(f -> {
                 ResourceAddress fqAddress = address.get();
                 if (fqAddress != null) {
-                    ca.remove(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress,
+                    ca.remove(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqAddress,
                             new Form.FinishRemove<ModelNode>(f) {
                                 @Override
                                 public void afterRemove(Form<ModelNode> form) {
@@ -211,11 +234,12 @@ public class CredentialReference {
         return form;
     }
 
-    private void addCredentialReference(String baseId, Metadata crMetadata, String alternativeName,
+    private void addCredentialReference(String baseId, Metadata crMetadata,
+            final String credentialReferenceName, String alternativeName,
             Supplier<ResourceAddress> address, Callback callback) {
         ResourceAddress fqAddress = address.get();
         if (fqAddress != null) {
-            String id = Ids.build(baseId, CREDENTIAL_REFERENCE, Ids.ADD_SUFFIX);
+            String id = Ids.build(baseId, credentialReferenceName, Ids.ADD_SUFFIX);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, crMetadata)
                     .addOnly()
                     .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
@@ -228,7 +252,7 @@ public class CredentialReference {
                             .param(NAME, alternativeName)
                             .build();
                     Operation write = new Operation.Builder(fqAddress, WRITE_ATTRIBUTE_OPERATION)
-                            .param(NAME, CREDENTIAL_REFERENCE)
+                            .param(NAME, credentialReferenceName)
                             .param(VALUE, model)
                             .build();
                     dispatcher.execute(new Composite(undefine, write), (CompositeResult result) -> {
@@ -238,7 +262,7 @@ public class CredentialReference {
                     });
 
                 } else {
-                    ca.add(CREDENTIAL_REFERENCE, Names.CREDENTIAL_REFERENCE, fqAddress, model, callback);
+                    ca.add(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqAddress, model, callback);
                 }
             }).show();
 

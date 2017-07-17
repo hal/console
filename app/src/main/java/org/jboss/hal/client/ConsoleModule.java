@@ -79,10 +79,10 @@ import org.jboss.hal.client.configuration.subsystem.messaging.DestinationPresent
 import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyPresenter;
 import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyView;
 import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgePresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgeView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ClusteringView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ConnectionView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_DestinationView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_JmsBridgeView;
 import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView;
 import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.modcluster.Mbui_ModclusterView;
@@ -355,7 +355,7 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         bindPresenter(JmsBridgePresenter.class,
                 JmsBridgePresenter.MyView.class,
-                Mbui_JmsBridgeView.class,
+                JmsBridgeView.class,
                 JmsBridgePresenter.MyProxy.class);
 
         bindPresenter(JmxPresenter.class,

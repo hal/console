@@ -40,7 +40,6 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.FilteringStatementContext;
 import org.jboss.hal.meta.FilteringStatementContext.Filter;
 import org.jboss.hal.meta.Metadata;
@@ -93,7 +92,6 @@ public class ApplicationSecurityDomainPresenter extends
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
-            final Dispatcher dispatcher,
             final CrudOperations crud,
             final ComplexAttributeOperations ca,
             final MetadataRegistry metadataRegistry,
