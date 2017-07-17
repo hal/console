@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.metric;
+package org.jboss.hal.ballroom.chart;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -120,7 +120,7 @@ public class Utilization implements IsElement {
 
             remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
             remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.style.width = width(String.valueOf(remainingPercent) +"%");
+            remainingBar.style.width = width(String.valueOf(remainingPercent) + "%");
             Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
             remainingElement.textContent = MESSAGES.available(remainingPercent);
 

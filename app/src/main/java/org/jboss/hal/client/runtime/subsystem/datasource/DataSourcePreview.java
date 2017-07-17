@@ -23,7 +23,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.PreviewContent;

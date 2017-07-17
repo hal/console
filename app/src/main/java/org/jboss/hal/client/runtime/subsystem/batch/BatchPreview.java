@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;

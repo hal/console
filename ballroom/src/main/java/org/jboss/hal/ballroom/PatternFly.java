@@ -17,22 +17,20 @@ package org.jboss.hal.ballroom;
 
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
-@JsType(isNative = true)
+@JsType(namespace = GLOBAL, name = "patternfly", isNative = true)
 public class PatternFly {
 
-    /** Convenience method for {@code Colors.get()} */
-    @JsOverlay
-    public static Colors colors() {
-        return Colors.get();
-    }
+    @JsProperty(name = "pfPaletteColors")
+    public static Colors colors;
 
     /** Same as {@code initComponents(false, null)} */
     @JsOverlay
@@ -60,12 +58,5 @@ public class PatternFly {
     }
 
     @JsMethod(namespace = GLOBAL)
-    public native static PatternFly $(@NonNls String selector);
-
-    @JsMethod(namespace = GLOBAL)
     public native static void prettyPrint();
-
-    public native void bootstrapSwitch();
-
-    public native void selectpicker(SelectBoxBridge.Options options);
 }

@@ -22,6 +22,7 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.HandlerRegistrations;
 import elemental2.dom.DragEvent;
 import elemental2.dom.HTMLElement;
+import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
 import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
@@ -40,9 +41,9 @@ public final class JsHelper {
         return map;
     }
 
-    public static JsPropertyMapOfAny asJsMap(Map<String, Object> map) {
+    public static <T> JsPropertyMapOfAny asJsMap(Map<String, T> map) {
         JsPropertyMapOfAny jsMap = JsPropertyMap.of();
-        map.forEach(jsMap::set);
+        map.forEach((key, value) -> jsMap.set(key, Any.of(value)));
         return jsMap;
     }
 

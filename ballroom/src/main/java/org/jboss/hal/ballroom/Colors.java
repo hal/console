@@ -15,17 +15,11 @@
  */
 package org.jboss.hal.ballroom;
 
-import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-
 @SuppressWarnings("unused")
-@JsType(namespace = GLOBAL, name = "$", isNative = true)
+@JsType(isNative = true)
 public class Colors {
-
-    @JsProperty(name = "pfPaletteColors")
-    public static native Colors get();
 
     public String black;
     public String black100;

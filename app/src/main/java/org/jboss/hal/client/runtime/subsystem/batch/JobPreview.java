@@ -21,8 +21,8 @@ import java.util.Map;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.metric.Utilization;
-import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
+import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.chart.Donut;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -38,11 +38,7 @@ class JobPreview extends PreviewContent<JobNode> {
 
     private final EmptyState empty;
     private final HTMLElement status;
-    private final Utilization running;
-    private final Utilization stopped;
-    private final Utilization completed;
-    private final Utilization failed;
-    private final Utilization abandoned;
+    private final Donut donut;
 
     JobPreview(JobColumn column, JobNode job, Resources resources) {
         super(job.getName(), job.getDeployment());
@@ -51,14 +47,19 @@ class JobPreview extends PreviewContent<JobNode> {
                 .description(resources.messages().noExecutions())
                 .build();
 
-        // TODO Replace with Donut
-        running = new Utilization(resources.constants().running(), Names.EXECUTIONS, false, false);
-        stopped = new Utilization(resources.constants().stopped(), Names.EXECUTIONS, false, false);
-        completed = new Utilization(resources.constants().completed(), Names.EXECUTIONS, false, false);
-        failed = new Utilization(resources.constants().failed(), Names.EXECUTIONS, false, false);
-        abandoned = new Utilization(resources.constants().abandoned(), Names.EXECUTIONS, false, false);
+        donut = new Donut.Builder(Names.EXECUTIONS)
+                .add(STARTED.name(), resources.constants().running(), PatternFly.colors.green)
+                .add(STOPPED.name(), resources.constants().stopped(), PatternFly.colors.orange)
+                .add(COMPLETED.name(), resources.constants().completed(), PatternFly.colors.blue)
+                .add(FAILED.name(), resources.constants().failed(), PatternFly.colors.red)
+                .add(ABANDONED.name(), resources.constants().abandoned(), PatternFly.colors.red300)
+                .legend(Donut.Legend.BOTTOM)
+                .responsive(true)
+                .build();
+        registerAttachable(donut);
+
         status = section()
-                .addAll(running, stopped, completed, failed, abandoned)
+                .add(donut)
                 .asElement();
         Elements.setVisible(status, false);
 
@@ -78,13 +79,9 @@ class JobPreview extends PreviewContent<JobNode> {
             Elements.setVisible(status, true);
 
             Collection<ExecutionNode> executions = item.byInstanceIdMostRecentExecution().values();
-            Map<BatchStatus, Long> byBatchStatus = executions.stream()
-                    .collect(groupingBy(ExecutionNode::getBatchStatus, counting()));
-            running.update(byBatchStatus.getOrDefault(STARTED, 0L), instanceCount);
-            stopped.update(byBatchStatus.getOrDefault(STOPPED, 0L), instanceCount);
-            completed.update(byBatchStatus.getOrDefault(COMPLETED, 0L), instanceCount);
-            failed.update(byBatchStatus.getOrDefault(FAILED, 0L), instanceCount);
-            abandoned.update(byBatchStatus.getOrDefault(ABANDONED, 0L), instanceCount);
+            Map<String, Long> byBatchStatus = executions.stream()
+                    .collect(groupingBy(e -> e.getBatchStatus().name(), counting()));
+            donut.update(byBatchStatus);
         }
     }
 }

@@ -13,29 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.ballroom.chart;
 
-import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.form.SelectBoxBridge;
-import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * Contains selected JQuery methods.
- *
- * @author Harald Pehl
- */
-@JsType(namespace = GLOBAL, name = "jQuery", isNative = true)
-public class JQuery {
+@JsType(isNative = true, namespace = GLOBAL, name = "c3")
+class C3 {
 
-    @JsMethod(namespace = GLOBAL)
-    public native static JQuery $(@NonNls String selector);
-
-    public native JQuery attr(String key, String value);
-
-    public native void bootstrapSwitch();
-
-    public native void selectpicker(SelectBoxBridge.Options options);
+    static native Api generate(Options options);
 }
