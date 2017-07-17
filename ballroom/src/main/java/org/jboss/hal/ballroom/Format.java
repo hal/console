@@ -50,6 +50,10 @@ public final class Format {
     }
 
     public static String humanReadableDuration(long duration) {
+        if (duration < 1000) {
+            return duration + " ms"; //NON-NLS
+        }
+
         duration = duration / 1000;
 
         int sec = (int) duration % 60;

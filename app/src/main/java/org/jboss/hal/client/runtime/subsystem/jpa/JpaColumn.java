@@ -48,9 +48,7 @@ import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_AD
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
+// TODO Support sub-deployments!
 @AsyncColumn(Ids.JPA_RUNTIME)
 @Requires(JPA_ADDRESS)
 public class JpaColumn extends FinderColumn<JpaStatistic> {

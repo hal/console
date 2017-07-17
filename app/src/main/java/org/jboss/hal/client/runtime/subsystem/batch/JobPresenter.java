@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.jpa;
+package org.jboss.hal.client.runtime.subsystem.batch;
 
 import javax.inject.Inject;
 
@@ -28,31 +28,32 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
+import static elemental2.dom.DomGlobal.alert;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBDEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
+import static org.jboss.hal.meta.token.NameTokens.JOB;
 
-// TODO Support sub-deployments!
-public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView, JobPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(JPA_RUNTIME)
-    @Requires(JPA_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JpaPresenter> {}
+    @NameToken(JOB)
+    @Requires(BATCH_DEPLOYMENT_JOB_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JobPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<JpaPresenter> {
-        void update(JpaStatistic statistic);
+    public interface MyView extends HalView, HasPresenter<JobPresenter> {
+        void update(JobNode job);
     }
     // @formatter:on
 
@@ -61,12 +62,12 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String resourceName;
     private String deployment;
-    private String persistenceUnit;
+    private String subdeployment;
+    private String job;
 
     @Inject
-    public JpaPresenter(final EventBus eventBus,
+    public JobPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
@@ -90,25 +91,34 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        persistenceUnit = request.getParameter(NAME, null);
         deployment = request.getParameter(DEPLOYMENT, null);
-        resourceName = deployment + "#" + persistenceUnit;
+        subdeployment = request.getParameter(SUBDEPLOYMENT, null);
+        job = request.getParameter(NAME, null);
     }
 
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.JPA), resources.constants().monitor(), Names.JPA)
-                .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, persistenceUnit), Names.JPA, persistenceUnit);
+                .append(Ids.SERVER_MONITOR, Ids.asId(Names.BATCH), resources.constants().monitor(), Names.BATCH)
+                .append(Ids.JOB, Ids.job(deployment, subdeployment, job), Names.JOB, job);
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = JPA_TEMPLATE.resolve(statementContext, deployment, resourceName);
+        ResourceAddress address;
+        if (subdeployment == null) {
+            address = BATCH_DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, job);
+        } else {
+            address = BATCH_SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, subdeployment, job);
+        }
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(new JpaStatistic(address, result)));
+        dispatcher.execute(operation, result -> getView().update(new JobNode(address, result)));
+    }
+
+    void restartExecution(ExecutionNode execution) {
+        alert(Names.NYI);
     }
 }

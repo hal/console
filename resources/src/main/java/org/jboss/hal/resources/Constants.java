@@ -113,6 +113,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String domainConfigurationChangedTooltip();
     String download();
     String duplicateMacro();
+    String duration();
 
     String edit();
     String enable();
@@ -142,6 +143,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String failedExecutions();
     String filter();
     String finish();
+    String finished();
     String flushAll();
     String flushGracefully();
     String flushIdle();

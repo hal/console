@@ -42,6 +42,7 @@ public interface Names {
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
     String BATCH = "Batch";
+    String BATCH_STATUS = "Batch Status";
     String BINARY_JDBC = "Binary JDBC";
     String BINARY_TABLE = "Binary Table";
     String BOOT_ERRORS = "Boot Errors";
@@ -95,7 +96,9 @@ public interface Names {
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
     String EVICTION = "Eviction";
+    String EXECUTION_ID = "Execution ID";
     String EXECUTIONS = "Executions";
+    String EXIT_STATUS = "Exit Status";
     String EXPIRATION = "Expiration";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
@@ -137,6 +140,7 @@ public interface Names {
     String IN_VM_CONNECTOR = "In VM Connector";
     String INBOUND = "Inbound";
     String INCLUDES = "Includes";
+    String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String INVALIDATION_CACHE = "Invalidation Cache";

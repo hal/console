@@ -17,9 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
+// TODO Support sub-deployments!
 interface AddressTemplates {
 
     String JPA_ADDRESS = "/{selected.host}/{selected.server}/deployment=*/subsystem=jpa/hibernate-persistence-unit=*";

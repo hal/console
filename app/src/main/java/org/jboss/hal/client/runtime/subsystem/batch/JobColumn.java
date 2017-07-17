@@ -18,12 +18,14 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
@@ -36,6 +38,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -58,8 +61,7 @@ import org.jboss.hal.spi.Requires;
 
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.setInterval;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
+import static java.util.Arrays.asList;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_TEMPLATE;
@@ -83,6 +85,7 @@ public class JobColumn extends FinderColumn<JobNode> {
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
             EventBus eventBus,
+            Places places,
             Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
             StatementContext statementContext,
@@ -117,15 +120,15 @@ public class JobColumn extends FinderColumn<JobNode> {
                     (CompositeResult result) -> {
                         List<JobNode> jobs = new ArrayList<>();
                         result.step(0).get(RESULT).asList().forEach(node -> {
-                            ResourceAddress deployment = new ResourceAddress(node.get(ADDRESS));
+                            ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
                             ModelNode job = node.get(RESULT);
-                            jobs.add(new JobNode(deployment, job));
+                            jobs.add(new JobNode(address, job));
                         });
                         callback.onSuccess(jobs);
 
                         // turn progress animation on/off
                         for (JobNode job : jobs) {
-                            String jobId = Ids.job(job.getDeployment(), job.getName());
+                            String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
                             if (job.getRunningExecutions() > 0) {
                                 ItemMonitor.startProgress(jobId);
                                 intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
@@ -139,7 +142,7 @@ public class JobColumn extends FinderColumn<JobNode> {
         setItemRenderer(item -> new ItemDisplay<JobNode>() {
             @Override
             public String getId() {
-                return Ids.job(item.getDeployment(), item.getName());
+                return Ids.job(item.getDeployment(), item.getSubdeployment(), item.getName());
             }
 
             @Override
@@ -149,19 +152,21 @@ public class JobColumn extends FinderColumn<JobNode> {
 
             @Override
             public String getFilterData() {
-                if (item.getInstanceCount() == 0) {
-                    return getTitle();
-                } else {
-                    Set<String> uniqueStatus = item.getExecutions().stream()
-                            .map(e -> e.getBatchStatus().name())
-                            .collect(toSet());
-                    return getTitle() + " " + uniqueStatus.stream().collect(joining(" "));
+                Set<String> data = new HashSet<>(asList(item.getName(), item.getDeployment()));
+                if (item.getSubdeployment() != null) {
+                    data.add(item.getSubdeployment());
                 }
+                if (item.getInstanceCount() > 0) {
+                    item.getExecutions().stream()
+                            .map(e -> e.getBatchStatus().name())
+                            .forEach(data::add);
+                }
+                return String.join(" ", data);
             }
 
             @Override
             public HTMLElement asElement() {
-                return ItemDisplay.withSubtitle(item.getName(), item.getDeployment());
+                return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 
             @Override
@@ -191,7 +196,13 @@ public class JobColumn extends FinderColumn<JobNode> {
             @Override
             public List<ItemAction<JobNode>> actions() {
                 List<ItemAction<JobNode>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.JOB, NAME, item.getName()));
+                PlaceRequest.Builder builder = places.selectedServer(NameTokens.JOB)
+                        .with(DEPLOYMENT, item.getDeployment());
+                if (item.getSubdeployment() != null) {
+                    builder.with(SUBDEPLOYMENT, item.getSubdeployment());
+                }
+                PlaceRequest placeRequest = builder.with(NAME, item.getName()).build();
+                actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction.Builder<JobNode>()
                         .title(resources.constants().start())
                         .constraint(Constraint.executable(BATCH_DEPLOYMENT_JOB_TEMPLATE, START_SERVERS))
@@ -208,7 +219,7 @@ public class JobColumn extends FinderColumn<JobNode> {
         Operation operation = new Operation.Builder(job.getAddress(), READ_ATTRIBUTE_OPERATION)
                 .param(NAME, RUNNING_EXECUTIONS)
                 .build();
-        String jobId = Ids.job(job.getDeployment(), job.getName());
+        String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
         dispatcher.execute(operation,
                 result -> {
                     if (result.asInt() == 0) {

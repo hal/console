@@ -41,7 +41,7 @@ class JobPreview extends PreviewContent<JobNode> {
     private final Donut donut;
 
     JobPreview(JobColumn column, JobNode job, Resources resources) {
-        super(job.getName(), job.getDeployment());
+        super(job.getName(), job.getPath());
 
         empty = new EmptyState.Builder(resources.constants().noExecutions())
                 .description(resources.messages().noExecutions())
@@ -49,7 +49,7 @@ class JobPreview extends PreviewContent<JobNode> {
 
         donut = new Donut.Builder(Names.EXECUTIONS)
                 .add(STARTED.name(), resources.constants().running(), PatternFly.colors.green)
-                .add(STOPPED.name(), resources.constants().stopped(), PatternFly.colors.orange)
+                .add(STOPPED.name(), resources.constants().stopped(), PatternFly.colors.black500)
                 .add(COMPLETED.name(), resources.constants().completed(), PatternFly.colors.blue)
                 .add(FAILED.name(), resources.constants().failed(), PatternFly.colors.red)
                 .add(ABANDONED.name(), resources.constants().abandoned(), PatternFly.colors.red300)

@@ -22,52 +22,28 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jboss.hal.client.runtime.subsystem.DeploymentNode;
 import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.resources.Names;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_EXECUTIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-class JobNode extends NamedNode {
+class JobNode extends DeploymentNode {
 
-    private final ResourceAddress address;
-    private final String deployment;
     private final List<ExecutionNode> executions;
 
     JobNode(ResourceAddress address, ModelNode modelNode) {
-        super(address.lastValue(), modelNode);
-        this.address = address;
+        super(address, modelNode);
         this.executions = failSafePropertyList(modelNode, EXECUTION).stream().map(ExecutionNode::new).collect(toList());
 
-        StringBuilder name = new StringBuilder();
-        address.asList().forEach(segment -> {
-            if (segment.hasDefined(DEPLOYMENT)) {
-                name.append(segment.get(DEPLOYMENT).asString());
-            }
-            if (segment.hasDefined(SUBDEPLOYMENT)) {
-                name.append("#").append(segment.get(SUBDEPLOYMENT).asString());
-            }
-        });
-        this.deployment = name.length() != 0 ? name.toString() : Names.NOT_AVAILABLE;
-    }
-
-    ResourceAddress getAddress() {
-        return address;
-    }
-
-    String getDeployment() {
-        return deployment;
     }
 
     int getInstanceCount() {
@@ -88,23 +64,6 @@ class JobNode extends NamedNode {
 
     List<ExecutionNode> getExecutions() {
         return executions;
-    }
-
-    Map<Integer, SortedSet<ExecutionNode>> byInstanceIdAllExecutions() {
-        // first group by instance-id,
-        // then sort multiple executions with the same instance id by last updated time
-        return executions.stream()
-                .collect(collectingAndThen(groupingBy(ExecutionNode::getInstanceId), input -> {
-                    // sort executions by last updated time
-                    Map<Integer, SortedSet<ExecutionNode>> result = new HashMap<>(input.size());
-                    input.forEach((instanceId, executions) -> {
-                        SortedSet<ExecutionNode> byLastUpdate = new TreeSet<>(
-                                comparing(ExecutionNode::getLastUpdatedTime));
-                        byLastUpdate.addAll(executions);
-                        result.put(instanceId, byLastUpdate);
-                    });
-                    return result;
-                }));
     }
 
     Map<Integer, ExecutionNode> byInstanceIdMostRecentExecution() {

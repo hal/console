@@ -172,6 +172,7 @@ public interface CSS {
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
+    String invisible = "invisible";
     String itemIcon = "item-icon";
     String itemText = "item-text";
 
@@ -191,6 +192,7 @@ public interface CSS {
     String listViewPfBody = "list-view-pf-body";
     String listViewPfCheckbox = "list-view-pf-checkbox";
     String listViewPfDescription = "list-view-pf-description";
+    String listViewPfIconMd = "list-view-pf-icon-md";
     String listViewPfLeft = "list-view-pf-left";
     String listViewPfMainInfo = "list-view-pf-main-info";
     String listViewPfStacked = "list-view-pf-stacked";
@@ -316,6 +318,7 @@ public interface CSS {
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
     String textCenter = "text-center";
+    String textRight = "text-right";
     String time = "time";
     String timestamp = "timestamp";
     String tmTag = "tm-tag";

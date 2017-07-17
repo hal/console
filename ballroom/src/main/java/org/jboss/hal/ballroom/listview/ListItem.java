@@ -73,6 +73,12 @@ class ListItem<T> implements IsElement {
         // actions
         if (!display.actions().isEmpty()) {
             HTMLElement actionsContainer = div().css(listViewPfActions).asElement();
+            boolean placeHolder = Iterables.size(display.actions()) == display.actions().stream()
+                    .filter(a -> a.id.startsWith(Ids.LIST_VIEW_ACTION_PLACEHOLDER))
+                    .count();
+            if (placeHolder) {
+                actionsContainer.classList.add(invisible);
+            }
             root.appendChild(actionsContainer);
 
             int index = 0;
@@ -88,6 +94,7 @@ class ListItem<T> implements IsElement {
                             .textContent(action.title)
                             .on(click, event -> action.handler.execute(item))
                             .asElement());
+
                 } else {
                     // remaining actions are inside the kebab menu
                     HTMLUListElement ul = null;
@@ -156,6 +163,8 @@ class ListItem<T> implements IsElement {
             for (HTMLElement element : display.getDescriptionElements().asElements()) {
                 text.appendChild(element);
             }
+        } else if (display.getDescriptionHtml() != null) {
+            text.innerHTML = display.getDescriptionHtml().asString();
         } else if (!Strings.isNullOrEmpty(display.getDescription())) {
             text.textContent = display.getDescription();
         }

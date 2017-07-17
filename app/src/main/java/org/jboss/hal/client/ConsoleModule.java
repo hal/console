@@ -142,6 +142,8 @@ import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
 import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
 import org.jboss.hal.client.runtime.server.ServerStatusView;
+import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
+import org.jboss.hal.client.runtime.subsystem.batch.JobView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
@@ -343,15 +345,15 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
 
-        bindPresenter(JcaPresenter.class,
-                JcaPresenter.MyView.class,
-                JcaView.class,
-                JcaPresenter.MyProxy.class);
-
         bindPresenter(JGroupsPresenter.class,
                 JGroupsPresenter.MyView.class,
                 JGroupsView.class,
                 JGroupsPresenter.MyProxy.class);
+
+        bindPresenter(JcaPresenter.class,
+                JcaPresenter.MyView.class,
+                JcaView.class,
+                JcaPresenter.MyProxy.class);
 
         bindPresenter(JmsBridgePresenter.class,
                 JmsBridgePresenter.MyView.class,
@@ -367,6 +369,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 JndiPresenter.MyView.class,
                 JndiView.class,
                 JndiPresenter.MyProxy.class);
+
+        bindPresenter(JobPresenter.class,
+                JobPresenter.MyView.class,
+                JobView.class,
+                JobPresenter.MyProxy.class);
 
         bindPresenter(org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.class,
                 org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.MyView.class,

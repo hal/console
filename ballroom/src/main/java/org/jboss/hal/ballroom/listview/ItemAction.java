@@ -15,10 +15,21 @@
  */
 package org.jboss.hal.ballroom.listview;
 
+import org.jboss.hal.resources.Ids;
+
 /**
  * @author Harald Pehl
  */
 public class ItemAction<T> {
+
+    private static int counter = 0;
+
+    public static <T> ItemAction<T> placeholder(String title) {
+        return new ItemAction<>(Ids.build(Ids.LIST_VIEW_ACTION_PLACEHOLDER, String.valueOf(counter++)), title, item -> {
+            // noop
+        });
+    }
+
 
     final String id;
     final String title;

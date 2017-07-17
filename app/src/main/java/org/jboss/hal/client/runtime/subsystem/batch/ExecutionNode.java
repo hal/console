@@ -29,7 +29,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 class ExecutionNode extends NamedNode {
 
     enum BatchStatus {STARTED, STOPPED, COMPLETED, FAILED, ABANDONED, UNKNOWN}
-    enum ExitStatus {STOPPED, COMPLETED, ERROR, UNKNOWN}
 
     private static final DateTimeFormat ISO_8601 = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.ISO_8601);
 
@@ -55,17 +54,8 @@ class ExecutionNode extends NamedNode {
         return asEnumValue(this, BATCH_STATUS, BatchStatus::valueOf, BatchStatus.UNKNOWN);
     }
 
-    ExitStatus getExitStatus() {
-        return asEnumValue(this, EXIT_STATUS, name -> {
-            if (name.startsWith("Error")) { //NON-NLS
-                return ExitStatus.ERROR;
-            }
-            return ExitStatus.valueOf(name);
-        }, ExitStatus.UNKNOWN);
-    }
-
     String getExitError() {
-        if (getExitStatus() == ExitStatus.ERROR) {
+        if (hasDefined(EXIT_STATUS) && get(EXIT_STATUS).asString().startsWith("Error")) { //NON-NLS
             return get(EXIT_STATUS).asString();
         }
         return null;

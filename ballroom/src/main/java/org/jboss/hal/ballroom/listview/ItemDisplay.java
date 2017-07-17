@@ -18,15 +18,12 @@ package org.jboss.hal.ballroom.listview;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.StreamSupport.stream;
+import org.jboss.hal.resources.Ids;
 
 /**
  * Controls the layout of a list view item.
@@ -35,7 +32,9 @@ import static java.util.stream.StreamSupport.stream;
  */
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
-    String getDescription();
+    default String getDescription() {
+        return null;
+    }
 
     /**
      * An unique id for this item
@@ -43,8 +42,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * @return an id based on {@link #getTitle()}
      */
     default String getId() {
-        Iterable<String> parts = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(getTitle());
-        return stream(parts.spliterator(), false).map(String::toLowerCase).collect(joining("-"));
+        return Ids.asId(getTitle());
     }
 
     default boolean stacked() {
@@ -56,6 +54,10 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     }
 
     default HasElements getTitleElements() {
+        return null;
+    }
+
+    default SafeHtml getDescriptionHtml() {
         return null;
     }
 
