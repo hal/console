@@ -225,7 +225,8 @@ public class JobColumn extends FinderColumn<JobNode> {
                     if (result.asInt() == 0) {
                         ItemMonitor.stopProgress(jobId);
                         if (intervalHandles.containsKey(jobId)) {
-                            clearInterval(intervalHandles.get(jobId));
+                            double handle = intervalHandles.remove(jobId);
+                            clearInterval(handle);
                         }
                         JobColumn.this.refresh(RESTORE_SELECTION);
                     }
@@ -288,8 +289,13 @@ public class JobColumn extends FinderColumn<JobNode> {
     @Override
     public void detach() {
         super.detach();
+        clearIntervals();
+    }
+
+    private void clearIntervals() {
         for (Double handle : intervalHandles.values()) {
             clearInterval(handle);
         }
+        intervalHandles.clear();
     }
 }

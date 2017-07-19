@@ -134,13 +134,14 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             getEventBus().fireEvent(Recording.stop());
 
         } else {
-            new MacroOptionsDialog(macros, resources, options -> {
-                MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
-                getEventBus().fireEvent(Recording.start(options));
-                getView().startRecording();
-                getView().steps(0);
-                recording = true;
-            }).show();
+            new MacroOptionsDialog(macros, resources,
+                    options -> {
+                        MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
+                        getEventBus().fireEvent(Recording.start(options));
+                        getView().startRecording();
+                        getView().steps(0);
+                        recording = true;
+                    }).show();
         }
     }
 

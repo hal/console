@@ -18,6 +18,7 @@ package org.jboss.hal.dmr.macro;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.resources.Ids;
 
@@ -90,6 +91,14 @@ public class Macro {
 
     public List<Operation> getOperations() {
         return operations;
+    }
+
+    public int getOperationCount() {
+        int count = 0;
+        for (Operation operation : operations) {
+            count += operation instanceof Composite ? ((Composite) operation).size() : 1;
+        }
+        return count;
     }
 
     public String asCli() {

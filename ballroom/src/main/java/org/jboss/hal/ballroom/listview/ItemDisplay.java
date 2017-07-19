@@ -32,10 +32,6 @@ import org.jboss.hal.resources.Ids;
  */
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
-    default String getDescription() {
-        return null;
-    }
-
     /**
      * An unique id for this item
      *
@@ -45,15 +41,23 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return Ids.asId(getTitle());
     }
 
-    default boolean stacked() {
-        return false;
+    default String getStatusIcon() {
+        return null;
     }
 
-    default HTMLElement status() {
+    default HTMLElement getStatusElement() {
+        return null;
+    }
+
+    default SafeHtml getTitleHtml() {
         return null;
     }
 
     default HasElements getTitleElements() {
+        return null;
+    }
+
+    default String getDescription() {
         return null;
     }
 
@@ -65,7 +69,15 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
-    default HasElements getAdditionalInfo() {
+    default String getAdditionalInfo() {
+        return null;
+    }
+
+    default SafeHtml getAdditionalInfoHtml() {
+        return null;
+    }
+
+    default HasElements getAdditionalInfoElements() {
         return null;
     }
 

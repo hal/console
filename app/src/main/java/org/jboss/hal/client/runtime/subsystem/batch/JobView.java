@@ -30,6 +30,7 @@ import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
+import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.CSS;
@@ -37,17 +38,20 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.Format.humanReadableDuration;
-import static org.jboss.hal.ballroom.Format.shortDateTime;
+import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.FAILED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_UPDATED_TIME;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.FontAwesomeSize.x2;
 
 public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
@@ -63,39 +67,37 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 .description(resources.messages().noExecutions())
                 .build();
 
-        listView = new ListView<>(Ids.JOB_LIST, item -> new ItemDisplay<ExecutionNode>() {
+        ItemRenderer<ExecutionNode> itemRenderer = item -> new ItemDisplay<ExecutionNode>() {
             @Override
             public String getId() {
                 return Ids.build(EXECUTION, String.valueOf(item.getExecutionId()));
             }
 
             @Override
-            public boolean stacked() {
-                return true;
-            }
-
-            @Override
-            public HTMLElement status() {
-                HtmlContentBuilder<HTMLElement> builder = span().css(listViewPfIconMd);
+            public HTMLElement getStatusElement() {
+                HtmlContentBuilder<HTMLElement> builder = span()
+                        .css(listHalIconBig)
+                        .title(item.getBatchStatus().name());
                 switch (item.getBatchStatus()) {
                     case STARTED:
-                        builder.css(pfIcon("spinner"));
+                        //noinspection HardCodedStringLiteral
+                        builder.css(fontAwesome("circle-o-notch fa-spin fa-fw"), listHalIconProgress);
                         break;
                     case STOPPED:
-                        builder.css(fontAwesome(stopCircleO), grey);
+                        builder.css(fontAwesome(stopCircleO), listHalIconInfo);
                         break;
                     case COMPLETED:
-                        builder.css(pfIcon(ok));
+                        builder.css(pfIcon(ok), listHalIconSuccess);
                         break;
                     case FAILED:
                     case ABANDONED:
-                        builder.css(pfIcon(errorCircleO));
+                        builder.css(pfIcon(errorCircleO), listHalIconError);
                         break;
                     case UNKNOWN:
                         builder.css(fontAwesome(questionsCircleO));
                         break;
                 }
-                return builder.title(item.getBatchStatus().name()).asElement();
+                return builder.asElement();
             }
 
             @Override
@@ -118,42 +120,60 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
             @Override
             @SuppressWarnings("HardCodedStringLiteral")
-            public HasElements getAdditionalInfo() {
+            public HasElements getAdditionalInfoElements() {
                 ElementsBuilder elements = elements();
-                elements.add(div()
-                        .add(p().style("width: 15em")
-                                .css(textRight).innerHtml(new SafeHtmlBuilder()
+                elements.add(div().css(halExecutionTime)
+                        .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
                                 .appendEscaped(resources.constants().start() + ": ")
-                                .appendEscaped(shortDateTime(item.getCreateTime()))
+                                .appendEscaped(mediumDateTime(item.getCreateTime()))
                                 .appendHtmlConstant("<br/>")
                                 .appendEscaped(resources.constants().finished() + ": ")
-                                .appendEscaped(shortDateTime(item.getEndTime()))
+                                .appendEscaped(failsSafeTime(item, END_TIME,
+                                        itm -> mediumDateTime(item.getEndTime())))
+                                .appendHtmlConstant("<br/>")
+                                .appendEscaped(resources.constants().lastModified() + ": ")
+                                .appendEscaped(failsSafeTime(item, LAST_UPDATED_TIME,
+                                        itm -> mediumDateTime(item.getLastUpdatedTime())))
                                 .toSafeHtml())));
-                elements.add(div()
-                        .add(span().css(fontAwesome("clock-o")).title(resources.constants().duration()))
-                        .add(strong().textContent(failsSafeEnd(item, itm ->
-                                humanReadableDuration(itm.getEndTime().getTime() - item.getCreateTime().getTime())))));
+                elements.add(div().css(halExecutionDuration)
+                        .add(span()
+                                .css(fontAwesome("clock-o", x2), marginRight5)
+                                .title(resources.constants().duration()))
+                        .add(p().css(CSS.lead).textContent(failsSafeTime(item, END_TIME, itm ->
+                                humanReadableDuration(
+                                        itm.getEndTime().getTime() - item.getCreateTime().getTime())))));
                 return elements;
             }
 
             @Override
             public List<ItemAction<ExecutionNode>> actions() {
                 List<ItemAction<ExecutionNode>> actions = new ArrayList<>();
-                if (item.getBatchStatus() == FAILED) {
+                if (item.getBatchStatus() == STARTED) {
+                    actions.add(new ItemAction<>(Ids.JOP_EXECUTION_STOP,
+                            resources.constants().stop(), execution -> presenter.stopExecution(execution)));
+                } else if (item.getBatchStatus() == FAILED) {
                     actions.add(new ItemAction<>(Ids.JOP_EXECUTION_RESTART,
-                            resources.constants().restart(), execution -> presenter.restartExecution(execution)));
-                } else {
-                    actions.add(ItemAction.placeholder(resources.constants().restart()));
+                            resources.constants().restart(),
+                            execution -> presenter.restartExecution(execution)));
                 }
                 return actions;
             }
-        });
+        };
+        listView = new ListView.Builder<>(Ids.JOB_LIST, itemRenderer)
+                .contentWidths("50%", "50%")
+                .stacked(true)
+                .multiselect(false)
+                .build();
 
         initElement(row()
                 .add(column()
-                        .add(header = h(1).asElement())
-                        .add(lead = p().css(CSS.lead).asElement())
-                        .add(listView)));
+                        .add(header()
+                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                                        .add(span().textContent(resources.constants().refresh())))
+                                .add(header = h(1).asElement())
+                                .add(lead = p().css(CSS.lead).asElement()))
+                        .addAll(empty, listView)));
     }
 
     @Override
@@ -170,16 +190,21 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         Elements.setVisible(empty.asElement(), !hasExecutions);
         Elements.setVisible(listView.asElement(), hasExecutions);
         if (hasExecutions) {
-            List<ExecutionNode> byInstanceIdAndLastUpdatedTime = job.getExecutions().stream()
-                    .sorted(comparing(ExecutionNode::getInstanceId)
-                            .thenComparing(ExecutionNode::getLastUpdatedTime))
-                    .collect(toList());
-            listView.setItems(byInstanceIdAndLastUpdatedTime);
+            listView.setItems(job.byInstanceIdMostRecentExecution().values());
+            if (job.getRunningExecutions() > 0) {
+                presenter.pollRunningExecutions();
+            }
         }
     }
 
-    private String failsSafeEnd(ExecutionNode execution, Function<ExecutionNode, String> fn) {
-        if (execution.hasDefined(END_TIME)) {
+    private void refresh() {
+        if (presenter != null) {
+            presenter.reload();
+        }
+    }
+
+    private String failsSafeTime(ExecutionNode execution, String attribute, Function<ExecutionNode, String> fn) {
+        if (execution.hasDefined(attribute)) {
             return fn.apply(execution);
         }
         return Names.NOT_AVAILABLE;

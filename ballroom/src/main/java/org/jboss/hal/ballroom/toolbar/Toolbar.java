@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom.toolbar;
 
 /**
- * @author Harald Pehl
+ * PatternFly toolbar.
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
  */
-public class ItemAction<T> {
-
-    final String id;
-    final String title;
-    final ItemActionHandler<T> handler;
-
-    public ItemAction(final String id, final String title, final ItemActionHandler<T> handler) {
-        this.id = id;
-        this.title = title;
-        this.handler = handler;
-    }
+public class Toolbar {
 }

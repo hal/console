@@ -390,6 +390,7 @@ public interface Ids {
     String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
     String JOB = "job";
     String JOP_EXECUTION_RESTART = build(JOB, "execution", "restart");
+    String JOP_EXECUTION_STOP = build(JOB, "execution", "stop");
     String JOB_LIST = build(JOB, "list");
     String JOB_REFRESH = build(JOB, REFRESH_SUFFIX);
     String JPA_RUNTIME = "jpa-runtime";
@@ -398,7 +399,6 @@ public interface Ids {
     String JPA_RUNTIME_ENTITY_ENTRY = build(JPA_RUNTIME, "entity", ENTRY_SUFFIX);
     String JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY = build(JPA_RUNTIME, "main", "attributes", ENTRY_SUFFIX);
     String JPA_RUNTIME_QUERY_CACHE_ENTRY = build(JPA_RUNTIME, "query-cache", ENTRY_SUFFIX);
-    String LIST_VIEW_ACTION_PLACEHOLDER = "list-view-action-placholder";
     String LOCAL_CACHE = "local-cache";
     String LOG_FILE = "lf";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");

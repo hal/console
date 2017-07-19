@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tooltip;
@@ -29,6 +30,7 @@ import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
+import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
@@ -44,6 +46,7 @@ import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -78,7 +81,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .build();
         empty.asElement().classList.add(noMacros);
 
-        macroList = new ListView<>(Ids.MACRO_LIST, macro -> new ItemDisplay<Macro>() {
+        ItemRenderer<Macro> itemRenderer = macro -> new ItemDisplay<Macro>() {
             @Override
             public String getTitle() {
                 return macro.getName();
@@ -90,8 +93,10 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             }
 
             @Override
-            public boolean stacked() {
-                return true;
+            public HasElements getAdditionalInfoElements() {
+                return elements().add(div()
+                        .add(span().css(pfIcon("image"), marginRight5))
+                        .add(span().textContent(resources.messages().operations(macro.getOperationCount()))));
             }
 
             @Override
@@ -107,7 +112,11 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                                         resources.messages().removeConfirmationQuestion(macro.getName()),
                                         () -> presenter.remove(macro))));
             }
-        });
+        };
+        macroList = new ListView.Builder<>(Ids.MACRO_LIST, itemRenderer)
+                .multiselect(false)
+                .stacked(true)
+                .build();
         macroList.onSelect(this::loadMacro);
         macroList.asElement().classList.add(CSS.macroList);
 

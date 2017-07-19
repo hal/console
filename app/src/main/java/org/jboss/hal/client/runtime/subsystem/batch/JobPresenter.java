@@ -121,4 +121,12 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
     void restartExecution(ExecutionNode execution) {
         alert(Names.NYI);
     }
+
+    void stopExecution(ExecutionNode execution) {
+        alert(Names.NYI);
+    }
+
+    void pollRunningExecutions() {
+
+    }
 }

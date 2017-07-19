@@ -48,9 +48,9 @@ class JobPreview extends PreviewContent<JobNode> {
                 .build();
 
         donut = new Donut.Builder(Names.EXECUTIONS)
-                .add(STARTED.name(), resources.constants().running(), PatternFly.colors.green)
+                .add(STARTED.name(), resources.constants().running(), PatternFly.colors.blue)
                 .add(STOPPED.name(), resources.constants().stopped(), PatternFly.colors.black500)
-                .add(COMPLETED.name(), resources.constants().completed(), PatternFly.colors.blue)
+                .add(COMPLETED.name(), resources.constants().completed(), PatternFly.colors.green)
                 .add(FAILED.name(), resources.constants().failed(), PatternFly.colors.red)
                 .add(ABANDONED.name(), resources.constants().abandoned(), PatternFly.colors.red300)
                 .legend(Donut.Legend.BOTTOM)

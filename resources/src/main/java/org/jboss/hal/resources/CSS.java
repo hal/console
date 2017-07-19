@@ -145,6 +145,8 @@ public interface CSS {
 
     String grey = "grey";
 
+    String halExecutionDuration = "hal-execution-duration";
+    String halExecutionTime = "hal-execution-time";
     String halFormLabel = "hal-form-label";
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
@@ -180,22 +182,34 @@ public interface CSS {
 
     String last = "last";
     String lead = "lead";
+    String listHalActions = "list-hal-actions";
+    String listHalIconBig = "list-hal-icon-big";
+    String listHalIconError = "list-hal-icon-error";
+    String listHalIconInfo = "list-hal-icon-info";
+    String listHalIconProgress = "list-hal-icon-progress";
+    String listHalIconSuccess = "list-hal-icon-success";
+    String listHalIconWarning = "list-hal-icon-warning";
+    String listPf = "list-pf";
+    String listPfActions = "list-pf-actions";
+    String listPfAdditionalContent = "list-pf-additional-content";
+    String listPfContainer = "list-pf-container";
+    String listPfContent = "list-pf-content";
+    String listPfContentFlex = "list-pf-content-flex";
+    String listPfContentWrapper = "list-pf-content-wrapper";
+    String listPfDescription = "list-pf-description";
+    String listPfIcon = "list-pf-icon";
+    String listPfIconBordered = "list-pf-icon-bordered";
+    String listPfIconSmall = "list-pf-icon-small";
+    String listPfItem = "list-pf-item";
+    String listPfLeft = "list-pf-left";
+    String listPfMainContent = "list-pf-main-content";
+    String listPfSelect = "list-pf-select";
+    String listPfStacked = "list-pf-stacked";
+    String listPfTitle = "list-pf-title";
+
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
-    String listGroupItemHeading = "list-group-item-heading";
-    String listGroupItemText = "list-group-item-text";
     String listGroupItemValue = "list-group-item-value";
-    String listViewPf = "list-view-pf";
-    String listViewPfAdditionalInfo = "list-view-pf-additional-info";
-    String listViewPfAdditionalInfoItem = "list-view-pf-additional-info-item";
-    String listViewPfActions = "list-view-pf-actions";
-    String listViewPfBody = "list-view-pf-body";
-    String listViewPfCheckbox = "list-view-pf-checkbox";
-    String listViewPfDescription = "list-view-pf-description";
-    String listViewPfIconMd = "list-view-pf-icon-md";
-    String listViewPfLeft = "list-view-pf-left";
-    String listViewPfMainInfo = "list-view-pf-main-info";
-    String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";
@@ -302,6 +316,7 @@ public interface CSS {
     String serverGroupContainer = "server-group-container";
     String smallLink = "small-link";
     String spinner = "spinner";
+    String spinnerInline = "spinner-inline";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
     String static_ = "static";

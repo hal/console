@@ -94,7 +94,7 @@ public class Macros {
     private String serialize(Macro macro) {
         ModelNode modelNode = new ModelNode();
         modelNode.get(NAME).set(macro.getName());
-        modelNode.get(DESCRIPTION).set(macro.getName());
+        modelNode.get(DESCRIPTION).set(macro.getDescription());
         for (Operation operation : macro.getOperations()) {
             modelNode.get(OPERATIONS).add(operation);
         }

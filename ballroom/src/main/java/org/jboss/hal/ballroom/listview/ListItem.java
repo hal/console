@@ -16,16 +16,17 @@
 package org.jboss.hal.ballroom.listview;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Splitter;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -47,19 +48,18 @@ class ListItem<T> implements IsElement {
     final T item;
 
 
-    ListItem(final ListView<T> listView, final T item, final boolean checkbox, final ItemDisplay<T> display) {
+    ListItem(ListView<T> listView, T item, boolean checkbox, String[] contentWidths, ItemDisplay<T> display) {
         this.id = display.getId();
         this.item = item;
         this.actions = new HashMap<>();
 
-        // root and checkbox
-        String css = listGroupItem;
-        if (display.stacked()) {
-            css = css + " " + listViewPfStacked;
-        }
-        root = div().id(id).css(css).asElement();
+        // root & checkbox
+        HTMLElement container;
+        root = div().id(id).css(listPfItem)
+                .add(container = div().css(listPfContainer).asElement())
+                .asElement();
         if (checkbox) {
-            root.appendChild(div().css(listViewPfCheckbox)
+            container.appendChild(div().css(listPfSelect)
                     .add(input(InputType.checkbox)
                             .on(click, event -> {
                                 HTMLInputElement element = (HTMLInputElement) event.target;
@@ -70,25 +70,94 @@ class ListItem<T> implements IsElement {
             bind(root, click, event -> listView.select(this, true));
         }
 
-        // actions
-        if (!display.actions().isEmpty()) {
-            HTMLElement actionsContainer = div().css(listViewPfActions).asElement();
-            boolean placeHolder = Iterables.size(display.actions()) == display.actions().stream()
-                    .filter(a -> a.id.startsWith(Ids.LIST_VIEW_ACTION_PLACEHOLDER))
-                    .count();
-            if (placeHolder) {
-                actionsContainer.classList.add(invisible);
+        // status icon, title, description, additional info
+        HTMLElement content;
+        HTMLElement contentWrapper;
+        HTMLElement mainContent;
+        HTMLElement title;
+        container.appendChild(content = div().css(listPfContent, listPfContentFlex).asElement());
+        if (display.getStatusElement() != null) {
+            content.appendChild(div().css(listPfLeft)
+                    .add(display.getStatusElement())
+                    .asElement());
+        } else if (display.getStatusIcon() != null) {
+            HTMLElement status;
+            content.appendChild(div().css(listPfLeft)
+                    .add(status = span().css(listPfIcon, listPfIconBordered, listPfIconSmall)
+                            .asElement())
+                    .asElement());
+            List<String> classes = Splitter.on(' ')
+                    .omitEmptyStrings()
+                    .trimResults()
+                    .splitToList(display.getStatusIcon());
+            status.classList.add(classes.toArray(new String[classes.size()]));
+        }
+        content.appendChild(contentWrapper = div().css(listPfContentWrapper)
+                .add(mainContent = div().css(listPfMainContent)
+                        .style("flex-basis:" + contentWidths[0]) //NON-NLS
+                        .add(title = div().css(listPfTitle)
+                                .asElement())
+                        .asElement())
+                .asElement());
+        if (display.getTitleElements() != null) {
+            for (HTMLElement element : display.getTitleElements().asElements()) {
+                title.appendChild(element);
             }
-            root.appendChild(actionsContainer);
+        } else if (display.getTitleHtml() != null) {
+            title.appendChild(h(3).innerHtml(display.getTitleHtml()).asElement());
+        } else if (display.getTitle() != null) {
+            title.appendChild(h(3, display.getTitle()).asElement());
+        } else {
+            title.appendChild(h(3, Names.NOT_AVAILABLE).asElement());
+        }
+        if (display.getDescriptionElements() != null ||
+                display.getDescriptionHtml() != null ||
+                display.getDescription() != null) {
+            HTMLElement description;
+            mainContent.appendChild(description = div().css(listPfDescription)
+                    .asElement());
+            if (display.getDescriptionElements() != null) {
+                for (HTMLElement element : display.getDescriptionElements().asElements()) {
+                    description.appendChild(element);
+                }
+            } else if (display.getDescriptionHtml() != null) {
+                description.innerHTML = display.getDescriptionHtml().asString();
+            } else if (display.getDescription() != null) {
+                description.textContent = display.getDescription();
+            }
+        }
+        if (display.getAdditionalInfoElements() != null ||
+                display.getAdditionalInfoHtml() != null ||
+                display.getAdditionalInfo() != null) {
+            HTMLElement additionalInfo;
+            contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent)
+                    .style("flex-basis:" + contentWidths[1]) //NON-NLS
+                    .asElement());
+            if (display.getAdditionalInfoElements() != null) {
+                for (HTMLElement element : display.getAdditionalInfoElements().asElements()) {
+                    additionalInfo.appendChild(element);
+                }
+            } else if (display.getAdditionalInfoHtml() != null) {
+                additionalInfo.innerHTML = display.getAdditionalInfoHtml().asString();
+            } else if (display.getAdditionalInfo() != null) {
+                additionalInfo.textContent = display.getAdditionalInfo();
+            }
+        }
 
+        // actions: always add the actions div to have a nice column based layout
+        HTMLElement actions;
+        content.appendChild(actions = div().css(listPfActions, listHalActions)
+                .asElement());
+        if (!display.actions().isEmpty()) {
             int index = 0;
+            HTMLUListElement ul = null;
             for (ItemAction<T> action : display.actions()) {
                 HTMLElement actionElement;
                 String actionId = Ids.build(this.id, action.id);
 
                 if (index == 0) {
                     // first action is a button
-                    actionsContainer.appendChild(actionElement = button()
+                    actions.appendChild(actionElement = button()
                             .id(actionId)
                             .css(btn, btnDefault)
                             .textContent(action.title)
@@ -97,10 +166,9 @@ class ListItem<T> implements IsElement {
 
                 } else {
                     // remaining actions are inside the kebab menu
-                    HTMLUListElement ul = null;
                     if (index == 1) {
                         String id = Ids.build(display.getId(), "kebab", "menu");
-                        actionsContainer.appendChild(
+                        actions.appendChild(
                                 div().css(dropdown, pullRight, dropdownKebabPf)
                                         .add(button()
                                                 .id(id)
@@ -124,61 +192,6 @@ class ListItem<T> implements IsElement {
 
                 this.actions.put(action.id, actionElement);
                 index++;
-            }
-        }
-
-        // main info and status
-        HTMLElement mainInfo = div().css(listViewPfMainInfo).asElement();
-        root.appendChild(mainInfo);
-        if (display.status() != null) {
-            mainInfo.appendChild(div().css(listViewPfLeft)
-                    .add(display.status())
-                    .asElement());
-        }
-
-        // body
-        //     description
-        //         heading, text
-        //     additional-info
-        //         item, item, ...
-        HTMLElement body = div().css(listViewPfBody).asElement();
-        mainInfo.appendChild(body);
-
-        HTMLElement description = div().css(listViewPfDescription).asElement();
-        body.appendChild(description);
-
-        HTMLElement heading = div().css(listGroupItemHeading).asElement();
-        description.appendChild(heading);
-        if (display.getTitleElements() != null) {
-            for (HTMLElement element : display.getTitleElements().asElements()) {
-                heading.appendChild(element);
-            }
-        } else if (!Strings.isNullOrEmpty(display.getTitle())) {
-            heading.textContent = display.getTitle();
-        }
-
-        HTMLElement text = div().css(listGroupItemText).asElement();
-        description.appendChild(text);
-        if (display.getDescriptionElements() != null) {
-            for (HTMLElement element : display.getDescriptionElements().asElements()) {
-                text.appendChild(element);
-            }
-        } else if (display.getDescriptionHtml() != null) {
-            text.innerHTML = display.getDescriptionHtml().asString();
-        } else if (!Strings.isNullOrEmpty(display.getDescription())) {
-            text.textContent = display.getDescription();
-        }
-
-        // additional info
-        if (display.getAdditionalInfo() != null && !Iterables.isEmpty(display.getAdditionalInfo().asElements())) {
-            HTMLElement additionalInfos = div().css(listViewPfAdditionalInfo).asElement();
-            body.appendChild(additionalInfos);
-
-            for (HTMLElement additionalInfo : display.getAdditionalInfo().asElements()) {
-                if (!additionalInfo.classList.contains(listViewPfAdditionalInfoItem)) {
-                    additionalInfo.classList.add(listViewPfAdditionalInfoItem);
-                }
-                additionalInfos.appendChild(additionalInfo);
             }
         }
     }

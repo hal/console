@@ -219,6 +219,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noWrite();
     SafeHtml normalLogFile(String size);
 
+    String operations(int size);
+
     SafeHtml pageNotFound(String invalidHistoryToken);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();

@@ -21,37 +21,77 @@ import java.util.List;
 import java.util.Map;
 
 import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.resources.CSS;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.active;
-import static org.jboss.hal.resources.CSS.listGroup;
-import static org.jboss.hal.resources.CSS.listViewPf;
+import static org.jboss.hal.resources.CSS.listPf;
+import static org.jboss.hal.resources.CSS.listPfStacked;
 
 // TODO Add support for toolbar and pagination
 public class ListView<T> implements IsElement {
 
-    private final String id;
+    public static class Builder<T> {
+
+        private final String id;
+        private final ItemRenderer<T> itemRenderer;
+        private final String[] contentWidths;
+        private boolean multiselect;
+        private boolean stacked;
+
+        public Builder(String id, ItemRenderer<T> itemRenderer) {
+            this.id = id;
+            this.itemRenderer = itemRenderer;
+            this.contentWidths = new String[]{"60%", "40%"};
+            this.multiselect = false;
+            this.stacked = true;
+        }
+
+        public Builder<T> multiselect(boolean multiselect) {
+            this.multiselect = multiselect;
+            return this;
+        }
+
+        public Builder<T> stacked(boolean stacked) {
+            this.stacked = stacked;
+            return this;
+        }
+
+        public Builder<T> contentWidths(String main, String additional) {
+            contentWidths[0] = main;
+            contentWidths[1] = additional;
+            return this;
+        }
+
+        public ListView<T> build() {
+            return new ListView<>(this);
+        }
+    }
+
+
     private final boolean multiselect;
+    private final String[] contentWidths;
     private final ItemRenderer<T> itemRenderer;
     private final Map<String, ListItem<T>> items;
     private final HTMLElement root;
     private SelectHandler<T> selectHandler;
 
-    public ListView(final String id, final ItemRenderer<T> itemRenderer) {
-        this(id, false, itemRenderer);
-    }
-
-    public ListView(final String id, final boolean multiselect, final ItemRenderer<T> itemRenderer) {
-        this.id = id;
-        this.multiselect = multiselect;
-        this.itemRenderer = itemRenderer;
+    private ListView(Builder<T> builder) {
+        this.multiselect = builder.multiselect;
+        this.contentWidths = builder.contentWidths;
+        this.itemRenderer = builder.itemRenderer;
         this.items = new HashMap<>();
-        this.root = div().id(id).css(listGroup, listViewPf).asElement();
+        HtmlContentBuilder<HTMLDivElement> div = div().id(builder.id).css(listPf);
+        if (builder.stacked) {
+            div.css(listPfStacked);
+        }
+        this.root = div.asElement();
     }
 
     @Override
@@ -63,7 +103,7 @@ public class ListView<T> implements IsElement {
         this.items.clear();
         Elements.removeChildrenFrom(root);
         for (T item : items) {
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, itemRenderer.render(item));
+            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
             this.items.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
         }
