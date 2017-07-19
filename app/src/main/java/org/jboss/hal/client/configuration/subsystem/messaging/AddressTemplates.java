@@ -32,6 +32,16 @@ interface AddressTemplates {
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
     AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
 
+    // journal directory
+    String BINDING_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=bindings-directory";
+    String PAGING_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=paging-directory";
+    String LARGE_MESSAGES_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=large-messages-directory";
+    String JOURNAL_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=journal-directory";
+    AddressTemplate BINDING_DIRECTORY_TEMPLATE = AddressTemplate.of(BINDING_DIRECTORY_ADDRESS);
+    AddressTemplate PAGING_DIRECTORY_TEMPLATE = AddressTemplate.of(PAGING_DIRECTORY_ADDRESS);
+    AddressTemplate LARGE_MESSAGES_DIRECTORY_TEMPLATE = AddressTemplate.of(LARGE_MESSAGES_DIRECTORY_ADDRESS);
+    AddressTemplate JOURNAL_DIRECTORY_TEMPLATE = AddressTemplate.of(JOURNAL_DIRECTORY_ADDRESS);
+
     // destinations
     String CORE_QUEUE_ADDRESS = SERVER_ADDRESS + "/queue=*";
     String JMS_QUEUE_ADDRESS = SERVER_ADDRESS + "/jms-queue=*";

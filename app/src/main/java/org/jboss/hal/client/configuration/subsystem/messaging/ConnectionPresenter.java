@@ -178,4 +178,31 @@ public class ConnectionPresenter
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
     }
+
+    void addPooledConnectionFactory(final ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .fromRequestProperties()
+                .include("entries", DISCOVERY_GROUP, STATIC_CONNECTORS)
+                .unsorted()
+                .build();
+
+        List<AddressTemplate> templates = asList(
+                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + "=*"),
+                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + "=*"));
+        form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + "=*")));
+        form.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
 }

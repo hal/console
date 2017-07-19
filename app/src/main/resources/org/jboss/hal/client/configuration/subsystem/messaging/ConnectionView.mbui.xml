@@ -340,7 +340,7 @@
                       prepare-reset="{{presenter.reset(ServerSubResource.CONNECTION_FACTORY, form)}}"/>
             </metadata>
         </item>
-
+<!--
         <item id="messaging-pooled-connection-factory-entry" title="Pooled Connection Factory"
               icon="pficon pficon-replicator">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/pooled-connection-factory=*">
@@ -364,6 +364,6 @@
                       on-save="{{presenter.save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues)}}"
                       prepare-reset="{{presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form)}}"/>
             </metadata>
-        </item>
+        </item>-->
     </vertical-navigation>
 </view>

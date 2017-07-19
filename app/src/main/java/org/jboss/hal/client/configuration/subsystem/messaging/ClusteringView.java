@@ -16,21 +16,41 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 
+import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.subsystem.elytron.CredentialReference;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.Arrays.asList;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.BRIDGE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
+import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
+import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
+import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
 /**
  * @author Harald Pehl
@@ -53,11 +73,72 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     @MbuiElement("messaging-cluster-connection-form") Form<NamedNode> clusterConnectionForm;
     @MbuiElement("messaging-grouping-handler-table") Table<NamedNode> groupingHandlerTable;
     @MbuiElement("messaging-grouping-handler-form") Form<NamedNode> groupingHandlerForm;
-    @MbuiElement("messaging-bridge-table") Table<NamedNode> bridgeTable;
-    @MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
+    //@MbuiElement("messaging-bridge-table") Table<NamedNode> bridgeTable;
+    //@MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
+    private Table<NamedNode> bridgeTable;
+    private Form<NamedNode> bridgeForm;
+    private CredentialReference cr;
+    private Form<ModelNode> crForm;
 
     ClusteringView(final MbuiContext mbuiContext) {
         super(mbuiContext);
+        cr = new CredentialReference(mbuiContext.eventBus(), mbuiContext.dispatcher(), mbuiContext.ca(),
+                mbuiContext.resources());
+    }
+
+    @PostConstruct
+    void init() {
+
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(BRIDGE_TEMPLATE);
+        crForm = cr.form(MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
+                () -> bridgeForm.<String>getFormItem(PASSWORD).getValue(),
+                () -> presenter.resourceAddress(),
+                () -> presenter.reload());
+
+        bridgeTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(MESSAGING_SERVER, BRIDGE, TABLE_SUFFIX), metadata)
+                .button(mbuiContext.resources().constants().add(),
+                        table -> presenter.addBridge(ServerSubResource.BRIDGE),
+                        Constraint.executable(BRIDGE_TEMPLATE, ADD))
+                .button(mbuiContext.resources().constants().remove(),
+                        table -> presenter.remove(ServerSubResource.BRIDGE, table.selectedRow()), Scope.SELECTED,
+                        Constraint.executable(BRIDGE_TEMPLATE, REMOVE))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        bridgeForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.MESSAGING_BRIDGE, Ids.FORM_SUFFIX), metadata)
+                .onSave((form, changedValues) -> presenter.save(ServerSubResource.BRIDGE, form, changedValues))
+                .prepareReset(form -> presenter.reset(ServerSubResource.BRIDGE, form))
+                .build();
+
+        Tabs tabs = new Tabs();
+        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, ATTRIBUTES, Ids.TAB_SUFFIX),
+                mbuiContext.resources().constants().attributes(), bridgeForm.asElement());
+        tabs.add(Ids.build(MESSAGING_SERVER, BRIDGE, CREDENTIAL_REFERENCE, Ids.TAB_SUFFIX),
+                Names.CREDENTIAL_REFERENCE, crForm.asElement());
+
+        HTMLElement bridgeSection = section()
+                .add(h(1).textContent(Names.BRIDGE))
+                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(bridgeTable)
+                .add(tabs)
+                .asElement();
+
+        registerAttachable(bridgeTable, bridgeForm, crForm);
+
+        navigation.addPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY_SUFFIX), Names.BRIDGE, "fa fa-road", bridgeSection);
+
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+
+        bridgeTable.bindForm(bridgeForm);
+        bridgeTable.onSelectionChange(t -> {
+            if (t.hasSelection()) {
+                crForm.view(failSafeGet(t.selectedRow(), CREDENTIAL_REFERENCE));
+            }
+        });
     }
 
     @Override

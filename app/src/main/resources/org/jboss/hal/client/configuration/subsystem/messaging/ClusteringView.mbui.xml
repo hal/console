@@ -138,7 +138,7 @@
             </metadata>
         </item>
 
-        <item id="messaging-bridge-entry" title="Bridge" icon="fa fa-road">
+        <!--<item id="messaging-bridge-entry" title="Bridge" icon="fa fa-road">
             <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/bridge=*">
                 <h1>Bridge</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
@@ -158,6 +158,6 @@
                       on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"
                       prepare-reset="{{presenter.reset(ServerSubResource.BRIDGE, form)}}"/>
             </metadata>
-        </item>
+        </item>-->
     </vertical-navigation>
 </view>
