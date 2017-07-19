@@ -38,6 +38,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.header;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -45,13 +46,14 @@ import static org.jboss.hal.ballroom.Format.humanReadableDuration;
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.FAILED;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_UPDATED_TIME;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.x2;
+import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
@@ -80,8 +82,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                         .title(item.getBatchStatus().name());
                 switch (item.getBatchStatus()) {
                     case STARTED:
-                        //noinspection HardCodedStringLiteral
-                        builder.css(fontAwesome("circle-o-notch fa-spin fa-fw"), listHalIconProgress);
+                        builder.css(pfIcon("spinner"), faSpin, listHalIconProgress);
                         break;
                     case STOPPED:
                         builder.css(fontAwesome(stopCircleO), listHalIconInfo);
@@ -151,7 +152,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 if (item.getBatchStatus() == STARTED) {
                     actions.add(new ItemAction<>(Ids.JOP_EXECUTION_STOP,
                             resources.constants().stop(), execution -> presenter.stopExecution(execution)));
-                } else if (item.getBatchStatus() == FAILED) {
+                } else if (item.getBatchStatus() == STOPPED) {
                     actions.add(new ItemAction<>(Ids.JOP_EXECUTION_RESTART,
                             resources.constants().restart(),
                             execution -> presenter.restartExecution(execution)));
@@ -192,7 +193,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         if (hasExecutions) {
             listView.setItems(job.byInstanceIdMostRecentExecution().values());
             if (job.getRunningExecutions() > 0) {
-                presenter.pollRunningExecutions();
+                setTimeout(o -> presenter.reload(), POLLING_INTERVAL);
             }
         }
     }

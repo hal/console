@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -35,9 +36,10 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static elemental2.dom.DomGlobal.alert;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBDEPLOYMENT_JOB_TEMPLATE;
@@ -105,12 +107,7 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
 
     @Override
     protected void reload() {
-        ResourceAddress address;
-        if (subdeployment == null) {
-            address = BATCH_DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, job);
-        } else {
-            address = BATCH_SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, subdeployment, job);
-        }
+        ResourceAddress address = jobAddress();
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -119,14 +116,30 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
     }
 
     void restartExecution(ExecutionNode execution) {
-        alert(Names.NYI);
+        executionOperation(execution, RESTART_JOB,
+                resources.messages().restartExecutionSuccess(execution.getInstanceId()));
     }
 
     void stopExecution(ExecutionNode execution) {
-        alert(Names.NYI);
+        executionOperation(execution, STOP_JOB, resources.messages().stopExecutionSuccess(execution.getInstanceId()));
     }
 
-    void pollRunningExecutions() {
+    private void executionOperation(ExecutionNode execution, String operation, SafeHtml message) {
+        ResourceAddress address = jobAddress().add(EXECUTION, String.valueOf(execution.getExecutionId()));
+        Operation o = new Operation.Builder(address, operation).build();
+        dispatcher.execute(o, result -> {
+            MessageEvent.fire(getEventBus(), Message.success(message));
+            reload();
+        });
+    }
 
+    private ResourceAddress jobAddress() {
+        ResourceAddress address;
+        if (subdeployment == null) {
+            address = BATCH_DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, job);
+        } else {
+            address = BATCH_SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext, deployment, subdeployment, job);
+        }
+        return address;
     }
 }

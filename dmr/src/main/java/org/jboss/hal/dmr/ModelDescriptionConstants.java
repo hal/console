@@ -468,6 +468,7 @@ public interface ModelDescriptionConstants {
     String RESPONSE = "response";
     String RESPONSE_HEADERS = "response-headers";
     String RESTART = "restart";
+    String RESTART_JOB = "restart-job";
     String RESTART_JOBS_ON_RESUME = "restart-jobs-on-resume";
     String RESTART_REQUIRED = "restart-required";
     String RESTART_SERVERS = "restart-servers";
@@ -549,6 +550,7 @@ public interface ModelDescriptionConstants {
     String STATUS = "status";
     String STEPS = "steps";
     String STOP = "stop";
+    String STOP_JOB = "stop-job";
     String STOP_SERVERS = "stop-servers";
     String STORAGE = "storage";
     String STORE = "store";

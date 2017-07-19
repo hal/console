@@ -36,7 +36,6 @@ package org.jboss.hal.resources;
 
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import org.jboss.hal.spi.Message;
 
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
@@ -280,6 +279,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);
     SafeHtml restartDomainControllerQuestion(String name);
+    SafeHtml restartExecutionSuccess(int id);
     SafeHtml restartHostControllerQuestion(String name);
     SafeHtml restartHostError(String name);
     SafeHtml restartHostSuccess(String name);
@@ -335,6 +335,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
+    SafeHtml stopExecutionSuccess(int id);
     SafeHtml stopServerGroupError(String name);
     SafeHtml stopServerGroupQuestion(String name);
     SafeHtml stopServerGroupSuccess(String name);

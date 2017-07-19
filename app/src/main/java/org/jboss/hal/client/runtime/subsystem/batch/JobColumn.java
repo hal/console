@@ -127,6 +127,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                         callback.onSuccess(jobs);
 
                         // turn progress animation on/off
+                        clearIntervals();
                         for (JobNode job : jobs) {
                             String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
                             if (job.getRunningExecutions() > 0) {

@@ -126,6 +126,7 @@ public interface CSS {
 
     String fade = "fade";
     String failSafeForm = "fail-safe-form";
+    String faSpin = "fa-spin";
     String filter = "filter";
     String finder = "finder";
     String finderColumn = "finder-column";
