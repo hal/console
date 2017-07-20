@@ -20,7 +20,6 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import elemental2.core.Array;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -55,10 +54,10 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.core.ui.Skeleton.applicationHeight;
-import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
@@ -278,6 +277,11 @@ class BrowseContentElement implements IsElement, Attachable {
             adjustEditorHeight();
             return null;
         };
+    }
+
+    @Override
+    public void detach() {
+        window.onresize = null;
     }
 
     @Override

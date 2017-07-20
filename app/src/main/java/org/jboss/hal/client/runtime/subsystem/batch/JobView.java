@@ -46,6 +46,8 @@ import static org.jboss.hal.ballroom.Format.humanReadableDuration;
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.ballroom.LayoutBuilder.*;
+import static org.jboss.hal.ballroom.LayoutBuilder.stickyLayout;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
@@ -168,13 +170,16 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
         initElement(row()
                 .add(column()
-                        .add(header()
-                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                                        .add(span().textContent(resources.constants().refresh())))
-                                .add(header = h(1).asElement())
-                                .add(lead = p().css(CSS.lead).asElement()))
-                        .addAll(empty, listView)));
+                        .add(stickyLayout()
+                                .add(stickyHeader()
+                                        .add(header()
+                                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                                                        .add(span().textContent(resources.constants().refresh())))
+                                                .add(header = h(1).asElement())
+                                                .add(lead = p().css(CSS.lead).asElement())))
+                                .add(stickyBody()
+                                        .addAll(empty, listView)))));
     }
 
     @Override
@@ -191,7 +196,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         Elements.setVisible(empty.asElement(), !hasExecutions);
         Elements.setVisible(listView.asElement(), hasExecutions);
         if (hasExecutions) {
-            listView.setItems(job.byInstanceIdMostRecentExecution().values());
+            listView.setItems(job.getExecutions());
             if (job.getRunningExecutions() > 0) {
                 setTimeout(o -> presenter.reload(), POLLING_INTERVAL);
             }

@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.batch;
 
-import java.util.Collection;
 import java.util.Map;
 
 import elemental2.dom.HTMLElement;
@@ -78,8 +77,7 @@ class JobPreview extends PreviewContent<JobNode> {
             Elements.setVisible(empty.asElement(), false);
             Elements.setVisible(status, true);
 
-            Collection<ExecutionNode> executions = item.byInstanceIdMostRecentExecution().values();
-            Map<String, Long> byBatchStatus = executions.stream()
+            Map<String, Long> byBatchStatus = item.getExecutions().stream()
                     .collect(groupingBy(e -> e.getBatchStatus().name(), counting()));
             donut.update(byBatchStatus);
         }

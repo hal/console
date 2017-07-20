@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -46,7 +46,7 @@ import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
 import static org.jboss.hal.resources.CSS.px;
 
@@ -143,6 +143,12 @@ public abstract class LogFileView extends HalViewImpl implements LogFilePresente
             adjustEditorHeight();
             return null;
         };
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        window.onresize = null;
     }
 
     private void adjustEditorHeight() {

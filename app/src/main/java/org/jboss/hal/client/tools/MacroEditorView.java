@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -50,7 +50,7 @@ import static org.jboss.gwt.elemento.core.Elements.elements;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -159,6 +159,12 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             adjustEditorHeight();
             return null;
         };
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        window.onresize = null;
     }
 
     private void adjustHeight() {

@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.hal.core.ui.Skeleton.applicationOffset;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 

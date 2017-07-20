@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.ui;
+package org.jboss.hal.ballroom;
 
 import elemental2.dom.CSSProperties.PaddingUnionType;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;

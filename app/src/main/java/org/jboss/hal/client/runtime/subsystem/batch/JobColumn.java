@@ -175,9 +175,9 @@ public class JobColumn extends FinderColumn<JobNode> {
                 if (item.getInstanceCount() == 0) {
                     return Icons.info();
                 } else if (item.hasExecutions(EnumSet.of(BatchStatus.FAILED, BatchStatus.ABANDONED))) {
-                    return Icons.error();
-                } else if (item.hasExecutions(BatchStatus.STOPPED)) {
                     return Icons.warning();
+                } else if (item.hasExecutions(BatchStatus.STOPPED)) {
+                    return Icons.stopped();
                 }
                 return Icons.ok();
             }

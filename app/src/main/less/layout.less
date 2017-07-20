@@ -82,6 +82,22 @@ h2.underline {
   line-height: 1;
 }
 
+.sticky-layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  .sticky-layout-header, .sticky-layout-footer {
+    flex: none;
+  }
+
+  .sticky-layout-body {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+    min-height: 0;
+  }
+}
+
 .with-progress {
   animation: progress-animation 1s linear infinite;
   background-size: 40px 40px;

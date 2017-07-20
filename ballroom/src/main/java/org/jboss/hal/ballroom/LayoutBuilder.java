@@ -20,6 +20,7 @@ import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.resources.CSS;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -43,6 +44,22 @@ public final class LayoutBuilder {
 
     public static HtmlContentBuilder<HTMLDivElement> column(int offset, int columns) {
         return div().css(rowCss(offset, columns));
+    }
+
+    public static HtmlContentBuilder<HTMLDivElement> stickyLayout() {
+        return div().css(stickyLayout).style("height: " + vh(applicationOffset()));
+    }
+
+    public static HtmlContentBuilder<HTMLDivElement> stickyHeader() {
+        return div().css(stickyLayoutHeader);
+    }
+
+    public static HtmlContentBuilder<HTMLDivElement> stickyBody() {
+        return div().css(stickyLayoutBody);
+    }
+
+    public static HtmlContentBuilder<HTMLDivElement> stickyFooter() {
+        return div().css(stickyLayoutFooter);
     }
 
     private static String rowCss(int offset, int columns) {

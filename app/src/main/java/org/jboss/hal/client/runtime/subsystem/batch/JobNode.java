@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.runtime.subsystem.batch;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_EXECUTIONS;
@@ -38,11 +37,26 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 class JobNode extends DeploymentNode {
 
-    private final List<ExecutionNode> executions;
+    private final Collection<ExecutionNode> executions;
 
     JobNode(ResourceAddress address, ModelNode modelNode) {
         super(address, modelNode);
-        this.executions = failSafePropertyList(modelNode, EXECUTION).stream().map(ExecutionNode::new).collect(toList());
+        this.executions = failSafePropertyList(modelNode, EXECUTION).stream()
+                .map(ExecutionNode::new)
+                // first group by instance-id,
+                // then keep only the execution with the most recent last updated time
+                .collect(collectingAndThen(groupingBy(ExecutionNode::getInstanceId), input -> {
+                    // sort executions by last updated time
+                    Map<Integer, ExecutionNode> result = new HashMap<>(input.size());
+                    input.forEach((instanceId, executions) -> {
+                        SortedSet<ExecutionNode> byLastUpdate = new TreeSet<>(
+                                comparing(ExecutionNode::getLastUpdatedTime));
+                        byLastUpdate.addAll(executions);
+                        result.put(instanceId, byLastUpdate.last());
+                    });
+                    return result;
+                }))
+                .values();
 
     }
 
@@ -62,24 +76,7 @@ class JobNode extends DeploymentNode {
         return executions.stream().anyMatch(e -> status.contains(e.getBatchStatus()));
     }
 
-    List<ExecutionNode> getExecutions() {
+    Collection<ExecutionNode> getExecutions() {
         return executions;
-    }
-
-    Map<Integer, ExecutionNode> byInstanceIdMostRecentExecution() {
-        // first group by instance-id,
-        // then keep only the execution with the most recent last updated time
-        return executions.stream()
-                .collect(collectingAndThen(groupingBy(ExecutionNode::getInstanceId), input -> {
-                    // sort executions by last updated time
-                    Map<Integer, ExecutionNode> result = new HashMap<>(input.size());
-                    input.forEach((instanceId, executions) -> {
-                        SortedSet<ExecutionNode> byLastUpdate = new TreeSet<>(
-                                comparing(ExecutionNode::getLastUpdatedTime));
-                        byLastUpdate.addAll(executions);
-                        result.put(instanceId, byLastUpdate.last());
-                    });
-                    return result;
-                }));
     }
 }
