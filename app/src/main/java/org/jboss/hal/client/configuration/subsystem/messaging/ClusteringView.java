@@ -16,7 +16,6 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
@@ -73,8 +72,6 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     @MbuiElement("messaging-cluster-connection-form") Form<NamedNode> clusterConnectionForm;
     @MbuiElement("messaging-grouping-handler-table") Table<NamedNode> groupingHandlerTable;
     @MbuiElement("messaging-grouping-handler-form") Form<NamedNode> groupingHandlerForm;
-    //@MbuiElement("messaging-bridge-table") Table<NamedNode> bridgeTable;
-    //@MbuiElement("messaging-bridge-form") Form<NamedNode> bridgeForm;
     private Table<NamedNode> bridgeTable;
     private Form<NamedNode> bridgeForm;
     private CredentialReference cr;
@@ -86,13 +83,12 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 mbuiContext.resources());
     }
 
-    @PostConstruct
     void init() {
 
         Metadata metadata = mbuiContext.metadataRegistry().lookup(BRIDGE_TEMPLATE);
         crForm = cr.form(MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
                 () -> bridgeForm.<String>getFormItem(PASSWORD).getValue(),
-                () -> presenter.resourceAddress(),
+                () -> presenter.bridgeAddress(bridgeTable.hasSelection() ? bridgeTable.selectedRow().getName() : null),
                 () -> presenter.reload());
 
         bridgeTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(MESSAGING_SERVER, BRIDGE, TABLE_SUFFIX), metadata)

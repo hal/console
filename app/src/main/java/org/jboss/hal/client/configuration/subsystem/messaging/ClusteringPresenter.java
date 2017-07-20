@@ -34,9 +34,9 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -48,6 +48,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_BRIDGE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -155,8 +156,9 @@ public class ClusteringPresenter
 
     void addBridge(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
+        NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD_SUFFIX), metadata)
-                .unboundFormItem(new NameItem(), 0)
+                .unboundFormItem(nameItem, 0)
                 .fromRequestProperties()
                 .include(QUEUE_NAME, DISCOVERY_GROUP, STATIC_CONNECTORS)
                 .unsorted()
@@ -174,9 +176,14 @@ public class ClusteringPresenter
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
         new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            name = nameItem.getValue();
             ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
                     .resolve(statementContext);
             crud.add(ssr.type, name, address, model, (n, a) -> reload());
         }).show();
+    }
+
+    ResourceAddress bridgeAddress(final String bridgeName) {
+        return bridgeName != null ? SELECTED_BRIDGE_TEMPLATE.resolve(statementContext, bridgeName) : null;
     }
 }

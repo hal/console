@@ -102,7 +102,9 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(POOLED_CONNECTION_FACTORY_TEMPLATE);
         crForm = cr.form(Ids.MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
                 () -> pooledConnectionFactoryForm.<String>getFormItem(PASSWORD).getValue(),
-                () -> presenter.resourceAddress(),
+                () -> presenter.pooledConnectionFactoryAddress(
+                        pooledConnectionFactoryTable.hasSelection() ? pooledConnectionFactoryTable.selectedRow()
+                                .getName() : null),
                 () -> presenter.reload());
 
         pooledConnectionFactoryTable = new ModelNodeTable.Builder<NamedNode>(
@@ -137,9 +139,9 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 .add(tabs)
                 .asElement();
 
-        //registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
+        registerAttachable(pooledConnectionFactoryTable, pooledConnectionFactoryForm, crForm);
 
-        navigation.addPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ENTRY_SUFFIX),
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, ENTRY_SUFFIX), null,
                 Names.POOLED_CONNECTION_FACTORY, "pficon pficon-replicator", htmlSection);
 
     }
@@ -147,9 +149,6 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
     @Override
     public void attach() {
         super.attach();
-        pooledConnectionFactoryTable.attach();
-        pooledConnectionFactoryForm.attach();
-        crForm.attach();
 
         pooledConnectionFactoryTable.bindForm(pooledConnectionFactoryForm);
         pooledConnectionFactoryTable.onSelectionChange(t -> {
@@ -157,14 +156,6 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 crForm.view(failSafeGet(t.selectedRow(), CREDENTIAL_REFERENCE));
             }
         });
-    }
-
-    @Override
-    public void detach() {
-        super.detach();
-        pooledConnectionFactoryTable.detach();
-        pooledConnectionFactoryForm.detach();
-        crForm.detach();
     }
 
     @Override
@@ -255,6 +246,7 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
     @Override
     public void updatePooledConnectionFactory(final List<NamedNode> pooledConnectionFactories) {
+        crForm.clear();
         pooledConnectionFactoryForm.clear();
         pooledConnectionFactoryTable.update(pooledConnectionFactories);
     }

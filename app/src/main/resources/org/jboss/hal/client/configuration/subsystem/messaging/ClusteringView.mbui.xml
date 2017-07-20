@@ -138,26 +138,5 @@
             </metadata>
         </item>
 
-        <!--<item id="messaging-bridge-entry" title="Bridge" icon="fa fa-road">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/bridge=*">
-                <h1>Bridge</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="messaging-bridge-table" title="Bridge" form-ref="messaging-bridge-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.addBridge(ServerSubResource.BRIDGE)}}" constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.BRIDGE, table.selectedRow())}}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="messaging-bridge-form" title="Bridge"
-                      on-save="{{presenter.save(ServerSubResource.BRIDGE, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.BRIDGE, form)}}"/>
-            </metadata>
-        </item>-->
     </vertical-navigation>
 </view>

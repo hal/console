@@ -80,6 +80,8 @@ interface AddressTemplates {
     AddressTemplate CONNECTOR_SERVICE_TEMPLATE = AddressTemplate.of(CONNECTOR_SERVICE_ADDRESS);
     AddressTemplate CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(CONNECTION_FACTORY_ADDRESS);
     AddressTemplate POOLED_CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(POOLED_CONNECTION_FACTORY_ADDRESS);
+    AddressTemplate SELECTED_POOLED_CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS)
+            .append("pooled-connection-factory=*");
 
     // clustering
     String BROADCAST_GROUP_ADDRESS = SERVER_ADDRESS + "/broadcast-group=*";
@@ -92,6 +94,7 @@ interface AddressTemplates {
     AddressTemplate CLUSTER_CONNECTION_TEMPLATE = AddressTemplate.of(CLUSTER_CONNECTION_ADDRESS);
     AddressTemplate GROUPING_HANDLER_TEMPLATE = AddressTemplate.of(GROUPING_HANDLER_ADDRESS);
     AddressTemplate BRIDGE_TEMPLATE = AddressTemplate.of(BRIDGE_ADDRESS);
+    AddressTemplate SELECTED_BRIDGE_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS).append("bridge=*");
 
     // ha-* resources
     String LIVE_ONLY_ADDRESS = SERVER_ADDRESS + "/ha-policy=live-only";
