@@ -37,7 +37,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -176,21 +175,21 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))
                                         .add(span().textContent(resources.constants().refresh())))
-                                .add(header = h(1).asElement())
-                                .add(lead = p().css(CSS.lead).asElement()))
+                                .add(header = h(1).textContent(Names.NOT_AVAILABLE).asElement())
+                                .add(lead = p().css(CSS.lead).textContent(Names.NOT_AVAILABLE).asElement()))
                         .addAll(empty, listView)));
+
+        Elements.setVisible(empty.asElement(), false);
+        Elements.setVisible(listView.asElement(), true);
     }
 
     @Override
     public void attach() {
         super.attach();
-        setTimeout((o) -> {
-            // wait until the elements are really attached
-            int headerHeight = (int) (header.offsetHeight + MARGIN_BIG + MARGIN_SMALL);
-            int leadHeight = (int) (lead.offsetHeight + MARGIN_BIG);
-            listView.asElement().style.height = vh(applicationOffset() + headerHeight + leadHeight + 1);
-            listView.asElement().style.overflow = "scroll";
-        }, UIConstants.SHORT_TIMEOUT);
+        int headerHeight = (int) (header.offsetHeight + MARGIN_BIG + MARGIN_SMALL);
+        int leadHeight = (int) (lead.offsetHeight + MARGIN_BIG);
+        listView.asElement().style.height = vh(applicationOffset() + headerHeight + leadHeight + 1);
+        listView.asElement().style.overflow = "scroll";
     }
 
     @Override
