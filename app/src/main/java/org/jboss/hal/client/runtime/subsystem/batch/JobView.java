@@ -37,6 +37,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -46,8 +47,9 @@ import static org.jboss.hal.ballroom.Format.humanReadableDuration;
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.ballroom.LayoutBuilder.*;
-import static org.jboss.hal.ballroom.LayoutBuilder.stickyLayout;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
+import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
@@ -170,16 +172,25 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
         initElement(row()
                 .add(column()
-                        .add(stickyLayout()
-                                .add(stickyHeader()
-                                        .add(header()
-                                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                                                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                                                        .add(span().textContent(resources.constants().refresh())))
-                                                .add(header = h(1).asElement())
-                                                .add(lead = p().css(CSS.lead).asElement())))
-                                .add(stickyBody()
-                                        .addAll(empty, listView)))));
+                        .add(header()
+                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                        .add(span().css(fontAwesome("refresh"), marginRight5))
+                                        .add(span().textContent(resources.constants().refresh())))
+                                .add(header = h(1).asElement())
+                                .add(lead = p().css(CSS.lead).asElement()))
+                        .addAll(empty, listView)));
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        setTimeout((o) -> {
+            // wait until the elements are really attached
+            int headerHeight = (int) (header.offsetHeight + MARGIN_BIG + MARGIN_SMALL);
+            int leadHeight = (int) (lead.offsetHeight + MARGIN_BIG);
+            listView.asElement().style.height = vh(applicationOffset() + headerHeight + leadHeight + 1);
+            listView.asElement().style.overflow = "scroll";
+        }, UIConstants.SHORT_TIMEOUT);
     }
 
     @Override

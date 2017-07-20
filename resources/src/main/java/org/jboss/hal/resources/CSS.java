@@ -321,10 +321,6 @@ public interface CSS {
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
     String static_ = "static";
-    String stickyLayout = "sticky-layout";
-    String stickyLayoutBody = "sticky-layout-body";
-    String stickyLayoutHeader = "sticky-layout-header";
-    String stickyLayoutFooter = "sticky-layout-footer";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
     String suspended = "suspended";

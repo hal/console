@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
+import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
@@ -32,6 +33,9 @@ public class JQuery {
 
     @JsMethod(namespace = GLOBAL)
     public native static JQuery $(@NonNls String selector);
+
+    @JsMethod(namespace = GLOBAL)
+    public native static JQuery $(HTMLElement element);
 
     public native JQuery attr(String key, String value);
 
