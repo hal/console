@@ -125,8 +125,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
         registerAttachable(bridgeTable, bridgeForm, crForm);
 
-        navigation.addPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY_SUFFIX), Names.BRIDGE, "fa fa-road", bridgeSection);
-
+        navigation.insertPrimary(Ids.build(MESSAGING_SERVER, BRIDGE, ENTRY_SUFFIX), null, Names.BRIDGE, "fa fa-road", bridgeSection);
     }
 
     @Override
@@ -197,6 +196,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
 
     @Override
     public void updateBridge(final List<NamedNode> bridges) {
+        crForm.clear();
         bridgeForm.clear();
         bridgeTable.update(bridges);
     }

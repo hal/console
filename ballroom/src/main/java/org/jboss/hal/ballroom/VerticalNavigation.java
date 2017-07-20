@@ -47,17 +47,23 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * An element which implements the <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">vertical
  * navigation</a> from PatternFly.
- * <p>
- * The vertical navigation consists of two parts:
+ *
+ * <p>The vertical navigation consists of two parts:</p>
  * <ol>
  * <li>Entries: The actual menu / navigation entries which are child elements of the vertical navigation</li>
  * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically
  * children
  * of the root container. Their visibility is controlled by the vertical navigation.</li>
  * </ol>
- * <p>
- * The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
- * the DOM by calling {@link #attach()} and {@link #detach()}.
+ *
+ * <p>The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
+ * the DOM by calling {@link #attach()} and {@link #detach()}.</p>
+ *
+ * <p>There are two groups of methods:</p>
+ * <ul>
+ * <li>{@code add*()}: Use these methods to add panes <strong>before</strong> the panes were added to the DOM</li>
+ * <li>{@code insert*()}: Use these methods to add panes <strong>after</strong> the panes were added to the DOM</li>
+ * </ul>
  *
  * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
