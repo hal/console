@@ -25,12 +25,12 @@ import java.util.Map;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.intendia.rxgwt.elemento.RxElemento;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
@@ -44,7 +44,9 @@ import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
 
+import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -74,7 +76,7 @@ import static org.jboss.hal.resources.CSS.label;
  *
  * @see <a href="http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
  */
-public class Toolbar<T> implements IsElement<HTMLElement> {
+public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
 
     @FunctionalInterface
     public interface Filter<T> {
@@ -198,6 +200,7 @@ public class Toolbar<T> implements IsElement<HTMLElement> {
     private HTMLElement filterButtonText;
     private HTMLElement filterUl;
     private HTMLInputElement filterInput;
+    private Subscription keyUpSubscription;
 
     private HTMLElement sortButtonText;
     private HTMLElement sortStaticText;
@@ -256,9 +259,9 @@ public class Toolbar<T> implements IsElement<HTMLElement> {
                     .css(formControl)
                     .id(Ids.TOOLBAR_FILTER)
                     .asElement());
-            RxElemento.fromEvent(filterInput, keyup)
+            keyUpSubscription = fromEvent(filterInput, keyup)
                     .throttleLast(750, MILLISECONDS)
-                    .subscribe(keyboardEvent -> {
+                    .subscribe(e -> {
                         addOrModifyActiveFilter(filterColumn);
                         apply();
                     });
@@ -371,6 +374,18 @@ public class Toolbar<T> implements IsElement<HTMLElement> {
 
         // initial reset
         reset();
+    }
+
+    @Override
+    public void attach() {
+        // noop
+    }
+
+    @Override
+    public void detach() {
+        if (keyUpSubscription != null) {
+            keyUpSubscription.unsubscribe();
+        }
     }
 
     @Override

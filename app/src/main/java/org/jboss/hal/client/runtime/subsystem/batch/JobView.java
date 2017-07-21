@@ -84,6 +84,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                         comparing(ExecutionNode::getDuration))))
                 .action(Ids.JOP_EXECUTION_REFRESH, resources.constants().refresh(), this::refresh)
                 .build();
+        registerAttachable(toolbar);
 
         ItemRenderer<ExecutionNode> itemRenderer = item -> new ItemDisplay<ExecutionNode>() {
             @Override
