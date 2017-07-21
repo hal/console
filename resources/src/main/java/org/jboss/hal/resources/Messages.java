@@ -134,6 +134,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml extensionScriptError();
     SafeHtml extensionUrl();
 
+    String filterBy(String name);
     SafeHtml flushConnectionSuccess();
 
     String goTo(String name);
@@ -275,6 +276,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     SafeHtml resourceAdapterProvidedBy(String type, String name);
+
+    String results(int number);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);

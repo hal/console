@@ -41,6 +41,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String active();
+    String activeFilters();
     String activeLower();
     String add();
     String address();
@@ -66,6 +67,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseStrategy();
     String chooseTemplate();
     String clear();
+    String clearAllFilters();
     String clearMessages();
     String clearRunAs();
     String clearRunAsTitle();

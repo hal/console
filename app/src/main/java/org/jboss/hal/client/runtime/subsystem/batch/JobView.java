@@ -23,53 +23,66 @@ import javax.inject.Inject;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
-import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
+import org.jboss.hal.ballroom.listview.Toolbar;
+import org.jboss.hal.ballroom.listview.Toolbar.Column;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.header;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.elements;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.Format.humanReadableDuration;
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STOPPED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_UPDATED_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.x2;
 import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
-    private final HTMLElement header;
-    private final HTMLElement lead;
-    private final EmptyState empty;
+    private final Toolbar<ExecutionNode> toolbar;
     private final ListView<ExecutionNode> listView;
     private JobPresenter presenter;
 
     @Inject
     public JobView(Resources resources) {
-        empty = new EmptyState.Builder(resources.constants().noExecutions())
-                .description(resources.messages().noExecutions())
+        toolbar = new Toolbar.Builder<>(asList(
+                new Column<>(NAME, Names.EXECUTION_ID,
+                        (node, filter) -> node.getName().equals(filter),
+                        comparing(NamedNode::getName)),
+                new Column<>(INSTANCE_ID, Names.INSTANCE_ID,
+                        (node, filter) -> String.valueOf(node.getInstanceId()).equals(filter),
+                        comparing(ExecutionNode::getInstanceId)),
+                new Column<>(BATCH_STATUS, Names.BATCH_STATUS,
+                        (node, filter) -> node.getBatchStatus().name().toLowerCase().contains(filter.toLowerCase()),
+                        comparing(ExecutionNode::getBatchStatus)),
+                new Column<>(START_TIME, resources.constants().start(), null, comparing(ExecutionNode::getStartTime)),
+                new Column<>(END_TIME, resources.constants().finished(), null, comparing(ExecutionNode::getEndTime)),
+                new Column<>(LAST_UPDATED_TIME, resources.constants().lastModified(), null,
+                        comparing(ExecutionNode::getLastUpdatedTime)),
+                new Column<>("duration", resources.constants().duration(), null,
+                        comparing(ExecutionNode::getDuration))))
+                .action(Ids.JOP_EXECUTION_REFRESH, resources.constants().refresh(), this::refresh)
                 .build();
 
         ItemRenderer<ExecutionNode> itemRenderer = item -> new ItemDisplay<ExecutionNode>() {
@@ -169,27 +182,20 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 .multiselect(false)
                 .build();
 
-        initElement(row()
-                .add(column()
-                        .add(header()
-                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                                        .add(span().textContent(resources.constants().refresh())))
-                                .add(header = h(1).textContent(Names.NOT_AVAILABLE).asElement())
-                                .add(lead = p().css(CSS.lead).textContent(Names.NOT_AVAILABLE).asElement()))
-                        .addAll(empty, listView)));
-
-        Elements.setVisible(empty.asElement(), false);
-        Elements.setVisible(listView.asElement(), true);
+        initElements(elements()
+                .add(toolbar)
+                .add(row()
+                        .add(column()
+                                .add(listView))));
     }
 
     @Override
     public void attach() {
         super.attach();
-        int headerHeight = (int) (header.offsetHeight + MARGIN_BIG + MARGIN_SMALL);
-        int leadHeight = (int) (lead.offsetHeight + MARGIN_BIG);
-        listView.asElement().style.height = vh(applicationOffset() + headerHeight + leadHeight + 1);
-        listView.asElement().style.overflow = "scroll";
+        int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
+        listView.asElement().style.height = vh(applicationOffset() + toolbarHeight + 1);
+        listView.asElement().style.overflow = "scroll"; //NON-NLS
+        toolbar.bindListView(listView);
     }
 
     @Override
@@ -199,17 +205,9 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
     @Override
     public void update(JobNode job) {
-        header.textContent = job.getName();
-        lead.textContent = job.getPath();
-
-        boolean hasExecutions = !job.getExecutions().isEmpty();
-        Elements.setVisible(empty.asElement(), !hasExecutions);
-        Elements.setVisible(listView.asElement(), hasExecutions);
-        if (hasExecutions) {
-            listView.setItems(job.getExecutions());
-            if (job.getRunningExecutions() > 0) {
-                setTimeout(o -> presenter.reload(), POLLING_INTERVAL);
-            }
+        listView.setItems(job.getExecutions());
+        if (job.getRunningExecutions() > 0) {
+            setTimeout(o -> presenter.reload(), POLLING_INTERVAL);
         }
     }
 

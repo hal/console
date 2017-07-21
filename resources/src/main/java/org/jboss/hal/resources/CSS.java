@@ -181,6 +181,8 @@ public interface CSS {
 
     String key = "key";
 
+    String label = "label";
+    String labelInfo = "label-info";
     String last = "last";
     String lead = "lead";
     String listHalActions = "list-hal-actions";
@@ -189,7 +191,7 @@ public interface CSS {
     String listHalIconInfo = "list-hal-icon-info";
     String listHalIconProgress = "list-hal-icon-progress";
     String listHalIconSuccess = "list-hal-icon-success";
-    String listHalIconWarning = "list-hal-icon-warning";
+    String listInline = "list-inline";
     String listPf = "list-pf";
     String listPfActions = "list-pf-actions";
     String listPfAdditionalContent = "list-pf-additional-content";
@@ -342,6 +344,11 @@ public interface CSS {
     String toastNotificationsListPf = "toast-notifications-list-pf";
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
+    String toolbarPf = "toolbar-pf";
+    String toolbarPfActionRight = "toolbar-pf-action-right";
+    String toolbarPfActions = "toolbar-pf-actions";
+    String toolbarPfFilter = "toolbar-pf-filter";
+    String toolbarPfResults = "toolbar-pf-results";
     String topology = "topology";
     String treeContainer = "tree-container";
 

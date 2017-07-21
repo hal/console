@@ -389,6 +389,7 @@ public interface Ids {
     String JNDI_TREE_APPLICATIONS_ROOT = build(JNDI_TREE, "applications-root");
     String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
     String JOB = "job";
+    String JOP_EXECUTION_REFRESH = build(JOB, "execution", "refresh");
     String JOP_EXECUTION_RESTART = build(JOB, "execution", "restart");
     String JOP_EXECUTION_STOP = build(JOB, "execution", "stop");
     String JOB_LIST = build(JOB, "list");
@@ -572,6 +573,9 @@ public interface Ids {
     String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+    String TOOLBAR = "toolbar";
+    String TOOLBAR_FILTER = build(TOOLBAR, "filter");
+    String TOOLBAR_ACTION_DROPDOWN = build(TOOLBAR, "action-dropdown");
     String UNDERTOW_APP_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_APP_SECURITY_DOMAIN_ADD = build(UNDERTOW_APP_SECURITY_DOMAIN, ADD_SUFFIX);
     String UNDERTOW_APP_SECURITY_DOMAIN_ENTRY = build(UNDERTOW_APP_SECURITY_DOMAIN, ENTRY_SUFFIX);

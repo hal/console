@@ -106,6 +106,10 @@
             <artifactId>guava-gwt</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <artifactId>rxgwt</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ru.finam</groupId>
             <artifactId>slf4j-gwt</artifactId>
         </dependency>

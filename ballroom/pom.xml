@@ -55,6 +55,10 @@
             <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.intendia.gwt.rxgwt</groupId>
+            <artifactId>rxgwt</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.gwt.flow</groupId>
             <artifactId>flow</artifactId>
         </dependency>

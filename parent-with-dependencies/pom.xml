@@ -53,6 +53,7 @@
         <mockito.version>2.7.10</mockito.version>
         <node.version>v8.1.2</node.version>
         <npm.version>5.0.4</npm.version>
+        <rx.gwt>0.3</rx.gwt>
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <undertow.version>1.3.18.Final</undertow.version>
@@ -120,6 +121,11 @@
                 <groupId>com.google.gwt.inject</groupId>
                 <artifactId>gin</artifactId>
                 <version>${gin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.intendia.gwt.rxgwt</groupId>
+                <artifactId>rxgwt</artifactId>
+                <version>${rx.gwt}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.gwt.flow</groupId>
