@@ -45,6 +45,7 @@ public interface Names {
     String BATCH_STATUS = "Batch Status";
     String BINARY_JDBC = "Binary JDBC";
     String BINARY_TABLE = "Binary Table";
+    String BINDINGS_DIRECTORY = "Bindings Directory";
     String BOOT_ERRORS = "Boot Errors";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
@@ -155,11 +156,13 @@ public interface Names {
     String JNDI = "JNDI";
     String JOB = "Job";
     String JOBS = "Jobs";
+    String JOURNAL_DIRECTORY = "Journal Directory";
     String JPA = "JPA";
     String JMS_QUEUE = "JMS Queue";
     String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
 
+    String LARGE_MESSAGES_DIRECTORY = "Large Messages Directory";
     String LDAP_KEY_STORE = "LDAP Key Store";
     String LDAP_REALM = "LDAP Realm";
     String LISTENER = "Listener";
@@ -204,6 +207,7 @@ public interface Names {
     String OUTBOUND_REMOTE = "Outbound Remote";
     String OTP_CREDENTIAL_MAPPER = "OTP Credential Mapper";
 
+    String PAGING_DIRECTORY = "Paging Directory";
     String PARTITION_HANDLING = "Partition Handling";
     String PATCHING = "Patching";
     String PATHS = "Paths";

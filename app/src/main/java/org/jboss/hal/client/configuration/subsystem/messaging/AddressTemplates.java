@@ -32,6 +32,16 @@ interface AddressTemplates {
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
     AddressTemplate SELECTED_SERVER_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS);
 
+    // journal directory
+    String BINDING_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=bindings-directory";
+    String PAGING_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=paging-directory";
+    String LARGE_MESSAGES_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=large-messages-directory";
+    String JOURNAL_DIRECTORY_ADDRESS = SERVER_ADDRESS + "/path=journal-directory";
+    AddressTemplate BINDING_DIRECTORY_TEMPLATE = AddressTemplate.of(BINDING_DIRECTORY_ADDRESS);
+    AddressTemplate PAGING_DIRECTORY_TEMPLATE = AddressTemplate.of(PAGING_DIRECTORY_ADDRESS);
+    AddressTemplate LARGE_MESSAGES_DIRECTORY_TEMPLATE = AddressTemplate.of(LARGE_MESSAGES_DIRECTORY_ADDRESS);
+    AddressTemplate JOURNAL_DIRECTORY_TEMPLATE = AddressTemplate.of(JOURNAL_DIRECTORY_ADDRESS);
+
     // destinations
     String CORE_QUEUE_ADDRESS = SERVER_ADDRESS + "/queue=*";
     String JMS_QUEUE_ADDRESS = SERVER_ADDRESS + "/jms-queue=*";
@@ -70,6 +80,8 @@ interface AddressTemplates {
     AddressTemplate CONNECTOR_SERVICE_TEMPLATE = AddressTemplate.of(CONNECTOR_SERVICE_ADDRESS);
     AddressTemplate CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(CONNECTION_FACTORY_ADDRESS);
     AddressTemplate POOLED_CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(POOLED_CONNECTION_FACTORY_ADDRESS);
+    AddressTemplate SELECTED_POOLED_CONNECTION_FACTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS)
+            .append("pooled-connection-factory=*");
 
     // clustering
     String BROADCAST_GROUP_ADDRESS = SERVER_ADDRESS + "/broadcast-group=*";
@@ -82,6 +94,7 @@ interface AddressTemplates {
     AddressTemplate CLUSTER_CONNECTION_TEMPLATE = AddressTemplate.of(CLUSTER_CONNECTION_ADDRESS);
     AddressTemplate GROUPING_HANDLER_TEMPLATE = AddressTemplate.of(GROUPING_HANDLER_ADDRESS);
     AddressTemplate BRIDGE_TEMPLATE = AddressTemplate.of(BRIDGE_ADDRESS);
+    AddressTemplate SELECTED_BRIDGE_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS).append("bridge=*");
 
     // ha-* resources
     String LIVE_ONLY_ADDRESS = SERVER_ADDRESS + "/ha-policy=live-only";

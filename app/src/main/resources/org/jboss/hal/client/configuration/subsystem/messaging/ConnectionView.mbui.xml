@@ -341,29 +341,5 @@
             </metadata>
         </item>
 
-        <item id="messaging-pooled-connection-factory-entry" title="Pooled Connection Factory"
-              icon="pficon pficon-replicator">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/pooled-connection-factory=*">
-                <h1>Pooled Connection Factory</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="messaging-pooled-connection-factory-table" title="Pooled Connection Factory"
-                       form-ref="messaging-pooled-connection-factory-form">
-                    <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}"
-                                handler="{{presenter.add(ServerSubResource.POOLED_CONNECTION_FACTORY)}}"
-                                constraint="add"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}"
-                                handler="{{presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow())}}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="{{row.getName()}}"/>
-                    </columns>
-                </table>
-                <form id="messaging-pooled-connection-factory-form" title="Pooled Connection Factory"
-                      on-save="{{presenter.save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues)}}"
-                      prepare-reset="{{presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form)}}"/>
-            </metadata>
-        </item>
     </vertical-navigation>
 </view>

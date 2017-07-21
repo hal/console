@@ -47,17 +47,23 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * An element which implements the <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">vertical
  * navigation</a> from PatternFly.
- * <p>
- * The vertical navigation consists of two parts:
+ *
+ * <p>The vertical navigation consists of two parts:</p>
  * <ol>
  * <li>Entries: The actual menu / navigation entries which are child elements of the vertical navigation</li>
  * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically
  * children
  * of the root container. Their visibility is controlled by the vertical navigation.</li>
  * </ol>
- * <p>
- * The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
- * the DOM by calling {@link #attach()} and {@link #detach()}.
+ *
+ * <p>The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
+ * the DOM by calling {@link #attach()} and {@link #detach()}.</p>
+ *
+ * <p>There are two groups of methods:</p>
+ * <ul>
+ * <li>{@code add*()}: Use these methods to add panes <strong>before</strong> the panes were added to the DOM</li>
+ * <li>{@code insert*()}: Use these methods to add panes <strong>after</strong> the panes were added to the DOM</li>
+ * </ul>
  *
  * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
@@ -217,6 +223,16 @@ public class VerticalNavigation implements Attachable {
      * <p>
      * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
      * navigation. The element should be rather a child of the root container.
+     *
+     * <p><strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the entry to the DOM. This has to be done manually using something
+     * like</p>
+     * <pre>
+     * HTMLElement root = row()
+     *     .add(column()
+     *         .addAll(navigation.panes()))
+     *     .asElement();
+     * </pre>
      */
     public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
         return addPrimary(entries, panes, id, text, iconClass, new Pane(id, element));
@@ -233,6 +249,10 @@ public class VerticalNavigation implements Attachable {
      * <p>
      * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
+     *
+     * <p><strong>Please note</strong><br/>
+     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the entry
+     * to the DOM.</p>
      */
     public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
         insertPrimary(id, beforeId, text, iconClass, element.asElement());
@@ -318,6 +338,22 @@ public class VerticalNavigation implements Attachable {
 
     // ------------------------------------------------------ add secondary items
 
+    /**
+     * Adds a secondary navigation entry to the navigation which controls the visibility of the specified element.
+     * <p>
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
+     * navigation. The element should be rather a child of the root container.
+     *
+     * <p><strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the entry to the DOM. This has to be done manually using something
+     * like</p>
+     * <pre>
+     * HTMLElement root = row()
+     *     .add(column()
+     *         .addAll(navigation.panes()))
+     *     .asElement();
+     * </pre>
+     */
     public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
         return addSecondary(entries, panes, primaryId, id, text, new Pane(id, element));
     }
@@ -329,6 +365,10 @@ public class VerticalNavigation implements Attachable {
      * <p>
      * You must call this method <em>after</em> at least one entry was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
+     *
+     * <p><strong>Please note</strong><br/>
+     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the
+     * entry to the DOM.</p>
      */
     public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
         Entry primaryEntry = entries.get(primaryId);
