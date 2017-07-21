@@ -34,7 +34,20 @@ import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.listPf;
 import static org.jboss.hal.resources.CSS.listPfStacked;
 
-// TODO Add support for toolbar and pagination
+/**
+ * PatternFly list view. Please not that the list view does not hold data. Instead use a {@link DataProvider} and
+ * connect it to the list view:
+ *
+ * <pre>
+ * DataProvider dataProvider = ...;
+ * ListView listView = ...;
+ *
+ * dataProvider.addDisplay(listView);
+ * dataProvider.setItems(...);
+ * </pre>
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/content-views/list-view/">http://www.patternfly.org/pattern-library/content-views/list-view/</a>
+ */
 public class ListView<T> implements IsElement {
 
     public static class Builder<T> {
@@ -75,18 +88,22 @@ public class ListView<T> implements IsElement {
     }
 
 
+    private final String id;
     private final boolean multiselect;
     private final String[] contentWidths;
     private final ItemRenderer<T> itemRenderer;
-    private final Map<String, ListItem<T>> items;
     private final HTMLElement root;
+    private final Map<String, ListItem<T>> currentItems;
+    private DataProvider<T> dataProvider;
     private SelectHandler<T> selectHandler;
 
     private ListView(Builder<T> builder) {
+        this.id = builder.id;
         this.multiselect = builder.multiselect;
         this.contentWidths = builder.contentWidths;
         this.itemRenderer = builder.itemRenderer;
-        this.items = new HashMap<>();
+        this.currentItems = new HashMap<>();
+
         HtmlContentBuilder<HTMLDivElement> div = div().id(builder.id).css(listPf);
         if (builder.stacked) {
             div.css(listPfStacked);
@@ -99,21 +116,11 @@ public class ListView<T> implements IsElement {
         return root;
     }
 
-    public void setItems(Iterable<T> items) {
-        this.items.clear();
-        Elements.removeChildrenFrom(root);
-        for (T item : items) {
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
-            this.items.put(listItem.id, listItem);
-            root.appendChild(listItem.asElement());
-        }
-    }
-
     /**
-     * Select the item and fires a selection event
+     * Select the item and fires a selection event if the item is in the visible range.
      */
     public void selectItem(T item) {
-        ListItem<T> listItem = getItem(item);
+        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
         if (listItem != null) {
             select(listItem, true);
         }
@@ -130,7 +137,7 @@ public class ListView<T> implements IsElement {
         }
         if (!multiselect) {
             // deselect all other items
-            for (ListItem<T> otherItem : items.values()) {
+            for (ListItem<T> otherItem : currentItems.values()) {
                 if (otherItem == item) {
                     continue;
                 }
@@ -149,8 +156,8 @@ public class ListView<T> implements IsElement {
 
     public T selectedItem() {
         HTMLElement element = (HTMLElement) root.querySelector("." + CSS.active);
-        if (element != null && element.id != null && items.containsKey(element.id)) {
-            return items.get(element.id).item;
+        if (element != null && element.id != null && currentItems.containsKey(element.id)) {
+            return currentItems.get(element.id).item;
         }
         return null;
     }
@@ -161,8 +168,8 @@ public class ListView<T> implements IsElement {
         for (int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i) instanceof HTMLElement) {
                 HTMLElement element = (HTMLElement) nodes.item(i);
-                if (element.id != null && items.containsKey(element.id)) {
-                    selected.add(items.get(element.id).item);
+                if (element.id != null && currentItems.containsKey(element.id)) {
+                    selected.add(currentItems.get(element.id).item);
                 }
             }
         }
@@ -170,21 +177,42 @@ public class ListView<T> implements IsElement {
     }
 
     public void enableAction(T item, String actionId) {
-        ListItem<T> listItem = getItem(item);
+        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
         if (listItem != null) {
             listItem.enableAction(actionId);
         }
     }
 
     public void disableAction(T item, String actionId) {
-        ListItem<T> listItem = getItem(item);
+        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
         if (listItem != null) {
             listItem.disableAction(actionId);
         }
     }
 
-    private ListItem<T> getItem(T item) {
-        String itemId = itemRenderer.render(item).getId();
-        return items.get(itemId);
+
+    // ------------------------------------------------------ internal API
+
+    void setDataProvider(DataProvider<T> dataProvider) {
+        this.dataProvider = dataProvider;
+    }
+
+    void setItems(Iterable<T> items) {
+        currentItems.clear();
+        Elements.removeChildrenFrom(root);
+        DataProvider<T> dp = dataProvider();
+        for (T item : items) {
+            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
+            currentItems.put(dp.identifer().apply(item), listItem);
+            root.appendChild(listItem.asElement());
+        }
+    }
+
+
+    // ------------------------------------------------------ private API
+
+    private DataProvider<T> dataProvider() {
+        assert dataProvider != null : "No data provider for list view " + id;
+        return dataProvider;
     }
 }

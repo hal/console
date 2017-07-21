@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.listview.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
@@ -65,6 +66,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
     private final Resources resources;
     private final EmptyState empty;
+    private final DataProvider<Macro> dataProvider;
     private final ListView<Macro> macroList;
     private final AceEditor editor;
     private final HTMLButtonElement copyToClipboard;
@@ -74,6 +76,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     @Inject
     public MacroEditorView(Resources resources) {
         this.resources = resources;
+
+        dataProvider = new DataProvider<>(Macro::getName);
 
         empty = new EmptyState.Builder(resources.constants().noMacros())
                 .icon(CSS.fontAwesome("dot-circle-o"))
@@ -119,6 +123,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .build();
         macroList.onSelect(this::loadMacro);
         macroList.asElement().classList.add(CSS.macroList);
+        dataProvider.addDisplay(macroList);
 
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
@@ -193,7 +198,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     public void setMacros(Iterable<Macro> macros) {
         Elements.setVisible(empty.asElement(), false);
         Elements.setVisible(row, true);
-        macroList.setItems(macros);
+        dataProvider.setItems(macros);
     }
 
     @Override

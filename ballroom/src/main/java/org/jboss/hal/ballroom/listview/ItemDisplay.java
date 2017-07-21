@@ -33,7 +33,7 @@ import org.jboss.hal.resources.Ids;
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
     /**
-     * An unique id for this item
+     * An unique id for this item. If you use a {@link DataProvider} make sure to use the same IDs.
      *
      * @return an id based on {@link #getTitle()}
      */

@@ -26,6 +26,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.hal.ballroom.listview.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
@@ -60,12 +61,15 @@ import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
+    private final DataProvider<ExecutionNode> dataProvider;
     private final Toolbar<ExecutionNode> toolbar;
     private final ListView<ExecutionNode> listView;
     private JobPresenter presenter;
 
     @Inject
     public JobView(Resources resources) {
+        dataProvider = new DataProvider<>(NamedNode::getName);
+
         toolbar = new Toolbar.Builder<>(asList(
                 new Column<>(NAME, Names.EXECUTION_ID,
                         (node, filter) -> node.getName().equals(filter),
@@ -182,6 +186,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 .stacked(true)
                 .multiselect(false)
                 .build();
+        dataProvider.addDisplay(listView);
 
         initElements(elements()
                 .add(toolbar)
@@ -196,7 +201,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
         listView.asElement().style.height = vh(applicationOffset() + toolbarHeight + 1);
         listView.asElement().style.overflow = "scroll"; //NON-NLS
-        toolbar.bindListView(listView);
+        toolbar.bind(dataProvider);
     }
 
     @Override
@@ -206,7 +211,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
     @Override
     public void update(JobNode job) {
-        listView.setItems(job.getExecutions());
+        dataProvider.setItems(job.getExecutions());
         if (job.getRunningExecutions() > 0) {
             setTimeout(o -> presenter.reload(), POLLING_INTERVAL);
         }

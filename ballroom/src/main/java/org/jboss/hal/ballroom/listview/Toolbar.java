@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.Element;
@@ -38,7 +39,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
@@ -60,7 +60,17 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.label;
 
 /**
- * PatternFly toolbar.
+ * PatternFly toolbar. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list
+ * view):
+ *
+ * <pre>
+ * DataProvider dataProvider = ...;
+ * ListView listView = ...;
+ * Toolbar toolbar = ...;
+ *
+ * dataProvider.addDisplay(listView);
+ * toolbar.bind(dataProvider();
+ * </pre>
  *
  * <p>Please note that the toolbar uses an own {@code <div class="row"/>} element. This is important if you add the
  * toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:</p>
@@ -77,13 +87,6 @@ import static org.jboss.hal.resources.CSS.label;
  * @see <a href="http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
  */
 public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
-
-    @FunctionalInterface
-    public interface Filter<T> {
-
-        boolean test(T model, String filter);
-    }
-
 
     public static class Column<T> {
 
@@ -194,7 +197,7 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
     private Column<T> filterColumn;
     private Column<T> sortColumn;
     private boolean asc;
-    private ListView<T> listView;
+    private DataProvider<T> dataProvider;
 
     private HTMLElement filterLabel;
     private HTMLElement filterButtonText;
@@ -393,8 +396,8 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
         return root;
     }
 
-    public void bindListView(ListView<T> listView) {
-        this.listView = listView;
+    public void bind(DataProvider<T> dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
     public void reset() {
@@ -510,8 +513,13 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
     }
 
     private void apply() {
-        logger.debug("Apply filters {} and sort by {} {} to list view {}",
-                activeFilters, sortColumn, (asc ? "asc" : "desc"),
-                listView != null ? listView.asElement().id : Names.NOT_AVAILABLE);
+        if (dataProvider != null) {
+            logger.debug("Apply filters {} and sort by {} {}", activeFilters, sortColumn, (asc ? "asc" : "desc"));
+            List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
+                    .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
+                    .collect(toList());
+            dataProvider.apply(filterValues);
+            numberOfResults.textContent = MESSAGES.results(Iterables.size(dataProvider.getVisibleItems()));
+        }
     }
 }
