@@ -25,11 +25,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.resources.Ids;
 
-/**
- * Controls the layout of a list view item.
- *
- * @author Harald Pehl
- */
+/** Controls the layout of a list view item. */
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
     /**

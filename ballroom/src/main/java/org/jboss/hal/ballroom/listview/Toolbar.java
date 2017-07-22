@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.Element;
@@ -86,7 +85,7 @@ import static org.jboss.hal.resources.CSS.label;
  *
  * @see <a href="http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">http://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
  */
-public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
+public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachable {
 
     public static class Column<T> {
 
@@ -154,10 +153,12 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
 
     public static class Builder<T> {
 
+        private final DataProvider<T> dataProvider;
         private final List<Column<T>> columns;
         private final List<Action> actions;
 
-        public Builder(Iterable<Column<T>> columns) {
+        public Builder(DataProvider<T> dataProvider, Iterable<Column<T>> columns) {
+            this.dataProvider = dataProvider;
             this.columns = Lists.newArrayList(columns);
             this.actions = new ArrayList<>();
         }
@@ -190,15 +191,15 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Toolbar.class);
 
-    private final HTMLElement root;
+    private final DataProvider<T> dataProvider;
     private final List<Column<T>> filterColumns;
     private final Map<Column<T>, String> activeFilters;
     private final List<Column<T>> sortColumns;
     private Column<T> filterColumn;
     private Column<T> sortColumn;
     private boolean asc;
-    private DataProvider<T> dataProvider;
 
+    private final HTMLElement root;
     private HTMLElement filterLabel;
     private HTMLElement filterButtonText;
     private HTMLElement filterUl;
@@ -215,6 +216,8 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
     private HTMLElement activeFiltersUl;
 
     private Toolbar(Builder<T> builder) {
+        this.dataProvider = builder.dataProvider;
+
         HTMLElement control;
         HTMLElement results;
         this.root = div().css(row, toolbarPf)
@@ -396,10 +399,6 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
         return root;
     }
 
-    public void bind(DataProvider<T> dataProvider) {
-        this.dataProvider = dataProvider;
-    }
-
     public void reset() {
         if (filterColumns.isEmpty()) {
             filterColumn = null;
@@ -417,6 +416,15 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
         clearAllFilters();
         clearResults();
         apply();
+    }
+
+    @Override
+    public void setItems(Iterable<T> items, int visible, int total) {
+        if (visible != total) {
+            numberOfResults.textContent = MESSAGES.resultsFiltered(visible, total);
+        } else {
+            numberOfResults.textContent = MESSAGES.results(total);
+        }
     }
 
     private void setFilterColumn(Column<T> column) {
@@ -513,13 +521,10 @@ public class Toolbar<T> implements IsElement<HTMLElement>, Attachable {
     }
 
     private void apply() {
-        if (dataProvider != null) {
-            logger.debug("Apply filters {} and sort by {} {}", activeFilters, sortColumn, (asc ? "asc" : "desc"));
-            List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
-                    .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
-                    .collect(toList());
-            dataProvider.apply(filterValues);
-            numberOfResults.textContent = MESSAGES.results(Iterables.size(dataProvider.getVisibleItems()));
-        }
+        logger.debug("Apply filters {} and sort by {} {}", activeFilters, sortColumn, (asc ? "asc" : "desc"));
+        List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
+                .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
+                .collect(toList());
+        dataProvider.apply(filterValues);
     }
 }

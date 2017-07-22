@@ -35,8 +35,8 @@ import static org.jboss.hal.resources.CSS.listPf;
 import static org.jboss.hal.resources.CSS.listPfStacked;
 
 /**
- * PatternFly list view. Please not that the list view does not hold data. Instead use a {@link DataProvider} and
- * connect it to the list view:
+ * PatternFly list view. Please note that the list view does not hold data. Instead use a {@link DataProvider} and
+ * add it as a display to the data provider:
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -48,7 +48,7 @@ import static org.jboss.hal.resources.CSS.listPfStacked;
  *
  * @see <a href="http://www.patternfly.org/pattern-library/content-views/list-view/">http://www.patternfly.org/pattern-library/content-views/list-view/</a>
  */
-public class ListView<T> implements IsElement {
+public class ListView<T> implements Display<T>, IsElement {
 
     public static class Builder<T> {
 
@@ -88,17 +88,14 @@ public class ListView<T> implements IsElement {
     }
 
 
-    private final String id;
     private final boolean multiselect;
     private final String[] contentWidths;
     private final ItemRenderer<T> itemRenderer;
     private final HTMLElement root;
     private final Map<String, ListItem<T>> currentItems;
-    private DataProvider<T> dataProvider;
     private SelectHandler<T> selectHandler;
 
     private ListView(Builder<T> builder) {
-        this.id = builder.id;
         this.multiselect = builder.multiselect;
         this.contentWidths = builder.contentWidths;
         this.itemRenderer = builder.itemRenderer;
@@ -120,7 +117,7 @@ public class ListView<T> implements IsElement {
      * Select the item and fires a selection event if the item is in the visible range.
      */
     public void selectItem(T item) {
-        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
+        ListItem<T> listItem = listItem(item);
         if (listItem != null) {
             select(listItem, true);
         }
@@ -177,42 +174,32 @@ public class ListView<T> implements IsElement {
     }
 
     public void enableAction(T item, String actionId) {
-        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
+        ListItem<T> listItem = listItem(item);
         if (listItem != null) {
             listItem.enableAction(actionId);
         }
     }
 
     public void disableAction(T item, String actionId) {
-        ListItem<T> listItem = currentItems.get(dataProvider().identifer().apply(item));
+        ListItem<T> listItem = listItem(item);
         if (listItem != null) {
             listItem.disableAction(actionId);
         }
     }
 
-
-    // ------------------------------------------------------ internal API
-
-    void setDataProvider(DataProvider<T> dataProvider) {
-        this.dataProvider = dataProvider;
-    }
-
-    void setItems(Iterable<T> items) {
+    @Override
+    public void setItems(Iterable<T> items, int visible, int total) {
         currentItems.clear();
         Elements.removeChildrenFrom(root);
-        DataProvider<T> dp = dataProvider();
         for (T item : items) {
             ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
-            currentItems.put(dp.identifer().apply(item), listItem);
+            currentItems.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
         }
     }
 
-
-    // ------------------------------------------------------ private API
-
-    private DataProvider<T> dataProvider() {
-        assert dataProvider != null : "No data provider for list view " + id;
-        return dataProvider;
+    private ListItem<T> listItem(T item) {
+        String id = itemRenderer.render(item).getId();
+        return currentItems.get(id);
     }
 }

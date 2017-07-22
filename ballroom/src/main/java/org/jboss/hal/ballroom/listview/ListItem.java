@@ -34,11 +34,7 @@ import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * An item inside a {@link ListView}.
- *
- * @author Harald Pehl
- */
+/** An item inside a {@link ListView}. */
 class ListItem<T> implements IsElement {
 
     private final HTMLElement root;

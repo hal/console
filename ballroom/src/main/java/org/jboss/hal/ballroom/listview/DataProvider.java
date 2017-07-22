@@ -32,7 +32,7 @@ public class DataProvider<T> {
 
     private final Function<T, String> identifier;
     private final Map<String, T> allItems;
-    private final List<ListView<T>> displays;
+    private final List<Display<T>> displays;
     private Map<String, T> visibleItems;
     private List<FilterValue<T>> filterValues;
 
@@ -44,9 +44,8 @@ public class DataProvider<T> {
         this.filterValues = new ArrayList<>();
     }
 
-    public void addDisplay(ListView<T> listView) {
-        listView.setDataProvider(this);
-        displays.add(listView);
+    public void addDisplay(Display<T> display) {
+        displays.add(display);
     }
 
     public void setItems(Iterable<T> items) {
@@ -103,8 +102,10 @@ public class DataProvider<T> {
     }
 
     private void updateDisplays() {
-        for (ListView<T> display : displays) {
-            display.setItems(visibleItems.values());
+        int visible = visibleItems.size();
+        int total = allItems.size();
+        for (Display<T> display : displays) {
+            display.setItems(visibleItems.values(), visible, total);
         }
     }
 }

@@ -278,6 +278,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceAdapterProvidedBy(String type, String name);
 
     String results(int number);
+    String resultsFiltered(int visible, int total);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);

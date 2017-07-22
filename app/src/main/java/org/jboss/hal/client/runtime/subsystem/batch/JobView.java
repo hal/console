@@ -70,7 +70,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
     public JobView(Resources resources) {
         dataProvider = new DataProvider<>(NamedNode::getName);
 
-        toolbar = new Toolbar.Builder<>(asList(
+        toolbar = new Toolbar.Builder<>(dataProvider, asList(
                 new Column<>(NAME, Names.EXECUTION_ID,
                         (node, filter) -> node.getName().equals(filter),
                         comparing(NamedNode::getName)),
@@ -186,7 +186,6 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 .stacked(true)
                 .multiselect(false)
                 .build();
-        dataProvider.addDisplay(listView);
 
         initElements(elements()
                 .add(toolbar)
@@ -201,7 +200,9 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
         listView.asElement().style.height = vh(applicationOffset() + toolbarHeight + 1);
         listView.asElement().style.overflow = "scroll"; //NON-NLS
-        toolbar.bind(dataProvider);
+
+        dataProvider.addDisplay(listView);
+        dataProvider.addDisplay(toolbar);
     }
 
     @Override
