@@ -88,18 +88,18 @@ public class ListView<T> implements Display<T>, IsElement {
     }
 
 
+    private final HTMLElement root;
     private final boolean multiselect;
     private final String[] contentWidths;
     private final ItemRenderer<T> itemRenderer;
-    private final HTMLElement root;
-    private final Map<String, ListItem<T>> currentItems;
+    private final Map<String, ListItem<T>> currentListItems;
     private SelectHandler<T> selectHandler;
 
     private ListView(Builder<T> builder) {
         this.multiselect = builder.multiselect;
         this.contentWidths = builder.contentWidths;
         this.itemRenderer = builder.itemRenderer;
-        this.currentItems = new HashMap<>();
+        this.currentListItems = new HashMap<>();
 
         HtmlContentBuilder<HTMLDivElement> div = div().id(builder.id).css(listPf);
         if (builder.stacked) {
@@ -113,9 +113,18 @@ public class ListView<T> implements Display<T>, IsElement {
         return root;
     }
 
-    /**
-     * Select the item and fires a selection event if the item is in the visible range.
-     */
+    @Override
+    public void setItems(Iterable<T> items, int visible, int total) {
+        currentListItems.clear();
+        Elements.removeChildrenFrom(root);
+        for (T item : items) {
+            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
+            currentListItems.put(listItem.id, listItem);
+            root.appendChild(listItem.asElement());
+        }
+    }
+
+    /** Selects the item and fires a selection event if the item is in the visible range. */
     public void selectItem(T item) {
         ListItem<T> listItem = listItem(item);
         if (listItem != null) {
@@ -134,7 +143,7 @@ public class ListView<T> implements Display<T>, IsElement {
         }
         if (!multiselect) {
             // deselect all other items
-            for (ListItem<T> otherItem : currentItems.values()) {
+            for (ListItem<T> otherItem : currentListItems.values()) {
                 if (otherItem == item) {
                     continue;
                 }
@@ -153,8 +162,8 @@ public class ListView<T> implements Display<T>, IsElement {
 
     public T selectedItem() {
         HTMLElement element = (HTMLElement) root.querySelector("." + CSS.active);
-        if (element != null && element.id != null && currentItems.containsKey(element.id)) {
-            return currentItems.get(element.id).item;
+        if (element != null && element.id != null && currentListItems.containsKey(element.id)) {
+            return currentListItems.get(element.id).item;
         }
         return null;
     }
@@ -165,8 +174,8 @@ public class ListView<T> implements Display<T>, IsElement {
         for (int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i) instanceof HTMLElement) {
                 HTMLElement element = (HTMLElement) nodes.item(i);
-                if (element.id != null && currentItems.containsKey(element.id)) {
-                    selected.add(currentItems.get(element.id).item);
+                if (element.id != null && currentListItems.containsKey(element.id)) {
+                    selected.add(currentListItems.get(element.id).item);
                 }
             }
         }
@@ -187,19 +196,8 @@ public class ListView<T> implements Display<T>, IsElement {
         }
     }
 
-    @Override
-    public void setItems(Iterable<T> items, int visible, int total) {
-        currentItems.clear();
-        Elements.removeChildrenFrom(root);
-        for (T item : items) {
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
-            currentItems.put(listItem.id, listItem);
-            root.appendChild(listItem.asElement());
-        }
-    }
-
     private ListItem<T> listItem(T item) {
         String id = itemRenderer.render(item).getId();
-        return currentItems.get(id);
+        return currentListItems.get(id);
     }
 }

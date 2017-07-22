@@ -16,11 +16,13 @@
 package org.jboss.hal.ballroom.listview;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -35,6 +37,8 @@ public class DataProvider<T> {
     private final List<Display<T>> displays;
     private Map<String, T> visibleItems;
     private List<FilterValue<T>> filterValues;
+    private Comparator<T> comparator;
+    private boolean asc;
 
     public DataProvider(Function<T, String> identifier) {
         this.identifier = identifier;
@@ -54,15 +58,22 @@ public class DataProvider<T> {
             String id = identifier.apply(item);
             allItems.put(id, item);
         }
-        apply(filterValues);
+        apply(filterValues, comparator, asc);
     }
 
-    public void apply(List<FilterValue<T>> filter) {
+    public void apply(List<FilterValue<T>> filter, Comparator<T> comparator, boolean asc) {
         this.filterValues = filter;
+        this.comparator = comparator;
+        this.asc = asc;
 
         if (filterValues.isEmpty()) {
-            visibleItems.clear();
-            visibleItems.putAll(allItems);
+            if (comparator != null) {
+                visibleItems = allItems.values().stream()
+                        .sorted(asc ? comparator : comparator.reversed())
+                        .collect(toMap(identifier, identity()));
+            } else {
+                visibleItems = allItems;
+            }
 
         } else {
             Predicate<T> predicate = null;
@@ -73,9 +84,11 @@ public class DataProvider<T> {
                     predicate = predicate.and(i -> filterValue.getFilter().test(i, filterValue.getValue()));
                 }
             }
-            visibleItems = allItems.values().stream()
-                    .filter(predicate)
-                    .collect(toMap(identifier, identity()));
+            Stream<T> stream = allItems.values().stream().filter(predicate);
+            if (comparator != null) {
+                stream = stream.sorted(asc ? comparator : comparator.reversed());
+            }
+            visibleItems = stream.collect(toMap(identifier, identity()));
         }
 
         updateDisplays();
@@ -95,10 +108,6 @@ public class DataProvider<T> {
 
     public Iterable<T> getVisibleItems() {
         return visibleItems.values();
-    }
-
-    protected Function<T, String> identifer() {
-        return identifier;
     }
 
     private void updateDisplays() {

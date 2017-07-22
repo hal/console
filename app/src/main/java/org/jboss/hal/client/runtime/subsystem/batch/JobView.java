@@ -73,7 +73,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         toolbar = new Toolbar.Builder<>(dataProvider, asList(
                 new Column<>(NAME, Names.EXECUTION_ID,
                         (node, filter) -> node.getName().equals(filter),
-                        comparing(NamedNode::getName)),
+                        comparing(ExecutionNode::getExecutionId)),
                 new Column<>(INSTANCE_ID, Names.INSTANCE_ID,
                         (node, filter) -> String.valueOf(node.getInstanceId()).equals(filter),
                         comparing(ExecutionNode::getInstanceId)),

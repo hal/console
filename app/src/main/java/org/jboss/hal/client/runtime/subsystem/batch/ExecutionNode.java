@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 import java.util.Date;
 
 import com.google.gwt.i18n.shared.DateTimeFormat;
-import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 
@@ -73,8 +72,8 @@ class ExecutionNode extends NamedNode {
         return getOrDefault(this, END_TIME, () -> ISO_8601.parse(get(END_TIME).asString()), null);
     }
 
-    String getDuration() {
-        return Format.humanReadableDuration(getEndTime().getTime() - getStartTime().getTime());
+    long getDuration() {
+        return getEndTime().getTime() - getStartTime().getTime();
     }
 
     Date getLastUpdatedTime() {

@@ -525,6 +525,6 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
                 .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
                 .collect(toList());
-        dataProvider.apply(filterValues);
+        dataProvider.apply(filterValues,sortColumn.comparator, asc);
     }
 }
