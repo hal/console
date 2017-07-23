@@ -479,6 +479,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
     private void clearAllFilters() {
         activeFilters.clear();
+        filterInput.value = "";
         Elements.setVisible(filters, false);
         Elements.removeChildrenFrom(activeFiltersUl);
     }
