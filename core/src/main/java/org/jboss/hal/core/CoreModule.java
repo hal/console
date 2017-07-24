@@ -20,6 +20,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
@@ -54,6 +55,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ComplexAttributeOperations.class).in(Singleton.class);
         bind(CredentialReference.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);
+        bind(DeploymentResources.class).in(Singleton.class);
         bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionRegistry.class).asEagerSingleton(); // to register the event handler
         bind(ExtensionStorage.class).in(Singleton.class);

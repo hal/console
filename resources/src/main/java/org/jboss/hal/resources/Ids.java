@@ -726,8 +726,8 @@ public interface Ids {
         return build(JMS_BRIDGE, name);
     }
 
-    static String jpaStatistic(final String deployment, final String persistenceUnit) {
-        return build(deployment, persistenceUnit);
+    static String jpaStatistic(final String deployment, String subdeployment, final String persistenceUnit) {
+        return build(deployment, subdeployment, persistenceUnit);
     }
 
     static String loggingProfile(final String name) {

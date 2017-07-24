@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.core.deployment;
 
 import javax.annotation.Nullable;
 
-import org.jboss.hal.client.deployment.Deployment.Status;
+import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
@@ -28,12 +28,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
  *
  * @author Harald Pehl
  */
-class ServerGroupDeployment extends Content {
+public class ServerGroupDeployment extends Content {
 
     private final String serverGroup;
     private Deployment deployment; // might be null if there's no reference server available
 
-    ServerGroupDeployment(final String serverGroup, final ModelNode node) {
+    public ServerGroupDeployment(final String serverGroup, final ModelNode node) {
         super(node);
         this.serverGroup = serverGroup;
     }
@@ -58,23 +58,23 @@ class ServerGroupDeployment extends Content {
         return result;
     }
 
-    boolean isEnabled() {
+    public boolean isEnabled() {
         return hasDefined(ENABLED) && get(ENABLED).asBoolean();
     }
 
-    String getServerGroup() {
+    public String getServerGroup() {
         return serverGroup;
     }
 
-    @Nullable Deployment getDeployment() {
+    public @Nullable Deployment getDeployment() {
         return deployment;
     }
 
-    void setDeployment(@Nullable Deployment deployment) {
+    public void setDeployment(@Nullable Deployment deployment) {
         this.deployment = deployment;
     }
 
-    boolean runningWithReferenceServer() {
+    public boolean runningWithReferenceServer() {
         return deployment != null && deployment.getStatus() == Status.OK && deployment.getReferenceServer() != null;
     }
 

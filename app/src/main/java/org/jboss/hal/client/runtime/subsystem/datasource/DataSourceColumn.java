@@ -62,9 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
-/**
- * @author Harald Pehl
- */
+// TODO Add data sources from deployments
 @AsyncColumn(Ids.DATA_SOURCE_RUNTIME)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
@@ -102,14 +100,12 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         ItemsProvider<DataSource> itemsProvider = (context, callback) -> {
             List<Operation> operations = new ArrayList<>();
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
-            )
+            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build());
-            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
-            )
+            operations.add(new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, XA_DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)

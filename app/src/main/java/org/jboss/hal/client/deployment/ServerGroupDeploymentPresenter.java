@@ -33,6 +33,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
 import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;

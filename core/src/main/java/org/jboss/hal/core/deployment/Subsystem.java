@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.core.deployment;
 
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.NamedNode;
 
-/**
- * @author Harald Pehl
- */
 public class Subsystem extends NamedNode {
 
     public Subsystem(Property property) {

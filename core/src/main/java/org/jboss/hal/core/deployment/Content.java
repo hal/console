@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.core.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +23,12 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * A deployment in the content repository. Can be exploded or archived, managed or unmanaged.
- *
- * @author Harald Pehl
- */
+/** A deployment in the content repository. Can be exploded or archived, managed or unmanaged. */
 public class Content extends NamedNode {
 
     private final List<ServerGroupDeployment> serverGroupDeployments;
 
-    Content(final ModelNode node) {
+    public Content(final ModelNode node) {
         super(node);
         this.serverGroupDeployments = new ArrayList<>();
 
@@ -54,31 +50,29 @@ public class Content extends NamedNode {
         get(MANAGED).set(managed);
     }
 
-    String getRuntimeName() {
+    public String getRuntimeName() {
         ModelNode runtimeName = get(RUNTIME_NAME);
         return runtimeName.isDefined() ? runtimeName.asString() : null;
     }
 
-    void addDeployment(ServerGroupDeployment serverGroupDeployment) {
+    public void addDeployment(ServerGroupDeployment serverGroupDeployment) {
         serverGroupDeployments.add(serverGroupDeployment);
     }
 
-    List<ServerGroupDeployment> getServerGroupDeployments() {
+    public List<ServerGroupDeployment> getServerGroupDeployments() {
         return serverGroupDeployments;
     }
 
-    boolean isDeployedTo(String serverGroup) {
+    public boolean isDeployedTo(String serverGroup) {
         return serverGroupDeployments.stream()
-                .filter(sgd -> serverGroup.equals(sgd.getServerGroup()))
-                .findAny()
-                .isPresent();
+                .anyMatch(sgd -> serverGroup.equals(sgd.getServerGroup()));
     }
 
-    boolean isExploded() {
+    public boolean isExploded() {
         return get(EXPLODED).asBoolean(false);
     }
 
-    boolean isManaged() {
+    public boolean isManaged() {
         return get(MANAGED).asBoolean(true);
     }
 

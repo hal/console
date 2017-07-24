@@ -16,7 +16,8 @@
 package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.client.deployment.Deployment.Status;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.meta.security.Constraint;

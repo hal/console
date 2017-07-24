@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.core.deployment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,14 +27,10 @@ import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * A deployment on a specific server.
- *
- * @author Harald Pehl
- */
-class Deployment extends Content {
+/** A deployment on a specific server. */
+public class Deployment extends Content {
 
-    enum Status {
+    public enum Status {
         OK, FAILED, STOPPED, UNDEFINED
     }
 
@@ -55,7 +51,7 @@ class Deployment extends Content {
     private final List<Subdeployment> subdeployments;
     private final List<Subsystem> subsystems;
 
-    Deployment(final Server referenceServer, final ModelNode node) {
+    public Deployment(final Server referenceServer, final ModelNode node) {
         super(node);
         this.referenceServer = referenceServer;
         this.subdeployments = new ArrayList<>();
@@ -108,21 +104,21 @@ class Deployment extends Content {
         return builder.toString();
     }
 
-    boolean isStandalone() {
+    public boolean isStandalone() {
         return referenceServer.isStandalone();
     }
 
-    Server getReferenceServer() {
+    public Server getReferenceServer() {
         return referenceServer;
     }
 
-    boolean isEnabled() {
+    public boolean isEnabled() {
         ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
         return enabled.isDefined() ? enabled.asBoolean() : false;
     }
 
-    boolean isExploded() {
+    public boolean isExploded() {
         return get(EXPLODED).asBoolean(false);
     }
 
@@ -130,7 +126,7 @@ class Deployment extends Content {
         return ModelNodeHelper.asEnumValue(this, STATUS, Status::valueOf, Status.UNDEFINED);
     }
 
-    String getEnabledTime() {
+    public String getEnabledTime() {
         ModelNode node = get(ENABLED_TIME);
         if (node.isDefined()) {
             return Format.shortDateTime(new Date(node.asLong()));
@@ -138,7 +134,7 @@ class Deployment extends Content {
         return null;
     }
 
-    String getDisabledTime() {
+    public String getDisabledTime() {
         ModelNode node = get(DISABLED_TIME);
         if (node.isDefined()) {
             return Format.shortDateTime(new Date(node.asLong()));
@@ -146,19 +142,19 @@ class Deployment extends Content {
         return null;
     }
 
-    boolean hasSubdeployments() {
+    public boolean hasSubdeployments() {
         return !subdeployments.isEmpty();
     }
 
-    List<Subdeployment> getSubdeployments() {
+    public List<Subdeployment> getSubdeployments() {
         return subdeployments;
     }
 
-    boolean hasSubsystem(String name) {
+    public boolean hasSubsystem(String name) {
         return subsystems.stream().anyMatch(subsystem -> name.equals(subsystem.getName()));
     }
 
-    boolean hasNestedSubsystem(String name) {
+    public boolean hasNestedSubsystem(String name) {
         for (Subdeployment subdeployment : subdeployments) {
             for (Subsystem subsystem : subdeployment.getSubsystems()) {
                 if (name.equals(subsystem.getName())) {

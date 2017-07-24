@@ -22,6 +22,8 @@ import com.google.common.collect.Lists;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.CSS;

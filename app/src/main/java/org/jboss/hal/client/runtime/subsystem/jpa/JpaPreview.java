@@ -30,8 +30,10 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -52,16 +54,20 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     private final Utilization closedSessions;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    JpaPreview(final JpaStatistic jpaStatistic, final Environment environment, final Dispatcher dispatcher,
-            final FinderPathFactory finderPathFactory, final PlaceManager placeManager, final Places places,
-            final Resources resources) {
+    JpaPreview(JpaStatistic jpaStatistic, Environment environment, Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory, PlaceManager placeManager, Places places, Resources resources) {
 
-        super(jpaStatistic.getName(), jpaStatistic.getDeployment());
+        super(jpaStatistic.getPersistenceUnit(), jpaStatistic.getPath());
         this.dispatcher = dispatcher;
         this.address = jpaStatistic.getAddress();
 
         FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
         PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
+        Elements.removeChildrenFrom(getLeadElement());
+        getLeadElement().appendChild(a(places.historyToken(placeRequest))
+                .textContent(jpaStatistic.getPath())
+                .title(resources.messages().goTo(Names.DEPLOYMENTS))
+                .asElement());
 
         noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
                 .description(resources.messages()

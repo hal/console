@@ -17,18 +17,34 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-// TODO Support sub-deployments!
+import static org.jboss.hal.core.deployment.DeploymentResources.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_ADDRESS;
+
 interface AddressTemplates {
 
-    String JPA_ADDRESS = "/{selected.host}/{selected.server}/deployment=*/subsystem=jpa/hibernate-persistence-unit=*";
-    String ENTITY_ADDRESS = JPA_ADDRESS + "/entity=*";
-    String ENTITY_CACHE_ADDRESS = JPA_ADDRESS + "/entity-cache=*";
-    String QUERY_CACHE_ADDRESS = JPA_ADDRESS + "/query-cache=*";
-    String COLLECTION_ADDRESS = JPA_ADDRESS + "/collection=*";
+    String PU_ADDRESS = "/subsystem=jpa/hibernate-persistence-unit=*";
 
-    AddressTemplate JPA_TEMPLATE = AddressTemplate.of(JPA_ADDRESS);
-    AddressTemplate ENTITY_TEMPLATE = AddressTemplate.of(ENTITY_ADDRESS);
-    AddressTemplate ENTITY_CACHE_TEMPLATE = AddressTemplate.of(ENTITY_CACHE_ADDRESS);
-    AddressTemplate QUERY_CACHE_TEMPLATE = AddressTemplate.of(QUERY_CACHE_ADDRESS);
-    AddressTemplate COLLECTION_TEMPLATE = AddressTemplate.of(COLLECTION_ADDRESS);
+    String JPA_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + PU_ADDRESS;
+    String ENTITY_DEPLOYMENT_ADDRESS = JPA_DEPLOYMENT_ADDRESS + "/entity=*";
+    String ENTITY_CACHE_DEPLOYMENT_ADDRESS = JPA_DEPLOYMENT_ADDRESS + "/entity-cache=*";
+    String QUERY_CACHE_DEPLOYMENT_ADDRESS = JPA_DEPLOYMENT_ADDRESS + "/query-cache=*";
+    String COLLECTION_DEPLOYMENT_ADDRESS = JPA_DEPLOYMENT_ADDRESS + "/collection=*";
+
+    String JPA_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + PU_ADDRESS;
+    String ENTITY_SUBDEPLOYMENT_ADDRESS = JPA_SUBDEPLOYMENT_ADDRESS + "/entity=*";
+    String ENTITY_CACHE_SUBDEPLOYMENT_ADDRESS = JPA_SUBDEPLOYMENT_ADDRESS + "/entity-cache=*";
+    String QUERY_CACHE_SUBDEPLOYMENT_ADDRESS = JPA_SUBDEPLOYMENT_ADDRESS + "/query-cache=*";
+    String COLLECTION_SUBDEPLOYMENT_ADDRESS = JPA_SUBDEPLOYMENT_ADDRESS + "/collection=*";
+
+    AddressTemplate JPA_DEPLOYMENT_TEMPLATE = AddressTemplate.of(JPA_DEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_DEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_DEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_CACHE_DEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_CACHE_DEPLOYMENT_ADDRESS);
+    AddressTemplate QUERY_CACHE_DEPLOYMENT_TEMPLATE = AddressTemplate.of(QUERY_CACHE_DEPLOYMENT_ADDRESS);
+    AddressTemplate COLLECTION_DEPLOYMENT_TEMPLATE = AddressTemplate.of(COLLECTION_DEPLOYMENT_ADDRESS);
+
+    AddressTemplate JPA_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(JPA_SUBDEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_SUBDEPLOYMENT_ADDRESS);
+    AddressTemplate ENTITY_CACHE_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(ENTITY_CACHE_SUBDEPLOYMENT_ADDRESS);
+    AddressTemplate QUERY_CACHE_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(QUERY_CACHE_SUBDEPLOYMENT_ADDRESS);
+    AddressTemplate COLLECTION_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(COLLECTION_SUBDEPLOYMENT_ADDRESS);
 }

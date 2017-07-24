@@ -34,6 +34,9 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Content;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
@@ -58,11 +61,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Deployment related functions
- *
- * @author Harald Pehl
- */
+/** Deployment related functions */
 class DeploymentFunctions {
 
     static final String SERVER_GROUP_DEPLOYMENTS = "deploymentFunctions.serverGroupDeployments";

@@ -17,17 +17,23 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import java.util.Map;
 
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.chart.Donut;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -39,8 +45,16 @@ class JobPreview extends PreviewContent<JobNode> {
     private final HTMLElement status;
     private final Donut donut;
 
-    JobPreview(JobColumn column, JobNode job, Resources resources) {
+    JobPreview(JobColumn column, JobNode job, FinderPathFactory finderPathFactory, Places places, Resources resources) {
         super(job.getName(), job.getPath());
+
+        FinderPath path = finderPathFactory.deployment(job.getDeployment());
+        PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
+        Elements.removeChildrenFrom(getLeadElement());
+        getLeadElement().appendChild(a(places.historyToken(placeRequest))
+                .textContent(job.getPath())
+                .title(resources.messages().goTo(Names.DEPLOYMENTS))
+                .asElement());
 
         empty = new EmptyState.Builder(resources.constants().noExecutions())
                 .description(resources.messages().noExecutions())

@@ -17,14 +17,17 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.core.deployment.DeploymentResources.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_ADDRESS;
+
 interface AddressTemplates {
 
     String BATCH_SUBSYSTEM_ADDRESS = "{selected.host}/{selected.server}/subsystem=batch-jberet";
 
-    String DEPLOYMENT_ADDRESS = "{selected.host}/{selected.server}/deployment=*";
+    String JOB_ADDRESS = "/subsystem=batch-jberet/job=*";
     String BATCH_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + "/subsystem=batch-jberet";
-    String BATCH_DEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + "/subsystem=batch-jberet/job=*";
-    String BATCH_SUBDEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + "/subdeployment=*/subsystem=batch-jberet/job=*";
+    String BATCH_DEPLOYMENT_JOB_ADDRESS = DEPLOYMENT_ADDRESS + JOB_ADDRESS;
+    String BATCH_SUBDEPLOYMENT_JOB_ADDRESS = SUBDEPLOYMENT_ADDRESS + JOB_ADDRESS;
 
     AddressTemplate BATCH_SUBSYSTEM_TEMPLATE = AddressTemplate.of(BATCH_SUBSYSTEM_ADDRESS);
 

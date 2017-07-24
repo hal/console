@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.ballroom.table.Table;
-import org.jboss.hal.client.deployment.Content;
+import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;

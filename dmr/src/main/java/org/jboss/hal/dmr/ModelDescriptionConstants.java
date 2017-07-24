@@ -242,6 +242,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
+    String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -290,6 +291,7 @@ public interface ModelDescriptionConstants {
     String JMS_TOPIC = "jms-topic";
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
+    String JOB = "job";
     String JOB_XML_NAME = "job-xml-name";
     String JOB_XML_NAMES = "job-xml-names";
     String JPA = "jpa";

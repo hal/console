@@ -45,6 +45,8 @@ import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadElement;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Content;
+import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;

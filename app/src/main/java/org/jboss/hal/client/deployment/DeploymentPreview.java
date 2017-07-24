@@ -20,6 +20,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.Subdeployment;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.core.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,7 @@ import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
-/**
- * @author Harald Pehl
- */
-class Subdeployment extends ModelNode {
+public class Subdeployment extends ModelNode {
 
     private final Deployment parent;
     private final String name;
@@ -55,11 +52,11 @@ class Subdeployment extends ModelNode {
         return parent;
     }
 
-    List<Subsystem> getSubsystems() {
+    public List<Subsystem> getSubsystems() {
         return subsystems;
     }
 
-    boolean hasSubsystem(String name) {
+    public boolean hasSubsystem(String name) {
         return subsystems.stream().anyMatch(subsystem -> name.equals(subsystem.getName()));
     }
 }

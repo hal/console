@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem;
+package org.jboss.hal.core.deployment;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
@@ -22,15 +22,18 @@ import org.jboss.hal.dmr.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 
-/** Model node for resources under {@code deployment=foo} resp. {@code deployment=foo/subdeployment=bar} */
-public class DeploymentNode extends NamedNode {
+/**
+ * Model node for resources under {@code /deployment=foo/subsystem=*} resp. {@code
+ * /deployment=foo/subdeployment=bar/subsystem=*}
+ */
+public class DeploymentResource extends NamedNode {
 
     private final ResourceAddress address;
     private String path;
     private String deployment;
     private String subdeployment;
 
-    public DeploymentNode(ResourceAddress address, ModelNode modelNode) {
+    public DeploymentResource(ResourceAddress address, ModelNode modelNode) {
         super(address.lastValue(), modelNode);
         this.address = address;
 
@@ -58,7 +61,8 @@ public class DeploymentNode extends NamedNode {
     }
 
     /**
-     * Return {@code deployment}/{@code subdeployment} if {@code subdeployment != null}, {@code deployment} otherwise.
+     * Returns {@code deployment}/{@code subdeployment} if {@code subdeployment != null}, {@code deployment} otherwise.
+     * Should not be used to build DMR operations, but rather in the UI.
      */
     public String getPath() {
         return path;

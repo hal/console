@@ -21,6 +21,7 @@ import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;

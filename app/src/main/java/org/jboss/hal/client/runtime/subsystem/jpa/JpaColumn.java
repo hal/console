@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,6 +25,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -31,10 +34,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -42,14 +42,13 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-// TODO Add support for sub-deployments!
-@Requires(JPA_ADDRESS)
+@Requires(JPA_DEPLOYMENT_ADDRESS)
 @AsyncColumn(Ids.JPA_RUNTIME)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
 
@@ -58,7 +57,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
             final ItemActionFactory itemActionFactory,
             final Environment environment,
             final Dispatcher dispatcher,
-            final StatementContext statementContext,
+            final DeploymentResources deploymentResources,
             final FinderPathFactory finderPathFactory,
             final PlaceManager placeManager,
             final Places places,
@@ -69,17 +68,26 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                 .itemRenderer(item -> new ItemDisplay<JpaStatistic>() {
                     @Override
                     public String getId() {
-                        return Ids.jpaStatistic(item.getDeployment(), item.getName());
-                    }
-
-                    @Override
-                    public HTMLElement asElement() {
-                        return ItemDisplay.withSubtitle(item.getName(), item.getDeployment());
+                        return Ids.jpaStatistic(item.getDeployment(), item.getSubdeployment(), item.getName());
                     }
 
                     @Override
                     public String getTitle() {
-                        return item.getName();
+                        return item.getPersistenceUnit();
+                    }
+
+                    @Override
+                    public HTMLElement asElement() {
+                        return ItemDisplay.withSubtitle(item.getPersistenceUnit(), item.getPath());
+                    }
+
+                    @Override
+                    public String getFilterData() {
+                        Set<String> data = new HashSet<>(asList(item.getName(), item.getDeployment()));
+                        if (item.getSubdeployment() != null) {
+                            data.add(item.getSubdeployment());
+                        }
+                        return String.join(" ", data);
                     }
 
                     @Override
@@ -93,10 +101,12 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                     @Override
                     public List<ItemAction<JpaStatistic>> actions() {
                         if (item.isStatisticsEnabled()) {
-                            PlaceRequest placeRequest = places.selectedServer(NameTokens.JPA_RUNTIME)
-                                    .with(DEPLOYMENT, item.getDeployment())
-                                    .with(NAME, item.getName())
-                                    .build();
+                            PlaceRequest.Builder builder = places.selectedServer(NameTokens.JPA_RUNTIME)
+                                    .with(DEPLOYMENT, item.getDeployment());
+                            if (item.getSubdeployment() != null) {
+                                builder.with(SUBDEPLOYMENT, item.getSubdeployment());
+                            }
+                            PlaceRequest placeRequest = builder.with(NAME, item.getName()).build();
                             return singletonList(itemActionFactory.view(placeRequest));
                         }
                         return ItemDisplay.super.actions();
@@ -105,22 +115,13 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(
-                        item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
+                .onPreview(item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
                                 resources))
         );
 
-        ItemsProvider<JpaStatistic> itemsProvider = (context, callback) -> {
-            ResourceAddress address = JPA_TEMPLATE.resolve(statementContext);
-            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build();
-            dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
-                    .filter(node -> !node.isFailure())
-                    .map(node -> new JpaStatistic(new ResourceAddress(node.get(ADDRESS)), node.get(RESULT)))
-                    .collect(toList())));
-        };
+        ItemsProvider<JpaStatistic> itemsProvider = (context, callback) ->
+                deploymentResources.readChildren(JPA, HIBERNATE_PERSISTENCE_UNIT, JpaStatistic::new,
+                        callback::onSuccess);
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items

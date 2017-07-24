@@ -30,24 +30,22 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus;
+import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -65,7 +63,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBDEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
@@ -84,11 +81,12 @@ public class JobColumn extends FinderColumn<JobNode> {
     public JobColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
-            EventBus eventBus,
+            DeploymentResources deploymentResources,
+            FinderPathFactory finderPathFactory,
             Places places,
+            EventBus eventBus,
             Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
-            StatementContext statementContext,
             Resources resources) {
 
         super(new Builder<JobNode>(finder, Ids.JOB, Names.JOB)
@@ -103,42 +101,21 @@ public class JobColumn extends FinderColumn<JobNode> {
         this.resources = resources;
         this.intervalHandles = new HashMap<>();
 
-        setItemsProvider((context, callback) -> {
-            Operation deploymentJobOperation = new Operation.Builder(
-                    BATCH_DEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
-                    READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build();
-            Operation subdeploymentJobOperation = new Operation.Builder(
-                    BATCH_SUBDEPLOYMENT_JOB_TEMPLATE.resolve(statementContext),
-                    READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build();
-            dispatcher.execute(new Composite(deploymentJobOperation, subdeploymentJobOperation),
-                    (CompositeResult result) -> {
-                        List<JobNode> jobs = new ArrayList<>();
-                        result.step(0).get(RESULT).asList().forEach(node -> {
-                            ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
-                            ModelNode job = node.get(RESULT);
-                            jobs.add(new JobNode(address, job));
-                        });
-                        callback.onSuccess(jobs);
+        setItemsProvider((context, callback) -> deploymentResources.readChildren(BATCH_JBERET, JOB, JobNode::new, jobs -> {
+            callback.onSuccess(jobs);
 
-                        // turn progress animation on/off
-                        clearIntervals();
-                        for (JobNode job : jobs) {
-                            String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
-                            if (job.getRunningExecutions() > 0) {
-                                ItemMonitor.startProgress(jobId);
-                                intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
-                            } else {
-                                ItemMonitor.stopProgress(jobId);
-                            }
-                        }
-                    });
-        });
+            // turn progress animation on/off
+            clearIntervals();
+            for (JobNode job : jobs) {
+                String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
+                if (job.getRunningExecutions() > 0) {
+                    ItemMonitor.startProgress(jobId);
+                    intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
+                } else {
+                    ItemMonitor.stopProgress(jobId);
+                }
+            }
+        }));
 
         setItemRenderer(item -> new ItemDisplay<JobNode>() {
             @Override
@@ -149,6 +126,11 @@ public class JobColumn extends FinderColumn<JobNode> {
             @Override
             public String getTitle() {
                 return item.getName();
+            }
+
+            @Override
+            public HTMLElement asElement() {
+                return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 
             @Override
@@ -163,11 +145,6 @@ public class JobColumn extends FinderColumn<JobNode> {
                             .forEach(data::add);
                 }
                 return String.join(" ", data);
-            }
-
-            @Override
-            public HTMLElement asElement() {
-                return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 
             @Override
@@ -213,7 +190,7 @@ public class JobColumn extends FinderColumn<JobNode> {
             }
         });
 
-        setPreviewCallback(itm -> new JobPreview(this, itm, resources));
+        setPreviewCallback(itm -> new JobPreview(this, itm, finderPathFactory, places, resources));
     }
 
     private void pollJob(JobNode job) {

@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;

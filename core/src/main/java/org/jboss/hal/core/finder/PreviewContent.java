@@ -150,24 +150,12 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     // ------------------------------------------------------ header & lead
 
-    protected void setHeader(String header) {
-        String readableHeader = shorten(header);
-        if (!readableHeader.equals(header)) {
-            this.headerText.textContent = readableHeader;
-            this.headerText.title = header;
-        } else {
-            this.headerText.textContent = header;
-        }
-    }
-
     protected HTMLElement getHeaderContainer() {
         return headerContainer;
     }
 
-    protected void setLead(String lead) {
-        if (this.lead != null) {
-            this.lead.textContent = lead;
-        }
+    public HTMLElement getLeadElement() {
+        return lead;
     }
 
     private HTMLElement header(final String header) {
