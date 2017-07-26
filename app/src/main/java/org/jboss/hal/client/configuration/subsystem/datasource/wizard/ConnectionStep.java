@@ -32,14 +32,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.USER_NAME;
 
-/**
- * @author Harald Pehl
- */
 class ConnectionStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    ConnectionStep(final Metadata metadata, final Resources resources, final boolean xa) {
+    ConnectionStep(Metadata metadata, Resources resources, boolean xa) {
         super(resources.constants().connection());
 
         List<String> attributes = new ArrayList<>();
@@ -63,12 +60,24 @@ class ConnectionStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected void onShow(final Context context) {
+    protected void onShow(Context context) {
         form.edit(context.dataSource);
     }
 
     @Override
-    protected boolean onNext(final Context context) {
+    protected boolean onNext(Context context) {
         return form.save();
+    }
+
+    @Override
+    protected boolean onBack(Context context) {
+        form.cancel();
+        return true;
+    }
+
+    @Override
+    protected boolean onCancel(Context context) {
+        form.cancel();
+        return true;
     }
 }

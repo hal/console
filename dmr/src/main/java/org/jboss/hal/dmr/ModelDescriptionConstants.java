@@ -85,6 +85,7 @@ public interface ModelDescriptionConstants {
     String AUTHENTICATION_CONTEXT = "authentication-context";
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
+    String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
     String BACKUPS = "backups";
@@ -201,6 +202,7 @@ public interface ModelDescriptionConstants {
     String END_TIME = "end-time";
     String ENDPOINT_CONFIG = "endpoint-config";
     String EVICTION = "eviction";
+    String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
     String EXECUTE = "execute";
@@ -341,6 +343,7 @@ public interface ModelDescriptionConstants {
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MAX = "max";
+    String MAX_POOL_SIZE = "max-pool-size";
     String MAX_THREADS = "max-threads";
     String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
     String MECHANISM_NAME = "mechanism-name";
@@ -350,6 +353,7 @@ public interface ModelDescriptionConstants {
     String METRIC = "metric";
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
+    String MIN_POOL_SIZE = "min-pool-size";
     String MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS = "missing-transitive-dependency-problems";
     String MIXED_JDBC = "mixed-jdbc";
     String MODCLUSTER = "modcluster";
@@ -366,6 +370,7 @@ public interface ModelDescriptionConstants {
     String NEW_ITEM_RDN = "new-item-rdn";
     String NEW_ITEM_TEMPLATE = "new-item-template";
     String NILLABLE = "nillable";
+    String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
     String NONE = "none";
     String NOT = "not";
     String OP = "operation";
@@ -388,6 +393,7 @@ public interface ModelDescriptionConstants {
     String POJO = "pojo";
     String POLICY = "policy";
     String POLICY_MODULE = "policy-module";
+    String POOL_NAME = "pool-name";
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
     String PORT = "port";
@@ -436,6 +442,7 @@ public interface ModelDescriptionConstants {
     String REALM = "realm";
     String REALM_NAME = "realm-name";
     String REASON = "reason";
+    String RECOVERY_PLUGIN_CLASS_NAME = "recovery-plugin-class-name";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
     String REGEX_PRINCIPAL_TRANSFORMER = "regex-principal-transformer";
@@ -484,6 +491,7 @@ public interface ModelDescriptionConstants {
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
+    String SAME_RM_OVERRIDE = "same-rm-override";
     String SAR = "sar";
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
@@ -540,6 +548,7 @@ public interface ModelDescriptionConstants {
     String SQL = "sql";
     String SSL_CONTEXT = "ssl-context";
     String STACK = "stack";
+    String STALE_CONNECTION_CHECKER_CLASS_NAME = "stale-connection-checker-class-name";
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
@@ -601,6 +610,7 @@ public interface ModelDescriptionConstants {
     String USER_PASSWORD_MAPPER = "user-password-mapper";
     String USERS_PROPERTIES = "users-properties";
     String USERNAME = "username";
+    String VALID_CONNECTION_CHECKER_CLASS_NAME = "valid-connection-checker-class-name";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
@@ -619,6 +629,7 @@ public interface ModelDescriptionConstants {
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
+    String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
 }
 

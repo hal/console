@@ -31,15 +31,11 @@ import static java.util.stream.StreamSupport.stream;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
-/**
- * @author Harald Pehl
- */
 class ChooseTemplateStep extends WizardStep<Context, State> {
 
     private final HTMLElement root;
 
-    ChooseTemplateStep(final DataSourceTemplates templates,
-            final Resources resources, final boolean xa) {
+    ChooseTemplateStep(DataSourceTemplates templates, Resources resources, boolean xa) {
         super(resources.constants().chooseTemplate());
 
         root = div()
@@ -64,10 +60,10 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                                     .attr("name", "template") //NON-NLS
                                     .attr("value", template.getId())
                                     .on(click, event -> {
-                                        String id = ((HTMLInputElement)event.target).value;
+                                        String id = ((HTMLInputElement) event.target).value;
                                         wizard().getContext().template = templates.getTemplate(id);
                                     }))
-                            .add(span().textContent(resources.constants().custom())))
+                            .add(span().textContent(template.getId())))
                     .asElement());
         }
 
@@ -81,7 +77,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected boolean onNext(final Context context) {
+    protected boolean onNext(Context context) {
         if (context.template != null) {
             context.useTemplate();
         } else {

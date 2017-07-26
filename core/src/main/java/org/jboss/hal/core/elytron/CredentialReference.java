@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.subsystem.elytron;
+package org.jboss.hal.core.elytron;
 
 import java.util.function.Supplier;
 import javax.inject.Inject;

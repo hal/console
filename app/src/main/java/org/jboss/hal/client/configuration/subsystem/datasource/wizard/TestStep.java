@@ -29,9 +29,9 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -42,17 +42,13 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard.addOperation;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.blankSlatePf;
 import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnLg;
 import static org.jboss.hal.resources.CSS.btnPrimary;
 
-/**
- * @author Harald Pehl
- */
 class TestStep extends WizardStep<Context, State> {
 
     private static final String WIZARD_TITLE = "wizard-title";
@@ -66,11 +62,11 @@ class TestStep extends WizardStep<Context, State> {
     private final Resources resources;
     private final HTMLElement root;
 
-    TestStep(final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Environment environment,
-            final Provider<Progress> progress,
-            final Resources resources) {
+    TestStep(Dispatcher dispatcher,
+            StatementContext statementContext,
+            Environment environment,
+            Provider<Progress> progress,
+            Resources resources) {
 
         super(resources.constants().testConnection());
         this.dispatcher = dispatcher;
@@ -99,28 +95,21 @@ class TestStep extends WizardStep<Context, State> {
 
     private void testConnection() {
         Context context = wizard().getContext();
-        DataSource dataSource = context.getDataSource();
 
         List<Function<FunctionContext>> functions = new ArrayList<>();
         if (!context.isCreated()) {
             // add data source
-            functions.add(control -> {
-                ResourceAddress address = dataSource.isXa()
-                        ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                        : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
-                Operation operation = new Operation.Builder(address, ADD).payload(dataSource).build();
-                dispatcher.executeInFunction(control, operation,
-                        result -> {
-                            context.setCreated(true);
-                            control.proceed();
-                        },
-                        (op, failure) -> {
-                            control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                            control.getContext().set(WIZARD_TEXT, resources.messages().dataSourceAddError());
-                            control.getContext().set(WIZARD_ERROR, failure);
-                            control.abort();
-                        });
-            });
+            functions.add(control -> dispatcher.executeInFunction(control, addOperation(context, statementContext),
+                    (CompositeResult result) -> {
+                        context.setCreated(true);
+                        control.proceed();
+                    },
+                    (op, failure) -> {
+                        control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
+                        control.getContext().set(WIZARD_TEXT, resources.messages().dataSourceAddError());
+                        control.getContext().set(WIZARD_ERROR, failure);
+                        control.abort();
+                    }));
         }
 
         // check running server(s)
@@ -133,14 +122,15 @@ class TestStep extends WizardStep<Context, State> {
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
-                        .add(DATA_SOURCE, dataSource.getName());
+                        .add(DATA_SOURCE, context.dataSource.getName());
                 Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
                 dispatcher.executeInFunction(control, operation,
                         result -> control.proceed(),
                         (op, failure) -> {
                             control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
                             control.getContext()
-                                    .set(WIZARD_TEXT, resources.messages().testConnectionError(dataSource.getName()));
+                                    .set(WIZARD_TEXT,
+                                            resources.messages().testConnectionError(context.dataSource.getName()));
                             control.getContext().set(WIZARD_ERROR, failure);
                             control.abort();
                         });
@@ -163,9 +153,9 @@ class TestStep extends WizardStep<Context, State> {
             }
 
             @Override
-            public void onSuccess(final FunctionContext context) {
+            public void onSuccess(final FunctionContext functionContext) {
                 wizard().showSuccess(resources.constants().testConnectionSuccess(),
-                        resources.messages().testConnectionSuccess(dataSource.getName()), false);
+                        resources.messages().testConnectionSuccess(context.dataSource.getName()), false);
             }
         };
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,

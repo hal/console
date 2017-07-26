@@ -152,6 +152,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String flushInvalid();
     String formErrors();
     String formResetDesc();
+    String fromDeployment();
 
     String globalSettings();
     String gotoDeployment();
@@ -399,6 +400,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String statements();
     String statisticsDisabled();
     String statisticsDisabledHeader();
+    String statisticsNotAvailableHeader();
     String status();
     String stop();
     String stopMacro();

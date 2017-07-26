@@ -31,14 +31,11 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ReviewStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    ReviewStep(final Metadata metadata, final Resources resources, final boolean xa) {
+    ReviewStep(Metadata metadata, Resources resources, boolean xa) {
         super(resources.constants().review());
 
         List<String> attributes = new ArrayList<>();
@@ -62,7 +59,7 @@ class ReviewStep extends WizardStep<Context, State> {
     }
 
     @Override
-    protected void onShow(final Context context) {
+    protected void onShow(Context context) {
         FormItem<String> nameItem = form.getFormItem(NAME);
         nameItem.setValue(context.dataSource.getName());
         form.view(context.dataSource);

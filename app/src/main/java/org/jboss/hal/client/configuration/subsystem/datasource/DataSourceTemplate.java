@@ -15,8 +15,12 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.Map;
+
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Datasource template for a quick and easy ways to setup vendor specific datasources.
@@ -47,12 +51,19 @@ public class DataSourceTemplate {
     private final Vendor vendor;
     private final DataSource dataSource;
     private final JdbcDriver driver;
+    private final Map<String, String> xaProperties;
 
     DataSourceTemplate(String id, Vendor vendor, DataSource dataSource, JdbcDriver driver) {
+        this(id, vendor, dataSource, driver, emptyMap());
+    }
+
+    DataSourceTemplate(String id, Vendor vendor, DataSource dataSource, JdbcDriver driver,
+            Map<String, String> xaProperties) {
         this.id = id;
         this.vendor = vendor;
         this.dataSource = dataSource;
         this.driver = driver;
+        this.xaProperties = xaProperties;
     }
 
     @Override
@@ -99,5 +110,9 @@ public class DataSourceTemplate {
 
     public Vendor getVendor() {
         return vendor;
+    }
+
+    public Map<String, String> getXaProperties() {
+        return xaProperties;
     }
 }

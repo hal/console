@@ -26,7 +26,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.core.subsystem.elytron.CredentialReference;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;

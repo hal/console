@@ -92,6 +92,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml dataSourceDisabledNoStatistics(String name);
     SafeHtml dataSourceEnabled(String name);
     SafeHtml dataSourceStatisticsDisabled(String name);
+    SafeHtml dataSourceStatisticsFromDeployment();
     SafeHtml deployedTo(String name);
     SafeHtml deploymentActive(String name);
     SafeHtml deploymentAdded(@PluralCount int count);
@@ -217,6 +218,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String notMoreThanOneAlternativeError(String alternatives);
     String notMoreThanOneAlternativesError(String alternatives);
     SafeHtml noWrite();
+    String noXaDatasourceProperties();
     SafeHtml normalLogFile(String size);
 
     String operations(int size);

@@ -32,14 +32,11 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 
-/**
- * @author Harald Pehl
- */
 public class PropertiesItem extends TagsItem<Map<String, String>> {
 
     private static class MapMapping implements TagsMapping<Map<String, String>> {
 
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/]+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/:]+)$"); //NON-NLS
 
         @Override
         public TagsManager.Validator validator() {

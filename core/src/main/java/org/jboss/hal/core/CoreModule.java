@@ -38,11 +38,11 @@ import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.subsystem.Subsystems;
-import org.jboss.hal.core.subsystem.elytron.CredentialReference;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.GinModule;
+import org.jboss.hal.core.elytron.CredentialReference;
 
 @GinModule
 public class CoreModule extends AbstractGinModule {

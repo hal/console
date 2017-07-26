@@ -33,7 +33,7 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.header;
+import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -160,7 +160,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
 
         HTMLElement root = row()
                 .add(column()
-                        .add(header = header().textContent(Names.DATASOURCE).asElement())
+                        .add(header = h(1).textContent(Names.DATASOURCE).asElement())
                         .add(p().css(clearfix)
                                 .add(a().css(clickable, pullRight).on(click, event -> refresh())
                                         .add(span().css(fontAwesome("refresh"), marginRight5))

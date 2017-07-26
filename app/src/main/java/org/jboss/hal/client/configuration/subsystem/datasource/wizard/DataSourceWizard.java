@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Provider;
 
@@ -27,11 +28,12 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -44,33 +46,57 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_PROPERTIES_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class DataSourceWizard {
+
+    static Composite addOperation(Context context, StatementContext statementContext) {
+        AddressTemplate template = context.dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
+        ResourceAddress address = template.resolve(statementContext, context.dataSource.getName());
+
+        ModelNode payload = context.dataSource.clone();
+        payload.remove(NAME);
+
+        List<Operation> operations = new ArrayList<>();
+        if (context.isXa()) {
+
+            // remove unsupported attributes
+            payload.remove(POOL_NAME);
+            payload.remove(DRIVER_CLASS);
+            operations.add(new Operation.Builder(address, ADD).payload(context.dataSource).build());
+
+            // add an operation for each property
+            context.xaProperties.forEach((key, value) -> {
+                ResourceAddress propertyAddress = XA_DATA_SOURCE_PROPERTIES_TEMPLATE.resolve(statementContext,
+                        context.dataSource.getName(), key);
+                operations.add(new Operation.Builder(propertyAddress, ADD).param(VALUE, value).build());
+            });
+        } else {
+            operations.add(new Operation.Builder(address, ADD).payload(context.dataSource).build());
+        }
+        return new Composite(operations);
+    }
 
     private final DataSourceColumn column;
     private final Resources resources;
     private final Wizard<Context, State> wizard;
 
-    public DataSourceWizard(final DataSourceColumn column,
-            final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final StatementContext statementContext,
-            final Environment environment,
-            final Provider<Progress> progress,
-            final Resources resources,
-            final DataSourceTemplates templates,
-            final List<DataSource> dataSources,
-            final List<JdbcDriver> drivers,
-            final boolean xa) {
+    public DataSourceWizard(DataSourceColumn column,
+            MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            StatementContext statementContext,
+            Environment environment,
+            Provider<Progress> progress,
+            Resources resources,
+            DataSourceTemplates templates,
+            List<DataSource> dataSources,
+            List<JdbcDriver> drivers,
+            boolean xa) {
         this.column = column;
         this.resources = resources;
 
@@ -136,52 +162,52 @@ public class DataSourceWizard {
                 .onCancel(context -> {
                     if (context.isCreated()) {
                         // cleanup
-                        DataSource dataSource = context.getDataSource();
-                        ResourceAddress address = dataSource.isXa()
-                                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                                : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+                        ResourceAddress address = context.dataSource.isXa()
+                                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName())
+                                : DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName());
                         Operation operation = new Operation.Builder(address, REMOVE).build();
                         dispatcher.execute(operation,
                                 result -> column.refresh(RESTORE_SELECTION),
                                 (op, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                        .testConnectionCancelError(dataSource.getName()), failure)));
+                                        .testConnectionCancelError(context.dataSource.getName()), failure)));
                     }
                 })
 
                 .onFinish((wizard, context) -> {
-                    DataSource dataSource = context.getDataSource();
-                    AddressTemplate template = dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
-                    ResourceAddress address = template.resolve(statementContext, dataSource.getName());
-                    Metadata metadata = metadataRegistry.lookup(template);
                     if (!context.isCreated()) {
-                        Operation operation = new Operation.Builder(address, ADD).payload(dataSource).build();
-                        dispatcher.execute(operation,
-                                result -> success(dataSource),
+                        dispatcher.execute(addOperation(context, statementContext),
+                                (CompositeResult result) -> success(context.dataSource),
                                 (op, failure) -> wizard.showError(resources.constants().operationFailed(),
                                         resources.messages().dataSourceAddError(), failure));
                     } else {
+                        AddressTemplate template = context.dataSource.isXa()
+                                ? XA_DATA_SOURCE_TEMPLATE
+                                : DATA_SOURCE_TEMPLATE;
+                        ResourceAddress address = template.resolve(statementContext, context.dataSource.getName());
+                        Metadata metadata = metadataRegistry.lookup(template);
                         if (context.hasChanges()) {
                             Composite operations = new OperationFactory().fromChangeSet(address, context.changes(),
                                     metadata);
                             dispatcher.execute(operations,
-                                    (CompositeResult result) -> success(dataSource),
+                                    (CompositeResult result) -> success(context.dataSource),
                                     (op, failure) -> wizard.showError(resources.constants().operationFailed(),
                                             resources.messages().dataSourceAddError(), failure));
                         } else {
-                            success(dataSource);
+                            success(context.dataSource);
                         }
                     }
                 });
 
         AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
         Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
+        Metadata xaDataSourcePropertiesMetadata = metadataRegistry.lookup(XA_DATA_SOURCE_PROPERTIES_TEMPLATE);
         Metadata driverMetadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
 
         builder.addStep(CHOOSE_TEMPLATE, new ChooseTemplateStep(templates, resources, xa));
         builder.addStep(NAMES, new NamesStep(dataSources, dataSourceMetadata, resources, xa));
         builder.addStep(DRIVER, new DriverStep(drivers, driverMetadata, resources));
         if (xa) {
-            builder.addStep(XA_PROPERTIES, new PropertiesStep(resources));
+            builder.addStep(XA_PROPERTIES, new PropertiesStep(xaDataSourcePropertiesMetadata, resources));
         }
         builder.addStep(CONNECTION, new ConnectionStep(dataSourceMetadata, resources, xa));
         builder.addStep(TEST, new TestStep(dispatcher, statementContext, environment, progress, resources));
@@ -190,7 +216,9 @@ public class DataSourceWizard {
         this.wizard = builder.build();
     }
 
-    public void show() {wizard.show();}
+    public void show() {
+        wizard.show();
+    }
 
     private void success(DataSource dataSource) {
         column.refresh(Ids.dataSourceConfiguration(dataSource.getName(), dataSource.isXa()));
