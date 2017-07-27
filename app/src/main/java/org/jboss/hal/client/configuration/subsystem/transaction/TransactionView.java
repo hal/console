@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.transaction;
 
-import javax.annotation.PostConstruct;
-
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -47,8 +45,10 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
         super(mbuiContext);
     }
 
-    @PostConstruct
-    void init() {
+    @Override
+    public void setPresenter(final TransactionPresenter presenter) {
+        super.setPresenter(presenter);
+
         // set the process fields as not required, because uuid and socket-binding are mutually exclusive.
         processForm.getBoundFormItems().forEach(formItem -> formItem.setRequired(false));
 
@@ -60,11 +60,6 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
 
         // --------------- form validation for the jdbc attributes
         jdbcForm.addFormValidation(presenter.getJdbcFormValidation());
-    }
-
-    @Override
-    public void setPresenter(final TransactionPresenter presenter) {
-        super.setPresenter(presenter);
     }
 
     @Override
