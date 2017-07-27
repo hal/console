@@ -15,14 +15,17 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
@@ -59,6 +62,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
 import static org.jboss.gwt.elemento.core.Elements.a;
@@ -101,6 +105,9 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     private HeaderPresenter presenter;
     private MessagePanel messagePanel;
     private MessageSink messageSink;
+    private HandlerRegistration switchModeHandler;
+    private List<HandlerRegistration> handlers;
+    private List<HandlerRegistration> breadcrumbHandlers;
 
     @DataElement HTMLElement logoFirst;
     @DataElement HTMLElement logoLast;
@@ -170,19 +177,35 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         tlc.put(NameTokens.MANAGEMENT,      (HTMLElement) root.querySelector("#" + Ids.TLC_MANAGEMENT));
         // @formatter:on
 
+        handlers = new ArrayList<>();
+        breadcrumbHandlers = new ArrayList<>();
         for (Map.Entry<String, HTMLElement> entry : tlc.entrySet()) {
-            bind(entry.getValue(), click, event -> {
+            handlers.add(bind(entry.getValue(), click, event -> {
                 if (tlcPlaceRequests.containsKey(entry.getKey())) {
                     presenter.goTo(tlcPlaceRequests.get(entry.getKey()));
                 }
-            });
+            }));
         }
-        bind(logoLink, click, event -> presenter.goTo(NameTokens.HOMEPAGE));
-        bind(backLink, click, event -> presenter.goTo(backPlaceRequest));
-        bind(reloadLink, click, event -> presenter.reload());
-        bind(messages, click, event -> messageSink.asElement().classList.toggle(hide));
-        bind(logout, click, event -> presenter.logout());
-        bind(reconnect, click, event -> presenter.reconnect());
+        handlers.addAll(asList(
+                bind(logoLink, click, event -> presenter.goTo(NameTokens.HOMEPAGE)),
+                bind(backLink, click, event -> presenter.goTo(backPlaceRequest)),
+                bind(reloadLink, click, event -> presenter.reload()),
+                bind(messages, click, event -> messageSink.asElement().classList.toggle(hide)),
+                bind(logout, click, event -> presenter.logout()),
+                bind(reconnect, click, event -> presenter.reconnect())));
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        for (HandlerRegistration handler : breadcrumbHandlers) {
+            handler.removeHandler();
+        }
+        breadcrumbHandlers.clear();
+        for (HandlerRegistration handler : handlers) {
+            handler.removeHandler();
+        }
+        handlers.clear();
     }
 
     @Override
@@ -379,6 +402,11 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
 
+        for (HandlerRegistration handler : breadcrumbHandlers) {
+            handler.removeHandler();
+        }
+        breadcrumbHandlers.clear();
+
         for (Iterator<FinderSegment> iterator = finderContext.getPath().iterator(); iterator.hasNext(); ) {
             FinderSegment<Object> segment = iterator.next();
             if (segment.getColumnId() == null || segment.getItemId() == null) {
@@ -423,7 +451,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                         .asElement());
-                bind(a, click, event -> {
+                breadcrumbHandlers.add(bind(a, click, event -> {
                     Element ul = a.nextElementSibling;
                     segment.dropdown(finderContext, items -> {
                         Elements.removeChildrenFrom(ul);
@@ -443,7 +471,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
                             }
                         }
                     });
-                });
+                }));
 
                 String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
@@ -524,7 +552,10 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @Override
     public void showExpertMode(final ResourceAddress address) {
-        bind(switchModeLink, click, event -> presenter.switchToExpertMode(address));
+        if (switchModeHandler != null) {
+            switchModeHandler.removeHandler();
+        }
+        switchModeHandler = bind(switchModeLink, click, event -> presenter.switchToExpertMode(address));
         switchModeLink.title = resources().constants().expertMode();
         switchModeIcon.className = fontAwesome("sitemap", large);
         Elements.setVisible(switchModeLink, true);
@@ -538,7 +569,10 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
             finderContext.reset(disconnected);
             updateBreadcrumb(finderContext);
         }
-        bind(switchModeLink, click, event -> presenter.backToNormalMode());
+        if (switchModeHandler != null) {
+            switchModeHandler.removeHandler();
+        }
+        switchModeHandler = bind(switchModeLink, click, event -> presenter.backToNormalMode());
         switchModeLink.title = resources().constants().backToNormalMode();
         switchModeIcon.className = fontAwesome("th-list", large);
         Elements.setVisible(switchModeLink, true);

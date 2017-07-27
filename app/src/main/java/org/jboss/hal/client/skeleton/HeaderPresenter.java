@@ -17,6 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -288,7 +289,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        String url = Endpoints.getBaseUrl() + "?" + EndpointManager.CONNECT_PARAMETER;
+        String url = GWT.getModuleBaseURL() + "?" + EndpointManager.CONNECT_PARAMETER;
         window.location.assign(url);
     }
 
