@@ -17,7 +17,4 @@ package org.jboss.hal.client.accesscontrol;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-/**
- * @author Harald Pehl
- */
 public class AccessControlView extends FinderViewImpl implements AccessControlPresenter.MyView {}

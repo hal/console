@@ -68,8 +68,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * Contains generic CRUD methods to add, read, update and remove (singleton) resources. Some methods just execute the
  * underlying DMR operations, other methods also interact with the user by showing (confirmation) dialogs.
- *
- * @author Harald Pehl
  */
 @JsType
 @SuppressWarnings("DuplicateStringLiteralInspection")

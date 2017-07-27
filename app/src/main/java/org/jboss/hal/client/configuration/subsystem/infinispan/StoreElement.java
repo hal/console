@@ -53,8 +53,6 @@ import static org.jboss.hal.resources.CSS.width;
 /**
  * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
  * that we need to take care of {@code store=none}.
- *
- * @author Harald Pehl
  */
 class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 

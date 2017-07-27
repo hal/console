@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.CACHE_CONTAINER)
 // TODO Add @Requires to make the column add action work with RBAC
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {

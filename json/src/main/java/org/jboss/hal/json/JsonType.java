@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.json;
 
-/**
- * Represents the type of the underlying JsonValue.
- */
+/** Represents the type of the underlying JsonValue. */
 public enum JsonType {
     OBJECT, ARRAY, STRING, NUMBER, BOOLEAN, NULL;
 }

@@ -38,9 +38,6 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
 
     final HTMLSelectElement selectElement;

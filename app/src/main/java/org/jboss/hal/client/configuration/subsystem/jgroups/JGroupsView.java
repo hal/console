@@ -45,11 +45,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * This view is not MBUI generated because there are deep neste objects as relay, transport, protocol into stacks.
- *
- * @author Claudio Miranda <claudio@redhat.com>
- */
+/** This view is not MBUI generated because there are deep neste objects as relay, transport, protocol into stacks. */
 public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView {
 
     private final Form<ModelNode> jgroupsForm;

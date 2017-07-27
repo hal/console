@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
@@ -64,8 +63,6 @@ import static org.jboss.hal.resources.UIConstants.*;
  * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
  * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
  * numbers for the right side. On each side the buttons are ordered according to the placement.
- *
- * @author Harald Pehl
  */
 @JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {

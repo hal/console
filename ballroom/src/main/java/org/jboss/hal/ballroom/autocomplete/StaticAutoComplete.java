@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-/**
- * @author Harald Pehl
- */
 public class StaticAutoComplete extends AutoComplete {
 
     public StaticAutoComplete(final List<String> values) {

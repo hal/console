@@ -49,11 +49,7 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * Presenter which is used for both XA and normal data sources.
- *
- * @author Harald Pehl
- */
+/** Presenter which is used for both XA and normal data sources. */
 public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy>
         implements SupportsExpertMode {

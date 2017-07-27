@@ -22,11 +22,7 @@ import org.jboss.hal.core.datasource.JdbcDriver;
 
 import static java.util.Collections.emptyMap;
 
-/**
- * Datasource template for a quick and easy ways to setup vendor specific datasources.
- *
- * @author Harald Pehl
- */
+/** Datasource template for a quick and easy ways to setup vendor specific datasources. */
 public class DataSourceTemplate {
 
     @SuppressWarnings("HardCodedStringLiteral")

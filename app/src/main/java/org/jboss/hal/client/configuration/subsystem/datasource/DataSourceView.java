@@ -51,11 +51,7 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa)
- *
- * @author Harald Pehl
- */
+/** TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa) */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 

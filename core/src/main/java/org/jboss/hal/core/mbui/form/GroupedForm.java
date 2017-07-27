@@ -51,8 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
  * <p>
  * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
  * callbacks.
- *
- * @author Harald Pehl
  */
 public class GroupedForm<T extends ModelNode> implements Form<T> {
 

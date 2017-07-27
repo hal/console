@@ -24,9 +24,6 @@ import org.jboss.hal.resources.Messages;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 public class BlacklistValidation
         implements FormItemValidation<Object> { // needs to be <Object> because it's used in generated code
 

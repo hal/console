@@ -23,11 +23,7 @@ import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * Contains selected JQuery methods.
- *
- * @author Harald Pehl
- */
+/** Contains selected JQuery methods. */
 @JsType(namespace = GLOBAL, name = "jQuery", isNative = true)
 public class JQuery {
 

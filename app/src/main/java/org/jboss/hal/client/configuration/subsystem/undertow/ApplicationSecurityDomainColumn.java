@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.APPLICATION_SECURITY_D
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Claudio Miranda
- */
 @AsyncColumn(Ids.UNDERTOW_APP_SECURITY_DOMAIN)
 @Requires(AddressTemplates.APPLICATION_SECURITY_DOMAIN_ADDRESS)
 public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {

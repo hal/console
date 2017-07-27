@@ -17,10 +17,6 @@ package org.jboss.hal.core.expression;
 
 import com.google.common.base.Strings;
 
-/**
- * @author Heiko Braun
- * @date 10/4/11
- */
 public class Expression {
 
     public static boolean isExpression(String value) {

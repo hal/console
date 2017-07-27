@@ -27,8 +27,6 @@ import static io.undertow.predicate.Predicates.suffixes;
 /**
  * Start a web server for the console at <a href="http://localhost:9090">http://localhost:9090</a>. Please make sure to
  * add {@code http://localhost:9090} as allowed origin in WildFly.
- *
- * @author Harald Pehl
  */
 public class Main {
 

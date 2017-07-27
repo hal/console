@@ -37,11 +37,7 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * Element to configure handler chains of a client or endpoint configuration.
- *
- * @author Harald Pehl
- */
+/** Element to configure handler chains of a client or endpoint configuration. */
 class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
 
     private final HTMLElement root;

@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.webservice;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String CONFIG_TYPE = "config-type";

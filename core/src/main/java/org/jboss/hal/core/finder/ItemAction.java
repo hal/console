@@ -22,9 +22,6 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 
-/**
- * @author Harald Pehl
- */
 public class ItemAction<T> {
 
     public static class Builder<T> {

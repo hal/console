@@ -33,11 +33,7 @@ import static org.jboss.hal.resources.UIConstants.DISMISS;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TRUE;
 
-/**
- * A message inside the {@link MessagePanel} element.
- *
- * @author Harald Pehl
- */
+/** A message inside the {@link MessagePanel} element. */
 class MessagePanelElement implements IsElement {
 
     private final HTMLElement root;

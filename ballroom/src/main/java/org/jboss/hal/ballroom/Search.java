@@ -31,9 +31,6 @@ import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.search;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class Search implements IsElement<HTMLElement> {
 
     @FunctionalInterface

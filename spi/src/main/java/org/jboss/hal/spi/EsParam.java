@@ -21,11 +21,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-/**
- * Annotation used to generate ECMAScript 6 documentation.
- *
- * @author Harald Pehl
- */
+/** Annotation used to generate ECMAScript 6 documentation. */
 @Retention(SOURCE)
 @Target(PARAMETER)
 public @interface EsParam {

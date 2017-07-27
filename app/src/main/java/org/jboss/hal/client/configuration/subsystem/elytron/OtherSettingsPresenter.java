@@ -42,7 +42,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -51,28 +50,36 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
 
     @ProxyCodeSplit
-    @Requires(value ={
-        KEY_STORE_ADDRESS, KEY_MANAGER_ADDRESS, SERVER_SSL_CONTEXT_ADDRESS, CLIENT_SSL_CONTEXT_ADDRESS, TRUST_MANAGER_ADDRESS, CREDENTIAL_STORE_ADDRESS,
-        FILTERING_KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS, PROVIDER_LOADER_ADDRESS, AGGREGATE_PROVIDERS_ADDRESS, SECURITY_DOMAIN_ADDRESS,
-        DIR_CONTEXT_ADDRESS, AUTHENTICATION_CONTEXT_ADDRESS, AUTHENTICATION_CONFIGURATION_ADDRESS, FILE_AUDIT_LOG_ADDRESS, SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
-        PERIODIC_FILE_AUDIT_LOG_ADDRESS, SYSLOG_AUDIT_LOG_ADDRESS, POLICY_ADDRESS, AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS
-    })
+    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
+            AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
+            AUTHENTICATION_CONFIGURATION_ADDRESS,
+            AUTHENTICATION_CONTEXT_ADDRESS,
+            CLIENT_SSL_CONTEXT_ADDRESS,
+            CREDENTIAL_STORE_ADDRESS,
+            DIR_CONTEXT_ADDRESS,
+            FILE_AUDIT_LOG_ADDRESS,
+            FILTERING_KEY_STORE_ADDRESS,
+            KEY_MANAGER_ADDRESS,
+            KEY_STORE_ADDRESS,
+            LDAP_KEY_STORE_ADDRESS,
+            PERIODIC_FILE_AUDIT_LOG_ADDRESS,
+            POLICY_ADDRESS,
+            PROVIDER_LOADER_ADDRESS,
+            SECURITY_DOMAIN_ADDRESS,
+            SERVER_SSL_CONTEXT_ADDRESS,
+            SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
+            SYSLOG_AUDIT_LOG_ADDRESS,
+            TRUST_MANAGER_ADDRESS})
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {}
 
@@ -82,22 +89,20 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         void updateLdapKeyStore(List<NamedNode> model);
         void updatePolicy(List<NamedNode> model);
     }
-    @NonNls private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OtherSettingsPresenter.class);
     // @formatter:on
+
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private Dispatcher dispatcher;
 
     @Inject
     public OtherSettingsPresenter(final EventBus eventBus,
             final OtherSettingsPresenter.MyView view,
             final OtherSettingsPresenter.MyProxy proxy,
             final Finder finder,
-            final Dispatcher dispatcher,
             final CrudOperations crud,
             final ComplexAttributeOperations ca,
             final FinderPathFactory finderPathFactory,
@@ -105,7 +110,6 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             final MetadataRegistry metadataRegistry,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
-        this.dispatcher = dispatcher;
         this.crud = crud;
         this.ca = ca;
         this.finderPathFactory = finderPathFactory;
@@ -283,43 +287,43 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     }
 
-    public void savePolicy(final String name, final Map<String, Object> changedValues) {
+    void savePolicy(final String name, final Map<String, Object> changedValues) {
         crud.save(Names.POLICY, name, AddressTemplates.POLICY_TEMPLATE, changedValues, this::reloadPolicy);
     }
 
-    public void reloadPolicy() {
+    void reloadPolicy() {
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, ModelDescriptionConstants.POLICY,
                 children -> getView().updatePolicy(asNamedNodes(children)));
     }
 
-    public void addCustomPolicy(final String selectedPolicyRealm) {
+    void addCustomPolicy(final String selectedPolicyRealm) {
         ca.listAdd(Ids.ELYTRON_CUSTOM_POLICY_ADD, selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY,
                 POLICY_TEMPLATE, asList(NAME, CLASS_NAME, MODULE), this::reloadPolicy);
     }
 
-    public void removeCustomPolicy(final String selectedPolicyRealm, final int customPolicyIndex) {
+    void removeCustomPolicy(final String selectedPolicyRealm, final int customPolicyIndex) {
         ca.remove(selectedPolicyRealm, CUSTOM_POLICY, Names.CUSTOM_POLICY, customPolicyIndex, POLICY_TEMPLATE,
                 this::reloadPolicy);
     }
 
-    public void saveCustomPolicy(final String selectedPolicyRealm, final int i,
+    void saveCustomPolicy(final String selectedPolicyRealm, final int i,
             final Map<String, Object> changedValues) {
         ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
         Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(CUSTOM_POLICY);
         ca.save(CUSTOM_POLICY, Names.CUSTOM_POLICY, i, address, changedValues, metadata, this::reloadPolicy);
     }
 
-    public void addJaccPolicy(final String selectedPolicyRealm) {
+    void addJaccPolicy(final String selectedPolicyRealm) {
         ca.listAdd(Ids.ELYTRON_JACC_POLICY_ADD, selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY,
                 POLICY_TEMPLATE, asList(NAME, POLICY, "configuration-factory", MODULE), this::reloadPolicy);
     }
 
-    public void removeJaccmPolicy(final String selectedPolicyRealm, final int jaccPolicyIndex) {
+    void removeJaccmPolicy(final String selectedPolicyRealm, final int jaccPolicyIndex) {
         ca.remove(selectedPolicyRealm, JACC_POLICY, Names.JACC_POLICY, jaccPolicyIndex, POLICY_TEMPLATE,
                 this::reloadPolicy);
     }
 
-    public void saveJaccPolicy(final String selectedPolicyRealm, final int i, final Map<String, Object> changedValues) {
+    void saveJaccPolicy(final String selectedPolicyRealm, final int i, final Map<String, Object> changedValues) {
         ResourceAddress address = POLICY_TEMPLATE.resolve(statementContext, selectedPolicyRealm);
         Metadata metadata = metadataRegistry.lookup(POLICY_TEMPLATE).forComplexAttribute(JACC_POLICY);
         ca.save(JACC_POLICY, Names.JACC_POLICY, i, address, changedValues, metadata, this::reloadPolicy);

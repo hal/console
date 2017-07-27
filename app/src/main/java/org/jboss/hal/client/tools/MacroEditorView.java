@@ -54,9 +54,6 @@ import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter.MyView {
 
     private static final String PLAY_ACTION = "play";

@@ -21,9 +21,6 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 
-/**
- * @author Harald Pehl
- */
 class MacroOperationFunction implements Function<FunctionContext> {
 
     private final Dispatcher dispatcher;

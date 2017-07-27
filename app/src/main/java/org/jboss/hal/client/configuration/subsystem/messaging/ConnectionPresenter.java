@@ -48,27 +48,27 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_POOLED_CONNECTION_FACTORY_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class ConnectionPresenter
         extends ServerSettingsPresenter<ConnectionPresenter.MyView, ConnectionPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {ACCEPTOR_ADDRESS, IN_VM_ACCEPTOR_ADDRESS, REMOTE_ACCEPTOR_ADDRESS,
-    // TODO  CONNECTOR_ADDRESS, IN_VM_CONNECTOR_ADDRESS, REMOTE_CONNECTOR_ADDRESS,
-    // TODO  CONNECTOR_SERVICE_ADDRESS, CONNECTION_FACTORY_ADDRESS, POOLED_CONNECTION_FACTORY_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({ACCEPTOR_ADDRESS,
+            CONNECTION_FACTORY_ADDRESS,
+            CONNECTOR_ADDRESS,
+            CONNECTOR_SERVICE_ADDRESS,
+            HTTP_ACCEPTOR_ADDRESS,
+            HTTP_CONNECTOR_ADDRESS,
+            IN_VM_ACCEPTOR_ADDRESS,
+            IN_VM_CONNECTOR_ADDRESS,
+            POOLED_CONNECTION_FACTORY_ADDRESS,
+            REMOTE_ACCEPTOR_ADDRESS,
+            REMOTE_CONNECTOR_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_CONNECTION)
     public interface MyProxy extends ProxyPlace<ConnectionPresenter> {}
 

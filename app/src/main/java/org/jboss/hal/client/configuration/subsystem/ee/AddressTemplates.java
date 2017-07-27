@@ -19,9 +19,6 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String EE_ADDRESS                           = "/{selected.profile}/subsystem=ee";

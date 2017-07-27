@@ -25,9 +25,6 @@ import org.jboss.hal.spi.Message;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class MessageDialog {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);

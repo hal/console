@@ -27,9 +27,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements BatchPresenter.MyView {

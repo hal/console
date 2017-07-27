@@ -32,11 +32,7 @@ import org.jboss.hal.spi.Column;
 
 import static elemental2.dom.DomGlobal.document;
 
-/**
- * Initial column in the deployment top level tab for the domain mode.
- *
- * @author Harald Pehl
- */
+/** Initial column in the deployment top level tab for the domain mode. */
 @Column(Ids.DEPLOYMENT_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 

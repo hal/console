@@ -32,11 +32,7 @@ import org.jboss.hal.resources.Ids;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Repository for macros.
- *
- * @author Harald Pehl
- */
+/** Repository for macros. */
 public class Macros {
 
     private final Map<String, Macro> macros;

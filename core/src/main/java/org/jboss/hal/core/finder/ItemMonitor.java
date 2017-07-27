@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.spi.Callback;
 
 import static elemental2.dom.DomGlobal.clearTimeout;
@@ -32,8 +31,6 @@ import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 /**
  * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
  * unique item id implemented by {@link ItemDisplay#getId()} and specified in the column setup.
- *
- * @author Harald Pehl
  */
 public class ItemMonitor {
 

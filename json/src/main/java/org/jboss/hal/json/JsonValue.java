@@ -17,9 +17,7 @@ package org.jboss.hal.json;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-/**
- * Base interface for all Json values.
- */
+/** Base interface for all Json values. */
 public class JsonValue extends JavaScriptObject {
 
     static native JsonValue box(JsonValue value) /*-{

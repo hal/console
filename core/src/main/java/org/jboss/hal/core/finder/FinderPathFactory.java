@@ -29,11 +29,7 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * Factory to build common finder path instances for configuration and runtime presenters.
- *
- * @author Harald Pehl
- */
+/** Factory to build common finder path instances for configuration and runtime presenters. */
 public class FinderPathFactory {
 
     private final Environment environment;

@@ -35,12 +35,7 @@
 
 package org.jboss.hal.ballroom.form;
 
-/**
- * Simple form item validation handler
- *
- * @author Heiko Braun
- * @date 3/28/11
- */
+/** Simple form item validation handler */
 @FunctionalInterface
 public interface FormItemValidation<T> {
 

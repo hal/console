@@ -28,9 +28,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 
-/**
- * @author Harald Pehl
- */
 class PrincipalPreview extends PreviewContent<Principal> {
 
     private final AccessControl accessControl;

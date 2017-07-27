@@ -63,8 +63,6 @@ import static org.jboss.hal.resources.CSS.tableStriped;
  * </pre>
  *
  * @param <T> the row type
- *
- * @author Harald Pehl
  * @see <a href="https://datatables.net/">https://datatables.net/</a>
  */
 public class DataTable<T> implements Table<T> {

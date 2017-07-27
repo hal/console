@@ -68,9 +68,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_DOMAIN;
 
-/**
- * @author Harald Pehl
- */
 public class SecurityDomainPresenter
         extends MbuiPresenter<SecurityDomainPresenter.MyView, SecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {

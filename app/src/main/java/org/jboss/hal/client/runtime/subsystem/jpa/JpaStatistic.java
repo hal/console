@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
-/**
- * @author Harald Pehl
- */
 class JpaStatistic extends DeploymentResource {
 
     private final String persistenceUnit;

@@ -24,9 +24,6 @@ import org.jboss.hal.resources.Messages;
 
 import static org.jboss.hal.ballroom.form.Decoration.*;
 
-/**
- * @author Harald Pehl
- */
 public class ListItem extends TagsItem<List<String>> {
 
     private static class ListMapping implements TagsMapping<List<String>> {

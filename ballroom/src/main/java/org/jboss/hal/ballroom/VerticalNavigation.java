@@ -65,7 +65,6 @@ import static org.jboss.hal.resources.CSS.*;
  * <li>{@code insert*()}: Use these methods to add panes <strong>after</strong> the panes were added to the DOM</li>
  * </ul>
  *
- * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
 // TODO Simplify: Replace linked collections. The order of entries and panes should not matter, only the order

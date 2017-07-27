@@ -67,8 +67,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * Shows the assigned roles of the selected principal (the reverse of the {@link MembershipColumn}.
- *
- * @author Harald Pehl
  */
 @AsyncColumn(Ids.ASSIGNMENT)
 public class AssignmentColumn extends FinderColumn<Assignment> {

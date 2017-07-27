@@ -23,16 +23,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
-/**
- * Common code used by both the general logging configuration and the logging profile configuration.
- *
- * @author Harald Pehl
- */
+/** Common code used by both the general logging configuration and the logging profile configuration. */
 final class Logging {
 
-    /**
-     * Helper method to build the filename using the nested ({@code relative-to/path}) attributes.
-     */
+    /** Helper method to build the filename using the nested ({@code relative-to/path}) attributes. */
     static String getFilename(NamedNode node) {
         String filename = Names.NOT_AVAILABLE;
         if (node.hasDefined(FILE) && node.get(FILE).hasDefined(PATH)) {

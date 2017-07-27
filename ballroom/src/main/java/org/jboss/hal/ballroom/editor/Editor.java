@@ -18,9 +18,6 @@ package org.jboss.hal.ballroom.editor;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
 public class Editor {
 

@@ -45,9 +45,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 
-/**
- * @author Harald Pehl
- */
 public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 

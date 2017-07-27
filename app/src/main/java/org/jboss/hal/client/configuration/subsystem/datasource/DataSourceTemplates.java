@@ -28,9 +28,7 @@ import org.jboss.hal.core.datasource.JdbcDriver;
 import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * List of well known datasource templates
- */
+/** List of well known datasource templates */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 

@@ -40,9 +40,6 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 class InterfacePreview extends PreviewContent<NamedNode> {
 
     private final Dispatcher dispatcher;

@@ -45,9 +45,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/**
- * @author Harald Pehl
- */
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         implements IsElement, MacroOperationHandler, MacroFinishedHandler {
 

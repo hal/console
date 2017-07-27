@@ -26,9 +26,6 @@ import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.div;
 
-/**
- * @author Harald Pehl
- */
 public class Tree<T> implements IsElement, Attachable {
 
     @JsType(isNative = true)

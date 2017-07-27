@@ -43,8 +43,6 @@ import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 /**
  * Processor which scans all {@code @NameToken} annotations and generates several registry and helper classes based
  * on the additional annotations bound to each place.
- *
- * @author Harald Pehl
  */
 @AutoService(Processor.class)
 @SuppressWarnings("HardCodedStringLiteral")

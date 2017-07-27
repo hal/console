@@ -53,9 +53,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 

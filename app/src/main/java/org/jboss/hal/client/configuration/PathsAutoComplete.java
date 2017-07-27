@@ -55,8 +55,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
  * <p>
  * Since the operation is static it's important to update it when a profile is selected or a server is stopped or
  * started.
- *
- * @author Harald Pehl
  */
 public class PathsAutoComplete extends AutoComplete {
 

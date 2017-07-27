@@ -13,9 +13,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 public class AddressTemplateTest {
 

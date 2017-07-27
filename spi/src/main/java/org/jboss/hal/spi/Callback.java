@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.spi;
 
-/**
- * A general purpose callback.
- *
- * @author Harald Pehl
- */
+/** A general purpose callback. */
 @FunctionalInterface
 public interface Callback {
 

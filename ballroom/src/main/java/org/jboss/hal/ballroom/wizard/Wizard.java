@@ -55,8 +55,6 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  *
  * @param <C> The context
  * @param <S> The state enum
- *
- * @author Harald Pehl
  */
 public class Wizard<C, S extends Enum<S>> {
 

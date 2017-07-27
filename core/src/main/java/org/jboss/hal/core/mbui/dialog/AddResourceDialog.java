@@ -28,9 +28,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 
-/**
- * @author Harald Pehl
- */
 public class AddResourceDialog {
 
     @FunctionalInterface

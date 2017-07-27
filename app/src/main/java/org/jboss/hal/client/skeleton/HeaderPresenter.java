@@ -103,8 +103,6 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * <p>
  * The header presenter is not part of the actual presenters such as finder or application presenters, its content can
  * only be controlled by sending events. A direct modification using methods is not allowed.
- *
- * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements
         MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler,

@@ -25,11 +25,10 @@ import static org.jboss.hal.ballroom.form.Form.Operation.SAVE;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 
 /**
- * A state machine for transient models. Supports only the {@link Form.State#EDITING} state and the {@link Operation#CANCEL} and {@link Operation#SAVE} operations.
+ * A state machine for transient models. Supports only the {@link Form.State#EDITING} state and the {@link
+ * Operation#CANCEL} and {@link Operation#SAVE} operations.
  * <p>
  * Most often used in add dialogs.
- *
- * @author Harald Pehl
  */
 public class AddOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 

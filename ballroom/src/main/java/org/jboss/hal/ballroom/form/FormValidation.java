@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
-/**
- * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
- *
- * @author Harald Pehl
- */
+/** Makes it possible to validate the form as a whole or to check fields which depend on other fields. */
 @FunctionalInterface
 public interface FormValidation<T>  {
 

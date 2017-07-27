@@ -15,14 +15,9 @@
  */
 package org.jboss.hal.dmr;
 
-import org.jboss.hal.dmr.ModelNode;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REASON;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SINCE;
 
-/**
- * @author Harald Pehl
- */
 public class Deprecation extends ModelNode {
 
     public Deprecation(ModelNode modelNode) {

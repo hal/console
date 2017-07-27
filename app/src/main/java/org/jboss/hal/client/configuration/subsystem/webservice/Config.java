@@ -20,11 +20,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-/**
- * Enum struct for the client and endpoint configuration.
- *
- * @author Harald Pehl
- */
+/** Enum struct for the client and endpoint configuration. */
 enum Config {
 
     CLIENT_CONFIG(Ids.WEBSERVICES_CLIENT_CONFIG,

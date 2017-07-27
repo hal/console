@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 
-/**
- * @author Harald Pehl
- */
 public class BrowseContentPresenter
         extends ApplicationFinderPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
 

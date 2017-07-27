@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.tree;
 
 import jsinterop.annotations.JsFunction;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 public interface DataFunction<T> {

@@ -52,11 +52,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.columnAction;
 
-/**
- * Element to configure client and endpoint configurations.
- *
- * @author Harald Pehl
- */
+/** Element to configure client and endpoint configurations. */
 class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
 
     private final Pages pages;

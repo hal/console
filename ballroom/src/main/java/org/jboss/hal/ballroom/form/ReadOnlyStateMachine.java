@@ -24,8 +24,6 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 /**
  * A read-only state machine. Supports only the {@link Form.State#READONLY} state and the {@link Form.Operation#VIEW}
  * operation.
- *
- * @author Harald Pehl
  */
 public class ReadOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 

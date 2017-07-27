@@ -54,9 +54,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class ServerStatusView extends HalViewImpl implements ServerStatusPresenter.MyView {
 
     private static final String[] MAIN_ATTRIBUTES = {

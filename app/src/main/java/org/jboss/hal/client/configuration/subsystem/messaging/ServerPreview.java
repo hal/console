@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.NamedNode;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
-/**
- * @author Harald Pehl
- */
 class ServerPreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")

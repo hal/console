@@ -63,9 +63,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
-/**
- * @author Harald Pehl
- */
 public class ServerPresenter
         extends ApplicationFinderPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {

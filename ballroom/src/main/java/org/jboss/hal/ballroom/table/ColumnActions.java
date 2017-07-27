@@ -18,9 +18,6 @@ package org.jboss.hal.ballroom.table;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Harald Pehl
- */
 public class ColumnActions<T> {
 
     private final Map<String, ColumnAction<T>> columnActions;

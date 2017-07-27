@@ -19,9 +19,6 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String MESSAGING_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=messaging-activemq";

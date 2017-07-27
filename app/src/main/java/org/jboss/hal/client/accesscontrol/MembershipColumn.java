@@ -66,11 +66,7 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLA
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * Shows the members (principals) of the selected role (the reverse of the {@link AssignmentColumn}.
- *
- * @author Harald Pehl
- */
+/** Shows the members (principals) of the selected role (the reverse of the {@link AssignmentColumn}. */
 @AsyncColumn(Ids.MEMBERSHIP)
 public class MembershipColumn extends FinderColumn<Assignment> {
 

@@ -51,9 +51,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
 
     private final HTMLElement bootErrorsSection;

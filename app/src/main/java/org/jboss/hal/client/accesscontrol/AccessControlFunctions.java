@@ -38,8 +38,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Functions related to principals, roles and assignments.
- *
- * @author Harald Pehl
  */
 final class AccessControlFunctions {
 

@@ -51,31 +51,28 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Harald Pehl
- */
 public class HaPolicyPresenter
         extends ApplicationFinderPresenter<HaPolicyPresenter.MyView, HaPolicyPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {LIVE_ONLY_ADDRESS,
-    // TODO  REPLICATION_COLOCATED_ADDRESS,
-    // TODO  REPLICATION_COLOCATED_MASTER_ADDRESS, REPLICATION_COLOCATED_SLAVE_ADDRESS,
-    // TODO  REPLICATION_SLAVE_ADDRESS, REPLICATION_MASTER_ADDRESS,
-    // TODO  SHARED_STORE_COLOCATED_ADDRESS,
-    // TODO  SHARED_STORE_COLOCATED_MASTER_ADDRESS, SHARED_STORE_COLOCATED_SLAVE_ADDRESS,
-    // TODO  SHARED_STORE_MASTER_ADDRESS, SHARED_STORE_SLAVE_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({LIVE_ONLY_ADDRESS,
+            REPLICATION_COLOCATED_ADDRESS,
+            REPLICATION_COLOCATED_MASTER_ADDRESS,
+            REPLICATION_COLOCATED_SLAVE_ADDRESS,
+            REPLICATION_MASTER_ADDRESS,
+            REPLICATION_SLAVE_ADDRESS,
+            SHARED_STORE_COLOCATED_ADDRESS,
+            SHARED_STORE_COLOCATED_MASTER_ADDRESS,
+            SHARED_STORE_COLOCATED_SLAVE_ADDRESS,
+            SHARED_STORE_MASTER_ADDRESS,
+            SHARED_STORE_SLAVE_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_HA_POLICY)
     public interface MyProxy extends ProxyPlace<HaPolicyPresenter> {}
 

@@ -42,9 +42,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.SECURITY_DOMAIN)
 @Requires(SECURITY_DOMAIN_ADDRESS)
 public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {

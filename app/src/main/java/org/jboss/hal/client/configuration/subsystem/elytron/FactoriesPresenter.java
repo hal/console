@@ -58,9 +58,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MECHANISM_REALM_CONFIG
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView, FactoriesPresenter.MyProxy>
         implements SupportsExpertMode {
 

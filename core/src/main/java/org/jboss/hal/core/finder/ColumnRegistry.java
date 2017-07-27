@@ -30,11 +30,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Registry for finder columns. Manages both sync and async columns behind a split point.
- *
- * @author Harald Pehl
- */
+/** Registry for finder columns. Manages both sync and async columns behind a split point. */
 public class ColumnRegistry {
 
     interface LookupCallback {

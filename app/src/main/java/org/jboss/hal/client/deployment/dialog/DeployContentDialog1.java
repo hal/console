@@ -43,11 +43,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * Dialog used to deploy and undeploy content to one or more server groups.
- *
- * @author Harald Pehl
- */
+/** Dialog used to deploy and undeploy content to one or more server groups. */
 public class DeployContentDialog1 {
 
     @FunctionalInterface

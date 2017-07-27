@@ -33,9 +33,6 @@ import org.jboss.hal.spi.MbuiView;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
@@ -108,8 +105,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
 
         Metadata spmMetadata = mbuiContext.metadataRegistry()
                 .lookup(AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE);
-        simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata, mbuiContext.tableButtonFactory(),
-                mbuiContext.resources());
+        simplePermissionMapperElement = new SimplePermissionMapperElement(spmMetadata, mbuiContext.tableButtonFactory());
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
                 Ids.build(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER, Ids.ENTRY_SUFFIX),

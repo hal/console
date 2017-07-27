@@ -23,8 +23,6 @@ import org.jboss.hal.resources.Names;
 /**
  * Contains information about the server instance the console is connected to or loaded from (taken from the root
  * resource).
- *
- * @author Harald Pehl
  */
 @JsType
 public class InstanceInfo {

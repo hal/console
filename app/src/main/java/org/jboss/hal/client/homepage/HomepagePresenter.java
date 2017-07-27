@@ -30,9 +30,6 @@ import org.jboss.hal.meta.token.NameTokens;
 
 import static org.jboss.hal.resources.Names.NYI;
 
-/**
- * @author Harald Pehl
- */
 public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
     // @formatter:off

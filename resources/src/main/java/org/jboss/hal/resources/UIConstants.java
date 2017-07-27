@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.resources;
 
-/**
- * UI related constants used in more than one place.
- *
- * @author Harald Pehl
- */
+/** UI related constants used in more than one place. */
 public interface UIConstants {
 
     /** The time in milliseconds after one modal dialog is closed and the next one is shown. */

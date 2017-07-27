@@ -22,9 +22,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String UNDERTOW_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=undertow";

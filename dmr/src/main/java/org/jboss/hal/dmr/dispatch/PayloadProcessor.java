@@ -17,11 +17,7 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 
-/**
- * Interface to turn the raw base64 encoded payload of a DMR response into a model node.
- *
- * @author Harald Pehl
- */
+/** Interface to turn the raw base64 encoded payload of a DMR response into a model node. */
 @FunctionalInterface
 interface PayloadProcessor {
 

@@ -39,8 +39,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 /**
  * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
  * parameter separated by "/" to get a deeply nested data.
- *
- * @author Harald Pehl
  */
 @JsType
 public final class ModelNodeHelper {

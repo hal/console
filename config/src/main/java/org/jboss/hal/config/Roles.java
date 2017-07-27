@@ -31,11 +31,7 @@ import org.jboss.hal.spi.EsReturn;
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.config.Role.*;
 
-/**
- * Provides access to all standard and scoped roles.
- *
- * @author Harald Pehl
- */
+/** Provides access to all standard and scoped roles. */
 @JsType
 public class Roles implements Iterable<Role> {
 

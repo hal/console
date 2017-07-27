@@ -29,9 +29,6 @@ import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
 
-/**
- * @author Harald Pehl
- */
 class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
     JdbcDriverPreview(final JdbcDriver driver, final Resources resources) {

@@ -54,12 +54,8 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class ServletContainerPresenter
-        extends
-        ApplicationFinderPresenter<ServletContainerPresenter.MyView, ServletContainerPresenter.MyProxy>
+        extends ApplicationFinderPresenter<ServletContainerPresenter.MyView, ServletContainerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off

@@ -32,8 +32,6 @@ import static org.jboss.hal.resources.CSS.itemText;
 /**
  * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
  * Override the default implementations if you need more control over the display and behaviour of the item.
- *
- * @author Harald Pehl
  */
 @FunctionalInterface
 public interface ItemDisplay<T> extends IsElement, HasTitle {

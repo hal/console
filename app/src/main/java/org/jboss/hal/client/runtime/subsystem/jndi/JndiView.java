@@ -43,9 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
     private static final String JAVA_CONTEXTS = "java: contexts";

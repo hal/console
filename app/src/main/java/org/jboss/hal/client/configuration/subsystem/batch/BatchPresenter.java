@@ -41,9 +41,6 @@ import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplate
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Claudio Miranda
- */
 public class BatchPresenter
         extends MbuiPresenter<BatchPresenter.MyView, BatchPresenter.MyProxy>
         implements SupportsExpertMode {

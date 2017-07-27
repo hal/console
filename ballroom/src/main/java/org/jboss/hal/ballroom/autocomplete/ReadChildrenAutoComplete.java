@@ -34,9 +34,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class ReadChildrenAutoComplete extends AutoComplete {
 
     private static final String ERROR_MESSAGE = "Unable to read child resource suggestions for {}: {}";

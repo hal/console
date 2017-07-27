@@ -37,9 +37,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_CONTROLLER;
 
-/**
- * @author Harald Pehl
- */
 public class RequestControllerPresenter
         extends MbuiPresenter<RequestControllerPresenter.MyView, RequestControllerPresenter.MyProxy>
         implements SupportsExpertMode {

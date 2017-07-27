@@ -20,11 +20,7 @@ import com.gwtplatform.dispatch.annotation.Optional;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.dmr.ResourceAddress;
 
-/**
- * Payload for the {@link HeaderModeEvent}. The event is fired by presenters to change the state of the header.
- *
- * @author Harald Pehl
- */
+/** Payload for the {@link HeaderModeEvent}. The event is fired by presenters to change the state of the header. */
 @GenEvent
 public class HeaderMode {
 

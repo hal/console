@@ -21,8 +21,6 @@ package org.jboss.hal.ballroom.form;
  *
  * TODO Add a SENSITIVE decoration which would be used by the PasswordItem and all form items which have
  * a access constraint of type sensitive in their metadata.
- *
- * @author Harald Pehl
  */
 public enum Decoration {
     // The context used with the decoration is given as comment.

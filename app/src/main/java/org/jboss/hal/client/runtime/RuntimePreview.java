@@ -23,9 +23,6 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
     protected static final String ALERT_CONTAINER = "alert-container-element";

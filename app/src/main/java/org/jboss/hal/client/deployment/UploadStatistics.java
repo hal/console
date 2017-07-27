@@ -31,8 +31,6 @@ import org.jboss.hal.spi.Message.Level;
 /**
  * Holds information about added, replaced and failed uploads and provides a message which summarizes the upload of one
  * or several files.
- *
- * @author Harald Pehl
  */
 class UploadStatistics {
 

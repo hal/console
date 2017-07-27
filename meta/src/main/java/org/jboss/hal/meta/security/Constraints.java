@@ -27,11 +27,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.meta.security.Constraints.Operator.AND;
 import static org.jboss.hal.meta.security.Constraints.Operator.OR;
 
-/**
- * A set of {@linkplain Constraint constraints} with an operator.
- *
- * @author Harald Pehl
- */
+/** A set of {@linkplain Constraint constraints} with an operator. */
 public class Constraints implements Iterable<Constraint> {
 
     public enum Operator {

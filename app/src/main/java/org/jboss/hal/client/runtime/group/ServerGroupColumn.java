@@ -60,9 +60,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.SERVER_GROUP)
 @Requires("/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>

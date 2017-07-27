@@ -75,9 +75,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("WeakerAccess")
 @Templated("MainLayout.html#header")
 public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {

@@ -26,11 +26,7 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Subsystem registry. Lives in core so that extensions can use this class to register their subsystems.
- *
- * @author Harald Pehl
- */
+/** Subsystem registry. Lives in core so that extensions can use this class to register their subsystems. */
 public class Subsystems {
 
     private final Map<String, SubsystemMetadata> subsystems;
@@ -46,6 +42,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationBatch())
                 .build());
         add(new SubsystemMetadata.Builder(BEAN_VALIDATION, "Bean Validation")
+                .generic()
                 .preview(resources.previews().configurationBeanValidation())
                 .build());
         add(new SubsystemMetadata.Builder(DATASOURCES, Names.DATASOURCES_DRIVERS)
@@ -83,6 +80,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationIo())
                 .build());
         add(new SubsystemMetadata.Builder(JAX_RS, "JAX-RS")
+                .generic()
                 .preview(resources.previews().configurationJaxRs())
                 .build());
         add(new SubsystemMetadata.Builder(JCA, "JCA")
@@ -90,6 +88,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationJca())
                 .build());
         add(new SubsystemMetadata.Builder(JDR, "JDR")
+                .generic()
                 .preview(resources.previews().configurationJdr())
                 .build());
         add(new SubsystemMetadata.Builder(JGROUPS, "JGroups")
@@ -105,9 +104,11 @@ public class Subsystems {
                 .preview(resources.previews().configurationJpa())
                 .build());
         add(new SubsystemMetadata.Builder(JSF, "JSF")
+                .generic()
                 .preview(resources.previews().configurationJsf())
                 .build());
         add(new SubsystemMetadata.Builder(JSR77, "JSR77")
+                .generic()
                 .preview(resources.previews().configurationJsr77())
                 .build());
         add(new SubsystemMetadata.Builder(LOGGING, Names.LOGGING)
@@ -128,9 +129,11 @@ public class Subsystems {
                 .preview(resources.previews().configurationModcluster())
                 .build());
         add(new SubsystemMetadata.Builder(NAMING, "Naming")
+                .generic()
                 .preview(resources.previews().configurationNaming())
                 .build());
         add(new SubsystemMetadata.Builder(POJO, "Pojo")
+                .generic()
                 .preview(resources.previews().configurationPojo())
                 .build());
         add(new SubsystemMetadata.Builder(REMOTING, "Remoting")
@@ -146,6 +149,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
         add(new SubsystemMetadata.Builder(SAR, "SAR")
+                .generic()
                 .preview(resources.previews().configurationSar())
                 .build());
         add(new SubsystemMetadata.Builder(SECURITY, "Security")
@@ -155,9 +159,11 @@ public class Subsystems {
                 .preview(resources.previews().configurationSecurityDomains())
                 .build());
         add(new SubsystemMetadata.Builder(SECURITY_MANAGER, "Security Manager")
+                .generic()
                 .preview(resources.previews().configurationSecurityManager())
                 .build());
         add(new SubsystemMetadata.Builder(SINGLETON, "Singleton")
+                .generic()
                 .preview(resources.previews().configurationSingleton())
                 .build());
         add(new SubsystemMetadata.Builder(TRANSACTIONS, "Transactions")
@@ -174,6 +180,7 @@ public class Subsystems {
                 .preview(resources.previews().configurationWebservices())
                 .build());
         add(new SubsystemMetadata.Builder(WELD, "Weld")
+                .generic()
                 .preview(resources.previews().configurationWeld())
                 .build());
     }

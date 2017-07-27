@@ -27,8 +27,6 @@ import jsinterop.annotations.JsType;
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation. The address consists of 0-n segments
  * with a name and a value for each segment.
- *
- * @author Harald Pehl
  */
 @JsType
 public class ResourceAddress extends ModelNode {

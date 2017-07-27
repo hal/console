@@ -23,9 +23,6 @@ import org.jboss.hal.dmr.ModelNode;
 
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.ISO_8601;
 
-/**
- * @author Harald Pehl
- */
 class LogFile extends ModelNode {
 
     private static final String FILE_NAME = "file-name";

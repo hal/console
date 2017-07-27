@@ -22,8 +22,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Function to load the items of the <em>current</em> column. Use the finder context and its path to find out what is
  * selected in <em>previous</em> columns.
- *
- * @author Harald Pehl
  */
 @FunctionalInterface
 public interface ItemsProvider<T> {

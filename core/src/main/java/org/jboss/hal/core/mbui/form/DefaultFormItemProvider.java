@@ -53,9 +53,6 @@ import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 class DefaultFormItemProvider implements FormItemProvider {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);

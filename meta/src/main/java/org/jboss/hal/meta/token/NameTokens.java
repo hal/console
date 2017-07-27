@@ -19,9 +19,7 @@ import java.util.Set;
 
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 
-/**
- * HAL name tokens.
- */
+/** HAL name tokens. */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 

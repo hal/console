@@ -62,9 +62,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.HOST)
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {

@@ -24,9 +24,6 @@ import org.jboss.hal.resources.Ids;
 
 import static java.util.stream.Collectors.joining;
 
-/**
- * @author Harald Pehl
- */
 public class Macro {
 
     private String name;

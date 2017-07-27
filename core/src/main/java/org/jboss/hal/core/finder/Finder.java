@@ -61,8 +61,6 @@ import static org.jboss.hal.resources.Ids.FINDER;
  * The one and only finder which is shared across all different top level categories in HAL. The very same finder
  * instance gets injected into the different top level presenters. Only the columns will change when navigating between
  * the different places
- *
- * @author Harald Pehl
  */
 public class Finder implements IsElement, Attachable {
 

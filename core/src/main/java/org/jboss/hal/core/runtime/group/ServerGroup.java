@@ -23,9 +23,6 @@ import org.jboss.hal.dmr.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * @author Harald Pehl
- */
 public class ServerGroup extends HasServersNode {
 
     public ServerGroup(final String name, final ModelNode node) {

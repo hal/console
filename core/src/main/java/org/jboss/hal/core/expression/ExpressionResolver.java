@@ -40,9 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpressionHandler {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExpressionResolver.class);

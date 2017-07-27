@@ -27,8 +27,6 @@ import org.jboss.hal.json.JsonObject;
  * <p>
  * The bulk of work should be placed into {@link #processToModel(String, ModelNode)} which can easily be unit tested.
  * Whereas {@link #asJson(List)} should contain no logic other than mapping the model to json.
- *
- * @author Harald Pehl
  */
 abstract class AbstractResultProcessor<T> implements ResultProcessor {
 

@@ -21,11 +21,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Interface for bootstrap functions.
- *
- * @author Harald Pehl
- */
+/** Interface for bootstrap functions. */
 public interface BootstrapFunction extends Function<FunctionContext> {
 
     @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);

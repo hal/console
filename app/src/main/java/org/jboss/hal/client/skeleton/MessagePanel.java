@@ -18,7 +18,6 @@ package org.jboss.hal.client.skeleton;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -45,8 +44,6 @@ import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
  * A container around the messages / toast notifications which are shown to the user in the upper right corner.
  * Prevents overlapping of simultaneous messages and handles the mouse over / out events in order to pause the
  * automatic fade out time.
- *
- * @author Harald Pehl
  */
 class MessagePanel implements IsElement {
 

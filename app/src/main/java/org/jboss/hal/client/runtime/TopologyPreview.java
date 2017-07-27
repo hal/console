@@ -102,9 +102,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
         ServerGroupActionHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {
 

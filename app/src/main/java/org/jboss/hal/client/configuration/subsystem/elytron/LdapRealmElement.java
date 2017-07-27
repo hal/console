@@ -48,9 +48,6 @@ import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
 import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 import static org.jboss.hal.resources.Ids.TAB_SUFFIX;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, HasPresenter<RealmsPresenter> {
 
     private final Table<NamedNode> ldapRealmTable;

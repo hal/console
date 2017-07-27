@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.DomGlobal;
 import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.dmr.ModelNode;
@@ -33,9 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.window;
 
-/**
- * @author Harald Pehl
- */
 public class ExtensionStorage {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ExtensionStorage.class);

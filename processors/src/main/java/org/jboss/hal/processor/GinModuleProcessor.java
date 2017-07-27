@@ -15,26 +15,25 @@
  */
 package org.jboss.hal.processor;
 
-import com.google.common.base.Joiner;
-import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.spi.GinModule;
-
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
-import static org.jboss.hal.processor.TemplateNames.*;
+import com.google.common.base.Joiner;
+import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.spi.GinModule;
 
-/**
- * Processor for GIN modules.
- *
- * @author Harald Pehl
- */
+import static org.jboss.hal.processor.TemplateNames.CLASS_NAME;
+import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
+import static org.jboss.hal.processor.TemplateNames.GIN_PACKAGE;
+import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
+
+/** Processor for GIN modules. */
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all GIN modules in all maven modules.
 @SuppressWarnings("HardCodedStringLiteral")

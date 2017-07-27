@@ -50,9 +50,6 @@ import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.MESSAGING_SERVER_SETTINGS)
 public class ServerSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility

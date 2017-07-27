@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 class JpaPreview extends PreviewContent<JpaStatistic> {
 
     private final Dispatcher dispatcher;

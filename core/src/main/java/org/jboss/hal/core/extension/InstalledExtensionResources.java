@@ -18,9 +18,6 @@ package org.jboss.hal.core.extension;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface InstalledExtensionResources extends ClientBundle {
 
     @Source("installed-extension.base64")

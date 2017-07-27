@@ -69,8 +69,6 @@ import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
  * <li>read-only</li>
  * <li>editing</li>
  * </ul>
- *
- * @author Harald Pehl
  */
 public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 

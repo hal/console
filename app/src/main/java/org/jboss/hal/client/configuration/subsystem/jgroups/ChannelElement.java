@@ -42,11 +42,7 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * Element to configure the fork resource
- *
- * @author Claudio Miranda
- */
+/** Element to configure the fork resource */
 class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     static final String PROTOCOL_ID = Ids.build(Ids.JGROUPS_CHANNEL_FORK_PROTOCOL, Ids.PAGE_SUFFIX);

@@ -37,8 +37,6 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Holds the top level items to configure the elytron subsystem.
- *
- * @author Harald Pehl
  */
 @AsyncColumn(Ids.ELYTRON)
 public class ElytronColumn

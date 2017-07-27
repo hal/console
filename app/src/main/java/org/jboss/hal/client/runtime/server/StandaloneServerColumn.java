@@ -57,9 +57,6 @@ import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEM
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.STANDALONE_SERVER)
 @Requires(value = MANAGEMENT_ADDRESS, recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {

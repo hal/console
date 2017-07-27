@@ -17,8 +17,6 @@ package org.jboss.hal.core.finder;
 
 /**
  * ActionHandler which will be invoked when selecting one of the items in the breadcrumb dropdown.
- *
- * @author Harald Pehl
  */
 @FunctionalInterface
 public interface BreadcrumbItemHandler<T> {

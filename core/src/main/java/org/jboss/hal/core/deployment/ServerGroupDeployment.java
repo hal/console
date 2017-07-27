@@ -23,11 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 
-/**
- * A deployed content used in domain mode.
- *
- * @author Harald Pehl
- */
+/** A deployed content used in domain mode. */
 public class ServerGroupDeployment extends Content {
 
     private final String serverGroup;

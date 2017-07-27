@@ -27,11 +27,7 @@ import static org.jboss.hal.config.Role.ADMINISTRATOR;
 import static org.jboss.hal.config.Role.SUPER_USER;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
-/**
- * Small helper class to check if the current user has access to restricted features.
- *
- * @author Harald Pehl
- */
+/** Small helper class to check if the current user has access to restricted features. */
 public class AccessControl {
 
     private final Environment environment;

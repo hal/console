@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=deployment-scanner";

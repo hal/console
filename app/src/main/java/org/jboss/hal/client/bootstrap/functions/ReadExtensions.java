@@ -23,9 +23,6 @@ import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
 
-/**
- * @author Harald Pehl
- */
 public class ReadExtensions implements BootstrapFunction {
 
     private final ExtensionRegistry extensionRegistry;

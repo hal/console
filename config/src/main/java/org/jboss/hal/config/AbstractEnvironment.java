@@ -25,8 +25,6 @@ import static org.jboss.hal.config.OperationMode.STANDALONE;
 
 /**
  * A base implementation for the environment.
- *
- * @author Harald Pehl
  * @see EnvironmentGenerator
  */
 @SuppressWarnings("unused")

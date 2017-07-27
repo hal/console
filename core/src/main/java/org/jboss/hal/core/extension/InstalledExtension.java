@@ -31,9 +31,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SCRIPT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STYLESHEETS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
-/**
- * @author Harald Pehl
- */
 public class InstalledExtension extends NamedNode {
 
     public static InstalledExtension fromJson(final String url, final JsonObject json) {

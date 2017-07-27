@@ -22,11 +22,7 @@ import org.jetbrains.annotations.NonNls;
 
 import static java.util.Arrays.asList;
 
-/**
- * A customizable finder item useful when you need full control over each and every item.
- *
- * @author Harald Pehl
- */
+/** A customizable finder item useful when you need full control over each and every item. */
 public class StaticItem {
 
     public static class Builder {

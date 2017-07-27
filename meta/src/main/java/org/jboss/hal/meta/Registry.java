@@ -28,8 +28,6 @@ import org.jboss.hal.dmr.ResourceAddress;
  * It's up to the concrete implementation how to resolve the generic address template and lookup the associated meta
  * data using the concrete resource address. The recommendation is to use a {@link StatementContext} together with
  * {@link AddressTemplate#resolve(StatementContext, String...)} to turn the template into a concrete resource address.
- *
- * @author Harald Pehl
  */
 interface Registry<T> {
 

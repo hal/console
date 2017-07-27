@@ -30,9 +30,6 @@ import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.formControl;
 
-/**
- * @author Harald Pehl
- */
 public class TextBoxItem extends AbstractFormItem<String> {
 
     private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {

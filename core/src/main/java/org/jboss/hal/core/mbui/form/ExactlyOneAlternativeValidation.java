@@ -31,9 +31,6 @@ import org.jboss.hal.resources.Messages;
 
 import static java.util.stream.Collectors.toSet;
 
-/**
- * @author Harald Pehl
- */
 class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
     private final SortedSet<String> requiredAlternatives;

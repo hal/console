@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
-/**
- * Meant to be implemented by elements which have a title.
- *
- * @author Harald Pehl
- */
+/** Meant to be implemented by elements which have a title. */
 public interface HasTitle {
 
     String getTitle();

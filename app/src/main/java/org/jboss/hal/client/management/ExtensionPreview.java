@@ -28,9 +28,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
     ExtensionPreview(final InstalledExtension extension,

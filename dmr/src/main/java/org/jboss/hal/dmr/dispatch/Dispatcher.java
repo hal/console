@@ -72,8 +72,6 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /**
  * Executes operations against the management endpoint.
- *
- * @author Harald Pehl
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 @JsType(namespace = "hal.dmr")

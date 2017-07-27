@@ -40,9 +40,6 @@ import static org.jboss.hal.config.Settings.Key.PAGE_LENGTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
-/**
- * @author Harald Pehl
- */
 class SettingsDialog {
 
     private static final SettingsResources RESOURCES = GWT.create(SettingsResources.class);

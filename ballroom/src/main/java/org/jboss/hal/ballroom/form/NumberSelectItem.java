@@ -36,11 +36,7 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * A form item to select from a small set of distinct numbers using a button group.
- *
- * @author Harald Pehl
- */
+/** A form item to select from a small set of distinct numbers using a button group. */
 public class NumberSelectItem extends AbstractFormItem<Long> {
 
     private static class NumberSelectReadOnlyAppearance extends ReadOnlyAppearance<Long> {

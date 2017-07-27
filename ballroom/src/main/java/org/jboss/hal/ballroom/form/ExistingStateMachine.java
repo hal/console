@@ -49,8 +49,6 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *                        +-------------------+
  * </pre>
  * (0) Initial states
- *
- * @author Harald Pehl
  */
 public class ExistingStateMachine extends AbstractStateMachine implements StateMachine {
 

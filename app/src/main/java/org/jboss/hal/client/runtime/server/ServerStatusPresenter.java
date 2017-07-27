@@ -40,9 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.meta.token.NameTokens.SERVER_STATUS;
 
-/**
- * @author Harald Pehl
- */
 public class ServerStatusPresenter
         extends ApplicationFinderPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
 

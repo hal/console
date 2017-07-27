@@ -64,6 +64,11 @@
             <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
+        <license>
+            <name>MIT License</name>
+            <url>http://repository.jboss.org/licenses/mit.txt</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
 
     <scm>
@@ -237,8 +242,7 @@
                 <gwt.draftCompile>false</gwt.draftCompile>
                 <gwt.namespace>PACKAGE</gwt.namespace>
                 <!--
-                    Do not optimize: It will wipe out code which actually must not be erased (like the
-                    org.jboss.hal.ballroom.dragndrop.DragEvent.dataTransfer parameter of the onDrop event handler)
+                    Do not optimize: It will wipe out code which actually must not be erased.
                     TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
                 -->
                 <gwt.optimize>0</gwt.optimize>

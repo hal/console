@@ -40,9 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
-/**
- * @author Harald Pehl
- */
 public class UndertowSubsystemPresenter
         extends MbuiPresenter<UndertowSubsystemPresenter.MyView, UndertowSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {

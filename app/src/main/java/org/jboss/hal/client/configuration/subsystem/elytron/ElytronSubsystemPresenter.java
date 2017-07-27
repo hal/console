@@ -40,10 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ELYTRON;
 
-
-/**
- * @author Claudio Miranda
- */
 public class ElytronSubsystemPresenter
         extends MbuiPresenter<ElytronSubsystemPresenter.MyView, ElytronSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {

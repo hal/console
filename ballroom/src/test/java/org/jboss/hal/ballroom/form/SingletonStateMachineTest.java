@@ -25,9 +25,6 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Harald Pehl
- */
 public class SingletonStateMachineTest {
 
     private StateMachine stateMachine;

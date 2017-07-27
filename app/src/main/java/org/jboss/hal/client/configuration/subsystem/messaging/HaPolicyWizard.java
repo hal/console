@@ -22,9 +22,6 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyWizard.State.CHOOSE_POLICY;
 import static org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyWizard.State.CHOOSE_STRATEGY;
 
-/**
- * @author Harald Pehl
- */
 class HaPolicyWizard {
 
     enum State {

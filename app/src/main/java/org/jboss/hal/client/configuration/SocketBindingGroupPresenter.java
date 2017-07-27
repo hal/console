@@ -65,9 +65,6 @@ import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class SocketBindingGroupPresenter
         extends MbuiPresenter<SocketBindingGroupPresenter.MyView, SocketBindingGroupPresenter.MyProxy>
         implements SupportsExpertMode {

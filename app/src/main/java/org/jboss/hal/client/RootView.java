@@ -36,9 +36,6 @@ import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
 import static org.jboss.hal.resources.CSS.containerFluid;
 
-/**
- * @author Harald Pehl
- */
 public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RootView.class);

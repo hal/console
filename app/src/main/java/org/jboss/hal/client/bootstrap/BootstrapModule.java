@@ -28,9 +28,6 @@ import org.jboss.hal.client.bootstrap.functions.ReadExtensions;
 import org.jboss.hal.client.bootstrap.functions.RegisterStaticCapabilities;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class BootstrapModule extends AbstractGinModule {
 

@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.json.JsonObject;
 
-/**
- * @author Harald Pehl
- */
 interface ResultProcessor {
 
     JsonObject[] process(String query, ModelNode nodes);

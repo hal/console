@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String JGROUPS_ADDRESS = "/{selected.profile}/subsystem=jgroups";

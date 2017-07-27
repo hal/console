@@ -42,11 +42,8 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.MESSAGING_SERVER)
-@Requires(SERVER_ADDRESS) // TODO Add recursive = false once WFCORE-2022 is resolved
+@Requires(value = SERVER_ADDRESS, recursive = false)
 public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject

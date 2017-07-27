@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-/**
- * @author Harald Pehl
- */
 enum HostSetting {
 
     ACCESS_LOG(Ids.UNDERTOW_HOST_ACCESS_LOG, Names.ACCESS_LOG, ModelDescriptionConstants.ACCESS_LOG),

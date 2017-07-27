@@ -55,8 +55,6 @@ import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWA
  * The value and the expression value are mutual exclusive. Only one of them is allowed to be non-null.
  *
  * @param <T> The type of the form item's value.
- *
- * @author Harald Pehl
  */
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 

@@ -27,9 +27,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Harald Pehl
- */
 public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ access control (rbac)

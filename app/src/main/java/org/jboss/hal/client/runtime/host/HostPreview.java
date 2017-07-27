@@ -38,9 +38,6 @@ import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
-/**
- * @author Harald Pehl
- */
 class HostPreview extends RuntimePreview<Host> {
 
     private final HTMLElement reloadLink;

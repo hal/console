@@ -31,8 +31,6 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
 /**
  * Loads the settings. Please make sure this is the last bootstrap function. This function loads the run-as role which
  * is then used by the dispatcher. But all previous bootstrap functions must not have a run-as role in the dispatcher.
- *
- * @author Harald Pehl
  */
 public class LoadSettings implements BootstrapFunction {
 

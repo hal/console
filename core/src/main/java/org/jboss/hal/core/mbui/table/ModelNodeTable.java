@@ -57,9 +57,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.UIConstants.data;
 
-/**
- * @author Harald Pehl
- */
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */

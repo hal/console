@@ -15,16 +15,10 @@
  */
 package org.jboss.hal.ballroom.form;
 
-/**
- * An interface to suggest values for form items.
- *
- * @author Harald Pehl
- */
+/** An interface to suggest values for form items. */
 public interface SuggestHandler {
 
-    /**
-     * Given this value the remote service should return all suggestions.
-     */
+    /** Given this value the remote service should return all suggestions. */
     String SHOW_ALL_VALUE = "*";
 
     void setFormItem(FormItem formItem);

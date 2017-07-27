@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NonNls;
 import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 
-/**
- * @author Harald Pehl
- */
 public final class StringRenderer<T> implements ItemRenderer<T> {
 
     private final Function<T, String> toString;

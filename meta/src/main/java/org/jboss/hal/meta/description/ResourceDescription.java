@@ -31,11 +31,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Contains the resource and attribute descriptions from the read-resource-description operation.
- *
- * @author Harald Pehl
- */
+/** Contains the resource and attribute descriptions from the read-resource-description operation. */
 @JsType(namespace = "hal.meta")
 public class ResourceDescription extends ModelNode {
 

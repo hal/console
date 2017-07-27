@@ -35,9 +35,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
-/**
- * @author Harald Pehl
- */
 public class JpaPresenter
         extends MbuiPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy>
         implements SupportsExpertMode {

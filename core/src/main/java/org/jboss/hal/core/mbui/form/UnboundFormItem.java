@@ -18,9 +18,6 @@ package org.jboss.hal.core.mbui.form;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.form.FormItem;
 
-/**
- * @author Harald Pehl
- */
 class UnboundFormItem {
 
     final FormItem formItem;

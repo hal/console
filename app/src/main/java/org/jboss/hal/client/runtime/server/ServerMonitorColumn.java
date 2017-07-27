@@ -45,9 +45,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.SERVER_MONITOR)
 public class ServerMonitorColumn extends StaticItemColumn {
 

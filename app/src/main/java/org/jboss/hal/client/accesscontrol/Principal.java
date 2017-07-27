@@ -17,11 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import org.jboss.hal.resources.Ids;
 
-/**
- * A user or a group with an optional realm.
- *
- * @author Harald Pehl
- */
+/** A user or a group with an optional realm. */
 class Principal {
 
     enum Type {

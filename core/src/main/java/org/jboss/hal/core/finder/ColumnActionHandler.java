@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.finder;
 
-/**
- * Action handler for a column action.
- *
- * @author Harald Pehl
- */
+/** Action handler for a column action. */
 @FunctionalInterface
 public interface ColumnActionHandler<T> {
 

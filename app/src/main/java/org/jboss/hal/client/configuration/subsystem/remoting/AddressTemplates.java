@@ -19,9 +19,6 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String REMOTING_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=remoting";

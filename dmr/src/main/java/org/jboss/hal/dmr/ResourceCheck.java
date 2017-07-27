@@ -25,8 +25,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 /**
  * Function which checks whether a given resource exists. Pushes {@code 200} onto the context stack if it exists,
  * {@code 404} otherwise.
- *
- * @author Harald Pehl
  */
 public class ResourceCheck implements Function<FunctionContext> {
 

@@ -17,9 +17,6 @@ package org.jboss.hal.core.subsystem;
 
 import com.google.gwt.resources.client.ExternalTextResource;
 
-/**
- * @author Harald Pehl
- */
 public class SubsystemMetadata {
 
     public static class Builder {

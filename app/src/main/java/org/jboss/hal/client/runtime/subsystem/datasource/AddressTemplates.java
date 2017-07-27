@@ -22,9 +22,6 @@ import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_AD
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String DATA_SOURCE_SUBSYSTEM = "/subsystem=datasources/data-source=*";

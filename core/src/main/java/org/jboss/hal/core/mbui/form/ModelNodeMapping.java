@@ -39,9 +39,6 @@ import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
 import static org.jboss.hal.dmr.ModelType.EXPRESSION;
 import static org.jboss.hal.dmr.ModelType.INT;
 
-/**
- * @author Harald Pehl
- */
 class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);

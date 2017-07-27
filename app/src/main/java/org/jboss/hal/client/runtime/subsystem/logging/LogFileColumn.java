@@ -46,9 +46,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.LOG_FILE)
 @Requires(value = {LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS}, recursive = false)
 public class LogFileColumn extends FinderColumn<LogFile> {

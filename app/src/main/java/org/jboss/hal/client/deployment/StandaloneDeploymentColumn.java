@@ -79,11 +79,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Column used in standalone mode to manage deployments.
- *
- * @author Harald Pehl
- */
+/** Column used in standalone mode to manage deployments. */
 @Column(Ids.DEPLOYMENT)
 @Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
 public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {

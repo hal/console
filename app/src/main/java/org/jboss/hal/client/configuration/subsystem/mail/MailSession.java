@@ -28,9 +28,6 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTBOUND_SOCKET_BINDING_REF;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Claudio Miranda
- */
 class MailSession extends NamedNode {
 
     MailSession(Property property) {

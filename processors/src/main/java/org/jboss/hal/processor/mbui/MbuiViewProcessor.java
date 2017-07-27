@@ -66,9 +66,6 @@ import static org.jboss.hal.processor.mbui.ElementType.Table;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
-/**
- * @author Harald Pehl
- */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
 public class MbuiViewProcessor extends AbstractProcessor {

@@ -23,9 +23,6 @@ import java.util.stream.Stream;
 
 import org.jboss.hal.config.Role;
 
-/**
- * @author Harald Pehl
- */
 class Assignments implements Iterable<Assignment> {
 
     // @formatter:off

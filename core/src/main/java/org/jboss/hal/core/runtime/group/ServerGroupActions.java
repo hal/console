@@ -65,11 +65,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 
-/**
- * TODO Fire events for the servers of a server group as well.
- *
- * @author Harald Pehl
- */
+/** TODO Fire events for the servers of a server group as well. */
 public class ServerGroupActions {
 
     private class ServerGroupTimeoutCallback implements TimeoutHandler.Callback {

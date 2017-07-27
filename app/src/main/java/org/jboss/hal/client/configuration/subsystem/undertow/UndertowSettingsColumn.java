@@ -35,11 +35,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Holds the top level items to configure the undertow subsystem.
- *
- * @author Harald Pehl
- */
+/** Holds the top level items to configure the undertow subsystem. */
 @AsyncColumn(Ids.UNDERTOW_SETTINGS)
 public class UndertowSettingsColumn
         extends FinderColumn<StaticItem> { // doesn't extend from StaticItemColumn because we need more flexibility

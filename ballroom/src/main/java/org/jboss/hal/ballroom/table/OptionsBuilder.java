@@ -32,8 +32,6 @@ package org.jboss.hal.ballroom.table;
  * </pre>
  *
  * @param <T> the row type
- *
- * @author Harald Pehl
  */
 public class OptionsBuilder<T> extends GenericOptionsBuilder<OptionsBuilder<T>, T> {
 

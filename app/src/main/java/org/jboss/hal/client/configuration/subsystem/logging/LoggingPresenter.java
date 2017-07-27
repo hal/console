@@ -43,9 +43,6 @@ import static org.jboss.hal.client.configuration.subsystem.logging.AddressTempla
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-/**
- * @author Harald Pehl
- */
 public class LoggingPresenter
         extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy>
         implements SupportsExpertMode {

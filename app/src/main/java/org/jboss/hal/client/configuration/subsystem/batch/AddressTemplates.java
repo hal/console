@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.batch;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String BATCH_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=batch-jberet";

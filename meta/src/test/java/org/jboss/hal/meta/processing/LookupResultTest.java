@@ -9,9 +9,6 @@ import org.junit.Test;
 import static org.jboss.hal.meta.processing.LookupResult.*;
 import static org.junit.Assert.*;
 
-/**
- * @author Harald Pehl
- */
 public class LookupResultTest {
 
     private LookupResult lookupResult;

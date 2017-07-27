@@ -93,11 +93,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * The deployments of a server group.
- *
- * @author Harald Pehl
- */
+/** The deployments of a server group. */
 @AsyncColumn(Ids.SERVER_GROUP_DEPLOYMENT)
 @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {

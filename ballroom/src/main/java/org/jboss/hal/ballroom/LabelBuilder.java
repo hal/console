@@ -29,11 +29,7 @@ import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
 
-/**
- * Generates human readable labels from terms used in the management model.
- *
- * @author Harald Pehl
- */
+/** Generates human readable labels from terms used in the management model. */
 public class LabelBuilder {
 
     private static final String QUOTE = "'";

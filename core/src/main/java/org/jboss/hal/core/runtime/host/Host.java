@@ -38,8 +38,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * For the host we need to distinguish between the address-name (the name which is part of the host address)
  * and the model-node-name (the name which is part of the host model node).
  * When the latter is changed, the former remains unchanged until a host reload was executed.
- *
- * @author Harald Pehl
  */
 public class Host extends HasServersNode {
 

@@ -64,9 +64,6 @@ import static org.jboss.hal.core.datasource.JdbcDriver.Provider.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.JDBC_DRIVER)
 @Requires(JDBC_DRIVER_ADDRESS)
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {

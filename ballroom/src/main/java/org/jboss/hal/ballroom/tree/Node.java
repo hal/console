@@ -21,11 +21,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/**
- * A node in a tree - used for both nodes and leafs.
- *
- * @author Harald Pehl
- */
+/** A node in a tree - used for both nodes and leafs. */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Node<T> {
 

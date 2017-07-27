@@ -39,9 +39,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATTERN_FILTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREDEFINED_FILTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER_NAME;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyView {
 
     private final Map<String, ResourceElement> elements;

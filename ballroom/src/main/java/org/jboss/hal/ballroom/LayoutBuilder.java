@@ -22,11 +22,7 @@ import org.jboss.hal.resources.CSS;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Helper methods to create {@code <div/>} elements for bootstrap grids.
- *
- * @author Harald Pehl
- */
+/** Helper methods to create {@code <div/>} elements for bootstrap grids. */
 public final class LayoutBuilder {
 
     public static HtmlContentBuilder<HTMLDivElement> row() {

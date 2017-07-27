@@ -18,9 +18,6 @@ package org.jboss.hal.processor.mbui;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Harald Pehl
- */
 public class Attribute {
 
     private final String name;

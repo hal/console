@@ -43,8 +43,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * <p>
  * This class and every member of this class is considered to be an internal API and should not be used outside of
  * package {@code org.jboss.hal.ballroom.table}.
- *
- * @author Harald Pehl
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)

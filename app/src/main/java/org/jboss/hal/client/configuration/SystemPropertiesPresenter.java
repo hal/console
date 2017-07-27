@@ -41,9 +41,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SYSTEM_PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class SystemPropertiesPresenter
         extends MbuiPresenter<SystemPropertiesPresenter.MyView, SystemPropertiesPresenter.MyProxy> {
 

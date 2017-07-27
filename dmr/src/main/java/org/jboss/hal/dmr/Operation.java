@@ -31,11 +31,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Represents a DMR operation.
- *
- * @author Harald Pehl
- */
+/** Represents a DMR operation. */
 @JsType
 public class Operation extends ModelNode {
 

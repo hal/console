@@ -20,11 +20,7 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Collection of common icons
- *
- * @author Harald Pehl
- */
+/** Collection of common icons */
 public interface Icons {
 
     // ------------------------------------------------------ icon css classes

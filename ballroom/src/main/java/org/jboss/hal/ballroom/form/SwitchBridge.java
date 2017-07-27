@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
-/**
- * @author Harald Pehl
- */
 public class SwitchBridge {
 
     @JsFunction

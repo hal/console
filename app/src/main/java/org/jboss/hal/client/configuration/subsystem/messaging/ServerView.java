@@ -49,12 +49,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
-    private VerticalNavigation verticalNavigation;
     private Form<NamedNode> form;
     private Form<ModelNode> pagingDirectoryForm;
     private Form<ModelNode> bindingsDirectoryForm;
@@ -66,7 +62,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
     @Inject
     ServerView(final MbuiContext mbuiContext, CredentialReference cr) {
 
-        verticalNavigation = new VerticalNavigation();
+        VerticalNavigation verticalNavigation = new VerticalNavigation();
         Metadata metadata = mbuiContext.metadataRegistry().lookup(SERVER_TEMPLATE);
 
         // there are several attributes with no attribute-group

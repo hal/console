@@ -34,11 +34,7 @@ import static org.jboss.gwt.elemento.core.InputType.file;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.x4;
 
-/**
- * Generic upload component used in various wizards and dialogs.
- *
- * @author Harald Pehl
- */
+/** Generic upload component used in various wizards and dialogs. */
 public class UploadElement implements IsElement<HTMLElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);

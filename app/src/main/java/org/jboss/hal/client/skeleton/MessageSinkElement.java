@@ -29,9 +29,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.time;
 
-/**
- * @author Harald Pehl
- */
 class MessageSinkElement implements IsElement {
 
     private final HTMLElement root;

@@ -59,9 +59,6 @@ import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
-/**
- * @author Harald Pehl
- */
 public class HostActions {
 
     private class HostFailedCallback implements Dispatcher.FailedCallback {

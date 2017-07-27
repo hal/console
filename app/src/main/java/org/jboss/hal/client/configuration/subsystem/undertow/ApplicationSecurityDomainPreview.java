@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Claudio Miranda
- */
 class ApplicationSecurityDomainPreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")

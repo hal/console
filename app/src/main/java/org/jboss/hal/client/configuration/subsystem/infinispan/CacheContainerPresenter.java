@@ -64,9 +64,6 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTem
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class CacheContainerPresenter
         extends ApplicationFinderPresenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy>
         implements SupportsExpertMode {

@@ -66,9 +66,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
-/**
- * @author Harald Pehl
- */
 public class ServerActions {
 
     private class ServerTimeoutCallback implements TimeoutHandler.Callback {

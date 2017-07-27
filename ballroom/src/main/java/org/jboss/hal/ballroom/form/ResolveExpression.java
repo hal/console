@@ -18,9 +18,6 @@ package org.jboss.hal.ballroom.form;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 
-/**
- * @author Harald Pehl
- */
 @GenEvent
 public class ResolveExpression {
 

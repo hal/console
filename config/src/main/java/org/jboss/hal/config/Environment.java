@@ -22,9 +22,7 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.config.semver.Version;
 
-/**
- * Instance holding information about the console and its environment.
- */
+/** Instance holding information about the console and its environment. */
 @JsType
 public interface Environment {
 

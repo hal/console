@@ -45,8 +45,6 @@ import static org.jboss.hal.resources.CSS.*;
  *     &lt;/div&gt;
  * &lt;/div&gt;
  * </pre>
- *
- * @author Harald Pehl
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class EditingAppearance<T> extends AbstractAppearance<T> {

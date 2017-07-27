@@ -59,8 +59,6 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  * <li>{@link Decoration#REQUIRED}</li>
  * <li>{@link Decoration#SUGGESTIONS}</li>
  * </ul>
- *
- * @author Harald Pehl
  */
 public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
 

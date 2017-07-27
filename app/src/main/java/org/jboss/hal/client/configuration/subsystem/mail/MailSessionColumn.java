@@ -50,9 +50,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Claudio Miranda
- */
 @AsyncColumn(Ids.MAIL_SESSION)
 @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
 public class MailSessionColumn extends FinderColumn<MailSession> {

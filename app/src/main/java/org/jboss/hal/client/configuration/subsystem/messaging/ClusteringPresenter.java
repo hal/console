@@ -48,27 +48,21 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_BRIDGE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class ClusteringPresenter
         extends ServerSettingsPresenter<ClusteringPresenter.MyView, ClusteringPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {BROADCAST_GROUP_ADDRESS, DISCOVERY_GROUP_ADDRESS,
-    // TODO  CLUSTER_CONNECTION_ADDRESS, GROUPING_HANDLER_ADDRESS,
-    // TODO  BRIDGE_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({BRIDGE_ADDRESS,
+            BROADCAST_GROUP_ADDRESS,
+            CLUSTER_CONNECTION_ADDRESS,
+            DISCOVERY_GROUP_ADDRESS,
+            GROUPING_HANDLER_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
     public interface MyProxy extends ProxyPlace<ClusteringPresenter> {}
 

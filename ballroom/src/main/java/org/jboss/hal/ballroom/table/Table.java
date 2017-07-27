@@ -26,9 +26,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
 
-/**
- * @author Harald Pehl
- */
 @JsType(namespace = "hal.ui")
 public interface Table<T> extends IsElement, Attachable {
 

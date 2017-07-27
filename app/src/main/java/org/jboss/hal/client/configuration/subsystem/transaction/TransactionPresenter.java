@@ -58,11 +58,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPE
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
-/**
- * TODO I18n for error / validation messages
- *
- * @author Claudio Miranda
- */
+/** TODO I18n for error / validation messages */
 public class TransactionPresenter
         extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy>
         implements SupportsExpertMode {

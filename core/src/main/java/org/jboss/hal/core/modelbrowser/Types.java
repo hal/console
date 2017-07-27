@@ -22,9 +22,6 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 
-/**
- * @author Harald Pehl
- */
 final class Types {
 
     private Types() {}

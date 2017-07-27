@@ -35,9 +35,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.Icons.flag;
 
-/**
- * @author Harald Pehl
- */
 abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> {
 
     private final LabelBuilder labelBuilder;

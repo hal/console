@@ -27,9 +27,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Harald Pehl
- */
 class RrdFunction implements Function<FunctionContext> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);

@@ -54,9 +54,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
-/**
- * @author Harald Pehl
- */
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all exported js types in all maven modules.
 @SupportedAnnotationTypes("jsinterop.annotations.JsType")

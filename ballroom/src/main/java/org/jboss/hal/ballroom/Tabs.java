@@ -36,9 +36,6 @@ import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class Tabs implements IsElement {
 
     @JsType(isNative = true)

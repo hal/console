@@ -72,8 +72,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * <li>Modified properties are modified in the PSRs</li>
  * <li>Removed properties are removed from the PSR</li>
  * </ol>
- *
- * @author Harald Pehl
  */
 public class PropertiesOperations {
 

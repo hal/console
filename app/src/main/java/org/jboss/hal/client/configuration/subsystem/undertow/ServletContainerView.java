@@ -57,9 +57,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class ServletContainerView extends HalViewImpl implements ServletContainerPresenter.MyView {
 
     private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[]{

@@ -34,9 +34,6 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.resources.CSS.formControl;
 
-/**
- * @author Harald Pehl
- */
 public class NumberItem extends AbstractFormItem<Long> {
 
     private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Long> {

@@ -32,9 +32,6 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 public class ServerGroupDeploymentView extends HalViewImpl implements ServerGroupDeploymentPresenter.MyView {
 
     private final DeploymentModelElement deploymentModel;

@@ -33,8 +33,6 @@ import org.jboss.hal.spi.Callback;
  * relation to the model (static text or buttons). They are not part of the automatic data mapping.
  *
  * @param <T> The model for this form
- *
- * @author Harald Pehl
  */
 @JsType(namespace = "hal.ui")
 public interface Form<T> extends IsElement, Attachable {

@@ -17,11 +17,7 @@ package org.jboss.hal.core;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
-/**
- * Event to signal the application is up and ready.
- *
- * @author Harald Pehl
- */
+/** Event to signal the application is up and ready. */
 @GenEvent
 public class ApplicationReady {
 }

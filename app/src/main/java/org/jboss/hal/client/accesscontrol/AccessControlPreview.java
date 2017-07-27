@@ -28,9 +28,6 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.section;
 
-/**
- * @author Harald Pehl
- */
 class AccessControlPreview extends PreviewContent<Void> {
 
     private final Environment environment;

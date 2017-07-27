@@ -32,8 +32,6 @@ import static org.jboss.hal.resources.UIConstants.data;
 /**
  * Helper class to process elements with constraints in their {@code data-constraint} attributes. Toggles the
  * element's visibility depending on the {@link AuthorisationDecision} result.
- *
- * @author Harald Pehl
  */
 public class ElementGuard {
 

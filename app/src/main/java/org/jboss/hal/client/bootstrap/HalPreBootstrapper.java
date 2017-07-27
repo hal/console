@@ -25,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.document;
 
-/**
- * @author Harald Pehl
- */
 public class HalPreBootstrapper implements PreBootstrapper {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);

@@ -19,9 +19,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-/**
- * @author Harald Pehl
- */
 enum SocketBinding {
 
     INBOUND(Ids.SOCKET_BINDING_GROUP_INBOUND, Names.INBOUND, ModelDescriptionConstants.SOCKET_BINDING),

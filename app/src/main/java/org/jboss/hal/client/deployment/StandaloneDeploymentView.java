@@ -34,9 +34,6 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.navTabsHal;
 
-/**
- * @author Harald Pehl
- */
 public class StandaloneDeploymentView extends HalViewImpl implements StandaloneDeploymentPresenter.MyView {
 
     private final boolean supportsReadContent;

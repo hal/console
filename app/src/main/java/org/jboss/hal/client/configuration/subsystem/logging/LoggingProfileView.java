@@ -56,9 +56,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePresenter>

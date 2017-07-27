@@ -22,9 +22,6 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Icons;
 
-/**
- * @author Harald Pehl
- */
 class ServerIcon implements Function<Server, HTMLElement> {
 
     private final ServerActions serverActions;

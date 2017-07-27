@@ -31,8 +31,6 @@ import org.jboss.hal.core.header.HeaderModeEvent;
  * <p>
  * The presenter calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
  * HalView#detach()} when it's {@linkplain #onHide() hidden}.
- *
- * @author Harald Pehl
  */
 abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>

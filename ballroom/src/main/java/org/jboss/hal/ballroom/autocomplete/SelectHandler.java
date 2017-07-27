@@ -19,9 +19,6 @@ import elemental2.dom.Event;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 interface SelectHandler {

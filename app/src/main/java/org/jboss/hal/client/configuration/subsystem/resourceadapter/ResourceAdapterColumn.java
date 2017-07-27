@@ -54,9 +54,6 @@ import static org.jboss.hal.client.configuration.subsystem.resourceadapter.Addre
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.RESOURCE_ADAPTER)
 @Requires(RESOURCE_ADAPTER_ADDRESS)
 public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {

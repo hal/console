@@ -17,9 +17,6 @@ package org.jboss.hal.core;
 
 import static java.lang.Math.max;
 
-/**
- * @author Harald Pehl
- */
 public final class Strings {
 
     private static final String ELLIPSIS = "...";

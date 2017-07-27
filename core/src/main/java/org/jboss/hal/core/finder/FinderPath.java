@@ -37,8 +37,6 @@ import static com.google.common.base.Strings.nullToEmpty;
  * <li>{@code itemTitle} The title of the selected item used un the UI. If not specified defaults to {@code
  * itemId}</li>
  * </ol>
- *
- * @author Harald Pehl
  */
 public class FinderPath implements Iterable<FinderSegment> {
 

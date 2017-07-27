@@ -50,9 +50,6 @@ import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class HostPresenter
         extends MbuiPresenter<HostPresenter.MyView, HostPresenter.MyProxy>
         implements SupportsExpertMode {

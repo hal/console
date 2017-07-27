@@ -17,9 +17,6 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Harald Pehl
- */
 public enum RequestHeader {
 
     // only those which are used in HAL

@@ -38,9 +38,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.LOGGING)
 public class LoggingColumn extends StaticItemColumn {
 

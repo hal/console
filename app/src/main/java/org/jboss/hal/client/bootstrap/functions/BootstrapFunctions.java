@@ -17,11 +17,7 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import javax.inject.Inject;
 
-/**
- * Simple wrapper around an ordered array of HAL's bootstrap functions.
- *
- * @author Harald Pehl
- */
+/** Simple wrapper around an ordered array of HAL's bootstrap functions. */
 public class BootstrapFunctions {
 
     private final BootstrapFunction[] functions;

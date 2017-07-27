@@ -26,9 +26,6 @@ import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class SingleOperationOneWildcardTest {
 

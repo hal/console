@@ -38,9 +38,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_TEMPLATE;
 
-/**
- * @author Claudio Miranda
- */
 public class EjbPresenter
         extends MbuiPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy>
         implements SupportsExpertMode {

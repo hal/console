@@ -38,8 +38,6 @@ import org.jboss.hal.core.runtime.server.ServerActions;
  * <li>stopped</li>
  * <li>unknown</li>
  * </ol>
- *
- * @author Harald Pehl
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class ServerStatusSwitch implements Consumer<Server> {

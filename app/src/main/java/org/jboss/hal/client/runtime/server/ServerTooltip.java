@@ -22,9 +22,6 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
 class ServerTooltip implements Function<Server, String> {
 
     private final ServerActions serverActions;

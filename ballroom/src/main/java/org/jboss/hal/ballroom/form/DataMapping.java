@@ -19,8 +19,6 @@ import org.jboss.hal.dmr.ModelNode;
 
 /**
  * Takes care of the mapping between form fields and the model.
- *
- * @author Harald Pehl
  */
 public interface DataMapping<T> {
 

@@ -47,9 +47,6 @@ import org.jboss.hal.spi.MessageEvent;
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
         implements HasTitle {

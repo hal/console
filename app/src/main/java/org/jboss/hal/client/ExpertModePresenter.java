@@ -37,8 +37,6 @@ import org.jboss.hal.meta.token.NameTokens;
 /**
  * Presenter which uses the {@link org.jboss.hal.core.modelbrowser.ModelBrowser} to view and modify a resource
  * specified by {@link SupportsExpertMode#resourceAddress()}.
- *
- * @author Harald Pehl
  */
 public class ExpertModePresenter
         extends ApplicationPresenter<ExpertModePresenter.MyView, ExpertModePresenter.MyProxy>

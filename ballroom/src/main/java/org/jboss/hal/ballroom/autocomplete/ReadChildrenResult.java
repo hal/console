@@ -24,9 +24,6 @@ import org.jboss.hal.json.JsonObject;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
-/**
- * @author Harald Pehl
- */
 class ReadChildrenResult {
 
     static final String ADDRESSES = "addresses";

@@ -30,9 +30,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 class JndiParser {
 
     @SuppressWarnings("unchecked")

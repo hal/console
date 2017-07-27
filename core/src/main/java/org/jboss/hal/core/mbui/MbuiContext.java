@@ -32,11 +32,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 
-/**
- * Holds common classes needed by UI views.
- *
- * @author Harald Pehl
- */
+/** Holds common classes needed by UI views. */
 public class MbuiContext {
 
     private final Dispatcher dispatcher;

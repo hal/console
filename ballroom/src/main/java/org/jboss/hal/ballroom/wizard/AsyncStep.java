@@ -17,8 +17,6 @@ package org.jboss.hal.ballroom.wizard;
 
 /**
  * Mixin interface for wizard steps which need an asynchronous implementation for the cancel, back and next workflow.
- *
- * @author Harald Pehl
  */
 public interface AsyncStep<C> {
 

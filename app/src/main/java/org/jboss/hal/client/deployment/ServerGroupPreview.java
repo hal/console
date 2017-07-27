@@ -26,9 +26,6 @@ import org.jboss.hal.resources.Resources;
 
 import static elemental2.dom.DomGlobal.document;
 
-/**
- * @author Harald Pehl
- */
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
     ServerGroupPreview(final ServerGroup serverGroup, Resources resources) {

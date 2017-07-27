@@ -58,9 +58,6 @@ import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
     private final Dispatcher dispatcher;

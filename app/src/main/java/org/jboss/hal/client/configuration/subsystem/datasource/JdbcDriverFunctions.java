@@ -40,11 +40,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Set of functions to read the installed JDBC drivers.
- *
- * @author Harald Pehl
- */
+/** Set of functions to read the installed JDBC drivers. */
 class JdbcDriverFunctions {
 
     private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";

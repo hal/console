@@ -52,9 +52,6 @@ import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>

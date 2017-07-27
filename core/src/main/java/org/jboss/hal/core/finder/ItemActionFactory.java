@@ -30,11 +30,7 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
-/**
- * Convenience methods for common item actions.
- *
- * @author Harald Pehl
- */
+/** Convenience methods for common item actions. */
 public class ItemActionFactory {
 
     private final CrudOperations crud;

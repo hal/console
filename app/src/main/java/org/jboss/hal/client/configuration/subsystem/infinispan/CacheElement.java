@@ -52,8 +52,6 @@ import static org.jboss.hal.resources.CSS.columnAction;
 /**
  * Element to manage the cache resources of a specific {@linkplain Cache cache type}. The element contains a table and
  * all necessary forms to add, update and remove caches.
- *
- * @author Harald Pehl
  */
 class CacheElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CacheContainerPresenter> {
 

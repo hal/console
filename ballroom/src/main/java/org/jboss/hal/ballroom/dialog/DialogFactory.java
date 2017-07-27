@@ -26,9 +26,6 @@ import static org.jboss.hal.resources.CSS.centerBlock;
 import static org.jboss.hal.resources.CSS.spinner;
 import static org.jboss.hal.resources.CSS.spinnerLg;
 
-/**
- * @author Harald Pehl
- */
 public final class DialogFactory {
 
     private DialogFactory() {}

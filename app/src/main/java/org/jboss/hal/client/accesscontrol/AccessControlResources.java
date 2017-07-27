@@ -18,9 +18,6 @@ package org.jboss.hal.client.accesscontrol;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface AccessControlResources extends ClientBundle {
 
     @Source("principal.base64")

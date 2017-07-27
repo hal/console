@@ -28,9 +28,6 @@ import static org.jboss.hal.resources.CSS.loading;
 import static org.jboss.hal.resources.CSS.loadingContainer;
 import static org.jboss.hal.resources.CSS.spinner;
 
-/**
- * @author Harald Pehl
- */
 public class LoadingPanel implements IsElement {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);

@@ -22,11 +22,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MAJOR_VERSI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MICRO_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSION;
 
-/**
- * Static code related to management model versions and support for various operations and attributes
- *
- * @author Harald Pehl
- */
+/** Static code related to management model versions and support for various operations and attributes */
 public class ManagementModel {
 
     private static final Version V_2_0_0 = Version.forIntegers(2, 0, 0); // WildFly 8

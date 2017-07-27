@@ -29,9 +29,6 @@ import org.jboss.hal.spi.MbuiView;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScannerPresenter>

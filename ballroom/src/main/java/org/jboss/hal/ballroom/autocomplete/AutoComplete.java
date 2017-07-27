@@ -40,8 +40,6 @@ import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 
 /**
  * Java wrapper for <a href="https://github.com/Pixabay/JavaScript-autoComplete">javascript-auto-complete</a>
- *
- * @author Harald Pehl
  * @see <a href="https://github.com/Pixabay/JavaScript-autoComplete">https://github.com/Pixabay/JavaScript-autoComplete</a>
  */
 public class AutoComplete implements SuggestHandler, Attachable {

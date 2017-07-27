@@ -24,9 +24,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Claudio Miranda
- */
 class ElytronSubsystemPreview extends PreviewContent<StaticItem> {
 
     private final CrudOperations crud;

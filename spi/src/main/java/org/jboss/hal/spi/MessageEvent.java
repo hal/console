@@ -19,9 +19,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
 
-/**
- * @author Harald Pehl
- */
 // No @GenEvent here due to naming conflicts
 public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
 

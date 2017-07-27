@@ -28,9 +28,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
-/**
- * @author Harald Pehl
- */
 class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     FormProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,

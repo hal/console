@@ -46,9 +46,6 @@ import static org.jboss.hal.client.runtime.BrowseByColumn.HOST_ADDRESS;
 import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_CONFIG_ADDRESS;
 import static org.jboss.hal.client.runtime.BrowseByColumn.SERVER_GROUP_ADDRESS;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.DOMAIN_BROWSE_BY)
 @Requires(value = {HOST_ADDRESS, SERVER_GROUP_ADDRESS, SERVER_CONFIG_ADDRESS}, recursive = false)
 public class BrowseByColumn extends StaticItemColumn {

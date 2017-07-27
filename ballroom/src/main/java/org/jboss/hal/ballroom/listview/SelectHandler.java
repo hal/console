@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.ballroom.listview;
 
-/**
- * ActionHandler when an item in a {@link ListView} is selected.
- *
- * @author Harald Pehl
- */
+/** ActionHandler when an item in a {@link ListView} is selected. */
 @FunctionalInterface
 public interface SelectHandler<T> {
 

@@ -28,8 +28,6 @@ import org.jboss.hal.ballroom.Attachable;
  *
  * @param <C> The context
  * @param <S> The state enum
- *
- * @author Harald Pehl
  */
 public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
 

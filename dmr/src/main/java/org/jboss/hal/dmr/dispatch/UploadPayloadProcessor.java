@@ -24,9 +24,6 @@ import org.jboss.hal.json.JsonType;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Names.UNKNOWN;
 
-/**
- * @author Harald Pehl
- */
 public class UploadPayloadProcessor implements PayloadProcessor {
 
     private static final String FAILURE = "failure";

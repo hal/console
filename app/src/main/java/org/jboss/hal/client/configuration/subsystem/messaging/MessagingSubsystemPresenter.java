@@ -40,9 +40,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 
-/**
- * @author Harald Pehl
- */
 public class MessagingSubsystemPresenter
         extends MbuiPresenter<MessagingSubsystemPresenter.MyView, MessagingSubsystemPresenter.MyProxy>
         implements SupportsExpertMode {

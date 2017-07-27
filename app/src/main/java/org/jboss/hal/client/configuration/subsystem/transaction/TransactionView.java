@@ -25,9 +25,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>

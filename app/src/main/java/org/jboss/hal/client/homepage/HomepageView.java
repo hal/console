@@ -35,9 +35,6 @@ import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.eapHomeRow;
 import static org.jboss.hal.resources.CSS.eapHomeTitle;
 
-/**
- * @author Harald Pehl
- */
 public class HomepageView extends HalViewImpl implements HomepagePresenter.MyView {
 
     private HomepagePresenter presenter;

@@ -23,11 +23,7 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 
-/**
- * Represents the different thread pool singletons of a cache container.
- *
- * @author Harald Pehl
- */
+/** Represents the different thread pool singletons of a cache container. */
 enum ThreadPool {
 
     ASYNC_OPERATIONS(Ids.CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS, Names.ASYNC_OPERATIONS,

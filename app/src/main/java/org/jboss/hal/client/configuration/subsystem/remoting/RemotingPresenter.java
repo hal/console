@@ -65,9 +65,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 public class RemotingPresenter
         extends MbuiPresenter<RemotingPresenter.MyView, RemotingPresenter.MyProxy>
         implements SupportsExpertMode {

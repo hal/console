@@ -47,9 +47,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
     private static final String POOL_PATH = "statistics/pool";

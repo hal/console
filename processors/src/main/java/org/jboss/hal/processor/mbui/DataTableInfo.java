@@ -22,9 +22,6 @@ import org.jboss.hal.ballroom.table.Scope;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public class DataTableInfo extends MbuiElementInfo {
 
     @SuppressWarnings("HardCodedStringLiteral")

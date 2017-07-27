@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.CSS.page;
  * <p>
  * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
  * VerticalNavigation vertical navigation}.
- *
- * @author Harald Pehl
  */
 public class Pages implements IsElement {
 

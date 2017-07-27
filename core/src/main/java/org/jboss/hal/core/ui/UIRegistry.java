@@ -17,11 +17,7 @@ package org.jboss.hal.core.ui;
 
 import org.jboss.gwt.flow.Progress;
 
-/**
- * Registry which can be used to get references to global UI related instances such as the progress bar in the footer.
- *
- * @author Harald Pehl
- */
+/** Registry which can be used to get references to global UI related instances such as the progress bar in the footer. */
 public class UIRegistry {
 
     private Progress progress = Progress.NOOP;

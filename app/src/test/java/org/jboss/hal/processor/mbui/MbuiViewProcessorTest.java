@@ -25,9 +25,6 @@ import org.junit.Before;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 public abstract class MbuiViewProcessorTest {
 

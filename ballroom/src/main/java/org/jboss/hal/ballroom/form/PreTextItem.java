@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.form;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 
-/**
- * @author Harald Pehl
- */
 public class PreTextItem extends TextBoxItem {
 
     public PreTextItem(String name) {

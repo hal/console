@@ -47,9 +47,6 @@ import static org.jboss.hal.client.management.AddExtensionWizard.State.REVIEW;
 import static org.jboss.hal.client.management.AddExtensionWizard.State.URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class AddExtensionWizard {
 
     // ------------------------------------------------------ context and state

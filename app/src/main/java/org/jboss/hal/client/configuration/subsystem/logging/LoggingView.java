@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
@@ -49,9 +48,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> implements LoggingPresenter.MyView {

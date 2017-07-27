@@ -28,9 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
-/**
- * @author Harald Pehl
- */
 public class Settings {
 
     @SuppressWarnings("DuplicateStringLiteralInspection")

@@ -27,9 +27,6 @@ import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 
-/**
- * @author Harald Pehl
- */
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {

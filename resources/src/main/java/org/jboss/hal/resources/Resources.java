@@ -20,11 +20,7 @@ import javax.inject.Inject;
 import com.google.gwt.resources.client.ExternalTextResource;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * Umbrella over all kind of resources in HAL.
- *
- * @author Harald Pehl
- */
+/** Umbrella over all kind of resources in HAL. */
 public class Resources implements Ids, Names, UIConstants, CSS, Icons {
 
     private final Constants constants;

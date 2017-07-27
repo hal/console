@@ -50,9 +50,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Harald Pehl
- */
 public class JmsBridgePresenter
         extends MbuiPresenter<JmsBridgePresenter.MyView, JmsBridgePresenter.MyProxy>
         implements SupportsExpertMode {

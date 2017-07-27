@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ModelNodeHelperTest {
 

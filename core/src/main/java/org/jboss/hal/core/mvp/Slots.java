@@ -17,9 +17,6 @@ package org.jboss.hal.core.mvp;
 
 import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 
-/**
- * @author Harald Pehl
- */
 public interface Slots {
 
     /**

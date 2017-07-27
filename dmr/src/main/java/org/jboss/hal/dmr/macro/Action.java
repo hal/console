@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.dmr.macro;
 
-/**
- * @author Harald Pehl
- */
 public enum Action {
     START, STOP
 }

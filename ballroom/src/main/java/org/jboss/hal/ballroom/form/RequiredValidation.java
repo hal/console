@@ -37,9 +37,6 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Constants;
 
-/**
- * @author Harald Pehl
- */
 public class RequiredValidation<T> implements FormItemValidation<T> {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);

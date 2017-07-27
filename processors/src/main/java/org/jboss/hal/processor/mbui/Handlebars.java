@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Harald Pehl
- */
 final class Handlebars {
 
     private final static Pattern PATTERN = Pattern.compile("\\{\\{(.*?)\\}\\}");

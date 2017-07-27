@@ -41,9 +41,6 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
-/**
- * @author Harald Pehl
- */
 public class HandlerPresenter
         extends MbuiPresenter<HandlerPresenter.MyView, HandlerPresenter.MyProxy>
         implements SupportsExpertMode {

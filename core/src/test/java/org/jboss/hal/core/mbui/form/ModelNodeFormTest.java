@@ -25,9 +25,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ModelNodeFormTest {
 

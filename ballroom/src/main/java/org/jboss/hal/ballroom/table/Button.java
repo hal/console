@@ -17,11 +17,7 @@ package org.jboss.hal.ballroom.table;
 
 import org.jboss.hal.meta.security.Constraint;
 
-/**
- * A table button
- *
- * @author Harald Pehl
- */
+/** A table button */
 public class Button<T> {
 
     final String title;

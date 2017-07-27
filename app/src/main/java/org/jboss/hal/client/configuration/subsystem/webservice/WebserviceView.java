@@ -45,9 +45,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * @author Harald Pehl
- */
 public class WebserviceView extends HalViewImpl implements WebservicePresenter.MyView {
 
     private final Form<ModelNode> webservicesForm;

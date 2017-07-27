@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.CSS.*;
  *
  * @param <B> the builder type
  * @param <T> the row type
- *
- * @author Harald Pehl
  */
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 

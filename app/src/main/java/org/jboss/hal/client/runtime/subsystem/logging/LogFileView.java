@@ -50,9 +50,6 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
 import static org.jboss.hal.resources.CSS.px;
 
-/**
- * @author Harald Pehl
- */
 @Templated("LogFileView.html#root")
 public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
 

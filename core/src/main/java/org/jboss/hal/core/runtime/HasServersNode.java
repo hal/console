@@ -26,9 +26,6 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public abstract class HasServersNode extends NamedNode {
 
     private final List<Server> servers;

@@ -37,9 +37,6 @@ import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {

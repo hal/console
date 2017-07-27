@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.ballroom.form;
 
-/**
- * @author Harald Pehl
- */
 public class TestableBlacklistValidation extends BlacklistValidation {
 
     TestableBlacklistValidation(final String first, final String... rest) {

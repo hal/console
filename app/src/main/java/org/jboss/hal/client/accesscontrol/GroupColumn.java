@@ -33,9 +33,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_ADDRESS;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_ADDRESS;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.GROUP)
 @Requires({INCLUDE_ADDRESS, EXCLUDE_ADDRESS})
 public class GroupColumn extends PrincipalColumn {

@@ -37,9 +37,6 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.HOST_SCOPED_RO
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.ROLE_MAPPING_ADDRESS;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_SCOPED_ROLE_ADDRESS;
 
-/**
- * @author Harald Pehl
- */
 public class AccessControlPresenter extends
         FinderPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
 

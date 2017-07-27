@@ -19,9 +19,6 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 
-/**
- * @author Harald Pehl
- */
 public class MacroOptions extends NamedNode {
 
     public static final MacroOptionsResources RESOURCES = GWT.create(MacroOptionsResources.class);

@@ -21,11 +21,7 @@ import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT;
 
-/**
- * Represents the different component singletons of specific cache resource.
- *
- * @author Harald Pehl
- */
+/** Represents the different component singletons of specific cache resource. */
 enum Component {
 
     BACKUP_FOR(Ids.CACHE_COMPONENT_BACKUP_FOR, Names.BACKUP_FOR, ModelDescriptionConstants.BACKUP_FOR),

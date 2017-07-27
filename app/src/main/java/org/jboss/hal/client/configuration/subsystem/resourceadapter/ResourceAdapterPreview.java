@@ -28,9 +28,6 @@ import static org.jboss.hal.client.configuration.subsystem.resourceadapter.Resou
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
 
-/**
- * @author Harald Pehl
- */
 class ResourceAdapterPreview extends PreviewContent<ResourceAdapter> {
 
     ResourceAdapterPreview(final ResourceAdapter resourceAdapter, final Resources resources) {

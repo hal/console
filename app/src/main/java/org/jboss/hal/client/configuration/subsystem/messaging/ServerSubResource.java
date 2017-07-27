@@ -34,9 +34,6 @@ import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 
-/**
- * @author Harald Pehl
- */
 enum ServerSubResource {
 
     ACCEPTOR(Ids.MESSAGING_ACCEPTOR, Names.GENERIC_ACCEPTOR,

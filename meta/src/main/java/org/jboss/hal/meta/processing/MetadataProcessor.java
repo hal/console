@@ -54,8 +54,6 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Reads resource {@link Metadata} using read-resource-description operations and stores it into the {@link
  * MetadataRegistry}. If you're sure the metadata is present you can use the {@link MetadataRegistry} instead.
- *
- * @author Harald Pehl
  */
 @JsType(namespace = "hal.meta")
 public class MetadataProcessor {

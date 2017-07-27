@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.fraction;
 
-/**
- * @author Harald Pehl
- */
 public interface HalProperties {
 
     String CONTEXT = "swarm.management.hal.context";

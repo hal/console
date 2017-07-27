@@ -84,11 +84,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
-/**
- * Model browser element which can be embedded in other elements.
- *
- * @author Harald Pehl
- */
+/** Model browser element which can be embedded in other elements. */
 public class ModelBrowser implements IsElement<HTMLElement> {
 
     private static class FilterInfo {

@@ -40,9 +40,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.meta.token.NameTokens.JNDI;
 
-/**
- * @author Harald Pehl
- */
 public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyView, JndiPresenter.MyProxy> {
 
     private static final String ROOT_ADDRESS = "/{selected.host}/{selected.server}/subsystem=naming";

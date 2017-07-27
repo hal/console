@@ -36,9 +36,6 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 class TransportElement extends GenericElement {
 
     private Form<ModelNode> threadPoolDefaultForm;

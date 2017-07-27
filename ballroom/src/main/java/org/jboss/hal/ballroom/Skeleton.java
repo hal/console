@@ -23,9 +23,6 @@ import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.resources.CSS.external;
 import static org.jboss.hal.resources.CSS.navbar;
 
-/**
- * @author Harald Pehl
- */
 public final class Skeleton {
 
     public static final int MARGIN_BIG = 20; // keep this in sync with the

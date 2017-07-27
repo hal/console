@@ -39,9 +39,6 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class HandlerFunctions {
 
     static class SaveAuditLog implements Function<FunctionContext> {

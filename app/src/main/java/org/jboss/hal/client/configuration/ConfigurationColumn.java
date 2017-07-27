@@ -33,9 +33,6 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.CONFIGURATION)
 public class ConfigurationColumn extends StaticItemColumn {
 

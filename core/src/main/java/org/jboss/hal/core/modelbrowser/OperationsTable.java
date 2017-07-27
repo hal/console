@@ -48,9 +48,6 @@ import static org.jboss.hal.resources.CSS.tableBordered;
 import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
-/**
- * @author Harald Pehl
- */
 class OperationsTable implements IsElement {
 
     private final HTMLElement root;

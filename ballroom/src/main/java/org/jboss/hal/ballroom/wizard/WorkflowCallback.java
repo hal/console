@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.ballroom.wizard;
 
-/**
- * @author Harald Pehl
- */
 @FunctionalInterface
 public interface WorkflowCallback {
 

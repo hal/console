@@ -46,11 +46,7 @@ import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
-/**
- * Panel which holds the children of the selected resource.
- *
- * @author Harald Pehl
- */
+/** Panel which holds the children of the selected resource. */
 class ChildrenPanel implements HasElements, Attachable {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ChildrenPanel.class);

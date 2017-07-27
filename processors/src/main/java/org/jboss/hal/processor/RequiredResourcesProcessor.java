@@ -41,11 +41,7 @@ import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
 import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
 import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
-/**
- * Processor which scans all {@code @Requires} annotations and generates the {@code RequiredResources} registry.
- *
- * @author Harald Pehl
- */
+/** Processor which scans all {@code @Requires} annotations and generates the {@code RequiredResources} registry. */
 @AutoService(Processor.class)
 @SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("org.jboss.hal.spi.Requires")

@@ -43,9 +43,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.BUFFER_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class BufferCachePresenter
         extends MbuiPresenter<BufferCachePresenter.MyView, BufferCachePresenter.MyProxy>
         implements SupportsExpertMode {

@@ -81,9 +81,6 @@ import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.subtitle;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.ROLE)
 @Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
 public class RoleColumn extends FinderColumn<Role> {

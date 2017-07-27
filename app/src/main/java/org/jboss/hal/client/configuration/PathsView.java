@@ -25,11 +25,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-/**
- * TODO Add support for adding a validation handler for form-item 'name'
- *
- * @author Harald Pehl
- */
+/** TODO Add support for adding a validation handler for form-item 'name' */
 @MbuiView
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class PathsView extends MbuiViewImpl<PathsPresenter> implements PathsPresenter.MyView {

@@ -19,9 +19,6 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-/**
- * @author Harald Pehl
- */
 public interface AddressTemplates {
 
     String DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";

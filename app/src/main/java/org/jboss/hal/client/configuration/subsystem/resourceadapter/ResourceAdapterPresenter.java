@@ -41,9 +41,6 @@ import static org.jboss.hal.client.configuration.subsystem.resourceadapter.Addre
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTERS;
 
-/**
- * @author Harald Pehl
- */
 public class ResourceAdapterPresenter
         extends MbuiPresenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy>
         implements SupportsExpertMode {

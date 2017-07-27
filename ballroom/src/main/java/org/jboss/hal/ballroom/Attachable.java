@@ -18,8 +18,6 @@ package org.jboss.hal.ballroom;
 /**
  * Interface for elements which need to run code when they get attached to the DOM. Global initialization logic which
  * is relevant across elements should be placed in {@link PatternFly#initComponents()} though.
- *
- * @author Harald Pehl
  */
 public interface Attachable {
 

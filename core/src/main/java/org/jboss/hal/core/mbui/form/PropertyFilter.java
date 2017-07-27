@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class PropertyFilter implements Predicate<Property> {
 
     private final ModelNodeForm.Builder builder;

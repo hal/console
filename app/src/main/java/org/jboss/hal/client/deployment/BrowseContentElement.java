@@ -63,11 +63,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * UI element to browse the content of an item from the content repository.
- *
- * @author Harald Pehl
- */
+/** UI element to browse the content of an item from the content repository. */
 class BrowseContentElement implements IsElement, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")

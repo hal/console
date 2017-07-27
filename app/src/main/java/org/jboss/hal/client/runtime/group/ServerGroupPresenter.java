@@ -43,9 +43,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class ServerGroupPresenter
         extends MbuiPresenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy>
         implements SupportsExpertMode {

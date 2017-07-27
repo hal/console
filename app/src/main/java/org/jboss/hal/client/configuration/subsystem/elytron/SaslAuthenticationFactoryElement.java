@@ -42,9 +42,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Ids.*;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attachable,
         HasPresenter<FactoriesPresenter> {
 

@@ -23,7 +23,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -56,9 +55,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
 
-/**
- * @author Harald Pehl
- */
 public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresenter.MyView, LogFilePresenter.MyProxy> {
 
     // @formatter:off

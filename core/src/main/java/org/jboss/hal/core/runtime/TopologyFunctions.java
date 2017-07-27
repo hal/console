@@ -51,11 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Set of functions to read runtime data like running server of a specific server group.
- *
- * @author Harald Pehl
- */
+/** Set of functions to read runtime data like running server of a specific server group. */
 public class TopologyFunctions {
 
     public static final String SERVER_GROUP = "topologyFunctions.serverGroup";

@@ -49,9 +49,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "ResultOfMethodCallIgnored"})
 public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 

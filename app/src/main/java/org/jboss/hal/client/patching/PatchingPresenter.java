@@ -27,9 +27,6 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.meta.token.NameTokens;
 
-/**
- * @author Harald Pehl
- */
 public class PatchingPresenter extends TopLevelPresenter<PatchingPresenter.MyView, PatchingPresenter.MyProxy> {
 
     // @formatter:off

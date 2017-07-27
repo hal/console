@@ -23,10 +23,6 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import org.jboss.hal.resources.Constants;
 
-
-/**
- * @author Harald Pehl
- */
 public final class Format {
 
     private static final DateTimeFormat DATE_TIME_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);

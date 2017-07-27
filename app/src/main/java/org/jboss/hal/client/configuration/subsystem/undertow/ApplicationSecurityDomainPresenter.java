@@ -60,9 +60,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.move;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
-/**
- * @author Claudio Miranda
- */
 public class ApplicationSecurityDomainPresenter extends
         ApplicationFinderPresenter<ApplicationSecurityDomainPresenter.MyView, ApplicationSecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {

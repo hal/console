@@ -31,9 +31,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 
-/**
- * @author Harald Pehl
- */
 class StandaloneDeploymentPreview extends DeploymentPreview<Deployment> {
 
     static final String LAST_ENABLED_AT = "Last enabled at";

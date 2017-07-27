@@ -30,9 +30,6 @@ import org.jboss.gwt.elemento.core.EventCallbackFn;
 import static org.jboss.gwt.elemento.core.EventType.*;
 import static org.jboss.hal.resources.CSS.ondrag;
 
-/**
- * @author Harald Pehl
- */
 public final class JsHelper {
 
     public static Map<String, Object> asMap(JsPropertyMapOfAny jsMap) {

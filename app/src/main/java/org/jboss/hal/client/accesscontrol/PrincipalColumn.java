@@ -64,9 +64,6 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class PrincipalColumn extends FinderColumn<Principal> {
 
     static List<String> filterData(Principal principal) {

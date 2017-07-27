@@ -35,8 +35,6 @@ import static org.jboss.hal.dmr.macro.MacroOptions.RESOURCES;
 /**
  * Dialog to record a new macro.
  * TODO Add a form validation to check for duplicate macro names.
- *
- * @author Harald Pehl
  */
 public class MacroOptionsDialog {
 

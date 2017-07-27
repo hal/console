@@ -30,9 +30,6 @@ import org.jboss.hal.resources.Ids;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 class ContentParser {
 
     private static final Comparator<ContentEntry> BY_NAME = Comparator.comparing(c -> c.name);

@@ -22,11 +22,7 @@ import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * A model node with a name.
- *
- * @author Harald Pehl
- */
+/** A model node with a name. */
 @JsType
 public class NamedNode extends ModelNode {
 

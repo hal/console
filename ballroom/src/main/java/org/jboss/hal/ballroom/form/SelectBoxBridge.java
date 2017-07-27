@@ -31,9 +31,6 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
-/**
- * @author Harald Pehl
- */
 public class SelectBoxBridge {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

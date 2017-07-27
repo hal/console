@@ -17,9 +17,6 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Harald Pehl
- */
 public enum ResponseHeader {
 
     // response header (https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields)

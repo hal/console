@@ -26,11 +26,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 
-/**
- * Updates the {@link PathsAutoComplete} upon profile selections and server stop / start.
- *
- * @author Harald Pehl
- */
+/** Updates the {@link PathsAutoComplete} upon profile selections and server stop / start. */
 public class UpdatePathAutoComplete implements ProfileSelectionHandler, ServerResultHandler {
 
     private final Environment environment;

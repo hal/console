@@ -24,11 +24,7 @@ import java.util.Set;
 import static org.jboss.hal.client.accesscontrol.Principal.Type.GROUP;
 import static org.jboss.hal.client.accesscontrol.Principal.Type.USER;
 
-/**
- * Contains a list of principals stored in the management model.
- *
- * @author Harald Pehl
- */
+/** Contains a list of principals stored in the management model. */
 class Principals implements Iterable<Principal> {
 
     private final Map<Principal.Type, Set<Principal>> principals;

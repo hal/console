@@ -17,9 +17,6 @@ package org.jboss.hal.core.mvp;
 
 import org.jboss.hal.core.finder.FinderPath;
 
-/**
- * @author Harald Pehl
- */
 public interface HasFinderPath {
 
     /**

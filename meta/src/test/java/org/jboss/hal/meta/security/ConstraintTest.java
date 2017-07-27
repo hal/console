@@ -27,9 +27,6 @@ import static org.jboss.hal.meta.security.Target.ATTRIBUTE;
 import static org.jboss.hal.meta.security.Target.OPERATION;
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class ConstraintTest {
 

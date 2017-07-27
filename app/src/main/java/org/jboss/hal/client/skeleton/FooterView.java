@@ -39,9 +39,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
 
-/**
- * @author Harald Pehl
- */
 @Templated("MainLayout.html#footer")
 public abstract class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 

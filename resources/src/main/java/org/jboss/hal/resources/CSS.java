@@ -26,8 +26,6 @@ import static java.util.stream.Collectors.joining;
 /**
  * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
  * any kind of code generation or GWT magic. They're just here to have them in one place.
- *
- * @author Harald Pehl
  */
 public interface CSS {
 

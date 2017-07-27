@@ -25,9 +25,6 @@ import org.jboss.hal.spi.MbuiView;
 
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> implements ModclusterPresenter.MyView {

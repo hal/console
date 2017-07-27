@@ -40,9 +40,6 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.lead;
 
-/**
- * @author Harald Pehl
- */
 class ServerStatusPreview extends PreviewContent<StaticItem> {
 
     private final Dispatcher dispatcher;

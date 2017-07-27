@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.meta;
 
-/**
- * @author Harald Pehl
- */
 public class MissingMetadataException extends RuntimeException {
 
     public MissingMetadataException(final String type, final AddressTemplate address) {

@@ -50,9 +50,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.EXTENSION_POINT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STANDALONE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.EXTENSION)
 public class ExtensionColumn extends FinderColumn<InstalledExtension> {
 

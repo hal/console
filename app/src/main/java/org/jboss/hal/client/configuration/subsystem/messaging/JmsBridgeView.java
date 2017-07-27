@@ -39,9 +39,6 @@ import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyView {
 
     private Form<NamedNode> attributesForm;

@@ -72,11 +72,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Column which is used for both XA and normal data sources.
- *
- * @author Harald Pehl
- */
+/** Column which is used for both XA and normal data sources. */
 @AsyncColumn(Ids.DATA_SOURCE_CONFIGURATION)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {

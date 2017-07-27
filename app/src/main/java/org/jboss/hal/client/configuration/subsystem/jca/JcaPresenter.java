@@ -67,9 +67,6 @@ import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Names.THREAD_POOL;
 
-/**
- * @author Harald Pehl
- */
 public class JcaPresenter
         extends ApplicationFinderPresenter<JcaPresenter.MyView, JcaPresenter.MyProxy>
         implements SupportsExpertMode {

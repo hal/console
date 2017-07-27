@@ -87,8 +87,6 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * TODO This class is huge! Try to refactor and break into smaller pieces.
  *
  * @param <T> The column and items type.
- *
- * @author Harald Pehl
  */
 public class FinderColumn<T> implements IsElement, Attachable {
 

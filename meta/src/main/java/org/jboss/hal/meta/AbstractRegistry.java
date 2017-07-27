@@ -17,11 +17,7 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.dmr.ResourceAddress;
 
-/**
- * Abstract registry which uses the specified statement context to resolve the address template.
- *
- * @author Harald Pehl
- */
+/** Abstract registry which uses the specified statement context to resolve the address template. */
 public abstract class AbstractRegistry<T> implements Registry<T> {
 
     private final StatementContext statementContext;

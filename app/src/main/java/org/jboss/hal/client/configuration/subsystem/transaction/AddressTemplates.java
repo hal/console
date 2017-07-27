@@ -17,9 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.transaction;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-/**
- * @author Claudio Miranda
- */
 interface AddressTemplates {
 
     String TRANSACTIONS_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=transactions";

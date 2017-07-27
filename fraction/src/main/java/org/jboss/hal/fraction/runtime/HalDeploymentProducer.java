@@ -31,9 +31,6 @@ import org.wildfly.swarm.spi.api.ArtifactLookup;
 import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 import org.wildfly.swarm.undertow.WARArchive;
 
-/**
- * @author Harald Pehl
- */
 public class HalDeploymentProducer {
 
     @Inject

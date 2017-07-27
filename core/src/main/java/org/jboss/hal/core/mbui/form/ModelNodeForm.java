@@ -85,9 +85,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
-/**
- * @author Harald Pehl
- */
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     /**

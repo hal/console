@@ -17,9 +17,7 @@ package org.jboss.hal.json;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-/**
- * Represents a Json object.
- */
+/** Represents a Json object. */
 public class JsonObject extends JsonValue {
 
     public static JsonObject create() {

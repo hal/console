@@ -17,9 +17,6 @@ package org.jboss.hal.core.mvp;
 
 import org.jboss.hal.core.finder.Finder;
 
-/**
- * @author Harald Pehl
- */
 public class FinderViewImpl extends HalViewImpl implements FinderView {
 
     @Override

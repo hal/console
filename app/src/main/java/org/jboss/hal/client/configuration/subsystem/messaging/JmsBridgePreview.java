@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 class JmsBridgePreview extends PreviewContent<NamedNode> {
 
     @SuppressWarnings("HardCodedStringLiteral")

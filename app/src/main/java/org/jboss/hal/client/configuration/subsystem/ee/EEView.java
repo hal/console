@@ -51,9 +51,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.*;
 
-/**
- * @author Claudio Miranda
- */
 public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
     // local names

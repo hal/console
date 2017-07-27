@@ -17,11 +17,7 @@ package org.jboss.hal.core.finder;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-/**
- * Holds state as the user navigates using the finder.
- *
- * @author Harald Pehl
- */
+/** Holds state as the user navigates using the finder. */
 public class FinderContext {
 
     public static final String PATH_PARAM = "path";

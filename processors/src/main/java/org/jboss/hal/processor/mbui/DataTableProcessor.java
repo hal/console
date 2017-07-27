@@ -32,9 +32,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
-/**
- * @author Harald Pehl
- */
 class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     DataTableProcessor(final MbuiViewProcessor processor, final Types typeUtils, final Elements elementUtils,

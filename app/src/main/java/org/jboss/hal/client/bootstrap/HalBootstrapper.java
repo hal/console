@@ -21,7 +21,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -41,9 +40,6 @@ import org.slf4j.LoggerFactory;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
 
-/**
- * @author Harald Pehl
- */
 public class HalBootstrapper implements Bootstrapper {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);

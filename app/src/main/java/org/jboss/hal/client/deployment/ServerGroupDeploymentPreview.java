@@ -39,9 +39,6 @@ import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_D
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployment> {
 
     ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,

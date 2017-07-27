@@ -27,9 +27,6 @@ import org.jdom2.xpath.XPathFactory;
 
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
-/**
- * @author Harald Pehl
- */
 class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     VerticalNavigationProcessor(final MbuiViewProcessor processor, final Types typeUtils,

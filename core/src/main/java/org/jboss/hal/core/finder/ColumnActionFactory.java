@@ -34,11 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-/**
- * Provides methods to create common column actions.
- *
- * @author Harald Pehl
- */
+/** Provides methods to create common column actions. */
 public class ColumnActionFactory {
 
     private final CrudOperations crud;

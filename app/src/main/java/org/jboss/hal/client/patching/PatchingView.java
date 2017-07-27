@@ -23,9 +23,6 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 
-/**
- * @author Harald Pehl
- */
 public class PatchingView extends HalViewImpl implements PatchingPresenter.MyView {
 
     public PatchingView() {

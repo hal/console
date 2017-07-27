@@ -26,9 +26,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUGGEST_CAPABILITIES;
 import static org.jboss.hal.meta.StatementContext.Tuple.DOMAIN_CONTROLLER;
 
-/**
- * @author Harald Pehl
- */
 public class SuggestCapabilitiesAutoComplete extends AutoComplete {
 
     private static final AddressTemplate CAPABILITY_REGISTRY =

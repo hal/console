@@ -30,7 +30,6 @@ import static org.jboss.hal.resources.CSS.clickable;
 /**
  * Breadcrumb element as specified by <a href="https://www.patternfly.org/pattern-library/widgets/#breadcrumbs">PatternFly</a>
  *
- * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/pattern-library/widgets/#breadcrumbs>https://www.patternfly.org/pattern-library/widgets/#breadcrumbs</a>
  */
 public class Breadcrumb implements IsElement {

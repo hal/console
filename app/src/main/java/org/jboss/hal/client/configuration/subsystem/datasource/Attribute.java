@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-/**
- * @author Harald Pehl
- */
 class Attribute {
 
     enum Scope {BOTH, NON_XA, XA}

@@ -9,9 +9,6 @@ import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.junit.Assert.*;
 
-/**
- * @author Harald Pehl
- */
 public class AddOnlyStateMachineTest {
 
     private StateMachine stateMachine;

@@ -17,11 +17,7 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
-/**
- * Finder column for {@link StaticItem}.
- *
- * @author Harald Pehl
- */
+/** Finder column for {@link StaticItem}. */
 public class StaticItemColumn extends FinderColumn<StaticItem> {
 
     public static class StaticItemDisplay implements ItemDisplay<StaticItem> {

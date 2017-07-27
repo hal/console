@@ -58,9 +58,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.EE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Claudio Miranda
- */
 public class EEPresenter
         extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy>
         implements SupportsExpertMode {

@@ -22,11 +22,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import static org.jboss.hal.meta.security.Target.ATTRIBUTE;
 import static org.jboss.hal.meta.security.Target.OPERATION;
 
-/**
- * A constraint for an attribute or operation of a DMR resource.
- *
- * @author Harald Pehl
- */
+/** A constraint for an attribute or operation of a DMR resource. */
 public class Constraint {
 
     public static Constraint executable(final AddressTemplate template, final String operation) {

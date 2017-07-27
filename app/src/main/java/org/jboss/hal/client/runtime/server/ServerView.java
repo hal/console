@@ -30,9 +30,6 @@ import org.jboss.hal.spi.MbuiView;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implements ServerPresenter.MyView {

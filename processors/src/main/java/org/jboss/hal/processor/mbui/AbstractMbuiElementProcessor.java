@@ -32,9 +32,6 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
-/**
- * @author Harald Pehl
- */
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
     @NonNls final MbuiViewProcessor processor;

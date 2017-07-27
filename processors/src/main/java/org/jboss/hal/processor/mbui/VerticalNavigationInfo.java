@@ -24,9 +24,6 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author Harald Pehl
- */
 public class VerticalNavigationInfo extends MbuiElementInfo {
 
     public static class Item {

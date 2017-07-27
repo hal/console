@@ -18,9 +18,6 @@ package org.jboss.hal.fraction;
 import org.wildfly.swarm.spi.api.Fraction;
 import org.wildfly.swarm.spi.api.annotations.Configurable;
 
-/**
- * @author Harald Pehl
- */
 @Configurable("swarm.management-hal")
 public class HalFraction implements Fraction<HalFraction> {
 

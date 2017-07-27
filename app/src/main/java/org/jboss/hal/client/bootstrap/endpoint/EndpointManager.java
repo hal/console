@@ -36,8 +36,6 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  * <p>
  * Please note: This class must run <em>before</em> any {@linkplain org.jboss.hal.client.bootstrap.functions.BootstrapFunction
  * bootstrap function}!
- *
- * @author Harald Pehl
  */
 public class EndpointManager {
 

@@ -20,9 +20,6 @@ import com.google.inject.Singleton;
 import org.jboss.hal.resources.Theme;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class EapThemeModule extends AbstractGinModule {
 

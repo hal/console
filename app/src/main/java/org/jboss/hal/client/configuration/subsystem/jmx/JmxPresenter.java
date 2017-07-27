@@ -55,9 +55,6 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 
-/**
- * @author Harald Pehl
- */
 public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView, JmxPresenter.MyProxy>
         implements SupportsExpertMode {
 

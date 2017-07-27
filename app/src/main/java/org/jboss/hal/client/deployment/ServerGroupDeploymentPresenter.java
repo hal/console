@@ -61,9 +61,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
-/**
- * @author Harald Pehl
- */
 public class ServerGroupDeploymentPresenter extends
         ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
 

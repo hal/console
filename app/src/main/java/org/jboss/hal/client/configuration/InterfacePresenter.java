@@ -44,9 +44,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("SpellCheckingInspection")
 public class InterfacePresenter
         extends MbuiPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy>

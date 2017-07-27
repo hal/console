@@ -50,17 +50,14 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
-/**
- * @author Harald Pehl
- */
 public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(SERVER_ADDRESS)
-    @NameToken(NameTokens.MESSAGING_SERVER) // TODO Add recursive = false once WFCORE-2022 is resolved
+    @NameToken(NameTokens.MESSAGING_SERVER)
+    @Requires(value = SERVER_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
     public interface MyView extends MbuiView<ServerPresenter> {

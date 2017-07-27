@@ -17,9 +17,6 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import jsinterop.annotations.JsFunction;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 public interface ResponseCallback<T> {

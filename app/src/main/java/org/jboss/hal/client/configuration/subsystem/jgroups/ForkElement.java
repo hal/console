@@ -39,9 +39,6 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.jgroups.ChannelElement.PROTOCOL_ID;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     protected final Table<NamedNode> table;

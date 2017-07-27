@@ -28,9 +28,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.address;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 
-/**
- * @author Harald Pehl
- */
 final class ReadChildrenRenderer implements ItemRenderer<JsonObject> {
 
     @Override

@@ -50,13 +50,11 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_MAPPINGS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
         implements SupportsExpertMode {
 
@@ -81,7 +79,6 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {}
-
 
     // @formatter:off
     public interface MyView extends MbuiView<MapperDecoderPresenter> {
@@ -209,22 +206,22 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 children -> getView().updateSimplePermissionMapper(asNamedNodes(children)));
     }
 
-    public void saveSimplePermissionMapping(final String name, final Map<String, Object> changedValues) {
+    void saveSimplePermissionMapping(final String name, final Map<String, Object> changedValues) {
         crud.save(Names.SIMPLE_PERMISSION_MAPPER, name, AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 changedValues, this::reloadSimplePermissionMapper);
     }
 
-    public void addPermissionMappings(final String resource) {
+    void addPermissionMappings(final String resource) {
         ca.listAdd(Ids.ELYTRON_PERMISSION_MAPPINGS_ADD, resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS,
                 SIMPLE_PERMISSION_MAPPER_TEMPLATE, this::reloadSimplePermissionMapper);
     }
 
-    public void removePermissionMappings(final String resource, final int index) {
+    void removePermissionMappings(final String resource, final int index) {
         ca.remove(resource, PERMISSION_MAPPINGS, Names.PERMISSION_MAPPINGS, index, SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 this::reloadSimplePermissionMapper);
     }
 
-    public void savePermissionMappings(final String resource, final int i, final Map<String, Object> changedValues) {
+    void savePermissionMappings(final String resource, final int i, final Map<String, Object> changedValues) {
         ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);
         Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
                 .forComplexAttribute(PERMISSION_MAPPINGS);
@@ -232,7 +229,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 this::reloadSimplePermissionMapper);
     }
 
-    public void addPermissions(final String resource, final int pmIndex) {
+    void addPermissions(final String resource, final int pmIndex) {
         Metadata metadata = metadataRegistry.lookup(SIMPLE_PERMISSION_MAPPER_TEMPLATE)
                 .forComplexAttribute(PERMISSION_MAPPINGS)
                 .forComplexAttribute(PERMISSIONS);
@@ -246,13 +243,13 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         dialog.show();
     }
 
-    public void removePermissions(final String resource, final int pmIndex, final int permissionsIndex) {
+    void removePermissions(final String resource, final int pmIndex, final int permissionsIndex) {
         ca.remove(resource, permissionsAttribute(pmIndex), Names.PERMISSIONS, permissionsIndex,
                 SIMPLE_PERMISSION_MAPPER_TEMPLATE,
                 this::reloadSimplePermissionMapper);
     }
 
-    public void savePermissions(final String resource, final int pmIndex, final int permissionsIndex,
+    void savePermissions(final String resource, final int pmIndex, final int permissionsIndex,
             final Map<String, Object> changedValues) {
 
         ResourceAddress address = SIMPLE_PERMISSION_MAPPER_TEMPLATE.resolve(statementContext, resource);

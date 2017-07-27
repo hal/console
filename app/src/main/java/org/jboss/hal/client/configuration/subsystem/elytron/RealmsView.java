@@ -35,9 +35,6 @@ import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.USERS_PROPERTIES;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
 
     private final Map<String, ResourceElement> elements;

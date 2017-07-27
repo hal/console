@@ -26,11 +26,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.EsReturn;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * A standard or scoped role used when RBAC is turned on.
- *
- * @author Harald Pehl
- */
+/** A standard or scoped role used when RBAC is turned on. */
 @JsType
 public class Role {
 
@@ -38,10 +34,12 @@ public class Role {
      * Has all permissions except cannot read or write resources related to the administrative audit logging system.
      */
     public static final Role ADMINISTRATOR = new Role("Administrator");
+
     /**
      * Can read anything. Can only modify the resources related to the administrative audit logging system.
      */
     public static final Role AUDITOR = new Role("Auditor");
+
     /**
      * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are
      * considered to be "application resources". A deployment is an application resource. The messaging server is not.
@@ -49,19 +47,23 @@ public class Role {
      * is configurable.
      */
     public static final Role DEPLOYER = new Role("Deployer");
+
     /**
      * Operator permissions, plus can modify the persistent configuration.
      */
     public static final Role MAINTAINER = new Role("Maintainer");
+
     /**
      * A read-only role. Cannot modify any resource.
      */
     public static final Role MONITOR = new Role("Monitor");
+
     /**
      * Monitor permissions, plus can modify runtime state, but cannot modify anything that ends up in the persistent
      * configuration. Could, for example, restart a server.
      */
     public static final Role OPERATOR = new Role("Operator");
+
     /**
      * Has all permissions. Equivalent to a JBoss AS 7 administrator.
      */

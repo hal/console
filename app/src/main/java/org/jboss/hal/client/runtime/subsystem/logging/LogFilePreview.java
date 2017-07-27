@@ -27,9 +27,6 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class LogFilePreview extends PreviewContent<LogFile> {
 
     private static final int PREVIEW_LINES = 20;

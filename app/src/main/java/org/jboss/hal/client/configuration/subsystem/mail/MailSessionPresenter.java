@@ -68,9 +68,6 @@ import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Claudio Miranda
- */
 public class MailSessionPresenter
         extends ApplicationFinderPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy>
         implements SupportsExpertMode {

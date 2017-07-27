@@ -44,9 +44,6 @@ import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.Icons.flag;
 
-/**
- * @author Harald Pehl
- */
 class ContentPreview extends PreviewContent<Content> {
 
     private final ContentColumn column;

@@ -97,11 +97,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.spi.MessageEvent.fire;
 
-/**
- * Column used in domain mode to manage content in the content repository.
- *
- * @author Harald Pehl
- */
+/** Column used in domain mode to manage content in the content repository. */
 @Column(Ids.CONTENT)
 @Requires(value = {ROOT_ADDRESS, CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
 public class ContentColumn extends FinderColumn<Content> {

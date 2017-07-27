@@ -28,11 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.window;
 
-/**
- * Registry for the management endpoints which uses the local storage of the browser.
- *
- * @author Harald Pehl
- */
+/** Registry for the management endpoints which uses the local storage of the browser. */
 public class EndpointStorage {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);

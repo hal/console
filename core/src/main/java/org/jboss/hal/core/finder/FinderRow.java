@@ -42,9 +42,7 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.data;
 
-/**
- * UI class for a single row in in a finder column. Only used internally in the finder.
- */
+/** UI class for a single row in in a finder column. Only used internally in the finder. */
 class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);

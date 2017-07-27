@@ -21,11 +21,7 @@ import org.jboss.hal.dmr.NamedNode;
 import static org.jboss.hal.resources.Names.LONG_RUNNING;
 import static org.jboss.hal.resources.Names.SHORT_RUNNING;
 
-/**
- * Model node for {@code short-running-threads} and {@code long-running-threads} resources.
- *
- * @author Harald Pehl
- */
+/** Model node for {@code short-running-threads} and {@code long-running-threads} resources. */
 class ThreadPool extends NamedNode {
 
     private final boolean longRunning;

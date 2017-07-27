@@ -46,9 +46,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Claudio Miranda
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbPresenter.MyView {

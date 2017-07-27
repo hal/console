@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -33,11 +32,7 @@ import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Container which holds the last n messages. The user can review and clear the messages.
- *
- * @author Harald Pehl
- */
+/** Container which holds the last n messages. The user can review and clear the messages. */
 class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
 
     private static final int SIZE = 50;

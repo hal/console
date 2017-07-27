@@ -62,9 +62,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HEADER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 
-/**
- * @author Harald Pehl
- */
 public class FilterPresenter
         extends MbuiPresenter<FilterPresenter.MyView, FilterPresenter.MyProxy>
         implements SupportsExpertMode {

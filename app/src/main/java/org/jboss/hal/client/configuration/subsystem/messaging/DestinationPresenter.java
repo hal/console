@@ -63,27 +63,22 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-/**
- * @author Harald Pehl
- */
 public class DestinationPresenter
         extends ServerSettingsPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
         implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
-    // TODO Replace with
-    // TODO {CORE_QUEUE_ADDRESS, JMS_QUEUE_ADDRESS, JMS_TOPIC_ADDRESS,
-    // TODO  SECURITY_SETTING_ADDRESS, ADDRESS_SETTING_ADDRESS, DIVERT_ADDRESS}
-    // TODO once WFCORE-2022 is resolved
-    @Requires(SERVER_ADDRESS)
+    @Requires({ADDRESS_SETTING_ADDRESS,
+            CORE_QUEUE_ADDRESS,
+            DIVERT_ADDRESS,
+            JMS_QUEUE_ADDRESS,
+            JMS_TOPIC_ADDRESS,
+            SECURITY_SETTING_ADDRESS})
     @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
     public interface MyProxy extends ProxyPlace<DestinationPresenter> {}
 

@@ -18,9 +18,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface EndpointResources extends ClientBundle {
 
     @Source("endpoint.base64")

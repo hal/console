@@ -23,9 +23,6 @@ import java.util.List;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.resources.Ids;
 
-/**
- * @author Harald Pehl
- */
 public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
     public static final Segment WILDCARD = new Segment(null, "*");

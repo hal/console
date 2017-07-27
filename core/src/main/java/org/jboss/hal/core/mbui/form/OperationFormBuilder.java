@@ -24,9 +24,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Harald Pehl
- */
 public class OperationFormBuilder<T extends ModelNode> {
 
     private final String id;

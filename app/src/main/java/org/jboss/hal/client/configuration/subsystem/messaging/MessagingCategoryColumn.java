@@ -32,9 +32,6 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(Ids.MESSAGING_CATEGORY)
 public class MessagingCategoryColumn extends StaticItemColumn {
 

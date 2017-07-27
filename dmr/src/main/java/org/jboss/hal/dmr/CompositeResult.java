@@ -25,11 +25,7 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.spi.EsReturn;
 
-/**
- * Represents the result of a composite operation.
- *
- * @author Harald Pehl
- */
+/** Represents the result of a composite operation. */
 @JsType
 public class CompositeResult implements Iterable<ModelNode> {
 

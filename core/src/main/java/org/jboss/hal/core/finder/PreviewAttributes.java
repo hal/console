@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
@@ -46,11 +45,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Element to show the basic attributes of a resource inside the preview pane.
- *
- * @author Harald Pehl
- */
+/** Element to show the basic attributes of a resource inside the preview pane. */
 public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
     public static class PreviewAttribute {

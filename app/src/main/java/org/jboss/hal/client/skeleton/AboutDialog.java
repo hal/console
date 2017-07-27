@@ -35,9 +35,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.*;
 
-/**
- * @author Harald Pehl
- */
 class AboutDialog {
 
     private static final String SELECTOR_ID = "#" + Ids.ABOUT_MODAL;

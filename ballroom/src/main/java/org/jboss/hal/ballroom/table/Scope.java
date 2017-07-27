@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.ballroom.table;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public enum Scope {
     SELECTED("selected"), SELECTED_SINGLE("selectedSingle");

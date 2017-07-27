@@ -25,9 +25,6 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
 public class AccessControlTokens {
 
     private final Places places;

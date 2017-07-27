@@ -23,11 +23,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-/**
- * An outcome implementation which has a default implementation for the {@link Outcome#onFailure(Object)} method.
- *
- * @author Harald Pehl
- */
+/** An outcome implementation which has a default implementation for the {@link Outcome#onFailure(Object)} method. */
 public abstract class SuccessfulOutcome implements Outcome<FunctionContext> {
 
     private final EventBus eventBus;

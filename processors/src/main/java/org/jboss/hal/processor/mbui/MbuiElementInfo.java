@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.processor.mbui;
 
-/**
- * @author Harald Pehl
- */
 class MbuiElementInfo {
 
     private final String name;

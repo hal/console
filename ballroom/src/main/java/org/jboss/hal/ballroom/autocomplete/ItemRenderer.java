@@ -19,9 +19,6 @@ import com.google.gwt.regexp.shared.RegExp;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 
-/**
- * @author Harald Pehl
- */
 @JsFunction
 @FunctionalInterface
 interface ItemRenderer<T> {

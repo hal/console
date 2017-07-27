@@ -58,9 +58,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.Ids.JGROUPS_REMOTE_SITE;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresenter.MyView, JGroupsPresenter.MyProxy>
         implements SupportsExpertMode {
 

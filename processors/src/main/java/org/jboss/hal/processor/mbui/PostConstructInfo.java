@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.processor.mbui;
 
-/**
- * @author Harald Pehl
- */
 public class PostConstructInfo {
 
     private final String name;

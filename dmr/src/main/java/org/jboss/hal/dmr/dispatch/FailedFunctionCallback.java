@@ -19,14 +19,11 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.Operation;
 
-/**
- * @author Harald Pehl
- */
 public class FailedFunctionCallback<C extends FunctionContext> implements Dispatcher.FailedCallback {
 
     private final Control<C> control;
 
-    public FailedFunctionCallback(final Control<C> control) {this.control = control;}
+    FailedFunctionCallback(final Control<C> control) {this.control = control;}
 
     @Override
     public void onFailed(final Operation operation, final String failure) {

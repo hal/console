@@ -20,16 +20,12 @@ import java.util.Set;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import elemental2.dom.DomGlobal;
 import elemental2.webstorage.Storage;
 import elemental2.webstorage.WebStorageWindow;
 import org.jboss.hal.resources.Ids;
 
 import static elemental2.dom.DomGlobal.window;
 
-/**
- * @author Harald Pehl
- */
 class FinderColumnStorage {
 
     private final String pinnedId;

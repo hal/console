@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.core.finder;
 
-/**
- * Function which generates the preview content for an item.
- *
- * @author Harald Pehl
- */
+/** Function which generates the preview content for an item. */
 @FunctionalInterface
 public interface PreviewCallback<T> {
 

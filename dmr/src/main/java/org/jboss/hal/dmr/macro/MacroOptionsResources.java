@@ -18,9 +18,6 @@ package org.jboss.hal.dmr.macro;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
-/**
- * @author Harald Pehl
- */
 public interface MacroOptionsResources extends ClientBundle {
 
     @Source("macroOptions.base64")

@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -44,10 +43,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
-public class SimplePermissionMapperElement implements IsElement<HTMLElement>, Attachable, HasPresenter<MapperDecoderPresenter> {
+public class SimplePermissionMapperElement
+        implements IsElement<HTMLElement>, Attachable, HasPresenter<MapperDecoderPresenter> {
 
     // removes the " [ ] from the principals and roles columns values
     private static final String REGEX = "\"|\\[|\\]";
@@ -65,7 +62,7 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
     private int pmIndex = -1;
     private int permissionsIndex = -1;
 
-    SimplePermissionMapperElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
+    SimplePermissionMapperElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
 
         spmTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_TABLE, metadata)
                 .button(tableButtonFactory.add(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_ADD, Names.SIMPLE_PERMISSION_MAPPER,
@@ -77,7 +74,8 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
                 .build();
 
         spmForm = new ModelNodeForm.Builder<NamedNode>(Ids.ELYTRON_SIMPLE_PERMISSION_MAPPER_FORM, metadata)
-                .onSave((form, changedValues) -> presenter.saveSimplePermissionMapping(form.getModel().getName(), changedValues))
+                .onSave((form, changedValues) -> presenter.saveSimplePermissionMapping(form.getModel().getName(),
+                        changedValues))
                 .build();
 
         HTMLElement primarySection = section()
@@ -117,7 +115,8 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
                 .button(tableButtonFactory.add(permissionsMetadata.getTemplate(),
                         table -> presenter.addPermissions(selectedSimplePermissionMapper, pmIndex)))
                 .button(tableButtonFactory.remove(permissionsMetadata.getTemplate(),
-                        table -> presenter.removePermissions(selectedSimplePermissionMapper, pmIndex, permissionsIndex)))
+                        table -> presenter.removePermissions(selectedSimplePermissionMapper, pmIndex,
+                                permissionsIndex)))
                 .column(CLASS_NAME)
                 .build();
         permissionsForm = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSIONS_FORM, permissionsMetadata)
@@ -151,6 +150,7 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
         return value;
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private String extractPermissionsString(ModelNode row) {
         String value = "";
         // as the permissions is a list of objects, the concatenated string may be large
@@ -162,12 +162,15 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
                 ModelNode node = permissions.get(i);
                 String className = node.get(CLASS_NAME).asString();
                 str.append(CLASS_NAME).append(": ").append(className);
-                if (node.hasDefined(MODULE))
+                if (node.hasDefined(MODULE)) {
                     str.append(", module").append(": ").append(node.get(MODULE).asString());
-                if (node.hasDefined("target-name"))
+                }
+                if (node.hasDefined("target-name")) {
                     str.append(", target-name").append(": ").append(node.get("target-name").asString());
-                if (node.hasDefined(ACTION))
+                }
+                if (node.hasDefined(ACTION)) {
                     str.append(", action").append(": ").append(node.get(ACTION).asString());
+                }
                 if (i + 1 < permissions.size()) {
                     str.append(" | ");
                 }
@@ -255,7 +258,8 @@ public class SimplePermissionMapperElement implements IsElement<HTMLElement>, At
                         pmTable.update(pmNodes,
                                 node -> Ids.build(node.get(PRINCIPALS).asString(), node.get(ROLES).asString()));
                         pmNodes.stream()
-                                .filter(permission -> selectedPermissionMapping.equals(permission.get(HAL_INDEX).asString()))
+                                .filter(permission -> selectedPermissionMapping.equals(
+                                        permission.get(HAL_INDEX).asString()))
                                 .findFirst()
                                 .ifPresent(this::showPermissions);
                     });

@@ -38,15 +38,11 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * Wrapper for the preview content which consists of a header (mandatory) and one or more optional elements.
- *
- * @author Harald Pehl
- */
+/** Wrapper for the preview content which consists of a header (mandatory) and one or more optional elements. */
 public class PreviewContent<T> implements HasElements, Attachable {
 
     /** Common building block for a refresh link */
-    public static HTMLElement refreshLink(Callback callback) {
+    protected static HTMLElement refreshLink(Callback callback) {
         return a().css(clickable, pullRight, smallLink).on(click, event -> callback.execute())
                 .add(span().css(fontAwesome("refresh"), marginRight5))
                 .add(span().textContent(CONSTANTS.refresh()))
@@ -61,7 +57,6 @@ public class PreviewContent<T> implements HasElements, Attachable {
     private final List<Attachable> attachables;
     private final ElementsBuilder builder;
     private HTMLElement headerContainer;
-    private HTMLElement headerText;
     private HTMLElement lead;
 
 
@@ -154,7 +149,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         return headerContainer;
     }
 
-    public HTMLElement getLeadElement() {
+    protected HTMLElement getLeadElement() {
         return lead;
     }
 
@@ -167,7 +162,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
         } else {
             builder.textContent(header);
         }
-        return this.headerContainer = h(1).add(this.headerText = builder.asElement()).asElement();
+        return this.headerContainer = h(1).add(builder.asElement()).asElement();
     }
 
     private String shorten(String header) {

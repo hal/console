@@ -17,6 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -51,9 +53,6 @@ import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
-/**
- * @author Harald Pehl
- */
 @MbuiView
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
 public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
@@ -83,8 +82,8 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 mbuiContext.resources());
     }
 
+    @PostConstruct
     void init() {
-
         Metadata metadata = mbuiContext.metadataRegistry().lookup(BRIDGE_TEMPLATE);
         crForm = cr.form(MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
                 () -> bridgeForm.<String>getFormItem(PASSWORD).getValue(),

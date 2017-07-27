@@ -21,9 +21,6 @@ import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ResourceAddress;
 
-/**
- * @author Harald Pehl
- */
 public class ModelBrowserView extends HalViewImpl implements ModelBrowserPresenter.MyView {
 
     private final ModelBrowser modelBrowser;

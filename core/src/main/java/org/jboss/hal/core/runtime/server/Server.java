@@ -32,8 +32,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 /**
  * Combination of the two resources {@code server-config} and {@code server}. Make sure to check {@link #isStarted()}
  * before reading server related attributes.
- *
- * @author Harald Pehl
  */
 public class Server extends NamedNode {
 

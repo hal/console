@@ -20,9 +20,6 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 
-/**
- * @author Harald Pehl
- */
 @JsType(isNative = true)
 public class Api<T> {
 

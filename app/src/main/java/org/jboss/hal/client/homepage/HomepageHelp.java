@@ -17,9 +17,7 @@ package org.jboss.hal.client.homepage;
 
 import javax.annotation.PostConstruct;
 
-import elemental.dom.Element;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.template.DataElement;
 import org.jboss.gwt.elemento.template.Templated;
@@ -31,9 +29,6 @@ import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.hal.resources.Urls.*;
 
-/**
- * @author Harald Pehl
- */
 @Templated("Homepage.html#homepage-help")
 abstract class HomepageHelp implements IsElement {
 

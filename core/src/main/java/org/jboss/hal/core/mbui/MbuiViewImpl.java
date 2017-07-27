@@ -25,11 +25,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 
-/**
- * Base class for views generated using {@code @MbuiView}.
- *
- * @author Harald Pehl
- */
+/** Base class for views generated using {@code @MbuiView}. */
 public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl implements MbuiView<P> {
 
     protected final MbuiContext mbuiContext;

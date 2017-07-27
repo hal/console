@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -44,9 +43,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 import static org.jboss.hal.resources.Names.CUSTOM_POLICY;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPresenter<OtherSettingsPresenter> {
 
     private final Table<NamedNode> policyTable;
@@ -61,7 +57,7 @@ public class PolicyElement implements IsElement<HTMLElement>, Attachable, HasPre
     private int customPolicyIndex = -1;
     private int jaccPolicyIndex = -1;
 
-    PolicyElement(final Metadata metadata, final TableButtonFactory tableButtonFactory, final Resources resources) {
+    PolicyElement(final Metadata metadata, final TableButtonFactory tableButtonFactory) {
 
         policyTable = new ModelNodeTable.Builder<NamedNode>(Ids.ELYTRON_POLICY_TABLE, metadata)
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addPolicy()))

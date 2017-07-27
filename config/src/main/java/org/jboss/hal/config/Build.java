@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.config;
 
-/**
- * @author Harald Pehl
- */
 public enum Build {
     COMMUNITY, PRODUCT;
 

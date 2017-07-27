@@ -38,9 +38,6 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 
-/**
- * @author Harald Pehl
- */
 class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
     private final MetadataProcessor metadataProcessor;

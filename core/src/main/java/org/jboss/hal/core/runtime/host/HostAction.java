@@ -22,9 +22,6 @@ import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.server.Server;
 
-/**
- * @author Harald Pehl
- */
 @GenEvent
 public class HostAction {
 

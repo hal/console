@@ -49,9 +49,6 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 
-/**
- * @author Harald Pehl
- */
 public class ProgressElement implements IsElement, Progress {
 
     private static final String ARIA_VALUENOW = "aria-valuenow";

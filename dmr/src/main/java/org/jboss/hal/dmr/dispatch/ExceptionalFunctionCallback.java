@@ -19,14 +19,11 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.Operation;
 
-/**
- * @author Harald Pehl
- */
 public class ExceptionalFunctionCallback<C extends FunctionContext> implements Dispatcher.ExceptionCallback {
 
     private final Control<C> control;
 
-    public ExceptionalFunctionCallback(final Control<C> control) {this.control = control;}
+    ExceptionalFunctionCallback(final Control<C> control) {this.control = control;}
 
     @Override
     public void onException(final Operation operation, final Throwable exception) {

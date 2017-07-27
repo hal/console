@@ -23,9 +23,6 @@ import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessors;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class DmrModule extends AbstractGinModule {
 

@@ -37,8 +37,6 @@ import static org.jboss.hal.resources.CSS.stopCircleO;
 /**
  * UI element to show the management model of a deployment in the model browser. Shows an empty state element in case
  * the deployment is inactive.
- *
- * @author Harald Pehl
  */
 class DeploymentModelElement implements HasElements {
 

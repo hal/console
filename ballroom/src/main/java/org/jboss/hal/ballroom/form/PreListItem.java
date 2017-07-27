@@ -19,9 +19,6 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 
-/**
- * @author Harald Pehl
- */
 public class PreListItem extends ListItem {
 
     public PreListItem(String name) {

@@ -66,8 +66,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
  * In standalone mode the message contains an action link to reload / restart the server. Whereas in domain mode
  * there's no direct way to reload / restart the affected servers (there might be just too many of them). Instead the
  * message contains a link to the topology.
- *
- * @author Harald Pehl
  */
 public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStateEvent.ProcessStateHandler,
         HostResultHandler, ServerGroupResultHandler, ServerActionHandler, ServerResultHandler {

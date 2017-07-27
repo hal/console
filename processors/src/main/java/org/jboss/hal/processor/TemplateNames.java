@@ -15,9 +15,6 @@
  */
 package org.jboss.hal.processor;
 
-/**
- * @author Harald Pehl
- */
 public interface TemplateNames {
 
     String CLASS_NAME = "className";

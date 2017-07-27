@@ -22,9 +22,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Harald Pehl
- */
 public class BrowseContentView extends HalViewImpl implements BrowseContentPresenter.MyView {
 
     private final BrowseContentElement browseContent;

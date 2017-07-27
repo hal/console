@@ -21,9 +21,6 @@ import org.jboss.hal.dmr.ModelNode;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class DmrPayloadProcessor implements PayloadProcessor {
 
     @Override

@@ -32,9 +32,6 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Harald Pehl
- */
 @Column(Ids.MANAGEMENT)
 public class ManagementColumn extends StaticItemColumn {
 

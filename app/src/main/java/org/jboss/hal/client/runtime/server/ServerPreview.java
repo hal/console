@@ -43,9 +43,6 @@ import static org.jboss.hal.client.runtime.server.ServerColumn.serverConfigTempl
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
-/**
- * @author Harald Pehl
- */
 class ServerPreview extends RuntimePreview<Server> {
 
     private final ServerActions serverActions;

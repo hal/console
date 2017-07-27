@@ -20,9 +20,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-/**
- * @author Harald Pehl
- */
 interface AddressTemplates {
 
     String MAIL_ADDRESS = "/{selected.profile}/subsystem=mail";

@@ -37,9 +37,6 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
     protected final Table<NamedNode> table;

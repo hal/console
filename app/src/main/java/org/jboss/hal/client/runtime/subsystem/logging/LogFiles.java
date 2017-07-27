@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -36,11 +35,7 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Common code used by the finder column and the presenter.
- *
- * @author Harald Pehl
- */
+/** Common code used by the finder column and the presenter. */
 public class LogFiles {
 
     /**

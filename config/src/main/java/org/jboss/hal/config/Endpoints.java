@@ -26,11 +26,7 @@ import static org.jboss.hal.resources.Urls.LOGOUT;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 import static org.jboss.hal.resources.Urls.UPLOAD;
 
-/**
- * Provides access to the endpoints used in HAL.
- *
- * @author Harald Pehl
- */
+/** Provides access to the endpoints used in HAL. */
 @JsType
 public class Endpoints {
 

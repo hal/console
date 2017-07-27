@@ -36,11 +36,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
-/**
- * Simple data struct for common metadata. Used to keep the method signatures small and tidy.
- *
- * @author Harald Pehl
- */
+/** Simple data struct for common metadata. Used to keep the method signatures small and tidy. */
 @JsType
 public class Metadata {
 

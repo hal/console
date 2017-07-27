@@ -26,7 +26,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLHeadElement;
 import elemental2.dom.HTMLLinkElement;
@@ -54,11 +53,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
-/**
- * Registry to manage HAL extensions written in JavaScript.
- *
- * @author Harald Pehl
- */
+/** Registry to manage HAL extensions written in JavaScript. */
 @JsType(namespace = "hal.core")
 public class ExtensionRegistry implements ApplicationReadyHandler {
 

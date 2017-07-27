@@ -37,9 +37,6 @@ import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView {
 
 
@@ -252,7 +249,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
 
         Metadata policyMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.POLICY_TEMPLATE);
-        policyElement = new PolicyElement(policyMetadata, mbuiContext.tableButtonFactory(), mbuiContext.resources());
+        policyElement = new PolicyElement(policyMetadata, mbuiContext.tableButtonFactory());
         registerAttachable(policyElement);
         navigation.addSecondary(primaryIdOther, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.asElement());
 

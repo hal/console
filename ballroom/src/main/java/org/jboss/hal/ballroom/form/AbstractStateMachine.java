@@ -22,9 +22,6 @@ import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author Harald Pehl
- */
 public abstract class AbstractStateMachine implements StateMachine {
 
     private final EnumSet<State> supportedStates;

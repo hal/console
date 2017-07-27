@@ -41,9 +41,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SINGLE_SIGN_ON;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-/**
- * @author Claudio Miranda
- */
 public class ApplicationSecurityDomainView extends HalViewImpl implements ApplicationSecurityDomainPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;

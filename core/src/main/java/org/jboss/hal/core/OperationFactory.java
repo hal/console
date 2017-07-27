@@ -47,9 +47,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Harald Pehl
- */
 public class OperationFactory {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);

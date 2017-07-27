@@ -21,9 +21,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public class ResourceDescriptionTemplateProcessorTest {
 

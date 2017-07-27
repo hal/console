@@ -30,11 +30,7 @@ import org.slf4j.LoggerFactory;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
 
-/**
- * Executes a DMR operation until a specific condition is met or a timeout occurs.
- *
- * @author Harald Pehl
- */
+/** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
 
     public interface Callback {

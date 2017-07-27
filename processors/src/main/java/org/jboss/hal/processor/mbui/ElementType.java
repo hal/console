@@ -15,11 +15,7 @@
  */
 package org.jboss.hal.processor.mbui;
 
-/**
- * Holds the supported types which can be mapped using {@code @MbuiElement}.
- *
- * @author Harald Pehl
- */
+/** Holds the supported types which can be mapped using {@code @MbuiElement}. */
 public enum ElementType {
 
     // Name them after the related type for nicer error messages

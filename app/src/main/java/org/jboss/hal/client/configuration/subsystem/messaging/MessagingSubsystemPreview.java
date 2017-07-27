@@ -25,9 +25,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
 
-/**
- * @author Harald Pehl
- */
 class MessagingSubsystemPreview extends PreviewContent<StaticItem> {
 
     private final CrudOperations crud;

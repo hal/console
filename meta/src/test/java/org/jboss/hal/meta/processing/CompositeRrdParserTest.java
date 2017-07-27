@@ -18,9 +18,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class CompositeRrdParserTest {
 
