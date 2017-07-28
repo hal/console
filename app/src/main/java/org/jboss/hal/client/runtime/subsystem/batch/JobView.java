@@ -66,6 +66,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
                 .toolbarAttribute(new Attribute<>("duration", resources.constants().duration(), null,
                         comparing(ExecutionNode::getDuration)))
                 .toolbarAction(new Action(Ids.JOP_EXECUTION_REFRESH, resources.constants().refresh(), this::refresh))
+                .noItems(resources.constants().noExecutions(), resources.messages().noExecutions())
                 .build();
 
         registerAttachable(listView);

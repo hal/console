@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.CSSProperties.MarginTopUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -44,6 +46,7 @@ import org.jetbrains.annotations.NonNls;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.vh;
 
@@ -67,6 +70,10 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         private final ItemRenderer<T> itemRenderer;
         private boolean multiselect;
         private boolean stacked;
+        private String noItemsHeader;
+        private SafeHtml noItemsDescription;
+        private String noMatchingItemsHeader;
+        private SafeHtml noMatchingItemsDescription;
 
         public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
                 ItemRenderer<T> itemRenderer) {
@@ -79,6 +86,10 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             this.toolbarActions = new ArrayList<>();
             this.multiselect = false;
             this.stacked = true;
+            this.noItemsHeader = CONSTANTS.noItems();
+            this.noItemsDescription = null;
+            this.noMatchingItemsHeader = CONSTANTS.noMatchingItems();
+            this.noMatchingItemsDescription = null;
         }
 
         public Builder<T> stacked(boolean stacked) {
@@ -107,6 +118,26 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             return this;
         }
 
+        public Builder<T> noItems(String header) {
+            return noItems(header, null);
+        }
+
+        public Builder<T> noItems(String header, SafeHtml description) {
+            this.noItemsHeader = header;
+            this.noItemsDescription = description;
+            return this;
+        }
+
+        public Builder<T> noMatchingItems(String header) {
+            return noMatchingItems(header, null);
+        }
+
+        public Builder<T> noMatchingItems(String header, SafeHtml description) {
+            this.noMatchingItemsHeader = header;
+            this.noMatchingItemsDescription = description;
+            return this;
+        }
+
         public ModelNodeListView<T> build() {
             return new ModelNodeListView<>(this);
         }
@@ -120,6 +151,10 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     private final EmptyState emptyState;
     private final ElementsBuilder elements;
     private int surroundingHeight;
+    private String noItemsHeader;
+    private SafeHtml noItemsDescription;
+    private String noMatchingItemsHeader;
+    private SafeHtml noMatchingItemsDescription;
 
     private ModelNodeListView(Builder<T> builder) {
         // toolbar
@@ -149,6 +184,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         // empty state
         emptyState = new EmptyState.Builder("")
+                .description(SafeHtmlUtils.fromString(""))
                 .primaryAction(CONSTANTS.clearAllFilters(), () -> {
                     if (toolbar != null) {
                         toolbar.clearAllFilters();
@@ -156,7 +192,11 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
                     }
                 })
                 .build();
-        emptyState.asElement().style.marginTop = MarginTopUnionType.of("20px");
+        emptyState.asElement().style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
+        noItemsHeader = builder.noItemsHeader;
+        noItemsDescription = builder.noItemsDescription;
+        noMatchingItemsHeader = builder.noMatchingItemsHeader;
+        noMatchingItemsDescription = builder.noMatchingItemsDescription;
 
         // root elements
         elements = Elements.elements();
@@ -220,7 +260,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     @Override
     public void showItems(Iterable<T> items, int visible, int total) {
         if (total == 0) {
-            emptyState.setHeader(CONSTANTS.noItems());
+            emptyState.setHeader(noItemsHeader);
+            emptyState.setDescription(noItemsDescription);
             emptyState.showPrimaryAction(false);
             if (toolbar != null) {
                 Elements.setVisible(toolbar.asElement(), false);
@@ -229,7 +270,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             Elements.setVisible(emptyState.asElement(), true);
 
         } else if (visible == 0) {
-            emptyState.setHeader(CONSTANTS.noMatchingItems());
+            emptyState.setHeader(noMatchingItemsHeader);
+            emptyState.setDescription(noMatchingItemsDescription);
             emptyState.showPrimaryAction(true);
             if (toolbar != null) {
                 Elements.setVisible(toolbar.asElement(), true);

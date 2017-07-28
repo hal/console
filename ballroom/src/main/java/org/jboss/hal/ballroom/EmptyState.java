@@ -185,7 +185,9 @@ public class EmptyState implements IsElement<HTMLElement> {
 
     public void setDescription(SafeHtml description) {
         Elements.removeChildrenFrom(paragraphsDiv);
-        paragraphsDiv.appendChild(p().innerHtml(description).asElement());
+        if (description != null) {
+            paragraphsDiv.appendChild(p().innerHtml(description).asElement());
+        }
     }
 
     public void setPrimaryAction(String title, Callback callback) {
