@@ -52,7 +52,8 @@ import static org.jboss.hal.resources.CSS.vh;
 
 /**
  * A list view for model nodes with a toolbar and an empty state (if no items are available). Actions are filtered
- * according to their constraints.
+ * according to their constraints. The list view does not hold data. Instead use a {@link DataProvider} and pass it to
+ * builder.
  *
  * <p>Please note that the {@code ModelNodeListView} uses an own {@code <div class="row"/>} element. This is important
  * if you add the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}</p>
