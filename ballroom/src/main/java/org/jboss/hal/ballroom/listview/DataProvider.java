@@ -28,7 +28,8 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * Holds data for displays like {@link ListView}. Changes to the data provider are reflected in the connected displays.
+ * Holds data for displays like {@link ListView}. Changes to the data provider are reflected in the connected
+ * displays.
  */
 public class DataProvider<T> {
 
@@ -52,7 +53,7 @@ public class DataProvider<T> {
         displays.add(display);
     }
 
-    public void setItems(Iterable<T> items) {
+    public void update(Iterable<T> items) {
         allItems.clear();
         for (T item : items) {
             String id = identifier.apply(item);
@@ -114,7 +115,7 @@ public class DataProvider<T> {
         int visible = visibleItems.size();
         int total = allItems.size();
         for (Display<T> display : displays) {
-            display.setItems(visibleItems.values(), visible, total);
+            display.showItems(visibleItems.values(), visible, total);
         }
     }
 }

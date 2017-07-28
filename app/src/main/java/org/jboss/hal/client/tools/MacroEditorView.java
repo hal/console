@@ -28,11 +28,11 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.ballroom.listview.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
-import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
@@ -114,10 +114,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                                         () -> presenter.remove(macro))));
             }
         };
-        macroList = new ListView.Builder<>(Ids.MACRO_LIST, itemRenderer)
-                .multiselect(false)
-                .stacked(true)
-                .build();
+        macroList = new ListView<>(Ids.MACRO_LIST, itemRenderer, true, false);
         macroList.onSelect(this::loadMacro);
         macroList.asElement().classList.add(CSS.macroList);
         dataProvider.addDisplay(macroList);
@@ -195,7 +192,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     public void setMacros(Iterable<Macro> macros) {
         Elements.setVisible(empty.asElement(), false);
         Elements.setVisible(row, true);
-        dataProvider.setItems(macros);
+        dataProvider.update(macros);
     }
 
     @Override

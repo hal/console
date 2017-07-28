@@ -39,4 +39,8 @@ public class ItemAction<T> {
         this.handler = handler;
         this.constraints = constraints;
     }
+
+    public Constraints getConstraints() {
+        return constraints;
+    }
 }

@@ -123,7 +123,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         // ------------------------------------------------------ configure required and optional settings
 
         @JsIgnore
-        public Builder(@NonNls final String id, final Metadata metadata) {
+        public Builder(@NonNls String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();

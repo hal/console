@@ -136,6 +136,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
 
     @Override
     public List<ItemAction<ExecutionNode>> actions() {
+        // TODO add constraints
         List<ItemAction<ExecutionNode>> actions = new ArrayList<>();
         if (item.getBatchStatus() == STARTED) {
             actions.add(new ItemAction<>(Ids.JOP_EXECUTION_STOP, resources.constants().stop(),

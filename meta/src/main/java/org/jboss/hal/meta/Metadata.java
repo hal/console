@@ -85,12 +85,14 @@ public class Metadata {
      * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to
      * another metadata. Without adjustment the copied attributes are read-only in the destination metadata.
      */
+    @JsIgnore
     public void makeWritable(String attribute) {
         getSecurityContext().get(ATTRIBUTES).get(attribute).get(READ).set(true);
         getSecurityContext().get(ATTRIBUTES).get(attribute).get(WRITE).set(true);
     }
 
     /** Shortcut for {@link #copyAttribute(String, Metadata)} and {@link #makeWritable(String)} */
+    @JsIgnore
     public void copyComplexAttributeAttributes(Iterable<String> attributes, Metadata destination) {
         for (String attribute : attributes) {
             copyAttribute(attribute, destination);
@@ -168,6 +170,7 @@ public class Metadata {
         return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
     }
 
+    @JsIgnore
     public Metadata forOperation(String name) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + DESCRIPTION));

@@ -141,19 +141,20 @@ class ListItem<T> implements IsElement {
         }
 
         // actions: always add the actions div to have a nice column based layout
-        HTMLElement actions;
-        content.appendChild(actions = div().css(listPfActions, listHalActions)
+        HTMLElement actionsContainer;
+        content.appendChild(actionsContainer = div().css(listPfActions, listHalActions)
                 .asElement());
-        if (!display.actions().isEmpty()) {
+        List<ItemAction<T>> allowedActions = listView.allowedActions(display.actions());
+        if (!allowedActions.isEmpty()) {
             int index = 0;
             HTMLUListElement ul = null;
-            for (ItemAction<T> action : display.actions()) {
+            for (ItemAction<T> action : allowedActions) {
                 HTMLElement actionElement;
                 String actionId = Ids.build(this.id, action.id);
 
                 if (index == 0) {
                     // first action is a button
-                    actions.appendChild(actionElement = button()
+                    actionsContainer.appendChild(actionElement = button()
                             .id(actionId)
                             .css(btn, btnDefault)
                             .textContent(action.title)
@@ -164,7 +165,7 @@ class ListItem<T> implements IsElement {
                     // remaining actions are inside the kebab menu
                     if (index == 1) {
                         String id = Ids.build(display.getId(), "kebab", "menu");
-                        actions.appendChild(
+                        actionsContainer.appendChild(
                                 div().css(dropdown, pullRight, dropdownKebabPf)
                                         .add(button()
                                                 .id(id)

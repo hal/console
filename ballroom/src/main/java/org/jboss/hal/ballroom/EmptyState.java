@@ -198,6 +198,10 @@ public class EmptyState implements IsElement<HTMLElement> {
         Elements.setVisible(primaryActionDiv, true);
     }
 
+    public void showPrimaryAction(boolean visible) {
+        Elements.setVisible(primaryActionDiv, visible);
+    }
+
     @Override
     public HTMLElement asElement() {
         return root;

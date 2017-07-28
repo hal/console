@@ -36,7 +36,7 @@ import static org.jboss.hal.resources.CSS.listPfStacked;
 
 /**
  * PatternFly list view. Please note that the list view does not hold data. Instead use a {@link DataProvider} and
- * add it as a display to the data provider:
+ * add the list view as a display to the data provider:
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -48,61 +48,28 @@ import static org.jboss.hal.resources.CSS.listPfStacked;
  *
  * @see <a href="http://www.patternfly.org/pattern-library/content-views/list-view/">http://www.patternfly.org/pattern-library/content-views/list-view/</a>
  */
-public class ListView<T> implements Display<T>, IsElement {
+public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
-    public static class Builder<T> {
-
-        private final String id;
-        private final ItemRenderer<T> itemRenderer;
-        private final String[] contentWidths;
-        private boolean multiselect;
-        private boolean stacked;
-
-        public Builder(String id, ItemRenderer<T> itemRenderer) {
-            this.id = id;
-            this.itemRenderer = itemRenderer;
-            this.contentWidths = new String[]{"60%", "40%"};
-            this.multiselect = false;
-            this.stacked = true;
-        }
-
-        public Builder<T> multiselect(boolean multiselect) {
-            this.multiselect = multiselect;
-            return this;
-        }
-
-        public Builder<T> stacked(boolean stacked) {
-            this.stacked = stacked;
-            return this;
-        }
-
-        public Builder<T> contentWidths(String main, String additional) {
-            contentWidths[0] = main;
-            contentWidths[1] = additional;
-            return this;
-        }
-
-        public ListView<T> build() {
-            return new ListView<>(this);
-        }
-    }
-
-
-    private final HTMLElement root;
-    private final boolean multiselect;
-    private final String[] contentWidths;
     private final ItemRenderer<T> itemRenderer;
+    private final String[] contentWidths;
+    private final boolean multiselect;
+    private final HTMLElement root;
     private final Map<String, ListItem<T>> currentListItems;
     private SelectHandler<T> selectHandler;
 
-    private ListView(Builder<T> builder) {
-        this.multiselect = builder.multiselect;
-        this.contentWidths = builder.contentWidths;
-        this.itemRenderer = builder.itemRenderer;
+    public ListView(String id, ItemRenderer<T> itemRenderer, boolean stacked, boolean multiselect) {
+        this(id, itemRenderer, stacked, multiselect, new String[]{"60%", "40%"});
+    }
+
+    public ListView(String id, ItemRenderer<T> itemRenderer, boolean stacked, boolean multiselect,
+            String[] contentWidths) {
+        this.itemRenderer = itemRenderer;
+        this.multiselect = multiselect;
+        this.contentWidths = contentWidths;
         this.currentListItems = new HashMap<>();
 
-        HtmlContentBuilder<HTMLDivElement> div = div().id(builder.id).css(listPf);
-        if (builder.stacked) {
+        HtmlContentBuilder<HTMLDivElement> div = div().id(id).css(listPf);
+        if (stacked) {
             div.css(listPfStacked);
         }
         this.root = div.asElement();
@@ -114,7 +81,7 @@ public class ListView<T> implements Display<T>, IsElement {
     }
 
     @Override
-    public void setItems(Iterable<T> items, int visible, int total) {
+    public void showItems(Iterable<T> items, int visible, int total) {
         currentListItems.clear();
         Elements.removeChildrenFrom(root);
         for (T item : items) {
@@ -194,6 +161,10 @@ public class ListView<T> implements Display<T>, IsElement {
         if (listItem != null) {
             listItem.disableAction(actionId);
         }
+    }
+
+    protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
+        return actions;
     }
 
     private ListItem<T> listItem(T item) {

@@ -18,5 +18,5 @@ package org.jboss.hal.ballroom.listview;
 /** Displays items managed by a {@link org.jboss.hal.ballroom.listview.DataProvider} */
 public interface Display<T> {
 
-    void setItems(Iterable<T> items, int visible, int total);
+    void showItems(Iterable<T> items, int visible, int total);
 }

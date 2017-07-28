@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom.toolbar;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
@@ -32,6 +30,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.listview.DataProvider;
+import org.jboss.hal.ballroom.listview.Display;
+import org.jboss.hal.ballroom.listview.Filter;
+import org.jboss.hal.ballroom.listview.FilterValue;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
@@ -87,26 +89,34 @@ import static org.jboss.hal.resources.CSS.label;
  */
 public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachable {
 
-    public static class Column<T> {
+    public static class Attribute<T> {
 
         private final String name;
         private final String title;
         private final Filter<T> filter;
         private final Comparator<T> comparator;
 
-        public Column(String name) {
-            this(name, new LabelBuilder().label(name), null, null);
+        public Attribute(String name, Filter<T> filter) {
+            this(name, new LabelBuilder().label(name), filter, null);
         }
 
-        public Column(String name, Filter<T> filter, Comparator<T> comparator) {
+        public Attribute(String name, Comparator<T> comparator) {
+            this(name, new LabelBuilder().label(name), null, comparator);
+        }
+
+        public Attribute(String name, Filter<T> filter, Comparator<T> comparator) {
             this(name, new LabelBuilder().label(name), filter, comparator);
         }
 
-        public Column(String name, String title) {
-            this(name, title, null, null);
+        public Attribute(String name, String title, Filter<T> filter) {
+            this(name, title, filter, null);
         }
 
-        public Column(String name, String title, Filter<T> filter, Comparator<T> comparator) {
+        public Attribute(String name, String title, Comparator<T> comparator) {
+            this(name, title, null, comparator);
+        }
+
+        public Attribute(String name, String title, Filter<T> filter, Comparator<T> comparator) {
             this.name = name;
             this.title = title;
             this.filter = filter;
@@ -116,11 +126,11 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         @Override
         public boolean equals(Object o) {
             if (this == o) { return true; }
-            if (!(o instanceof Column)) { return false; }
+            if (!(o instanceof Toolbar.Attribute)) { return false; }
 
-            Column<?> column = (Column<?>) o;
+            Attribute<?> attribute = (Attribute<?>) o;
 
-            return name.equals(column.name);
+            return name.equals(attribute.name);
         }
 
         @Override
@@ -130,55 +140,35 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
         @Override
         public String toString() {
-            return "Toolbar.Column(" + name + ")";
+            return "Toolbar.Attribute(" + name + ")";
         }
     }
 
 
-    private static class Action {
+    public static class Action {
 
         private final String id;
         private final String text;
-        private final Callback callback;
         private final Constraints constraints;
+        private final Callback callback;
 
-        private Action(String id, String text, Callback callback, Constraints constraints) {
+        public Action(String id, String text, Callback callback) {
+            this(id, text, Constraints.empty(), callback);
+        }
+
+        public Action(String id, String text, Constraint constraint, Callback callback) {
+            this(id, text, Constraints.single(constraint), callback);
+        }
+
+        public Action(String id, String text, Constraints constraints, Callback callback) {
             this.id = id;
             this.text = text;
-            this.callback = callback;
             this.constraints = constraints;
-        }
-    }
-
-
-    public static class Builder<T> {
-
-        private final DataProvider<T> dataProvider;
-        private final List<Column<T>> columns;
-        private final List<Action> actions;
-
-        public Builder(DataProvider<T> dataProvider, Iterable<Column<T>> columns) {
-            this.dataProvider = dataProvider;
-            this.columns = Lists.newArrayList(columns);
-            this.actions = new ArrayList<>();
+            this.callback = callback;
         }
 
-        public Builder<T> action(String id, String text, Callback callback) {
-            return action(id, text, callback, Constraints.empty());
-        }
-
-        public Builder<T> action(String id, String text, Callback callback, Constraint constraint) {
-            this.actions.add(new Action(id, text, callback, Constraints.single(constraint)));
-            return this;
-        }
-
-        public Builder<T> action(String id, String text, Callback callback, Constraints constraints) {
-            this.actions.add(new Action(id, text, callback, constraints));
-            return this;
-        }
-
-        public Toolbar<T> build() {
-            return new Toolbar<>(this);
+        public Constraints getConstraints() {
+            return constraints;
         }
     }
 
@@ -192,11 +182,11 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Toolbar.class);
 
     private final DataProvider<T> dataProvider;
-    private final List<Column<T>> filterColumns;
-    private final Map<Column<T>, String> activeFilters;
-    private final List<Column<T>> sortColumns;
-    private Column<T> filterColumn;
-    private Column<T> sortColumn;
+    private final List<Attribute<T>> filterAttributes;
+    private final Map<Attribute<T>, String> activeFilters;
+    private final List<Attribute<T>> sortAttributes;
+    private Attribute<T> filterAttribute;
+    private Attribute<T> sortAttribute;
     private boolean asc;
 
     private final HTMLElement root;
@@ -215,24 +205,26 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     private HTMLElement filters;
     private HTMLElement activeFiltersUl;
 
-    private Toolbar(Builder<T> builder) {
-        this.dataProvider = builder.dataProvider;
+    public Toolbar(@NonNls String id, DataProvider<T> dataProvider, List<Attribute<T>> attributes,
+            List<Action> actions) {
+        this.dataProvider = dataProvider;
 
         HTMLElement control;
         HTMLElement results;
-        this.root = div().css(row, toolbarPf)
+        this.root = div().css(row, toolbarPf).id(id)
                 .add(column()
-                        .add(control = form().css(toolbarPfActions)
-                                .asElement())
-                        .add(results = div().css(row, toolbarPfResults)
-                                .asElement()))
+                        .add(control = form().css(toolbarPfActions).asElement())
+                        .add(results = div().css(row, toolbarPfResults).asElement()))
                 .asElement();
 
         // filter
-        filterColumns = builder.columns.stream()
-                .filter(c -> c.filter != null)
+        filterAttributes = attributes.stream()
+                .filter(attribute -> {
+                    Filter<T> filter = attribute.filter;
+                    return filter != null;
+                })
                 .collect(toList());
-        if (!filterColumns.isEmpty()) {
+        if (!filterAttributes.isEmpty()) {
             HTMLElement inputGroup;
             control.appendChild(div().css(formGroup, toolbarPfFilter)
                     .add(filterLabel = label()
@@ -243,7 +235,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .asElement())
                     .asElement());
 
-            if (filterColumns.size() > 1) {
+            if (filterAttributes.size() > 1) {
                 inputGroup.appendChild(div().css(inputGroupBtn)
                         .add(button().css(btn, btnDefault, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -253,35 +245,29 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .add(span().css(caret)))
                         .add(filterUl = ul().css(dropdownMenu).asElement())
                         .asElement());
-                for (Column<T> column : filterColumns) {
+                for (Attribute<T> attribute : filterAttributes) {
                     filterUl.appendChild(li()
-                            .data(DATA_FILTER, column.name)
+                            .data(DATA_FILTER, attribute.name)
                             .add(a().css(clickable)
-                                    .on(click, e -> setFilterColumn(column))
-                                    .textContent(column.title)).asElement());
+                                    .on(click, e -> setFilterAttribute(attribute))
+                                    .textContent(attribute.title)).asElement());
                 }
             }
             inputGroup.appendChild(filterInput = input(text)
                     .css(formControl)
                     .id(Ids.TOOLBAR_FILTER)
                     .asElement());
-            keyUpSubscription = fromEvent(filterInput, keyup)
-                    .throttleLast(750, MILLISECONDS)
-                    .subscribe(e -> {
-                        addOrModifyActiveFilter(filterColumn);
-                        apply();
-                    });
         }
 
         // sort
-        sortColumns = builder.columns.stream()
-                .filter(c -> c.comparator != null)
+        sortAttributes = attributes.stream()
+                .filter(attribute -> attribute.comparator != null)
                 .collect(toList());
-        if (!sortColumns.isEmpty()) {
+        if (!sortAttributes.isEmpty()) {
             HTMLElement formGroup;
             control.appendChild(formGroup = div().css(CSS.formGroup)
                     .asElement());
-            if (sortColumns.size() > 1) {
+            if (sortAttributes.size() > 1) {
                 formGroup.appendChild(div().css(dropdown, btnGroup)
                         .add(button().css(btn, btnDefault, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -291,15 +277,15 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .add(span().css(caret)))
                         .add(sortUl = ul().css(dropdownMenu).asElement())
                         .asElement());
-                for (Column<T> column : sortColumns) {
+                for (Attribute<T> attribute : sortAttributes) {
                     sortUl.appendChild(li()
-                            .data(DATA_SORT, column.name)
+                            .data(DATA_SORT, attribute.name)
                             .add(a().css(clickable)
                                     .on(click, e -> {
-                                        setSortColumn(column);
+                                        setSortAttribute(attribute);
                                         apply();
                                     })
-                                    .textContent(column.title)).asElement());
+                                    .textContent(attribute.title)).asElement());
                 }
             } else {
                 formGroup.appendChild(sortStaticText = span().css(formControlStatic).asElement());
@@ -316,19 +302,19 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
 
         // actions
-        if (!builder.actions.isEmpty()) {
-            HTMLElement actions;
+        if (!actions.isEmpty()) {
+            HTMLElement actionsContainer;
             control.appendChild(div().css(toolbarPfActionRight)
-                    .add(actions = div().css(formGroup)
+                    .add(actionsContainer = div().css(formGroup)
                             .asElement())
                     .asElement());
             int i = 0;
             HTMLElement ul = null;
-            for (Iterator<Action> iterator = builder.actions.iterator(); iterator.hasNext(); i++) {
+            for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); i++) {
                 Action action = iterator.next();
                 String actionId = Ids.build(Ids.TOOLBAR, "action", action.id);
                 if (i <= 2) {
-                    actions.appendChild(button()
+                    actionsContainer.appendChild(button()
                             .css(btn, btnDefault)
                             .id(actionId)
                             .textContent(action.text)
@@ -336,7 +322,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .apply(b -> b.type = UIConstants.BUTTON)
                             .asElement());
                     if (i == 2) {
-                        actions.appendChild(div().css(dropdown, btnGroup, dropdownKebabPf)
+                        actionsContainer.appendChild(div().css(dropdown, btnGroup, dropdownKebabPf)
                                 .add(button().css(btn, btnLink, dropdownToggle)
                                         .id(Ids.TOOLBAR_ACTION_DROPDOWN)
                                         .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -384,7 +370,12 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
     @Override
     public void attach() {
-        // noop
+        keyUpSubscription = fromEvent(filterInput, keyup)
+                .throttleLast(750, MILLISECONDS)
+                .subscribe(e -> {
+                    addOrModifyActiveFilter(filterAttribute);
+                    apply();
+                });
     }
 
     @Override
@@ -400,18 +391,18 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     public void reset() {
-        if (filterColumns.isEmpty()) {
-            filterColumn = null;
+        if (filterAttributes.isEmpty()) {
+            filterAttribute = null;
         } else {
-            filterColumn = filterColumns.get(0);
+            filterAttribute = filterAttributes.get(0);
         }
-        if (sortColumns.isEmpty()) {
-            sortColumn = null;
+        if (sortAttributes.isEmpty()) {
+            sortAttribute = null;
         } else {
-            sortColumn = sortColumns.get(0);
+            sortAttribute = sortAttributes.get(0);
         }
-        setFilterColumn(filterColumn);
-        setSortColumn(sortColumn);
+        setFilterAttribute(filterAttribute);
+        setSortAttribute(sortAttribute);
         setAsc(true);
         clearAllFilters();
         clearResults();
@@ -419,7 +410,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     @Override
-    public void setItems(Iterable<T> items, int visible, int total) {
+    public void showItems(Iterable<T> items, int visible, int total) {
         if (visible != total) {
             numberOfResults.textContent = MESSAGES.resultsFiltered(visible, total);
         } else {
@@ -427,40 +418,40 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
     }
 
-    private void setFilterColumn(Column<T> column) {
-        filterColumn = column;
+    private void setFilterAttribute(Attribute<T> attribute) {
+        filterAttribute = attribute;
         if (filterUl != null) {
-            selectDropdownItem(filterUl, DATA_FILTER, column);
+            selectDropdownItem(filterUl, DATA_FILTER, attribute);
         }
-        filterLabel.textContent = column.title;
+        filterLabel.textContent = attribute.title;
         if (filterButtonText != null) {
-            filterButtonText.textContent = column.title;
+            filterButtonText.textContent = attribute.title;
         }
-        filterInput.value = activeFilters.getOrDefault(column, "");
-        filterInput.placeholder = MESSAGES.filterBy(column.title);
+        filterInput.value = activeFilters.getOrDefault(attribute, "");
+        filterInput.placeholder = MESSAGES.filterBy(attribute.title);
     }
 
-    private void addOrModifyActiveFilter(Column<T> column) {
+    private void addOrModifyActiveFilter(Attribute<T> attribute) {
         if (Strings.isNullOrEmpty(filterInput.value)) {
-            activeFilters.remove(column);
-            clearFilter(column);
+            activeFilters.remove(attribute);
+            clearFilter(attribute);
 
         } else {
-            activeFilters.put(column, filterInput.value);
+            activeFilters.put(attribute, filterInput.value);
             Element activeFilterValue = activeFiltersUl.querySelector(
-                    "span[data-active-filter-value=" + column.name + "]"); //NON-NLS
+                    "span[data-active-filter-value=" + attribute.name + "]"); //NON-NLS
             if (activeFilterValue != null) {
                 activeFilterValue.textContent = filterInput.value;
             } else {
                 activeFiltersUl.appendChild(li()
-                        .data(DATA_ACTIVE_FILTER, column.name)
+                        .data(DATA_ACTIVE_FILTER, attribute.name)
                         .add(span().css(label, labelInfo)
-                                .add(span().textContent(column.title + ": "))
-                                .add(span().data(DATA_ACTIVE_FILTER_VALUE, column.name)
+                                .add(span().textContent(attribute.title + ": "))
+                                .add(span().data(DATA_ACTIVE_FILTER_VALUE, attribute.name)
                                         .textContent(filterInput.value))
                                 .add(a().css(clickable)
                                         .on(click, e -> {
-                                            clearFilter(column);
+                                            clearFilter(attribute);
                                             apply();
                                         })
                                         .add(span().css(pfIcon("close")))))
@@ -470,30 +461,30 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         Elements.setVisible(filters, !activeFilters.isEmpty());
     }
 
-    private void clearFilter(Column<T> column) {
-        activeFilters.remove(column);
-        Element activeFilter = activeFiltersUl.querySelector("li[data-active-filter=" + column.name + "]"); //NON-NLS
+    private void clearFilter(Attribute<T> attribute) {
+        activeFilters.remove(attribute);
+        Element activeFilter = activeFiltersUl.querySelector("li[data-active-filter=" + attribute.name + "]"); //NON-NLS
         Elements.failSafeRemove(activeFiltersUl, activeFilter);
         Elements.setVisible(filters, !activeFilters.isEmpty());
     }
 
-    private void clearAllFilters() {
+    public void clearAllFilters() {
         activeFilters.clear();
         filterInput.value = "";
         Elements.setVisible(filters, false);
         Elements.removeChildrenFrom(activeFiltersUl);
     }
 
-    private void setSortColumn(Column<T> column) {
-        sortColumn = column;
+    private void setSortAttribute(Attribute<T> attribute) {
+        sortAttribute = attribute;
         if (sortUl != null) {
-            selectDropdownItem(sortUl, DATA_SORT, column);
+            selectDropdownItem(sortUl, DATA_SORT, attribute);
         }
         if (sortButtonText != null) {
-            sortButtonText.textContent = column.title;
+            sortButtonText.textContent = attribute.title;
         }
         if (sortStaticText != null) {
-            sortStaticText.textContent = column.title;
+            sortStaticText.textContent = attribute.title;
         }
     }
 
@@ -506,11 +497,11 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
     }
 
-    private void selectDropdownItem(HTMLElement ul, String data, Column<T> column) {
+    private void selectDropdownItem(HTMLElement ul, String data, Attribute<T> attribute) {
         for (HTMLElement li : Elements.children(ul)) {
             li.classList.remove(selected);
         }
-        Element li = ul.querySelector("li[data-" + data + "=" + column.name + "]"); //NON-NLS
+        Element li = ul.querySelector("li[data-" + data + "=" + attribute.name + "]"); //NON-NLS
         if (li != null) {
             li.classList.add(selected);
         }
@@ -521,11 +512,12 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         Elements.setVisible(filters, false);
     }
 
-    private void apply() {
-        logger.debug("Apply filters {} and sort by {} {}", activeFilters, sortColumn, (asc ? "asc" : "desc"));
+    /** Applies the filters and sort order to the data provider */
+    public void apply() {
+        logger.debug("Apply filters {} and sort by {} {}", activeFilters, sortAttribute, (asc ? "asc" : "desc"));
         List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
                 .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
                 .collect(toList());
-        dataProvider.apply(filterValues,sortColumn.comparator, asc);
+        dataProvider.apply(filterValues, sortAttribute.comparator, asc);
     }
 }
