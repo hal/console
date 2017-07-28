@@ -35,10 +35,12 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-config</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -49,10 +51,12 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-resources</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.flow</groupId>

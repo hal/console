@@ -35,6 +35,7 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>

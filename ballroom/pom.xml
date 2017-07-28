@@ -35,6 +35,7 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -45,38 +46,47 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-json</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-meta</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-resources</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>com.intendia.gwt.rxgwt</groupId>
             <artifactId>rxgwt</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.flow</groupId>
             <artifactId>flow</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>
             <artifactId>elemento-core</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-gwt</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-elemental</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-processors</artifactId>
+            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
