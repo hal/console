@@ -66,7 +66,6 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-processors</artifactId>
-            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
