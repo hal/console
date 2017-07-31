@@ -78,6 +78,7 @@ public interface NameTokens {
     String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
+    String PATCHING_HOSTS = "patching-hosts";
     String PATH = "path";
     String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;

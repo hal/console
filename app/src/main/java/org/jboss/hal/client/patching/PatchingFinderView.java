@@ -15,21 +15,9 @@
  */
 package org.jboss.hal.client.patching;
 
-import org.jboss.hal.core.mvp.HalViewImpl;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.ballroom.LayoutBuilder.row;
-
-public class PatchingView extends HalViewImpl implements PatchingPresenter.MyView {
-
-    public PatchingView() {
-        initElement(row()
-                .add(column()
-                        .add(h(1).textContent(Names.PATCHING))
-                        .add(p().textContent(Names.NYI)))
-                .asElement());
-    }
-}
+/**
+ * @author Claudio Miranda <claudio@redhat.com>
+ */
+public class PatchingFinderView extends FinderViewImpl implements PatchingFinderPresenter.MyView {}

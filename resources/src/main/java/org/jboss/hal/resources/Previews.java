@@ -268,6 +268,11 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ runtime
 
+    @Source("previews/patching/patching.html")
+    ExternalTextResource patching();
+
+    // ------------------------------------------------------ runtime
+
     @Source("previews/runtime/datasources.html")
     ExternalTextResource runtimeDatasources();
 
