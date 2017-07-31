@@ -74,15 +74,15 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         }
 
         public PreviewAttribute(final String label, final Iterable<HTMLElement> elements) {
-            this(label, null, null, null, elements, null);
+            this(label, null, null, null, null, elements);
         }
 
         public PreviewAttribute(final String label, final HTMLElement element) {
-            this(label, null, null, null, null, element);
+            this(label, null, null, null, element, null);
         }
 
         private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href,
-                final Iterable<HTMLElement> elements, final HTMLElement element) {
+                final HTMLElement element, final Iterable<HTMLElement> elements) {
             this.label = label;
             this.value = value;
             this.htmlValue = htmlValue;

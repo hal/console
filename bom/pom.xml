@@ -67,25 +67,21 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-ballroom</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-config</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-core</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-dmr</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
@@ -102,13 +98,11 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-json</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-meta</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
@@ -124,7 +118,6 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-resources</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
@@ -136,25 +129,21 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-spi</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-theme-eap</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-theme-hal</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-theme-wildfly</artifactId>
                 <version>${project.version}</version>
-                <type>gwt-lib</type>
             </dependency>
         </dependencies>
     </dependencyManagement>

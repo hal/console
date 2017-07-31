@@ -141,6 +141,7 @@ public interface Names {
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String INVALIDATION_CACHE = "Invalidation Cache";
+    String IO = "IO";
 
     String JACC_POLICY = "JACC Policy";
     String JDBC = "JDBC";
@@ -299,6 +300,7 @@ public interface Names {
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
+    String WORKER = "Worker";
     String WRITE_BEHAVIOUR = "Write Behaviour";
     String WRITE_BEHIND = "Write Behind";
     String WRITE_THROUGH = "Write Through";

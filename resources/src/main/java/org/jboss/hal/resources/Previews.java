@@ -298,6 +298,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();
 
+    @Source("previews/runtime/worker.html")
+    ExternalTextResource runtimeWorker();
+
 
     // ------------------------------------------------------ helper methods
 

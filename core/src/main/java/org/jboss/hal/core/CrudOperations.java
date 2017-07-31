@@ -541,8 +541,7 @@ public class CrudOperations {
      *                 List<Property>}
      */
     @JsIgnore
-    public void readChildren(final ResourceAddress address, final String resource,
-            final ReadChildrenCallback callback) {
+    public void readChildren(ResourceAddress address, String resource, ReadChildrenCallback callback) {
         readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                         .param(CHILD_TYPE, resource)
                         .build(),

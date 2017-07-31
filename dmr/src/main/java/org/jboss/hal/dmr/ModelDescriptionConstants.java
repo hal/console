@@ -128,6 +128,9 @@ public interface ModelDescriptionConstants {
     String CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY = "configurable-http-server-mechanism-factory";
     String CONFIGURABLE_SASL_SERVER_FACTORY = "configurable-sasl-server-factory";
     String CONFIGURATION = "configuration";
+    String CONNECTION_COUNT = "connection-count";
+    String CONNECTION_LIMIT_HIGH_WATER_MARK = "connection-limit-high-water-mark";
+    String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
     String CONNECTION_DEFINITIONS = "connection-definitions";
     String CONNECTION_FACTORY = "connection-factory";
     String CONNECTION_URL = "connection-url";
@@ -143,6 +146,7 @@ public interface ModelDescriptionConstants {
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
+    String CORE_POOL_SIZE = "core-pool-size";
     String CORE_SERVICE = "core-service";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CREATE_TIME = "create-time";
@@ -280,6 +284,8 @@ public interface ModelDescriptionConstants {
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
     String IO = "io";
+    String IO_THREAD_COUNT = "io-thread-count";
+    String IO_THREADS = "io-threads";
     String JACC_POLICY = "jacc-policy";
     String JAX_RS = "jaxrs";
     String JCA = "jca";
@@ -582,6 +588,7 @@ public interface ModelDescriptionConstants {
     String TARGET = "target";
     String TARGET_CREDENTIAL_REFERENCE = "target-credential-reference";
     String TARGET_PASSWORD = "target-password";
+    String TASK_MAX_THREADS = "task-max-threads";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";
@@ -629,7 +636,6 @@ public interface ModelDescriptionConstants {
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
-    String XA_DATASOURCE_PROPERTIES = "xa-datasource-properties";
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";
 }
 

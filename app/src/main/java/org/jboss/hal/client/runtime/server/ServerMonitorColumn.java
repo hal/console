@@ -28,9 +28,9 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
@@ -72,8 +72,12 @@ public class ServerMonitorColumn extends StaticItemColumn {
 
                     new StaticItem.Builder(Names.DATASOURCES)
                             .nextColumn(Ids.DATA_SOURCE_RUNTIME)
-                            .onPreview(new PreviewContent(Names.DATASOURCES,
-                                    resources.previews().runtimeDatasources()))
+                            .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
+                            .build(),
+
+                    new StaticItem.Builder(Names.IO)
+                            .nextColumn(Ids.WORKER)
+                            .onPreview(new PreviewContent(Names.WORKER, resources.previews().runtimeWorker()))
                             .build(),
 
                     new StaticItem.Builder(Names.JNDI)

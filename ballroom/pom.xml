@@ -35,7 +35,6 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
-            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -46,17 +45,14 @@
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-json</artifactId>
-            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-meta</artifactId>
-            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-resources</artifactId>
-            <type>gwt-lib</type>
         </dependency>
         <dependency>
             <groupId>com.intendia.gwt.rxgwt</groupId>
