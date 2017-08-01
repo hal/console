@@ -106,6 +106,7 @@ public interface ModelDescriptionConstants {
     String BUFFER_POOL = "buffer-pool";
     String BUNDLED = "bundled";
     String CACHE_CONTAINER = "cache-container";
+    String CACHE_SIZE = "cache-size";
     String CACHE_TYPE = "cache-type";
     String CACHING_REALM = "caching-realm";
     String CAPABILITY_REFERENCE = "capability-reference";
@@ -391,6 +392,7 @@ public interface ModelDescriptionConstants {
     String OUTCOME = "outcome";
     String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
     String PARTITION_HANDLING = "partition-handling";
+    String PASSIVATED_COUNT = "passivated-count";
     String PASSWORD = "password";
     String PATH = "path";
     String PATTERN = "pattern";
@@ -404,6 +406,8 @@ public interface ModelDescriptionConstants {
     String POJO = "pojo";
     String POLICY = "policy";
     String POLICY_MODULE = "policy-module";
+    String POOL_CURRENT_SIZE = "pool-current-size";
+    String POOL_MAX_SIZE = "pool-max-size";
     String POOL_NAME = "pool-name";
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
@@ -604,6 +608,7 @@ public interface ModelDescriptionConstants {
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TO_PROFILE = "to-profile";
+    String TOTAL_SIZE = "total-size";
     String TOKEN_REALM = "token-realm";
     String TRANSACTION = "transaction";
     String TRANSACTION_SUPPORT = "transaction-support";

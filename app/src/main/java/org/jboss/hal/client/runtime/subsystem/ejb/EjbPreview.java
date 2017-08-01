@@ -16,16 +16,16 @@
 package org.jboss.hal.client.runtime.subsystem.ejb;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.ProgressElement;
+import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -64,7 +64,10 @@ class EjbPreview extends PreviewContent<EjbNode> {
     private final ResourceAddress address;
     private final LabelBuilder labelBuilder;
     private final PreviewAttributes<EjbNode> attributes;
-    private final Map<EjbNode.Type, HTMLElement> typeElements;
+    private final HTMLElement statefulSection;
+    private final PreviewAttributes<EjbNode> statefulAttributes;
+    private final HTMLElement poolSection;
+    private final Utilization poolUtilization;
     private PreviewAttributes<ModelNode> timer;
     private HTMLElement nextTimeoutElement;
     private ProgressElement remainingElement;
@@ -76,7 +79,6 @@ class EjbPreview extends PreviewContent<EjbNode> {
         this.dispatcher = dispatcher;
         this.address = ejb.getAddress();
         this.labelBuilder = new LabelBuilder();
-        this.typeElements = new HashMap<>();
         this.maxRemaining = 0;
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
@@ -92,11 +94,13 @@ class EjbPreview extends PreviewContent<EjbNode> {
         attributes = new PreviewAttributes<>(ejb, asList(COMPONENT_CLASS_NAME, INVOCATIONS, EXECUTION_TIME));
         previewBuilder().addAll(attributes);
 
-        HTMLElement poolElements = section().add(h(2, Names.POOL)).asElement();
-        HTMLElement statefulElement = section().addAll(new PreviewAttributes<EjbNode>(ejb, STATELESS.type)).asElement();
-        typeElements.put(MDB, poolElements);
-        typeElements.put(STATELESS, poolElements);
-        typeElements.put(STATEFUL, statefulElement);
+        poolSection = section().add(h(2, Names.POOL))
+                .add(poolUtilization = new Utilization(resources.constants().size(), resources.constants().instances(),
+                        false, true))
+                .asElement();
+        statefulSection = section().addAll(statefulAttributes = new PreviewAttributes<>(ejb, STATEFUL.type,
+                asList(CACHE_SIZE, PASSIVATED_COUNT, TOTAL_SIZE))).asElement();
+        previewBuilder().addAll(poolSection, statefulSection);
 
         ModelNode firstTimer = firstTimer(ejb);
         if (firstTimer.isDefined()) {
@@ -107,13 +111,15 @@ class EjbPreview extends PreviewContent<EjbNode> {
                         return new PreviewAttribute(labelBuilder.label(NEXT_TIMEOUT), nextTimeoutElement);
                     })
                     .append(t -> {
-                        maxRemaining = round(t.get(TIME_REMAINING).asInt() / 1000);
+                        maxRemaining = (int) round(t.get(TIME_REMAINING).asLong() / 1000.0);
                         remainingElement = new ProgressElement(NORMAL, INLINE, true);
                         remainingElement.reset(maxRemaining);
+                        remainingElement.asElement().style.marginBottom = MarginBottomUnionType.of(0);
                         return new PreviewAttribute(labelBuilder.label(TIME_REMAINING), remainingElement.asElement());
                     });
             previewBuilder().addAll(timer);
         }
+        updateInternal(ejb);
     }
 
     @Override
@@ -123,7 +129,6 @@ class EjbPreview extends PreviewContent<EjbNode> {
 
     @Override
     public void update(EjbNode item) {
-        clearInterval(intervalHandle);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -132,10 +137,24 @@ class EjbPreview extends PreviewContent<EjbNode> {
     }
 
     private void updateInternal(EjbNode ejb) {
+        Elements.setVisible(poolSection, ejb.type == MDB || ejb.type == STATELESS);
+        Elements.setVisible(statefulSection, ejb.type == STATEFUL);
         attributes.refresh(ejb);
+        switch (ejb.type) {
+            case MDB:
+            case STATELESS:
+                poolUtilization.update(ejb.get(POOL_CURRENT_SIZE).asLong(), ejb.get(POOL_MAX_SIZE).asLong());
+                break;
+            case STATEFUL:
+                statefulAttributes.refresh(ejb);
+                break;
+            default:
+                break;
+        }
         ModelNode firstTimer = firstTimer(ejb);
         if (firstTimer.isDefined()) {
             timer.refresh(firstTimer);
+            clearInterval(intervalHandle);
             intervalHandle = setInterval(o -> updateDuration(), 1000);
         }
     }
@@ -151,8 +170,8 @@ class EjbPreview extends PreviewContent<EjbNode> {
                 nextTimeoutElement.textContent = Format.mediumDateTime(new Date(firstTimer.get(NEXT_TIMEOUT).asLong()));
 
                 long timeRemaining = firstTimer.get(TIME_REMAINING).asLong();
-                int timeRemainingInSeconds = round(timeRemaining / 1000);
-                String humanReadableDuration = Format.humanReadableDuration(timeRemaining);
+                int timeRemainingInSeconds = (int) round((timeRemaining / 1000.0));
+                String humanReadableDuration = Format.humanReadableDuration(timeRemaining, false);
                 if (maxRemaining < timeRemainingInSeconds) {
                     maxRemaining = timeRemainingInSeconds;
                 }

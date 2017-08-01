@@ -51,20 +51,24 @@ public final class Format {
     }
 
     public static String humanReadableDuration(long duration) {
+        return humanReadableDuration(duration, true);
+    }
+
+    public static String humanReadableDuration(long duration, boolean milliseconds) {
         if (duration < 1000) {
-            return duration + " ms"; //NON-NLS
+            return milliseconds ? duration + " ms" : "1 " + CONSTANTS.second(); //NON-NLS
         }
 
-        duration = duration / 1000;
+        duration = Math.round(duration / 1000.0);
 
         int sec = (int) duration % 60;
-        duration /= 60;
+        duration = Math.round(duration / 60.0);
 
         int min = (int) duration % 60;
-        duration /= 60;
+        duration = Math.round(duration / 60.0);
 
         int hour = (int) duration % 24;
-        duration /= 24;
+        duration = Math.round(duration / 24.0);
 
         int day = (int) duration;
 

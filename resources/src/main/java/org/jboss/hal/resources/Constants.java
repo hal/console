@@ -251,6 +251,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllDescription();
     String includesAllHeader();
     String input();
+    String instances();
     String invalidExpression();
     String invalidJson();
     String invalidMetadata();
