@@ -88,6 +88,7 @@ public interface Names {
     String DOMAIN_CONTROLLER = "Domain Controller";
 
     String EE = "EE";
+    String EJB3 = "EJB";
     String ELYTRON = "Elytron";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
@@ -95,7 +96,6 @@ public interface Names {
     String EVICTION = "Eviction";
     String EXECUTION_ID = "Execution ID";
     String EXECUTIONS = "Executions";
-    String EXIT_STATUS = "Exit Status";
     String EXPIRATION = "Expiration";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
@@ -152,7 +152,6 @@ public interface Names {
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
     String JOB = "Job";
-    String JOBS = "Jobs";
     String JOURNAL_DIRECTORY = "Journal Directory";
     String JPA = "JPA";
     String JMS_QUEUE = "JMS Queue";
@@ -187,6 +186,7 @@ public interface Names {
     String MECHANISM_CONFIGURATIONS = "Mechanism Configurations";
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
     String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
+    String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MIME_MAPPING = "Mime Mapping";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
@@ -213,6 +213,7 @@ public interface Names {
     String PERMISSION_MAPPINGS = "Permission Mappings";
     String PERSISTENCE = "Persistence";
     String POLICY = "Policy";
+    String POOL = "Pool";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
@@ -262,6 +263,7 @@ public interface Names {
     String SHARED_STORE_SLAVE = "Shared Store Slave";
     String SIMPLE_PERMISSION_MAPPER = "Simple Permission Mapper";
     String SINGLE_SIGN_ON = "Single Sign On";
+    String SINGLETON_BEAN = "Singleton Bean";
     String SHORT_RUNNING = "short running";
     String SLAVE = "Slave";
     String SOCKET_BINDING = "Socket Binding";
@@ -275,6 +277,8 @@ public interface Names {
     String STORE = "Store";
     String STRING_TABLE = "String Table";
     String STACK = "Stack";
+    String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
+    String STATELESS_SESSION_BEAN = "Stateless Session Bean";
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
@@ -285,6 +289,7 @@ public interface Names {
     String THREAD_POOL = "Thread Pool";
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
+    String TIMER = "Timer";
     String TOPOLOGY = "Topology";
     String TRANSPORT = "Transport";
     String TRANSACTION = "Transaction";

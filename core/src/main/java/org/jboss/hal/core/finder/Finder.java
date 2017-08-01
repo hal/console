@@ -173,6 +173,7 @@ public class Finder implements IsElement, Attachable {
     private final Map<String, PreviewContent> initialPreviewsByToken;
     private final HTMLElement root;
     private final HTMLElement previewColumn;
+    private PreviewContent currentPreview;
 
 
     // ------------------------------------------------------ ui
@@ -402,7 +403,8 @@ public class Finder implements IsElement, Attachable {
 
     @SuppressWarnings("unchecked")
     void showPreview(PreviewContent preview) {
-        Elements.removeChildrenFrom(previewColumn);
+        clearPreview();
+        currentPreview = preview;
         if (preview != null) {
             Iterable<HTMLElement> elements = preview.asElements();
             for (HTMLElement element : elements) {
@@ -413,6 +415,9 @@ public class Finder implements IsElement, Attachable {
     }
 
     private void clearPreview() {
+        if (currentPreview != null) {
+            currentPreview.detach();
+        }
         Elements.removeChildrenFrom(previewColumn);
     }
 

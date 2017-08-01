@@ -122,6 +122,7 @@ public interface ModelDescriptionConstants {
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPONENT = "component";
+    String COMPONENT_CLASS_NAME = "component-class-name";
     String COMPOSITE = "composite";
     String CONCATENATING_PRINCIPAL_DECODER = "concatenating-principal-decoder";
     String CONFIG_PROPERTIES = "config-properties";
@@ -211,6 +212,7 @@ public interface ModelDescriptionConstants {
     String EXCLUDE = "exclude";
     String EXECUTE = "execute";
     String EXECUTION = "execution";
+    String EXECUTION_TIME = "execution-time";
     String EXIT_STATUS = "exit-status";
     String EXPIRATION = "expiration";
     String EXPLODE = "explode";
@@ -283,6 +285,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
+    String INVOCATIONS = "invocations";
     String IO = "io";
     String IO_THREAD_COUNT = "io-thread-count";
     String IO_THREADS = "io-threads";
@@ -375,6 +378,7 @@ public interface ModelDescriptionConstants {
     String NEW_ITEM_PATH = "new-item-path";
     String NEW_ITEM_RDN = "new-item-rdn";
     String NEW_ITEM_TEMPLATE = "new-item-template";
+    String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
     String NONE = "none";
@@ -391,6 +395,7 @@ public interface ModelDescriptionConstants {
     String PATH = "path";
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
+    String PEAK_CONCURRENT_INVOCATIONS = "peak-concurrent-invocations";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSIONS = "permissions";
@@ -594,6 +599,8 @@ public interface ModelDescriptionConstants {
     String THREAD_POOL = "thread-pool";
     String THROUGH = "through";
     String TIMEOUT = "timeout";
+    String TIME_REMAINING = "time-remaining";
+    String TIMERS = "timers";
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TO_PROFILE = "to-profile";
@@ -622,6 +629,7 @@ public interface ModelDescriptionConstants {
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
     String VERSION = "version";
+    String WAIT_TIME = "wait-time";
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";

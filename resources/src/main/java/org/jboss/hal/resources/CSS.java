@@ -286,8 +286,10 @@ public interface CSS {
     String progressContainer = "progress-container";
     String progressDescription = "progress-description";
     String progressDescriptionLeft = "progress-description-left ";
+    String progressLabelLeft = "progress-label-left";
     String progressLabelRight = "progress-label-right";
     String progressLabelTopRight = "progress-label-top-right";
+    String progressSm = "progress-sm";
     String progressXs = "progress-xs";
     String properties = "properties";
     String pullLeft = "pull-left";

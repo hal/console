@@ -43,8 +43,6 @@ import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Deployment
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
-import org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter;
-import org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView;
 import org.jboss.hal.client.configuration.subsystem.elytron.ElytronSubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.elytron.FactoriesPresenter;
 import org.jboss.hal.client.configuration.subsystem.elytron.FactoriesView;
@@ -275,10 +273,15 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_DestinationView.class,
                 DestinationPresenter.MyProxy.class);
 
-        bindPresenter(EjbPresenter.class,
-                EjbPresenter.MyView.class,
-                Mbui_EjbView.class,
-                EjbPresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView.class,
+                org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.ejb.EjbPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.ejb.EjbPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.ejb.EjbView.class,
+                org.jboss.hal.client.runtime.subsystem.ejb.EjbPresenter.MyProxy.class);
 
         bindPresenter(ElytronSubsystemPresenter.class,
                 ElytronSubsystemPresenter.MyView.class,

@@ -57,8 +57,8 @@ public class Subsystems {
                 .token(NameTokens.EE)
                 .preview(resources.previews().configurationEe())
                 .build());
-        add(new SubsystemMetadata.Builder(EJB3, "EJB3")
-                .token(NameTokens.EJB3)
+        add(new SubsystemMetadata.Builder(EJB3, Names.EJB3)
+                .token(NameTokens.EJB3_CONFIGURATION)
                 .preview(resources.previews().configurationEjb3())
                 .build());
         add(new SubsystemMetadata.Builder(ELYTRON, "Security")
@@ -75,7 +75,7 @@ public class Subsystems {
                 .nextColumn(Ids.CACHE_CONTAINER)
                 .preview(resources.previews().configurationInfinispan())
                 .build());
-        add(new SubsystemMetadata.Builder(IO, "IO")
+        add(new SubsystemMetadata.Builder(IO, Names.IO)
                 .token(NameTokens.IO)
                 .preview(resources.previews().configurationIo())
                 .build());

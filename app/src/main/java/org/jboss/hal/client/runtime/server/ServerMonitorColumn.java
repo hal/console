@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
+import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
@@ -73,6 +74,11 @@ public class ServerMonitorColumn extends StaticItemColumn {
                     new StaticItem.Builder(Names.DATASOURCES)
                             .nextColumn(Ids.DATA_SOURCE_RUNTIME)
                             .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
+                            .build(),
+
+                    new StaticItem.Builder(Names.EJB3)
+                            .nextColumn(Ids.EJB3)
+                            .onPreview(new ThreadPoolPreview(dispatcher, statementContext, resources))
                             .build(),
 
                     new StaticItem.Builder(Names.IO)

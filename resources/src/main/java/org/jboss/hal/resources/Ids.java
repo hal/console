@@ -169,7 +169,8 @@ public interface Ids {
     String EE_MANAGED_EXECUTOR_SCHEDULED = build(EE, "service", "scheduled-executor");
     String EE_MANAGED_THREAD_FACTORY = build(EE, "service", "thread-factories");
     String EE_SERVICES_ENTRY = build(Ids.EE, "services", ENTRY_SUFFIX);
-    String EJB_APPLICATION_SECURITY_DOMAIN = "ejb-app-security-domain";
+    String EJB3 = "ejb3";
+    String EJB_APPLICATION_SECURITY_DOMAIN = build(EJB3, "app-security-domain");
     String EJB_APPLICATION_SECURITY_DOMAIN_ADD = build(EJB_APPLICATION_SECURITY_DOMAIN, ADD_SUFFIX);
     String EJB_APPLICATION_SECURITY_DOMAIN_ENTRY = build(EJB_APPLICATION_SECURITY_DOMAIN, ENTRY_SUFFIX);
     String EJB_APPLICATION_SECURITY_DOMAIN_FORM = build(EJB_APPLICATION_SECURITY_DOMAIN, FORM_SUFFIX);
@@ -711,11 +712,15 @@ public interface Ids {
         return name;
     }
 
-    static String host(final String name) {
+    static String ejb3(String deployment, String subdeployment, String type, String name) {
+        return build(deployment, subdeployment, type, name);
+    }
+
+    static String host(String name) {
         return build(HOST, name);
     }
 
-    static String hostServer(final String host, final String server) {
+    static String hostServer(String host, String server) {
         return build(host, server);
     }
 
@@ -727,11 +732,11 @@ public interface Ids {
         return build(JMS_BRIDGE, name);
     }
 
-    static String jpaStatistic(final String deployment, String subdeployment, final String persistenceUnit) {
+    static String jpaStatistic(String deployment, String subdeployment, String persistenceUnit) {
         return build(deployment, subdeployment, persistenceUnit);
     }
 
-    static String loggingProfile(final String name) {
+    static String loggingProfile(String name) {
         return build(LOGGING, name);
     }
 
@@ -742,11 +747,11 @@ public interface Ids {
     /**
      * @param type must be one of "user" or "group"
      */
-    static String principal(final String type, final String name) {
+    static String principal(String type, String name) {
         return build(type, name);
     }
 
-    static String resourceAdapter(final String name) {
+    static String resourceAdapter(String name) {
         return build(RESOURCE_ADAPTER, name);
     }
 
@@ -754,19 +759,19 @@ public interface Ids {
         return asId(name);
     }
 
-    static String securityDomain(final String name) {
+    static String securityDomain(String name) {
         return build(SECURITY_DOMAIN, name);
     }
 
-    static String serverGroup(final String name) {
+    static String serverGroup(String name) {
         return build(SERVER_GROUP, name);
     }
 
-    static String serverGroupDeployment(final String serverGroup, String name) {
+    static String serverGroupDeployment(String serverGroup, String name) {
         return build(serverGroup, name);
     }
 
-    static String serverGroupServer(final String serverGroup, final String server) {
+    static String serverGroupServer(String serverGroup, String server) {
         return build(serverGroup, server);
     }
 

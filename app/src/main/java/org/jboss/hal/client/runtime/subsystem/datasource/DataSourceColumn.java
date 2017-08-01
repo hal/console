@@ -215,7 +215,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public HTMLElement asElement() {
-                return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
+                List<String> subtitles = new ArrayList<>();
+                if (dataSource.isXa()) {
+                    subtitles.add(Names.XA_DATASOURCE);
+                }
+                if (dataSource.fromDeployment()) {
+                    subtitles.add(dataSource.getDeployment());
+                }
+                if (!subtitles.isEmpty()) {
+                    return ItemDisplay.withSubtitle(dataSource.getName(), String.join(" / ", subtitles));
+                }
+                return null;
             }
 
             @Override

@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.ProgressElement.Label.NONE;
+import static org.jboss.hal.ballroom.ProgressElement.Size.XS;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
 
@@ -58,7 +60,7 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
     private FooterPresenter presenter;
     private Environment environment;
 
-    @DataElement ProgressElement progress = new ProgressElement();
+    @DataElement ProgressElement progress = new ProgressElement(XS, NONE, false);
     @DataElement HTMLElement halVersion;
     @DataElement HTMLElement updateAvailable;
     @DataElement HTMLElement showVersion;

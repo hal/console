@@ -44,7 +44,7 @@ public class EjbPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.EJB3)
+    @NameToken(NameTokens.EJB3_CONFIGURATION)
     @Requires({EJB_SUBSYSTEM_ADDRESS})
     public interface MyProxy extends ProxyPlace<EjbPresenter> {}
 
