@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -41,6 +42,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
+import static java.util.Comparator.comparing;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
@@ -59,12 +61,6 @@ public class ServerMonitorColumn extends StaticItemColumn {
             final Resources resources) {
         super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), (context, callback) -> {
             List<StaticItem> items = Lists.newArrayList(
-
-                    new StaticItem.Builder(resources.constants().status())
-                            .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
-                            .onPreview(
-                                    new ServerStatusPreview(environment, dispatcher, statementContext, resources))
-                            .build(),
 
                     new StaticItem.Builder(Names.BATCH)
                             .nextColumn(Ids.JOB)
@@ -94,6 +90,12 @@ public class ServerMonitorColumn extends StaticItemColumn {
                     new StaticItem.Builder(Names.JPA)
                             .nextColumn(Ids.JPA_RUNTIME)
                             .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
+                            .build(),
+
+                    new StaticItem.Builder(Names.MESSAGING)
+                            .subtitle(Names.ACTIVE_MQ)
+                            .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
+                            .onPreview(new PreviewContent(Names.SERVER, resources.previews().runtimeMessagingServer()))
                             .build());
 
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
@@ -110,7 +112,14 @@ public class ServerMonitorColumn extends StaticItemColumn {
                                     resources.previews().runtimeLogFiles()))
                             .build());
                 }
-                callback.onSuccess(items);
+                items.sort(comparing(StaticItem::getTitle));
+                List<StaticItem> statusFirst = new ArrayList<>();
+                statusFirst.add(new StaticItem.Builder(resources.constants().status())
+                        .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
+                        .onPreview(new ServerStatusPreview(environment, dispatcher, statementContext, resources))
+                        .build());
+                statusFirst.addAll(items);
+                callback.onSuccess(statusFirst);
             });
         });
     }

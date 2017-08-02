@@ -91,7 +91,7 @@ public class ServerSettingsColumn
         setItemsProvider((context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
             Optional<String> optional = stream(context.getPath().spliterator(), false)
-                    .filter(segment -> Ids.MESSAGING_SERVER.equals(segment.getColumnId()))
+                    .filter(segment -> Ids.MESSAGING_SERVER_CONFIGURATION.equals(segment.getColumnId()))
                     .findAny()
                     .map(FinderSegment::getItemId);
             if (optional.isPresent()) {

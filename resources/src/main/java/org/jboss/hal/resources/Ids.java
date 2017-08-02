@@ -484,22 +484,25 @@ public interface Ids {
     String MESSAGING_SECURITY_SETTING_ROLE_ENTRY = build(MESSAGING_SECURITY_SETTING_ROLE, ENTRY_SUFFIX);
     String MESSAGING_SECURITY_SETTING_ROLE_FORM = build(MESSAGING_SECURITY_SETTING_ROLE, FORM_SUFFIX);
     String MESSAGING_SECURITY_SETTING_ROLE_TABLE = build(MESSAGING_SECURITY_SETTING_ROLE, TABLE_SUFFIX);
-    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER = "msg-server";
     String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
     String MESSAGING_SERVER_CLUSTERING = build(MESSAGING_SERVER, "clustering");
+    String MESSAGING_SERVER_CONFIGURATION = "msg-server-c";
     String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");
-    String MESSAGING_SERVER_DESTINATION = build(MESSAGING_SERVER, "destination");
+    String MESSAGING_SERVER_DESTINATION = "msg-server-destination";
     String MESSAGING_SERVER_HA_POLICY = build(MESSAGING_SERVER, "ha-policy");
     String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
-    String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
-    String JOURNAL_DIRECTORY = build(MESSAGING_SERVER, "journal-directory");
-    String JOURNAL_DIRECTORY_FORM = build(MESSAGING_SERVER, "journal-directory", FORM_SUFFIX);
-    String PAGING_DIRECTORY = build(MESSAGING_SERVER, "paging-directory");
-    String PAGING_DIRECTORY_FORM = build(MESSAGING_SERVER, "paging-directory", FORM_SUFFIX);
-    String BINDING_DIRECTORY = build(MESSAGING_SERVER, "bindings-directory");
-    String BINDING_DIRECTORY_FORM = build(MESSAGING_SERVER, "bindings-directory", FORM_SUFFIX);
-    String LARGE_MESSAGES_DIRECTORY = build(MESSAGING_SERVER, "large-messages-directory");
-    String LARGE_MESSAGES_DIRECTORY_FORM = build(MESSAGING_SERVER, "large-messages-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_RUNTIME = "msg-server-r";
+    String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MESSAGING_SERVER_JOURNAL_DIRECTORY = build(MESSAGING_SERVER, "journal-directory");
+    String MESSAGING_SERVER_JOURNAL_DIRECTORY_FORM = build(MESSAGING_SERVER, "journal-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_PAGING_DIRECTORY = build(MESSAGING_SERVER, "paging-directory");
+    String MESSAGING_SERVER_PAGING_DIRECTORY_FORM = build(MESSAGING_SERVER, "paging-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_BINDING_DIRECTORY = build(MESSAGING_SERVER, "bindings-directory");
+    String MESSAGING_SERVER_BINDING_DIRECTORY_FORM = build(MESSAGING_SERVER, "bindings-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY = build(MESSAGING_SERVER, "large-messages-directory");
+    String MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM = build(MESSAGING_SERVER, "large-messages-directory",
+            FORM_SUFFIX);
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
@@ -716,6 +719,13 @@ public interface Ids {
 
     static String deployment(String name) {
         return name;
+    }
+
+    static String destination(String deployment, String subdeployment, String type, String name) {
+        if (deployment == null) {
+            return build(type, name);
+        }
+        return build(deployment, subdeployment, type, name);
     }
 
     static String ejb3(String deployment, String subdeployment, String type, String name) {

@@ -21,6 +21,7 @@ public interface Names {
     // KEEP THESE IN ALPHABETICAL ORDER!
     String ACCESS_CONTROL = "Access Control";
     String ACCESS_LOG = "Access Log";
+    String ACTIVE_MQ = "ActiveMQ";
     String ADDRESS_SETTING = "Address Setting";
     String ACL_MODULE = "ACL Module";
     String ADMIN_OBJECT = "Admin Object";
@@ -189,6 +190,7 @@ public interface Names {
     String MECHANISM_REALM_CONFIGURATION = "Mechanism Realm Configuration";
     String MECHANISM_REALM_CONFIGURATIONS = "Mechanism Realm Configurations";
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
+    String MESSAGING = "Messaging";
     String MIME_MAPPING = "Mime Mapping";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
@@ -228,6 +230,7 @@ public interface Names {
 
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
+    String QUEUE = "Queue";
 
     String REALM = "Realm";
     String RELAY = "Relay";

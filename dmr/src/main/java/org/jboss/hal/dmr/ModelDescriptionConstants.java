@@ -52,6 +52,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
     String ACTION = "action";
+    String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
     String ADD = "add";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
@@ -347,11 +348,13 @@ public interface ModelDescriptionConstants {
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
     String MANAGEMENT = "management";
+    String MANAGEMENT_ADDRESS = "management-address";
     String MANAGEMENT_HTTP = "management-http";
     String MANAGEMENT_HTTPS = "management-https";
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
+    String MANAGEMENT_NOTIFICATION_ADDRESS = "management-notification-address";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
@@ -514,6 +517,7 @@ public interface ModelDescriptionConstants {
     String SAR = "sar";
     String SASL_AUTHENTICATION_FACTORY = "sasl-authentication-factory";
     String SASL_PROTOCOL = "sasl-protocol";
+    String SCHEDULED_THREAD_POOL_MAX_SIZE = "scheduled-thread-pool-max-size";
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
@@ -575,6 +579,7 @@ public interface ModelDescriptionConstants {
     String START_JOB = "start-job";
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
+    String STARTED = "started";
     String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
     String STATISTICS_ENABLED = "statistics-enabled";
@@ -607,6 +612,7 @@ public interface ModelDescriptionConstants {
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";
+    String THREAD_POOL_MAX_SIZE = "thread-pool-max-size";
     String THROUGH = "through";
     String TIMEOUT = "timeout";
     String TIME_REMAINING = "time-remaining";
@@ -618,6 +624,8 @@ public interface ModelDescriptionConstants {
     String TOKEN_REALM = "token-realm";
     String TRANSACTION = "transaction";
     String TRANSACTION_SUPPORT = "transaction-support";
+    String TRANSACTION_TIMEOUT = "transaction-timeout";
+    String TRANSACTION_TIMEOUT_SCAN_PERIOD = "transaction-timeout-scan-period";
     String TRANSACTIONS = "transactions";
     String TRANSPORT = "transport";
     String TRIM_DESCRIPTIONS = "trim-descriptions";

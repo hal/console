@@ -244,6 +244,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hour();
     String hours();
 
+    String inactive();
     String includeRole();
     String includeUserGroup();
     String includes();

@@ -106,7 +106,9 @@ class FinderRow<T> implements IsElement {
         root.id = display.getId();
         root.dataset.set(DATA_BREADCRUMB, display.getTitle());
         // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
-        root.dataset.set(DATA_FILTER, display.getFilterData());
+        if (display.getFilterData() != null) {
+            root.dataset.set(DATA_FILTER, display.getFilterData());
+        }
 
         HTMLElement icon = display.getIcon();
         if (icon != null) {
