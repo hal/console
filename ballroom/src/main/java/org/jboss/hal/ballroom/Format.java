@@ -51,12 +51,8 @@ public final class Format {
     }
 
     public static String humanReadableDuration(long duration) {
-        return humanReadableDuration(duration, true);
-    }
-
-    public static String humanReadableDuration(long duration, boolean milliseconds) {
         if (duration < 1000) {
-            return milliseconds ? duration + " ms" : "1 " + CONSTANTS.second(); //NON-NLS
+            return duration + " ms"; //NON-NLS
         }
 
         duration = Math.round(duration / 1000.0);

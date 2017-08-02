@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
@@ -38,23 +39,35 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
+import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.MDB;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.EJB3)
 public class EjbColumn extends FinderColumn<EjbNode> {
 
+    private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Resources resources;
+
     @Inject
     public EjbColumn(Finder finder,
             FinderPathFactory finderPathFactory,
             ItemActionFactory itemActionFactory,
+            EventBus eventBus,
             Places places,
             Dispatcher dispatcher,
             StatementContext statementContext,
@@ -92,51 +105,107 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                         callback.onSuccess(ejbs);
                     });
                 })
-
-                .itemRenderer(item -> new ItemDisplay<EjbNode>() {
-                    @Override
-                    public String getId() {
-                        return Ids.ejb3(item.getDeployment(), item.getSubdeployment(), item.type.name(),
-                                item.getName());
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-
-                    @Override
-                    public HTMLElement asElement() {
-                        return ItemDisplay.withSubtitle(item.getName(), item.type.type);
-                    }
-
-                    @Override
-                    public String getFilterData() {
-                        return item.getName() + " " + item.type.type;
-                    }
-
-                    @Override
-                    public List<ItemAction<EjbNode>> actions() {
-                        List<ItemAction<EjbNode>> actions = new ArrayList<>();
-                        PlaceRequest.Builder builder = places.selectedServer(NameTokens.EJB3_RUNTIME)
-                                .with(DEPLOYMENT, item.getDeployment());
-                        if (item.getSubdeployment() != null) {
-                            builder.with(SUBDEPLOYMENT, item.getSubdeployment());
-                        }
-                        PlaceRequest placeRequest = builder
-                                .with(TYPE, item.type.name().toLowerCase())
-                                .with(NAME, item.getName())
-                                .build();
-                        actions.add(itemActionFactory.view(placeRequest));
-                        return actions;
-                    }
-                })
-
                 .onPreview(item -> new EjbPreview(item, finderPathFactory, places, dispatcher, resources))
-
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()
                 .pinnable());
+
+        this.eventBus = eventBus;
+        this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
+        this.resources = resources;
+
+        setItemRenderer(item -> new ItemDisplay<EjbNode>() {
+            @Override
+            public String getId() {
+                return Ids.ejb3(item.getDeployment(), item.getSubdeployment(), item.type.name(),
+                        item.getName());
+            }
+
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public String getTooltip() {
+                if (item.type == MDB) {
+                    return item.get(DELIVERY_ACTIVE).asBoolean() ? Names.DELIVERY_ACTIVE : Names.DELIVERY_INACTIVE;
+                }
+                return null;
+            }
+
+            @Override
+            public HTMLElement asElement() {
+                return ItemDisplay.withSubtitle(item.getName(), item.type.type);
+            }
+
+            @Override
+            public String getFilterData() {
+                return item.getName() + " " + item.type.type;
+            }
+
+            @Override
+            public List<ItemAction<EjbNode>> actions() {
+                List<ItemAction<EjbNode>> actions = new ArrayList<>();
+                PlaceRequest.Builder builder = places.selectedServer(NameTokens.EJB3_RUNTIME)
+                        .with(DEPLOYMENT, item.getDeployment());
+                if (item.getSubdeployment() != null) {
+                    builder.with(SUBDEPLOYMENT, item.getSubdeployment());
+                }
+                PlaceRequest placeRequest = builder
+                        .with(TYPE, item.type.name().toLowerCase())
+                        .with(NAME, item.getName())
+                        .build();
+                actions.add(itemActionFactory.view(placeRequest));
+                if (item.type == MDB) {
+                    if (item.get(DELIVERY_ACTIVE).asBoolean()) {
+                        actions.add(new ItemAction.Builder<EjbNode>()
+                                .title(resources.constants().stopDelivery())
+                                .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), STOP_DELIVERY))
+                                .handler(EjbColumn.this::stopDelivery)
+                                .build());
+                    } else {
+                        actions.add(new ItemAction.Builder<EjbNode>()
+                                .title(resources.constants().startDelivery())
+                                .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), START_DELIVERY))
+                                .handler(EjbColumn.this::startDelivery)
+                                .build());
+                    }
+                }
+                return actions;
+            }
+        });
+    }
+
+    private void startDelivery(EjbNode ejb) {
+        Operation operation = new Operation.Builder(ejbAddress(ejb), START_DELIVERY).build();
+        dispatcher.execute(operation, result -> {
+            refresh(RESTORE_SELECTION);
+            MessageEvent.fire(eventBus, Message.success(resources.messages().startDeliverySuccess(ejb.getName())));
+        });
+    }
+
+    private void stopDelivery(EjbNode ejb) {
+        Operation operation = new Operation.Builder(ejbAddress(ejb), STOP_DELIVERY).build();
+        dispatcher.execute(operation, result -> {
+            refresh(RESTORE_SELECTION);
+            MessageEvent.fire(eventBus, Message.success(resources.messages().stopDeliverySuccess(ejb.getName())));
+        });
+    }
+
+    private ResourceAddress ejbAddress(EjbNode ejb) {
+        ResourceAddress address;
+        if (ejb.getSubdeployment() != null) {
+            address = EJB3_SUBDEPLOYMENT_TEMPLATE
+                    .append(ejb.type.resource + "=*")
+                    .resolve(statementContext, ejb.getDeployment(), ejb.getSubdeployment(), ejb.getName());
+        } else {
+            address = EJB3_DEPLOYMENT_TEMPLATE
+                    .append(ejb.type.resource + "=*")
+                    .resolve(statementContext, ejb.getDeployment(), ejb.getName());
+        }
+        return address;
     }
 }

@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -44,7 +45,8 @@ import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_S
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.EJB3_RUNTIME;
 
-public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy> {
+public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy> implements
+        SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -106,8 +108,13 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     }
 
     @Override
+    public ResourceAddress resourceAddress() {
+        return ejbAddress();
+    }
+
+    @Override
     protected void reload() {
-        ResourceAddress address = jobAddress();
+        ResourceAddress address = ejbAddress();
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -115,7 +122,7 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
         dispatcher.execute(operation, result -> getView().update(new EjbNode(address, result)));
     }
 
-    private ResourceAddress jobAddress() {
+    private ResourceAddress ejbAddress() {
         ResourceAddress address;
         if (subdeployment == null) {
             address = EJB3_DEPLOYMENT_TEMPLATE

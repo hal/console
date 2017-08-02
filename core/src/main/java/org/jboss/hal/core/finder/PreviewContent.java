@@ -196,6 +196,11 @@ public class PreviewContent<T> implements HasElements, Attachable {
     }
 
     @Override
+    public void detach() {
+        attachables.forEach(Attachable::detach);
+    }
+
+    @Override
     public Iterable<HTMLElement> asElements() {
         return builder.asElements();
     }

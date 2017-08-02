@@ -100,17 +100,17 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     "/{selected.profile}/subsystem=ejb3/application-security-domain=*");
             Metadata metadata = mbuiContext.metadataRegistry().lookup(template);
 
-            appSecurityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_TABLE,
+            appSecurityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_TABLE,
                     metadata)
                     .button(mbuiContext.tableButtonFactory()
-                            .add(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
+                            .add(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
                                     (name, address) -> presenter.reload()))
                     .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
                             (api) -> api.selectedRow().getName(), () -> presenter.reload()))
                     .column(NAME, (cell, type, row, meta) -> row.getName())
                     .build();
 
-            appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB_APPLICATION_SECURITY_DOMAIN_FORM,
+            appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_FORM,
                     metadata)
                     .onSave((form, changedValues) -> {
                         String name = form.getModel().getName();
@@ -130,7 +130,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .add(appSecurityDomainTable)
                     .add(appSecurityDomainForm)
                     .asElement();
-            navigation.insertPrimary(Ids.EJB_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
+            navigation.insertPrimary(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ENTRY, null, Names.SECURITY_DOMAIN,
                     fontAwesome("link"), section);
         }
     }

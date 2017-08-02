@@ -331,6 +331,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml sharedStoreStrategy();
     SafeHtml staleStatistics();
 
+    SafeHtml startDeliverySuccess(String name);
     SafeHtml startJobSuccess(String job, long id);
     SafeHtml startServerError(String name);
     SafeHtml startServerGroupError(String name);
@@ -340,6 +341,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
+    SafeHtml stopDeliverySuccess(String name);
     SafeHtml stopExecutionSuccess(int id);
     SafeHtml stopServerGroupError(String name);
     SafeHtml stopServerGroupQuestion(String name);

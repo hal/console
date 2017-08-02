@@ -43,6 +43,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * <p>
  * This class and every member of this class is considered to be an internal API and should not be used outside of
  * package {@code org.jboss.hal.ballroom.table}.
+ *
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
@@ -239,6 +240,17 @@ class Api<T> {
     native Api<T> on(String event, SelectCallback callback);
 
     native Api<T> off(String event);
+
+    /**
+     * Restore the tables in the current context to its original state in the DOM by removing all of DataTables
+     * enhancements, alterations to the DOM structure of the table and event listeners.
+     *
+     * @param remove Completely remove the table from the DOM ({@{@code true}}) or leave it in the DOM in its original
+     *               plain un-enhanced HTML state (default, {@code false}).
+     *
+     * @return
+     */
+    native Api<T> destroy(boolean remove);
 
     /**
      * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}

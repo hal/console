@@ -346,7 +346,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productVersion();
     String providedBy();
 
+    String queue();
+
     String recovery();
+    String rejected();
     String references();
     String refresh();
     String releaseName();
@@ -396,6 +399,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sizing();
     String specifyNames();
     String start();
+    String startDelivery();
     String startJob();
     String starting();
     String startMacro();
@@ -405,6 +409,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String statisticsNotAvailableHeader();
     String status();
     String stop();
+    String stopDelivery();
     String stopMacro();
     String stopped();
     String stoppedExecution();

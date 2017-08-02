@@ -52,6 +52,7 @@ public interface ModelDescriptionConstants {
     String ACCESS_TYPE = "access-type";
     String ACL_MODULE = "acl-module";
     String ACTION = "action";
+    String ACTIVE_COUNT = "active-count";
     String ADD = "add";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
@@ -122,6 +123,7 @@ public interface ModelDescriptionConstants {
     String CLONE = "clone";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
+    String COMPLETED_TASK_COUNT = "completed-task-count";
     String COMPONENT = "component";
     String COMPONENT_CLASS_NAME = "component-class-name";
     String COMPOSITE = "composite";
@@ -176,6 +178,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
     String DEFAULT_INTERFACE = "default-interface";
+    String DELIVERY_ACTIVE = "delivery-active";
     String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
@@ -397,7 +400,6 @@ public interface ModelDescriptionConstants {
     String PATH = "path";
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
-    String PEAK_CONCURRENT_INVOCATIONS = "peak-concurrent-invocations";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSIONS = "permissions";
@@ -441,6 +443,7 @@ public interface ModelDescriptionConstants {
     String QUEUE = "queue";
     String QUEUE_LENGTH = "queue-length";
     String QUEUE_NAME = "queue-name";
+    String QUEUE_SIZE = "queue-size";
     String RDN_IDENTIFIER = "rdn-identifier";
     String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
@@ -462,6 +465,7 @@ public interface ModelDescriptionConstants {
     String RECURSIVE_DEPTH = "recursive-depth";
     String REGEX_PRINCIPAL_TRANSFORMER = "regex-principal-transformer";
     String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "regex-validating-principal-transformer";
+    String REJECTED_COUNT = "rejected-count";
     String RELATIVE_TO = "relative-to";
     String RELAY = "relay";
     String RELEASE_CODENAME = "release-codename";
@@ -567,6 +571,7 @@ public interface ModelDescriptionConstants {
     String STANDALONE = "standalone";
     String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
+    String START_DELIVERY = "start-delivery";
     String START_JOB = "start-job";
     String START_SERVERS = "start-servers";
     String START_TIME = "start-time";
@@ -576,6 +581,7 @@ public interface ModelDescriptionConstants {
     String STATUS = "status";
     String STEPS = "steps";
     String STOP = "stop";
+    String STOP_DELIVERY = "stop-delivery";
     String STOP_JOB = "stop-job";
     String STOP_SERVERS = "stop-servers";
     String STORAGE = "storage";
@@ -634,7 +640,6 @@ public interface ModelDescriptionConstants {
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
     String VERSION = "version";
-    String WAIT_TIME = "wait-time";
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";

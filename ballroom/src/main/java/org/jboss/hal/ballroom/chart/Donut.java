@@ -118,12 +118,10 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
             api = C3.generate(options);
             if (builder.responsive) {
                 window.onresize = event -> {
-                    HTMLElement parent = (HTMLElement) root.parentNode;
-                    resize((int) parent.offsetWidth);
+                    resizeInParent();
                     return null;
                 };
-                HTMLElement parent = (HTMLElement) root.parentNode;
-                resize((int) parent.offsetWidth);
+                resizeInParent();
             }
         }
     }
@@ -132,6 +130,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     public void detach() {
         if (api != null) {
             api.destroy();
+            api = null;
             window.onresize = null;
         }
     }
@@ -156,7 +155,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         Array<Array<Any>> columns = new Array<>();
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String key = entry.getKey();
-            Long value = entry.getValue();
+            long value = entry.getValue();
             total += value;
             Array<Any> column = new Array<>();
             column.push(Any.of(key), Any.of(value));
@@ -173,5 +172,10 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         dimension.set("width", Any.of(width));
         dimension.set("height", Any.of(width / builder.legend.ratio));
         api().resize(dimension);
+    }
+
+    private void resizeInParent() {
+        HTMLElement parent = (HTMLElement) root.parentNode;
+        resize((int) parent.offsetWidth);
     }
 }

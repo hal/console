@@ -15,26 +15,58 @@
  */
 package org.jboss.hal.client.runtime.subsystem.ejb;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+
 import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
+import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.VALID_TYPES;
 
 public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
 
     private final HTMLElement header;
     private final HTMLElement lead;
+    private final Map<EjbNode.Type, Form<EjbNode>> forms;
     private EjbPresenter presenter;
 
-    public EjbView() {
+    @Inject
+    public EjbView(MetadataRegistry metadataRegistry) {
+        forms = new HashMap<>();
+        for (EjbNode.Type type : VALID_TYPES) {
+            Form<EjbNode> form = ejbForm(type, metadataRegistry);
+            Elements.setVisible(form.asElement(), false);
+            forms.put(type, form);
+        }
+
         initElement(row()
                 .add(column()
                         .add(header = h(1).asElement())
-                        .add(lead = p().css(CSS.lead).asElement())));
+                        .add(lead = p().css(CSS.lead).asElement())
+                        .addAll(forms.values().toArray(new IsElement[forms.values().size()]))));
+    }
+
+    private Form<EjbNode> ejbForm(EjbNode.Type type, MetadataRegistry metadataRegistry) {
+        Metadata metadata = metadataRegistry.lookup(ejbDeploymentTemplate(type));
+        String id = Ids.build(Ids.EJB3_DEPLOYMENT, type.name(), Ids.FORM_SUFFIX);
+        return new ModelNodeForm.Builder<EjbNode>(id, metadata)
+                .readOnly()
+                .includeRuntime()
+                .build();
     }
 
     @Override
@@ -46,5 +78,7 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
     public void update(EjbNode ejb) {
         header.textContent = ejb.getName();
         lead.textContent = ejb.type.type;
+        forms.get(ejb.type).view(ejb);
+        forms.forEach((type, form) -> Elements.setVisible(form.asElement(), type == ejb.type));
     }
 }

@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 import java.util.Map;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.PatternFly;
@@ -34,7 +33,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
@@ -42,8 +40,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
 class JobPreview extends PreviewContent<JobNode> {
 
     private final EmptyState empty;
-    private final HTMLElement status;
-    private final Donut donut;
+    private final Donut executions;
 
     JobPreview(JobColumn column, JobNode job, FinderPathFactory finderPathFactory, Places places, Resources resources) {
         super(job.getName(), job.getPath());
@@ -60,7 +57,7 @@ class JobPreview extends PreviewContent<JobNode> {
                 .description(resources.messages().noExecutions())
                 .build();
 
-        donut = new Donut.Builder(Names.EXECUTIONS)
+        executions = new Donut.Builder(Names.EXECUTIONS)
                 .add(STARTED.name(), resources.constants().running(), PatternFly.colors.blue)
                 .add(STOPPED.name(), resources.constants().stopped(), PatternFly.colors.black500)
                 .add(COMPLETED.name(), resources.constants().completed(), PatternFly.colors.green)
@@ -69,15 +66,12 @@ class JobPreview extends PreviewContent<JobNode> {
                 .legend(Donut.Legend.BOTTOM)
                 .responsive(true)
                 .build();
-        registerAttachable(donut);
+        registerAttachable(executions);
 
-        status = section()
-                .add(donut)
-                .asElement();
-        Elements.setVisible(status, false);
+        Elements.setVisible(executions.asElement(), false);
 
         getHeaderContainer().appendChild(refreshLink(() -> column.refresh(RESTORE_SELECTION)));
-        previewBuilder().addAll(empty.asElement(), status);
+        previewBuilder().addAll(empty, executions);
     }
 
     @Override
@@ -85,15 +79,15 @@ class JobPreview extends PreviewContent<JobNode> {
         int instanceCount = item.get(INSTANCE_COUNT).asInt();
         if (instanceCount == 0) {
             Elements.setVisible(empty.asElement(), true);
-            Elements.setVisible(status, false);
+            Elements.setVisible(executions.asElement(), false);
 
         } else {
             Elements.setVisible(empty.asElement(), false);
-            Elements.setVisible(status, true);
+            Elements.setVisible(executions.asElement(), true);
 
             Map<String, Long> byBatchStatus = item.getExecutions().stream()
                     .collect(groupingBy(e -> e.getBatchStatus().name(), counting()));
-            donut.update(byBatchStatus);
+            executions.update(byBatchStatus);
         }
     }
 }

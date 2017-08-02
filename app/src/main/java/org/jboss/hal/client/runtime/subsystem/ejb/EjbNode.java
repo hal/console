@@ -30,13 +30,7 @@ class EjbNode extends DeploymentResource {
         STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN),
         UNDEFINED("undefined", Names.NOT_AVAILABLE);
 
-        final String resource;
-        final String type;
-
-        Type(@NonNls String resource, String type) {
-            this.resource = resource;
-            this.type = type;
-        }
+        static Type[] VALID_TYPES = new Type[]{MDB, SINGLETON, STATEFUL, STATELESS};
 
         static Type fromResource(String resource) {
             if (MDB.resource.equals(resource)) {
@@ -49,6 +43,14 @@ class EjbNode extends DeploymentResource {
                 return STATELESS;
             }
             return Type.UNDEFINED;
+        }
+
+        final String resource;
+        final String type;
+
+        Type(@NonNls String resource, String type) {
+            this.resource = resource;
+            this.type = type;
         }
     }
 

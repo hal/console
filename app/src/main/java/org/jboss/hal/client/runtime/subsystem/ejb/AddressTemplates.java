@@ -32,4 +32,8 @@ interface AddressTemplates {
 
     AddressTemplate EJB3_DEPLOYMENT_TEMPLATE = AddressTemplate.of(EJB3_DEPLOYMENT_ADDRESS);
     AddressTemplate EJB3_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(EJB3_SUBDEPLOYMENT_ADDRESS);
+
+    static AddressTemplate ejbDeploymentTemplate(EjbNode.Type type) {
+        return EJB3_DEPLOYMENT_TEMPLATE.append(type.resource + "=*");
+    }
 }

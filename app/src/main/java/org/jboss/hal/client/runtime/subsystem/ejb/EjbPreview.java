@@ -91,7 +91,8 @@ class EjbPreview extends PreviewContent<EjbNode> {
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))
                 .asElement());
 
-        attributes = new PreviewAttributes<>(ejb, asList(COMPONENT_CLASS_NAME, INVOCATIONS, EXECUTION_TIME));
+        attributes = new PreviewAttributes<>(ejb,
+                asList(COMPONENT_CLASS_NAME, INVOCATIONS, EXECUTION_TIME, DELIVERY_ACTIVE));
         previewBuilder().addAll(attributes);
 
         poolSection = section().add(h(2, Names.POOL))
@@ -124,6 +125,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
 
     @Override
     public void detach() {
+        super.detach();
         clearInterval(intervalHandle);
     }
 
@@ -140,6 +142,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
         Elements.setVisible(poolSection, ejb.type == MDB || ejb.type == STATELESS);
         Elements.setVisible(statefulSection, ejb.type == STATEFUL);
         attributes.refresh(ejb);
+        attributes.setVisible(DELIVERY_ACTIVE, ejb.type == MDB);
         switch (ejb.type) {
             case MDB:
             case STATELESS:
@@ -155,11 +158,11 @@ class EjbPreview extends PreviewContent<EjbNode> {
         if (firstTimer.isDefined()) {
             timer.refresh(firstTimer);
             clearInterval(intervalHandle);
-            intervalHandle = setInterval(o -> updateDuration(), 1000);
+            intervalHandle = setInterval(o -> updateRemaining(), 1000);
         }
     }
 
-    private void updateDuration() {
+    private void updateRemaining() {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -171,7 +174,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
 
                 long timeRemaining = firstTimer.get(TIME_REMAINING).asLong();
                 int timeRemainingInSeconds = (int) round((timeRemaining / 1000.0));
-                String humanReadableDuration = Format.humanReadableDuration(timeRemaining, false);
+                String humanReadableDuration = Format.humanReadableDuration(timeRemaining);
                 if (maxRemaining < timeRemainingInSeconds) {
                     maxRemaining = timeRemainingInSeconds;
                 }

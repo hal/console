@@ -78,6 +78,8 @@ public interface Names {
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEFAULT_INTERFACE = "Default Interface";
+    String DELIVERY_ACTIVE = "delivery active";
+    String DELIVERY_INACTIVE = "delivery inactive";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
     String DESTINATION = "Destination";
@@ -286,6 +288,7 @@ public interface Names {
     String SYSTEM_PROPERTY = "System Property";
 
     String TARGET = "Target";
+    String TASKS = "Tasks";
     String THREAD_POOL = "Thread Pool";
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
