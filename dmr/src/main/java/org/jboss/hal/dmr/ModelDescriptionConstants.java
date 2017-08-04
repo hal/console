@@ -430,12 +430,14 @@ public interface ModelDescriptionConstants {
     String OUTCOME = "outcome";
     String OTHER_QUEUE_NAME = "other-queue-name";
     String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
+    String OVERRIDE = "override";
     String OVERRIDE_ALL = "override-all";
     String OVERRIDE_MODULE = "override-modules";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
     String PASSWORD = "password";
     String PATH = "path";
+    String PATCH = "patch";
     String PATCH_ID = "patch-id";
     String PATCHING = "patching";
     String PATTERN = "pattern";
@@ -462,6 +464,7 @@ public interface ModelDescriptionConstants {
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
+    String PRESERVE = "preserve";
     String PRINCIPALS = "principals";
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";

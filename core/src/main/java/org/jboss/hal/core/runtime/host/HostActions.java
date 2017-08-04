@@ -206,6 +206,10 @@ public class HostActions {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
+        restart(host, question);
+    }
+
+    public void restart(final Host host, SafeHtml question) {
         DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)

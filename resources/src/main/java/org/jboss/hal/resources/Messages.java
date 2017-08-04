@@ -66,6 +66,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseSharedStore();
     SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
+    String cleanPatchHistory();
+    SafeHtml cleanPatchHistoryQuestion(String prependMessage);
+    String cleanPatchHistorySuccess();
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
     SafeHtml configuredMailServer(String servers);
@@ -206,6 +209,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
+    SafeHtml noSelectedPatch();
     SafeHtml noContentSelected();
     SafeHtml noContextForNormalMode();
     SafeHtml noDeployment();
@@ -233,6 +237,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
+    SafeHtml patchHostNeedsRestart(String hostname);
+    SafeHtml patchRestartDomainControllerQuestion(String hostname);
+    SafeHtml patchRestartHostControllerQuestion(String hostname);
+    SafeHtml patchSucessfullyApplied(String patchId);
+    SafeHtml patchAddError(String patchId, String error);
+    SafeHtml patchSucessfullyRemoved(String patchId);
     SafeHtml pauseQueueSuccess(String name);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();

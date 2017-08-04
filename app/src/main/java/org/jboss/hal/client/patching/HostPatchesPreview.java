@@ -15,26 +15,37 @@
  */
 package org.jboss.hal.client.patching;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.dmr.NamedNode;
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.patching.HostPatchesColumn.hostTemplate;
+import static org.jboss.hal.client.patching.HostPatchesColumn.namedNodeToHost;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE_PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.resources.CSS.alertLink;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.hidden;
 
 /**
  * @author Claudio Miranda
  */
 class HostPatchesPreview extends RuntimePreview<NamedNode> {
 
+    private final HTMLElement restartLink;
     private final PreviewAttributes<NamedNode> attributes;
     private final HostActions hostActions;
     private final Resources resources;
@@ -50,6 +61,12 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
                 .add(alertContainer = div()
                         .add(alertIcon = span().asElement())
                         .add(alertText = span().asElement())
+                        .add(span().textContent(" "))
+                        .add(restartLink = a().css(clickable, alertLink)
+                                .on(click, event -> hostActions.restart(namedNodeToHost(host)))
+                                .data(UIConstants.CONSTRAINT, Constraint.executable(hostTemplate(host), RESTART).data())
+                                .textContent(resources.constants().restart())
+                                .asElement())
                         .asElement());
 
         attributes = new PreviewAttributes<>(host)
@@ -67,7 +84,7 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
 
     @Override
     public void update(final NamedNode item) {
-        Host host = new Host(new Property(item.getName(), item.asModelNode()));
+        Host host = namedNodeToHost(item);
         if (hostActions.isPending(host)) {
             pending(resources.messages().hostPending(host.getName()));
         } else if (host.isAdminMode()) {
@@ -77,12 +94,16 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
         } else if (host.needsReload()) {
             needsReload(resources.messages().hostNeedsReload(host.getName()));
         } else if (host.needsRestart()) {
-            needsRestart(resources.messages().hostNeedsRestart(host.getName()));
+            needsRestart(resources.messages().patchHostNeedsRestart(host.getName()));
         } else if (host.isRunning()) {
             running(resources.messages().hostRunning(host.getName()));
         } else {
             unknown(resources.messages().hostUndefined(host.getName()));
         }
+
+        // Do not simply hide the links, but add the hidden CSS class.
+        // Important when constraints for the links are processed later.
+        Elements.toggle(restartLink, hidden, !host.needsRestart());
 
         attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }

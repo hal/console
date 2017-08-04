@@ -524,7 +524,9 @@ public interface Ids {
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
     String PATCH_ADD = build("patch", ADD_SUFFIX);
+    String PATCH_UPLOAD_NAMES_FORM = build("patch", "names", FORM_SUFFIX);
     String PATCHES = "patches";
+    String PATCHES_AGEOUT = build(PATCHES, "ageout-history");
     String PATCHES_HOST = "patches-host";
     String PATCHES_REFRESH = build(PATCHES, REFRESH_SUFFIX);
     String PATCHING_DOMAIN = "patching-domain";
