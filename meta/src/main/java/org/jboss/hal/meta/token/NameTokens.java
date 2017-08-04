@@ -55,6 +55,8 @@ public interface NameTokens {
     String JCA = ModelDescriptionConstants.JCA;
     String JGROUPS = ModelDescriptionConstants.JGROUPS;
     String JMS_BRIDGE = ModelDescriptionConstants.JMS_BRIDGE;
+    String JMS_QUEUE = "jms-queue";
+    String JMS_TOPIC = "jms-topic";
     String JMX = ModelDescriptionConstants.JMX;
     String JNDI = "jndi";
     String JOB = "job" + RUNTIME_SUFFIX;
@@ -77,6 +79,7 @@ public interface NameTokens {
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";
+    String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;

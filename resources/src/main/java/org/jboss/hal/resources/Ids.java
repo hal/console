@@ -386,6 +386,19 @@ public interface Ids {
     String JMS_BRIDGE_FORM = build(JMS_BRIDGE, FORM_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
     String JMS_BRIDGE_TAB = build(JMS_BRIDGE, TAB_SUFFIX);
+    String JMS_MESSAGE = "jms-message";
+    String JMS_MESSAGE_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE, "change-priority");
+    String JMS_MESSAGE_EXPIRE = Ids.build(JMS_MESSAGE, "expire");
+    String JMS_MESSAGE_MOVE = Ids.build(JMS_MESSAGE, "move");
+    String JMS_MESSAGE_REMOVE = Ids.build(JMS_MESSAGE, "remove");
+    String JMS_MESSAGE_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE, "send-to-dead-letter");
+    String JMS_MESSAGE_LIST = "jms-message-list";
+    String JMS_MESSAGE_LIST_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE_LIST, "change-priority");
+    String JMS_MESSAGE_LIST_EXPIRE = Ids.build(JMS_MESSAGE_LIST, "expire");
+    String JMS_MESSAGE_LIST_MOVE = Ids.build(JMS_MESSAGE_LIST, "move");
+    String JMS_MESSAGE_LIST_REFRESH = Ids.build(JMS_MESSAGE_LIST, "refresh");
+    String JMS_MESSAGE_LIST_REMOVE = Ids.build(JMS_MESSAGE_LIST, "remove");
+    String JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE_LIST, "send-to-dead-letter");
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -721,11 +734,11 @@ public interface Ids {
         return name;
     }
 
-    static String destination(String deployment, String subdeployment, String type, String name) {
+    static String destination(String deployment, String subdeployment, String messageServer, String type, String name) {
         if (deployment == null) {
-            return build(type, name);
+            return build(messageServer, type, name);
         }
-        return build(deployment, subdeployment, type, name);
+        return build(deployment, subdeployment, messageServer, type, name);
     }
 
     static String ejb3(String deployment, String subdeployment, String type, String name) {

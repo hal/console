@@ -73,7 +73,7 @@ import static org.jboss.hal.resources.CSS.label;
  * toolbar.bind(dataProvider();
  * </pre>
  *
- * <p>Please note that the toolbar uses an own {@code <div class="row"/>} element. This is important if you add the
+ * <p>Please note that the toolbar uses its own {@code <div class="row"/>} element. This is important if you add the
  * toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:</p>
  *
  * <pre>
@@ -313,7 +313,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); i++) {
                 Action action = iterator.next();
                 String actionId = Ids.build(Ids.TOOLBAR, "action", action.id);
-                if (i <= 2) {
+                if (i < 2) {
                     actionsContainer.appendChild(button()
                             .css(btn, btnDefault)
                             .id(actionId)
@@ -321,7 +321,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .on(click, e -> action.callback.execute())
                             .apply(b -> b.type = UIConstants.BUTTON)
                             .asElement());
-                    if (i == 2) {
+                    if (i == 1) {
                         actionsContainer.appendChild(div().css(dropdown, btnGroup, dropdownKebabPf)
                                 .add(button().css(btn, btnLink, dropdownToggle)
                                         .id(Ids.TOOLBAR_ACTION_DROPDOWN)
@@ -370,12 +370,14 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
     @Override
     public void attach() {
-        keyUpSubscription = fromEvent(filterInput, keyup)
-                .throttleLast(750, MILLISECONDS)
-                .subscribe(e -> {
-                    addOrModifyActiveFilter(filterAttribute);
-                    apply();
-                });
+        if (filterInput != null) {
+            keyUpSubscription = fromEvent(filterInput, keyup)
+                    .throttleLast(750, MILLISECONDS)
+                    .subscribe(e -> {
+                        addOrModifyActiveFilter(filterAttribute);
+                        apply();
+                    });
+        }
     }
 
     @Override
@@ -401,10 +403,14 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         } else {
             sortAttribute = sortAttributes.get(0);
         }
-        setFilterAttribute(filterAttribute);
-        setSortAttribute(sortAttribute);
-        setAsc(true);
-        clearAllFilters();
+        if (filterAttribute != null) {
+            setFilterAttribute(filterAttribute);
+            clearAllFilters();
+        }
+        if (sortAttribute != null) {
+            setSortAttribute(sortAttribute);
+            setAsc(true);
+        }
         clearResults();
         apply();
     }
@@ -518,6 +524,6 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         List<FilterValue<T>> filterValues = activeFilters.entrySet().stream()
                 .map(entry -> new FilterValue<>(entry.getKey().filter, entry.getValue()))
                 .collect(toList());
-        dataProvider.apply(filterValues, sortAttribute.comparator, asc);
+        dataProvider.apply(filterValues, sortAttribute != null ? sortAttribute.comparator : null, asc);
     }
 }

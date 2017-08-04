@@ -146,6 +146,8 @@ import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
 import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView;
+import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueuePresenter;
+import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueueView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView;
@@ -362,6 +364,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 JmsBridgePresenter.MyView.class,
                 JmsBridgeView.class,
                 JmsBridgePresenter.MyProxy.class);
+
+        bindPresenter(JmsQueuePresenter.class,
+                JmsQueuePresenter.MyView.class,
+                JmsQueueView.class,
+                JmsQueuePresenter.MyProxy.class);
 
         bindPresenter(JmxPresenter.class,
                 JmxPresenter.MyView.class,

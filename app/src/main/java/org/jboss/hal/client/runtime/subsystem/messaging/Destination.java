@@ -18,16 +18,21 @@ package org.jboss.hal.client.runtime.subsystem.messaging;
 import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
+
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PAUSED;
 
 class Destination extends DeploymentResource {
 
     enum Type {
-        JMS_QUEUE("jms-queue", Names.JMS_QUEUE),
-        JMS_TOPIC("jms-topic", Names.JMS_TOPIC),
-        QUEUE("queue", Names.QUERY),
-        UNDEFINED("undefined", Names.NOT_AVAILABLE);
+        JMS_QUEUE("jms-queue", NameTokens.JMS_QUEUE, Names.JMS_QUEUE),
+        JMS_TOPIC("jms-topic", NameTokens.JMS_TOPIC, Names.JMS_TOPIC),
+        QUEUE("queue", NameTokens.QUEUE, Names.QUERY);
 
         static Type[] SUBSYSTEM_RESOURCES = new Type[]{JMS_QUEUE, JMS_TOPIC, QUEUE};
         static Type[] DEPLOYMENT_RESOURCES = new Type[]{JMS_QUEUE, JMS_TOPIC};
@@ -40,14 +45,16 @@ class Destination extends DeploymentResource {
             } else if (QUEUE.resource.equals(resource)) {
                 return QUEUE;
             }
-            return Destination.Type.UNDEFINED;
+            return null;
         }
 
         final String resource;
+        final String token;
         final String type;
 
-        Type(@NonNls String resource, String type) {
+        Type(@NonNls String resource, String token, String type) {
             this.resource = resource;
+            this.token = token;
             this.type = type;
         }
     }
@@ -62,5 +69,14 @@ class Destination extends DeploymentResource {
 
     boolean fromDeployment() {
         return getDeployment() != null;
+    }
+
+    boolean isPaused() {
+        return hasDefined(PAUSED) && get(PAUSED).asBoolean();
+    }
+
+    AddressTemplate template() {
+        AddressTemplate template = fromDeployment() ? MESSAGING_DEPLOYMENT_TEMPLATE : MESSAGING_SERVER_TEMPLATE;
+        return template.append(type.resource + "=*");
     }
 }

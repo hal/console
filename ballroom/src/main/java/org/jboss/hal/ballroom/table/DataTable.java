@@ -106,14 +106,6 @@ public class DataTable<T> implements Table<T> {
         }
     }
 
-    @Override
-    public void detach() {
-        if (api != null) {
-            api.destroy(true);
-            api = null;
-        }
-    }
-
 
     // ------------------------------------------------------ DataTable API access
 

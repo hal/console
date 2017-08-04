@@ -113,6 +113,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String deprecated(String since, String reason);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
+    SafeHtml dropSubscriptionsQuestion(String topic);
+    SafeHtml dropSubscriptionsSuccess(String topic);
 
     SafeHtml duplicateAuthenticationModule();
     String duplicateAuthenticationModuleReason();
@@ -184,6 +186,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
+    SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
     String messages(@PluralCount int count);
     SafeHtml metadataError();
@@ -203,6 +206,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
     SafeHtml noExecutions();
+    SafeHtml noItems();
+    SafeHtml noMatchingItems();
+    SafeHtml noMessagesSelected();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     String nonEmptyRequires(String fields);
@@ -217,12 +223,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String notMoreThanOneAlternativeError(String alternatives);
     String notMoreThanOneAlternativesError(String alternatives);
     SafeHtml noWrite();
-    String noXaDatasourceProperties();
     SafeHtml normalLogFile(String size);
 
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
+    SafeHtml pauseQueueSuccess(String name);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
@@ -298,6 +304,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartStandaloneQuestion(String name);
     SafeHtml restartStandaloneTimeout(String name);
 
+    SafeHtml resumeQueueSuccess(String name);
     SafeHtml resumeServerGroupError(String name);
     SafeHtml resumeServerGroupSuccess(String name);
     SafeHtml resumeServerError(String name);

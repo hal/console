@@ -1,0 +1,281 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.runtime.subsystem.messaging;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
+import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.SuccessfulOutcome;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_QUEUE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+
+public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
+
+    // @formatter:off
+    @ProxyCodeSplit
+    @NameToken(NameTokens.JMS_QUEUE)
+    @Requires(MESSAGING_QUEUE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<JmsQueuePresenter> {}
+
+    public interface MyView extends HalView, HasPresenter<JmsQueuePresenter> {
+        void showMany(long count);
+        void showAll(List<JmsMessage> messages);
+    }
+    // @formatter:on
+
+
+    private static final long MESSAGES_THRESHOLD = 500L;
+    private static final String MESSAGES_COUNT = "messagesCount";
+    private static final String MESSAGES = "messages";
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(JmsQueuePresenter.class);
+
+    private final FinderPathFactory finderPathFactory;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Progress progress;
+    private final Resources resources;
+    private final Map<String, Boolean> showAll;
+    private String deployment;
+    private String subdeployment;
+    private String messageServer;
+    private String queue;
+
+    @Inject
+    public JmsQueuePresenter(final EventBus eventBus,
+            final JmsQueuePresenter.MyView view,
+            final JmsQueuePresenter.MyProxy myProxy,
+            final Finder finder,
+            final FinderPathFactory finderPathFactory,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
+            @Footer final Progress progress,
+            final Resources resources) {
+        super(eventBus, view, myProxy, finder);
+        this.finderPathFactory = finderPathFactory;
+        this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
+        this.progress = progress;
+        this.resources = resources;
+        this.showAll = new HashMap<>();
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    @Override
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        deployment = request.getParameter(DEPLOYMENT, null);
+        subdeployment = request.getParameter(SUBDEPLOYMENT, null);
+        messageServer = request.getParameter(Ids.MESSAGING_SERVER, null);
+        queue = request.getParameter(NAME, null);
+    }
+
+    @Override
+    public FinderPath finderPath() {
+        return finderPathFactory.runtimeServerPath()
+                .append(Ids.SERVER_MONITOR, Ids.asId(Names.MESSAGING),
+                        resources.constants().monitor(), Names.MESSAGING)
+                .append(Ids.MESSAGING_SERVER_RUNTIME, Ids.messagingServer(messageServer),
+                        Names.SERVER, messageServer)
+                .append(Ids.MESSAGING_SERVER_DESTINATION,
+                        Ids.destination(deployment, subdeployment, messageServer, Type.JMS_QUEUE.name(), queue),
+                        Names.DESTINATION, queue);
+    }
+
+    @Override
+    protected void reload() {
+        if (showAll()) {
+            readAll();
+
+        } else {
+            ResourceAddress address = queueAddress();
+            Function<FunctionContext> count = control -> {
+                Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
+                dispatcher.executeInFunction(control, operation, result -> {
+                    control.getContext().set(MESSAGES_COUNT, result.asLong());
+                    control.proceed();
+                });
+            };
+            Function<FunctionContext> list = control -> {
+                long messages = control.getContext().get(MESSAGES_COUNT);
+                if (messages > MESSAGES_THRESHOLD) {
+                    control.getContext().set(MESSAGES, emptyList());
+                    control.proceed();
+                } else {
+                    Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
+                    dispatcher.executeInFunction(control, operation, result -> {
+                        control.getContext().set(MESSAGES,
+                                result.asList().stream().map(JmsMessage::new).collect(toList()));
+                        control.proceed();
+                    });
+                }
+            };
+            new Async<FunctionContext>(progress).waterfall(new FunctionContext(),
+                    new SuccessfulOutcome(getEventBus(), resources) {
+                        @Override
+                        public void onSuccess(FunctionContext context) {
+                            long count = context.get(MESSAGES_COUNT);
+                            List<JmsMessage> messages = context.get(MESSAGES);
+                            if (count > MESSAGES_THRESHOLD) {
+                                logger.debug("More than {} messages in queue {}. Skip :list-messages operation.",
+                                        MESSAGES_THRESHOLD, queueAddress().toString());
+                                getView().showMany(count);
+                            } else {
+                                getView().showAll(messages);
+                            }
+                        }
+                    }, count, list);
+        }
+    }
+
+    void readAllMessages(boolean always) {
+        if (always) {
+            String id = Ids.destination(deployment, subdeployment, messageServer, Type.JMS_QUEUE.name(), queue);
+            showAll.put(id, true);
+        }
+        readAll();
+    }
+
+    private void readAll() {
+        ResourceAddress address = queueAddress();
+        Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
+        dispatcher.execute(operation, result ->
+                getView().showAll(result.asList().stream().map(JmsMessage::new).collect(toList())));
+    }
+
+    private boolean showAll() {
+        String id = Ids.destination(deployment, subdeployment, messageServer, Type.JMS_QUEUE.name(), queue);
+        return showAll.getOrDefault(id, false);
+    }
+
+    void changePriority(List<JmsMessage> messages) {
+        if (messages.isEmpty()) {
+            noMessagesSelected();
+        } else if (messages.size() == 1) {
+
+        } else {
+
+        }
+    }
+
+    void expire(List<JmsMessage> messages) {
+        if (messages.isEmpty()) {
+            noMessagesSelected();
+        } else if (messages.size() == 1) {
+
+        } else {
+
+        }
+    }
+
+    void move(List<JmsMessage> messages) {
+        if (messages.isEmpty()) {
+            noMessagesSelected();
+        } else if (messages.size() == 1) {
+
+        } else {
+
+        }
+    }
+
+    void sendToDeadLetter(List<JmsMessage> messages) {
+        if (messages.isEmpty()) {
+            noMessagesSelected();
+        } else if (messages.size() == 1) {
+
+        } else {
+
+        }
+    }
+
+    void remove(List<JmsMessage> messages) {
+        if (messages.isEmpty()) {
+            noMessagesSelected();
+        } else if (messages.size() == 1) {
+
+        } else {
+
+        }
+    }
+
+    private void noMessagesSelected() {
+        MessageEvent.fire(getEventBus(), Message.warning(resources.messages().noMessagesSelected()));
+    }
+
+    private ResourceAddress queueAddress() {
+        ResourceAddress address;
+        if (deployment != null || subdeployment != null) {
+            if (subdeployment == null) {
+                address = MESSAGING_DEPLOYMENT_TEMPLATE
+                        .append("jms-queue=*")
+                        .resolve(statementContext, deployment, messageServer, queue);
+            } else {
+                address = MESSAGING_SUBDEPLOYMENT_TEMPLATE
+                        .append("jms-queue=*")
+                        .resolve(statementContext, deployment, subdeployment, messageServer, queue);
+            }
+
+        } else {
+            address = MESSAGING_SERVER_TEMPLATE
+                    .append("jms-queue=*")
+                    .resolve(statementContext, messageServer, queue);
+        }
+        return address;
+    }
+}

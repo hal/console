@@ -21,16 +21,15 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
+
 class EjbNode extends DeploymentResource {
 
     enum Type {
         MDB("message-driven-bean", Names.MESSAGE_DRIVEN_BEAN),
         SINGLETON("singleton-bean", Names.SINGLETON_BEAN),
         STATEFUL("stateful-session-bean", Names.STATEFUL_SESSION_BEAN),
-        STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN),
-        UNDEFINED("undefined", Names.NOT_AVAILABLE);
-
-        static Type[] VALID_TYPES = new Type[]{MDB, SINGLETON, STATEFUL, STATELESS};
+        STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN);
 
         static Type fromResource(String resource) {
             if (MDB.resource.equals(resource)) {
@@ -42,7 +41,7 @@ class EjbNode extends DeploymentResource {
             } else if (STATELESS.resource.equals(resource)) {
                 return STATELESS;
             }
-            return Type.UNDEFINED;
+            return null;
         }
 
         final String resource;
@@ -60,5 +59,9 @@ class EjbNode extends DeploymentResource {
     EjbNode(ResourceAddress address, ModelNode modelNode) {
         super(address, modelNode);
         this.type = Type.fromResource(address.lastName());
+    }
+
+    boolean isDeliveryActive() {
+        return hasDefined(DELIVERY_ACTIVE) && get(DELIVERY_ACTIVE).asBoolean();
     }
 }

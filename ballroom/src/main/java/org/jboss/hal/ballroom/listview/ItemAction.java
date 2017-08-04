@@ -22,22 +22,22 @@ public class ItemAction<T> {
 
     final String id;
     final String title;
-    final ItemActionHandler<T> handler;
     final Constraints constraints;
+    final ItemActionHandler<T> handler;
 
     public ItemAction(String id, String title, ItemActionHandler<T> handler) {
-        this(id, title, handler, Constraints.empty());
+        this(id, title, Constraints.empty(), handler);
     }
 
-    public ItemAction(String id, String title, ItemActionHandler<T> handler, Constraint constraint) {
-        this(id, title, handler, Constraints.single(constraint));
+    public ItemAction(String id, String title, Constraint constraint, ItemActionHandler<T> handler) {
+        this(id, title, Constraints.single(constraint), handler);
     }
 
-    public ItemAction(String id, String title, ItemActionHandler<T> handler, Constraints constraints) {
+    public ItemAction(String id, String title, Constraints constraints, ItemActionHandler<T> handler) {
         this.id = id;
         this.title = title;
-        this.handler = handler;
         this.constraints = constraints;
+        this.handler = handler;
     }
 
     public Constraints getConstraints() {

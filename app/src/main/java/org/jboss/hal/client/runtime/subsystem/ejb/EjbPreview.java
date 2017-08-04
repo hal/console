@@ -85,6 +85,7 @@ class EjbPreview extends PreviewContent<EjbNode> {
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
         FinderPath path = finderPathFactory.deployment(ejb.getDeployment());
         PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
+        Elements.removeChildrenFrom(getLeadElement());
         getLeadElement().appendChild(
                 document.createTextNode(ejb.type.type + " @ "));
         getLeadElement().appendChild(a(places.historyToken(placeRequest))

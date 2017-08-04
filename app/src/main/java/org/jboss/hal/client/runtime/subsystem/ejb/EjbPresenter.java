@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -54,7 +53,7 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     @Requires(EJB3_DEPLOYMENT_ADDRESS)
     public interface MyProxy extends ProxyPlace<EjbPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<EjbPresenter> {
+    public interface MyView extends HalView {
         void update(EjbNode ejb);
     }
     // @formatter:on
@@ -86,17 +85,12 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         deployment = request.getParameter(DEPLOYMENT, null);
         subdeployment = request.getParameter(SUBDEPLOYMENT, null);
-        type = Type.valueOf(request.getParameter(TYPE, Type.UNDEFINED.name()).toUpperCase());
+        String typeParameter = request.getParameter(TYPE, null);
+        type = typeParameter != null ? Type.valueOf(typeParameter.toUpperCase()) : null;
         ejb = request.getParameter(NAME, null);
     }
 

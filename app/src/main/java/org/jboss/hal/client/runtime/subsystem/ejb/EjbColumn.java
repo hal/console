@@ -140,7 +140,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
             @Override
             public String getTooltip() {
                 String tt = item.type.type;
-                if (!item.get(DELIVERY_ACTIVE).asBoolean()) {
+                if (item.type == MDB && !item.isDeliveryActive()) {
                     tt += " (" + resources.constants().inactive() + ")";
                 }
                 return tt;
@@ -154,7 +154,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                     switch (item.type) {
                         case MDB:
                             HTMLElement icon = Icons.custom(fontAwesome("exchange"));
-                            if (!item.get(DELIVERY_ACTIVE).asBoolean()) {
+                            if (!item.isDeliveryActive()) {
                                 icon.style.color = PatternFly.colors.black400;
                             }
                             return icon;
@@ -164,8 +164,6 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                             return Icons.custom(fontAwesome("file-text-o"));
                         case STATELESS:
                             return Icons.custom(fontAwesome("file-o"));
-                        case UNDEFINED:
-                            return Icons.unknown();
                         default:
                             return Icons.unknown();
                     }
@@ -211,7 +209,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
     }
 
     private void startDelivery(EjbNode ejb) {
-        Operation operation = new Operation.Builder(ejbAddress(ejb), START_DELIVERY).build();
+        Operation operation = new Operation.Builder(ejb.getAddress(), START_DELIVERY).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent.fire(eventBus, Message.success(resources.messages().startDeliverySuccess(ejb.getName())));
@@ -219,25 +217,11 @@ public class EjbColumn extends FinderColumn<EjbNode> {
     }
 
     private void stopDelivery(EjbNode ejb) {
-        Operation operation = new Operation.Builder(ejbAddress(ejb), STOP_DELIVERY).build();
+        Operation operation = new Operation.Builder(ejb.getAddress(), STOP_DELIVERY).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent.fire(eventBus, Message.success(resources.messages().stopDeliverySuccess(ejb.getName())));
         });
-    }
-
-    private ResourceAddress ejbAddress(EjbNode ejb) {
-        ResourceAddress address;
-        if (ejb.getSubdeployment() != null) {
-            address = EJB3_SUBDEPLOYMENT_TEMPLATE
-                    .append(ejb.type.resource + "=*")
-                    .resolve(statementContext, ejb.getDeployment(), ejb.getSubdeployment(), ejb.getName());
-        } else {
-            address = EJB3_DEPLOYMENT_TEMPLATE
-                    .append(ejb.type.resource + "=*")
-                    .resolve(statementContext, ejb.getDeployment(), ejb.getName());
-        }
-        return address;
     }
 
     private boolean hasTimer(EjbNode ejb) {
