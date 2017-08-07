@@ -17,7 +17,6 @@ package org.jboss.hal.client.patching.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.Form;
@@ -36,12 +35,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
 
 public class PatchNamesStep extends WizardStep<PatchContext, PatchState> {
 
-    static Logger _log = Logger.getLogger("org.jboss");
     private final Form<ModelNode> form;
     private final Environment environment;
 
     public PatchNamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
-        super("Configure patch");
+        super(resources.messages().configurePatchTitle());
         this.environment = environment;
 
         form = new ModelNodeForm.Builder<>(Ids.PATCH_UPLOAD_NAMES_FORM, metadata)

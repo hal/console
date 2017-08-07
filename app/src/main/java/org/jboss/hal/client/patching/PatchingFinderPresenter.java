@@ -60,7 +60,7 @@ public class PatchingFinderPresenter extends FinderPresenter<PatchingFinderPrese
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? Ids.PATCHING_STANDALONE : Ids.PATCHING_DOMAIN;
+        return environment.isStandalone() ? Ids.PATCHING : Ids.PATCHING_DOMAIN;
     }
 
     @Override

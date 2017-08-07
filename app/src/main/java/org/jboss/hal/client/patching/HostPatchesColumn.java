@@ -94,8 +94,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                     .param(INCLUDE_RUNTIME, true)
                     .build();
 
-            Operation opPatches = new Operation.Builder(patchingAddress,
-                    READ_RESOURCE_OPERATION)
+            Operation opPatches = new Operation.Builder(patchingAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
                     .build();
@@ -254,7 +253,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
             @Override
             public String nextColumn() {
-                return Ids.PATCHES_HOST;
+                return Ids.PATCHING;
             }
 
             @Override
@@ -283,8 +282,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                 .sorted(comparing(NamedNode::getName))
                 .collect(toList());
         NamedNode domainController = null;
-        for (Iterator<NamedNode> iterator = hosts.iterator();
-                iterator.hasNext() && domainController == null; ) {
+        for (Iterator<NamedNode> iterator = hosts.iterator(); iterator.hasNext() && domainController == null; ) {
             NamedNode host = iterator.next();
             if (host.get(MASTER).asBoolean()) {
                 domainController = host;

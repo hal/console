@@ -348,9 +348,6 @@ class DeploymentFunctions {
             this.enabled = enabled;
         }
 
-        static java.util.logging.Logger _log = java.util.logging.Logger.getLogger("org.jboss");
-
-
         @Override
         public void execute(final Control<FunctionContext> control) {
             boolean replace;
@@ -376,7 +373,6 @@ class DeploymentFunctions {
             }
             Operation operation = builder.build();
             operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
-            _log.info("deploy operation: " + operation);
 
             dispatcher.upload(file, operation,
                     result -> {

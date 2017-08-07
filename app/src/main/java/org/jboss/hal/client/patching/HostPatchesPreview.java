@@ -72,11 +72,12 @@ class HostPatchesPreview extends RuntimePreview<NamedNode> {
         attributes = new PreviewAttributes<>(host)
                 .append(model -> {
                     String latest = model.get(CORE_SERVICE_PATCHING).get("cumulative-patch-id").asString();
-                    // when there is no patch installed, the above attribute returns as "base"
+                    // if there is no patch installed, the above attribute returns as "base"
+                    // so, lets display an informative message as there is no patch installed.
                     if ("base".equals(latest)) {
-                        latest = "No patch installed for this host.";
+                        latest = resources.messages().noPatchesForHost();
                     }
-                    return new PreviewAttributes.PreviewAttribute("Latest applied patch", latest);
+                    return new PreviewAttributes.PreviewAttribute(resources.messages().patchLatestInstalledLabel(), latest);
                 });
         previewBuilder().addAll(attributes);
         update(host);

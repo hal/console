@@ -71,6 +71,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String cleanPatchHistorySuccess();
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
+    String configurePatchTitle();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);
@@ -221,6 +222,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     String nonEmptyRequires(String fields);
+    String noPatchesForHost();
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
     SafeHtml noReset();
@@ -237,10 +239,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
+    String patchLatestInstalledLabel();
     SafeHtml patchHostNeedsRestart(String hostname);
     SafeHtml patchRestartDomainControllerQuestion(String hostname);
     SafeHtml patchRestartHostControllerQuestion(String hostname);
+    SafeHtml patchRestartStandaloneQuestion();
     SafeHtml patchSucessfullyApplied(String patchId);
+    String patchStopAllServersTitle();
+    SafeHtml patchStopAllServersQuestion(String servers, String host);
     SafeHtml patchAddError(String patchId, String error);
     SafeHtml patchSucessfullyRemoved(String patchId);
     SafeHtml pauseQueueSuccess(String name);
