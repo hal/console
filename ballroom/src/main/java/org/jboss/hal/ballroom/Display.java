@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom;
 
-/** Displays items managed by a {@link org.jboss.hal.ballroom.listview.DataProvider} */
+/** Displays items managed by a {@link DataProvider} */
 public interface Display<T> {
 
-    void showItems(Iterable<T> items, int visible, int total);
+    void showItems(Iterable<T> items, PageInfo pageInfo);
 }

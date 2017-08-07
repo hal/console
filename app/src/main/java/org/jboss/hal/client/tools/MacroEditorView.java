@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.ballroom.listview.DataProvider;
+import org.jboss.hal.ballroom.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;

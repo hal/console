@@ -84,6 +84,7 @@ public interface CSS {
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
     String containerPfNavPfVerticalWithSubMenus = "container-pf-nav-pf-vertical-with-sub-menus";
+    String contentViewPfPagination = "content-view-pf-pagination";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -123,7 +124,6 @@ public interface CSS {
     String external = "external";
 
     String fade = "fade";
-    String failSafeForm = "fail-safe-form";
     String faSpin = "fa-spin";
     String filter = "filter";
     String finder = "finder";
@@ -150,7 +150,6 @@ public interface CSS {
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
     String halSearch = "hal-search";
-    String halTableButton = "hal-table-button";
     String hasButton = "has-button";
     String hasClear = "has-clear";
     String hasError = "has-error";
@@ -164,12 +163,14 @@ public interface CSS {
     String hover = "hover";
     String hostContainer = "host-container";
 
+    String i = "i";
     String imgResponsive = "img-responsive";
     String imgThumbnail = "img-thumbnail";
     String in = "in";
     String inactive = "inactive";
     String indicator = "indicator";
     String info = "info";
+    String inner = "inner";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
@@ -184,11 +185,13 @@ public interface CSS {
     String last = "last";
     String lead = "lead";
     String listHalActions = "list-hal-actions";
+    String listHalAdditionalContent = "list-hal-additional-content";
     String listHalIconBig = "list-hal-icon-big";
     String listHalIconError = "list-hal-icon-error";
     String listHalIconInfo = "list-hal-icon-info";
     String listHalIconProgress = "list-hal-icon-progress";
     String listHalIconSuccess = "list-hal-icon-success";
+    String listHalMainContent = "list-hal-main-content";
     String listInline = "list-inline";
     String listPf = "list-pf";
     String listPfActions = "list-pf-actions";
@@ -218,7 +221,6 @@ public interface CSS {
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
-    String marginBottom5 = "margin-bottom-5";
     String marginBottomLarge = "margin-bottom-large";
     String marginBottomSmall = "margin-bottom-small";
     String marginRight5 = "margin-right-5";
@@ -259,10 +261,20 @@ public interface CSS {
     String offset = "offset";
     String ok = "ok";
     String ondrag = "ondrag";
+    String open = "open";
     String operationParameter = "operation-parameter";
     String operations = "operations";
 
     String page = "page";
+    String pagination = "pagination";
+    String paginationHal = "pagination-hal";
+    String paginationPfBack = "paginationpfBack";
+    String paginationPfForward = "paginationpfForward";
+    String paginationPfItemsCurrent = "pagination-pf-items-current";
+    String paginationPfItemsTotal = "pagination-pf-items-total";
+    String paginationPfPage = "pagination-pf-page";
+    String paginationPfPages = "pagination-pf-pages";
+    String paginationPfPagesize = "pagination-pf-pagesize";
     String panel = "panel";
     String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";
@@ -319,7 +331,6 @@ public interface CSS {
     String serverGroupContainer = "server-group-container";
     String smallLink = "small-link";
     String spinner = "spinner";
-    String spinnerInline = "spinner-inline";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
     String static_ = "static";
@@ -335,6 +346,7 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String text = "text";
     String textCenter = "text-center";
     String textRight = "text-right";
     String time = "time";

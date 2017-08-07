@@ -17,9 +17,9 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.listview.DataProvider;
-import org.jboss.hal.ballroom.toolbar.Toolbar.Action;
-import org.jboss.hal.ballroom.toolbar.Toolbar.Attribute;
+import org.jboss.hal.ballroom.DataProvider;
+import org.jboss.hal.ballroom.Toolbar.Action;
+import org.jboss.hal.ballroom.Toolbar.Attribute;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
@@ -47,7 +47,6 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
         Metadata metadata = metadataRegistry.lookup(EXECUTION_TEMPLATE);
         ModelNodeListView<ExecutionNode> listView = new ModelNodeListView.Builder<>(Ids.JOB_LIST, metadata,
                 dataProvider, item -> new ExecutionNodeDisplay(item, presenter, resources))
-                .contentWidths("40%", "60%")
                 .toolbarAttribute(new Attribute<>(NAME, Names.EXECUTION_ID,
                         (node, filter) -> node.getName().equals(filter),
                         comparing(ExecutionNode::getExecutionId)))

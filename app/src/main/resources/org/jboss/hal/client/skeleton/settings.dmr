@@ -12,7 +12,7 @@
             "nillable" => false,
             "allowed" => [],
         },
-        "page-length" => {
+        "page-size" => {
             "type" => INT,
             "description" => "The number of items which are displayed in table pages.",
             "nillable" => true

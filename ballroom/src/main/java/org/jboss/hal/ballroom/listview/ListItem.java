@@ -44,7 +44,7 @@ class ListItem<T> implements IsElement {
     final T item;
 
 
-    ListItem(ListView<T> listView, T item, boolean checkbox, String[] contentWidths, ItemDisplay<T> display) {
+    ListItem(ListView<T> listView, T item, boolean checkbox, ItemDisplay<T> display) {
         this.id = display.getId();
         this.item = item;
         this.actions = new HashMap<>();
@@ -89,8 +89,7 @@ class ListItem<T> implements IsElement {
             status.classList.add(classes.toArray(new String[classes.size()]));
         }
         content.appendChild(contentWrapper = div().css(listPfContentWrapper)
-                .add(mainContent = div().css(listPfMainContent)
-                        .style("flex-basis:" + contentWidths[0]) //NON-NLS
+                .add(mainContent = div().css(listPfMainContent, listHalMainContent)
                         .add(title = div().css(listPfTitle)
                                 .asElement())
                         .asElement())
@@ -126,8 +125,7 @@ class ListItem<T> implements IsElement {
                 display.getAdditionalInfoHtml() != null ||
                 display.getAdditionalInfo() != null) {
             HTMLElement additionalInfo;
-            contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent)
-                    .style("flex-basis:" + contentWidths[1]) //NON-NLS
+            contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent, listHalAdditionalContent)
                     .asElement());
             if (display.getAdditionalInfoElements() != null) {
                 for (HTMLElement element : display.getAdditionalInfoElements().asElements()) {
@@ -140,12 +138,11 @@ class ListItem<T> implements IsElement {
             }
         }
 
-        // actions: always add the actions div to have a nice column based layout
-        HTMLElement actionsContainer;
-        content.appendChild(actionsContainer = div().css(listPfActions, listHalActions)
-                .asElement());
         List<ItemAction<T>> allowedActions = listView.allowedActions(display.actions());
         if (!allowedActions.isEmpty()) {
+            HTMLElement actionsContainer;
+            content.appendChild(actionsContainer = div().css(listPfActions, listHalActions)
+                    .asElement());
             int index = 0;
             HTMLUListElement ul = null;
             for (ItemAction<T> action : allowedActions) {

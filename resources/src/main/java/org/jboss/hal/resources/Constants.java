@@ -94,6 +94,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copyToClipboard();
     String count();
     String counter();
+    String currentPage();
     String custom();
 
     String data();
@@ -151,6 +152,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String filter();
     String finish();
     String finished();
+    String firstPage();
     String flushAll();
     String flushGracefully();
     String flushIdle();
@@ -271,6 +273,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String kill();
 
     String largest();
+    String lastPage();
     String lastModified();
     String loading();
     String loadingPleaseWait();
@@ -300,6 +303,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String needsRestart();
     String networkError();
     String next();
+    String nextPage();
     String no();
     String noAttributes();
     String noBootErrors();
@@ -328,6 +332,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String notEnabled();
     String nothingSelected();
 
+    String of();
     String ok();
     String opened();
     String openInExternalWindow();
@@ -344,6 +349,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pattern();
     String pause();
     String pending();
+    String perPage();
     String pin();
     String ping();
     String platform();
@@ -352,6 +358,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pool();
     String preparedStatementCache();
     String preview();
+    String previousPage();
     String processors();
     String productName();
     String productVersion();

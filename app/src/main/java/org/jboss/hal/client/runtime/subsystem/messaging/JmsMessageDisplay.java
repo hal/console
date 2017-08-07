@@ -22,8 +22,6 @@ import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
@@ -32,7 +30,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jetbrains.annotations.NonNls;
 
-import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -74,11 +71,14 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
     }
 
     @Override
-    public HasElements getAdditionalInfoElements() {
-        ElementsBuilder elements = new ElementsBuilder();
-        elements.add(span().textContent(JMS_PRIORITY + ": " + message.get(JMS_PRIORITY).asInt()))
-                .add(span().textContent(JMS_DELIVERY_MODE + ": " + message.get(JMS_DELIVERY_MODE).asString()));
-        return elements;
+    public SafeHtml getAdditionalInfoHtml() {
+        @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendHtmlConstant("<p>")
+                .appendEscaped(JMS_PRIORITY + ": " + message.get(JMS_PRIORITY).asInt())
+                .appendHtmlConstant("</br/>")
+                .appendEscaped(JMS_DELIVERY_MODE + ": " + message.get(JMS_DELIVERY_MODE).asString())
+                .appendHtmlConstant("</p>");
+        return builder.toSafeHtml();
     }
 
     @Override

@@ -19,9 +19,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.listview.DataProvider;
-import org.jboss.hal.ballroom.toolbar.Toolbar;
-import org.jboss.hal.ballroom.toolbar.Toolbar.Attribute;
+import org.jboss.hal.ballroom.DataProvider;
+import org.jboss.hal.ballroom.Toolbar;
+import org.jboss.hal.ballroom.Toolbar.Attribute;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.meta.Metadata;
@@ -98,7 +98,6 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
                         this::remove))
 
                 .emptyState(TOO_MANY_MESSAGES, tooManyMessages)
-                .contentWidths("50%", "50%")
                 .multiselect(true)
                 .build();
 

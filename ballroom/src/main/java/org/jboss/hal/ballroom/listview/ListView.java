@@ -27,6 +27,9 @@ import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.hal.ballroom.DataProvider;
+import org.jboss.hal.ballroom.Display;
+import org.jboss.hal.ballroom.PageInfo;
 import org.jboss.hal.resources.CSS;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -35,8 +38,8 @@ import static org.jboss.hal.resources.CSS.listPf;
 import static org.jboss.hal.resources.CSS.listPfStacked;
 
 /**
- * PatternFly list view. Please note that the list view does not hold data. Instead use a {@link DataProvider} and
- * add the list view as a display to the data provider:
+ * PatternFly list view. The list view should not manage data by itself. Instead use a {@link DataProvider} and add the
+ * list view as a display to the data provider:
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -51,21 +54,14 @@ import static org.jboss.hal.resources.CSS.listPfStacked;
 public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
     private final ItemRenderer<T> itemRenderer;
-    private final String[] contentWidths;
     private final boolean multiselect;
     private final HTMLElement root;
     private final Map<String, ListItem<T>> currentListItems;
     private SelectHandler<T> selectHandler;
 
     public ListView(String id, ItemRenderer<T> itemRenderer, boolean stacked, boolean multiselect) {
-        this(id, itemRenderer, stacked, multiselect, new String[]{"60%", "40%"});
-    }
-
-    public ListView(String id, ItemRenderer<T> itemRenderer, boolean stacked, boolean multiselect,
-            String[] contentWidths) {
         this.itemRenderer = itemRenderer;
         this.multiselect = multiselect;
-        this.contentWidths = contentWidths;
         this.currentListItems = new HashMap<>();
 
         HtmlContentBuilder<HTMLDivElement> div = div().id(id).css(listPf);
@@ -81,11 +77,11 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
     }
 
     @Override
-    public void showItems(Iterable<T> items, int visible, int total) {
+    public void showItems(Iterable<T> items, PageInfo pageInfo) {
         currentListItems.clear();
         Elements.removeChildrenFrom(root);
         for (T item : items) {
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, contentWidths, itemRenderer.render(item));
+            ListItem<T> listItem = new ListItem<>(this, item, multiselect, itemRenderer.render(item));
             currentListItems.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
         }

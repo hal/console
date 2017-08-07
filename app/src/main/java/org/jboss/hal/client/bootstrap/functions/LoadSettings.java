@@ -25,7 +25,7 @@ import org.jboss.hal.config.Settings;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
-import static org.jboss.hal.config.Settings.Key.PAGE_LENGTH;
+import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
@@ -49,7 +49,7 @@ public class LoadSettings implements BootstrapFunction {
 
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
-        settings.load(PAGE_LENGTH, Settings.DEFAULT_PAGE_LENGTH);
+        settings.load(PAGE_SIZE, Settings.DEFAULT_PAGE_SIZE);
         settings.load(RUN_AS, null);
 
         logDone();

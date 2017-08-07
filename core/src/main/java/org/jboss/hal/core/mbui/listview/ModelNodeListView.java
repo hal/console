@@ -28,20 +28,21 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.DataProvider;
+import org.jboss.hal.ballroom.Display;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.listview.DataProvider;
-import org.jboss.hal.ballroom.listview.Display;
+import org.jboss.hal.ballroom.PageInfo;
+import org.jboss.hal.ballroom.Pager;
+import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.ballroom.toolbar.Toolbar;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 
@@ -54,8 +55,8 @@ import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.vh;
 
 /**
- * A list view for model nodes with a toolbar and empty states. Actions are filtered according to their constraints.
- * The list view does not hold data. Instead use a {@link DataProvider} and pass it to builder.
+ * A list view for model nodes with a toolbar, pager and empty states. Actions are filtered according to their
+ * constraints.
  *
  * <p>Please note that the {@code ModelNodeListView} uses its own {@code <div class="row"/>} element. This is important
  * if you add the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}</p>
@@ -70,7 +71,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         private final String id;
         private final Metadata metadata;
-        private final String[] contentWidths;
         private final List<Toolbar.Attribute<T>> toolbarAttributes;
         private final List<Toolbar.Action> toolbarActions;
         private final DataProvider<T> dataProvider;
@@ -85,7 +85,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             this.metadata = metadata;
             this.dataProvider = dataProvider;
             this.itemRenderer = itemRenderer;
-            this.contentWidths = new String[]{"60%", "40%"};
             this.toolbarAttributes = new ArrayList<>();
             this.toolbarActions = new ArrayList<>();
             this.emptyStates = new HashMap<>();
@@ -107,12 +106,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         public Builder<T> multiselect(boolean multiselect) {
             this.multiselect = multiselect;
-            return this;
-        }
-
-        public Builder<T> contentWidths(String main, String additional) {
-            contentWidths[0] = main;
-            contentWidths[1] = additional;
             return this;
         }
 
@@ -160,31 +153,27 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
+    private final DataProvider<T> dataProvider;
     private final Toolbar<T> toolbar;
     private final ListView<T> listView;
+    private final Pager<T> pager;
     private final ElementsBuilder elements;
-    private final Map<String, EmptyState> emptyStates;
+    private final Map<String, HTMLElement> emptyStates;
     private int surroundingHeight;
 
     private ModelNodeListView(Builder<T> builder) {
-        this.emptyStates = builder.emptyStates;
+        this.dataProvider = builder.dataProvider;
 
         // toolbar
         Environment environment = Core.INSTANCE.environment();
-        if (!builder.toolbarAttributes.isEmpty() || !builder.toolbarActions.isEmpty()) {
-            List<Toolbar.Action> allowedActions = builder.toolbarActions.stream()
-                    .filter(action -> AuthorisationDecision.from(environment,
-                            builder.metadata.getSecurityContext()).isAllowed(action.getConstraints()))
-                    .collect(toList());
-            toolbar = new Toolbar<>(Ids.build(builder.id, "toolbar"), builder.dataProvider,
-                    builder.toolbarAttributes, allowedActions);
-        } else {
-            toolbar = null;
-        }
+        List<Toolbar.Action> allowedActions = builder.toolbarActions.stream()
+                .filter(action -> AuthorisationDecision.from(environment,
+                        builder.metadata.getSecurityContext()).isAllowed(action.getConstraints()))
+                .collect(toList());
+        toolbar = new Toolbar<>(dataProvider, builder.toolbarAttributes, allowedActions);
 
         // list view
-        listView = new ListView<T>(builder.id, builder.itemRenderer, builder.stacked, builder.multiselect,
-                builder.contentWidths) {
+        listView = new ListView<T>(builder.id, builder.itemRenderer, builder.stacked, builder.multiselect) {
             @Override
             protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
                 return actions.stream()
@@ -194,40 +183,39 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             }
         };
 
+        // pager
+        pager = new Pager<>(dataProvider);
+
         // empty states
-        emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(), () -> {
-            if (toolbar != null) {
-                toolbar.clearAllFilters();
-                toolbar.apply();
-            }
+        emptyStates = new HashMap<>();
+        builder.emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(), () -> {
+            toolbar.clearAllFilters();
+            dataProvider.update();
         });
-        HTMLElement emptyStatesContainer = div().asElement();
-        for (EmptyState emptyState : emptyStates.values()) {
+        builder.emptyStates.forEach((key, emptyState) -> {
             HTMLElement element = emptyState.asElement();
             element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
+            emptyStates.put(key, element);
+        });
+        HTMLElement emptyStatesContainer = div().asElement();
+        for (HTMLElement element : emptyStates.values()) {
             emptyStatesContainer.appendChild(element);
         }
 
         // root elements
         elements = Elements.elements();
-        if (toolbar != null) {
-            elements.add(toolbar)
-                    .add(row()
-                            .add(column()
-                                    .addAll(listView.asElement(), emptyStatesContainer)));
-        } else {
-            elements.add(row()
-                    .add(column()
-                            .addAll(listView.asElement(), emptyStatesContainer)));
-        }
+        elements.add(toolbar)
+                .add(row()
+                        .add(column()
+                                .addAll(listView.asElement(), emptyStatesContainer)))
+                .add(pager);
         surroundingHeight = 0;
 
         // wire displays
-        if (toolbar != null) {
-            builder.dataProvider.addDisplay(toolbar);
-        }
-        builder.dataProvider.addDisplay(listView);
-        builder.dataProvider.addDisplay(this);
+        dataProvider.addDisplay(toolbar);
+        dataProvider.addDisplay(listView);
+        dataProvider.addDisplay(pager);
+        dataProvider.addDisplay(this);
     }
 
     @Override
@@ -251,8 +239,10 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     private void adjustHeight() {
-        int toolbarHeight = toolbar != null ? (int) (toolbar.asElement().offsetHeight) : 0;
-        listView.asElement().style.height = vh(applicationOffset() + toolbarHeight + surroundingHeight + 2);
+        int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
+        int pagerHeight = (int) pager.asElement().offsetHeight;
+        listView.asElement().style.height = vh(
+                applicationOffset() + toolbarHeight + pagerHeight + surroundingHeight + 2);
         listView.asElement().style.overflow = "scroll"; //NON-NLS
     }
 
@@ -268,24 +258,18 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     @Override
-    public void showItems(Iterable<T> items, int visible, int total) {
-        if (total == 0) {
-            showEmptyState(NO_ITEMS);
-            if (toolbar != null) {
-                Elements.setVisible(toolbar.asElement(), false);
-            }
-
-        } else if (visible == 0) {
-            showEmptyState(NO_MATCHING_ITEMS);
-            if (toolbar != null) {
+    public void showItems(Iterable<T> items, PageInfo pageInfo) {
+        if (pageInfo.getTotal() == 0) {
+            if (dataProvider.hasFilters()) {
+                showEmptyState(NO_MATCHING_ITEMS);
                 Elements.setVisible(toolbar.asElement(), true);
+            } else {
+                showEmptyState(NO_ITEMS);
             }
 
         } else {
             hideEmptyStates();
-            if (toolbar != null) {
-                Elements.setVisible(toolbar.asElement(), true);
-            }
+            Elements.setVisible(toolbar.asElement(), true);
         }
         adjustHeight();
     }
@@ -298,15 +282,18 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
     public void showEmptyState(String name) {
         if (emptyStates.containsKey(name)) {
+            Elements.setVisible(toolbar.asElement(), false);
             Elements.setVisible(listView.asElement(), false);
-            emptyStates.forEach((n, emptyState) -> Elements.setVisible(emptyState.asElement(), n.equals(name)));
+            Elements.setVisible(pager.asElement(), false);
+            emptyStates.forEach((n, element) -> Elements.setVisible(element, n.equals(name)));
         }
     }
 
     private void hideEmptyStates() {
-        for (EmptyState emptyState : emptyStates.values()) {
-            Elements.setVisible(emptyState.asElement(), false);
+        for (HTMLElement element : emptyStates.values()) {
+            Elements.setVisible(element, false);
         }
         Elements.setVisible(listView.asElement(), true);
+        Elements.setVisible(pager.asElement(), true);
     }
 }
