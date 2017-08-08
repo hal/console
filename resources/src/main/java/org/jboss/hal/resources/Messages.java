@@ -58,6 +58,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String blacklist(String blacklist);
 
     String cacheStore();
+    SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
     SafeHtml chooseServerGroupsToUndeploy(String name);

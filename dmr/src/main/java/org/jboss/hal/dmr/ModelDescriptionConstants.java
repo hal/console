@@ -247,6 +247,7 @@ public interface ModelDescriptionConstants {
     String FILE = "file";
     String FILE_AUDIT_LOG = "file-audit-log";
     String FILESYSTEM_REALM = "filesystem-realm";
+    String FILTER = "filter";
     String FILTER_REF = "filter-ref";
     String FILTERING_KEY_STORE = "filtering-key-store";
     String FILTERS = "filters";
@@ -386,6 +387,7 @@ public interface ModelDescriptionConstants {
     String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY = "mechanism-provider-filtering-sasl-server-factory";
     String MECHANISM_REALM_CONFIGURATIONS = "mechanism-realm-configurations";
     String MESSAGE_COUNT = "message-count";
+    String MESSAGE_ID = "message-id";
     String MESSAGES_ADDED = "messages-added";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
@@ -409,6 +411,7 @@ public interface ModelDescriptionConstants {
     String NEW_ITEM_PATH = "new-item-path";
     String NEW_ITEM_RDN = "new-item-rdn";
     String NEW_ITEM_TEMPLATE = "new-item-template";
+    String NEW_PRIORITY = "new-priority";
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";

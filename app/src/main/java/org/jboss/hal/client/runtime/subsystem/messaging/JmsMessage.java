@@ -20,16 +20,16 @@ import java.util.Date;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_DELIVERY_MODE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_EXPIRATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_MESSAGE_ID;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_PRIORITY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_TIMESTAMP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class JmsMessage extends NamedNode {
 
     JmsMessage(ModelNode node) {
         super(node.get(JMS_MESSAGE_ID).asString(), node);
+    }
+
+    String getMessageId() {
+        return get(JMS_MESSAGE_ID).asString();
     }
 
     Date getTimestamp() {

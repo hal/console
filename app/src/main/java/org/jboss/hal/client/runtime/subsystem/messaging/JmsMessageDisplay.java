@@ -47,7 +47,7 @@ class JmsMessageDisplay implements ItemDisplay<JmsMessage> {
 
     @Override
     public String getTitle() {
-        return message.getName();
+        return message.getMessageId();
     }
 
     @Override

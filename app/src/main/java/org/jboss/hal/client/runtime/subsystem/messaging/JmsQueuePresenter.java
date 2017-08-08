@@ -25,21 +25,29 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -54,11 +62,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_QUEUE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
@@ -82,6 +88,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     @NonNls private static final Logger logger = LoggerFactory.getLogger(JmsQueuePresenter.class);
 
     private final FinderPathFactory finderPathFactory;
+    private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Progress progress;
@@ -93,17 +100,19 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     private String queue;
 
     @Inject
-    public JmsQueuePresenter(final EventBus eventBus,
-            final JmsQueuePresenter.MyView view,
-            final JmsQueuePresenter.MyProxy myProxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            @Footer final Progress progress,
-            final Resources resources) {
+    public JmsQueuePresenter(EventBus eventBus,
+            JmsQueuePresenter.MyView view,
+            JmsQueuePresenter.MyProxy myProxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            MetadataRegistry metadataRegistry,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            @Footer Progress progress,
+            Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
+        this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.progress = progress;
@@ -207,10 +216,53 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     void changePriority(List<JmsMessage> messages) {
         if (messages.isEmpty()) {
             noMessagesSelected();
-        } else if (messages.size() == 1) {
-
         } else {
+            Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
+            Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_CHANGE_PRIORITY_FORM, metadata,
+                    CHANGE_MESSAGE_PRIORITY)
+                    .build();
 
+            Dialog dialog = new Dialog.Builder(resources.constants().changePriority())
+                    .add(form.asElement())
+                    .cancel()
+                    .primary(resources.constants().ok(), () -> {
+                        boolean valid = form.save();
+                        if (valid) {
+                            Operation operation;
+                            int priority = form.getModel().get(NEW_PRIORITY).asInt();
+                            if (messages.size() == 1) {
+                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGE_PRIORITY)
+                                        .param(MESSAGE_ID, messages.get(0).getMessageId())
+                                        .param(NEW_PRIORITY, priority)
+                                        .build();
+                            } else {
+                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGES_PRIORITY)
+                                        .param(FILTER, filter(messages))
+                                        .param(NEW_PRIORITY, priority)
+                                        .build();
+                            }
+                            dispatcher.execute(operation, result -> {
+                                reload();
+                                MessageEvent.fire(getEventBus(),
+                                        Message.success(resources.messages().changePrioritySuccess(priority)));
+                            });
+                        }
+                        return valid;
+                    })
+                    .build();
+            dialog.registerAttachable(form);
+            dialog.show();
+
+            ModelNode model = new ModelNode();
+            form.edit(model);
+            FormItem<Number> messageId = form.getFormItem(MESSAGE_ID);
+            messageId.setValue(42L);
+            Elements.setVisible(messageId.asElement(Form.State.EDITING), false);
+            FormItem<Number> priorityItem = form.getFormItem(NEW_PRIORITY);
+            if (messages.size() == 1) {
+                priorityItem.setValue(messages.get(0).get(JMS_PRIORITY).asLong());
+            }
+            priorityItem.setFocus(true);
         }
     }
 
@@ -256,6 +308,12 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
     private void noMessagesSelected() {
         MessageEvent.fire(getEventBus(), Message.warning(resources.messages().noMessagesSelected()));
+    }
+
+    private String filter(List<JmsMessage> messages) {
+        return messages.stream()
+                .map(message -> JMS_MESSAGE_ID + "='" + message.getMessageId() + "'")
+                .collect(joining(" OR ")); //NON-NLS
     }
 
     private ResourceAddress queueAddress() {

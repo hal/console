@@ -388,6 +388,7 @@ public interface Ids {
     String JMS_BRIDGE_TAB = build(JMS_BRIDGE, TAB_SUFFIX);
     String JMS_MESSAGE = "jms-message";
     String JMS_MESSAGE_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE, "change-priority");
+    String JMS_MESSAGE_CHANGE_PRIORITY_FORM = Ids.build(JMS_MESSAGE, "change-priority", FORM_SUFFIX);
     String JMS_MESSAGE_EXPIRE = Ids.build(JMS_MESSAGE, "expire");
     String JMS_MESSAGE_MOVE = Ids.build(JMS_MESSAGE, "move");
     String JMS_MESSAGE_REMOVE = Ids.build(JMS_MESSAGE, "remove");

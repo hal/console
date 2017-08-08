@@ -164,7 +164,8 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        Builder yesNo(Callback yesCallback) {
+        @JsIgnore
+        public Builder yesNo(Callback yesCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), null, null, false));
@@ -172,10 +173,11 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
+         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on ok will execute the specified
          * callback.
          */
-        Builder okCancel(Callback okCallback) {
+        @JsIgnore
+        public Builder okCancel(Callback okCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));

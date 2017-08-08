@@ -61,8 +61,8 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
                 item -> new JmsMessageDisplay(item, presenter, resources))
 
                 .toolbarAttribute(new Attribute<>(JMS_MESSAGE_ID, JMS_MESSAGE_ID,
-                        (model, filter) -> model.getName().contains(filter),
-                        comparing(JmsMessage::getName)))
+                        (model, filter) -> model.getMessageId().contains(filter),
+                        comparing(JmsMessage::getMessageId)))
                 .toolbarAttribute(new Attribute<>(JMS_TIMESTAMP, JMS_TIMESTAMP,
                         comparing(JmsMessage::getTimestamp)))
                 .toolbarAttribute(new Attribute<>(JMS_EXPIRATION, JMS_EXPIRATION,
