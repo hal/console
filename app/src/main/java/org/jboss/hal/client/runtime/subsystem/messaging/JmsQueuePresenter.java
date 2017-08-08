@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -31,6 +32,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
@@ -66,6 +68,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 
 public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
 
@@ -269,40 +272,132 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     void expire(List<JmsMessage> messages) {
         if (messages.isEmpty()) {
             noMessagesSelected();
-        } else if (messages.size() == 1) {
-
         } else {
-
+            SafeHtml question = messages.size() == 1
+                    ? resources.messages().expireMessageQuestion()
+                    : resources.messages().expireMessagesQuestion();
+            DialogFactory.showConfirmation(resources.constants().expire(), question, () -> {
+                Operation operation;
+                if (messages.size() == 1) {
+                    operation = new Operation.Builder(queueAddress(), EXPIRE_MESSAGE)
+                            .param(MESSAGE_ID, messages.get(0).getMessageId())
+                            .build();
+                } else {
+                    operation = new Operation.Builder(queueAddress(), EXPIRE_MESSAGES)
+                            .param(FILTER, filter(messages))
+                            .build();
+                }
+                dispatcher.execute(operation, result -> {
+                    reload();
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().expireMessageSuccess()));
+                });
+            });
         }
     }
 
     void move(List<JmsMessage> messages) {
         if (messages.isEmpty()) {
             noMessagesSelected();
-        } else if (messages.size() == 1) {
-
         } else {
+            Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
+            Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_MOVE_FORM, metadata, MOVE_MESSAGE)
+                    .build();
 
+            Dialog dialog = new Dialog.Builder(resources.constants().move())
+                    .add(form.asElement())
+                    .cancel()
+                    .primary(resources.constants().ok(), () -> {
+                        boolean valid = form.save();
+                        if (valid) {
+                            Operation operation;
+                            String destination = form.getModel().get(OTHER_QUEUE_NAME).asString();
+                            boolean rejectDuplicates = failSafeBoolean(form.getModel(), REJECT_DUPLICATES);
+                            if (messages.size() == 1) {
+                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGE_PRIORITY)
+                                        .param(MESSAGE_ID, messages.get(0).getMessageId())
+                                        .param(OTHER_QUEUE_NAME, destination)
+                                        .param(REJECT_DUPLICATES, rejectDuplicates)
+                                        .build();
+                            } else {
+                                operation = new Operation.Builder(queueAddress(), CHANGE_MESSAGES_PRIORITY)
+                                        .param(FILTER, filter(messages))
+                                        .param(OTHER_QUEUE_NAME, destination)
+                                        .param(REJECT_DUPLICATES, rejectDuplicates)
+                                        .build();
+                            }
+                            dispatcher.execute(operation, result -> {
+                                reload();
+                                MessageEvent.fire(getEventBus(),
+                                        Message.success(resources.messages().moveMessageSuccess(destination)));
+                            });
+                        }
+                        return valid;
+                    })
+                    .build();
+            dialog.registerAttachable(form);
+            dialog.show();
+
+            ModelNode model = new ModelNode();
+            form.edit(model);
+            FormItem<Number> messageId = form.getFormItem(MESSAGE_ID);
+            messageId.setValue(42L);
+            Elements.setVisible(messageId.asElement(Form.State.EDITING), false);
+            form.getFormItem(OTHER_QUEUE_NAME).setFocus(true);
         }
     }
 
     void sendToDeadLetter(List<JmsMessage> messages) {
         if (messages.isEmpty()) {
             noMessagesSelected();
-        } else if (messages.size() == 1) {
-
         } else {
-
+            SafeHtml question = messages.size() == 1
+                    ? resources.messages().sendMessageToDeadLetterQuestion()
+                    : resources.messages().sendMessagesToDeadLetterQuestion();
+            DialogFactory.showConfirmation(resources.constants().sendToDeadLetter(), question, () -> {
+                Operation operation;
+                if (messages.size() == 1) {
+                    operation = new Operation.Builder(queueAddress(), SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS)
+                            .param(MESSAGE_ID, messages.get(0).getMessageId())
+                            .build();
+                } else {
+                    operation = new Operation.Builder(queueAddress(), SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS)
+                            .param(FILTER, filter(messages))
+                            .build();
+                }
+                dispatcher.execute(operation, result -> {
+                    reload();
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().sendMessageToDeadLetterSuccess()));
+                });
+            });
         }
     }
 
     void remove(List<JmsMessage> messages) {
         if (messages.isEmpty()) {
             noMessagesSelected();
-        } else if (messages.size() == 1) {
-
         } else {
-
+            SafeHtml question = messages.size() == 1
+                    ? resources.messages().removeMessageQuestion()
+                    : resources.messages().removeMessagesQuestion();
+            DialogFactory.showConfirmation(resources.constants().remove(), question, () -> {
+                Operation operation;
+                if (messages.size() == 1) {
+                    operation = new Operation.Builder(queueAddress(), REMOVE_MESSAGE)
+                            .param(MESSAGE_ID, messages.get(0).getMessageId())
+                            .build();
+                } else {
+                    operation = new Operation.Builder(queueAddress(), REMOVE_MESSAGES)
+                            .param(FILTER, filter(messages))
+                            .build();
+                }
+                dispatcher.execute(operation, result -> {
+                    reload();
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().removeMessageSuccess()));
+                });
+            });
         }
     }
 

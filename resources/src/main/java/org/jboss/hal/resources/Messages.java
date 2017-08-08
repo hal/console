@@ -126,6 +126,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml endpointOk(String url);
     String exactlyOneAlternativeError(String alternatives);
     String exactlyOneAlternativesError(String alternatives);
+    SafeHtml expireMessageQuestion();
+    SafeHtml expireMessagesQuestion();
+    SafeHtml expireMessageSuccess();
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
     SafeHtml extensionError(int status);
@@ -197,6 +200,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moreThanOneCacheStore();
     String moreThanOneCacheStoreDetails();
     SafeHtml moreThanOneKeyMapperForPrincipalQuery();
+    SafeHtml moveMessageSuccess(String queue);
     SafeHtml multiValueListHint();
 
     String noBootErrors();
@@ -260,6 +264,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeExtensionSuccess();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
+    SafeHtml removeMessageQuestion();
+    SafeHtml removeMessagesQuestion();
+    SafeHtml removeMessageSuccess();
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
     SafeHtml removeRunAsRoleError(String role);
@@ -311,6 +318,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
 
+    SafeHtml sendMessageToDeadLetterQuestion();
+    SafeHtml sendMessagesToDeadLetterQuestion();
+    SafeHtml sendMessageToDeadLetterSuccess();
     SafeHtml simpleProviderWarning();
 
     SafeHtml serverGroupNoStartedServers(String name);

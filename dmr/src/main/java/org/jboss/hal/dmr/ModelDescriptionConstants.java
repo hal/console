@@ -425,6 +425,7 @@ public interface ModelDescriptionConstants {
     String OPERATIONS = "operations";
     String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
+    String OTHER_QUEUE_NAME = "other-queue-name";
     String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
@@ -500,6 +501,7 @@ public interface ModelDescriptionConstants {
     String RECURSIVE_DEPTH = "recursive-depth";
     String REGEX_PRINCIPAL_TRANSFORMER = "regex-principal-transformer";
     String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "regex-validating-principal-transformer";
+    String REJECT_DUPLICATES = "reject-duplicates";
     String REJECTED_COUNT = "rejected-count";
     String RELATIVE_TO = "relative-to";
     String RELAY = "relay";
