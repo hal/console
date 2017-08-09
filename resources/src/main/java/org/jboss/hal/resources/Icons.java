@@ -79,4 +79,8 @@ public interface Icons {
     static HTMLElement unknown() {
         return span().css(UNKNOWN).asElement();
     }
+
+    static HTMLElement custom(String css) {
+        return span().css(css).asElement();
+    }
 }

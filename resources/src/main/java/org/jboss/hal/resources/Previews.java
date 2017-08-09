@@ -286,6 +286,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/logfiles.html")
     ExternalTextResource runtimeLogFiles();
 
+    @Source("previews/runtime/messaging-server.html")
+    ExternalTextResource runtimeMessagingServer();
+
     @Source("previews/runtime/server-groups.html")
     ExternalTextResource runtimeServerGroups();
 

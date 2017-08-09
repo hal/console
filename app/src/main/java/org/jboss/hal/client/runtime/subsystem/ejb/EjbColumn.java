@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -41,6 +42,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -54,6 +56,9 @@ import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDep
 import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.MDB;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.EJB3)
 public class EjbColumn extends FinderColumn<EjbNode> {
@@ -119,8 +124,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
         setItemRenderer(item -> new ItemDisplay<EjbNode>() {
             @Override
             public String getId() {
-                return Ids.ejb3(item.getDeployment(), item.getSubdeployment(), item.type.name(),
-                        item.getName());
+                return Ids.ejb3(item.getDeployment(), item.getSubdeployment(), item.type.name(), item.getName());
             }
 
             @Override
@@ -129,16 +133,41 @@ public class EjbColumn extends FinderColumn<EjbNode> {
             }
 
             @Override
-            public String getTooltip() {
-                if (item.type == MDB) {
-                    return item.get(DELIVERY_ACTIVE).asBoolean() ? Names.DELIVERY_ACTIVE : Names.DELIVERY_INACTIVE;
-                }
-                return null;
+            public HTMLElement asElement() {
+                return ItemDisplay.withSubtitle(item.getName(), item.getPath());
             }
 
             @Override
-            public HTMLElement asElement() {
-                return ItemDisplay.withSubtitle(item.getName(), item.type.type);
+            public String getTooltip() {
+                String tt = item.type.type;
+                if (item.type == MDB && !item.isDeliveryActive()) {
+                    tt += " (" + resources.constants().inactive() + ")";
+                }
+                return tt;
+            }
+
+            @Override
+            public HTMLElement getIcon() {
+                if (hasTimer(item)) {
+                    return Icons.custom(pfIcon("history"));
+                } else {
+                    switch (item.type) {
+                        case MDB:
+                            HTMLElement icon = Icons.custom(fontAwesome("exchange"));
+                            if (!item.isDeliveryActive()) {
+                                icon.style.color = PatternFly.colors.black400;
+                            }
+                            return icon;
+                        case SINGLETON:
+                            return Icons.custom(fontAwesome("cube"));
+                        case STATEFUL:
+                            return Icons.custom(fontAwesome("file-text-o"));
+                        case STATELESS:
+                            return Icons.custom(fontAwesome("file-o"));
+                        default:
+                            return Icons.unknown();
+                    }
+                }
             }
 
             @Override
@@ -180,7 +209,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
     }
 
     private void startDelivery(EjbNode ejb) {
-        Operation operation = new Operation.Builder(ejbAddress(ejb), START_DELIVERY).build();
+        Operation operation = new Operation.Builder(ejb.getAddress(), START_DELIVERY).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent.fire(eventBus, Message.success(resources.messages().startDeliverySuccess(ejb.getName())));
@@ -188,24 +217,14 @@ public class EjbColumn extends FinderColumn<EjbNode> {
     }
 
     private void stopDelivery(EjbNode ejb) {
-        Operation operation = new Operation.Builder(ejbAddress(ejb), STOP_DELIVERY).build();
+        Operation operation = new Operation.Builder(ejb.getAddress(), STOP_DELIVERY).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
             MessageEvent.fire(eventBus, Message.success(resources.messages().stopDeliverySuccess(ejb.getName())));
         });
     }
 
-    private ResourceAddress ejbAddress(EjbNode ejb) {
-        ResourceAddress address;
-        if (ejb.getSubdeployment() != null) {
-            address = EJB3_SUBDEPLOYMENT_TEMPLATE
-                    .append(ejb.type.resource + "=*")
-                    .resolve(statementContext, ejb.getDeployment(), ejb.getSubdeployment(), ejb.getName());
-        } else {
-            address = EJB3_DEPLOYMENT_TEMPLATE
-                    .append(ejb.type.resource + "=*")
-                    .resolve(statementContext, ejb.getDeployment(), ejb.getName());
-        }
-        return address;
+    private boolean hasTimer(EjbNode ejb) {
+        return !failSafeList(ejb, TIMERS).isEmpty();
     }
 }

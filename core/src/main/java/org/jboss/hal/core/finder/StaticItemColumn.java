@@ -17,6 +17,8 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
+import elemental2.dom.HTMLElement;
+
 /** Finder column for {@link StaticItem}. */
 public class StaticItemColumn extends FinderColumn<StaticItem> {
 
@@ -36,6 +38,14 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         @Override
         public String getTitle() {
             return item.getTitle();
+        }
+
+        @Override
+        public HTMLElement asElement() {
+            if (item.getSubtitle() != null) {
+                return ItemDisplay.withSubtitle(item.getTitle(), item.getSubtitle());
+            }
+            return null;
         }
 
         @Override

@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.messaging;
+package org.jboss.hal.client.runtime.subsystem.messaging;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STARTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VERSION;
 
 class ServerPreview extends PreviewContent<NamedNode> {
 
     ServerPreview(NamedNode server) {
         super(server.getName());
-
-        previewBuilder().addAll(new PreviewAttributes<>(server, asList(
-                MANAGEMENT_ADDRESS,
-                MANAGEMENT_NOTIFICATION_ADDRESS,
-                STATISTICS_ENABLED,
-                THREAD_POOL_MAX_SIZE,
-                SCHEDULED_THREAD_POOL_MAX_SIZE,
-                TRANSACTION_TIMEOUT,
-                TRANSACTION_TIMEOUT_SCAN_PERIOD)));
+        previewBuilder().addAll(new PreviewAttributes<>(server, asList(ACTIVE, STARTED, VERSION)));
     }
 }

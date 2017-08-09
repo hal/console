@@ -126,7 +126,7 @@ public class DestinationPresenter
         return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
-                .append(Ids.MESSAGING_SERVER, Ids.messagingServer(serverName),
+                .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName),
                         Names.SERVER, serverName)
                 .append(Ids.MESSAGING_SERVER_SETTINGS, Ids.MESSAGING_SERVER_DESTINATION,
                         resources.constants().settings(), Names.DESTINATIONS);

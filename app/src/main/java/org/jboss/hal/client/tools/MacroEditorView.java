@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.ballroom.listview.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
@@ -74,7 +74,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     public MacroEditorView(Resources resources) {
         this.resources = resources;
 
-        dataProvider = new DataProvider<>(Macro::getName);
+        dataProvider = new DataProvider<>(Macro::getName, false);
+        dataProvider.onSelect(this::loadMacro);
 
         empty = new EmptyState.Builder(resources.constants().noMacros())
                 .icon(CSS.fontAwesome("dot-circle-o"))
@@ -114,8 +115,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                                         () -> presenter.remove(macro))));
             }
         };
-        macroList = new ListView<>(Ids.MACRO_LIST, itemRenderer, true, false);
-        macroList.onSelect(this::loadMacro);
+        macroList = new ListView<>(Ids.MACRO_LIST, dataProvider, itemRenderer, true, false);
         macroList.asElement().classList.add(CSS.macroList);
         dataProvider.addDisplay(macroList);
 
@@ -197,7 +197,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
     @Override
     public void selectMacro(final Macro macro) {
-        macroList.selectItem(macro);
+        dataProvider.select(macro, true);
     }
 
     @Override
@@ -219,8 +219,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     }
 
     private void copyToClipboard(Clipboard clipboard) {
-        if (macroList.selectedItem() != null) {
-            clipboard.setText(macroList.selectedItem().asCli());
+        if (dataProvider.getSingleSelection() != null) {
+            clipboard.setText(dataProvider.getSingleSelection().asCli());
             Tooltip tooltip = Tooltip.element(copyToClipboard);
             tooltip.hide()
                     .setTitle(resources.constants().copied())

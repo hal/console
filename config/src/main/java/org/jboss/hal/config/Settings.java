@@ -34,7 +34,7 @@ public class Settings {
     public enum Key {
         COLLECT_USER_DATA("collect-user-data", true),
         LOCALE("locale", true),
-        PAGE_LENGTH("page-length", true),
+        PAGE_SIZE("page-size", true),
         RUN_AS("run-as", false); // can contain multiple roles separated by ","
 
         public static Key from(@NonNls String key) {
@@ -43,8 +43,8 @@ public class Settings {
                     return COLLECT_USER_DATA;
                 case "locale":
                     return LOCALE;
-                case "page-length":
-                    return PAGE_LENGTH;
+                case "page-size":
+                    return PAGE_SIZE;
                 case "run-as":
                     return RUN_AS;
                 default:
@@ -111,7 +111,8 @@ public class Settings {
     @Inject
     public static Settings INSTANCE; // use only if no DI is available!
     public static final String DEFAULT_LOCALE = "en";
-    public static final int DEFAULT_PAGE_LENGTH = 10;
+    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static final int[] PAGE_SIZE_VALUES = new int[]{10, 20, 50};
     private static final int EXPIRES = 365; // days
 
     private final Map<Key, Value> values;

@@ -386,6 +386,23 @@ public interface Ids {
     String JMS_BRIDGE_FORM = build(JMS_BRIDGE, FORM_SUFFIX);
     String JMS_BRIDGE_REFRESH = build(JMS_BRIDGE, REFRESH_SUFFIX);
     String JMS_BRIDGE_TAB = build(JMS_BRIDGE, TAB_SUFFIX);
+    String JMS_MESSAGE = "jms-message";
+    String JMS_MESSAGE_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE, "change-priority");
+    String JMS_MESSAGE_CHANGE_PRIORITY_FORM = Ids.build(JMS_MESSAGE, "change-priority", FORM_SUFFIX);
+    String JMS_MESSAGE_EXPIRE = Ids.build(JMS_MESSAGE, "expire");
+    String JMS_MESSAGE_MOVE = Ids.build(JMS_MESSAGE, "move");
+    String JMS_MESSAGE_MOVE_FORM = Ids.build(JMS_MESSAGE, "move", FORM_SUFFIX);
+    String JMS_MESSAGE_REMOVE = Ids.build(JMS_MESSAGE, "remove");
+    String JMS_MESSAGE_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE, "send-to-dead-letter");
+    String JMS_MESSAGE_LIST = "jms-message-list";
+    String JMS_MESSAGE_LIST_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE_LIST, "change-priority");
+    String JMS_MESSAGE_LIST_CLEAR_SELECTION = Ids.build(JMS_MESSAGE_LIST, "clear-selection");
+    String JMS_MESSAGE_LIST_EXPIRE = Ids.build(JMS_MESSAGE_LIST, "expire");
+    String JMS_MESSAGE_LIST_MOVE = Ids.build(JMS_MESSAGE_LIST, "move");
+    String JMS_MESSAGE_LIST_REFRESH = Ids.build(JMS_MESSAGE_LIST, "refresh");
+    String JMS_MESSAGE_LIST_REMOVE = Ids.build(JMS_MESSAGE_LIST, "remove");
+    String JMS_MESSAGE_LIST_SELECT_ALL = Ids.build(JMS_MESSAGE_LIST, "select-all");
+    String JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE_LIST, "send-to-dead-letter");
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
     String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
@@ -484,22 +501,25 @@ public interface Ids {
     String MESSAGING_SECURITY_SETTING_ROLE_ENTRY = build(MESSAGING_SECURITY_SETTING_ROLE, ENTRY_SUFFIX);
     String MESSAGING_SECURITY_SETTING_ROLE_FORM = build(MESSAGING_SECURITY_SETTING_ROLE, FORM_SUFFIX);
     String MESSAGING_SECURITY_SETTING_ROLE_TABLE = build(MESSAGING_SECURITY_SETTING_ROLE, TABLE_SUFFIX);
-    String MESSAGING_SERVER = "messaging-server";
+    String MESSAGING_SERVER = "msg-server";
     String MESSAGING_SERVER_ADD = build(MESSAGING_SERVER, ADD_SUFFIX);
     String MESSAGING_SERVER_CLUSTERING = build(MESSAGING_SERVER, "clustering");
+    String MESSAGING_SERVER_CONFIGURATION = "msg-server-c";
     String MESSAGING_SERVER_CONNECTION = build(MESSAGING_SERVER, "connection");
-    String MESSAGING_SERVER_DESTINATION = build(MESSAGING_SERVER, "destination");
+    String MESSAGING_SERVER_DESTINATION = "msg-server-destination";
     String MESSAGING_SERVER_HA_POLICY = build(MESSAGING_SERVER, "ha-policy");
     String MESSAGING_SERVER_REFRESH = build(MESSAGING_SERVER, REFRESH_SUFFIX);
-    String MESSAGING_SERVER_SETTINGS = "messaging-server-settings";
-    String JOURNAL_DIRECTORY = build(MESSAGING_SERVER, "journal-directory");
-    String JOURNAL_DIRECTORY_FORM = build(MESSAGING_SERVER, "journal-directory", FORM_SUFFIX);
-    String PAGING_DIRECTORY = build(MESSAGING_SERVER, "paging-directory");
-    String PAGING_DIRECTORY_FORM = build(MESSAGING_SERVER, "paging-directory", FORM_SUFFIX);
-    String BINDING_DIRECTORY = build(MESSAGING_SERVER, "bindings-directory");
-    String BINDING_DIRECTORY_FORM = build(MESSAGING_SERVER, "bindings-directory", FORM_SUFFIX);
-    String LARGE_MESSAGES_DIRECTORY = build(MESSAGING_SERVER, "large-messages-directory");
-    String LARGE_MESSAGES_DIRECTORY_FORM = build(MESSAGING_SERVER, "large-messages-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_RUNTIME = "msg-server-r";
+    String MESSAGING_SERVER_SETTINGS = "msg-server-settings";
+    String MESSAGING_SERVER_JOURNAL_DIRECTORY = build(MESSAGING_SERVER, "journal-directory");
+    String MESSAGING_SERVER_JOURNAL_DIRECTORY_FORM = build(MESSAGING_SERVER, "journal-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_PAGING_DIRECTORY = build(MESSAGING_SERVER, "paging-directory");
+    String MESSAGING_SERVER_PAGING_DIRECTORY_FORM = build(MESSAGING_SERVER, "paging-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_BINDING_DIRECTORY = build(MESSAGING_SERVER, "bindings-directory");
+    String MESSAGING_SERVER_BINDING_DIRECTORY_FORM = build(MESSAGING_SERVER, "bindings-directory", FORM_SUFFIX);
+    String MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY = build(MESSAGING_SERVER, "large-messages-directory");
+    String MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM = build(MESSAGING_SERVER, "large-messages-directory",
+            FORM_SUFFIX);
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
@@ -716,6 +736,13 @@ public interface Ids {
 
     static String deployment(String name) {
         return name;
+    }
+
+    static String destination(String deployment, String subdeployment, String messageServer, String type, String name) {
+        if (deployment == null) {
+            return build(messageServer, type, name);
+        }
+        return build(deployment, subdeployment, messageServer, type, name);
     }
 
     static String ejb3(String deployment, String subdeployment, String type, String name) {

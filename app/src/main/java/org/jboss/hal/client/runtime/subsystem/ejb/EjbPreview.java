@@ -42,6 +42,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static elemental2.dom.DomGlobal.clearInterval;
+import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
 import static java.lang.Math.round;
 import static java.util.Arrays.asList;
@@ -75,17 +76,18 @@ class EjbPreview extends PreviewContent<EjbNode> {
 
     EjbPreview(EjbNode ejb, FinderPathFactory finderPathFactory, Places places, Dispatcher dispatcher,
             Resources resources) {
-        super(ejb.getName(), ejb.getPath());
+        super(ejb.getName(), ejb.type.type);
         this.dispatcher = dispatcher;
         this.address = ejb.getAddress();
         this.labelBuilder = new LabelBuilder();
         this.maxRemaining = 0;
 
         getHeaderContainer().appendChild(refreshLink(() -> update(null)));
-
         FinderPath path = finderPathFactory.deployment(ejb.getDeployment());
         PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
         Elements.removeChildrenFrom(getLeadElement());
+        getLeadElement().appendChild(
+                document.createTextNode(ejb.type.type + " @ "));
         getLeadElement().appendChild(a(places.historyToken(placeRequest))
                 .textContent(ejb.getPath())
                 .title(resources.messages().goTo(Names.DEPLOYMENTS))

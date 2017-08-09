@@ -109,7 +109,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
             Elements.removeChildrenFrom(getLeadElement());
             getLeadElement().appendChild(
-                    document.createTextNode(dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE + " - "));
+                    document.createTextNode(dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE + " @ "));
             getLeadElement().appendChild(a(places.historyToken(placeRequest))
                     .textContent(dataSource.getPath())
                     .title(resources.messages().goTo(Names.DEPLOYMENTS))

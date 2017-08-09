@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom.dataprovider;
 
-/** A filter for a column in a list view */
-@FunctionalInterface
-public interface Filter<T> {
+/** Wrapper for a {@link Filter} and its value */
+public class FilterValue<T> {
 
-    boolean test(T model, String filter);
+    public static final FilterValue EMPTY = new FilterValue<>((model, filter) -> false, "");
+
+    private final Filter<T> filter;
+    private String value;
+
+    public FilterValue(Filter<T> filter, String value) {
+        this.filter = filter;
+        this.value = value;
+    }
+
+    public Filter<T> getFilter() {
+        return filter;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

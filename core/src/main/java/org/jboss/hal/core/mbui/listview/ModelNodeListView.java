@@ -16,11 +16,12 @@
 package org.jboss.hal.core.mbui.listview;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.CSSProperties.MarginTopUnionType;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -28,22 +29,26 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.listview.DataProvider;
-import org.jboss.hal.ballroom.listview.Display;
+import org.jboss.hal.ballroom.Pager;
+import org.jboss.hal.ballroom.Toolbar;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.Display;
+import org.jboss.hal.ballroom.dataprovider.PageInfo;
+import org.jboss.hal.ballroom.dataprovider.Selection;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.ballroom.toolbar.Toolbar;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -51,30 +56,29 @@ import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.vh;
 
 /**
- * A list view for model nodes with a toolbar and an empty state (if no items are available). Actions are filtered
- * according to their constraints. The list view does not hold data. Instead use a {@link DataProvider} and pass it to
- * builder.
+ * A list view for model nodes with a toolbar, pager and empty states. Actions are filtered according to their
+ * constraints.
  *
- * <p>Please note that the {@code ModelNodeListView} uses an own {@code <div class="row"/>} element. This is important
+ * <p>Please note that the {@code ModelNodeListView} uses its own {@code <div class="row"/>} element. This is important
  * if you add the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}</p>
  */
 public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasElements, Attachable {
+
+    private static final String NO_ITEMS = "org.jboss.hal.core.mbui.listview.NoItems";
+    private static final String NO_MATCHING_ITEMS = "org.jboss.hal.core.mbui.listview.NoMatchingItems";
+
 
     public static class Builder<T extends ModelNode> {
 
         private final String id;
         private final Metadata metadata;
-        private final String[] contentWidths;
         private final List<Toolbar.Attribute<T>> toolbarAttributes;
         private final List<Toolbar.Action> toolbarActions;
         private final DataProvider<T> dataProvider;
         private final ItemRenderer<T> itemRenderer;
+        private final Map<String, EmptyState> emptyStates;
         private boolean multiselect;
         private boolean stacked;
-        private String noItemsHeader;
-        private SafeHtml noItemsDescription;
-        private String noMatchingItemsHeader;
-        private SafeHtml noMatchingItemsDescription;
 
         public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
                 ItemRenderer<T> itemRenderer) {
@@ -82,15 +86,18 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             this.metadata = metadata;
             this.dataProvider = dataProvider;
             this.itemRenderer = itemRenderer;
-            this.contentWidths = new String[]{"60%", "40%"};
             this.toolbarAttributes = new ArrayList<>();
             this.toolbarActions = new ArrayList<>();
+            this.emptyStates = new HashMap<>();
             this.multiselect = false;
             this.stacked = true;
-            this.noItemsHeader = CONSTANTS.noItems();
-            this.noItemsDescription = null;
-            this.noMatchingItemsHeader = CONSTANTS.noMatchingItems();
-            this.noMatchingItemsDescription = null;
+
+            emptyStates.put(NO_ITEMS, new EmptyState.Builder(CONSTANTS.noItems())
+                    .description(MESSAGES.noItems())
+                    .build());
+            emptyStates.put(NO_MATCHING_ITEMS, new EmptyState.Builder(CONSTANTS.noMatchingItems())
+                    .description(MESSAGES.noMatchingItems())
+                    .build());
         }
 
         public Builder<T> stacked(boolean stacked) {
@@ -100,12 +107,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         public Builder<T> multiselect(boolean multiselect) {
             this.multiselect = multiselect;
-            return this;
-        }
-
-        public Builder<T> contentWidths(String main, String additional) {
-            contentWidths[0] = main;
-            contentWidths[1] = additional;
             return this;
         }
 
@@ -124,8 +125,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         }
 
         public Builder<T> noItems(String header, SafeHtml description) {
-            this.noItemsHeader = header;
-            this.noItemsDescription = description;
+            emptyStates.get(NO_ITEMS).setHeader(header);
+            emptyStates.get(NO_ITEMS).setDescription(description);
             return this;
         }
 
@@ -134,8 +135,13 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         }
 
         public Builder<T> noMatchingItems(String header, SafeHtml description) {
-            this.noMatchingItemsHeader = header;
-            this.noMatchingItemsDescription = description;
+            emptyStates.get(NO_MATCHING_ITEMS).setHeader(header);
+            emptyStates.get(NO_MATCHING_ITEMS).setDescription(description);
+            return this;
+        }
+
+        public Builder<T> emptyState(String name, EmptyState emptyState) {
+            emptyStates.put(name, emptyState);
             return this;
         }
 
@@ -146,34 +152,30 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
 
+    private final DataProvider<T> dataProvider;
     private final Toolbar<T> toolbar;
     private final ListView<T> listView;
-    private final EmptyState emptyState;
+    private final Pager<T> pager;
     private final ElementsBuilder elements;
+    private final Map<String, HTMLElement> emptyStates;
     private int surroundingHeight;
-    private String noItemsHeader;
-    private SafeHtml noItemsDescription;
-    private String noMatchingItemsHeader;
-    private SafeHtml noMatchingItemsDescription;
 
     private ModelNodeListView(Builder<T> builder) {
+        this.dataProvider = builder.dataProvider;
+
         // toolbar
         Environment environment = Core.INSTANCE.environment();
-        if (!builder.toolbarAttributes.isEmpty() || !builder.toolbarActions.isEmpty()) {
-            List<Toolbar.Action> allowedActions = builder.toolbarActions.stream()
-                    .filter(action -> AuthorisationDecision.from(environment,
-                            builder.metadata.getSecurityContext()).isAllowed(action.getConstraints()))
-                    .collect(toList());
-            toolbar = new Toolbar<>(Ids.build(builder.id, "toolbar"), builder.dataProvider,
-                    builder.toolbarAttributes, allowedActions);
-        } else {
-            toolbar = null;
-        }
+        List<Toolbar.Action> allowedActions = builder.toolbarActions.stream()
+                .filter(action -> AuthorisationDecision.from(environment,
+                        builder.metadata.getSecurityContext()).isAllowed(action.getConstraints()))
+                .collect(toList());
+        toolbar = new Toolbar<>(dataProvider, builder.toolbarAttributes, allowedActions);
 
         // list view
-        listView = new ListView<T>(builder.id, builder.itemRenderer, builder.stacked, builder.multiselect,
-                builder.contentWidths) {
+        listView = new ListView<T>(builder.id, dataProvider, builder.itemRenderer, builder.stacked,
+                builder.multiselect) {
             @Override
             protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
                 return actions.stream()
@@ -183,42 +185,39 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             }
         };
 
-        // empty state
-        emptyState = new EmptyState.Builder("")
-                .description(SafeHtmlUtils.fromString(""))
-                .primaryAction(CONSTANTS.clearAllFilters(), () -> {
-                    if (toolbar != null) {
-                        toolbar.clearAllFilters();
-                        toolbar.apply();
-                    }
-                })
-                .build();
-        emptyState.asElement().style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
-        noItemsHeader = builder.noItemsHeader;
-        noItemsDescription = builder.noItemsDescription;
-        noMatchingItemsHeader = builder.noMatchingItemsHeader;
-        noMatchingItemsDescription = builder.noMatchingItemsDescription;
+        // pager
+        pager = new Pager<>(dataProvider);
+
+        // empty states
+        emptyStates = new HashMap<>();
+        builder.emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(), () -> {
+            toolbar.clearAllFilters();
+            dataProvider.update();
+        });
+        builder.emptyStates.forEach((key, emptyState) -> {
+            HTMLElement element = emptyState.asElement();
+            element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
+            emptyStates.put(key, element);
+        });
+        HTMLElement emptyStatesContainer = div().asElement();
+        for (HTMLElement element : emptyStates.values()) {
+            emptyStatesContainer.appendChild(element);
+        }
 
         // root elements
         elements = Elements.elements();
-        if (toolbar != null) {
-            elements.add(toolbar)
-                    .add(row()
-                            .add(column()
-                                    .addAll(listView, emptyState)));
-        } else {
-            elements.add(row()
-                    .add(column()
-                            .addAll(listView, emptyState)));
-        }
+        elements.add(toolbar)
+                .add(row()
+                        .add(column()
+                                .addAll(listView.asElement(), emptyStatesContainer)))
+                .add(pager);
         surroundingHeight = 0;
 
         // wire displays
-        if (toolbar != null) {
-            builder.dataProvider.addDisplay(toolbar);
-        }
-        builder.dataProvider.addDisplay(listView);
-        builder.dataProvider.addDisplay(this);
+        dataProvider.addDisplay(toolbar);
+        dataProvider.addDisplay(listView);
+        dataProvider.addDisplay(pager);
+        dataProvider.addDisplay(this);
     }
 
     @Override
@@ -242,8 +241,10 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     private void adjustHeight() {
-        int toolbarHeight = toolbar != null ? (int) (toolbar.asElement().offsetHeight) : 0;
-        listView.asElement().style.height = vh(applicationOffset() + toolbarHeight + surroundingHeight + 2);
+        int toolbarHeight = (int) (toolbar.asElement().offsetHeight);
+        int pagerHeight = (int) pager.asElement().offsetHeight;
+        listView.asElement().style.height = vh(
+                applicationOffset() + toolbarHeight + pagerHeight + surroundingHeight + 2);
         listView.asElement().style.overflow = "scroll"; //NON-NLS
     }
 
@@ -259,34 +260,41 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     @Override
-    public void showItems(Iterable<T> items, int visible, int total) {
-        if (total == 0) {
-            emptyState.setHeader(noItemsHeader);
-            emptyState.setDescription(noItemsDescription);
-            emptyState.showPrimaryAction(false);
-            if (toolbar != null) {
-                Elements.setVisible(toolbar.asElement(), false);
-            }
-            Elements.setVisible(listView.asElement(), false);
-            Elements.setVisible(emptyState.asElement(), true);
-
-        } else if (visible == 0) {
-            emptyState.setHeader(noMatchingItemsHeader);
-            emptyState.setDescription(noMatchingItemsDescription);
-            emptyState.showPrimaryAction(true);
-            if (toolbar != null) {
+    public void showItems(Iterable<T> items, PageInfo pageInfo) {
+        if (pageInfo.getTotal() == 0) {
+            if (dataProvider.hasFilters()) {
+                showEmptyState(NO_MATCHING_ITEMS);
                 Elements.setVisible(toolbar.asElement(), true);
+            } else {
+                showEmptyState(NO_ITEMS);
             }
-            Elements.setVisible(listView.asElement(), false);
-            Elements.setVisible(emptyState.asElement(), true);
 
         } else {
-            Elements.setVisible(emptyState.asElement(), false);
-            if (toolbar != null) {
-                Elements.setVisible(toolbar.asElement(), true);
-            }
-            Elements.setVisible(listView.asElement(), true);
+            hideEmptyStates();
+            Elements.setVisible(toolbar.asElement(), true);
+            Elements.setVisible(pager.asElement(), pageInfo.getPages() > 1);
         }
         adjustHeight();
+    }
+
+    @Override
+    public void updateSelection(Selection selection) {
+        // already covered by listView
+    }
+
+    public void showEmptyState(String name) {
+        if (emptyStates.containsKey(name)) {
+            Elements.setVisible(toolbar.asElement(), false);
+            Elements.setVisible(listView.asElement(), false);
+            Elements.setVisible(pager.asElement(), false);
+            emptyStates.forEach((n, element) -> Elements.setVisible(element, n.equals(name)));
+        }
+    }
+
+    private void hideEmptyStates() {
+        for (HTMLElement element : emptyStates.values()) {
+            Elements.setVisible(element, false);
+        }
+        Elements.setVisible(listView.asElement(), true);
     }
 }

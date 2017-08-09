@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom.dataprovider;
 
-/** Displays items managed by a {@link org.jboss.hal.ballroom.listview.DataProvider} */
-public interface Display<T> {
+@FunctionalInterface
+public interface SelectHandler<T> {
 
-    void showItems(Iterable<T> items, int visible, int total);
+    void onSelect(T item);
 }

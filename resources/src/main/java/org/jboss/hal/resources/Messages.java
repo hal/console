@@ -58,6 +58,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String blacklist(String blacklist);
 
     String cacheStore();
+    SafeHtml changePrioritySuccess(int priority);
     SafeHtml chooseContentToDeploy(String serverGroup);
     SafeHtml chooseReplication();
     SafeHtml chooseServerGroupsToUndeploy(String name);
@@ -113,6 +114,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String deprecated(String since, String reason);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
+    SafeHtml dropSubscriptionsQuestion(String topic);
+    SafeHtml dropSubscriptionsSuccess(String topic);
 
     SafeHtml duplicateAuthenticationModule();
     String duplicateAuthenticationModuleReason();
@@ -123,6 +126,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml endpointOk(String url);
     String exactlyOneAlternativeError(String alternatives);
     String exactlyOneAlternativesError(String alternatives);
+    SafeHtml expireMessageQuestion();
+    SafeHtml expireMessagesQuestion();
+    SafeHtml expireMessageSuccess();
     SafeHtml expressionError(String expression);
     SafeHtml expressionWarning(String expression);
     SafeHtml extensionError(int status);
@@ -184,6 +190,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
+    SafeHtml manyMessages(long number);
     SafeHtml mappingHint();
     String messages(@PluralCount int count);
     SafeHtml metadataError();
@@ -193,6 +200,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml moreThanOneCacheStore();
     String moreThanOneCacheStoreDetails();
     SafeHtml moreThanOneKeyMapperForPrincipalQuery();
+    SafeHtml moveMessageSuccess(String queue);
     SafeHtml multiValueListHint();
 
     String noBootErrors();
@@ -203,6 +211,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
     SafeHtml noExecutions();
+    SafeHtml noItems();
+    SafeHtml noMatchingItems();
+    SafeHtml noMessagesSelected();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     String nonEmptyRequires(String fields);
@@ -217,12 +228,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String notMoreThanOneAlternativeError(String alternatives);
     String notMoreThanOneAlternativesError(String alternatives);
     SafeHtml noWrite();
-    String noXaDatasourceProperties();
     SafeHtml normalLogFile(String size);
 
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
+    SafeHtml pauseQueueSuccess(String name);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
@@ -253,6 +264,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml removeExtensionSuccess();
     SafeHtml removeGroupQuestion(String name);
     SafeHtml removeGroupSuccess(String name);
+    SafeHtml removeMessageQuestion();
+    SafeHtml removeMessagesQuestion();
+    SafeHtml removeMessageSuccess();
     SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml removeRoleQuestion(String name);
     SafeHtml removeRunAsRoleError(String role);
@@ -279,7 +293,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceAdapterProvidedBy(String type, String name);
 
     String results(int number);
-    String resultsFiltered(int visible, int total);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);
@@ -298,11 +311,16 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartStandaloneQuestion(String name);
     SafeHtml restartStandaloneTimeout(String name);
 
+    SafeHtml resumeQueueSuccess(String name);
     SafeHtml resumeServerGroupError(String name);
     SafeHtml resumeServerGroupSuccess(String name);
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
 
+    SafeHtml selected(int selected, int total);
+    SafeHtml sendMessageToDeadLetterQuestion();
+    SafeHtml sendMessagesToDeadLetterQuestion();
+    SafeHtml sendMessageToDeadLetterSuccess();
     SafeHtml simpleProviderWarning();
 
     SafeHtml serverGroupNoStartedServers(String name);

@@ -119,8 +119,8 @@ public class Subsystems {
                 .nextColumn(Ids.MAIL_SESSION)
                 .preview(resources.previews().configurationMail())
                 .build());
-        add(new SubsystemMetadata.Builder(MESSAGING_ACTIVEMQ, "Messaging")
-                .subtitle("ActiveMQ")
+        add(new SubsystemMetadata.Builder(MESSAGING_ACTIVEMQ, Names.MESSAGING)
+                .subtitle(Names.ACTIVE_MQ)
                 .nextColumn(Ids.MESSAGING_CATEGORY)
                 .preview(resources.previews().configurationMessaging())
                 .build());

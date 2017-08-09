@@ -49,7 +49,7 @@ public class MessagingCategoryColumn extends StaticItemColumn {
                         .onPreview(new MessagingSubsystemPreview(crud, resources))
                         .build(),
                 new StaticItem.Builder(Names.SERVER)
-                        .nextColumn(Ids.MESSAGING_SERVER)
+                        .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
                         .onPreview(new PreviewContent(Names.SERVER,
                                 resources.previews().configurationMessagingServer()))
                         .build(),

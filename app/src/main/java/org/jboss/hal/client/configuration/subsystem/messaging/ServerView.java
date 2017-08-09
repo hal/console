@@ -119,12 +119,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Metadata largeMetadata = mbuiContext.metadataRegistry().lookup(LARGE_MESSAGES_DIRECTORY_TEMPLATE);
         Metadata pagingMetadata = mbuiContext.metadataRegistry().lookup(PAGING_DIRECTORY_TEMPLATE);
 
-
-        bindingsDirectoryForm = new ModelNodeForm.Builder<>(Ids.BINDING_DIRECTORY_FORM, bindingMetadata)
+        bindingsDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_BINDING_DIRECTORY_FORM, bindingMetadata)
                 .singleton(
                         () -> new Operation.Builder(BINDING_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()),
                                 READ_RESOURCE_OPERATION).build(),
-                        () -> mbuiContext.crud().addSingleton(Ids.BINDING_DIRECTORY_FORM, Names.BINDINGS_DIRECTORY,
+                        () -> mbuiContext.crud().addSingleton(Ids.MESSAGING_SERVER_BINDING_DIRECTORY_FORM, Names.BINDINGS_DIRECTORY,
                                 BINDING_DIRECTORY_TEMPLATE, address -> presenter.reload()))
                 .prepareRemove(form -> mbuiContext.crud().removeSingleton(Names.BINDINGS_DIRECTORY,
                         BINDING_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()), () -> presenter.reload()))
@@ -134,11 +133,11 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         () -> presenter.reload()))
                 .build();
 
-        journalDirectoryForm = new ModelNodeForm.Builder<>(Ids.JOURNAL_DIRECTORY_FORM, journalMetadata)
+        journalDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY_FORM, journalMetadata)
                 .singleton(
                         () -> new Operation.Builder(JOURNAL_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()),
                                 READ_RESOURCE_OPERATION).build(),
-                        () -> mbuiContext.crud().addSingleton(Ids.JOURNAL_DIRECTORY_FORM, Names.JOURNAL_DIRECTORY,
+                        () -> mbuiContext.crud().addSingleton(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY_FORM, Names.JOURNAL_DIRECTORY,
                                 JOURNAL_DIRECTORY_TEMPLATE, address -> presenter.reload()))
                 .prepareRemove(form -> mbuiContext.crud().removeSingleton(Names.JOURNAL_DIRECTORY,
                         JOURNAL_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()), () -> presenter.reload()))
@@ -148,13 +147,13 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                         () -> presenter.reload()))
                 .build();
 
-        largeMessagesDirectoryForm = new ModelNodeForm.Builder<>(Ids.LARGE_MESSAGES_DIRECTORY_FORM, largeMetadata)
+        largeMessagesDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM, largeMetadata)
                 .singleton(
                         () -> new Operation.Builder(
                                 LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()),
                                 READ_RESOURCE_OPERATION).build(),
                         () -> mbuiContext.crud()
-                                .addSingleton(Ids.LARGE_MESSAGES_DIRECTORY_FORM, Names.LARGE_MESSAGES_DIRECTORY,
+                                .addSingleton(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM, Names.LARGE_MESSAGES_DIRECTORY,
                                         LARGE_MESSAGES_DIRECTORY_TEMPLATE, address -> presenter.reload()))
                 .prepareRemove(form -> mbuiContext.crud()
                         .removeSingleton(Names.LARGE_MESSAGES_DIRECTORY, LARGE_MESSAGES_DIRECTORY_TEMPLATE
@@ -165,12 +164,12 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                                 () -> presenter.reload()))
                 .build();
 
-        pagingDirectoryForm = new ModelNodeForm.Builder<>(Ids.PAGING_DIRECTORY_FORM, pagingMetadata)
+        pagingDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_PAGING_DIRECTORY_FORM, pagingMetadata)
                 .singleton(
                         () -> new Operation.Builder(PAGING_DIRECTORY_TEMPLATE.resolve(mbuiContext.statementContext()),
                                 READ_RESOURCE_OPERATION).build(),
                         () -> mbuiContext.crud()
-                                .addSingleton(Ids.PAGING_DIRECTORY_FORM, Names.PAGING_DIRECTORY,
+                                .addSingleton(Ids.MESSAGING_SERVER_PAGING_DIRECTORY_FORM, Names.PAGING_DIRECTORY,
                                         PAGING_DIRECTORY_TEMPLATE,
                                         address -> presenter.reload()))
                 .prepareRemove(form -> mbuiContext.crud().removeSingleton(Names.PAGING_DIRECTORY,
@@ -210,17 +209,17 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
 
         verticalNavigation.addPrimary(primaryIdDirectory, "Directories", "pficon pficon-repository");
-        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.PAGING_DIRECTORY, Ids.ENTRY_SUFFIX), "Paging",
+        verticalNavigation.addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_PAGING_DIRECTORY, Ids.ENTRY_SUFFIX), "Paging",
                 pagingDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.BINDING_DIRECTORY, Ids.ENTRY_SUFFIX), "Bindings",
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_BINDING_DIRECTORY, Ids.ENTRY_SUFFIX), "Bindings",
                         bindingsDirectoryElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.LARGE_MESSAGES_DIRECTORY, Ids.ENTRY_SUFFIX),
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY, Ids.ENTRY_SUFFIX),
                         "Large Messages",
                         largeMessagesElement);
         verticalNavigation
-                .addSecondary(primaryIdDirectory, Ids.build(Ids.JOURNAL_DIRECTORY, Ids.ENTRY_SUFFIX), "Journal",
+                .addSecondary(primaryIdDirectory, Ids.build(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY, Ids.ENTRY_SUFFIX), "Journal",
                         journalElement);
 
         registerAttachable(verticalNavigation);

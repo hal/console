@@ -42,7 +42,7 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-@AsyncColumn(Ids.MESSAGING_SERVER)
+@AsyncColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
 @Requires(value = SERVER_ADDRESS, recursive = false)
 public class ServerColumn extends FinderColumn<NamedNode> {
 
@@ -54,7 +54,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             final PlaceManager placeManager,
             final Places places) {
 
-        super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER, Names.SERVER)
+        super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_CONFIGURATION, Names.SERVER)
 
                 .columnAction(columnActionFactory.add(Ids.MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
                         name -> {

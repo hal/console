@@ -214,28 +214,26 @@ public class FinderColumn<T> implements IsElement, Attachable {
     private final String title;
     private final boolean showCount;
     private final boolean pinnable;
-    private final HTMLElement columnActions;
-    private final List<T> initialItems;
-    private final ItemSelectionHandler<T> selectionHandler;
-    private final List<HandlerRegistration> handlers;
-    private ItemsProvider<T> itemsProvider;
-    private ItemRenderer<T> itemRenderer;
-    private PreviewCallback<T> previewCallback;
-    private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
-    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
-    private boolean firstActionAsBreadcrumbHandler;
-
-    private final Map<String, FinderRow<T>> rows;
-    private final FinderColumnStorage storage;
-
     private final HTMLElement root;
+    private final HTMLElement columnActions;
     private final HTMLElement hiddenColumns;
     private final HTMLElement headerElement;
     private final HTMLInputElement filterElement;
     private final HTMLElement ulElement;
     private final HTMLElement noItems;
+    private final List<T> initialItems;
+    private final ItemSelectionHandler<T> selectionHandler;
+    private final List<HandlerRegistration> handlers;
+    private final Map<String, FinderRow<T>> rows;
+    private final FinderColumnStorage storage;
 
     private boolean asElement;
+    private boolean firstActionAsBreadcrumbHandler;
+    private ItemsProvider<T> itemsProvider;
+    private ItemRenderer<T> itemRenderer;
+    private PreviewCallback<T> previewCallback;
+    private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
+    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
 
 
     // ------------------------------------------------------ ui

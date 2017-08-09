@@ -31,6 +31,7 @@ public class StaticItem {
         private final List<ItemAction<StaticItem>> actions;
         private final List<String> keywords;
         private String id;
+        private String subtitle;
         private PreviewContent previewContent;
         private String nextColumn;
 
@@ -43,6 +44,11 @@ public class StaticItem {
 
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder subtitle(String subtitle) {
+            this.subtitle = subtitle;
             return this;
         }
 
@@ -81,6 +87,7 @@ public class StaticItem {
 
 
     private final String title;
+    private final String subtitle;
     private final List<ItemAction<StaticItem>> actions;
     private final List<String> keywords;
     private final String nextColumn;
@@ -90,6 +97,7 @@ public class StaticItem {
     private StaticItem(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
+        this.subtitle = builder.subtitle;
         this.actions = builder.actions;
         this.keywords = builder.keywords;
         this.nextColumn = builder.nextColumn;
@@ -114,6 +122,10 @@ public class StaticItem {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
     }
 
     public String getNextColumn() {

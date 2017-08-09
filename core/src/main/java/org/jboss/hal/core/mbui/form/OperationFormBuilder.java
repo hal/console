@@ -16,7 +16,9 @@
 package org.jboss.hal.core.mbui.form;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -24,18 +26,22 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 
+import static java.util.Arrays.asList;
+
 public class OperationFormBuilder<T extends ModelNode> {
 
     private final String id;
     private final Metadata metadata;
     private final String operation;
     private final LinkedHashSet<String> includes;
+    private final Set<String> excludes;
 
     public OperationFormBuilder(@NonNls final String id, final Metadata metadata, final String operation) {
         this.id = id;
         this.metadata = metadata;
         this.operation = operation;
         this.includes = new LinkedHashSet<>();
+        this.excludes = new HashSet<>();
     }
 
     public OperationFormBuilder<T> include(final String[] attributes) {
@@ -54,9 +60,25 @@ public class OperationFormBuilder<T extends ModelNode> {
         return this;
     }
 
+    public OperationFormBuilder<T> exclude(final String[] attributes) {
+        excludes.addAll(asList(attributes));
+        return this;
+    }
+
+    public OperationFormBuilder<T> exclude(final Iterable<String> attributes) {
+        Iterables.addAll(excludes, attributes);
+        return this;
+    }
+
+    public OperationFormBuilder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
+        excludes.addAll(Lists.asList(first, rest));
+        return this;
+    }
+
     public ModelNodeForm<T> build() {
         return new ModelNodeForm.Builder<T>(id, metadata.forOperation(operation))
                 .include(includes)
+                .exclude(excludes)
                 .addOnly()
                 .build();
     }

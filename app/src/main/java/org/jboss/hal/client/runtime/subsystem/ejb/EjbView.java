@@ -35,19 +35,17 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
-import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.VALID_TYPES;
 
 public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
 
     private final HTMLElement header;
     private final HTMLElement lead;
     private final Map<EjbNode.Type, Form<EjbNode>> forms;
-    private EjbPresenter presenter;
 
     @Inject
     public EjbView(MetadataRegistry metadataRegistry) {
         forms = new HashMap<>();
-        for (EjbNode.Type type : VALID_TYPES) {
+        for (EjbNode.Type type : EjbNode.Type.values()) {
             Form<EjbNode> form = ejbForm(type, metadataRegistry);
             Elements.setVisible(form.asElement(), false);
             forms.put(type, form);
@@ -67,11 +65,6 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
                 .readOnly()
                 .includeRuntime()
                 .build();
-    }
-
-    @Override
-    public void setPresenter(EjbPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override

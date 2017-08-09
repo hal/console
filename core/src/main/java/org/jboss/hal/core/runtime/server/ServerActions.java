@@ -24,7 +24,6 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.DomGlobal;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -293,8 +292,8 @@ public class ServerActions {
                                     int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
                                     prepare(server, Action.SUSPEND);
-                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), SUSPEND
-                                    )
+                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(),
+                                            SUSPEND)
                                             .param(TIMEOUT, timeout)
                                             .build();
                                     dispatcher.execute(operation,

@@ -46,6 +46,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String add();
     String address();
     String adminOnly();
+    String allMessagesAlways();
+    String allMessagesOnce();
     String and();
     String archived();
     String assignment();
@@ -61,6 +63,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String cancel();
     String category();
+    String changePriority();
     String chooseFile();
     String choosePolicy();
     String chooseSingleton();
@@ -71,6 +74,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clearMessages();
     String clearRunAs();
     String clearRunAsTitle();
+    String clearSelection();
     String clone();
     String cloneProfile();
     String close();
@@ -91,6 +95,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copyToClipboard();
     String count();
     String counter();
+    String currentPage();
     String custom();
 
     String data();
@@ -114,6 +119,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String domainConfigurationChanged();
     String domainConfigurationChangedTooltip();
     String download();
+    String dropSubscriptions();
     String duplicateMacro();
     String duration();
 
@@ -133,6 +139,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeUserGroup();
     String excludes();
     String expertMode();
+    String expire();
     String explode();
     String exploded();
     String expression();
@@ -146,6 +153,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String filter();
     String finish();
     String finished();
+    String firstPage();
     String flushAll();
     String flushGracefully();
     String flushIdle();
@@ -244,6 +252,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hour();
     String hours();
 
+    String inactive();
     String includeRole();
     String includeUserGroup();
     String includes();
@@ -259,11 +268,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String jcaConfiguration();
     String jgroupsRelayAlias();
     String jdbcDriver();
+    String jndiNames();
     String jndiTree();
 
     String kill();
 
     String largest();
+    String lastPage();
     String lastModified();
     String loading();
     String loadingPleaseWait();
@@ -276,20 +287,24 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String mainAttributes();
     String managed();
     String managementVersion();
+    String manyMessages();
     String maxUsed();
     String membership();
     String membershipOfRole();
     String message();
+    String messages();
     String minute();
     String minutes();
     String missCount();
     String modelBrowser();
     String monitor();
+    String move();
 
     String needsReload();
     String needsRestart();
     String networkError();
     String next();
+    String nextPage();
     String no();
     String noAttributes();
     String noBootErrors();
@@ -318,6 +333,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String notEnabled();
     String nothingSelected();
 
+    String of();
     String ok();
     String opened();
     String openInExternalWindow();
@@ -332,7 +348,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String output();
 
     String pattern();
+    String pause();
     String pending();
+    String perPage();
     String pin();
     String ping();
     String platform();
@@ -341,6 +359,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pool();
     String preparedStatementCache();
     String preview();
+    String previousPage();
     String processors();
     String productName();
     String productVersion();
@@ -389,6 +408,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String second();
     String seconds();
     String security();
+    String selectAll();
+    String sendToDeadLetter();
     String serverGroupScopedRole();
     String serverName();
     String sessions();
@@ -414,6 +435,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String stopped();
     String stoppedExecution();
     String storage();
+    String subscriptions();
     String supportsExpressions();
     String suspend();
     String suspended();
