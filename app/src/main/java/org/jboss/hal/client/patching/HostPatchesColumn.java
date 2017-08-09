@@ -64,9 +64,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * @author Claudio Miranda
- */
 @Column(Ids.PATCHING_DOMAIN)
 @Requires(value = "/host=*/core-service=patching")
 public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostActionEvent.HostActionHandler,

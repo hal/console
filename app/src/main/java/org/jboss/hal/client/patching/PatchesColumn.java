@@ -90,9 +90,6 @@ import static org.jboss.hal.resources.CSS.radio;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
-/**
- * @author Claudio Miranda
- */
 @Column(Ids.PATCHING)
 public class PatchesColumn extends FinderColumn<ModelNode> {
 
@@ -148,6 +145,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                     });
         }
     }
+
 
     static final AddressTemplate PATCHING_TEMPLATE = AddressTemplate.of(SELECTED_HOST, "core-service=patching");
 
@@ -257,7 +255,8 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                                     model.get(PATCH_ID).set(patchId);
                                     ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
                                     Metadata operationMetadata = metadata.forOperation(ROLLBACK_OPERATION);
-                                    String id = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE, PATCHING, patchId, ROLLBACK_OPERATION);
+                                    String id = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE,
+                                            PATCHING, patchId, ROLLBACK_OPERATION);
                                     Form<ModelNode> form = new ModelNodeForm.Builder<>(id, operationMetadata)
                                             .unsorted()
                                             .build();
@@ -274,9 +273,12 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                                                     if (!payload.hasDefined(RESET_CONFIGURATION)) {
                                                         payload.get(RESET_CONFIGURATION).set(false);
                                                     }
-                                                    String idProgress = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE, PATCHING, patchId, "rollback-progress");
+                                                    String idProgress = Ids.build(Ids.HOST,
+                                                            statementContext.selectedHost(), CORE_SERVICE, PATCHING,
+                                                            patchId, "rollback-progress");
                                                     ItemMonitor.startProgress(idProgress);
-                                                    Operation operation = new Operation.Builder(address, ROLLBACK_OPERATION)
+                                                    Operation operation = new Operation.Builder(address,
+                                                            ROLLBACK_OPERATION)
                                                             .payload(payload)
                                                             .build();
                                                     dispatcher.execute(operation, result2 -> {
@@ -313,8 +315,6 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     }
 
     private void ageoutHistory() {
-
-
         metadataProcessor
                 .lookup(PATCHING_TEMPLATE, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
                     @Override
@@ -341,61 +341,69 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     }
 
     private void applyPatch() {
-
         // check the host controller for restart-required
         checkHostState(() ->
-            // check the servers, advise to stop them before apply/rollback a patch
-            checkServersState(() -> {
+                // check the servers, advise to stop them before apply/rollback a patch
+                checkServersState(() -> {
+                    metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
+                            new SuccessfulMetadataCallback(eventBus, resources) {
+                                @Override
+                                public void onMetadata(final Metadata metadata) {
+                                    Metadata metadataOp = metadata.forOperation(PATCH);
+                                    final Messages messages = resources.messages();
+                                    Wizard<PatchContext, PatchState> wizard = new Wizard.Builder<PatchContext, PatchState>(
+                                            messages.addResourceTitle(Names.PATCH), new PatchContext())
 
-                metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
-                    new SuccessfulMetadataCallback(eventBus, resources) {
-                        @Override
-                        public void onMetadata(final Metadata metadata) {
-                            Metadata metadataOp = metadata.forOperation(PATCH);
-                            final Messages messages = resources.messages();
-                            Wizard<PatchContext, PatchState> wizard = new Wizard.Builder<PatchContext, PatchState>(messages.addResourceTitle(Names.PATCH), new PatchContext())
+                                            .addStep(UPLOAD, new PatchContentStep(resources))
+                                            .addStep(NAMES, new PatchNamesStep(environment, metadataOp, resources))
 
-                                .addStep(UPLOAD, new PatchContentStep(resources))
-                                .addStep(NAMES, new PatchNamesStep(environment, metadataOp, resources))
+                                            .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                                            .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                                            .stayOpenAfterFinish()
+                                            .onFinish((wzd, context) -> {
+                                                String name = context.file.name;
+                                                wzd.showProgress(resources.constants().uploadInProgress(),
+                                                        messages.uploadInProgress(name));
 
-                                .stayOpenAfterFinish()
-                                .onFinish((wzd, context) -> {
-                                    String name = context.file.name;
-                                    wzd.showProgress(resources.constants().uploadInProgress(), messages.uploadInProgress(name));
+                                                Function[] functions = {
+                                                        new UploadPatch(eventBus, statementContext, dispatcher,
+                                                                resources, context)
+                                                };
+                                                new Async<FunctionContext>(progress.get()).waterfall(
+                                                        new FunctionContext(),
+                                                        new Outcome<FunctionContext>() {
+                                                            @Override
+                                                            public void onFailure(
+                                                                    final FunctionContext functionContext) {
+                                                                wzd.showError(resources.constants().uploadError(),
+                                                                        messages.uploadError(name),
+                                                                        functionContext.getError());
+                                                            }
 
-                                    Function[] functions = {
-                                            new UploadPatch(eventBus, statementContext, dispatcher, resources, context)
-                                    };
-                                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                                        new Outcome<FunctionContext>() {
-                                            @Override
-                                            public void onFailure(final FunctionContext functionContext) {
-                                                wzd.showError(resources.constants().uploadError(), messages.uploadError(name),functionContext.getError());
-                                            }
+                                                            @Override
+                                                            public void onSuccess(
+                                                                    final FunctionContext functionContext) {
+                                                                refresh(Ids.content(name));
+                                                                wzd.showSuccess(
+                                                                        resources.constants().uploadSuccessful(),
+                                                                        messages.uploadSuccessful(name),
+                                                                        messages.view(Names.CONTENT),
+                                                                        cxt -> { /* nothing to do, content is already selected */ });
+                                                            }
+                                                        }, functions);
+                                            })
+                                            .build();
+                                    wizard.show();
+                                }
+                            });
 
-                                            @Override
-                                            public void onSuccess(final FunctionContext functionContext) {
-                                                refresh(Ids.content(name));
-                                                wzd.showSuccess(resources.constants().uploadSuccessful(), messages.uploadSuccessful(name), messages.view(Names.CONTENT),
-                                                        cxt -> { /* nothing to do, content is already selected */ });
-                                            }
-                                        }, functions);
-                                })
-                                .build();
-                            wizard.show();
-                        }
-                    });
-
-            }));
+                }));
     }
 
     /**
      * Checks if the host or standalone server is in restart mode, if yes then asks user to restart host/server, as it
      * must be restarted before a patch can be installed or to call a rollback on an installed patch.
-     *
      */
     private void checkHostState(Callback callback) {
 
@@ -539,5 +547,4 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
         restartServersDialog.getButton(PRIMARY_POSITION).disabled = true;
         restartServersDialog.show();
     }
-
 }

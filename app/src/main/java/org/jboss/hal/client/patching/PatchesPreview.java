@@ -24,9 +24,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.APPLIED_AT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCH_ID;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
-/**
- * @author Claudio Miranda
- */
 class PatchesPreview extends PreviewContent<ModelNode> {
 
     PatchesPreview(final ModelNode patchNode) {

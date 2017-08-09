@@ -40,9 +40,6 @@ import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 
-/**
- * @author Claudio Miranda
- */
 class HostPatchesPreview extends RuntimePreview<NamedNode> {
 
     private final HTMLElement restartLink;

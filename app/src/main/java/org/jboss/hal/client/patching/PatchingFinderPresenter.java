@@ -31,9 +31,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-/**
- * @author Claudio Miranda <claudio@redhat.com>
- */
 public class PatchingFinderPresenter extends FinderPresenter<PatchingFinderPresenter.MyView, PatchingFinderPresenter.MyProxy> {
 
     // @formatter:off
