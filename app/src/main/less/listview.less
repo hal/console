@@ -13,7 +13,7 @@
 
 .list-hal-actions {
   justify-content: flex-end;
-  width: 100px;
+  min-width: 50px;
 }
 
 .list-hal-additional-content {
@@ -21,7 +21,6 @@
 }
 
 .list-hal-main-content, .list-hal-additional-content {
-  flex-basis: inherit;
 }
 
 .list-hal-icon-big {
@@ -56,4 +55,9 @@
 .list-hal-icon-warning {
   background-color: #fdf2e5;
   color: @color-pf-orange-400;
+}
+
+.list-hal-selected {
+  line-height: 40px;
+  text-align: right;
 }

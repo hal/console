@@ -28,12 +28,13 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.DataProvider;
-import org.jboss.hal.ballroom.Display;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.PageInfo;
 import org.jboss.hal.ballroom.Pager;
 import org.jboss.hal.ballroom.Toolbar;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.Display;
+import org.jboss.hal.ballroom.dataprovider.PageInfo;
+import org.jboss.hal.ballroom.dataprovider.Selection;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
@@ -173,7 +174,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         toolbar = new Toolbar<>(dataProvider, builder.toolbarAttributes, allowedActions);
 
         // list view
-        listView = new ListView<T>(builder.id, builder.itemRenderer, builder.stacked, builder.multiselect) {
+        listView = new ListView<T>(builder.id, dataProvider, builder.itemRenderer, builder.stacked,
+                builder.multiselect) {
             @Override
             protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
                 return actions.stream()
@@ -270,15 +272,15 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         } else {
             hideEmptyStates();
             Elements.setVisible(toolbar.asElement(), true);
+            Elements.setVisible(pager.asElement(), pageInfo.getPages() > 1);
         }
         adjustHeight();
     }
 
-    public boolean hasSelection() {return listView.hasSelection();}
-
-    public T selectedItem() {return listView.selectedItem();}
-
-    public List<T> selectedItems() {return listView.selectedItems();}
+    @Override
+    public void updateSelection(Selection selection) {
+        // already covered by listView
+    }
 
     public void showEmptyState(String name) {
         if (emptyStates.containsKey(name)) {
@@ -294,6 +296,5 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             Elements.setVisible(element, false);
         }
         Elements.setVisible(listView.asElement(), true);
-        Elements.setVisible(pager.asElement(), true);
     }
 }

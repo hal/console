@@ -396,10 +396,12 @@ public interface Ids {
     String JMS_MESSAGE_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE, "send-to-dead-letter");
     String JMS_MESSAGE_LIST = "jms-message-list";
     String JMS_MESSAGE_LIST_CHANGE_PRIORITY = Ids.build(JMS_MESSAGE_LIST, "change-priority");
+    String JMS_MESSAGE_LIST_CLEAR_SELECTION = Ids.build(JMS_MESSAGE_LIST, "clear-selection");
     String JMS_MESSAGE_LIST_EXPIRE = Ids.build(JMS_MESSAGE_LIST, "expire");
     String JMS_MESSAGE_LIST_MOVE = Ids.build(JMS_MESSAGE_LIST, "move");
     String JMS_MESSAGE_LIST_REFRESH = Ids.build(JMS_MESSAGE_LIST, "refresh");
     String JMS_MESSAGE_LIST_REMOVE = Ids.build(JMS_MESSAGE_LIST, "remove");
+    String JMS_MESSAGE_LIST_SELECT_ALL = Ids.build(JMS_MESSAGE_LIST, "select-all");
     String JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER = Ids.build(JMS_MESSAGE_LIST, "send-to-dead-letter");
     String JMX = "jmx";
     String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);

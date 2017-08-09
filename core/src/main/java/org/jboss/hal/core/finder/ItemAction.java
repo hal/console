@@ -47,11 +47,6 @@ public class ItemAction<T> {
             return this;
         }
 
-        public Builder<T> element(final HTMLElement element) {
-            this.element = element;
-            return this;
-        }
-
         public Builder<T> handler(final ItemActionHandler<T> handler) {
             this.handler = handler;
             return this;
@@ -87,7 +82,6 @@ public class ItemAction<T> {
 
 
     final String title;
-    final HTMLElement element;
     final ItemActionHandler<T> handler;
     final String href;
     final Map<String, String> attributes;
@@ -95,7 +89,6 @@ public class ItemAction<T> {
 
     private ItemAction(final Builder<T> builder) {
         this.title = builder.title;
-        this.element = builder.element;
         this.handler = builder.handler;
         this.href = builder.href;
         this.attributes = builder.attributes;

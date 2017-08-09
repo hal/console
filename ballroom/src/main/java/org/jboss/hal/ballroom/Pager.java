@@ -22,6 +22,10 @@ import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.Display;
+import org.jboss.hal.ballroom.dataprovider.PageInfo;
+import org.jboss.hal.ballroom.dataprovider.Selection;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
@@ -174,6 +178,10 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
         Elements.toggle(lastPage, disabled, pageInfo.getPage() == pageInfo.getPages() - 1);
     }
 
+    @Override
+    public void updateSelection(Selection selection) {
+
+    }
 
     // ------------------------------------------------------ event handler
 

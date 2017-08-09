@@ -18,8 +18,8 @@ package org.jboss.hal.client.runtime.subsystem.messaging;
 import java.util.List;
 import javax.inject.Inject;
 
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.EmptyState;
-import org.jboss.hal.ballroom.DataProvider;
 import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.Toolbar.Attribute;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
@@ -50,7 +50,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
     public JmsQueueView(MetadataRegistry metadataRegistry, Resources resources) {
         this.resources = resources;
 
-        dataProvider = new DataProvider<>(JmsMessage::getName);
+        dataProvider = new DataProvider<>(JmsMessage::getName, true);
         Metadata metadata = metadataRegistry.lookup(MESSAGING_QUEUE_TEMPLATE);
         tooManyMessages = new EmptyState.Builder(resources.constants().manyMessages())
                 .icon(Icons.WARNING)
@@ -78,6 +78,10 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
 
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REFRESH, resources.constants().refresh(),
                         this::refresh))
+                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CLEAR_SELECTION,
+                        resources.constants().clearSelection(), this::clearSelection))
+                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SELECT_ALL,
+                        resources.constants().selectAll(), this::selectAll))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CHANGE_PRIORITY,
                         resources.constants().changePriority(),
                         Constraint.executable(MESSAGING_QUEUE_TEMPLATE, CHANGE_MESSAGES_PRIORITY),
@@ -85,7 +89,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_EXPIRE,
                         resources.constants().expire(),
                         Constraint.executable(MESSAGING_QUEUE_TEMPLATE, EXPIRE_MESSAGES),
-                        this::changePriority))
+                        this::expire))
                 .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_MOVE, resources.constants().move(),
                         Constraint.executable(MESSAGING_QUEUE_TEMPLATE, MOVE_MESSAGES),
                         this::move))
@@ -127,33 +131,41 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
         }
     }
 
+    private void clearSelection() {
+        dataProvider.clearVisibleSelection();
+    }
+
+    private void selectAll() {
+        dataProvider.selectVisible();
+    }
+
     private void changePriority() {
         if (presenter != null) {
-            presenter.changePriority(listView.selectedItems());
+            presenter.changePriority(dataProvider.getSelection());
         }
     }
 
     private void expire() {
         if (presenter != null) {
-            presenter.expire(listView.selectedItems());
+            presenter.expire(dataProvider.getSelection());
         }
     }
 
     private void move() {
         if (presenter != null) {
-            presenter.move(listView.selectedItems());
+            presenter.move(dataProvider.getSelection());
         }
     }
 
     private void sendToDeadLetter() {
         if (presenter != null) {
-            presenter.sendToDeadLetter(listView.selectedItems());
+            presenter.sendToDeadLetter(dataProvider.getSelection());
         }
     }
 
     private void remove() {
         if (presenter != null) {
-            presenter.remove(listView.selectedItems());
+            presenter.remove(dataProvider.getSelection());
         }
     }
 }

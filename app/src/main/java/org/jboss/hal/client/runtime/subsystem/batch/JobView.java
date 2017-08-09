@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.Toolbar.Action;
 import org.jboss.hal.ballroom.Toolbar.Attribute;
 import org.jboss.hal.core.mbui.listview.ModelNodeListView;
@@ -42,7 +42,7 @@ public class JobView extends HalViewImpl implements JobPresenter.MyView {
 
     @Inject
     public JobView(MetadataRegistry metadataRegistry, Resources resources) {
-        dataProvider = new DataProvider<>(NamedNode::getName);
+        dataProvider = new DataProvider<>(NamedNode::getName, false);
 
         Metadata metadata = metadataRegistry.lookup(EXECUTION_TEMPLATE);
         ModelNodeListView<ExecutionNode> listView = new ModelNodeListView.Builder<>(Ids.JOB_LIST, metadata,

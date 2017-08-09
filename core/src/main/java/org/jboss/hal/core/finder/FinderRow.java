@@ -25,6 +25,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.CSS;
@@ -47,6 +48,7 @@ class FinderRow<T> implements IsElement {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String PREVENT_SET_ITEMS = "preventSetItems";
+    private static final int MAX_ACTION_TITLE_LENGTH = 16;
 
     private final Finder finder;
     private final FinderColumn<T> column;
@@ -199,8 +201,13 @@ class FinderRow<T> implements IsElement {
     private HTMLAnchorElement actionLink(ItemAction<T> action, boolean li) {
         String[] css = li ? new String[]{clickable} : new String[]{clickable, btn, btnFinder};
         HtmlContentBuilder<HTMLAnchorElement> builder = a().css(css)
-                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                .textContent(action.title);
+                .data(PREVENT_SET_ITEMS, UIConstants.TRUE);
+        if (action.title.length() > MAX_ACTION_TITLE_LENGTH) {
+            builder.textContent(Strings.abbreviateMiddle(action.title, MAX_ACTION_TITLE_LENGTH));
+            builder.title(action.title);
+        } else {
+            builder.textContent(action.title);
+        }
         if (action.handler != null) {
             builder.on(click, event -> action.handler.execute(item));
         } else if (action.href != null) {

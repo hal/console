@@ -42,9 +42,9 @@ class ListItem<T> implements IsElement {
 
     final String id;
     final T item;
+    final HTMLInputElement checkbox;
 
-
-    ListItem(ListView<T> listView, T item, boolean checkbox, ItemDisplay<T> display) {
+    ListItem(ListView<T> listView, T item, boolean checkbox, ItemDisplay<T> display, String[] contentWidths) {
         this.id = display.getId();
         this.item = item;
         this.actions = new HashMap<>();
@@ -56,14 +56,16 @@ class ListItem<T> implements IsElement {
                 .asElement();
         if (checkbox) {
             container.appendChild(div().css(listPfSelect)
-                    .add(input(InputType.checkbox)
+                    .add(this.checkbox = input(InputType.checkbox)
                             .on(click, event -> {
                                 HTMLInputElement element = (HTMLInputElement) event.target;
-                                listView.select(ListItem.this, element.checked);
-                            }))
+                                listView.selectListItem(ListItem.this, element.checked);
+                            })
+                            .asElement())
                     .asElement());
         } else {
-            bind(root, click, event -> listView.select(this, true));
+            this.checkbox = null;
+            bind(root, click, event -> listView.selectListItem(this, true));
         }
 
         // status icon, title, description, additional info
@@ -90,6 +92,7 @@ class ListItem<T> implements IsElement {
         }
         content.appendChild(contentWrapper = div().css(listPfContentWrapper)
                 .add(mainContent = div().css(listPfMainContent, listHalMainContent)
+                        .style("flex-basis:" + contentWidths[0]) //NON-NLS
                         .add(title = div().css(listPfTitle)
                                 .asElement())
                         .asElement())
@@ -126,6 +129,7 @@ class ListItem<T> implements IsElement {
                 display.getAdditionalInfo() != null) {
             HTMLElement additionalInfo;
             contentWrapper.appendChild(additionalInfo = div().css(listPfAdditionalContent, listHalAdditionalContent)
+                    .style("flex-basis:" + contentWidths[1]) //NON-NLS
                     .asElement());
             if (display.getAdditionalInfoElements() != null) {
                 for (HTMLElement element : display.getAdditionalInfoElements().asElements()) {

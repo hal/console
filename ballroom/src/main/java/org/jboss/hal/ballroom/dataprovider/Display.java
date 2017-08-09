@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.listview;
+package org.jboss.hal.ballroom.dataprovider;
 
-/** ActionHandler when an item in a {@link ListView} is selected. */
-@FunctionalInterface
-public interface SelectHandler<T> {
+/** Displays items managed by a {@link DataProvider} */
+public interface Display<T> {
 
-    void onSelect(T item);
+    void showItems(Iterable<T> items, PageInfo pageInfo);
+
+    void updateSelection(Selection<T> selection);
 }

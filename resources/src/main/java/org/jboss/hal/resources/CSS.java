@@ -192,6 +192,7 @@ public interface CSS {
     String listHalIconProgress = "list-hal-icon-progress";
     String listHalIconSuccess = "list-hal-icon-success";
     String listHalMainContent = "list-hal-main-content";
+    String listHalSelected = "list-hal-selected";
     String listInline = "list-inline";
     String listPf = "list-pf";
     String listPfActions = "list-pf-actions";

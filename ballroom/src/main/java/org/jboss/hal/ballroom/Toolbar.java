@@ -26,6 +26,12 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.dataprovider.DataProvider;
+import org.jboss.hal.ballroom.dataprovider.Display;
+import org.jboss.hal.ballroom.dataprovider.Filter;
+import org.jboss.hal.ballroom.dataprovider.FilterValue;
+import org.jboss.hal.ballroom.dataprovider.PageInfo;
+import org.jboss.hal.ballroom.dataprovider.Selection;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
@@ -190,19 +196,20 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     private HTMLElement sortOrderIcon;
     private HTMLElement sortUl;
 
-    private HTMLElement numberOfResults;
+    private HTMLElement results;
+    private HTMLElement selection;
     private HTMLElement filters;
     private HTMLElement activeFiltersUl;
 
     public Toolbar(DataProvider<T> dataProvider, List<Attribute<T>> attributes, List<Action> actions) {
         this.dataProvider = dataProvider;
 
-        HTMLElement control;
-        HTMLElement results;
+        HTMLElement controlContainer;
+        HTMLElement resultContainer;
         this.root = div().css(row, toolbarPf)
                 .add(column()
-                        .add(control = form().css(toolbarPfActions).asElement())
-                        .add(results = div().css(row, toolbarPfResults).asElement()))
+                        .add(controlContainer = form().css(toolbarPfActions).asElement())
+                        .add(resultContainer = div().css(row, toolbarPfResults).asElement()))
                 .asElement();
 
         // filter
@@ -214,7 +221,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                 .collect(toList());
         if (!filterAttributes.isEmpty()) {
             HTMLElement inputGroup;
-            control.appendChild(div().css(formGroup, toolbarPfFilter)
+            controlContainer.appendChild(div().css(formGroup, toolbarPfFilter)
                     .add(filterLabel = label()
                             .css(srOnly)
                             .apply(l -> l.htmlFor = Ids.TOOLBAR_FILTER)
@@ -253,7 +260,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                 .collect(toList());
         if (!sortAttributes.isEmpty()) {
             HTMLElement formGroup;
-            control.appendChild(formGroup = div().css(CSS.formGroup)
+            controlContainer.appendChild(formGroup = div().css(CSS.formGroup)
                     .asElement());
             if (sortAttributes.size() > 1) {
                 formGroup.appendChild(div().css(dropdown, btnGroup)
@@ -292,7 +299,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         // actions
         if (!actions.isEmpty()) {
             HTMLElement actionsContainer;
-            control.appendChild(div().css(toolbarPfActionRight)
+            controlContainer.appendChild(div().css(toolbarPfActionRight)
                     .add(actionsContainer = div().css(formGroup)
                             .asElement())
                     .asElement());
@@ -317,7 +324,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                         .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                                         .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                                         .add(span().css(fontAwesome("ellipsis-v"))))
-                                .add(ul = ul().css(dropdownMenu)
+                                .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
                                         .aria(UIConstants.LABELLED_BY, Ids.TOOLBAR_ACTION_DROPDOWN)
                                         .asElement())
                                 .asElement());
@@ -336,8 +343,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         // search and change view not yet implemented!
 
         // results
-        results.appendChild(column()
-                .add(numberOfResults = h(5).textContent(MESSAGES.results(0)).asElement())
+        resultContainer.appendChild(column(9)
+                .add(results = h(5).textContent(MESSAGES.results(0)).asElement())
                 .add(filters = span()
                         .add(p().css(marginRight5).textContent(CONSTANTS.activeFilters()))
                         .add(activeFiltersUl = ul().css(listInline).asElement())
@@ -350,6 +357,9 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 })))
                         .asElement())
                 .asElement());
+        resultContainer.appendChild(selection = column(3).css(listHalSelected)
+                .asElement());
+
 
         // initial reset
         if (filterAttributes.isEmpty()) {
@@ -370,7 +380,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             setSelectedSort(selectedSort);
             setAsc(true);
         }
-        numberOfResults.textContent = MESSAGES.results(0);
+        this.results.textContent = MESSAGES.results(0);
         Elements.setVisible(filters, false);
     }
 
@@ -400,10 +410,15 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
     @Override
     public void showItems(Iterable<T> items, PageInfo pageInfo) {
-        if (pageInfo.getVisible() != pageInfo.getTotal()) {
-            numberOfResults.textContent = MESSAGES.resultsFiltered(pageInfo.getVisible(), pageInfo.getTotal());
-        } else {
-            numberOfResults.textContent = MESSAGES.results(pageInfo.getTotal());
+        results.textContent = MESSAGES.results(pageInfo.getVisible());
+    }
+
+    @Override
+    public void updateSelection(Selection selection) {
+        Elements.setVisible(this.selection, selection.hasSelection());
+        if (selection.hasSelection() && selection.isMultiselect()) {
+            this.selection.innerHTML = MESSAGES.selected(selection.getSelectionCount(), selection.getTotal())
+                    .asString();
         }
     }
 

@@ -103,8 +103,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -150,8 +150,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -201,8 +201,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -255,8 +255,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -308,8 +308,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -350,13 +350,13 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/console-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/syslog-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/syslog-handler=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -401,8 +401,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selected}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>

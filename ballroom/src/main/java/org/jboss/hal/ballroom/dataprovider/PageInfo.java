@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.ballroom.dataprovider;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -30,6 +30,10 @@ public class PageInfo {
         this.pageSize = pageSize;
         this.visible = visible;
         this.total = total;
+    }
+
+    void reset() {
+
     }
 
     public int getFrom() {

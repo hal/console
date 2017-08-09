@@ -293,7 +293,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceAdapterProvidedBy(String type, String name);
 
     String results(int number);
-    String resultsFiltered(int visible, int total);
 
     String restart(String name);
     SafeHtml restartDomainControllerPending(String name);
@@ -318,6 +317,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
 
+    SafeHtml selected(int selected, int total);
     SafeHtml sendMessageToDeadLetterQuestion();
     SafeHtml sendMessagesToDeadLetterQuestion();
     SafeHtml sendMessageToDeadLetterSuccess();

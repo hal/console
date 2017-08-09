@@ -51,6 +51,7 @@ class DestinationPreview extends PreviewContent<Destination> {
     private final ResourceAddress address;
     private final PreviewAttributes<Destination> attributes;
     private final PreviewAttributes<Destination> messages;
+    private final PreviewAttributes<Destination> subscriptions;
 
     DestinationPreview(Destination destination, FinderPathFactory finderPathFactory, Places places,
             Dispatcher dispatcher, Resources resources) {
@@ -79,6 +80,7 @@ class DestinationPreview extends PreviewContent<Destination> {
         };
         attributes = new PreviewAttributes<>(destination);
         messages = new PreviewAttributes<>(destination, resources.constants().messages());
+        subscriptions = new PreviewAttributes<>(destination, resources.constants().subscriptions());
 
         LabelBuilder labelBuilder = new LabelBuilder();
         if (destination.type == Destination.Type.JMS_QUEUE || destination.type == Destination.Type.QUEUE) {
@@ -112,14 +114,17 @@ class DestinationPreview extends PreviewContent<Destination> {
                     .append(DURABLE_MESSAGE_COUNT)
                     .append(NON_DURABLE_MESSAGE_COUNT)
                     .append(MESSAGES_ADDED)
-                    .append(DELIVERING_COUNT)
-                    .append(SUBSCRIPTION_COUNT)
+                    .append(DELIVERING_COUNT);
+            subscriptions.append(SUBSCRIPTION_COUNT)
                     .append(DURABLE_SUBSCRIPTION_COUNT)
                     .append(NON_DURABLE_SUBSCRIPTION_COUNT);
         }
 
         previewBuilder().addAll(attributes);
         previewBuilder().addAll(messages);
+        if (destination.type == Destination.Type.JMS_TOPIC) {
+            previewBuilder().addAll(subscriptions);
+        }
     }
 
     @Override
@@ -128,8 +133,12 @@ class DestinationPreview extends PreviewContent<Destination> {
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         dispatcher.execute(operation, result -> {
-            attributes.refresh(item);
-            messages.refresh(item);
+            Destination update = new Destination(item.getAddress(), item);
+            attributes.refresh(update);
+            messages.refresh(update);
+            if (update.type == Destination.Type.JMS_TOPIC) {
+                subscriptions.refresh(item);
+            }
         });
     }
 }
