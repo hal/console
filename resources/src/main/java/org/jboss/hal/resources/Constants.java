@@ -398,6 +398,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String review();
     String role();
     String roles();
+    String rollback();
     String runAs();
     String runAsRoleTitle();
     String running();
@@ -470,6 +471,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unsupportedFileType();
     String unsupportedFileTypeDescription();
     String uploadContent();
+    String uploadPatch();
     String uploadDeployment();
     String uploadError();
     String uploadInProgress();

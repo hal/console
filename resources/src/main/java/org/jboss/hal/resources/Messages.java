@@ -66,8 +66,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml chooseSharedStore();
     SafeHtml chooseStrategy();
     String chooseTemplate(String custom);
+    String cleanPatchHistory();
+    SafeHtml cleanPatchHistoryQuestion(String prependMessage);
+    SafeHtml cleanPatchHistorySuccess();
+    SafeHtml cleanPatchHistoryFailure(String error);
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
+    String configurePatchTitle();
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);
@@ -206,6 +211,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String noBootErrors();
     SafeHtml noChanges();
     SafeHtml noContent();
+    SafeHtml noSelectedPatch();
     SafeHtml noContentSelected();
     SafeHtml noContextForNormalMode();
     SafeHtml noDeployment();
@@ -217,6 +223,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     String nonEmptyRequires(String fields);
+    String noPatchesForHost();
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
     SafeHtml noReset();
@@ -233,7 +240,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String operations(int size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
+    String patchLatestInstalledLabel();
+    SafeHtml patchHostNeedsRestart(String hostname);
+    SafeHtml patchRestartDomainControllerQuestion(String hostname);
+    SafeHtml patchRestartHostControllerQuestion(String hostname);
+    SafeHtml patchRestartStandaloneQuestion();
+    SafeHtml patchSucessfullyApplied(String patchId);
+    String patchStopAllServersTitle();
+    SafeHtml patchStopAllServersQuestion(String servers, String host);
+    SafeHtml patchStopServersDialogMessage1();
+    SafeHtml patchStopServersDialogMessage2();
+    SafeHtml patchAddError(String patchId, String error);
+    SafeHtml patchSucessfullyRemoved(String patchId);
     SafeHtml pauseQueueSuccess(String name);
+    SafeHtml patchRemovedError(String failure);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);

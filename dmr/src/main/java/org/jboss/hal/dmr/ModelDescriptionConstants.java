@@ -60,6 +60,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS = "address";
     String ADDRESS_SETTING = "address-setting";
     String ADMIN_OBJECTS = "admin-objects";
+    String AGEOUT_HISTORY_OPERATION = "ageout-history";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
     String AGGREGATE_PRINCIPAL_TRANSFORMER = "aggregate-principal-transformer";
@@ -77,6 +78,7 @@ public interface ModelDescriptionConstants {
     String ALTERNATIVES = "alternatives";
     String ANY = "any";
     String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
+    String APPLIED_AT = "applied-at";
     String ARCHIVE = "archive";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
@@ -156,6 +158,7 @@ public interface ModelDescriptionConstants {
     String CONTEXT_SERVICE = "context-service";
     String CORE_POOL_SIZE = "core-pool-size";
     String CORE_SERVICE = "core-service";
+    String CORE_SERVICE_PATCHING = "core-service-patching";
     String COUNT_MESSAGES = "count-messages";
     String CRAWLER_SESSION_MANAGEMENT = "crawler-session-management";
     String CREATE_TIME = "create-time";
@@ -427,10 +430,16 @@ public interface ModelDescriptionConstants {
     String OUTCOME = "outcome";
     String OTHER_QUEUE_NAME = "other-queue-name";
     String OTP_CREDENTIAL_MAPPER = "otp-credential-mapper";
+    String OVERRIDE = "override";
+    String OVERRIDE_ALL = "override-all";
+    String OVERRIDE_MODULE = "override-modules";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
     String PASSWORD = "password";
     String PATH = "path";
+    String PATCH = "patch";
+    String PATCH_ID = "patch-id";
+    String PATCHING = "patching";
     String PATTERN = "pattern";
     String PATTERN_FILTER = "pattern-filter";
     String PAUSE = "pause";
@@ -455,6 +464,7 @@ public interface ModelDescriptionConstants {
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
+    String PRESERVE = "preserve";
     String PRINCIPALS = "principals";
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
@@ -528,6 +538,7 @@ public interface ModelDescriptionConstants {
     String REQUEST_PROPERTIES = "request-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";
+    String RESET_CONFIGURATION = "reset-configuration";
     String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTER = "resource-adapter";
@@ -545,6 +556,8 @@ public interface ModelDescriptionConstants {
     String ROLE = "role";
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
+    String ROLLBACK_OPERATION = "rollback";
+    String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
@@ -588,6 +601,7 @@ public interface ModelDescriptionConstants {
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
+    String SHOW_HISTORY_OPERATION = "show-history";
     String SHUTDOWN = "shutdown";
     String SIMPLE_PERMISSION_MAPPER = "simple-permission-mapper";
     String SIMPLE_REGEX_REALM_MAPPER = "simple-regex-realm-mapper";

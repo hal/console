@@ -201,53 +201,56 @@ public class ServerActions {
     }
 
     private void restartStandalone(Server server) {
+        restartStandalone(server, resources.messages().restartStandaloneQuestion(server.getName()));
+    }
+
+    public void restartStandalone(Server server, SafeHtml question) {
         String title = resources.messages().restart(server.getName());
-        DialogFactory.showConfirmation(title,
-                resources.messages().restartStandaloneQuestion(server.getName()), () -> {
-                    // execute the restart with a little delay to ensure the confirmation dialog is closed
-                    // before the next dialog is opened (only one modal can be open at a time!)
-                    setTimeout((o) -> {
+        DialogFactory.showConfirmation(title, question, () -> {
+            // execute the restart with a little delay to ensure the confirmation dialog is closed
+            // before the next dialog is opened (only one modal can be open at a time!)
+            setTimeout((o) -> {
 
-                        prepare(server, Action.RESTART);
-                        BlockingDialog pendingDialog = DialogFactory
-                                .buildLongRunning(title,
-                                        resources.messages().restartStandalonePending(server.getName()));
-                        pendingDialog.show();
-                        Operation operation = new Operation.Builder(ResourceAddress.root(), SHUTDOWN)
-                                .param(RESTART, true)
-                                .build();
-                        Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
-                        dispatcher.execute(operation,
+                prepare(server, Action.RESTART);
+                BlockingDialog pendingDialog = DialogFactory
+                        .buildLongRunning(title,
+                                resources.messages().restartStandalonePending(server.getName()));
+                pendingDialog.show();
+                Operation operation = new Operation.Builder(ResourceAddress.root(), SHUTDOWN)
+                        .param(RESTART, true)
+                        .build();
+                Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
+                dispatcher.execute(operation,
 
-                                result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
-                                        .execute(ping, new TimeoutHandler.Callback() {
-                                            @Override
-                                            public void onSuccess() {
-                                                // wait a little bit before event handlers try to use the restarted server
-                                                setTimeout((o) -> {
-                                                    pendingDialog.close();
-                                                    finish(Server.STANDALONE, Result.SUCCESS, Message.success(
-                                                            resources.messages()
-                                                                    .restartServerSuccess(server.getName())));
-                                                }, 666);
-                                            }
+                        result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
+                                .execute(ping, new TimeoutHandler.Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        // wait a little bit before event handlers try to use the restarted server
+                                        setTimeout((o) -> {
+                                            pendingDialog.close();
+                                            finish(Server.STANDALONE, Result.SUCCESS, Message.success(
+                                                    resources.messages()
+                                                            .restartServerSuccess(server.getName())));
+                                        }, 666);
+                                    }
 
-                                            @Override
-                                            public void onTimeout() {
-                                                pendingDialog.close();
-                                                DialogFactory.buildBlocking(title,
-                                                        resources.messages().restartStandaloneTimeout(server.getName()))
-                                                        .show();
-                                                finish(Server.STANDALONE, Result.TIMEOUT, null);
-                                            }
-                                        }),
-                                (o1, failure) -> finish(Server.STANDALONE, Result.ERROR,
-                                        Message.error(resources.messages().restartServerError(server.getName()))),
-                                (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
-                                        Message.error(resources.messages().restartServerError(server.getName()))));
+                                    @Override
+                                    public void onTimeout() {
+                                        pendingDialog.close();
+                                        DialogFactory.buildBlocking(title,
+                                                resources.messages().restartStandaloneTimeout(server.getName()))
+                                                .show();
+                                        finish(Server.STANDALONE, Result.TIMEOUT, null);
+                                    }
+                                }),
+                        (o1, failure) -> finish(Server.STANDALONE, Result.ERROR,
+                                Message.error(resources.messages().restartServerError(server.getName()))),
+                        (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
+                                Message.error(resources.messages().restartServerError(server.getName()))));
 
-                    }, SHORT_TIMEOUT);
-                });
+            }, SHORT_TIMEOUT);
+        });
     }
 
     private void reloadRestart(Server server, Operation operation, Action action, int timeout,
@@ -397,6 +400,27 @@ public class ServerActions {
                                         Message.error(resources.messages().metadataError(), error.getMessage()));
                     }
                 });
+    }
+
+    /**
+     * Call <code>/host={host}/server-config={sever}:stop(blocking=false)</code> the intended action is to immediately
+     * stop the server.
+     *
+     * @param server
+     */
+    public void stopNow(Server server) {
+        prepare(server, Action.STOP);
+        Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
+                .param(BLOCKING, false)
+                .build();
+        dispatcher.execute(operation, result -> new TimeoutHandler(dispatcher, SERVER_STOP_TIMEOUT).execute(
+                readServerConfigStatus(server),
+                checkServerConfigStatus(STOPPED, DISABLED),
+                new ServerTimeoutCallback(server, Action.STOP,
+                        resources.messages().stopServerSuccess(server.getName()))),
+                new ServerFailedCallback(server, resources.messages().stopServerError(server.getName())),
+                new ServerExceptionCallback(server, resources.messages().stopServerError(server.getName())));
+
     }
 
     public void kill(Server server) {

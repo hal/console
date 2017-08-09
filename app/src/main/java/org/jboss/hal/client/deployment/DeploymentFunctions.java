@@ -369,6 +369,7 @@ class DeploymentFunctions {
                 builder = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                         .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, enabled);
+
             }
             Operation operation = builder.build();
             operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS

@@ -210,6 +210,8 @@ public interface Names {
 
     String PAGING_DIRECTORY = "Paging Directory";
     String PARTITION_HANDLING = "Partition Handling";
+    String PATCH = "Patch";
+    String PATCHES = "Patches";
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN = "Pattern";

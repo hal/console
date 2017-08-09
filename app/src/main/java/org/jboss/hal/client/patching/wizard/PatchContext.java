@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.dialog;
+package org.jboss.hal.client.patching.wizard;
 
-/**
- * A dialog w/o any means to close the dialog (no close icon, no esc handler). The only way to close this dialog is
- * using the {@link #close()} method.
- */
-public class BlockingDialog extends Dialog {
+import java.util.List;
 
-    public BlockingDialog(Dialog.Builder builder) {
-        super(builder.closeIcon(false).closeOnEsc(false));
-    }
+import elemental2.dom.File;
 
-    @Override
-    public void close() {
-        super.close();
-    }
+public class PatchContext {
+
+    public File file;
+    public boolean overrideAll;
+    public boolean overrideModules;
+    public List<String> override;
+    public List<String> preserve;
 }

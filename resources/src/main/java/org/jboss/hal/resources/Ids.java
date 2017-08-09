@@ -523,6 +523,12 @@ public interface Ids {
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
+    String PATCH_ADD = build("patch", ADD_SUFFIX);
+    String PATCH_UPLOAD_NAMES_FORM = build("patch", "names", FORM_SUFFIX);
+    String PATCHING = "patching";
+    String PATCHES_AGEOUT = build(PATCHING, "ageout-history");
+    String PATCHES_REFRESH = build(PATCHING, REFRESH_SUFFIX);
+    String PATCHING_DOMAIN = "patching-domain";
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
