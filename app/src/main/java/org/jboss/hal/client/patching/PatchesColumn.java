@@ -23,14 +23,16 @@ import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -46,6 +48,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
@@ -66,16 +69,24 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
+import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
 import static org.jboss.hal.client.patching.wizard.PatchState.NAMES;
 import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.resources.CSS.formHorizontal;
+import static org.jboss.hal.resources.CSS.radio;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
@@ -114,9 +125,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
             if (patchContext.preserve != null) {
                 opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[patchContext.preserve.size()]));
             }
-
             Operation operation = opBuilder.build();
-
             operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
 
             dispatcher.upload(patchContext.file, operation,
@@ -140,7 +149,6 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
         }
     }
 
-
     static final AddressTemplate PATCHING_TEMPLATE = AddressTemplate.of(SELECTED_HOST, "core-service=patching");
 
     private EventBus eventBus;
@@ -152,6 +160,9 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private ServerActions serverActions;
     private Provider<Progress> progress;
     private Resources resources;
+    // flag set in the restart servers dialog
+    private boolean restartServers;
+    private BlockingDialog restartServersDialog;
 
     @Inject
     public PatchesColumn(final Finder finder,
@@ -214,7 +225,6 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
                 return actions;
             }
-
         });
 
         ColumnAction<ModelNode> applyPatchAction = new ColumnAction.Builder<ModelNode>(Ids.PATCH_ADD)
@@ -233,10 +243,10 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
     private void rollback(final String patchId) {
 
-        // check the host controller for restart-required
-        checkHostState(_result ->
-                // check the servers, advise to stop them before apply/rollback a patch
-                checkServersState(_result1 -> {
+        // check the host controller (or standalone server) for restart-required
+        checkHostState(() ->
+                // check the servers (domain mode only), advise to stop them before apply/rollback a patch
+                checkServersState(() -> {
 
                     metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
                             new SuccessfulMetadataCallback(eventBus, resources) {
@@ -264,13 +274,28 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                                                     if (!payload.hasDefined(RESET_CONFIGURATION)) {
                                                         payload.get(RESET_CONFIGURATION).set(false);
                                                     }
+                                                    String idProgress = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE, PATCHING, patchId, "rollback-progress");
+                                                    ItemMonitor.startProgress(idProgress);
                                                     Operation operation = new Operation.Builder(address, ROLLBACK_OPERATION)
                                                             .payload(payload)
                                                             .build();
                                                     dispatcher.execute(operation, result2 -> {
+                                                        ItemMonitor.stopProgress(idProgress);
                                                         MessageEvent.fire(eventBus,
                                                                 Message.success(resources.messages()
                                                                         .patchSucessfullyRemoved(patchId)));
+                                                        refresh(RESTORE_SELECTION);
+                                                    }, (operation1, failure) -> {
+                                                        ItemMonitor.stopProgress(idProgress);
+                                                        MessageEvent.fire(eventBus,
+                                                                Message.error(resources.messages()
+                                                                        .patchRemovedError(failure)));
+                                                        refresh(RESTORE_SELECTION);
+                                                    }, (operation1, exception) -> {
+                                                        ItemMonitor.stopProgress(idProgress);
+                                                        MessageEvent.fire(eventBus,
+                                                                Message.error(resources.messages()
+                                                                        .patchRemovedError(exception.getMessage())));
                                                         refresh(RESTORE_SELECTION);
                                                     });
                                                     return true;
@@ -304,9 +329,10 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                         DialogFactory.showConfirmation(messages.cleanPatchHistory(), message, () -> {
                             Operation operation = new Operation.Builder(address, AGEOUT_HISTORY_OPERATION).build();
                             dispatcher.execute(operation, result -> {
-                                MessageEvent
-                                        .fire(eventBus, Message.success(
-                                                SafeHtmlUtils.fromString(messages.cleanPatchHistorySuccess())));
+                                MessageEvent.fire(eventBus, Message.success(messages.cleanPatchHistorySuccess()));
+                                refresh(RESTORE_SELECTION);
+                            }, (operation1, failure) -> {
+                                MessageEvent.fire(eventBus, Message.error(messages.cleanPatchHistoryFailure(failure)));
                                 refresh(RESTORE_SELECTION);
                             });
                         });
@@ -317,9 +343,9 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private void applyPatch() {
 
         // check the host controller for restart-required
-        checkHostState(result ->
+        checkHostState(() ->
             // check the servers, advise to stop them before apply/rollback a patch
-            checkServersState(result1 -> {
+            checkServersState(() -> {
 
                 metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
                     new SuccessfulMetadataCallback(eventBus, resources) {
@@ -367,12 +393,11 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     }
 
     /**
-     * Checks if the host or server is in restart mode, if yes then asks user to restart host/server, as it must be restarted before
-     * a patch can be installed or to call a rollback on a installed patch.
+     * Checks if the host or standalone server is in restart mode, if yes then asks user to restart host/server, as it
+     * must be restarted before a patch can be installed or to call a rollback on an installed patch.
      *
-     * @param callback
      */
-    private void checkHostState(Dispatcher.SuccessCallback callback) {
+    private void checkHostState(Callback callback) {
 
         Messages messages = resources.messages();
         if (environment.isStandalone()) {
@@ -386,7 +411,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 if (Server.STANDALONE.needsRestart()) {
                     serverActions.restartStandalone(Server.STANDALONE, messages.patchRestartStandaloneQuestion());
                 } else {
-                    callback.onSuccess(null);
+                    callback.execute();
                 }
             });
         } else {
@@ -407,7 +432,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
                     hostActions.restart(host, question);
                 } else {
-                    callback.onSuccess(null);
+                    callback.execute();
                 }
             });
         }
@@ -418,13 +443,11 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
      * Checks if each servers of a host is stopped, if the server is started, asks the user to stop them.
      * It is a good practice to apply/rollback a patch to a stopped server to prevent application and internal services
      * from failing.
-     *
-     * @param callback
      */
-    private void checkServersState(Dispatcher.SuccessCallback callback) {
+    private void checkServersState(Callback callback) {
 
         if (environment.isStandalone()) {
-            callback.onSuccess(null);
+            callback.execute();
         } else {
 
             String host = statementContext.selectedHost();
@@ -452,18 +475,69 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 if (anyServerStarted) {
                     String serversList = Joiner.on(", ").join(serversString);
                     SafeHtml question = resources.messages().patchStopAllServersQuestion(serversList, host);
-                    DialogFactory.showConfirmation(resources.messages().patchStopAllServersTitle(), question,
-                            () -> {
-                                for (Property serverProp : servers) {
-                                    Server server = new Server(host, serverProp);
-                                    serverActions.stopNow(server);
-                                }
-                            });
+
+                    askRestartServers(resources.messages().patchStopAllServersTitle(), question, () -> {
+                        if (restartServers) {
+                            for (Property serverProp : servers) {
+                                Server server = new Server(host, serverProp);
+                                serverActions.stopNow(server);
+                            }
+                        }
+                        // programmatically closes the dialog as a wizard dialog will open before this ResultCallback
+                        // returns
+                        restartServersDialog.close();
+                        // the callback will show a wizard dialog
+                        callback.execute();
+                        // returns false as the previous close call already closed the dialog
+                        return false;
+                    });
                 } else {
-                    callback.onSuccess(null);
+                    callback.execute();
                 }
             });
         }
+    }
+
+    private void askRestartServers(String title, SafeHtml question, Dialog.ResultCallback callback) {
+
+        String radioName = Ids.build(HOST, PATCHING, "choose-restart");
+        HTMLElement content = div().css(formHorizontal)
+                .add(p().innerHtml(question))
+                .add(div().css(radio)
+                        .add(label()
+                                .add(input(InputType.radio)
+                                        .id(Ids.build(HOST, PATCHING, "ok"))
+                                        .attr(UIConstants.NAME, radioName)
+                                        .on(click, e -> {
+                                            restartServers = true;
+                                            restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
+                                        })
+                                        .asElement())
+                                .add(span().innerHtml(resources.messages().patchStopServersDialogMessage1()))))
+                .add(div().css(radio)
+                        .add(label()
+                                .add(input(InputType.radio)
+                                        .id(Ids.build(HOST, PATCHING, "no"))
+                                        .attr(UIConstants.NAME, radioName)
+                                        .on(click, e -> {
+                                            restartServers = false;
+                                            restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
+                                        })
+                                        .asElement())
+                                .add(span().innerHtml(resources.messages().patchStopServersDialogMessage2()))))
+                .asElement();
+
+
+        Dialog.Builder dialogBuilder = new Dialog.Builder(title)
+                .primary(resources.constants().next(), callback)
+                .secondary(resources.constants().cancel(), null)
+                .size(MEDIUM)
+                .add(content);
+
+        // BlockingDialog used as we want to call close method
+        restartServersDialog = new BlockingDialog(dialogBuilder);
+        restartServersDialog.getButton(PRIMARY_POSITION).disabled = true;
+        restartServersDialog.show();
     }
 
 }

@@ -68,7 +68,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String chooseTemplate(String custom);
     String cleanPatchHistory();
     SafeHtml cleanPatchHistoryQuestion(String prependMessage);
-    String cleanPatchHistorySuccess();
+    SafeHtml cleanPatchHistorySuccess();
+    SafeHtml cleanPatchHistoryFailure(String error);
     SafeHtml cloneProfileSuccess(String from, String to);
     SafeHtml closeToLogout();
     String configurePatchTitle();
@@ -247,9 +248,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml patchSucessfullyApplied(String patchId);
     String patchStopAllServersTitle();
     SafeHtml patchStopAllServersQuestion(String servers, String host);
+    SafeHtml patchStopServersDialogMessage1();
+    SafeHtml patchStopServersDialogMessage2();
     SafeHtml patchAddError(String patchId, String error);
     SafeHtml patchSucessfullyRemoved(String patchId);
     SafeHtml pauseQueueSuccess(String name);
+    SafeHtml patchRemovedError(String failure);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);

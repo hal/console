@@ -21,7 +21,7 @@ package org.jboss.hal.ballroom.dialog;
  */
 public class BlockingDialog extends Dialog {
 
-    BlockingDialog(Dialog.Builder builder) {
+    public BlockingDialog(Dialog.Builder builder) {
         super(builder.closeIcon(false).closeOnEsc(false));
     }
 
