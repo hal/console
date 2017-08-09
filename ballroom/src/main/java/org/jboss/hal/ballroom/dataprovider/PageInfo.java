@@ -32,8 +32,31 @@ public class PageInfo {
         this.total = total;
     }
 
-    void reset() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof PageInfo)) { return false; }
 
+        PageInfo pageInfo = (PageInfo) o;
+
+        if (page != pageInfo.page) { return false; }
+        if (pageSize != pageInfo.pageSize) { return false; }
+        if (visible != pageInfo.visible) { return false; }
+        return total == pageInfo.total;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = page;
+        result = 31 * result + pageSize;
+        result = 31 * result + visible;
+        result = 31 * result + total;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PageInfo(" + "page=" + page + ", pageSize=" + pageSize + ", visible=" + visible + ", total=" + total + ')';
     }
 
     public int getFrom() {

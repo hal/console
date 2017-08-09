@@ -32,6 +32,26 @@ public class Selection<T> {
         this.total = total;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof Selection)) { return false; }
+
+        Selection<?> selection1 = (Selection<?>) o;
+
+        if (multiselect != selection1.multiselect) { return false; }
+        if (total != selection1.total) { return false; }
+        return selection.equals(selection1.selection);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = selection.hashCode();
+        result = 31 * result + (multiselect ? 1 : 0);
+        result = 31 * result + total;
+        return result;
+    }
+
     public Map<String, T> getSelection() {
         return selection;
     }

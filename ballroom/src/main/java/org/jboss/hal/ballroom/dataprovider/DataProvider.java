@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
@@ -57,6 +58,10 @@ public class DataProvider<T> {
     private int page;
 
     public DataProvider(Function<T, String> identifier, boolean multiselect) {
+        this(identifier, multiselect, Settings.INSTANCE.get(PAGE_SIZE).asInt(DEFAULT_PAGE_SIZE));
+    }
+
+    DataProvider(Function<T, String> identifier, boolean multiselect, int pageSize) {
         this.identifier = identifier;
         this.multiselect = multiselect;
         this.allItems = new LinkedHashMap<>();
@@ -66,7 +71,7 @@ public class DataProvider<T> {
         this.selection = new HashSet<>();
         this.selectHandler = new ArrayList<>();
         this.displays = new ArrayList<>();
-        this.pageSize = Settings.INSTANCE.get(PAGE_SIZE).asInt(DEFAULT_PAGE_SIZE);
+        this.pageSize = pageSize;
         this.page = 0;
     }
 
@@ -102,14 +107,23 @@ public class DataProvider<T> {
         }
         List<T> values = stream.collect(toList());
         if (values.size() > pageSize) {
-            filteredItems = values.stream().collect(toMap(identifier, identity()));
+            filteredItems = values.stream().collect(toLinkedMap(identifier, identity()));
             values = paged(values);
-            visibleItems = values.stream().collect(toMap(identifier, identity()));
+            visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
         } else {
-            filteredItems = visibleItems = values.stream().collect(toMap(identifier, identity()));
+            filteredItems = visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
         }
         showItems();
         updateSelection();
+    }
+
+    private Collector<T, ?, Map<String, T>> toLinkedMap(Function<? super T, ? extends String> keyMapper,
+            Function<? super T, ? extends T> valueMapper) {
+        return toMap(keyMapper, valueMapper,
+                (u, v) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u)); //NON-NLS
+                },
+                LinkedHashMap::new);
     }
 
     public boolean contains(T item) {
@@ -122,6 +136,18 @@ public class DataProvider<T> {
 
     public String getId(T item) {
         return identifier.apply(item);
+    }
+
+    public Iterable<T> getAllItems() {
+        return allItems.values();
+    }
+
+    public Iterable<T> getFilteredItems() {
+        return filteredItems.values();
+    }
+
+    public Iterable<T> getVisibleItems() {
+        return visibleItems.values();
     }
 
 
