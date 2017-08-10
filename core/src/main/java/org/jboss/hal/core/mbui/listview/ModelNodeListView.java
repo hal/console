@@ -190,10 +190,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         // empty states
         emptyStates = new HashMap<>();
-        builder.emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(), () -> {
-            toolbar.clearAllFilters();
-            dataProvider.update();
-        });
+        builder.emptyStates.get(NO_MATCHING_ITEMS).setPrimaryAction(CONSTANTS.clearAllFilters(),
+                toolbar::clearAllFilters);
         builder.emptyStates.forEach((key, emptyState) -> {
             HTMLElement element = emptyState.asElement();
             element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
