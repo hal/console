@@ -219,8 +219,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     }
 
     private void copyToClipboard(Clipboard clipboard) {
-        if (dataProvider.getSingleSelection() != null) {
-            clipboard.setText(dataProvider.getSingleSelection().asCli());
+        if (dataProvider.getSelectionInfo().getSingleSelection() != null) {
+            clipboard.setText(dataProvider.getSelectionInfo().getSingleSelection().asCli());
             Tooltip tooltip = Tooltip.element(copyToClipboard);
             tooltip.hide()
                     .setTitle(resources.constants().copied())

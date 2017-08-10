@@ -141,31 +141,31 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
 
     private void changePriority() {
         if (presenter != null) {
-            presenter.changePriority(dataProvider.getSelectionInfo());
+            presenter.changePriority(dataProvider.getSelectionInfo().getSelection());
         }
     }
 
     private void expire() {
         if (presenter != null) {
-            presenter.expire(dataProvider.getSelectionInfo());
+            presenter.expire(dataProvider.getSelectionInfo().getSelection());
         }
     }
 
     private void move() {
         if (presenter != null) {
-            presenter.move(dataProvider.getSelectionInfo());
+            presenter.move(dataProvider.getSelectionInfo().getSelection());
         }
     }
 
     private void sendToDeadLetter() {
         if (presenter != null) {
-            presenter.sendToDeadLetter(dataProvider.getSelectionInfo());
+            presenter.sendToDeadLetter(dataProvider.getSelectionInfo().getSelection());
         }
     }
 
     private void remove() {
         if (presenter != null) {
-            presenter.remove(dataProvider.getSelectionInfo());
+            presenter.remove(dataProvider.getSelectionInfo().getSelection());
         }
     }
 }
