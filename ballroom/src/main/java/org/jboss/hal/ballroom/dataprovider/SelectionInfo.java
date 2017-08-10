@@ -42,6 +42,9 @@ public class SelectionInfo<T> {
     }
 
     void add(String id, T item) {
+        if (!multiSelect) {
+            reset();
+        }
         selection.put(id, item);
     }
 

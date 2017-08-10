@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
 import static com.google.common.primitives.Ints.asList;
+import static java.lang.Integer.parseInt;
 import static java.lang.System.arraycopy;
 import static java.util.Comparator.naturalOrder;
 import static org.junit.Assert.*;
@@ -62,6 +63,7 @@ public class DataProviderTest {
         }
     }
 
+
     private static Iterable<Integer> itemsMatcher(int[] items) {
         return argThat(new ItemsMatcher(items));
     }
@@ -74,9 +76,13 @@ public class DataProviderTest {
         return Ints.toArray(list);
     }
 
-
     private static final int PAGE_SIZE = 10;
+    private static final int[] EVEN = new int[]{0, 2, 4, 6, 8};
+    private static final int[] BY_THREE = new int[]{0, 3, 6, 9};
+    private static final int[] COMBINED = new int[]{0, 6};
     private static final Function<Integer, String> IDENTIFIER = String::valueOf;
+    private static final Filter<Integer> DIVISIBLE = (number, filter) -> number % parseInt(filter) == 0;
+
 
     private DataProvider<Integer> single;
     private DataProvider<Integer> multi;
@@ -356,6 +362,63 @@ public class DataProviderTest {
 
     // ------------------------------------------------------ filter
 
+    @Test
+    public void filter() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
+
+        reset(display);
+        single.addFilter("even", new FilterValue<>(DIVISIBLE, "2"));
+        verify(display).showItems(itemsMatcher(EVEN), eq(new PageInfo(PAGE_SIZE, 0, 5, 5)));
+
+        reset(display);
+        single.addFilter("byThree", new FilterValue<>(DIVISIBLE, "3"));
+        verify(display).showItems(itemsMatcher(COMBINED), eq(new PageInfo(PAGE_SIZE, 0, 2, 2)));
+
+        reset(display);
+        single.removeFilter("even");
+        verify(display).showItems(itemsMatcher(BY_THREE), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
+
+        reset(display);
+        single.clearFilters();
+        verify(display).showItems(itemsMatcher(items(PAGE_SIZE)), eq(new PageInfo(PAGE_SIZE, 0, PAGE_SIZE, PAGE_SIZE)));
+    }
+
+    @Test
+    public void changeFilter() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
+
+        reset(display);
+        single.addFilter("divisible", new FilterValue<>(DIVISIBLE, "2"));
+        verify(display).showItems(itemsMatcher(EVEN), eq(new PageInfo(PAGE_SIZE, 0, 5, 5)));
+
+        reset(display);
+        single.addFilter("divisible", new FilterValue<>(DIVISIBLE, "3"));
+        verify(display).showItems(itemsMatcher(BY_THREE), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
+    }
+
+    @Test
+    public void removeUnknownFilter() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
+
+        reset(display);
+        single.removeFilter("foo");
+        verify(display, never()).showItems(any(), any());
+    }
+
+    @Test
+    public void clearNoFilter() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
+
+        reset(display);
+        single.clearFilters();
+        verify(display, never()).showItems(any(), any());
+    }
+
+    @Test
+    public void getFilter() throws Exception {
+        assertFalse(single.hasFilters());
+        assertSame(FilterValue.EMPTY, single.getFilter("foo"));
+    }
 
     // ------------------------------------------------------ sort
 

@@ -53,7 +53,7 @@ public class PageInfo {
     }
 
     void setVisible(int visible) {
-        this.visible = visible;
+        this.visible = min(total, visible);
     }
 
     void setTotal(int total) {
@@ -84,11 +84,11 @@ public class PageInfo {
 
     @Override
     public String toString() {
-        return "PageInfo(page=" + page + ", pageSize=" + pageSize + ", visible=" + visible + ", total=" + total + ')';
+        return "PageInfo(pageSize=" + pageSize + ", page=" + page+ ", visible=" + visible + ", total=" + total + ')';
     }
 
     public int getFrom() {
-        return getPage() * getPageSize() + 1;
+        return total == 0 ? 0 : getPage() * getPageSize() + 1;
     }
 
     public int getTo() {

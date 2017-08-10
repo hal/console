@@ -140,8 +140,8 @@ public class DataProvider<T> {
         } else {
             filteredItems = visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
         }
+        pageInfo.setTotal(filteredItems.size()); // total first!
         pageInfo.setVisible(visibleItems.size());
-        pageInfo.setTotal(filteredItems.size());
     }
 
     private Collector<T, ?, Map<String, T>> toLinkedMap(Function<? super T, ? extends String> keyMapper,
@@ -194,9 +194,6 @@ public class DataProvider<T> {
 
     /** (De)selects the specified item and fires a selection event if {@code select == true} */
     public void select(T item, boolean select) {
-        if (select && !selectionInfo.isMultiSelect()) {
-            selectionInfo.reset();
-        }
         selectInternal(getId(item), item, select);
         if (select) {
             fireSelection(item);
@@ -232,15 +229,19 @@ public class DataProvider<T> {
     }
 
     public void removeFilter(String name) {
-        filterValues.remove(name);
-        applyFilterSortAndPaging();
-        showItems();
+        if (filterValues.containsKey(name)) {
+            filterValues.remove(name);
+            applyFilterSortAndPaging();
+            showItems();
+        }
     }
 
     public void clearFilters() {
-        filterValues.clear();
-        applyFilterSortAndPaging();
-        showItems();
+        if (!filterValues.isEmpty()) {
+            filterValues.clear();
+            applyFilterSortAndPaging();
+            showItems();
+        }
     }
 
     @SuppressWarnings("unchecked")
