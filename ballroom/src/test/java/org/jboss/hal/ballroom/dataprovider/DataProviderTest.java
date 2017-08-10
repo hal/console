@@ -348,11 +348,12 @@ public class DataProviderTest {
         verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(items(PAGE_SIZE))));
         verify(selectHandler, never()).onSelect(anyInt());
 
-        reset(display, selectHandler);
         int[] selection = new int[12];
         arraycopy(items(PAGE_SIZE), 0, selection, 0, 10);
         arraycopy(items(40, 41), 0, selection, 10, 2);
         multi.gotoLastPage();
+
+        reset(display, selectHandler);
         multi.selectVisible();
         assertSelection(multi, selection);
         verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(selection)));
