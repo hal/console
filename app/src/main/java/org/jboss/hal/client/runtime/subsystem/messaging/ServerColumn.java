@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -44,12 +45,14 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
     @Inject
     public ServerColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
             PlaceManager placeManager,
             Places places,
             Dispatcher dispatcher,
             StatementContext statementContext) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_RUNTIME, Names.SERVER)
+                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_REFRESH))
                 .itemsProvider((context, callback) -> {
                     ResourceAddress address = MESSAGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)

@@ -349,27 +349,26 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         resultContainer.appendChild(selection = column(3).css(listHalSelected)
                 .asElement());
 
-
         // initial reset
         filterInput.value = "";
         Elements.setVisible(filters, false);
         Elements.removeChildrenFrom(activeFiltersUl);
+
         if (filterAttributes.isEmpty()) {
             selectedFilter = null;
         } else {
             setSelectedFilter(filterAttributes.get(0));
         }
+
+        this.asc = true;
+        sortOrderIcon.className = fontAwesome("sort-alpha-asc");
         if (sortAttributes.isEmpty()) {
             selectedSort = null;
         } else {
-            setSelectedFilter(sortAttributes.get(0));
+            setSelectedSort(sortAttributes.get(0));
         }
-        this.asc = true;
-        if (selectedSort != null) {
-            setSelectedSort(selectedSort);
-        }
+
         this.results.textContent = MESSAGES.results(0);
-        Elements.setVisible(filters, false);
     }
 
     @Override

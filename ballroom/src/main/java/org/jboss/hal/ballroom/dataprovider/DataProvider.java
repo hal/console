@@ -226,6 +226,7 @@ public class DataProvider<T> {
         filterValues.put(name, filter);
         applyFilterSortAndPaging();
         showItems();
+        updateSelection();
     }
 
     public void removeFilter(String name) {
@@ -233,6 +234,7 @@ public class DataProvider<T> {
             filterValues.remove(name);
             applyFilterSortAndPaging();
             showItems();
+            updateSelection();
         }
     }
 
@@ -241,6 +243,7 @@ public class DataProvider<T> {
             filterValues.clear();
             applyFilterSortAndPaging();
             showItems();
+            updateSelection();
         }
     }
 
@@ -260,6 +263,7 @@ public class DataProvider<T> {
         this.comparator = comparator;
         applyFilterSortAndPaging();
         showItems();
+        updateSelection();
     }
 
     public Comparator<T> getComparator() {
@@ -275,15 +279,7 @@ public class DataProvider<T> {
         if (oldPageSize != pageInfo.getPageSize()) {
             applyFilterSortAndPaging();
             showItems();
-        }
-    }
-
-    public void gotoPage(int page) {
-        int oldPage = pageInfo.getPage();
-        pageInfo.setPage(page);
-        if (oldPage != pageInfo.getPage()) {
-            applyFilterSortAndPaging();
-            showItems();
+            updateSelection();
         }
     }
 
@@ -301,6 +297,16 @@ public class DataProvider<T> {
 
     public void gotoLastPage() {
         gotoPage(pageInfo.getPages() - 1);
+    }
+
+    public void gotoPage(int page) {
+        int oldPage = pageInfo.getPage();
+        pageInfo.setPage(page);
+        if (oldPage != pageInfo.getPage()) {
+            applyFilterSortAndPaging();
+            showItems();
+            updateSelection();
+        }
     }
 
     public PageInfo getPageInfo() {

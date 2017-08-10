@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
 import org.jboss.hal.core.Strings;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -74,6 +75,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
 
     @Inject
     public DestinationColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
             ItemActionFactory itemActionFactory,
             FinderPathFactory finderPathFactory,
             Places places,
@@ -83,6 +85,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
             Resources resources) {
 
         super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION, Names.DESTINATION)
+                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_DESTINATION_REFRESH))
                 .onPreview(item -> new DestinationPreview(item, finderPathFactory, places, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
