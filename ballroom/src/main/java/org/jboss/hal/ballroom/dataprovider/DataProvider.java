@@ -18,12 +18,9 @@ package org.jboss.hal.ballroom.dataprovider;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -33,7 +30,6 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.config.Settings;
 
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -41,89 +37,53 @@ import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.config.Settings.DEFAULT_PAGE_SIZE;
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 
-/** Holds state for displays like {@link ListView}. Changes to the state is reflected in the connected displays. */
+/**
+ * Holds items and state for displays like {@link ListView}. Changes to the state is reflected in the connected
+ * displays.
+ */
 public class DataProvider<T> {
 
     private final Function<T, String> identifier;
-    private final boolean multiselect;
+    private final PageInfo pageInfo;
+    private final SelectionInfo<T> selectionInfo;
     private final Map<String, T> allItems;
     private final Map<String, FilterValue<T>> filterValues;
-    private final Set<String> selection;
     private final List<Display<T>> displays;
+    private List<SelectHandler<T>> selectHandler;
     private Map<String, T> filteredItems;
     private Map<String, T> visibleItems;
-    private List<SelectHandler<T>> selectHandler;
     private Comparator<T> comparator;
-    private int pageSize;
-    private int page;
 
-    public DataProvider(Function<T, String> identifier, boolean multiselect) {
-        this(identifier, multiselect, Settings.INSTANCE.get(PAGE_SIZE).asInt(DEFAULT_PAGE_SIZE));
+    public DataProvider(Function<T, String> identifier, boolean multiSelect) {
+        this(identifier, multiSelect, Settings.INSTANCE.get(PAGE_SIZE).asInt(DEFAULT_PAGE_SIZE));
     }
 
-    DataProvider(Function<T, String> identifier, boolean multiselect, int pageSize) {
+    DataProvider(Function<T, String> identifier, boolean multiSelect, int pageSize) {
         this.identifier = identifier;
-        this.multiselect = multiselect;
+        this.pageInfo = new PageInfo(pageSize);
+        this.selectionInfo = new SelectionInfo<>(identifier, multiSelect);
         this.allItems = new LinkedHashMap<>();
         this.filteredItems = new LinkedHashMap<>();
         this.visibleItems = new LinkedHashMap<>();
         this.filterValues = new HashMap<>();
-        this.selection = new HashSet<>();
         this.selectHandler = new ArrayList<>();
         this.displays = new ArrayList<>();
-        this.pageSize = pageSize;
-        this.page = 0;
+
+        reset();
     }
 
 
-    // ------------------------------------------------------ update items
+    // ------------------------------------------------------ items
 
-    /** Replaces the items and applies the current filter, sort order and paging. */
+    /** Replaces the items, resets the paging and selection and applies the current filter and sort order. */
     public void update(Iterable<T> items) {
-        allItems.clear();
-        selection.clear();
+        reset();
         for (T item : items) {
             allItems.put(getId(item), item);
         }
-        update();
-    }
-
-    /** Applies the filter, sort order and paging to the current items. */
-    public void update() {
-        Stream<T> stream = allItems.values().stream();
-        if (!filterValues.isEmpty()) {
-            Predicate<T> predicate = null;
-            for (FilterValue<T> filterValue : filterValues.values()) {
-                if (predicate == null) {
-                    predicate = i -> filterValue.getFilter().test(i, filterValue.getValue());
-                } else {
-                    predicate = predicate.and(i -> filterValue.getFilter().test(i, filterValue.getValue()));
-                }
-            }
-            stream = stream.filter(predicate);
-        }
-        if (comparator != null) {
-            stream = stream.sorted(comparator);
-        }
-        List<T> values = stream.collect(toList());
-        if (values.size() > pageSize) {
-            filteredItems = values.stream().collect(toLinkedMap(identifier, identity()));
-            values = paged(values);
-            visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
-        } else {
-            filteredItems = visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
-        }
+        applyFilterSortAndPaging();
         showItems();
         updateSelection();
-    }
-
-    private Collector<T, ?, Map<String, T>> toLinkedMap(Function<? super T, ? extends String> keyMapper,
-            Function<? super T, ? extends T> valueMapper) {
-        return toMap(keyMapper, valueMapper,
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u)); //NON-NLS
-                },
-                LinkedHashMap::new);
     }
 
     public boolean contains(T item) {
@@ -150,6 +110,49 @@ public class DataProvider<T> {
         return visibleItems.values();
     }
 
+    private void reset() {
+        allItems.clear();
+        pageInfo.reset();
+        selectionInfo.reset();
+    }
+
+    private void applyFilterSortAndPaging() {
+        Stream<T> stream = allItems.values().stream();
+        if (!filterValues.isEmpty()) {
+            Predicate<T> predicate = null;
+            for (FilterValue<T> filterValue : filterValues.values()) {
+                if (predicate == null) {
+                    predicate = i -> filterValue.getFilter().test(i, filterValue.getValue());
+                } else {
+                    predicate = predicate.and(i -> filterValue.getFilter().test(i, filterValue.getValue()));
+                }
+            }
+            stream = stream.filter(predicate);
+        }
+        if (comparator != null) {
+            stream = stream.sorted(comparator);
+        }
+        List<T> values = stream.collect(toList());
+        if (values.size() > pageInfo.getPageSize()) {
+            filteredItems = values.stream().collect(toLinkedMap(identifier, identity()));
+            values = paged(values);
+            visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
+        } else {
+            filteredItems = visibleItems = values.stream().collect(toLinkedMap(identifier, identity()));
+        }
+        pageInfo.setVisible(visibleItems.size());
+        pageInfo.setTotal(filteredItems.size());
+    }
+
+    private Collector<T, ?, Map<String, T>> toLinkedMap(Function<? super T, ? extends String> keyMapper,
+            Function<? super T, ? extends T> valueMapper) {
+        return toMap(keyMapper, valueMapper,
+                (u, v) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u)); //NON-NLS
+                },
+                LinkedHashMap::new);
+    }
+
 
     // ------------------------------------------------------ selection
 
@@ -157,59 +160,59 @@ public class DataProvider<T> {
         this.selectHandler.add(selectHandler);
     }
 
-    /** Selects all items if {@ocde multiselect == true}. Does not fire selection events */
+    /** Selects all items if {@ocde multiSelect == true}. Does not fire selection events */
     public void selectAll() {
-        if (multiselect) {
-            for (String id : filteredItems.keySet()) {
-                selectInternal(id, true);
-            }
+        if (selectionInfo.isMultiSelect()) {
+            filteredItems.forEach((id, item) -> selectInternal(id, item, true));
             updateSelection();
         }
     }
 
-    /** Selects the visible items if {@ocde multiselect == true}. Does not fire selection events */
+    /** Selects all visible items if {@ocde multiSelect == true}. Does not fire selection events */
     public void selectVisible() {
-        if (multiselect) {
-            for (String id : visibleItems.keySet()) {
-                selectInternal(id, true);
-            }
+        if (selectionInfo.isMultiSelect()) {
+            visibleItems.forEach((id, item) -> selectInternal(id, item, true));
             updateSelection();
         }
     }
 
     /** Clears the selection for all items */
     public void clearAllSelection() {
-        for (String id : filteredItems.keySet()) {
-            selectInternal(id, false);
+        if (selectionInfo.hasSelection()) {
+            filteredItems.forEach((id, item) -> selectInternal(id, item, false));
+            updateSelection();
         }
-        updateSelection();
     }
 
-    /** Clears the selection for the visible items */
+    /** Clears the selection for all visible items */
     public void clearVisibleSelection() {
-        for (String id : visibleItems.keySet()) {
-            selectInternal(id, false);
+        if (selectionInfo.hasSelection()) {
+            visibleItems.forEach((id, item) -> selectInternal(id, item, false));
+            updateSelection();
         }
-        updateSelection();
     }
 
-    /** Selects the specified item and fires a selection event */
+    /** (De)selects the specified item and fires a selection event if {@code select == true} */
     public void select(T item, boolean select) {
-        if (select && !multiselect) {
-            for (String id : visibleItems.keySet()) {
-                selectInternal(id, false);
-            }
+        if (select && !selectionInfo.isMultiSelect()) {
+            selectionInfo.reset();
         }
-        selectInternal(getId(item), select);
-        fireSelection(item);
+        selectInternal(getId(item), item, select);
+        if (select) {
+            fireSelection(item);
+        }
         updateSelection();
     }
 
-    private void selectInternal(String id, boolean select) {
+    public SelectionInfo<T> getSelectionInfo() {
+        return selectionInfo;
+    }
+
+    private void selectInternal(String id, T item, boolean select) {
         if (select) {
-            selection.add(id);
+            selectionInfo.add(id, item);
         } else {
-            selection.remove(id);
+            selectionInfo.remove(id);
         }
     }
 
@@ -219,38 +222,25 @@ public class DataProvider<T> {
         }
     }
 
-    public boolean isSelected(T item) {
-        return isSelected(getId(item));
-    }
-
-    private boolean isSelected(String id) {
-        return selection.contains(id);
-    }
-
-    public boolean hasSelection() {
-        return !selection.isEmpty();
-    }
-
-    public T getSingleSelection() {
-        List<T> s = getSelection();
-        if (!selection.isEmpty()) {
-            return s.get(0);
-        }
-        return null;
-    }
-
-    public List<T> getSelection() {
-        return selection.stream()
-                .map(filteredItems::get)
-                .filter(Objects::nonNull)
-                .collect(toList());
-    }
-
 
     // ------------------------------------------------------ filter
 
     public void addFilter(String name, FilterValue<T> filter) {
         filterValues.put(name, filter);
+        applyFilterSortAndPaging();
+        showItems();
+    }
+
+    public void removeFilter(String name) {
+        filterValues.remove(name);
+        applyFilterSortAndPaging();
+        showItems();
+    }
+
+    public void clearFilters() {
+        filterValues.clear();
+        applyFilterSortAndPaging();
+        showItems();
     }
 
     @SuppressWarnings("unchecked")
@@ -262,19 +252,13 @@ public class DataProvider<T> {
         return !filterValues.isEmpty();
     }
 
-    public void removeFilter(String name) {
-        filterValues.remove(name);
-    }
-
-    public void clearFilters() {
-        filterValues.clear();
-    }
-
 
     // ------------------------------------------------------ sort
 
     public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
+        applyFilterSortAndPaging();
+        showItems();
     }
 
     public Comparator<T> getComparator() {
@@ -284,35 +268,47 @@ public class DataProvider<T> {
 
     // ------------------------------------------------------ paging
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
     public void setPageSize(int pageSize) {
-        this.pageSize = max(1, pageSize);
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public int getPages() {
-        int total = filteredItems.size();
-        int pages = total / pageSize;
-        if (total % pageSize != 0) {
-            pages++;
+        int oldPageSize = pageInfo.getPageSize();
+        pageInfo.setPageSize(pageSize);
+        if (oldPageSize != pageInfo.getPageSize()) {
+            applyFilterSortAndPaging();
+            showItems();
         }
-        return max(1, pages);
     }
 
-    public void setPage(int page) {
-        int safePage = max(0, page);
-        this.page = min(safePage, getPages() - 1);
+    public void gotoPage(int page) {
+        int oldPage = pageInfo.getPage();
+        pageInfo.setPage(page);
+        if (oldPage != pageInfo.getPage()) {
+            applyFilterSortAndPaging();
+            showItems();
+        }
+    }
+
+    public void gotoFirstPage() {
+        gotoPage(0);
+    }
+
+    public void gotoPreviousPage() {
+        gotoPage(pageInfo.getPage() - 1);
+    }
+
+    public void gotoNextPage() {
+        gotoPage(pageInfo.getPage() + 1);
+    }
+
+    public void gotoLastPage() {
+        gotoPage(pageInfo.getPages() - 1);
+    }
+
+    public PageInfo getPageInfo() {
+        return pageInfo;
     }
 
     private List<T> paged(List<T> values) {
-        List<List<T>> pages = Lists.partition(values, pageSize);
-        return pages.get(min(page, pages.size() - 1));
+        List<List<T>> pages = Lists.partition(values, pageInfo.getPageSize());
+        return pages.get(min(pageInfo.getPage(), pages.size() - 1));
     }
 
 
@@ -323,17 +319,14 @@ public class DataProvider<T> {
     }
 
     private void showItems() {
-        PageInfo pageInfo = new PageInfo(page, pageSize, visibleItems.size(), filteredItems.size());
         for (Display<T> display : displays) {
             display.showItems(visibleItems.values(), pageInfo);
         }
     }
 
     private void updateSelection() {
-        Map<String, T> selectedItems = selection.stream().collect(toMap(identity(), id -> filteredItems.get(id)));
-        Selection<T> sel = new Selection<>(identifier, selectedItems, multiselect, filteredItems.size());
         for (Display<T> display : displays) {
-            display.updateSelection(sel);
+            display.updateSelection(selectionInfo);
         }
     }
 }

@@ -16,19 +16,29 @@
 package org.jboss.hal.ballroom.dataprovider;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.primitives.Ints.asList;
+import static java.lang.System.arraycopy;
+import static java.util.Comparator.naturalOrder;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -39,7 +49,7 @@ public class DataProviderTest {
 
         private final int[] expected;
 
-        ItemsMatcher(int[] expected) {this.expected = expected;}
+        private ItemsMatcher(int[] expected) {this.expected = expected;}
 
         @Override
         public String toString() {
@@ -57,21 +67,34 @@ public class DataProviderTest {
     }
 
     private static int[] toArray(Iterable<Integer> iterable) {
-        return Ints.toArray(newArrayList(iterable));
+        return toArray(Lists.newArrayList(iterable));
+    }
+
+    private static int[] toArray(List<Integer> list) {
+        return Ints.toArray(list);
     }
 
 
     private static final int PAGE_SIZE = 10;
     private static final Function<Integer, String> IDENTIFIER = String::valueOf;
 
-    private DataProvider<Integer> dataProvider;
+    private DataProvider<Integer> single;
+    private DataProvider<Integer> multi;
     private Display<Integer> display;
+    private SelectHandler<Integer> selectHandler;
 
     @Before
     public void setUp() throws Exception {
-        dataProvider = new DataProvider<>(IDENTIFIER, false, PAGE_SIZE);
+        single = new DataProvider<>(IDENTIFIER, false, PAGE_SIZE);
+        multi = new DataProvider<>(IDENTIFIER, true, PAGE_SIZE);
+
         display = mock(Display.class);
-        dataProvider.addDisplay(display);
+        single.addDisplay(display);
+        multi.addDisplay(display);
+
+        selectHandler = mock(SelectHandler.class);
+        single.onSelect(selectHandler);
+        multi.onSelect(selectHandler);
     }
 
 
@@ -80,30 +103,30 @@ public class DataProviderTest {
     @Test
     public void updateItems() throws Exception {
         int[] items = items(PAGE_SIZE);
-        dataProvider.update(asList(items));
-        assertAllFilteredVisible(items, items, items);
+        single.update(asList(items));
+        assertVisibleFilteredAll(single, items, items, items);
     }
 
     @Test
     public void contains() throws Exception {
         int[] items = items(23);
-        dataProvider.update(asList(items));
-        assertTrue(dataProvider.contains(0));
-        assertTrue(dataProvider.contains(9));
-        assertTrue(dataProvider.contains(10));
-        assertTrue(dataProvider.contains(22));
-        assertFalse(dataProvider.contains(23));
+        single.update(asList(items));
+        assertTrue(single.contains(0));
+        assertTrue(single.contains(9));
+        assertTrue(single.contains(10));
+        assertTrue(single.contains(22));
+        assertFalse(single.contains(23));
     }
 
     @Test
     public void visible() throws Exception {
         int[] items = items(23);
-        dataProvider.update(asList(items));
-        assertTrue(dataProvider.isVisible(0));
-        assertTrue(dataProvider.isVisible(9));
-        assertFalse(dataProvider.isVisible(10));
-        assertFalse(dataProvider.isVisible(22));
-        assertFalse(dataProvider.isVisible(23));
+        single.update(asList(items));
+        assertTrue(single.isVisible(0));
+        assertTrue(single.isVisible(9));
+        assertFalse(single.isVisible(10));
+        assertFalse(single.isVisible(22));
+        assertFalse(single.isVisible(23));
     }
 
 
@@ -112,99 +135,274 @@ public class DataProviderTest {
     @Test
     public void setPageSize() throws Exception {
         int[] items = items(PAGE_SIZE);
-        dataProvider.update(asList(items));
-        verify(display).showItems(itemsMatcher(items(PAGE_SIZE)), eq(new PageInfo(0, PAGE_SIZE, PAGE_SIZE, PAGE_SIZE)));
-        assertAllFilteredVisible(items, items, items(PAGE_SIZE));
+        single.update(asList(items));
+        assertVisibleFilteredAll(single, items(PAGE_SIZE), items, items);
+        verify(display).showItems(itemsMatcher(items(PAGE_SIZE)), eq(new PageInfo(PAGE_SIZE, 0, PAGE_SIZE, PAGE_SIZE)));
 
-        dataProvider.setPageSize(6);
-        dataProvider.update();
-        verify(display).showItems(itemsMatcher(items(6)), eq(new PageInfo(0, 6, 6, PAGE_SIZE)));
-        assertAllFilteredVisible(items, items, items(6));
+        single.setPageSize(6);
+        assertVisibleFilteredAll(single, items(6), items, items);
+        verify(display).showItems(itemsMatcher(items(6)), eq(new PageInfo(6, 0, 6, PAGE_SIZE)));
     }
 
     @Test
     public void getPageSize() throws Exception {
-        dataProvider.update(asList(items(PAGE_SIZE)));
-        assertEquals(1, dataProvider.getPages());
+        single.update(asList(items(PAGE_SIZE)));
+        assertEquals(1, single.getPageInfo().getPages());
 
-        dataProvider.update(asList(items(PAGE_SIZE - 1)));
-        assertEquals(1, dataProvider.getPages());
+        single.update(asList(items(PAGE_SIZE - 1)));
+        assertEquals(1, single.getPageInfo().getPages());
 
-        dataProvider.update(asList(items(PAGE_SIZE + 1)));
-        assertEquals(2, dataProvider.getPages());
-    }
-
-    @Test
-    public void illegalPageSize() throws Exception {
-        dataProvider.setPageSize(Integer.MIN_VALUE);
-        assertEquals(1, dataProvider.getPageSize());
+        single.update(asList(items(PAGE_SIZE + 1)));
+        assertEquals(2, single.getPageInfo().getPages());
     }
 
 
     // ------------------------------------------------------ paging
 
     @Test
-    public void firstPage() throws Exception {
+    public void navigate() throws Exception {
         int[] items = items(42);
-        dataProvider.update(asList(items));
+        single.update(asList(items));
 
         reset(display);
-        dataProvider.setPage(0);
-        dataProvider.update();
-        verify(display).showItems(itemsMatcher(items(PAGE_SIZE)), eq(new PageInfo(0, PAGE_SIZE, PAGE_SIZE, 42)));
-        assertAllFilteredVisible(items, items, items(PAGE_SIZE));
+        single.gotoFirstPage();
+        assertVisibleFilteredAll(single, items(PAGE_SIZE), items, items);
+        verify(display, never()).showItems(any(), any());
+
+        reset(display);
+        single.gotoPreviousPage();
+        assertVisibleFilteredAll(single, items(PAGE_SIZE), items, items);
+        verify(display, never()).showItems(any(), any());
+
+        reset(display);
+        single.gotoNextPage();
+        assertVisibleFilteredAll(single, items(10, 19), items, items);
+        verify(display).showItems(itemsMatcher(items(10, 19)), eq(new PageInfo(PAGE_SIZE, 1, PAGE_SIZE, 42)));
+
+        reset(display);
+        single.gotoPage(2);
+        assertVisibleFilteredAll(single, items(20, 29), items, items);
+        verify(display).showItems(itemsMatcher(items(20, 29)), eq(new PageInfo(PAGE_SIZE, 2, 10, 42)));
+
+        reset(display);
+        single.gotoLastPage();
+        assertVisibleFilteredAll(single, items(40, 41), items, items);
+        verify(display).showItems(itemsMatcher(items(40, 41)), eq(new PageInfo(PAGE_SIZE, 4, 2, 42)));
+
+        reset(display);
+        single.gotoNextPage();
+        assertVisibleFilteredAll(single, items(40, 41), items, items);
+        verify(display, never()).showItems(any(), any());
+
+        reset(display);
+        single.gotoLastPage();
+        assertVisibleFilteredAll(single, items(40, 41), items, items);
+        verify(display, never()).showItems(any(), any());
+    }
+
+
+    // ------------------------------------------------------ select
+
+    @Test
+    public void singleSelect() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
+
+        reset(display, selectHandler);
+        single.select(2, true);
+        assertSelection(single, new int[]{2});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, false, selection(new int[]{2})));
+        verify(selectHandler).onSelect(2);
+
+        reset(display, selectHandler);
+        single.select(2, false);
+        assertNoSelection(single);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, false));
+        verify(selectHandler, never()).onSelect(anyInt());
     }
 
     @Test
-    public void midPage() throws Exception {
-        int[] items = items(42);
-        dataProvider.update(asList(items));
+    public void multiSelect() throws Exception {
+        multi.update(asList(items(PAGE_SIZE)));
 
-        reset(display);
-        dataProvider.setPage(2);
-        dataProvider.update();
-        verify(display).showItems(itemsMatcher(items(20, 29)), eq(new PageInfo(2, PAGE_SIZE, 10, 42)));
-        assertAllFilteredVisible(items, items, items(20, 29));
+        reset(display, selectHandler);
+        multi.select(1, true);
+        assertSelection(multi, new int[]{1});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1})));
+        verify(selectHandler).onSelect(1);
+
+        reset(display, selectHandler);
+        multi.select(3, true);
+        assertSelection(multi, new int[]{1, 3});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3})));
+        verify(selectHandler).onSelect(3);
+
+        reset(display, selectHandler);
+        multi.select(5, true);
+        assertSelection(multi, new int[]{1, 3, 5});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3, 5})));
+        verify(selectHandler).onSelect(5);
+
+        reset(display, selectHandler);
+        multi.select(5, false);
+        assertSelection(multi, new int[]{1, 3});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3})));
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        multi.select(3, false);
+        assertSelection(multi, new int[]{1});
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1})));
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        multi.select(1, false);
+        assertNoSelection(multi);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true));
+        verify(selectHandler, never()).onSelect(anyInt());
     }
 
     @Test
-    public void lastPage() throws Exception {
-        int[] items = items(42);
-        dataProvider.update(asList(items));
+    public void singleSelectAll() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
 
-        reset(display);
-        dataProvider.setPage(4);
-        dataProvider.update();
-        verify(display).showItems(itemsMatcher(items(40, 41)), eq(new PageInfo(4, PAGE_SIZE, 2, 42)));
-        assertAllFilteredVisible(items, items, items(40, 41));
+        reset(display, selectHandler);
+        single.selectAll();
+        assertNoSelection(single);
+        verify(display, never()).updateSelection(any());
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        single.clearAllSelection();
+        assertNoSelection(single);
+        verify(display, never()).updateSelection(any());
+        verify(selectHandler, never()).onSelect(anyInt());
     }
 
     @Test
-    public void illegalPage() throws Exception {
-        dataProvider.update(asList(items(2 * PAGE_SIZE)));
-        dataProvider.setPage(Integer.MIN_VALUE);
-        assertEquals(0, dataProvider.getPage());
-        dataProvider.setPage(Integer.MAX_VALUE);
-        assertEquals(1, dataProvider.getPage());
+    public void singleSelectVisible() throws Exception {
+        single.update(asList(items(PAGE_SIZE)));
 
-        dataProvider.update(asList(items(2 * PAGE_SIZE + 1)));
-        dataProvider.setPage(Integer.MAX_VALUE);
-        assertEquals(2, dataProvider.getPage());
+        reset(display, selectHandler);
+        single.selectVisible();
+        assertNoSelection(single);
+        verify(display, never()).updateSelection(any());
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        single.clearAllSelection();
+        assertNoSelection(single);
+        verify(display, never()).updateSelection(any());
+        verify(selectHandler, never()).onSelect(anyInt());
+    }
+
+    @Test
+    public void multiSelectAll() throws Exception {
+        int[] items = items(PAGE_SIZE);
+        multi.update(asList(items));
+
+        reset(display, selectHandler);
+        multi.selectAll();
+        assertSelection(multi, items);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(items)));
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        multi.clearAllSelection();
+        assertNoSelection(multi);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true));
+        verify(selectHandler, never()).onSelect(anyInt());
+    }
+
+    @Test
+    public void multiSelectVisible() throws Exception {
+        int[] items = items(42);
+        multi.update(asList(items));
+
+        reset(display, selectHandler);
+        multi.selectVisible();
+        assertSelection(multi, items(PAGE_SIZE));
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(items(PAGE_SIZE))));
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        multi.clearVisibleSelection();
+        assertNoSelection(multi);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true));
+        verify(selectHandler, never()).onSelect(anyInt());
+    }
+
+    @Test
+    public void selectAndNavigate() throws Exception {
+        int[] items = items(42);
+        multi.update(asList(items));
+
+        reset(display, selectHandler);
+        multi.selectVisible();
+        assertSelection(multi, items(PAGE_SIZE));
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(items(PAGE_SIZE))));
+        verify(selectHandler, never()).onSelect(anyInt());
+
+        reset(display, selectHandler);
+        int[] selection = new int[12];
+        arraycopy(items(PAGE_SIZE), 0, selection, 0, 10);
+        arraycopy(items(40, 41), 0, selection, 10, 2);
+        multi.gotoLastPage();
+        multi.selectVisible();
+        assertSelection(multi, selection);
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(selection)));
+        verify(selectHandler, never()).onSelect(anyInt());
+    }
+
+
+    // ------------------------------------------------------ filter
+
+
+    // ------------------------------------------------------ sort
+
+    @Test
+    public void sortAsc() throws Exception {
+        int[] items = {0, 8, 1, 5};
+        int[] sorted = {0, 1, 5, 8};
+
+        single.update(asList(items));
+        verify(display).showItems(itemsMatcher(items), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
+        single.setComparator(naturalOrder());
+        verify(display).showItems(itemsMatcher(sorted), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
+    }
+
+    @Test
+    public void sortDesc() throws Exception {
+        int[] items = {0, 8, 1, 5};
+        int[] sorted = {8, 5, 1, 0};
+
+        single.update(asList(items));
+        verify(display).showItems(itemsMatcher(items), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
+        single.setComparator(Comparator.<Integer>naturalOrder().reversed());
+        verify(display).showItems(itemsMatcher(sorted), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
     }
 
 
     // ------------------------------------------------------ helper methods
 
-    private void assertAllFilteredVisible(int[] all, int[] filtered, int[] visible) {
-        assertArrayEquals(all, toArray(dataProvider.getAllItems()));
-        assertArrayEquals(filtered, toArray(dataProvider.getFilteredItems()));
-        assertArrayEquals(visible, toArray(dataProvider.getVisibleItems()));
+    private void assertVisibleFilteredAll(DataProvider<Integer> dp, int[] visible, int[] filtered, int[] all) {
+        assertArrayEquals(all, toArray(dp.getAllItems()));
+        assertArrayEquals(filtered, toArray(dp.getFilteredItems()));
+        assertArrayEquals(visible, toArray(dp.getVisibleItems()));
     }
 
-    private void assertNoSelection() {
-        assertFalse(dataProvider.hasSelection());
-        assertNull(dataProvider.getSingleSelection());
-        assertTrue(dataProvider.getSelection().isEmpty());
+    private void assertNoSelection(DataProvider<Integer> dp) {
+        assertFalse(dp.getSelectionInfo().hasSelection());
+        assertTrue(dp.getSelectionInfo().getSelection().isEmpty());
+        assertNull(dp.getSelectionInfo().getSingleSelection());
+    }
+
+    private void assertSelection(DataProvider<Integer> dp, int[] selection) {
+        assertTrue(dp.getSelectionInfo().hasSelection());
+        assertFalse(dp.getSelectionInfo().getSelection().isEmpty());
+        assertTrue(new HashSet<>(Ints.asList(selection)).contains(dp.getSelectionInfo().getSingleSelection()));
+        int[] dpSelection = toArray(dp.getSelectionInfo().getSelection());
+        Arrays.sort(dpSelection);
+        assertArrayEquals(selection, dpSelection);
     }
 
     private int[] items(int size) {
@@ -219,5 +417,13 @@ public class DataProviderTest {
             items[i] = from + i;
         }
         return items;
+    }
+
+    private Map<String, Integer> selection(int[] items) {
+        Map<String, Integer> selection = new HashMap<>();
+        for (int item : items) {
+            selection.put(String.valueOf(item), item);
+        }
+        return selection;
     }
 }

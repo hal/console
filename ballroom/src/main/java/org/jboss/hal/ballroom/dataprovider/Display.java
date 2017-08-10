@@ -20,5 +20,5 @@ public interface Display<T> {
 
     void showItems(Iterable<T> items, PageInfo pageInfo);
 
-    void updateSelection(Selection<T> selection);
+    void updateSelection(SelectionInfo<T> selectionInfo);
 }

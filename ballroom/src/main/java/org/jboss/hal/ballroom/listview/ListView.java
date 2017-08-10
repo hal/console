@@ -27,7 +27,7 @@ import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
-import org.jboss.hal.ballroom.dataprovider.Selection;
+import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.active;
@@ -52,21 +52,21 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
     private final DataProvider<T> dataProvider;
     private final ItemRenderer<T> itemRenderer;
-    private final boolean multiselect;
+    private final boolean multiSelect;
     private final String[] contentWidths;
     private final HTMLElement root;
     private final Map<String, ListItem<T>> currentListItems;
 
     public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
-            boolean stacked, boolean multiselect) {
-        this(id, dataProvider, itemRenderer, stacked, multiselect, new String[]{"60%", "40%"});
+            boolean stacked, boolean multiSelect) {
+        this(id, dataProvider, itemRenderer, stacked, multiSelect, new String[]{"60%", "40%"});
     }
 
     public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
-            boolean stacked, boolean multiselect, String[] contentWidths) {
+            boolean stacked, boolean multiSelect, String[] contentWidths) {
         this.dataProvider = dataProvider;
         this.itemRenderer = itemRenderer;
-        this.multiselect = multiselect;
+        this.multiSelect = multiSelect;
         this.contentWidths = contentWidths;
         this.currentListItems = new HashMap<>();
 
@@ -88,16 +88,16 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
         Elements.removeChildrenFrom(root);
         for (T item : items) {
             ItemDisplay<T> display = itemRenderer.render(item);
-            ListItem<T> listItem = new ListItem<>(this, item, multiselect, display, contentWidths);
+            ListItem<T> listItem = new ListItem<>(this, item, multiSelect, display, contentWidths);
             currentListItems.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
         }
     }
 
     @Override
-    public void updateSelection(Selection<T> selection) {
+    public void updateSelection(SelectionInfo<T> selectionInfo) {
         for (ListItem<T> item : currentListItems.values()) {
-            if (selection.isSelected(item.item)) {
+            if (selectionInfo.isSelected(item.item)) {
                 item.asElement().classList.add(active);
                 if (item.checkbox != null) {
                     item.checkbox.checked = true;

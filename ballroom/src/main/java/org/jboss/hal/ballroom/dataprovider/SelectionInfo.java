@@ -15,45 +15,72 @@
  */
 package org.jboss.hal.ballroom.dataprovider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class Selection<T> {
+public class SelectionInfo<T> {
 
     private final Function<T, String> identifier;
+    private final boolean multiSelect;
     private final Map<String, T> selection; // contains only selected items
-    private final boolean multiselect;
-    private final int total;
 
-    public Selection(Function<T, String> identifier, Map<String, T> selection, boolean multiselect, int total) {
+    SelectionInfo(Function<T, String> identifier, boolean multiSelect) {
+        this(identifier, multiSelect, new HashMap<>());
+    }
+
+    SelectionInfo(Function<T, String> identifier, boolean multiSelect, Map<String, T> selection) {
         this.identifier = identifier;
+        this.multiSelect = multiSelect;
         this.selection = selection;
-        this.multiselect = multiselect;
-        this.total = total;
+    }
+
+    void reset() {
+        selection.clear();
+    }
+
+    void add(String id, T item) {
+        selection.put(id, item);
+    }
+
+    void remove(String id) {
+        selection.remove(id);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
-        if (!(o instanceof Selection)) { return false; }
+        if (!(o instanceof SelectionInfo)) { return false; }
 
-        Selection<?> selection1 = (Selection<?>) o;
+        SelectionInfo<?> other = (SelectionInfo<?>) o;
 
-        if (multiselect != selection1.multiselect) { return false; }
-        if (total != selection1.total) { return false; }
-        return selection.equals(selection1.selection);
+        if (multiSelect != other.multiSelect) { return false; }
+        return selection.equals(other.selection);
     }
 
     @Override
     public int hashCode() {
         int result = selection.hashCode();
-        result = 31 * result + (multiselect ? 1 : 0);
-        result = 31 * result + total;
+        result = 31 * result + (multiSelect ? 1 : 0);
         return result;
     }
 
-    public Map<String, T> getSelection() {
-        return selection;
+    @Override
+    public String toString() {
+        return "SelectionInfo(multiSelect=" + multiSelect+ ", selection=" + getSelection() + ')';
+    }
+
+    public List<T> getSelection() {
+        return new ArrayList<>(selection.values());
+    }
+
+    public T getSingleSelection() {
+        if (hasSelection()) {
+            return getSelection().get(0);
+        }
+        return null;
     }
 
     public boolean hasSelection() {
@@ -68,11 +95,7 @@ public class Selection<T> {
         return selection.size();
     }
 
-    public boolean isMultiselect() {
-        return multiselect;
-    }
-
-    public int getTotal() {
-        return total;
+    public boolean isMultiSelect() {
+        return multiSelect;
     }
 }

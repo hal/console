@@ -20,15 +20,43 @@ import static java.lang.Math.min;
 
 public class PageInfo {
 
-    private final int page;
-    private final int pageSize;
-    private final int visible;
-    private final int total;
+    private int pageSize;
+    private int page;
+    private int visible;
+    private int total;
 
-    PageInfo(int page, int pageSize, int visible, int total) {
-        this.page = page;
+    PageInfo(int pageSize) {
         this.pageSize = pageSize;
+        reset();
+    }
+
+    PageInfo(int pageSize, int page, int visible, int total) {
+        this.pageSize = pageSize;
+        this.page = page;
         this.visible = visible;
+        this.total = total;
+    }
+
+    void reset() {
+        page = 0;
+        visible = 0;
+        total = 0;
+    }
+
+    void setPageSize(int pageSize) {
+        this.pageSize = max(1, pageSize);
+    }
+
+    void setPage(int page) {
+        int safePage = max(0, page);
+        this.page = min(safePage, getPages() - 1);
+    }
+
+    void setVisible(int visible) {
+        this.visible = visible;
+    }
+
+    void setTotal(int total) {
         this.total = total;
     }
 
@@ -56,7 +84,7 @@ public class PageInfo {
 
     @Override
     public String toString() {
-        return "PageInfo(" + "page=" + page + ", pageSize=" + pageSize + ", visible=" + visible + ", total=" + total + ')';
+        return "PageInfo(page=" + page + ", pageSize=" + pageSize + ", visible=" + visible + ", total=" + total + ')';
     }
 
     public int getFrom() {

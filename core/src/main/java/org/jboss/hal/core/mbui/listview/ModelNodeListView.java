@@ -34,7 +34,7 @@ import org.jboss.hal.ballroom.Toolbar;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
-import org.jboss.hal.ballroom.dataprovider.Selection;
+import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemRenderer;
 import org.jboss.hal.ballroom.listview.ListView;
@@ -77,7 +77,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
         private final DataProvider<T> dataProvider;
         private final ItemRenderer<T> itemRenderer;
         private final Map<String, EmptyState> emptyStates;
-        private boolean multiselect;
+        private boolean multiSelect;
         private boolean stacked;
 
         public Builder(@NonNls String id, Metadata metadata, DataProvider<T> dataProvider,
@@ -89,7 +89,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             this.toolbarAttributes = new ArrayList<>();
             this.toolbarActions = new ArrayList<>();
             this.emptyStates = new HashMap<>();
-            this.multiselect = false;
+            this.multiSelect = false;
             this.stacked = true;
 
             emptyStates.put(NO_ITEMS, new EmptyState.Builder(CONSTANTS.noItems())
@@ -105,8 +105,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
             return this;
         }
 
-        public Builder<T> multiselect(boolean multiselect) {
-            this.multiselect = multiselect;
+        public Builder<T> multiSelect(boolean multiSelect) {
+            this.multiSelect = multiSelect;
             return this;
         }
 
@@ -175,7 +175,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
 
         // list view
         listView = new ListView<T>(builder.id, dataProvider, builder.itemRenderer, builder.stacked,
-                builder.multiselect) {
+                builder.multiSelect) {
             @Override
             protected List<ItemAction<T>> allowedActions(List<ItemAction<T>> actions) {
                 return actions.stream()
@@ -278,7 +278,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, HasEl
     }
 
     @Override
-    public void updateSelection(Selection selection) {
+    public void updateSelection(SelectionInfo selectionInfo) {
         // already covered by listView
     }
 

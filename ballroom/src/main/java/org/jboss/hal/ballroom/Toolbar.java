@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.Filter;
 import org.jboss.hal.ballroom.dataprovider.FilterValue;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
-import org.jboss.hal.ballroom.dataprovider.Selection;
+import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
@@ -178,8 +178,6 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
     private final DataProvider<T> dataProvider;
-    private final List<Attribute<T>> filterAttributes;
-    private final List<Attribute<T>> sortAttributes;
     private Attribute<T> selectedFilter;
     private Attribute<T> selectedSort;
     private boolean asc;
@@ -213,7 +211,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                 .asElement();
 
         // filter
-        filterAttributes = attributes.stream()
+        List<Attribute<T>> filterAttributes = attributes.stream()
                 .filter(attribute -> {
                     Filter<T> filter = attribute.filter;
                     return filter != null;
@@ -255,7 +253,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
 
         // sort
-        sortAttributes = attributes.stream()
+        List<Attribute<T>> sortAttributes = attributes.stream()
                 .filter(attribute -> attribute.comparator != null)
                 .collect(toList());
         if (!sortAttributes.isEmpty()) {
@@ -276,10 +274,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                     sortUl.appendChild(li()
                             .data(DATA_SORT, attribute.name)
                             .add(a().css(clickable)
-                                    .on(click, e -> {
-                                        setSelectedSort(attribute);
-                                        dataProvider.update();
-                                    })
+                                    .on(click, e -> sort(attribute))
                                     .textContent(attribute.title)).asElement());
                 }
             } else {
@@ -288,10 +283,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             asc = true;
             formGroup.appendChild(button().css(btn, btnLink)
                     .apply(b -> b.type = UIConstants.BUTTON)
-                    .on(click, e -> {
-                        setAsc(!asc);
-                        dataProvider.update();
-                    })
+                    .on(click, e -> toggleSortOrder())
                     .add(sortOrderIcon = span().asElement())
                     .asElement());
         }
@@ -351,10 +343,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                         .add(p().add(a()
                                 .css(clickable)
                                 .textContent(CONSTANTS.clearAllFilters())
-                                .on(click, e -> {
-                                    clearAllFilters();
-                                    dataProvider.update();
-                                })))
+                                .on(click, e -> clearAllFilters())))
                         .asElement())
                 .asElement());
         resultContainer.appendChild(selection = column(3).css(listHalSelected)
@@ -362,23 +351,22 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
 
         // initial reset
+        filterInput.value = "";
+        Elements.setVisible(filters, false);
+        Elements.removeChildrenFrom(activeFiltersUl);
         if (filterAttributes.isEmpty()) {
             selectedFilter = null;
         } else {
-            selectedFilter = filterAttributes.get(0);
+            setSelectedFilter(filterAttributes.get(0));
         }
         if (sortAttributes.isEmpty()) {
             selectedSort = null;
         } else {
-            selectedSort = sortAttributes.get(0);
+            setSelectedFilter(sortAttributes.get(0));
         }
-        if (selectedFilter != null) {
-            setSelectedFilter(selectedFilter);
-            clearAllFilters();
-        }
+        this.asc = true;
         if (selectedSort != null) {
             setSelectedSort(selectedSort);
-            setAsc(true);
         }
         this.results.textContent = MESSAGES.results(0);
         Elements.setVisible(filters, false);
@@ -394,10 +382,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         if (filterInput != null) {
             keyUpSubscription = fromEvent(filterInput, keyup)
                     .throttleLast(750, MILLISECONDS)
-                    .subscribe(e -> {
-                        addOrModifySelectedFilter(selectedFilter);
-                        dataProvider.update();
-                    });
+                    .subscribe(e -> addOrModifySelectedFilter(selectedFilter));
         }
     }
 
@@ -414,11 +399,11 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     @Override
-    public void updateSelection(Selection selection) {
-        Elements.setVisible(this.selection, selection.hasSelection());
-        if (selection.hasSelection() && selection.isMultiselect()) {
-            this.selection.innerHTML = MESSAGES.selected(selection.getSelectionCount(), selection.getTotal())
-                    .asString();
+    public void updateSelection(SelectionInfo selectionInfo) {
+        Elements.setVisible(this.selection, selectionInfo.hasSelection());
+        if (selectionInfo.hasSelection() && selectionInfo.isMultiSelect()) {
+            this.selection.innerHTML = MESSAGES.selected(selectionInfo.getSelectionCount(),
+                    dataProvider.getPageInfo().getTotal()).asString();
         }
     }
 
@@ -440,11 +425,9 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
     private void addOrModifySelectedFilter(Attribute<T> attribute) {
         if (Strings.isNullOrEmpty(filterInput.value)) {
-            dataProvider.removeFilter(attribute.name);
             clearFilter(attribute);
 
         } else {
-            dataProvider.addFilter(attribute.name, new FilterValue<>(attribute.filter, filterInput.value));
             Element activeFilterValue = activeFiltersUl.querySelector(
                     "span[data-active-filter-value=" + attribute.name + "]"); //NON-NLS
             if (activeFilterValue != null) {
@@ -457,34 +440,36 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .add(span().data(DATA_ACTIVE_FILTER_VALUE, attribute.name)
                                         .textContent(filterInput.value))
                                 .add(a().css(clickable)
-                                        .on(click, e -> {
-                                            clearFilter(attribute);
-                                            dataProvider.update();
-                                        })
+                                        .on(click, e -> clearFilter(attribute))
                                         .add(span().css(pfIcon("close")))))
                         .asElement());
             }
+            Elements.setVisible(filters, dataProvider.hasFilters());
+            dataProvider.addFilter(attribute.name, new FilterValue<>(attribute.filter, filterInput.value));
         }
-        Elements.setVisible(filters, dataProvider.hasFilters());
     }
 
     private void clearFilter(Attribute<T> attribute) {
-        dataProvider.removeFilter(attribute.name);
         Element activeFilter = activeFiltersUl.querySelector("li[data-active-filter=" + attribute.name + "]"); //NON-NLS
         Elements.failSafeRemove(activeFiltersUl, activeFilter);
         Elements.setVisible(filters, dataProvider.hasFilters());
+        dataProvider.removeFilter(attribute.name);
     }
 
     public void clearAllFilters() {
-        dataProvider.clearFilters();
         filterInput.value = "";
         Elements.setVisible(filters, false);
         Elements.removeChildrenFrom(activeFiltersUl);
+        dataProvider.clearFilters();
+    }
+
+    private void sort(Attribute<T> attribute) {
+        setSelectedSort(attribute);
+        dataProvider.setComparator(asc ? selectedSort.comparator : selectedSort.comparator.reversed());
     }
 
     private void setSelectedSort(Attribute<T> attribute) {
         selectedSort = attribute;
-        dataProvider.setComparator(asc ? selectedSort.comparator : selectedSort.comparator.reversed());
         if (sortUl != null) {
             selectDropdownItem(sortUl, DATA_SORT, attribute);
         }
@@ -496,14 +481,14 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
     }
 
-    private void setAsc(boolean asc) {
-        this.asc = asc;
-        dataProvider.setComparator(dataProvider.getComparator().reversed());
+    private void toggleSortOrder() {
+        asc = !asc;
         if (asc) {
             sortOrderIcon.className = fontAwesome("sort-alpha-asc");
         } else {
             sortOrderIcon.className = fontAwesome("sort-alpha-desc");
         }
+        dataProvider.setComparator(asc ? selectedSort.comparator : selectedSort.comparator.reversed());
     }
 
     private void selectDropdownItem(HTMLElement ul, String data, Attribute<T> attribute) {

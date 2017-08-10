@@ -25,7 +25,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
-import org.jboss.hal.ballroom.dataprovider.Selection;
+import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
@@ -76,7 +76,6 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final HTMLElement root;
-    private final HTMLSelectElement pageSizeSelect;
     private final HTMLElement current;
     private final HTMLElement total;
     private final HTMLInputElement pageInput;
@@ -91,6 +90,7 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
         this.dataProvider = dataProvider;
         String pageId = Ids.uniqueId();
 
+        HTMLSelectElement pageSizeSelect;
         root = div().css(row, paginationHal)
                 .add(column()
                         .add(form().css(contentViewPfPagination, clearfix)
@@ -157,7 +157,7 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
         }
 
         // initial reset
-        pageSizeSelect.value = String.valueOf(dataProvider.getPageSize());
+        pageSizeSelect.value = String.valueOf(dataProvider.getPageInfo().getPageSize());
         pageInput.value = "1";
     }
 
@@ -179,7 +179,7 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
     }
 
     @Override
-    public void updateSelection(Selection selection) {
+    public void updateSelection(SelectionInfo selectionInfo) {
 
     }
 
@@ -188,36 +188,30 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
     @SuppressWarnings("HardCodedStringLiteral")
     private void setPageSize(int pageSize) {
         dataProvider.setPageSize(pageSize);
-        dataProvider.update();
     }
 
     private void firstPage() {
-        gotoPage(0);
+        dataProvider.gotoFirstPage();
     }
 
     private void previousPage() {
-        gotoPage(dataProvider.getPage() - 1);
+        dataProvider.gotoPreviousPage();
     }
 
     private void nextPage() {
-        gotoPage(dataProvider.getPage() + 1);
+        dataProvider.gotoNextPage();
     }
 
     private void lastPage() {
-        gotoPage(dataProvider.getPages() - 1);
+        dataProvider.gotoLastPage();
     }
 
     // only method where page is one-based!
     private void gotoPage(String page) {
         try {
-            gotoPage(Integer.parseInt(page) - 1);
+            dataProvider.gotoPage(Integer.parseInt(page) - 1);
         } catch (NumberFormatException e) {
-            pageInput.value = String.valueOf(dataProvider.getPage() + 1);
+            pageInput.value = String.valueOf(dataProvider.getPageInfo().getPage() + 1);
         }
-    }
-
-    private void gotoPage(int page) {
-        dataProvider.setPage(page);
-        dataProvider.update();
     }
 }

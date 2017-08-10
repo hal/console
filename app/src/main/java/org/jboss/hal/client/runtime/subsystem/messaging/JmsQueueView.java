@@ -102,7 +102,7 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
                         this::remove))
 
                 .emptyState(TOO_MANY_MESSAGES, tooManyMessages)
-                .multiselect(true)
+                .multiSelect(true)
                 .build();
 
         registerAttachable(listView);
@@ -141,31 +141,31 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
 
     private void changePriority() {
         if (presenter != null) {
-            presenter.changePriority(dataProvider.getSelection());
+            presenter.changePriority(dataProvider.getSelectionInfo());
         }
     }
 
     private void expire() {
         if (presenter != null) {
-            presenter.expire(dataProvider.getSelection());
+            presenter.expire(dataProvider.getSelectionInfo());
         }
     }
 
     private void move() {
         if (presenter != null) {
-            presenter.move(dataProvider.getSelection());
+            presenter.move(dataProvider.getSelectionInfo());
         }
     }
 
     private void sendToDeadLetter() {
         if (presenter != null) {
-            presenter.sendToDeadLetter(dataProvider.getSelection());
+            presenter.sendToDeadLetter(dataProvider.getSelectionInfo());
         }
     }
 
     private void remove() {
         if (presenter != null) {
-            presenter.remove(dataProvider.getSelection());
+            presenter.remove(dataProvider.getSelectionInfo());
         }
     }
 }
