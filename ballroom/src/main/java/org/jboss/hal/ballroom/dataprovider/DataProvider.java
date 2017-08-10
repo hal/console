@@ -148,7 +148,7 @@ public class DataProvider<T> {
             Function<? super T, ? extends T> valueMapper) {
         return toMap(keyMapper, valueMapper,
                 (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u)); //NON-NLS
+                    throw new IllegalStateException("Duplicate key " + u); //NON-NLS
                 },
                 LinkedHashMap::new);
     }
