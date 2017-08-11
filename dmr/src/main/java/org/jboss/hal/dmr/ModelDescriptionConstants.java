@@ -184,9 +184,10 @@ public interface ModelDescriptionConstants {
     String DEFAULT_BINDINGS = "default-bindings";
     String DEFAULT_CACHE = "default-cache";
     String DEFAULT_HOST = "default-host";
+    String DEFAULT_INTERFACE = "default-interface";
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_THREAD_POOL = "default-thread-pool";
-    String DEFAULT_INTERFACE = "default-interface";
+    String DEFAULT_WEB_MODULE = "default-web-module";
     String DELIVERING_COUNT = "delivering-count";
     String DELIVERY_ACTIVE = "delivery-active";
     String DEPENDENT_ADDRESS = "dependent-address";
