@@ -59,7 +59,7 @@ class DestinationPreview extends PreviewContent<Destination> {
         this.dispatcher = dispatcher;
         this.address = destination.getAddress();
 
-        getHeaderContainer().appendChild(refreshLink(() -> update(null)));
+        getHeaderContainer().appendChild(refreshLink(() -> update(destination)));
         if (destination.fromDeployment()) {
             FinderPath path = finderPathFactory.deployment(destination.getDeployment());
             PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
