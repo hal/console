@@ -623,6 +623,7 @@ public interface ModelDescriptionConstants {
     String SOURCE_NETWORK = "source-network";
     String SOURCE_PASSWORD = "source-password";
     String SQL = "sql";
+    String SSL = "ssl";
     String SSL_CONTEXT = "ssl-context";
     String STACK = "stack";
     String STALE_CONNECTION_CHECKER_CLASS_NAME = "stale-connection-checker-class-name";

@@ -44,8 +44,10 @@ class PropertyFilter implements Predicate<Property> {
         if (builder.addOnly) {
             // if builder.includes is empty include either all or only required properties
             // otherwise include required properties plus the ones defined in builder.includes
-            if (emptyIncludes()) {
+            if (emptyIncludes() && builder.excludes.isEmpty()) {
                 filter = builder.requiredOnly ? required : (p) -> true;
+            } else if (!builder.excludes.isEmpty()) {
+                filter = p -> !builder.excludes.contains(p.getName());
             } else {
                 Predicate<Property> included = p -> builder.includes.contains(p.getName());
                 filter = required.or(included);

@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.core.runtime.server;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import javax.inject.Inject;
@@ -29,13 +31,20 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
+import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
@@ -44,9 +53,13 @@ import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -63,6 +76,7 @@ import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class ServerActions {
@@ -154,26 +168,146 @@ public class ServerActions {
                 : AddressTemplate.of("/host=" + server.getHost() + "/server-config=*" + server.getName());
     }
 
-
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
     private final Resources resources;
     private final Map<String, Server> pendingServers;
+    private StatementContext statementContext;
+    private CrudOperations crud;
 
     @Inject
     public ServerActions(final EventBus eventBus,
             final Dispatcher dispatcher,
+            final StatementContext statementContext,
             final MetadataProcessor metadataProcessor,
+            final CrudOperations crud,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.metadataProcessor = metadataProcessor;
+        this.crud = crud;
         this.progress = progress;
         this.resources = resources;
         this.pendingServers = new HashMap<>();
+    }
+
+    public void copyServer(Server server, Callback callback) {
+        Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                .param(CHILD_TYPE, HOST)
+                .build();
+
+        dispatcher.execute(operation, result -> {
+
+            List<String> hosts = new ArrayList<>();
+            result.asList().forEach(m -> {
+                hosts.add(m.asString());
+            });
+            // get the first host only to retrieve the r-r-d for server-config
+            // as /host=*/server-config=*:read-operation-description(name=add) does not work
+            AddressTemplate template = AddressTemplate.of("/host=" + hosts.get(0) + "/server-config=*");
+            metadataProcessor
+                    .lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+                        @Override
+                        public void onMetadata(final Metadata metadata) {
+
+                            String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
+                                    FORM_SUFFIX);
+                            SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
+                                    false);
+                            hostFormItem.setRequired(true);
+                            NameItem nameItem = new NameItem();
+
+                            ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                    .fromRequestProperties()
+                                    .unboundFormItem(nameItem, 0)
+                                    .unboundFormItem(hostFormItem, 1, resources.messages().addServerHostHelp())
+                                    .exclude("auto-start", "socket-binding-default-interface",
+                                            "socket-binding-group", "update-auto-start-with-server-status")
+                                    .build();
+
+                            AddResourceDialog dialog = new AddResourceDialog(resources.messages().copyServerTitle(),
+                                    form, (resource, payload) -> {
+
+                                // read server-config recursively to retrieve nested resources
+                                ModelNode serverConfigModel = new ModelNode();
+                                serverConfigModel.get(HOST).set(server.getHost());
+                                serverConfigModel.get(SERVER_CONFIG).set(server.getName());
+
+                                ResourceAddress serverAddress = new ResourceAddress(serverConfigModel);
+                                Operation opReadServer = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
+                                        .param(RECURSIVE, true)
+                                        .build();
+
+                                dispatcher.execute(opReadServer, new Dispatcher.OperationCallback() {
+                                    @Override
+                                    public void onSuccess(final ModelNode newServerModel) {
+
+                                        String newServerName = nameItem.getValue();
+                                        // set the chosen group in the model
+                                        newServerModel.get(GROUP).set(payload.get(GROUP).asString());
+                                        if (payload.hasDefined(SOCKET_BINDING_PORT_OFFSET))
+                                            newServerModel.get(SOCKET_BINDING_PORT_OFFSET)
+                                                    .set(payload.get(SOCKET_BINDING_PORT_OFFSET).asLong());
+                                        newServerModel.get(NAME).set(newServerName);
+
+                                        ModelNode newServerModelAddress = new ModelNode();
+                                        newServerModelAddress.get(HOST).set(hostFormItem.getValue());
+                                        newServerModelAddress.get(SERVER_CONFIG).set(newServerName);
+
+                                        Operation opAddServer = new Operation.Builder(
+                                                new ResourceAddress(newServerModelAddress), ADD)
+                                                .payload(newServerModel)
+                                                .build();
+                                        Composite comp = new Composite();
+                                        comp.add(opAddServer);
+
+                                        // create operation for each nested resource of the source server
+                                        createOperation(comp, JVM, newServerModel, newServerModelAddress);
+                                        createOperation(comp, INTERFACE, newServerModel, newServerModelAddress);
+                                        createOperation(comp, PATH, newServerModel, newServerModelAddress);
+                                        createOperation(comp, SYSTEM_PROPERTY, newServerModel, newServerModelAddress);
+                                        createOperation(comp, SSL, newServerModel, newServerModelAddress);
+
+                                        dispatcher.execute(comp, (Dispatcher.CompositeCallback) result -> {
+                                            MessageEvent.fire(eventBus, Message.success(
+                                                    resources.messages().addResourceSuccess(Names.SERVER, newServerName)));
+                                            callback.execute();
+                                        }, (operation1, failure) -> {
+                                            MessageEvent.fire(eventBus, Message.error(
+                                                    resources.messages().addResourceError(newServerName, failure)));
+                                            callback.execute();
+                                        }, (operation1, exception) -> {
+                                            MessageEvent.fire(eventBus, Message.error(resources.messages()
+                                                    .addResourceError(newServerName, exception.getMessage())));
+                                            callback.execute();
+                                        });
+                                    }
+
+                                    private void createOperation(Composite composite, String resource, ModelNode model, ModelNode baseAddress) {
+                                        if (model.hasDefined(resource)) {
+                                            List<Property> props = model.get(resource).asPropertyList();
+                                            props.forEach(p -> {
+                                                String propname = p.getName();
+                                                ModelNode _address = baseAddress.clone();
+                                                _address.get(resource).set(propname);
+                                                Operation operation = new Operation.Builder(new ResourceAddress(_address), ADD)
+                                                        .payload(p.getValue())
+                                                        .build();
+                                                composite.add(operation);
+                                            });
+                                        }
+                                    }
+
+                                });
+                            });
+                            dialog.show();
+                        }
+                    });
+        });
     }
 
     public void reload(Server server) {
@@ -348,6 +482,7 @@ public class ServerActions {
                 new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
     }
 
+
     public void stop(Server server) {
         metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
                 new MetadataProcessor.MetadataCallback() {
@@ -420,7 +555,6 @@ public class ServerActions {
                         resources.messages().stopServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().stopServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().stopServerError(server.getName())));
-
     }
 
     public void kill(Server server) {

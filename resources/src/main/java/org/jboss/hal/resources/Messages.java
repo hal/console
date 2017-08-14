@@ -41,8 +41,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     //@formatter:off
     String activeRoles(String roles);
     SafeHtml addHaPolicy();
+    SafeHtml addResourceError(String name, String cause);
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
+    SafeHtml addServerHostHelp();
+    String addServerTitle();
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allContentAlreadyDeployedToServerGroup(String serverGroup);
     SafeHtml allMailServersExist();
@@ -85,6 +88,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentReplaced(@PluralCount int size);
     SafeHtml contentUndeployed(String name);
     SafeHtml contentUndeployedFromServerGroup(String name, String serverGroup);
+    String copyServerTitle();
     SafeHtml credentialReferenceAddConfirmation(String alternative);
     SafeHtml credentialReferenceAddressError();
     String credentialReferenceConflict();

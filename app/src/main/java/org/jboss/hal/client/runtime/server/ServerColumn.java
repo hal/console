@@ -27,15 +27,17 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -48,6 +50,9 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
@@ -66,7 +71,10 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.ElementGuard;
@@ -79,13 +87,14 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static elemental2.dom.DomGlobal.alert;
 import static elemental2.dom.DomGlobal.document;
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 
 @Column(Ids.SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
@@ -102,6 +111,14 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private final Finder finder;
     private final Environment environment;
     private final SecurityContextRegistry securityContextRegistry;
+    private Dispatcher dispatcher;
+    private EventBus eventBus;
+    private Provider<Progress> progress;
+    private StatementContext statementContext;
+    private MetadataProcessor metadataProcessor;
+    private ServerActions serverActions;
+    private CrudOperations crud;
+    private Resources resources;
     private FinderPath refreshPath;
 
     @Inject
@@ -114,10 +131,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final StatementContext statementContext,
             final PlaceManager placeManager,
             final Places places,
+            final MetadataProcessor metadataProcessor,
             final FinderPathFactory finderPathFactory,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
+            final CrudOperations crud,
             final Resources resources) {
 
         super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
@@ -166,8 +185,16 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         resources))
         );
         this.finder = finder;
+        this.dispatcher = dispatcher;
         this.environment = environment;
+        this.eventBus = eventBus;
+        this.progress = progress;
         this.securityContextRegistry = securityContextRegistry;
+        this.statementContext = statementContext;
+        this.metadataProcessor = metadataProcessor;
+        this.serverActions = serverActions;
+        this.crud = crud;
+        this.resources = resources;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
@@ -334,7 +361,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     }
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().copy())
-                            .handler(itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext())))
+                            .handler(itm -> copyServer(itm))
                             .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
                             .build());
                     if (item.isStarted()) {
@@ -400,11 +427,79 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private void addServer(boolean browseByHost) {
-        alert(Names.NYI);
+        if (browseByHost) {
+            AddressTemplate template = serverConfigTemplate(statementContext.selectedHost());
+            String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD_SUFFIX);
+            List<String> attributes = asList("auto-start", "group", "socket-binding-default-interface",
+                    "socket-binding-group", "socket-binding-port-offset", "update-auto-start-with-server-status");
+            crud.add(id, Names.SERVER, template, attributes, (name, address) -> {
+                refresh(RESTORE_SELECTION);
+            });
+        } else {
+
+            // load all available hosts to show in the copy dialog
+            Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
+                    .param(CHILD_TYPE, HOST)
+                    .build();
+
+            dispatcher.execute(operation, result -> {
+
+                List<String> hosts = new ArrayList<>();
+                result.asList().forEach(m -> {
+                    hosts.add(m.asString());
+                });
+
+                // get the first host, only to retrieve the r-r-d for server-config
+                // as /host=*/server-config=*:read-operation-description(name=add) does not work
+                AddressTemplate template = serverConfigTemplate(hosts.get(0));
+                metadataProcessor
+                        .lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
+                            @Override
+                            public void onMetadata(final Metadata metadata) {
+
+                                String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
+                                        FORM_SUFFIX);
+                                SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
+                                        false);
+                                hostFormItem.setRequired(true);
+                                NameItem nameItem = new NameItem();
+
+                                ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                        .unboundFormItem(nameItem, 0)
+                                        .unboundFormItem(hostFormItem, 1, resources.messages().addServerHostHelp())
+                                        // add group as custom form item, to set it as read-only and pre-set with
+                                        // the selected server-group column
+                                        .customFormItem(GROUP, attributeDescription -> {
+                                            TextBoxItem groupItem = new TextBoxItem(GROUP, resources.constants().group());
+                                            groupItem.setEnabled(false);
+                                            return groupItem;
+                                        })
+                                        .fromRequestProperties()
+                                        .build();
+
+                                AddResourceDialog dialog = new AddResourceDialog(resources.messages().addServerTitle(),
+                                        form, (resource, payload) -> {
+
+                                    payload.get(GROUP).set(statementContext.selectedServerGroup());
+                                    String serverName = nameItem.getValue();
+                                    ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
+                                            .resolve(statementContext, serverName);
+
+                                    crud.add(serverName, address, payload,
+                                            resources.messages().addResourceSuccess(Names.SERVER,
+                                                    serverName), (name, address1) -> refresh(RESTORE_SELECTION));
+                                });
+                                dialog.show();
+                                form.<String>getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
+                            }
+                        });
+            });
+
+        }
     }
 
-    private void copyServer(Server server, boolean browseByHost) {
-        alert(Names.NYI);
+    private void copyServer(Server server) {
+        serverActions.copyServer(server, () -> refresh(RESTORE_SELECTION));
     }
 
     private boolean serverIsLastSegment() {
