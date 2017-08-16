@@ -33,12 +33,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_ALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
 
-public class PatchNamesStep extends WizardStep<PatchContext, PatchState> {
+public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
 
     private final Form<ModelNode> form;
     private final Environment environment;
 
-    public PatchNamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
+    public ConfigurationStep(final Environment environment, final Metadata metadata, final Resources resources) {
         super(resources.messages().configurePatchTitle());
         this.environment = environment;
 

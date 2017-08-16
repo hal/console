@@ -19,11 +19,11 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 
-abstract class PatchStep extends WizardStep<PatchContext, PatchState> {
+public class UploadPatchStep extends WizardStep<PatchContext, PatchState> {
 
     private final PatchElement uploadElement;
 
-    PatchStep(final String title, final SafeHtml onError) {
+    public UploadPatchStep(final String title, final SafeHtml onError) {
         super(title);
         this.uploadElement = new PatchElement(onError);
     }

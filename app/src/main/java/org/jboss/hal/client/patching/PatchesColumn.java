@@ -16,31 +16,18 @@
 package org.jboss.hal.client.patching;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.InputType;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.patching.wizard.PatchContentStep;
-import org.jboss.hal.client.patching.wizard.PatchContext;
-import org.jboss.hal.client.patching.wizard.PatchNamesStep;
-import org.jboss.hal.client.patching.wizard.PatchState;
+import org.jboss.hal.client.patching.wizard.ApplyPatchWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -69,85 +56,22 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
-import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
-import static org.jboss.hal.client.patching.wizard.PatchState.NAMES;
-import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.resources.CSS.formHorizontal;
-import static org.jboss.hal.resources.CSS.radio;
 import static org.jboss.hal.resources.Ids.ADD_SUFFIX;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
 @Column(Ids.PATCHING)
 public class PatchesColumn extends FinderColumn<ModelNode> {
 
-    static class UploadPatch implements Function<FunctionContext> {
-
-        private final Dispatcher dispatcher;
-        private EventBus eventBus;
-        private StatementContext statementContext;
-        private Resources resources;
-        private PatchContext patchContext;
-
-        UploadPatch(final EventBus eventBus, final StatementContext statementContext, final Dispatcher dispatcher,
-                final Resources resources, final PatchContext patchContext) {
-            this.eventBus = eventBus;
-            this.statementContext = statementContext;
-            this.dispatcher = dispatcher;
-            this.resources = resources;
-            this.patchContext = patchContext;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
-            Operation.Builder opBuilder = new Operation.Builder(address, PATCH)
-                    .param(OVERRIDE_ALL, patchContext.overrideAll)
-                    .param(OVERRIDE_MODULE, patchContext.overrideModules);
-            if (patchContext.override != null) {
-                opBuilder.param(OVERRIDE, patchContext.override.toArray(new String[patchContext.override.size()]));
-            }
-            if (patchContext.preserve != null) {
-                opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[patchContext.preserve.size()]));
-            }
-            Operation operation = opBuilder.build();
-            operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
-
-            dispatcher.upload(patchContext.file, operation,
-                    result -> {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().patchSucessfullyApplied(patchContext.file.name)));
-                        control.proceed();
-                    },
-
-                    (op, failure) -> {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().patchAddError(patchContext.file.name, failure)));
-                        control.proceed();
-                    },
-
-                    (op, exception) -> {
-                        MessageEvent.fire(eventBus, Message.error(
-                                resources.messages().patchAddError(patchContext.file.name, exception.getMessage())));
-                        control.proceed();
-                    });
-        }
-    }
-
-
-    static final AddressTemplate PATCHING_TEMPLATE = AddressTemplate.of(SELECTED_HOST, "core-service=patching");
+    public static final AddressTemplate PATCHING_TEMPLATE = AddressTemplate.of(SELECTED_HOST, "core-service=patching");
 
     private EventBus eventBus;
     private Dispatcher dispatcher;
@@ -159,7 +83,6 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private Provider<Progress> progress;
     private Resources resources;
     // flag set in the restart servers dialog
-    private boolean restartServers;
     private BlockingDialog restartServersDialog;
 
     @Inject
@@ -243,75 +166,72 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
         // check the host controller (or standalone server) for restart-required
         checkHostState(() ->
-                // check the servers (domain mode only), advise to stop them before apply/rollback a patch
-                checkServersState(() -> {
+                metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
+                        new SuccessfulMetadataCallback(eventBus, resources) {
 
-                    metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
-                            new SuccessfulMetadataCallback(eventBus, resources) {
-
-                                @Override
-                                public void onMetadata(final Metadata metadata) {
-                                    ModelNode model = new ModelNode();
-                                    model.get(PATCH_ID).set(patchId);
-                                    ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
-                                    Metadata operationMetadata = metadata.forOperation(ROLLBACK_OPERATION);
-                                    String id = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE,
-                                            PATCHING, patchId, ROLLBACK_OPERATION);
-                                    Form<ModelNode> form = new ModelNodeForm.Builder<>(id, operationMetadata)
-                                            .unsorted()
-                                            .build();
-                                    form.getFormItem(PATCH_ID).setEnabled(false);
-                                    Dialog dialog = new Dialog.Builder(resources.constants().rollback())
-                                            .add(form.asElement())
-                                            .closeIcon(true)
-                                            .closeOnEsc(true)
-                                            .primary(resources.constants().rollback(), () -> {
-                                                if (form.save()) {
-                                                    ModelNode payload = form.getModel();
-                                                    // reset-configuration is a required attribute, if the user doesn't set it, meaning it should be false
-                                                    // it will not be added into the payload, but we must forcibly set as false to satisfy the required=true metadata
-                                                    if (!payload.hasDefined(RESET_CONFIGURATION)) {
-                                                        payload.get(RESET_CONFIGURATION).set(false);
-                                                    }
-                                                    String idProgress = Ids.build(Ids.HOST,
-                                                            statementContext.selectedHost(), CORE_SERVICE, PATCHING,
-                                                            patchId, "rollback-progress");
-                                                    ItemMonitor.startProgress(idProgress);
-                                                    Operation operation = new Operation.Builder(address,
-                                                            ROLLBACK_OPERATION)
-                                                            .payload(payload)
-                                                            .build();
-                                                    dispatcher.execute(operation, result2 -> {
-                                                        ItemMonitor.stopProgress(idProgress);
-                                                        MessageEvent.fire(eventBus,
-                                                                Message.success(resources.messages()
-                                                                        .patchSucessfullyRemoved(patchId)));
-                                                        refresh(RESTORE_SELECTION);
-                                                    }, (operation1, failure) -> {
-                                                        ItemMonitor.stopProgress(idProgress);
-                                                        MessageEvent.fire(eventBus,
-                                                                Message.error(resources.messages()
-                                                                        .patchRemovedError(failure)));
-                                                        refresh(RESTORE_SELECTION);
-                                                    }, (operation1, exception) -> {
-                                                        ItemMonitor.stopProgress(idProgress);
-                                                        MessageEvent.fire(eventBus,
-                                                                Message.error(resources.messages()
-                                                                        .patchRemovedError(exception.getMessage())));
-                                                        refresh(RESTORE_SELECTION);
-                                                    });
-                                                    return true;
+                            @Override
+                            public void onMetadata(final Metadata metadata) {
+                                ModelNode model = new ModelNode();
+                                model.get(PATCH_ID).set(patchId);
+                                ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
+                                Metadata operationMetadata = metadata.forOperation(ROLLBACK_OPERATION);
+                                String id = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE,
+                                        PATCHING, patchId, ROLLBACK_OPERATION);
+                                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, operationMetadata)
+                                        .unsorted()
+                                        .build();
+                                form.getFormItem(PATCH_ID).setEnabled(false);
+                                Dialog dialog = new Dialog.Builder(resources.constants().rollback())
+                                        .add(form.asElement())
+                                        .closeIcon(true)
+                                        .closeOnEsc(true)
+                                        .primary(resources.constants().rollback(), () -> {
+                                            if (form.save()) {
+                                                ModelNode payload = form.getModel();
+                                                // reset-configuration is a required attribute, if the user doesn't set it, meaning it should be false
+                                                // it will not be added into the payload, but we must forcibly set as false to satisfy the required=true metadata
+                                                if (!payload.hasDefined(RESET_CONFIGURATION)) {
+                                                    payload.get(RESET_CONFIGURATION).set(false);
                                                 }
-                                                return false;
-                                            })
-                                            .cancel()
-                                            .build();
-                                    dialog.registerAttachable(form);
-                                    dialog.show();
-                                    form.edit(model);
-                                }
-                            });
-                }));
+                                                String idProgress = Ids.build(Ids.HOST,
+                                                        statementContext.selectedHost(), CORE_SERVICE, PATCHING,
+                                                        patchId, "rollback-progress");
+                                                ItemMonitor.startProgress(idProgress);
+                                                Operation operation = new Operation.Builder(address,
+                                                        ROLLBACK_OPERATION)
+                                                        .payload(payload)
+                                                        .build();
+                                                dispatcher.execute(operation, result2 -> {
+                                                    ItemMonitor.stopProgress(idProgress);
+                                                    MessageEvent.fire(eventBus,
+                                                            Message.success(resources.messages()
+                                                                    .patchSucessfullyRemoved(patchId)));
+                                                    refresh(RESTORE_SELECTION);
+                                                }, (operation1, failure) -> {
+                                                    ItemMonitor.stopProgress(idProgress);
+                                                    MessageEvent.fire(eventBus,
+                                                            Message.error(resources.messages()
+                                                                    .patchRemovedError(failure)));
+                                                    refresh(RESTORE_SELECTION);
+                                                }, (operation1, exception) -> {
+                                                    ItemMonitor.stopProgress(idProgress);
+                                                    MessageEvent.fire(eventBus,
+                                                            Message.error(resources.messages()
+                                                                    .patchRemovedError(exception.getMessage())));
+                                                    refresh(RESTORE_SELECTION);
+                                                });
+                                                return true;
+                                            }
+                                            return false;
+                                        })
+                                        .cancel()
+                                        .build();
+                                dialog.registerAttachable(form);
+                                dialog.show();
+                                form.edit(model);
+                            }
+                        })
+        );
     }
 
     private void ageoutHistory() {
@@ -343,63 +263,20 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private void applyPatch() {
         // check the host controller for restart-required
         checkHostState(() ->
-                // check the servers, advise to stop them before apply/rollback a patch
-                checkServersState(() -> {
-                    metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
-                            new SuccessfulMetadataCallback(eventBus, resources) {
-                                @Override
-                                public void onMetadata(final Metadata metadata) {
-                                    Metadata metadataOp = metadata.forOperation(PATCH);
-                                    final Messages messages = resources.messages();
-                                    Wizard<PatchContext, PatchState> wizard = new Wizard.Builder<PatchContext, PatchState>(
-                                            messages.addResourceTitle(Names.PATCH), new PatchContext())
+                metadataProcessor.lookup(PATCHING_TEMPLATE, progress.get(),
+                        new SuccessfulMetadataCallback(eventBus, resources) {
+                            @Override
+                            public void onMetadata(final Metadata metadata) {
+                                Metadata metadataOp = metadata.forOperation(PATCH);
+                                new ApplyPatchWizard(resources, environment, metadataOp, eventBus, statementContext,
+                                        dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
+                                        .show();
+                            }
+                        })
 
-                                            .addStep(UPLOAD, new PatchContentStep(resources))
-                                            .addStep(NAMES, new PatchNamesStep(environment, metadataOp, resources))
-
-                                            .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                                            .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
-
-                                            .stayOpenAfterFinish()
-                                            .onFinish((wzd, context) -> {
-                                                String name = context.file.name;
-                                                wzd.showProgress(resources.constants().uploadInProgress(),
-                                                        messages.uploadInProgress(name));
-
-                                                Function[] functions = {
-                                                        new UploadPatch(eventBus, statementContext, dispatcher,
-                                                                resources, context)
-                                                };
-                                                new Async<FunctionContext>(progress.get()).waterfall(
-                                                        new FunctionContext(),
-                                                        new Outcome<FunctionContext>() {
-                                                            @Override
-                                                            public void onFailure(
-                                                                    final FunctionContext functionContext) {
-                                                                wzd.showError(resources.constants().uploadError(),
-                                                                        messages.uploadError(name),
-                                                                        functionContext.getError());
-                                                            }
-
-                                                            @Override
-                                                            public void onSuccess(
-                                                                    final FunctionContext functionContext) {
-                                                                refresh(Ids.content(name));
-                                                                wzd.showSuccess(
-                                                                        resources.constants().uploadSuccessful(),
-                                                                        messages.uploadSuccessful(name),
-                                                                        messages.view(Names.CONTENT),
-                                                                        cxt -> { /* nothing to do, content is already selected */ });
-                                                            }
-                                                        }, functions);
-                                            })
-                                            .build();
-                                    wizard.show();
-                                }
-                            });
-
-                }));
+        );
     }
+
 
     /**
      * Checks if the host or standalone server is in restart mode, if yes then asks user to restart host/server, as it
@@ -445,106 +322,5 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
             });
         }
 
-    }
-
-    /**
-     * Checks if each servers of a host is stopped, if the server is started, asks the user to stop them.
-     * It is a good practice to apply/rollback a patch to a stopped server to prevent application and internal services
-     * from failing.
-     */
-    private void checkServersState(Callback callback) {
-
-        if (environment.isStandalone()) {
-            callback.execute();
-        } else {
-
-            String host = statementContext.selectedHost();
-            ResourceAddress address = new ResourceAddress().add(HOST, host);
-            Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(CHILD_TYPE, SERVER_CONFIG)
-                    .build();
-
-            dispatcher.execute(operation, result -> {
-                List<Property> servers = result.asPropertyList();
-                List<String> serversString = new ArrayList<>();
-                boolean anyServerStarted = false;
-                for (Iterator<Property> iter = servers.iterator(); iter.hasNext(); ) {
-                    Property serverProp = iter.next();
-                    Server server = new Server(host, serverProp);
-                    if (!server.isStopped()) {
-                        serversString.add(serverProp.getName());
-                        anyServerStarted = true;
-                    } else {
-                        iter.remove();
-                    }
-                }
-
-                if (anyServerStarted) {
-                    String serversList = Joiner.on(", ").join(serversString);
-                    SafeHtml question = resources.messages().patchStopAllServersQuestion(serversList, host);
-
-                    askRestartServers(resources.messages().patchStopAllServersTitle(), question, () -> {
-                        if (restartServers) {
-                            for (Property serverProp : servers) {
-                                Server server = new Server(host, serverProp);
-                                serverActions.stopNow(server);
-                            }
-                        }
-                        // programmatically closes the dialog as a wizard dialog will open before this ResultCallback
-                        // returns
-                        restartServersDialog.close();
-                        // the callback will show a wizard dialog
-                        callback.execute();
-                        // returns false as the previous close call already closed the dialog
-                        return false;
-                    });
-                } else {
-                    callback.execute();
-                }
-            });
-        }
-    }
-
-    private void askRestartServers(String title, SafeHtml question, Dialog.ResultCallback callback) {
-
-        String radioName = Ids.build(HOST, PATCHING, "choose-restart");
-        HTMLElement content = div().css(formHorizontal)
-                .add(p().innerHtml(question))
-                .add(div().css(radio)
-                        .add(label()
-                                .add(input(InputType.radio)
-                                        .id(Ids.build(HOST, PATCHING, "ok"))
-                                        .attr(UIConstants.NAME, radioName)
-                                        .on(click, e -> {
-                                            restartServers = true;
-                                            restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
-                                        })
-                                        .asElement())
-                                .add(span().innerHtml(resources.messages().patchStopServersDialogMessage1()))))
-                .add(div().css(radio)
-                        .add(label()
-                                .add(input(InputType.radio)
-                                        .id(Ids.build(HOST, PATCHING, "no"))
-                                        .attr(UIConstants.NAME, radioName)
-                                        .on(click, e -> {
-                                            restartServers = false;
-                                            restartServersDialog.getButton(PRIMARY_POSITION).disabled = false;
-                                        })
-                                        .asElement())
-                                .add(span().innerHtml(resources.messages().patchStopServersDialogMessage2()))))
-                .asElement();
-
-
-        Dialog.Builder dialogBuilder = new Dialog.Builder(title)
-                .primary(resources.constants().next(), callback)
-                .secondary(resources.constants().cancel(), null)
-                .size(MEDIUM)
-                .add(content);
-
-        // BlockingDialog used as we want to call close method
-        restartServersDialog = new BlockingDialog(dialogBuilder);
-        restartServersDialog.getButton(PRIMARY_POSITION).disabled = true;
-        restartServersDialog.show();
     }
 }

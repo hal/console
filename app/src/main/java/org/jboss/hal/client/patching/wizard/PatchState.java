@@ -16,5 +16,5 @@
 package org.jboss.hal.client.patching.wizard;
 
 public enum PatchState {
-    UPLOAD, NAMES
+    CHECK_SERVERS, UPLOAD, CONFIGURE
 }

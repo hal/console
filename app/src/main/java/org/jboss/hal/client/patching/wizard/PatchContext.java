@@ -18,6 +18,7 @@ package org.jboss.hal.client.patching.wizard;
 import java.util.List;
 
 import elemental2.dom.File;
+import org.jboss.hal.dmr.Property;
 
 public class PatchContext {
 
@@ -26,4 +27,6 @@ public class PatchContext {
     public boolean overrideModules;
     public List<String> override;
     public List<String> preserve;
+    public boolean restartServers;
+    public List<Property> servers;
 }
