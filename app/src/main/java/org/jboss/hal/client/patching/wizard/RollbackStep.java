@@ -27,22 +27,26 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_ALL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_MODULE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
+public class RollbackStep extends WizardStep<PatchContext, PatchState> {
 
     private final Form<ModelNode> form;
+    private ModelNode model;
 
-    public ConfigurationStep(final Metadata metadata, final Resources resources) {
-        super(resources.messages().configurePatchTitle());
+    public RollbackStep(final Metadata metadata, final Resources resources, final String host,
+            final String patchId) {
+        super(resources.constants().rollback());
 
-        form = new ModelNodeForm.Builder<>(Ids.PATCH_UPLOAD_NAMES_FORM, metadata)
-                .exclude("input-stream-index")
+        model = new ModelNode();
+        model.get(PATCH_ID).set(patchId);
+        String id = Ids.build(Ids.HOST, host, CORE_SERVICE, PATCHING, patchId, ROLLBACK_OPERATION);
+        form = new ModelNodeForm.Builder<>(id, metadata)
                 .unsorted()
                 .build();
+        form.getFormItem(PATCH_ID).setEnabled(false);
+        //form.edit(model);
+
         registerAttachable(form);
     }
 
@@ -53,21 +57,28 @@ public class ConfigurationStep extends WizardStep<PatchContext, PatchState> {
 
     @Override
     public void reset(final PatchContext context) {
+        context.rollbackTo = false;
+        context.resetConfiguration = false;
         context.overrideAll = false;
         context.overrideModules = false;
         context.override = new ArrayList<>();
         context.preserve = new ArrayList<>();
+        context.patchId = model.get(PATCH_ID).asString();
     }
 
     @Override
     protected void onShow(final PatchContext context) {
-        form.edit(new ModelNode());
+        form.edit(model);
     }
 
     @Override
     protected boolean onNext(final PatchContext context) {
         boolean valid = form.save();
         if (valid) {
+            context.rollbackTo = form.getFormItem(ROLLBACK_TO).isUndefined() ? false
+                    : form.<Boolean>getFormItem(ROLLBACK_TO).getValue();
+            context.resetConfiguration = form.getFormItem(RESET_CONFIGURATION).isUndefined() ? false
+                    : form.<Boolean>getFormItem(RESET_CONFIGURATION).getValue();
             context.overrideAll = form.getFormItem(OVERRIDE_ALL).isUndefined() ? false
                     : form.<Boolean>getFormItem(OVERRIDE_ALL).getValue();
             context.overrideModules = form.getFormItem(OVERRIDE_MODULE).isUndefined() ? false

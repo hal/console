@@ -16,5 +16,13 @@
 package org.jboss.hal.client.patching.wizard;
 
 public enum PatchState {
-    CHECK_SERVERS, UPLOAD, CONFIGURE
+
+    // used on apply patch and rollback
+    CHECK_SERVERS,
+
+    // used only on apply patch wizard
+    UPLOAD, CONFIGURE,
+
+    // used only on rollback wizard
+    ROLLBACK
 }

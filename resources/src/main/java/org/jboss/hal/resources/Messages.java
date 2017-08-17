@@ -246,6 +246,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml pageNotFound(String invalidHistoryToken);
     String patchLatestInstalledLabel();
     SafeHtml patchHostNeedsRestart(String hostname);
+    SafeHtml patchInProgress(String patch);
     SafeHtml patchRestartDomainControllerQuestion(String hostname);
     SafeHtml patchRestartHostControllerQuestion(String hostname);
     SafeHtml patchRestartStandaloneQuestion();
@@ -255,9 +256,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml patchStopServersDialogMessage1();
     SafeHtml patchStopServersDialogMessage2();
     SafeHtml patchAddError(String patchId, String error);
-    SafeHtml patchSucessfullyRemoved(String patchId);
+    SafeHtml rollbackSucessful(String patchId);
     SafeHtml pauseQueueSuccess(String name);
-    SafeHtml patchRemovedError(String failure);
+    SafeHtml rollbackError(String failure);
+    SafeHtml rollbackInProgress(String patchid);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
