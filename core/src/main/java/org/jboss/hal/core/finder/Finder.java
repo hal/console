@@ -216,6 +216,11 @@ public class Finder implements IsElement, Attachable {
         root.style.height = vh(applicationOffset());
     }
 
+    @Override
+    public void detach() {
+        columns.values().forEach(Attachable::detach);
+    }
+
     private FinderColumn initialColumn() {
         String columnId = initialColumnsByToken.get(context.getToken());
         if (columnId != null) {

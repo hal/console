@@ -58,6 +58,13 @@ public class StringsTest {
     }
 
     @Test
+    public void abbreviateFqClassname() throws Exception {
+        assertEquals("c.a.main", Strings.abbreviateFqClassName("com.acme.main"));
+        assertEquals("c.a.main.Main", Strings.abbreviateFqClassName("com.acme.main.Main"));
+        assertEquals("c.a.l.p.foo.Bar", Strings.abbreviateFqClassName("com.acme.longer.package.foo.Bar"));
+    }
+
+    @Test
     public void substringAfterLast() throws Exception {
         assertNull(Strings.substringAfterLast(null, "/"));
         assertEquals("", Strings.substringAfterLast("", "/"));

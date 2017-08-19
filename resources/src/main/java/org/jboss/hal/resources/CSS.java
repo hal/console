@@ -57,6 +57,7 @@ public interface CSS {
     String bootstrapSelect = "bootstrap-select";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
+    String breakTooltip = "break-tooltip";
     String btn = "btn";
     String btnBlock = "btn-block";
     String btnCancel = "btn-cancel";
@@ -182,8 +183,12 @@ public interface CSS {
 
     String label = "label";
     String labelInfo = "label-info";
+    String langJava = "lang-java";
     String last = "last";
     String lead = "lead";
+    String listGroup = "list-group";
+    String listGroupItem = "list-group-item";
+    String listGroupItemValue = "list-group-item-value";
     String listHalActions = "list-hal-actions";
     String listHalAdditionalContent = "list-hal-additional-content";
     String listHalIconBig = "list-hal-icon-big";
@@ -211,10 +216,6 @@ public interface CSS {
     String listPfSelect = "list-pf-select";
     String listPfStacked = "list-pf-stacked";
     String listPfTitle = "list-pf-title";
-
-    String listGroup = "list-group";
-    String listGroupItem = "list-group-item";
-    String listGroupItemValue = "list-group-item-value";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";
@@ -287,6 +288,7 @@ public interface CSS {
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
+    String prettyPrint = "prettyprint";
     String preview = "preview";
     String productVersionsPf = "product-versions-pf";
     String progress = "progress";
@@ -315,6 +317,7 @@ public interface CSS {
     String rbacHidden = "rbac-hidden";
     String readonly = "readonly";
     String refresh = "refresh";
+    String restResources = "rest-resources";
     String restricted = "restricted";
     String row = "row";
     String rowHeader = "row-header";

@@ -82,6 +82,11 @@ public class ServerMonitorColumn extends StaticItemColumn {
                             .onPreview(new PreviewContent(Names.WORKER, resources.previews().runtimeWorker()))
                             .build(),
 
+                    new StaticItem.Builder(Names.JAX_RS)
+                            .nextColumn(Ids.REST_RESOURCE)
+                            .onPreview(new PreviewContent(Names.JAX_RS, resources.previews().runtimeJaxRs()))
+                            .build(),
+
                     new StaticItem.Builder(Names.JNDI)
                             .action(itemActionFactory.view(places.selectedServer(NameTokens.JNDI).build()))
                             .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))

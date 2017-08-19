@@ -152,6 +152,7 @@ public interface ModelDescriptionConstants {
     String CONSTANT_PRINCIPAL_TRANSFORMER = "constant-principal-transformer";
     String CONSTANT_REALM_MAPPER = "constant-realm-mapper";
     String CONSTANT_ROLE_MAPPER = "constant-role-mapper";
+    String CONSUMES = "consumes";
     String CONSUMER_COUNT = "consumer-count";
     String CONTENT = "content";
     String CONTEXT_ROOT = "context-root";
@@ -314,6 +315,7 @@ public interface ModelDescriptionConstants {
     String IO_THREAD_COUNT = "io-thread-count";
     String IO_THREADS = "io-threads";
     String JACC_POLICY = "jacc-policy";
+    String JAVA_METHOD = "java-method";
     String JAX_RS = "jaxrs";
     String JCA = "jca";
     String JDR = "jdr";
@@ -470,6 +472,7 @@ public interface ModelDescriptionConstants {
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
     String PROCESS_STATE = "process-state";
+    String PRODUCES = "produces";
     String PRODUCT_NAME = "product-name";
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
@@ -544,8 +547,12 @@ public interface ModelDescriptionConstants {
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
+    String RESOURCE_METHODS = "resource-methods";
+    String RESOURCE_PATH = "resource-path";
     String RESPONSE = "response";
     String RESPONSE_HEADERS = "response-headers";
+    String REST_RESOURCE = "rest-resource";
+    String REST_RESOURCE_PATHS = "rest-resource-paths";
     String RESTART = "restart";
     String RESTART_JOB = "restart-job";
     String RESTART_JOBS_ON_RESUME = "restart-jobs-on-resume";
@@ -558,7 +565,6 @@ public interface ModelDescriptionConstants {
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
     String ROLLBACK_OPERATION = "rollback";
-    String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
@@ -649,6 +655,7 @@ public interface ModelDescriptionConstants {
     String STREAM = "stream";
     String STRING = "string";
     String STYLESHEETS = "stylesheets";
+    String SUB_RESOURCE_LOCATORS = "sub-resource-locators";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSCRIPTION_COUNT = "subscription-count";
     String SUBSYSTEM = "subsystem";

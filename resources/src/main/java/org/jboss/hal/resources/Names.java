@@ -79,8 +79,6 @@ public interface Names {
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEFAULT_INTERFACE = "Default Interface";
-    String DELIVERY_ACTIVE = "delivery active";
-    String DELIVERY_INACTIVE = "delivery inactive";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
     String DESTINATION = "Destination";
@@ -147,6 +145,7 @@ public interface Names {
     String IO = "IO";
 
     String JACC_POLICY = "JACC Policy";
+    String JAX_RS = "JAX-RS";
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
@@ -232,7 +231,6 @@ public interface Names {
 
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
-    String QUEUE = "Queue";
 
     String REALM = "Realm";
     String RELAY = "Relay";
@@ -250,7 +248,9 @@ public interface Names {
     String REPLICATION_SLAVE = "Replication Slave";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
+    String RESOURCE_PATHS = "Resource Paths";
     String RESPONSE_HEADER = "Response Header";
+    String REST_RESOURCE = "REST Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
 
@@ -286,6 +286,7 @@ public interface Names {
     String STACK = "Stack";
     String STATEFUL_SESSION_BEAN = "Stateful Session Bean";
     String STATELESS_SESSION_BEAN = "Stateless Session Bean";
+    String SUB_RESOURCE_LOCATORS = "Sub Resource Locators";
     String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";

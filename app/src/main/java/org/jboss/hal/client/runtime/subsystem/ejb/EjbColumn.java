@@ -65,7 +65,6 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
-    private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
@@ -118,7 +117,6 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
-        this.statementContext = statementContext;
         this.resources = resources;
 
         setItemRenderer(item -> new ItemDisplay<EjbNode>() {

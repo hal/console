@@ -557,6 +557,8 @@ public interface Ids {
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = build(RESOURCE_ADAPTER, "admin-object", ADD_SUFFIX);
     String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = build(RESOURCE_ADAPTER, "connection-definition", ADD_SUFFIX);
     String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);
+    String REST_RESOURCE = "rest-rsc";
+    String REST_RESOURCE_REFRESH = build(REST_RESOURCE, REFRESH_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
@@ -793,6 +795,10 @@ public interface Ids {
 
     static String resourceAdapter(String name) {
         return build(RESOURCE_ADAPTER, name);
+    }
+
+    static String restResource(String deployment, String subdeployment, String name) {
+        return build(deployment, subdeployment, name);
     }
 
     static String role(String name) {
