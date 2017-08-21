@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.google.common.collect.Lists;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
+import org.jboss.hal.client.runtime.subsystem.web.WebPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
@@ -96,6 +97,12 @@ public class ServerMonitorColumn extends StaticItemColumn {
                             .subtitle(Names.ACTIVE_MQ)
                             .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
                             .onPreview(new PreviewContent(Names.SERVER, resources.previews().runtimeMessagingServer()))
+                            .build(),
+
+                    new StaticItem.Builder(Names.WEB)
+                            .subtitle(Names.UNDERTOW)
+                            .nextColumn(Ids.UNDERTOW_RUNTIME)
+                            .onPreview(new WebPreview(dispatcher, statementContext, resources))
                             .build());
 
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)

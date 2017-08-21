@@ -33,6 +33,7 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -61,6 +62,7 @@ import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.DEPLOYMENT_RESOURCES;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.SUBSYSTEM_RESOURCES;
+import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -97,34 +99,46 @@ public class DestinationColumn extends FinderColumn<Destination> {
         this.resources = resources;
 
         ItemsProvider<Destination> itemsProvider = (context, callback) -> {
-            List<Operation> operations = new ArrayList<>();
-            for (Type type : SUBSYSTEM_RESOURCES) {
-                ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
-                        .resolve(statementContext);
-                operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build());
-            }
-            for (Type type : DEPLOYMENT_RESOURCES) {
-                ResourceAddress address = MESSAGING_DEPLOYMENT_TEMPLATE.append(type.resource + "=*")
-                        .resolve(statementContext);
-                operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build());
-            }
-            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
-                List<Destination> destinations = new ArrayList<>();
-                for (ModelNode step : result) {
-                    if (!step.isFailure()) {
-                        for (ModelNode node : step.get(RESULT).asList()) {
-                            ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
-                            destinations.add(new Destination(address, node.get(RESULT)));
+
+            // extract server name from the finder path
+            Optional<String> optional = stream(context.getPath().spliterator(), false)
+                    .filter(segment -> Ids.MESSAGING_SERVER_RUNTIME.equals(segment.getColumnId()))
+                    .findAny()
+                    .map(FinderSegment::getItemId);
+            if (optional.isPresent()) {
+                // Extract the server name from the item id "msg-server-<server name>"
+                String server = substringAfterLast(optional.get(), Ids.MESSAGING_SERVER + "-");
+                List<Operation> operations = new ArrayList<>();
+                for (Type type : SUBSYSTEM_RESOURCES) {
+                    ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
+                            .resolve(statementContext, server);
+                    operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build());
+                }
+                for (Type type : DEPLOYMENT_RESOURCES) {
+                    ResourceAddress address = MESSAGING_DEPLOYMENT_TEMPLATE.append(type.resource + "=*")
+                            .resolve(statementContext);
+                    operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build());
+                }
+                dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                    List<Destination> destinations = new ArrayList<>();
+                    for (ModelNode step : result) {
+                        if (!step.isFailure()) {
+                            for (ModelNode node : step.get(RESULT).asList()) {
+                                ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                                destinations.add(new Destination(address, node.get(RESULT)));
+                            }
                         }
                     }
-                }
-                destinations.sort(Comparator.comparing(NamedNode::getName));
-                callback.onSuccess(destinations);
-            });
+                    destinations.sort(Comparator.comparing(NamedNode::getName));
+                    callback.onSuccess(destinations);
+                });
+            }
+
+
         };
         setItemsProvider(itemsProvider);
         setBreadcrumbItemsProvider(

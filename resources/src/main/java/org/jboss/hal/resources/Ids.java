@@ -638,6 +638,7 @@ public interface Ids {
     String UNDERTOW_APP_SECURITY_DOMAIN_REFRESH = build(UNDERTOW_APP_SECURITY_DOMAIN, REFRESH_SUFFIX);
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB = build(UNDERTOW_APP_SECURITY_DOMAIN, TABLE_SUFFIX);
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
+    String UNDERTOW_LISTENER_REFRESH = build("undertow-listener", REFRESH_SUFFIX);
     String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = build(UNDERTOW_HOST, "access-log");
     String UNDERTOW_HOST_ACTION_COLUMN = build(UNDERTOW_HOST, "action-column");
@@ -662,6 +663,11 @@ public interface Ids {
     String UNDERTOW_HOST_SINGLE_SIGN_ON = build(UNDERTOW_HOST, "single-sign-on");
     String UNDERTOW_HOST_TABLE = build(UNDERTOW_HOST, TABLE_SUFFIX);
     String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
+    String UNDERTOW_RUNTIME = "undertow-runtime";
+    String UNDERTOW_RUNTIME_DEPLOYMENT = "undertow-runtime-deployment";
+    String UNDERTOW_RUNTIME_LISTENER = "undertow-runtime-listener";
+    String UNDERTOW_RUNTIME_MODCLUSTER = "undertow-runtime-modcluster";
+    String UNDERTOW_RUNTIME_SERVER = "undertow-runtime-server";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVER_ADD = build(UNDERTOW_SERVER, ADD_SUFFIX);
     String UNDERTOW_SERVER_AJP_LISTENER = build(UNDERTOW_SERVER, "ajp-listener");
@@ -782,6 +788,14 @@ public interface Ids {
 
     static String messagingServer(String name) {
         return build(MESSAGING_SERVER, name);
+    }
+
+    static String webServer(String name) {
+        return build(UNDERTOW_SERVER, name);
+    }
+
+    static String webListener(String name) {
+        return build(UNDERTOW_RUNTIME_LISTENER, name);
     }
 
     /**

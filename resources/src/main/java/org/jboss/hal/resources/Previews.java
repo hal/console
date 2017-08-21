@@ -309,6 +309,8 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/worker.html")
     ExternalTextResource runtimeWorker();
 
+    @Source("previews/runtime/web.html")
+    ExternalTextResource runtimeWeb();
 
     // ------------------------------------------------------ helper methods
 
@@ -318,7 +320,7 @@ public interface Previews extends ClientBundleWithLookup {
      * Sets the inner HTML of the specified element to the HTML from the specified resource.
      */
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    static void innerHtml(HTMLElement element, ExternalTextResource resource) {
+    public static void innerHtml(HTMLElement element, ExternalTextResource resource) {
         if (resource != null) {
             try {
                 resource.getText(new ResourceCallback<TextResource>() {

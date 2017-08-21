@@ -195,6 +195,7 @@ public interface Names {
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
     String MIXED_JDBC = "Mixed JDBC";
+    String MODCLUSTER = "Modcluster";
     String MODULE = "Module";
 
     String NAME = "Name";
@@ -305,11 +306,13 @@ public interface Names {
 
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
+    String UNDERTOW = "Undertow";
     String URL = "URL";
     String USER_PASSWORD_MAPPER = "User Password Mapper";
 
     String VALUE = "Value";
 
+    String WEB = "Web";
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
