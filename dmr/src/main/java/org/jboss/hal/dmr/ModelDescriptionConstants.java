@@ -93,6 +93,7 @@ public interface ModelDescriptionConstants {
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
     String BACKUPS = "backups";
+    String BALANCER = "balancer";
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BATCH_SIZE = "batch-size";
@@ -154,6 +155,7 @@ public interface ModelDescriptionConstants {
     String CONSTANT_ROLE_MAPPER = "constant-role-mapper";
     String CONSUMER_COUNT = "consumer-count";
     String CONTENT = "content";
+    String CONTEXT = "context";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
     String CORE_POOL_SIZE = "core-pool-size";
@@ -419,6 +421,7 @@ public interface ModelDescriptionConstants {
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
+    String NODE = "node";
     String NON_DURABLE_MESSAGE_COUNT = "non-durable-message-count";
     String NON_DURABLE_SUBSCRIPTION_COUNT = "non-durable-subscription-count";
     String NONE = "none";
@@ -540,6 +543,7 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESET_CONFIGURATION = "reset-configuration";
+    String RESET_STATISTICS_OPERATION = "reset-statistics";
     String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTER = "resource-adapter";

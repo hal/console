@@ -311,6 +311,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String requires(String requires);
     String resetConfirmationTitle(String type);
     SafeHtml resetConfirmationQuestion(String name);
+    String resetStatisticsTitle();
+    SafeHtml resetStatisticsQuestion(String connector);
+    SafeHtml  resetStatisticsSuccess(String connector);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();
     SafeHtml resetSingletonSuccess(String type);

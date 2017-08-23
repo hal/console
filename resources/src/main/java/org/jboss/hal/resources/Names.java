@@ -38,6 +38,7 @@ public interface Names {
     String BACKUP_FOR = "Backup For";
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
+    String BALANCER = "Balancer";
     String BATCH = "Batch";
     String BATCH_STATUS = "Batch Status";
     String BINARY_JDBC = "Binary JDBC";
@@ -66,6 +67,7 @@ public interface Names {
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
     String CONTENT = "Content";
+    String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
     String COOKIES = "Cookies";
@@ -200,6 +202,7 @@ public interface Names {
 
     String NAME = "Name";
     String NEW_ITEM_TEMPLATE = "New Item Template";
+    String NODE = "Node";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 

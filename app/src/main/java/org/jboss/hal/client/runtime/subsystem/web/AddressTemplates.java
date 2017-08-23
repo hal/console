@@ -27,24 +27,21 @@ public interface AddressTemplates {
 
     String WEB_SUBSYSTEM_ADDRESS = "/{selected.host}/{selected.server}" + WEB_ADDRESS;
     String WEB_SERVER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + SERVER_ADDRESS;
-    String AJP_LISTENER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + SERVER_ADDRESS + "/ajp-listener=*";
-    String HTTP_LISTENER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + SERVER_ADDRESS + "/http-listener=*";
-    String HTTPS_LISTENER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + SERVER_ADDRESS + "/https-listener=*";
 
+    String MODCLUSTER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*";
     String MODCLUSTER_BALANCER_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*";
     String MODCLUSTER_BALANCER_NODE_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*/node=*";
     String MODCLUSTER_BALANCER_NODE_CONTEXT_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*/node=*/context=*";
 
+
     String WEB_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + WEB_ADDRESS + SERVER_ADDRESS;
     String WEB_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + WEB_ADDRESS + SERVER_ADDRESS;
 
+    AddressTemplate AJP_LISTENER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS + "/ajp-listener=*");
+    AddressTemplate MODCLUSTER_TEMPLATE = AddressTemplate.of(MODCLUSTER_ADDRESS);
     AddressTemplate MODCLUSTER_BALANCER_TEMPLATE = AddressTemplate.of(MODCLUSTER_BALANCER_ADDRESS);
     AddressTemplate MODCLUSTER_BALANCER_NODE_TEMPLATE = AddressTemplate.of(MODCLUSTER_BALANCER_NODE_ADDRESS);
     AddressTemplate MODCLUSTER_BALANCER_NODE_CONTEXT_TEMPLATE = AddressTemplate.of(MODCLUSTER_BALANCER_NODE_CONTEXT_ADDRESS);
-
-    AddressTemplate AJP_LISTENER_TEMPLATE = AddressTemplate.of(AJP_LISTENER_ADDRESS);
-    AddressTemplate HTTP_LISTENER_TEMPLATE = AddressTemplate.of(HTTP_LISTENER_ADDRESS);
-    AddressTemplate HTTPS_LISTENER_TEMPLATE = AddressTemplate.of(HTTPS_LISTENER_ADDRESS);
 
     AddressTemplate WEB_SUBSYSTEM_TEMPLATE = AddressTemplate.of(WEB_SUBSYSTEM_ADDRESS);
     AddressTemplate WEB_SERVER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS);

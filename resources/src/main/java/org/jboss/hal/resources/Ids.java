@@ -662,11 +662,19 @@ public interface Ids {
     String UNDERTOW_HOST_MAIN_PAGE = build(UNDERTOW_HOST, "main", PAGE_SUFFIX);
     String UNDERTOW_HOST_SINGLE_SIGN_ON = build(UNDERTOW_HOST, "single-sign-on");
     String UNDERTOW_HOST_TABLE = build(UNDERTOW_HOST, TABLE_SUFFIX);
+    String UNDERTOW_MODCLUSTER_BALANCER_NODE_CONTEXT_REFRESH = build("modcluster", "balancer", "node", "context",
+            REFRESH_SUFFIX);
+    String UNDERTOW_MODCLUSTER_BALANCER_NODE_REFRESH = build("modcluster", "balancer", "node", REFRESH_SUFFIX);
+    String UNDERTOW_MODCLUSTER_BALANCER_REFRESH = build("modcluster", "balancer", REFRESH_SUFFIX);
+    String UNDERTOW_MODCLUSTER_REFRESH = build("modcluster", REFRESH_SUFFIX);
     String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
     String UNDERTOW_RUNTIME = "undertow-runtime";
     String UNDERTOW_RUNTIME_DEPLOYMENT = "undertow-runtime-deployment";
     String UNDERTOW_RUNTIME_LISTENER = "undertow-runtime-listener";
     String UNDERTOW_RUNTIME_MODCLUSTER = "undertow-runtime-modcluster";
+    String UNDERTOW_RUNTIME_MODCLUSTER_BALANCER = "undertow-runtime-modcluster-balancer";
+    String UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE = "undertow-runtime-modcluster-balancer-node";
+    String UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE_CONTEXT = "undertow-runtime-modcluster-balancer-node-context";
     String UNDERTOW_RUNTIME_SERVER = "undertow-runtime-server";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVER_ADD = build(UNDERTOW_SERVER, ADD_SUFFIX);

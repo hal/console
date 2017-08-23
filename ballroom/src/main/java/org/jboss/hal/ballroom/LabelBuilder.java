@@ -35,6 +35,7 @@ public class LabelBuilder {
     private static final String QUOTE = "'";
     @SuppressWarnings("HardCodedStringLiteral")
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
+            .put("ajp", "AJP")
             .put("dn", "DN")
             .put("ee", "EE")
             .put("ejb3", "EJB3")
@@ -60,6 +61,7 @@ public class LabelBuilder {
             .put("sql", "SQL")
             .put("ssl", "SSL")
             .put("tcp", "TCP")
+            .put("ttl", "TTL")
             .put("uri", "URI")
             .put("url", "URL")
             .put("wsdl", "WSDL")

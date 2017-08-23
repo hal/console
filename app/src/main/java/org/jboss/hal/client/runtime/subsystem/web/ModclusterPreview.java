@@ -1,0 +1,47 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.runtime.subsystem.web;
+
+import java.util.logging.Logger;
+
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.NamedNode;
+
+import static java.util.Arrays.asList;
+
+class ModclusterPreview extends PreviewContent<NamedNode> {
+
+    static Logger _log = Logger.getLogger("org.jboss");
+
+
+    ModclusterPreview(NamedNode modcluster) {
+        super(modcluster.getName());
+        previewBuilder().addAll(new PreviewAttributes<>(modcluster, asList(
+                "advertise-frequency",
+                "advertise-path",
+                "advertise-protocol",
+                "advertise-socket-binding",
+                "broken-node-timeout",
+                "enable-http2",
+                "failover-strategy",
+                "health-check-interval",
+                "max-request-time",
+                "max-retries",
+                "request-queue-size",
+                "worker")));
+    }
+}
