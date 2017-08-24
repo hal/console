@@ -264,6 +264,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String invalidExpression();
     String invalidJson();
     String invalidMetadata();
+    String invalidate();
+    String invalidateSession();
 
     String jcaConfiguration();
     String jgroupsRelayAlias();

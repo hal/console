@@ -174,6 +174,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml invalidExtensionJson();
     SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidRange(long value, long min, long max);
+    String invalidateSessionTitle();
+    SafeHtml invalidateSessionQuestion();
+    SafeHtml invalidateSessionSuccess(String sessionId);
+    SafeHtml invalidateSessionError(String sessionId, String cause);
+    SafeHtml invalidateSessionNotExist(String sessionId);
 
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedBy(String type, String value);

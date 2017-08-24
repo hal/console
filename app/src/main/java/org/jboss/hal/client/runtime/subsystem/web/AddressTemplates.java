@@ -33,9 +33,8 @@ public interface AddressTemplates {
     String MODCLUSTER_BALANCER_NODE_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*/node=*";
     String MODCLUSTER_BALANCER_NODE_CONTEXT_ADDRESS = WEB_SUBSYSTEM_ADDRESS + "/configuration=filter/mod-cluster=*/balancer=*/node=*/context=*";
 
-
-    String WEB_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + WEB_ADDRESS + SERVER_ADDRESS;
-    String WEB_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + WEB_ADDRESS + SERVER_ADDRESS;
+    String WEB_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + WEB_ADDRESS;
+    String WEB_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + WEB_ADDRESS;
 
     AddressTemplate AJP_LISTENER_TEMPLATE = AddressTemplate.of(WEB_SERVER_ADDRESS + "/ajp-listener=*");
     AddressTemplate MODCLUSTER_TEMPLATE = AddressTemplate.of(MODCLUSTER_ADDRESS);

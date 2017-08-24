@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.web;
 
-import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -37,9 +36,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER)
 public class ModclusterColumn extends FinderColumn<NamedNode> {
-
-    static Logger _log = Logger.getLogger("org.jboss");
-
 
     @Inject
     public ModclusterColumn(Finder finder,

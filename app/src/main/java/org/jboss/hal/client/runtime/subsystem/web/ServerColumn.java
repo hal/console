@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.web;
 
-import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -43,9 +42,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_SERVER)
 public class ServerColumn extends FinderColumn<NamedNode> {
-
-    static Logger _log = Logger.getLogger("org.jboss");
-
 
     @Inject
     public ServerColumn(Finder finder,
@@ -88,7 +84,5 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 })
                 .onPreview(ServerPreview::new)
         );
-
-
     }
 }

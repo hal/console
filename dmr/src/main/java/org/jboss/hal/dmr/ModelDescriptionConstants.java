@@ -311,6 +311,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
+    String INVALIDATE_SESSION_OPERATION = "invalidate-session";
     String INVOCATIONS = "invocations";
     String IO = "io";
     String IO_THREAD_COUNT = "io-thread-count";

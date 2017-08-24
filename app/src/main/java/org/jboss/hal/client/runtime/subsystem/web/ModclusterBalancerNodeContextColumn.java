@@ -16,7 +16,6 @@
 package org.jboss.hal.client.runtime.subsystem.web;
 
 import java.util.Iterator;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -41,9 +40,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE_CONTEXT)
 public class ModclusterBalancerNodeContextColumn extends FinderColumn<NamedNode> {
 
-    static Logger _log = Logger.getLogger("org.jboss");
-
-
     @Inject
     public ModclusterBalancerNodeContextColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
@@ -67,7 +63,7 @@ public class ModclusterBalancerNodeContextColumn extends FinderColumn<NamedNode>
                         }
                         if ("undertow-runtime-modcluster-balancer-node".equals(finderSegment.getColumnId())) {
                             node = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-balancer-node-");
-                            _log.info("  node item id: " + finderSegment.getItemId() );
+                            //_log.info("  node item id: " + finderSegment.getItemId() );
                         }
                     }
                     ResourceAddress address = MODCLUSTER_BALANCER_NODE_TEMPLATE.resolve(statementContext, modcluster,
@@ -76,10 +72,10 @@ public class ModclusterBalancerNodeContextColumn extends FinderColumn<NamedNode>
                             .param(CHILD_TYPE, CONTEXT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    _log.info(" operation: " + operation);
+                    //_log.info(" operation: " + operation);
 
                     dispatcher.execute(operation, result -> {
-                        _log.info(" result: " + result);
+                        //_log.info(" result: " + result);
                         callback.onSuccess(asNamedNodes(result.asPropertyList()));
                     });
                 })

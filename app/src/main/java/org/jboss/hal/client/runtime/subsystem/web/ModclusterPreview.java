@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.web;
 
-import java.util.logging.Logger;
-
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
@@ -24,9 +22,6 @@ import org.jboss.hal.dmr.NamedNode;
 import static java.util.Arrays.asList;
 
 class ModclusterPreview extends PreviewContent<NamedNode> {
-
-    static Logger _log = Logger.getLogger("org.jboss");
-
 
     ModclusterPreview(NamedNode modcluster) {
         super(modcluster.getName());

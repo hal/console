@@ -670,6 +670,7 @@ public interface Ids {
     String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
     String UNDERTOW_RUNTIME = "undertow-runtime";
     String UNDERTOW_RUNTIME_DEPLOYMENT = "undertow-runtime-deployment";
+    String UNDERTOW_RUNTIME_REFRESH = build("undertow-runtime-deployment", REFRESH_SUFFIX);
     String UNDERTOW_RUNTIME_LISTENER = "undertow-runtime-listener";
     String UNDERTOW_RUNTIME_MODCLUSTER = "undertow-runtime-modcluster";
     String UNDERTOW_RUNTIME_MODCLUSTER_BALANCER = "undertow-runtime-modcluster-balancer";
