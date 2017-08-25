@@ -267,6 +267,7 @@ public interface Names {
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
+    String SERVLET = "Servlet";
     String SERVLET_CONTAINER = "Servlet Container";
     String SESSIONS = "Sessions";
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
@@ -317,6 +318,7 @@ public interface Names {
 
     String WEB = "Web";
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
+    String WEBSOCKET = "Web Socket";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
     String WORKER = "Worker";

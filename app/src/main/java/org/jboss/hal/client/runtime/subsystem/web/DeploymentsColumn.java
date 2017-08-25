@@ -31,8 +31,10 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -43,6 +45,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -61,6 +64,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
 public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
 
+    /**
+     *  The regular Dialogs in DialogFactory uses button with a simple Callback that closes the dialog, even when
+     *  the form contains errors as "required fields" not set. This custom dialog uses a <code>Dialog.ResultCallback</code>
+     *  that returns a boolean, thus the dialog is closed only if there are no form errors.
+     */
     private static Dialog buildConfirmation(Resources resources, String title, SafeHtml question, HTMLElement element,
             Dialog.ResultCallback confirm) {
         HTMLElement content;
@@ -90,8 +98,10 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
     @Inject
     public DeploymentsColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final Places places,
             final Resources resources,
             @Footer final Provider<Progress> progress,
             final MetadataProcessor metadataProcessor,
@@ -132,8 +142,7 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
         setItemRenderer(item -> new ItemDisplay<DeploymentResource>() {
             @Override
             public String getId() {
-                return Ids.build(statementContext.selectedHost(), statementContext.selectedServer(), DEPLOYMENT,
-                        UNDERTOW, item.getPath());
+                return Ids.asId(item.getPath());
             }
 
             @Override
@@ -155,6 +164,10 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                         .constraint(Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, INVALIDATE_SESSION_OPERATION))
                         .handler(item1 -> invalidateSession(item))
                         .build());
+                actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
+                        .with(DEPLOYMENT, item.getDeployment())
+                        .with(SUBDEPLOYMENT, item.getSubdeployment())
+                        .build()));
                 return actions;
             }
         });
@@ -170,12 +183,13 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, INVALIDATE_SESSION_OPERATION)
                                 .build();
 
+                        // uses a custom dialog that only closes a dialog if there are no form errors
                         Dialog dialog = buildConfirmation(resources,
                                 resources.messages().invalidateSessionTitle(),
                                 resources.messages().invalidateSessionQuestion(),
                                 form.asElement(), () -> {
-                                    boolean save = form.save();
-                                    if (save) {
+                                    boolean formOk = form.save();
+                                    if (formOk) {
                                         String sessionId = form.<String>getFormItem("session-id").getValue();
                                         Operation operation = new Operation.Builder(item.getAddress(),
                                                 INVALIDATE_SESSION_OPERATION)
@@ -192,10 +206,8 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                                         }, (operation1, failure) -> MessageEvent.fire(eventBus, Message.error(
                                                 resources.messages().invalidateSessionError(sessionId, failure))));
                                     }
-                                    return save;
+                                    return formOk;
                                 });
-
-                        //dialog.registerAttachable(form);
                         dialog.show();
                         form.edit(new ModelNode());
                     }

@@ -47,4 +47,6 @@ public interface AddressTemplates {
 
     AddressTemplate WEB_DEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_DEPLOYMENT_ADDRESS);
     AddressTemplate WEB_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(WEB_SUBDEPLOYMENT_ADDRESS);
+    AddressTemplate WEB_DEPLOYMENT_SERVLET_TEMPLATE = AddressTemplate.of(WEB_DEPLOYMENT_ADDRESS + "/servlet=*");
+    AddressTemplate WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE = AddressTemplate.of(WEB_DEPLOYMENT_ADDRESS + "/websocket=*");
 }

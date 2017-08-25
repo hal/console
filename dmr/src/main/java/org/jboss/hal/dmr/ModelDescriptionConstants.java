@@ -601,6 +601,7 @@ public interface ModelDescriptionConstants {
     String SERVICE_LOADER_SASL_SERVER_FACTORY = "service-loader-sasl-server-factory";
     String SERVICES_MISSING_DEPENDENCIES = "services-missing-dependencies";
     String SERVICES_MISSING_TRANSITIVE_DEPENDENCIES = "services-missing-transitive-dependencies";
+    String SERVLET = "servlet";
     String SERVLET_CONTAINER = "servlet-container";
     String SETTING = "setting";
     String SESSION_COOKIE = "session-cookie";
@@ -712,6 +713,7 @@ public interface ModelDescriptionConstants {
     String VERBOSE = "verbose";
     String VERSION = "version";
     String WEBSERVICES = "webservices";
+    String WEBSOCKET = "websocket";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";
     String WELD = "weld";

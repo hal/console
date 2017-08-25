@@ -100,6 +100,7 @@ public interface NameTokens {
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";
     String UNDERTOW_FILTER = "undertow-filter";
     String UNDERTOW_HANDLER = "undertow-handler";
+    String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
