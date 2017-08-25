@@ -669,6 +669,8 @@ public interface Ids {
     String UNDERTOW_MODCLUSTER_REFRESH = build("modcluster", REFRESH_SUFFIX);
     String UNDERTOW_RESPONSE_HEADER_ADD = build("undertow-response-header", ADD_SUFFIX);
     String UNDERTOW_RUNTIME = "undertow-runtime";
+    String UNDERTOW_RUNTIME_APP_SEC_DOMAIN = "undertow-runtime-app-sec-domain";
+    String UNDERTOW_RUNTIME_APP_SEC_DOMAIN_REFRESH = "undertow-runtime-app-sec-domain-refresh";
     String UNDERTOW_RUNTIME_DEPLOYMENT = "undertow-runtime-deployment";
     String UNDERTOW_RUNTIME_REFRESH = build("undertow-runtime-deployment", REFRESH_SUFFIX);
     String UNDERTOW_RUNTIME_LISTENER = "undertow-runtime-listener";

@@ -42,6 +42,9 @@ public class WebColumn extends FinderColumn<StaticItem> {
                 .useFirstActionAsBreadcrumbHandler());
 
         List<StaticItem> items = asList(
+                new StaticItem.Builder(Names.APPLICATION_SECURITY_DOMAIN)
+                        .nextColumn(Ids.UNDERTOW_RUNTIME_APP_SEC_DOMAIN)
+                        .build(),
                 new StaticItem.Builder(Names.SERVER)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_SERVER)
                         .build(),

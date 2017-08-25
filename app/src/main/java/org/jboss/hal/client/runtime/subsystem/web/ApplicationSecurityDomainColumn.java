@@ -31,27 +31,27 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.APPLICATION_SECURITY_DOMAIN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-@AsyncColumn(Ids.UNDERTOW_RUNTIME_SERVER)
-public class ServerColumn extends FinderColumn<NamedNode> {
+@AsyncColumn(Ids.UNDERTOW_RUNTIME_APP_SEC_DOMAIN)
+public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public ServerColumn(Finder finder,
+    public ApplicationSecurityDomainColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
             Dispatcher dispatcher,
             StatementContext statementContext) {
 
-        super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_SERVER, Names.SERVER)
-                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH))
+        super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_APP_SEC_DOMAIN, Names.APPLICATION_SECURITY_DOMAIN)
+                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_APP_SECURITY_DOMAIN_REFRESH))
                 .itemsProvider((context, callback) -> {
                     ResourceAddress address = WEB_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, SERVER)
+                            .param(CHILD_TYPE, APPLICATION_SECURITY_DOMAIN)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
@@ -59,20 +59,15 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override
                     public String getId() {
-                        return Ids.webServer(item.getName());
+                        return Ids.asId(item.getName());
                     }
 
                     @Override
                     public String getTitle() {
                         return item.getName();
                     }
-
-                    @Override
-                    public String nextColumn() {
-                        return Ids.UNDERTOW_RUNTIME_LISTENER;
-                    }
                 })
-                .onPreview(ServerPreview::new)
+                .onPreview(ApplicationSecurityDomainPreview::new)
         );
     }
 }
