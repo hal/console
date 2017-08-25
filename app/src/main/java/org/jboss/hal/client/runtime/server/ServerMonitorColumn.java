@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.collect.Lists;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.client.runtime.subsystem.web.WebPreview;
@@ -31,6 +30,9 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -44,8 +46,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
@@ -61,57 +62,90 @@ public class ServerMonitorColumn extends StaticItemColumn {
             final Places places,
             final Resources resources) {
         super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), (context, callback) -> {
-            List<StaticItem> items = Lists.newArrayList(
-
-                    new StaticItem.Builder(Names.BATCH)
-                            .nextColumn(Ids.JOB)
-                            .onPreview(new BatchPreview(dispatcher, statementContext, resources))
-                            .build(),
-
-                    new StaticItem.Builder(Names.DATASOURCES)
-                            .nextColumn(Ids.DATA_SOURCE_RUNTIME)
-                            .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
-                            .build(),
-
-                    new StaticItem.Builder(Names.EJB3)
-                            .nextColumn(Ids.EJB3)
-                            .onPreview(new ThreadPoolPreview(dispatcher, statementContext, resources))
-                            .build(),
-
-                    new StaticItem.Builder(Names.IO)
-                            .nextColumn(Ids.WORKER)
-                            .onPreview(new PreviewContent(Names.WORKER, resources.previews().runtimeWorker()))
-                            .build(),
-
-                    new StaticItem.Builder(Names.JNDI)
-                            .action(itemActionFactory.view(places.selectedServer(NameTokens.JNDI).build()))
-                            .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
-                            .build(),
-
-                    new StaticItem.Builder(Names.JPA)
-                            .nextColumn(Ids.JPA_RUNTIME)
-                            .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
-                            .build(),
-
-                    new StaticItem.Builder(Names.MESSAGING)
-                            .subtitle(Names.ACTIVE_MQ)
-                            .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
-                            .onPreview(new PreviewContent(Names.SERVER, resources.previews().runtimeMessagingServer()))
-                            .build(),
-
-                    new StaticItem.Builder(Names.WEB)
-                            .subtitle(Names.UNDERTOW)
-                            .nextColumn(Ids.UNDERTOW_RUNTIME)
-                            .onPreview(new WebPreview(dispatcher, statementContext, resources))
-                            .build());
 
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
-            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+            Operation operation1 = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
+                    .param(CHILD_TYPE, SUBSYSTEM)
+                    .build();
+            Operation operation2 = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
                     .build();
-            dispatcher.execute(operation, result -> {
-                Version serverVersion = ManagementModel.parseVersion(result);
+            dispatcher.execute(new Composite(operation1, operation2), (CompositeResult result) -> {
+
+                List<StaticItem> items = new ArrayList<>();
+                ModelNode subsystemsNode = result.step(0).get(RESULT);
+
+                for (ModelNode subsystemNode : subsystemsNode.asList()) {
+                    String subsystem = subsystemNode.asString();
+
+                    switch (subsystem) {
+                        case BATCH_JBERET:
+                            items.add(new StaticItem.Builder(Names.BATCH)
+                                    .nextColumn(Ids.JOB)
+                                    .onPreview(new BatchPreview(dispatcher, statementContext, resources))
+                                    .build());
+                            break;
+
+                        case DATASOURCES:
+                            items.add(new StaticItem.Builder(Names.DATASOURCES)
+                                    .nextColumn(Ids.DATA_SOURCE_RUNTIME)
+                                    .onPreview(new PreviewContent(Names.DATASOURCES,
+                                            resources.previews().runtimeDatasources()))
+                                    .build());
+                            break;
+
+
+                        case EJB3:
+                            items.add(new StaticItem.Builder(Names.EJB3)
+                                    .nextColumn(Ids.EJB3)
+                                    .onPreview(new ThreadPoolPreview(dispatcher, statementContext, resources))
+                                    .build());
+                            break;
+
+                        case IO:
+                            items.add(new StaticItem.Builder(Names.IO)
+                                    .nextColumn(Ids.WORKER)
+                                    .onPreview(new PreviewContent(Names.WORKER, resources.previews().runtimeWorker()))
+                                    .build());
+                            break;
+
+                        case NAMING:
+                            items.add(new StaticItem.Builder(Names.JNDI)
+                                    .action(itemActionFactory.view(places.selectedServer(NameTokens.JNDI).build()))
+                                    .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
+                                    .build());
+                            break;
+
+                        case JPA:
+                            items.add(new StaticItem.Builder(Names.JPA)
+                                    .nextColumn(Ids.JPA_RUNTIME)
+                                    .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
+                                    .build());
+                            break;
+
+                        case MESSAGING_ACTIVEMQ:
+                            items.add(new StaticItem.Builder(Names.MESSAGING)
+                                    .subtitle(Names.ACTIVE_MQ)
+                                    .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)
+                                    .onPreview(
+                                            new PreviewContent(Names.SERVER,
+                                                    resources.previews().runtimeMessagingServer()))
+                                    .build());
+                            break;
+
+                        case UNDERTOW:
+                            items.add(new StaticItem.Builder(Names.WEB)
+                                    .subtitle(Names.UNDERTOW)
+                                    .nextColumn(Ids.UNDERTOW_RUNTIME)
+                                    .onPreview(new WebPreview(dispatcher, statementContext, resources))
+                                    .build());
+                            break;
+                    }
+                }
+
+                ModelNode attrsNode = result.step(1).get(RESULT);
+                Version serverVersion = ManagementModel.parseVersion(attrsNode);
                 if (ManagementModel.supportsListLogFiles(serverVersion)) {
                     items.add(new StaticItem.Builder(resources.constants().logFiles())
                             .nextColumn(Ids.LOG_FILE)

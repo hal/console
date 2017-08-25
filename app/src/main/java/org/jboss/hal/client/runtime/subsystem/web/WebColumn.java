@@ -45,14 +45,14 @@ public class WebColumn extends FinderColumn<StaticItem> {
                 new StaticItem.Builder(Names.APPLICATION_SECURITY_DOMAIN)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_APP_SEC_DOMAIN)
                         .build(),
-                new StaticItem.Builder(Names.SERVER)
-                        .nextColumn(Ids.UNDERTOW_RUNTIME_SERVER)
+                new StaticItem.Builder(Names.DEPLOYMENT)
+                        .nextColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
                         .build(),
                 new StaticItem.Builder(Names.MODCLUSTER)
                         .nextColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER)
                         .build(),
-                new StaticItem.Builder(Names.DEPLOYMENT)
-                        .nextColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
+                new StaticItem.Builder(Names.SERVER)
+                        .nextColumn(Ids.UNDERTOW_RUNTIME_SERVER)
                         .build()
 
         );
