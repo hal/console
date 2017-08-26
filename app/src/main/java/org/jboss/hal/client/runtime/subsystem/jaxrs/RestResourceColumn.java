@@ -15,31 +15,27 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jaxrs;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.collect.Sets;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.hal.core.Strings.abbreviateFqClassName;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JAX_RS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REST_RESOURCE;
 import static org.jboss.hal.resources.CSS.breakTooltip;
 
 @AsyncColumn(Ids.REST_RESOURCE)
@@ -94,21 +90,6 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
                     @Override
                     public String getTooltip() {
                         return item.getName();
-                    }
-
-                    @Override
-                    public List<ItemAction<RestResource>> actions() {
-                        List<ItemAction<RestResource>> actions = new ArrayList<>();
-                        PlaceRequest.Builder builder = places.selectedServer(NameTokens.REST_RESOURCE)
-                                .with(DEPLOYMENT, item.getDeployment());
-                        if (item.getSubdeployment() != null) {
-                            builder.with(SUBDEPLOYMENT, item.getSubdeployment());
-                        }
-                        PlaceRequest placeRequest = builder
-                                .with(NAME, item.getName())
-                                .build();
-                        actions.add(itemActionFactory.view(placeRequest));
-                        return actions;
                     }
                 })
 

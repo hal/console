@@ -89,6 +89,7 @@ public interface ModelDescriptionConstants {
     String AUTHENTICATION_CONTEXT = "authentication-context";
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
+    String AVAILABLE_PROCESSORS = "available-processors";
     String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
@@ -102,6 +103,8 @@ public interface ModelDescriptionConstants {
     String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
+    String BOOT_CLASS_PATH = "boot-class-path";
+    String BOOT_CLASS_PATH_SUPPORTED = "boot-class-path-supported";
     String BOOT_TIME = "boot-time";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
@@ -121,6 +124,7 @@ public interface ModelDescriptionConstants {
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";
+    String CLASS_PATH = "class-path";
     String CLEAR_TEXT = "clear-text";
     String CLIENT_CONFIG = "client-config";
     String CLIENT_MAPPINGS = "client-mappings";
@@ -128,6 +132,7 @@ public interface ModelDescriptionConstants {
     String CLONE = "clone";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
+    String COMMITTED = "committed";
     String COMPLETED_TASK_COUNT = "completed-task-count";
     String COMPONENT = "component";
     String COMPONENT_CLASS_NAME = "component-class-name";
@@ -177,6 +182,7 @@ public interface ModelDescriptionConstants {
     String CUSTOM_REALM_MAPPER = "custom-realm-mapper";
     String CUSTOM_ROLE_DECODER = "custom-role-decoder";
     String CUSTOM_ROLE_MAPPER = "custom-role-mapper";
+    String DAEMON_THREAD_COUNT = "daemon-thread-count";
     String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
@@ -275,6 +281,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
+    String HEAP_MEMORY_USAGE = "heap-memory-usage";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";
@@ -307,6 +314,7 @@ public interface ModelDescriptionConstants {
     String INDEX = "index";
     String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
+    String INPUT_ARGUMENTS = "input-arguments";
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
@@ -353,6 +361,7 @@ public interface ModelDescriptionConstants {
     String LDAP_KEY_STORE = "ldap-key-store";
     String LDAP_REALM = "ldap-realm";
     String LEVEL = "level";
+    String LIBRARY_PATH = "library-path";
     String LICENSE = "license";
     String LINES = "lines";
     String LIST_ADD_OPERATION = "list-add";
@@ -382,6 +391,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MANAGEMENT_NOTIFICATION_ADDRESS = "management-notification-address";
+    String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
@@ -628,6 +638,9 @@ public interface ModelDescriptionConstants {
     String SOURCE_CREDENTIAL_REFERENCE = "source-credential-reference";
     String SOURCE_NETWORK = "source-network";
     String SOURCE_PASSWORD = "source-password";
+    String SPEC_NAME = "spec-name";
+    String SPEC_VENDOR = "spec-vendor";
+    String SPEC_VERSION = "spec-version";
     String SQL = "sql";
     String SSL = "ssl";
     String SSL_CONTEXT = "ssl-context";
@@ -666,6 +679,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSLOG_AUDIT_LOG = "syslog-audit-log";
     String SYSTEM_PROPERTY = "system-property";
+    String SYSTEM_PROPERTIES = "system-properties";
     String TABLE = "table";
     String TAIL = "tail";
     String TARGET = "target";
@@ -674,6 +688,7 @@ public interface ModelDescriptionConstants {
     String TASK_MAX_THREADS = "task-max-threads";
     String TEMPORARY = "temporary";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
+    String THREAD_COUNT = "thread-count";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";
     String THREAD_POOL_MAX_SIZE = "thread-pool-max-size";
@@ -702,8 +717,11 @@ public interface ModelDescriptionConstants {
     String UNDEPLOY = "undeploy";
     String UNDERTOW = "undertow";
     String UNIT = "unit";
+    String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
+    String UPTIME = "uptime";
     String URL = "url";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
+    String USED = "used";
     String USER_NAME = "user-name";
     String USER_PASSWORD_MAPPER = "user-password-mapper";
     String USERS_PROPERTIES = "users-properties";
@@ -713,6 +731,9 @@ public interface ModelDescriptionConstants {
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
     String VERSION = "version";
+    String VM_NAME = "vm-name";
+    String VM_VENDOR = "vm-vendor";
+    String VM_VERSION = "vm-version";
     String WEBSERVICES = "webservices";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";

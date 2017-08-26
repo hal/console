@@ -22,6 +22,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -29,19 +33,25 @@ import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 public class ServerPresenter
         extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
@@ -52,6 +62,11 @@ public class ServerPresenter
     static final String JVM_ADDRESS = SERVER_CONFIG_ADDRESS + "/jvm=*";
     static final String PATH_ADDRESS = SERVER_CONFIG_ADDRESS + "/path=*";
     static final String SYSTEM_PROPERTY_ADDRESS = SERVER_CONFIG_ADDRESS + "/system-property=*";
+    static final String SERVER_RUNTIME_ADDRESS = "/{selected.host}/{selected.server}/core-service=platform-mbean/type=runtime";
+    static final AddressTemplate SERVER_RUNTIME_TEMPLATE = AddressTemplate.of(SERVER_RUNTIME_ADDRESS);
+    private static final String SERVER_KEY = "server";
+    private static final String SERVER_CONFIG_KEY = "server-config";
+    private static final String SERVER_RUNTIME_KEY = "server-runtime";
 
 
     // @formatter:off
@@ -61,7 +76,8 @@ public class ServerPresenter
             INTERFACE_ADDRESS,
             JVM_ADDRESS,
             PATH_ADDRESS,
-            SYSTEM_PROPERTY_ADDRESS},
+            SYSTEM_PROPERTY_ADDRESS,
+            OPTIONAL + SERVER_RUNTIME_ADDRESS},
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
@@ -71,6 +87,7 @@ public class ServerPresenter
         void updateJvms(List<NamedNode> interfaces);
         void updatePaths(List<NamedNode> interfaces);
         void updateSystemProperties(List<NamedNode> interfaces);
+        void updateRuntime(ModelNode modelNode);
     }
     // @formatter:on
 
@@ -78,19 +95,28 @@ public class ServerPresenter
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
+    private final ServerActions serverActions;
+    private final Progress progress;
+    private final Resources resources;
 
     @Inject
-    public ServerPresenter(final EventBus eventBus,
-            final ServerPresenter.MyView view,
-            final ServerPresenter.MyProxy proxy,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext,
-            final Dispatcher dispatcher) {
+    public ServerPresenter(EventBus eventBus,
+            ServerPresenter.MyView view,
+            ServerPresenter.MyProxy proxy,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            StatementContext statementContext,
+            Dispatcher dispatcher,
+            ServerActions serverActions,
+            @Footer Progress progress,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.serverActions = serverActions;
+        this.progress = progress;
+        this.resources = resources;
     }
 
     @Override
@@ -111,35 +137,74 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
-        Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation interfacesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, INTERFACE)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation jvmsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, JVM)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation pathsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, PATH)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        Operation systemPropertiesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, SYSTEM_PROPERTY)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-
-        dispatcher.execute(
-                new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp),
-                (CompositeResult result) -> {
-                    getView().updateServer(new Server(statementContext.selectedHost(), result.step(0).get(RESULT)));
-                    getView().updateInterfaces(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateJvms(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updatePaths(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateSystemProperties(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
+        Function<FunctionContext> serverConfigFn = control -> {
+            ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
+            Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation interfacesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                    .param(CHILD_TYPE, INTERFACE)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation jvmsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                    .param(CHILD_TYPE, JVM)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation pathsOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                    .param(CHILD_TYPE, PATH)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation systemPropertiesOp = new Operation.Builder(serverAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                    .param(CHILD_TYPE, SYSTEM_PROPERTY)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            dispatcher.executeInFunction(control,
+                    new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp),
+                    (CompositeResult result) -> {
+                        Server server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
+                        control.getContext().set(SERVER_KEY, server);
+                        control.getContext().set(SERVER_CONFIG_KEY, result);
+                        control.proceed();
+                    });
+        };
+        Function<FunctionContext> serverRuntimeFn = control -> {
+            Server server = control.getContext().get(SERVER_KEY);
+            if (!serverActions.isPending(server) && server.isRunning()) {
+                ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);
+                Operation serverRuntimeOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
+                dispatcher.executeInFunction(control, serverRuntimeOp, result -> {
+                    control.getContext().set(SERVER_RUNTIME_KEY, result);
+                    control.proceed();
                 });
+            } else {
+                control.proceed();
+            }
+        };
+
+        new Async<FunctionContext>(progress).waterfall(new FunctionContext(),
+                new SuccessfulOutcome(getEventBus(), resources) {
+                    @Override
+                    public void onSuccess(FunctionContext context) {
+                        Server server = context.get(SERVER_KEY);
+                        getView().updateServer(server);
+
+                        CompositeResult serverConfig = context.get(SERVER_CONFIG_KEY);
+                        getView().updateInterfaces(asNamedNodes(serverConfig.step(1).get(RESULT).asPropertyList()));
+                        getView().updateJvms(asNamedNodes(serverConfig.step(2).get(RESULT).asPropertyList()));
+                        getView().updatePaths(asNamedNodes(serverConfig.step(3).get(RESULT).asPropertyList()));
+                        getView().updateSystemProperties(
+                                asNamedNodes(serverConfig.step(4).get(RESULT).asPropertyList()));
+
+                        if (context.get(SERVER_RUNTIME_KEY) != null) {
+                            ModelNode serverRuntime = context.get(SERVER_RUNTIME_KEY);
+                            getView().updateRuntime(serverRuntime);
+                        } else {
+                            getView().updateRuntime(null);
+                        }
+                    }
+                },
+                serverConfigFn, serverRuntimeFn);
     }
 }

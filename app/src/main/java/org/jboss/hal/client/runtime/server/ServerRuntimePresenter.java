@@ -38,16 +38,16 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.meta.token.NameTokens.SERVER_STATUS;
+import static org.jboss.hal.meta.token.NameTokens.SERVER_RUNTIME;
 
-public class ServerStatusPresenter
-        extends ApplicationFinderPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
+public class ServerRuntimePresenter
+        extends ApplicationFinderPresenter<ServerRuntimePresenter.MyView, ServerRuntimePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(SERVER_STATUS)
-    @Requires(SERVER_STATUS_ADDRESS)
-    public interface MyProxy extends ProxyPlace<ServerStatusPresenter> {}
+    @NameToken(SERVER_RUNTIME)
+    @Requires(SERVER_RUNTIME_ADDRESS)
+    public interface MyProxy extends ProxyPlace<ServerRuntimePresenter> {}
 
     public interface MyView extends HalView {
         void update(ModelNode modelNode);
@@ -55,16 +55,8 @@ public class ServerStatusPresenter
     // @formatter:on
 
 
-    static final String SERVER_STATUS_ADDRESS = "/{selected.host}/{selected.server}/core-service=platform-mbean/type=runtime";
-    static final AddressTemplate SERVER_STATUS_TEMPLATE = AddressTemplate.of(SERVER_STATUS_ADDRESS);
-
-    static final String BOOT_CLASS_PATH = "boot-class-path";
-    static final String CLASS_PATH = "class-path";
-    static final String INPUT_ARGUMENTS = "input-arguments";
-    static final String LIBRARY_PATH = "library-path";
-    static final String START_TIME = "start-time";
-    static final String SYSTEM_PROPERTIES = "system-properties";
-    static final String UPTIME = "uptime";
+    static final String SERVER_RUNTIME_ADDRESS = "/{selected.host}/{selected.server}/core-service=platform-mbean/type=runtime";
+    static final AddressTemplate SERVER_RUNTIME_TEMPLATE = AddressTemplate.of(SERVER_RUNTIME_ADDRESS);
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -72,7 +64,7 @@ public class ServerStatusPresenter
     private final Resources resources;
 
     @Inject
-    public ServerStatusPresenter(final EventBus eventBus,
+    public ServerRuntimePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
@@ -90,13 +82,13 @@ public class ServerStatusPresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().status()),
+                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(resources.constants().status()),
                         resources.constants().monitor(), resources.constants().status());
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = SERVER_STATUS_TEMPLATE.resolve(statementContext);
+        ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

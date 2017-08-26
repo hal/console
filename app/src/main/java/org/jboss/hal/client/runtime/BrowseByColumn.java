@@ -96,11 +96,6 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .nextColumn(Ids.SERVER_GROUP)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
-                                .build(),
-                        new StaticItem.Builder(Names.SUBSYSTEMS)
-                                .nextColumn(Ids.RUNTIME_SUBSYSTEMS)
-                                .onPreview(new PreviewContent(Names.SUBSYSTEMS,
-                                        resources.previews().runtimeSubsystems()))
                                 .build()
                 ));
     }

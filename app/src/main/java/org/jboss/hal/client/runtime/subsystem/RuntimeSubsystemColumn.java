@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.server;
+package org.jboss.hal.client.runtime.subsystem;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
+import org.jboss.hal.client.runtime.server.ServerRuntimePreview;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.config.Environment;
@@ -48,18 +49,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
-@AsyncColumn(Ids.SERVER_MONITOR)
-public class ServerMonitorColumn extends StaticItemColumn {
+@AsyncColumn(Ids.RUNTIME_SUBSYSTEM)
+public class RuntimeSubsystemColumn extends StaticItemColumn {
 
     @Inject
-    public ServerMonitorColumn(final Finder finder,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final ItemActionFactory itemActionFactory,
-            final Places places,
-            final Resources resources) {
-        super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), (context, callback) -> {
+    public RuntimeSubsystemColumn(Finder finder,
+            Environment environment,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            ItemActionFactory itemActionFactory,
+            Places places,
+            Resources resources) {
+        super(finder, Ids.RUNTIME_SUBSYSTEM, resources.constants().monitor(), (context, callback) -> {
             List<StaticItem> items = Lists.newArrayList(
 
                     new StaticItem.Builder(Names.BATCH)
@@ -120,8 +121,8 @@ public class ServerMonitorColumn extends StaticItemColumn {
                 items.sort(comparing(StaticItem::getTitle));
                 List<StaticItem> statusFirst = new ArrayList<>();
                 statusFirst.add(new StaticItem.Builder(resources.constants().status())
-                        .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
-                        .onPreview(new ServerStatusPreview(environment, dispatcher, statementContext, resources))
+                        .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_RUNTIME).build()))
+                        .onPreview(new ServerRuntimePreview(environment, dispatcher, statementContext, resources))
                         .build());
                 statusFirst.addAll(items);
                 callback.onSuccess(statusFirst);

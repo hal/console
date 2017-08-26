@@ -48,27 +48,25 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-public class ServerStatusView extends HalViewImpl implements ServerStatusPresenter.MyView {
+public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePresenter.MyView {
 
     private static final String[] MAIN_ATTRIBUTES = {
             NAME,
-            "vm-name",
-            "vm-vendor",
-            "vm-version",
-            "spec-name",
-            "spec-vendor",
-            "spec-version",
-            "management-spec-version"
+            VM_NAME,
+            VM_VENDOR,
+            VM_VERSION,
+            SPEC_NAME,
+            SPEC_VENDOR,
+            SPEC_VERSION,
+            MANAGEMENT_SPEC_VERSION
     };
 
     private static final String[] BOOTSTRAP_ATTRIBUTES = {
-            "boot-class-path-supported",
+            BOOT_CLASS_PATH_SUPPORTED,
             BOOT_CLASS_PATH,
             CLASS_PATH,
             LIBRARY_PATH,
@@ -81,9 +79,9 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
     private final HTMLElement headerElement;
 
     @Inject
-    public ServerStatusView(final MetadataRegistry metadataRegistry, final Resources resources) {
-        Metadata metadata = metadataRegistry.lookup(ServerStatusPresenter.SERVER_STATUS_TEMPLATE);
-        mainAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_FORM, metadata)
+    public ServerRuntimeView(final MetadataRegistry metadataRegistry, final Resources resources) {
+        Metadata metadata = metadataRegistry.lookup(ServerRuntimePresenter.SERVER_RUNTIME_TEMPLATE);
+        mainAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_RUNTIME_JVM_ATTRIBUTES_FORM, metadata)
                 .readOnly()
                 .includeRuntime()
                 .include(MAIN_ATTRIBUTES)
@@ -92,7 +90,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .unsorted()
                 .build();
 
-        bootstrapAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_STATUS_BOOTSTRAP_FORM, metadata)
+        bootstrapAttributes = new ModelNodeForm.Builder<>(Ids.SERVER_RUNTIME_BOOTSTRAP_FORM, metadata)
                 .readOnly()
                 .includeRuntime()
                 .include(BOOTSTRAP_ATTRIBUTES)
@@ -112,7 +110,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                         .orderable(false)
                         .build())
                 .options();
-        systemProperties = new DataTable<>(Ids.SERVER_STATUS_SYSTEM_PROPERTIES_TABLE, options);
+        systemProperties = new DataTable<>(Ids.SERVER_RUNTIME_PROPERTIES_TABLE, options);
 
         registerAttachable(mainAttributes, bootstrapAttributes, systemProperties);
 

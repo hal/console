@@ -87,7 +87,7 @@ public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyVi
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.JNDI), resources.constants().monitor(), Names.JNDI);
+                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.JNDI), resources.constants().monitor(), Names.JNDI);
     }
 
     @Override

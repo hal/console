@@ -138,8 +138,8 @@ import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
 import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
-import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
-import org.jboss.hal.client.runtime.server.ServerStatusView;
+import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
+import org.jboss.hal.client.runtime.server.ServerRuntimeView;
 import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
 import org.jboss.hal.client.runtime.subsystem.batch.JobView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
@@ -530,10 +530,10 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ServerGroupDeploymentView.class,
                 ServerGroupDeploymentPresenter.MyProxy.class);
 
-        bindPresenter(ServerStatusPresenter.class,
-                ServerStatusPresenter.MyView.class,
-                ServerStatusView.class,
-                ServerStatusPresenter.MyProxy.class);
+        bindPresenter(ServerRuntimePresenter.class,
+                ServerRuntimePresenter.MyView.class,
+                ServerRuntimeView.class,
+                ServerRuntimePresenter.MyProxy.class);
 
         bindPresenter(ServletContainerPresenter.class,
                 ServletContainerPresenter.MyView.class,

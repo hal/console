@@ -68,7 +68,7 @@ public class FinderPathFactory {
                     .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
-        path.append(Ids.SUBSYSTEM, subsystem,
+        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem,
                 Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.get(subsystem)));
         return path;
     }

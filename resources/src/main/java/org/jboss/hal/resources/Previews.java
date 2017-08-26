@@ -303,9 +303,6 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
 
-    @Source("previews/runtime/subsystems.html")
-    ExternalTextResource runtimeSubsystems();
-
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();
 

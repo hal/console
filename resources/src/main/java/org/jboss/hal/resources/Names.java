@@ -159,6 +159,7 @@ public interface Names {
     String JMS_QUEUE = "JMS Queue";
     String JMS_TOPIC = "JMS Topic";
     String JSP = "JSP";
+    String JVM_ATTRIBUTES = "JVM Attributes";
 
     String LARGE_MESSAGES_DIRECTORY = "Large Messages Directory";
     String LDAP_KEY_STORE = "LDAP Key Store";
@@ -253,6 +254,7 @@ public interface Names {
     String REST_RESOURCE = "REST Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
+    String RUNTIME_PROPERTIES = "Runtime Properties";
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
