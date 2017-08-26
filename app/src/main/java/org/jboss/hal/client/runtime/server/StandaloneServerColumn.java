@@ -69,10 +69,10 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
     private FinderPath refreshPath;
 
     @Inject
-    public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
-            final ItemActionFactory itemActionFactory, final ServerActions serverActions,
-            final PlaceManager placeManager, final Places places, final FinderPathFactory finderPathFactory,
-            final Resources resources) {
+    public StandaloneServerColumn(Finder finder, EventBus eventBus, Dispatcher dispatcher,
+            FinderPathFactory finderPathFactory, ItemActionFactory itemActionFactory,
+            ServerActions serverActions, PlaceManager placeManager, Places places,
+            Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -156,7 +156,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                     @Override
                     public String nextColumn() {
-                        return Ids.SERVER_MONITOR;
+                        return Ids.RUNTIME_SUBSYSTEM;
                     }
                 })
 

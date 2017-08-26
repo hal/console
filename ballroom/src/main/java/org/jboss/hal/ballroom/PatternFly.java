@@ -57,6 +57,6 @@ public class PatternFly {
         }
     }
 
-    @JsMethod(namespace = GLOBAL)
+    @JsMethod(namespace = "PR")
     public native static void prettyPrint();
 }

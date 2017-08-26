@@ -53,7 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
-@Column(Ids.SUBSYSTEM)
+@Column(Ids.CONFIGURATION_SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
@@ -66,7 +66,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final ItemActionFactory itemActionFactory,
             final Subsystems subsystems) {
 
-        super(new Builder<SubsystemMetadata>(finder, Ids.SUBSYSTEM, Names.SUBSYSTEM)
+        super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM, Names.SUBSYSTEM)
 
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
                     @Override

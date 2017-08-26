@@ -104,7 +104,7 @@ public class DataSourcePresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.DATASOURCES),
+                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.DATASOURCES),
                         resources.constants().monitor(), Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, xa), Names.DATASOURCE, name);
     }

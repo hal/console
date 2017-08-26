@@ -55,9 +55,12 @@ class ServerPreview extends RuntimePreview<Server> {
     private final HTMLElement[] links;
     private final PreviewAttributes<Server> attributes;
 
-    ServerPreview(final ServerActions serverActions, final Server server,
-            final PlaceManager placeManager, final Places places, final FinderPathFactory finderPathFactory,
-            final Resources resources) {
+    ServerPreview(ServerActions serverActions,
+            Server server,
+            PlaceManager placeManager,
+            Places places,
+            FinderPathFactory finderPathFactory,
+            Resources resources) {
         super(server.getName(), null, resources);
         this.serverActions = serverActions;
 

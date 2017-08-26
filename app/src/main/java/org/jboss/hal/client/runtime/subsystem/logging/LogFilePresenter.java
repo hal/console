@@ -117,7 +117,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().logFiles()),
+                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(resources.constants().logFiles()),
                         resources.constants().monitor(), resources.constants().logFiles())
                 .append(Ids.LOG_FILE, Ids.asId(logFileName), resources.constants().logFile(), logFileName);
     }

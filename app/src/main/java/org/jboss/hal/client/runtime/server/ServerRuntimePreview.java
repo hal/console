@@ -40,7 +40,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.lead;
 
-class ServerStatusPreview extends PreviewContent<StaticItem> {
+public class ServerRuntimePreview extends PreviewContent<StaticItem> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -55,7 +55,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private final Utilization committedHeap;
     private final Utilization threads;
 
-    ServerStatusPreview(final Environment environment, final Dispatcher dispatcher,
+    public ServerRuntimePreview(final Environment environment, final Dispatcher dispatcher,
             final StatementContext statementContext, final Resources resources) {
         super(resources.constants().status());
         this.dispatcher = dispatcher;

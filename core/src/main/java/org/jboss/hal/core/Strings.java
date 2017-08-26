@@ -23,6 +23,7 @@ public final class Strings {
     private static final String EMPTY = "";
     private static final String SCHEME_HOST_SEPARATOR = "://";
     private static final int INDEX_NOT_FOUND = -1;
+    private static final String FQ_CLASS_NAME = "\\B\\w+(\\.[a-z])";
 
     public static String abbreviateMiddle(String string, int maxLength) {
         if (string == null || maxLength >= string.length()) {
@@ -40,6 +41,11 @@ public final class Strings {
         int endOffset = string.length() - targetSting / 2;
 
         return string.substring(0, startOffset) + ELLIPSIS + string.substring(endOffset);
+    }
+
+    public static String abbreviateFqClassName(String fqcn) {
+        return fqcn.replaceAll(FQ_CLASS_NAME,"$1");
+
     }
 
     public static String substringAfterLast(final String str, final String separator) {

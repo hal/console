@@ -409,7 +409,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String nextColumn() {
-                return item.isStarted() ? Ids.SERVER_MONITOR : null;
+                return item.isStarted() ? Ids.RUNTIME_SUBSYSTEM : null;
             }
         });
 
@@ -430,11 +430,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         if (browseByHost) {
             AddressTemplate template = serverConfigTemplate(statementContext.selectedHost());
             String id = Ids.build(HOST, statementContext.selectedHost(), SERVER, Ids.ADD_SUFFIX);
-            List<String> attributes = asList("auto-start", "group", "socket-binding-default-interface",
-                    "socket-binding-group", "socket-binding-port-offset", "update-auto-start-with-server-status");
-            crud.add(id, Names.SERVER, template, attributes, (name, address) -> {
-                refresh(RESTORE_SELECTION);
-            });
+            List<String> attributes = asList(AUTO_START, GROUP, SOCKET_BINDING_DEFAULT_INTERFACE,
+                    SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET, UPDATE_AUTO_START_WITH_SERVER_STATUS);
+            crud.add(id, Names.SERVER, template, attributes, (name, address) -> refresh(RESTORE_SELECTION));
         } else {
 
             // load all available hosts to show in the copy dialog
@@ -445,9 +443,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             dispatcher.execute(operation, result -> {
 
                 List<String> hosts = new ArrayList<>();
-                result.asList().forEach(m -> {
-                    hosts.add(m.asString());
-                });
+                result.asList().forEach(m -> hosts.add(m.asString()));
 
                 // get the first host, only to retrieve the r-r-d for server-config
                 // as /host=*/server-config=*:read-operation-description(name=add) does not work
@@ -470,7 +466,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                         // add group as custom form item, to set it as read-only and pre-set with
                                         // the selected server-group column
                                         .customFormItem(GROUP, attributeDescription -> {
-                                            TextBoxItem groupItem = new TextBoxItem(GROUP, resources.constants().group());
+                                            TextBoxItem groupItem = new TextBoxItem(GROUP,
+                                                    resources.constants().group());
                                             groupItem.setEnabled(false);
                                             return groupItem;
                                         })
@@ -494,7 +491,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             }
                         });
             });
-
         }
     }
 

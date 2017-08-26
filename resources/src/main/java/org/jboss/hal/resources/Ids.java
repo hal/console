@@ -118,6 +118,7 @@ public interface Ids {
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
     String CONFIGURATION = "configuration";
+    String CONFIGURATION_SUBSYSTEM = "css";
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
     String CONTENT_ADD_ACTIONS = build(CONTENT, "add-actions");
@@ -557,6 +558,8 @@ public interface Ids {
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = build(RESOURCE_ADAPTER, "admin-object", ADD_SUFFIX);
     String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = build(RESOURCE_ADAPTER, "connection-definition", ADD_SUFFIX);
     String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);
+    String REST_RESOURCE = "rest-rsc";
+    String REST_RESOURCE_REFRESH = build(REST_RESOURCE, REFRESH_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
@@ -566,7 +569,7 @@ public interface Ids {
     String ROLE_SERVER_GROUP_SCOPED_ADD = build(ROLE, "server-group", ADD_SUFFIX);
     String ROLE_SERVER_GROUP_SCOPED_FORM = build(ROLE, "server-group", FORM_SUFFIX);
     String ROOT_CONTAINER = "hal-root-container";
-    String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
+    String RUNTIME_SUBSYSTEM = "rss";
     String SECURITY_DOMAIN = "security-domain";
     String SECURITY_DOMAIN_ACL_MODULE_ADD = build(SECURITY_DOMAIN, "acl", ADD_SUFFIX);
     String SECURITY_DOMAIN_ADD = build(SECURITY_DOMAIN, ADD_SUFFIX);
@@ -588,15 +591,18 @@ public interface Ids {
     String SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD = build(SERVER_GROUP_DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String SERVER_GROUP_DEPLOYMENT_UPLOAD = build(SERVER_GROUP_DEPLOYMENT, "upload");
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
-    String SERVER_MONITOR = "server-monitor";
     String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
-    String SERVER_STATUS = "server-status";
-    String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_STATUS, "bootstrap", ENTRY_SUFFIX);
-    String SERVER_STATUS_BOOTSTRAP_FORM = build(SERVER_STATUS, "bootstrap", FORM_SUFFIX);
-    String SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY = build(SERVER_STATUS, "main-attributes", ENTRY_SUFFIX);
-    String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
-    String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
-    String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
+    String SERVER_RUNTIME = build(SERVER, "runtime");
+    String SERVER_RUNTIME_ITEM = build(SERVER_RUNTIME, "item");
+    String SERVER_RUNTIME_BOOTSTRAP_FORM = build(SERVER_RUNTIME, "bootstrap", FORM_SUFFIX);
+    String SERVER_RUNTIME_BOOTSTRAP_TAB = build(SERVER_RUNTIME, "bootstrap", TAB_SUFFIX);
+    String SERVER_RUNTIME_JVM_ATTRIBUTES_FORM = build(SERVER_RUNTIME, "jvm-attributes", FORM_SUFFIX);
+    String SERVER_RUNTIME_JVM_ATTRIBUTES_TAB = build(SERVER_RUNTIME, "jvm-attributes", TAB_SUFFIX);
+    String SERVER_RUNTIME_PROPERTIES_TAB = build(SERVER_RUNTIME, "properties", TAB_SUFFIX);
+    String SERVER_RUNTIME_PROPERTIES_TABLE = build(SERVER_RUNTIME, "properties", TABLE_SUFFIX);
+    String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_RUNTIME, "bootstrap", ENTRY_SUFFIX);
+    String SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY = build(SERVER_RUNTIME, "main-attributes", ENTRY_SUFFIX);
+    String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_RUNTIME, "system-properties", ENTRY_SUFFIX);
     String SETTINGS_FORM = "settings-form";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = build(SOCKET_BINDING_GROUP, ADD_SUFFIX);
@@ -615,7 +621,6 @@ public interface Ids {
     String SOCKET_BINDING_GROUP_REFRESH = build(SOCKET_BINDING_GROUP, REFRESH_SUFFIX);
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
-    String SUBSYSTEM = "subsystem";
     String SYSTEM_PROPERTY_ADD = "system-property-add";
     String TASKS = "tasks";
     String TASKS_ACTIVE = build(TASKS, "active");
@@ -793,6 +798,10 @@ public interface Ids {
 
     static String resourceAdapter(String name) {
         return build(RESOURCE_ADAPTER, name);
+    }
+
+    static String restResource(String deployment, String subdeployment, String name) {
+        return build(deployment, subdeployment, name);
     }
 
     static String role(String name) {

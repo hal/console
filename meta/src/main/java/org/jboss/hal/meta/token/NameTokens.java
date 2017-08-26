@@ -78,7 +78,6 @@ public interface NameTokens {
     String MODCLUSTER = ModelDescriptionConstants.MODCLUSTER;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
-    String PATCHING_HOSTS = "patching-hosts";
     String PATH = "path";
     String QUEUE = "queue";
     String REMOTING = ModelDescriptionConstants.REMOTING;
@@ -91,7 +90,7 @@ public interface NameTokens {
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
-    String SERVER_STATUS = "server-status";
+    String SERVER_RUNTIME = "server-runtime";
     String SOCKET_BINDING_GROUP = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;

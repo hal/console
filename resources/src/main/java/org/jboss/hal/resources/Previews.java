@@ -282,6 +282,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/hosts.html")
     ExternalTextResource runtimeHosts();
 
+    @Source("previews/runtime/jax-rs.html")
+    ExternalTextResource runtimeJaxRs();
+
     @Source("previews/runtime/jndi.html")
     ExternalTextResource runtimeJndi();
 
@@ -299,9 +302,6 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
-
-    @Source("previews/runtime/subsystems.html")
-    ExternalTextResource runtimeSubsystems();
 
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();

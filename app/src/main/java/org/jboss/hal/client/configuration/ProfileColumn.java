@@ -158,7 +158,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
 
             @Override
             public String nextColumn() {
-                return Ids.SUBSYSTEM;
+                return Ids.CONFIGURATION_SUBSYSTEM;
             }
         });
     }
