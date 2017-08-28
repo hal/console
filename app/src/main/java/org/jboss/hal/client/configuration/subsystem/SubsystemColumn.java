@@ -59,12 +59,12 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
 
     @Inject
-    public SubsystemColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final Places places,
-            final StatementContext statementContext,
-            final ItemActionFactory itemActionFactory,
-            final Subsystems subsystems) {
+    public SubsystemColumn(Finder finder,
+            Dispatcher dispatcher,
+            Places places,
+            StatementContext statementContext,
+            ItemActionFactory itemActionFactory,
+            Subsystems subsystems) {
 
         super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM, Names.SUBSYSTEM)
 
@@ -102,8 +102,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         if (item.isGeneric()) {
                             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                             placeRequest = places.genericSubsystem(address);
-                        }
-                        else if (item.getToken() != null) {
+                        } else if (item.getToken() != null) {
                             placeRequest = places.selectedProfile(item.getToken()).build();
                         }
 
@@ -141,8 +140,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 List<SubsystemMetadata> combined = new ArrayList<>();
                 for (ModelNode modelNode : result.asList()) {
                     String name = modelNode.asString();
-                    if (subsystems.contains(name)) {
-                        combined.add(subsystems.get(name));
+                    if (subsystems.containsConfiguration(name)) {
+                        combined.add(subsystems.getConfiguration(name));
 
                     } else {
                         String title = new LabelBuilder().label(name);

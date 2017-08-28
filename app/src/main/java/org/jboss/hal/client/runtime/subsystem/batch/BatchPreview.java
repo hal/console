@@ -20,7 +20,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -36,7 +36,7 @@ import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATC
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
-public class BatchPreview extends PreviewContent<StaticItem> {
+public class BatchPreview extends PreviewContent<SubsystemMetadata> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -69,7 +69,7 @@ public class BatchPreview extends PreviewContent<StaticItem> {
     }
 
     @Override
-    public void update(StaticItem item) {
+    public void update(SubsystemMetadata item) {
         ResourceAddress address = BATCH_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)

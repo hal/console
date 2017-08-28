@@ -94,6 +94,7 @@ public interface ModelDescriptionConstants {
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
     String BACKUPS = "backups";
+    String BALANCER = "balancer";
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BATCH_SIZE = "batch-size";
@@ -160,6 +161,7 @@ public interface ModelDescriptionConstants {
     String CONSUMES = "consumes";
     String CONSUMER_COUNT = "consumer-count";
     String CONTENT = "content";
+    String CONTEXT = "context";
     String CONTEXT_ROOT = "context-root";
     String CONTEXT_SERVICE = "context-service";
     String CORE_POOL_SIZE = "core-pool-size";
@@ -318,6 +320,7 @@ public interface ModelDescriptionConstants {
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
+    String INVALIDATE_SESSION_OPERATION = "invalidate-session";
     String INVOCATIONS = "invocations";
     String IO = "io";
     String IO_THREAD_COUNT = "io-thread-count";
@@ -431,6 +434,7 @@ public interface ModelDescriptionConstants {
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
+    String NODE = "node";
     String NON_DURABLE_MESSAGE_COUNT = "non-durable-message-count";
     String NON_DURABLE_SUBSCRIPTION_COUNT = "non-durable-subscription-count";
     String NONE = "none";
@@ -553,6 +557,7 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESET_CONFIGURATION = "reset-configuration";
+    String RESET_STATISTICS_OPERATION = "reset-statistics";
     String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTER = "resource-adapter";
@@ -575,6 +580,7 @@ public interface ModelDescriptionConstants {
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
     String ROLLBACK_OPERATION = "rollback";
+    String ROLLBACK_TO = "rollback-to";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
@@ -612,6 +618,7 @@ public interface ModelDescriptionConstants {
     String SERVICE_LOADER_SASL_SERVER_FACTORY = "service-loader-sasl-server-factory";
     String SERVICES_MISSING_DEPENDENCIES = "services-missing-dependencies";
     String SERVICES_MISSING_TRANSITIVE_DEPENDENCIES = "services-missing-transitive-dependencies";
+    String SERVLET = "servlet";
     String SERVLET_CONTAINER = "servlet-container";
     String SETTING = "setting";
     String SESSION_COOKIE = "session-cookie";
@@ -735,6 +742,7 @@ public interface ModelDescriptionConstants {
     String VM_VENDOR = "vm-vendor";
     String VM_VERSION = "vm-version";
     String WEBSERVICES = "webservices";
+    String WEBSOCKET = "websocket";
     String WEBSOCKETS = "websockets";
     String WELCOME_FILE = "welcome-file";
     String WELD = "weld";

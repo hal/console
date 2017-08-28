@@ -264,6 +264,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String invalidExpression();
     String invalidJson();
     String invalidMetadata();
+    String invalidate();
+    String invalidateSession();
 
     String jcaConfiguration();
     String jgroupsRelayAlias();
@@ -348,6 +350,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String output();
 
     String patchError();
+    String patchInProgress();
+    String patchSuccessful();
     String pattern();
     String pause();
     String pending();
@@ -400,6 +404,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String role();
     String roles();
     String rollback();
+    String rollbackError();
+    String rollbackInProgress();
+    String rollbackSuccessful();
     String runAs();
     String runAsRoleTitle();
     String running();

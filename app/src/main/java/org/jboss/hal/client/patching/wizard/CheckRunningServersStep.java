@@ -23,7 +23,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -40,15 +39,11 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
 
     private final HTMLElement root;
     private Boolean restartServers;
-    private ServerActions serverActions;
     private List<Property> servers;
-    private String host;
 
-    public CheckRunningServersStep(final Resources resources, final ServerActions serverActions, List<Property> servers, String host) {
+    public CheckRunningServersStep(final Resources resources, List<Property> servers, String host) {
         super(resources.messages().patchStopAllServersTitle());
-        this.serverActions = serverActions;
         this.servers = servers;
-        this.host = host;
 
         List<String> serversList = new ArrayList<>();
         servers.forEach(p -> serversList.add(p.getName()));
@@ -56,14 +51,6 @@ public class CheckRunningServersStep extends WizardStep<PatchContext, PatchState
         String serverStr = Joiner.on(", ").join(serversList);
         SafeHtml description = resources.messages().patchStopAllServersQuestion(serverStr, host);
 
-        /*
-        root = div()
-                .add(div().innerHtml(description))
-                .add(div().css(blankSlatePf)
-                        .add(button("Yes, stop all servers").css(btn, btnLg, btnPrimary)
-                                .on(click, event -> restartServers())))
-                .asElement();
-*/
         String radioName = Ids.build(HOST, PATCHING, "choose-restart");
         root = div().css(formHorizontal)
                 .add(p().innerHtml(description))

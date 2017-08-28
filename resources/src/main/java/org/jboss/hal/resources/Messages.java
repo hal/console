@@ -174,6 +174,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml invalidExtensionJson();
     SafeHtml invalidExtensionMetadata(String extensionDocumentation);
     String invalidRange(long value, long min, long max);
+    String invalidateSessionTitle();
+    SafeHtml invalidateSessionQuestion();
+    SafeHtml invalidateSessionSuccess(String sessionId);
+    SafeHtml invalidateSessionError(String sessionId, String cause);
+    SafeHtml invalidateSessionNotExist(String sessionId);
 
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedBy(String type, String value);
@@ -246,6 +251,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml pageNotFound(String invalidHistoryToken);
     String patchLatestInstalledLabel();
     SafeHtml patchHostNeedsRestart(String hostname);
+    SafeHtml patchInProgress(String patch);
     SafeHtml patchRestartDomainControllerQuestion(String hostname);
     SafeHtml patchRestartHostControllerQuestion(String hostname);
     SafeHtml patchRestartStandaloneQuestion();
@@ -255,9 +261,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml patchStopServersDialogMessage1();
     SafeHtml patchStopServersDialogMessage2();
     SafeHtml patchAddError(String patchId, String error);
-    SafeHtml patchSucessfullyRemoved(String patchId);
+    SafeHtml rollbackSucessful(String patchId);
     SafeHtml pauseQueueSuccess(String name);
-    SafeHtml patchRemovedError(String failure);
+    SafeHtml rollbackError(String failure);
+    SafeHtml rollbackInProgress(String patchid);
     String profileIncludes(String includes);
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
@@ -309,6 +316,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String requires(String requires);
     String resetConfirmationTitle(String type);
     SafeHtml resetConfirmationQuestion(String name);
+    String resetStatisticsTitle();
+    SafeHtml resetStatisticsQuestion(String connector);
+    SafeHtml  resetStatisticsSuccess(String connector);
     SafeHtml resetResourceSuccess(String type, String name);
     SafeHtml resetSingletonConfirmationQuestion();
     SafeHtml resetSingletonSuccess(String type);
@@ -415,6 +425,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
+    SafeHtml undertowStatisticsDisabled(String profile);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
     SafeHtml uploadError(String name);

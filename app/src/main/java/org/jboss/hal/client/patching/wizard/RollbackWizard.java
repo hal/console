@@ -42,20 +42,19 @@ import org.jboss.hal.spi.Callback;
 
 import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
-import static org.jboss.hal.client.patching.wizard.PatchState.CONFIGURE;
-import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
+import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-public class ApplyPatchWizard {
+public class RollbackWizard {
 
-    static class UploadPatch implements Function<FunctionContext> {
+    static class RollbackFunction implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private StatementContext statementContext;
         private ServerActions serverActions;
         private PatchContext patchContext;
 
-        UploadPatch(final StatementContext statementContext, final Dispatcher dispatcher,
+        RollbackFunction(final StatementContext statementContext, final Dispatcher dispatcher,
                 final ServerActions serverActions, final PatchContext patchContext) {
 
             this.statementContext = statementContext;
@@ -75,9 +74,13 @@ public class ApplyPatchWizard {
             }
 
             ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
-            Operation.Builder opBuilder = new Operation.Builder(address, PATCH)
+            Operation.Builder opBuilder = new Operation.Builder(address, ROLLBACK_OPERATION)
+                    .param(PATCH_ID, patchContext.patchId)
+                    .param(ROLLBACK_TO, patchContext.rollbackTo)
+                    .param(RESET_CONFIGURATION, patchContext.resetConfiguration)
                     .param(OVERRIDE_ALL, patchContext.overrideAll)
                     .param(OVERRIDE_MODULE, patchContext.overrideModules);
+
             if (patchContext.override != null) {
                 opBuilder.param(OVERRIDE, patchContext.override.toArray(new String[patchContext.override.size()]));
             }
@@ -85,9 +88,8 @@ public class ApplyPatchWizard {
                 opBuilder.param(PRESERVE, patchContext.preserve.toArray(new String[patchContext.preserve.size()]));
             }
             Operation operation = opBuilder.build();
-            operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
 
-            dispatcher.upload(patchContext.file, operation,
+            dispatcher.execute(operation,
                     result -> {
                         control.proceed();
                     },
@@ -107,20 +109,23 @@ public class ApplyPatchWizard {
 
     private Resources resources;
     private Environment environment;
-    private Metadata metadataOp;
+    private String patchId;
+    private Metadata metadata;
     private StatementContext statementContext;
     private Dispatcher dispatcher;
     private Provider<Progress> progress;
     private ServerActions serverActions;
     private Callback callback;
 
-    public ApplyPatchWizard(final Resources resources, final Environment environment, final Metadata metadata,
+    public RollbackWizard(final Resources resources, final Environment environment, final String patchId,
+            final Metadata metadata,
             final StatementContext statementContext, final Dispatcher dispatcher, final Provider<Progress> progress,
             final ServerActions serverActions, Callback callback) {
 
         this.resources = resources;
         this.environment = environment;
-        this.metadataOp = metadata;
+        this.patchId = patchId;
+        this.metadata = metadata;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.progress = progress;
@@ -130,27 +135,22 @@ public class ApplyPatchWizard {
 
     public void show() {
         Messages messages = resources.messages();
-        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(
-                messages.addResourceTitle(Names.PATCH), new PatchContext());
+        Wizard.Builder<PatchContext, PatchState> wb = new Wizard.Builder<>(resources.constants().rollback(), new PatchContext());
 
         checkServersState(servers -> {
             if (servers != null) {
                 wb.addStep(CHECK_SERVERS, new CheckRunningServersStep(resources, servers,
                         statementContext.selectedHost()));
             }
-            wb.addStep(UPLOAD, new UploadPatchStep(resources.constants().uploadPatch(), messages.noSelectedPatch()))
-            .addStep(CONFIGURE, new ConfigurationStep(metadataOp, resources))
+            wb.addStep(ROLLBACK, new RollbackStep(metadata, resources, statementContext.selectedHost(), patchId))
 
             .onBack((context, currentState) -> {
                 PatchState previous = null;
                 switch (currentState) {
                     case CHECK_SERVERS:
                         break;
-                    case UPLOAD:
+                    case ROLLBACK:
                         previous = CHECK_SERVERS;
-                        break;
-                    case CONFIGURE:
-                        previous = UPLOAD;
                         break;
                 }
                 return previous;
@@ -159,12 +159,9 @@ public class ApplyPatchWizard {
                 PatchState next = null;
                 switch (currentState) {
                     case CHECK_SERVERS:
-                        next = UPLOAD;
+                        next = ROLLBACK;
                         break;
-                    case UPLOAD:
-                        next = CONFIGURE;
-                        break;
-                    case CONFIGURE:
+                    case ROLLBACK:
                         break;
                 }
                 return next;
@@ -172,20 +169,19 @@ public class ApplyPatchWizard {
 
             .stayOpenAfterFinish()
             .onFinish((wzd, context) -> {
-                String name = context.file.name;
-                wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
+                String name = context.patchId;
+                wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
                 Function[] functions = {
-                        new UploadPatch(statementContext, dispatcher, serverActions,
-                                context)
+                        new RollbackFunction(statementContext, dispatcher, serverActions, context)
                 };
                 new Async<FunctionContext>(progress.get()).waterfall(
                         new FunctionContext(),
                         new Outcome<FunctionContext>() {
                             @Override
                             public void onFailure(final FunctionContext functionContext) {
-                                wzd.showError(resources.constants().patchError(),
-                                        messages.patchAddError(name, functionContext.getError()),
+                                wzd.showError(resources.constants().rollbackError(),
+                                        messages.rollbackError(functionContext.getError()),
                                         functionContext.getError());
                             }
 
@@ -193,8 +189,8 @@ public class ApplyPatchWizard {
                             public void onSuccess(final FunctionContext functionContext) {
                                 callback.execute();
                                 wzd.showSuccess(
-                                        resources.constants().patchSuccessful(),
-                                        messages.patchSucessfullyApplied(name),
+                                        resources.constants().rollbackSuccessful(),
+                                        messages.rollbackSucessful(name),
                                         messages.view(Names.PATCH),
                                         cxt -> { /* nothing to do, content is already selected */ });
                             }

@@ -23,11 +23,9 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.dialog.BlockingDialog;
-import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.patching.wizard.ApplyPatchWizard;
+import org.jboss.hal.client.patching.wizard.RollbackWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -35,8 +33,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.ItemMonitor;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.Server;
@@ -82,8 +78,6 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
     private ServerActions serverActions;
     private Provider<Progress> progress;
     private Resources resources;
-    // flag set in the restart servers dialog
-    private BlockingDialog restartServersDialog;
 
     @Inject
     public PatchesColumn(final Finder finder,
@@ -171,67 +165,12 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
                             @Override
                             public void onMetadata(final Metadata metadata) {
-                                ModelNode model = new ModelNode();
-                                model.get(PATCH_ID).set(patchId);
-                                ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
-                                Metadata operationMetadata = metadata.forOperation(ROLLBACK_OPERATION);
-                                String id = Ids.build(Ids.HOST, statementContext.selectedHost(), CORE_SERVICE,
-                                        PATCHING, patchId, ROLLBACK_OPERATION);
-                                Form<ModelNode> form = new ModelNodeForm.Builder<>(id, operationMetadata)
-                                        .unsorted()
-                                        .build();
-                                form.getFormItem(PATCH_ID).setEnabled(false);
-                                Dialog dialog = new Dialog.Builder(resources.constants().rollback())
-                                        .add(form.asElement())
-                                        .closeIcon(true)
-                                        .closeOnEsc(true)
-                                        .primary(resources.constants().rollback(), () -> {
-                                            if (form.save()) {
-                                                ModelNode payload = form.getModel();
-                                                // reset-configuration is a required attribute, if the user doesn't set it, meaning it should be false
-                                                // it will not be added into the payload, but we must forcibly set as false to satisfy the required=true metadata
-                                                if (!payload.hasDefined(RESET_CONFIGURATION)) {
-                                                    payload.get(RESET_CONFIGURATION).set(false);
-                                                }
-                                                String idProgress = Ids.build(Ids.HOST,
-                                                        statementContext.selectedHost(), CORE_SERVICE, PATCHING,
-                                                        patchId, "rollback-progress");
-                                                ItemMonitor.startProgress(idProgress);
-                                                Operation operation = new Operation.Builder(address,
-                                                        ROLLBACK_OPERATION)
-                                                        .payload(payload)
-                                                        .build();
-                                                dispatcher.execute(operation, result2 -> {
-                                                    ItemMonitor.stopProgress(idProgress);
-                                                    MessageEvent.fire(eventBus,
-                                                            Message.success(resources.messages()
-                                                                    .patchSucessfullyRemoved(patchId)));
-                                                    refresh(RESTORE_SELECTION);
-                                                }, (operation1, failure) -> {
-                                                    ItemMonitor.stopProgress(idProgress);
-                                                    MessageEvent.fire(eventBus,
-                                                            Message.error(resources.messages()
-                                                                    .patchRemovedError(failure)));
-                                                    refresh(RESTORE_SELECTION);
-                                                }, (operation1, exception) -> {
-                                                    ItemMonitor.stopProgress(idProgress);
-                                                    MessageEvent.fire(eventBus,
-                                                            Message.error(resources.messages()
-                                                                    .patchRemovedError(exception.getMessage())));
-                                                    refresh(RESTORE_SELECTION);
-                                                });
-                                                return true;
-                                            }
-                                            return false;
-                                        })
-                                        .cancel()
-                                        .build();
-                                dialog.registerAttachable(form);
-                                dialog.show();
-                                form.edit(model);
+                                Metadata metadataRollback = metadata.forOperation(ROLLBACK_OPERATION);
+                                new RollbackWizard(resources, environment, patchId, metadataRollback, statementContext,
+                                        dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
+                                        .show();
                             }
-                        })
-        );
+                        }));
     }
 
     private void ageoutHistory() {
@@ -268,7 +207,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                             @Override
                             public void onMetadata(final Metadata metadata) {
                                 Metadata metadataOp = metadata.forOperation(PATCH);
-                                new ApplyPatchWizard(resources, environment, metadataOp, eventBus, statementContext,
+                                new ApplyPatchWizard(resources, environment, metadataOp, statementContext,
                                         dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
                                         .show();
                             }

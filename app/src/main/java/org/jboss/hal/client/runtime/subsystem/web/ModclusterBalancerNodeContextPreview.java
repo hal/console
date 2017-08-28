@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.patching.wizard;
+package org.jboss.hal.client.runtime.subsystem.web;
 
-public enum PatchState {
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.NamedNode;
 
-    // used on apply patch and rollback
-    CHECK_SERVERS,
+import static java.util.Arrays.asList;
 
-    // used only on apply patch wizard
-    UPLOAD, CONFIGURE,
+class ModclusterBalancerNodeContextPreview extends PreviewContent<NamedNode> {
 
-    // used only on rollback wizard
-    ROLLBACK
+    ModclusterBalancerNodeContextPreview(NamedNode modcluster) {
+        super(modcluster.getName());
+        previewBuilder().addAll(new PreviewAttributes<>(modcluster, asList("requests", "status")));
+    }
 }

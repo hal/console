@@ -25,7 +25,7 @@ import org.jboss.hal.ballroom.Skeleton;
 import org.jboss.hal.ballroom.chart.Donut;
 import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
@@ -41,7 +41,7 @@ import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_S
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
-public class ThreadPoolPreview extends PreviewContent<StaticItem> {
+public class ThreadPoolPreview extends PreviewContent<SubsystemMetadata> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -73,7 +73,7 @@ public class ThreadPoolPreview extends PreviewContent<StaticItem> {
     }
 
     @Override
-    public void update(StaticItem item) {
+    public void update(SubsystemMetadata item) {
         ResourceAddress address = EJB3_SUBSYSTEM_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)

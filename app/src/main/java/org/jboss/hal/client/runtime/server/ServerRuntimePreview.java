@@ -20,7 +20,7 @@ import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -40,7 +40,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.lead;
 
-public class ServerRuntimePreview extends PreviewContent<StaticItem> {
+public class ServerRuntimePreview extends PreviewContent<SubsystemMetadata> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -87,7 +87,7 @@ public class ServerRuntimePreview extends PreviewContent<StaticItem> {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void update(final StaticItem item) {
+    public void update(final SubsystemMetadata item) {
         AddressTemplate mbean = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER, "core-service=platform-mbean");
         AddressTemplate osTmpl = mbean.append("type=operating-system");
         AddressTemplate runtimeTmpl = mbean.append("type=runtime");

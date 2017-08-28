@@ -38,6 +38,7 @@ public interface Names {
     String BACKUP_FOR = "Backup For";
     String BACKUP = "Backup";
     String BACKUPS = "Backups";
+    String BALANCER = "Balancer";
     String BATCH = "Batch";
     String BATCH_STATUS = "Batch Status";
     String BINARY_JDBC = "Binary JDBC";
@@ -66,6 +67,7 @@ public interface Names {
     String CONNECTIONS = "Connections";
     String CONNECTOR_SERVICE = "Connector Service";
     String CONTENT = "Content";
+    String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
     String COOKIES = "Cookies";
@@ -146,6 +148,7 @@ public interface Names {
 
     String JACC_POLICY = "JACC Policy";
     String JAX_RS = "JAX-RS";
+    String JBERET = "JBeret";
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
@@ -195,10 +198,12 @@ public interface Names {
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
     String MIXED_JDBC = "Mixed JDBC";
+    String MODCLUSTER = "Modcluster";
     String MODULE = "Module";
 
     String NAME = "Name";
     String NEW_ITEM_TEMPLATE = "New Item Template";
+    String NODE = "Node";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
@@ -259,12 +264,14 @@ public interface Names {
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
+    String SECURITY = "Security";
     String SECURITY_DOMAIN = "Security Domain";
     String SECURITY_REALMS = "Security Realms";
     String SECURITY_SETTING = "Security Setting";
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
+    String SERVLET = "Servlet";
     String SERVLET_CONTAINER = "Servlet Container";
     String SESSIONS = "Sessions";
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
@@ -308,12 +315,15 @@ public interface Names {
 
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
+    String UNDERTOW = "Undertow";
     String URL = "URL";
     String USER_PASSWORD_MAPPER = "User Password Mapper";
 
     String VALUE = "Value";
 
+    String WEB = "Web";
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
+    String WEBSOCKET = "Web Socket";
     String WEBSOCKETS = "Web Sockets";
     String WELCOME_FILE = "Welcome File";
     String WORKER = "Worker";
