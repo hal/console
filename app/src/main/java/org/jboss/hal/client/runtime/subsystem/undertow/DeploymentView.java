@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -38,9 +38,9 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_SERVLET_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_SERVLET_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_WEBSOCKETS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.ENTRY_SUFFIX;

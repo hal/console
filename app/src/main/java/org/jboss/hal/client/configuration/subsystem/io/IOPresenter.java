@@ -88,7 +88,7 @@ public class IOPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.IO);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.IO);
     }
 
     @Override

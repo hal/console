@@ -120,7 +120,7 @@ public class DataSourcePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(DATASOURCES)
+        return finderPathFactory.configurationSubsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);
     }

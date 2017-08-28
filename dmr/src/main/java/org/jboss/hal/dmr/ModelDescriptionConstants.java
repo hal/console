@@ -622,6 +622,7 @@ public interface ModelDescriptionConstants {
     String SERVLET_CONTAINER = "servlet-container";
     String SETTING = "setting";
     String SESSION_COOKIE = "session-cookie";
+    String SESSION_ID = "session-id";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";

@@ -132,7 +132,7 @@ public class CacheContainerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(INFINISPAN)
+        return finderPathFactory.configurationSubsystemPath(INFINISPAN)
                 .append(Ids.CACHE_CONTAINER, Ids.cacheContainer(cacheContainer),
                         Names.CACHE_CONTAINER, cacheContainer);
     }

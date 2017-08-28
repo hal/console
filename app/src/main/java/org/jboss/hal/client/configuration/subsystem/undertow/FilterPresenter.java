@@ -117,7 +117,7 @@ public class FilterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.FILTERS),
                         resources.constants().settings(), Names.FILTERS);
     }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -21,22 +21,12 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
 
-class ModclusterPreview extends PreviewContent<NamedNode> {
+class ModclusterBalancerNodePreview extends PreviewContent<NamedNode> {
 
-    ModclusterPreview(NamedNode modcluster) {
+    ModclusterBalancerNodePreview(NamedNode modcluster) {
         super(modcluster.getName());
-        previewBuilder().addAll(new PreviewAttributes<>(modcluster, asList(
-                "advertise-frequency",
-                "advertise-path",
-                "advertise-protocol",
-                "advertise-socket-binding",
-                "broken-node-timeout",
-                "enable-http2",
-                "failover-strategy",
-                "health-check-interval",
-                "max-request-time",
-                "max-retries",
-                "request-queue-size",
-                "worker")));
+        previewBuilder().addAll(new PreviewAttributes<>(modcluster, asList("aliases", "cache-connections", "elected",
+                "flush-packets", "load", "load-balancing-group", "max-connections", "open-connections", "ping",
+                "queue-new-requests", "read", "request-queue-size", "status", "timeout", "ttl", "uri", "written")));
     }
 }

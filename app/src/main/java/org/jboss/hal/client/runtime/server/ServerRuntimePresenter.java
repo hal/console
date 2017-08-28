@@ -82,7 +82,7 @@ public class ServerRuntimePresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(resources.constants().status()),
+                .append(Ids.RUNTIME_SUBSYSTEM, Ids.SERVER_RUNTIME_STATUS,
                         resources.constants().monitor(), resources.constants().status());
     }
 

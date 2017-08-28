@@ -94,6 +94,6 @@ public class GenericSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(address.lastValue());
+        return finderPathFactory.configurationSubsystemPath(address.lastValue());
     }
 }

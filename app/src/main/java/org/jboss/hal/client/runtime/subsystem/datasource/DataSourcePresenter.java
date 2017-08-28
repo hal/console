@@ -39,10 +39,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 
 public class DataSourcePresenter
@@ -104,8 +101,7 @@ public class DataSourcePresenter
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.DATASOURCES),
-                        resources.constants().monitor(), Names.DATASOURCES)
+                .append(Ids.RUNTIME_SUBSYSTEM, DATASOURCES, resources.constants().monitor(), Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, xa), Names.DATASOURCE, name);
     }
 

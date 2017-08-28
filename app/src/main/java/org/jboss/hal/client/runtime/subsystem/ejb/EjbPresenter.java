@@ -97,7 +97,7 @@ public class EjbPresenter extends ApplicationFinderPresenter<EjbPresenter.MyView
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.EJB3), resources.constants().monitor(), Names.EJB3)
+                .append(Ids.RUNTIME_SUBSYSTEM, EJB3, resources.constants().monitor(), Names.EJB3)
                 .append(Ids.EJB3, Ids.ejb3(deployment, subdeployment, type.name().toLowerCase(), ejb), Names.EJB3, ejb);
     }
 

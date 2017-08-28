@@ -28,7 +28,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.client.runtime.server.ServerRuntimePreview;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
-import org.jboss.hal.client.runtime.subsystem.web.WebPreview;
+import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
@@ -81,11 +81,11 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .useFirstActionAsBreadcrumbHandler());
 
         customPreviews = new HashMap<>();
-        customPreviews.put(Ids.SERVER_RUNTIME,
+        customPreviews.put(Ids.SERVER_RUNTIME_STATUS,
                 new ServerRuntimePreview(environment, dispatcher, statementContext, resources));
         customPreviews.put(BATCH_JBERET, new BatchPreview(dispatcher, statementContext, resources));
         customPreviews.put(EJB3, new ThreadPoolPreview(dispatcher, statementContext, resources));
-        customPreviews.put(UNDERTOW, new WebPreview(dispatcher, statementContext, resources));
+        customPreviews.put(UNDERTOW, new UndertowPreview(dispatcher, statementContext, resources));
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
@@ -111,7 +111,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                 // add server runtime as first item
                 List<SubsystemMetadata> items = new ArrayList<>();
-                items.add(new SubsystemMetadata.Builder(Ids.SERVER_RUNTIME, resources.constants().status())
+                items.add(new SubsystemMetadata.Builder(Ids.SERVER_RUNTIME_STATUS, resources.constants().status())
                         .token(NameTokens.SERVER_RUNTIME)
                         .build());
                 items.addAll(existingSubsystems.values().stream()

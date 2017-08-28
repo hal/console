@@ -89,7 +89,7 @@ public class ElytronSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ELYTRON)
+        return finderPathFactory.configurationSubsystemPath(ELYTRON)
                 .append(Ids.ELYTRON, Ids.ELYTRON,
                         resources.constants().settings(), resources.constants().globalSettings());
     }

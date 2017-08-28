@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -21,12 +21,10 @@ import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
 
-class ModclusterBalancerNodePreview extends PreviewContent<NamedNode> {
+class ServerPreview extends PreviewContent<NamedNode> {
 
-    ModclusterBalancerNodePreview(NamedNode modcluster) {
-        super(modcluster.getName());
-        previewBuilder().addAll(new PreviewAttributes<>(modcluster, asList("aliases", "cache-connections", "elected",
-                "flush-packets", "load", "load-balancing-group", "max-connections", "open-connections", "ping",
-                "queue-new-requests", "read", "request-queue-size", "status", "timeout", "ttl", "uri", "written")));
+    ServerPreview(NamedNode server) {
+        super(server.getName());
+        previewBuilder().addAll(new PreviewAttributes<>(server, asList("default-host", "servlet-container")));
     }
 }

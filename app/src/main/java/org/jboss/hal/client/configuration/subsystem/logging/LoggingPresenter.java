@@ -110,7 +110,7 @@ public class LoggingPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.LOGGING)
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.LOGGING)
                 .append(Ids.LOGGING, Ids.LOGGING_CONFIGURATION, Names.LOGGING, Names.CONFIGURATION);
     }
 

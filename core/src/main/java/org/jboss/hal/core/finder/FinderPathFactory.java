@@ -57,7 +57,7 @@ public class FinderPathFactory {
     /**
      * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
      */
-    public FinderPath subsystemPath(String subsystem) {
+    public FinderPath configurationSubsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
 
         if (environment.isStandalone()) {

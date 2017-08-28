@@ -50,6 +50,7 @@ import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
@@ -117,7 +118,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(resources.constants().logFiles()),
+                .append(Ids.RUNTIME_SUBSYSTEM, LOGGING,
                         resources.constants().monitor(), resources.constants().logFiles())
                 .append(Ids.LOG_FILE, Ids.asId(logFileName), resources.constants().logFile(), logFileName);
     }

@@ -29,7 +29,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -38,6 +37,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -91,7 +91,7 @@ public class BatchPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.BATCH_JBERET);
+        return finderPathFactory.configurationSubsystemPath(BATCH_JBERET);
     }
 
     @Override

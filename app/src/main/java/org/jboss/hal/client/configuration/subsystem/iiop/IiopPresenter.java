@@ -80,7 +80,7 @@ public class IiopPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override

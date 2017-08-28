@@ -141,10 +141,8 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.MESSAGING),
-                        resources.constants().monitor(), Names.MESSAGING)
-                .append(Ids.MESSAGING_SERVER_RUNTIME, Ids.messagingServer(messageServer),
-                        Names.SERVER, messageServer)
+                .append(Ids.RUNTIME_SUBSYSTEM, MESSAGING_ACTIVEMQ, resources.constants().monitor(), Names.MESSAGING)
+                .append(Ids.MESSAGING_SERVER_RUNTIME, Ids.messagingServer(messageServer), Names.SERVER, messageServer)
                 .append(Ids.MESSAGING_SERVER_DESTINATION,
                         Ids.destination(deployment, subdeployment, messageServer, Type.JMS_QUEUE.name(), queue),
                         Names.DESTINATION, queue);

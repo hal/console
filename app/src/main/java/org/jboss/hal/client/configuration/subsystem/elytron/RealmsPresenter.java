@@ -144,7 +144,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(Ids.ELYTRON)
+        return finderPathFactory.configurationSubsystemPath(Ids.ELYTRON)
                 .append(Ids.ELYTRON, Ids.asId(Names.SECURITY_REALMS),
                         resources.constants().settings(), Names.SECURITY_REALMS);
     }

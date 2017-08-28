@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -30,10 +30,10 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 @Column(Ids.UNDERTOW_RUNTIME)
-public class WebColumn extends FinderColumn<StaticItem> {
+public class UndertowColumn extends FinderColumn<StaticItem> {
 
     @Inject
-    public WebColumn(Finder finder) {
+    public UndertowColumn(Finder finder) {
 
         super(new Builder<StaticItem>(finder, Ids.UNDERTOW_RUNTIME, Names.WEB)
 

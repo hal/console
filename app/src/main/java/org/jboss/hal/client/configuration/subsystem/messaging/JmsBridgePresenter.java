@@ -110,7 +110,7 @@ public class JmsBridgePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.JMS_BRIDGE),
                         resources.constants().category(), Names.JMS_BRIDGE)
                 .append(Ids.JMS_BRIDGE, Ids.jmsBridge(jmsBridgeName), Names.JMS_BRIDGE, jmsBridgeName);

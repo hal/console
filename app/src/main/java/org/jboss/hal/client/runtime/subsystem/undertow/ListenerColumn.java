@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +46,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.AJP_LISTENER_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SERVER_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_TEMPLATE;
 import static org.jboss.hal.core.Strings.substringAfterLast;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -41,10 +41,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SUBDEPLOYMENT_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -64,6 +64,7 @@ public class DeploymentPresenter
         void updateWebsockets(List<NamedNode> model);
     }
     // @formatter:on
+
     private final Dispatcher dispatcher;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
@@ -110,7 +111,7 @@ public class DeploymentPresenter
     public FinderPath finderPath() {
         String itemPath = subdeploymentName == null ? deploymentName : deploymentName + "/" + subdeploymentName;
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_RUNTIME, Ids.asId(Names.WEB), resources.constants().monitor(), Names.WEB)
+                .append(Ids.RUNTIME_SUBSYSTEM, UNDERTOW, resources.constants().monitor(), Names.WEB)
                 .append(Ids.UNDERTOW_RUNTIME, Ids.asId(Names.DEPLOYMENT), Names.WEB, Names.DEPLOYMENT)
                 .append(Ids.UNDERTOW_RUNTIME_DEPLOYMENT, Ids.asId(itemPath), Names.DEPLOYMENT, itemPath);
     }

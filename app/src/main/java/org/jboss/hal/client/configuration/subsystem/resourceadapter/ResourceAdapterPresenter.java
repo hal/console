@@ -99,7 +99,7 @@ public class ResourceAdapterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(RESOURCE_ADAPTERS)
+        return finderPathFactory.configurationSubsystemPath(RESOURCE_ADAPTERS)
                 .append(Ids.RESOURCE_ADAPTER, Ids.resourceAdapter(resourceAdapter),
                         Names.RESOURCE_ADAPTER, resourceAdapter);
     }

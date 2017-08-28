@@ -120,7 +120,7 @@ public class TransactionPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.TRANSACTIONS);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.TRANSACTIONS);
     }
 
     @Override

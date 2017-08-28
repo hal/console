@@ -89,7 +89,7 @@ public class MessagingSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.MESSAGING_GLOBAL_SETTINGS,
                         resources.constants().category(), resources.constants().globalSettings());
     }

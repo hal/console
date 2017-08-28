@@ -112,7 +112,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(JMX_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(JMX_TEMPLATE.lastValue());
     }
 
     @Override

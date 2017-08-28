@@ -102,7 +102,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.JPA), resources.constants().monitor(), Names.JPA)
+                .append(Ids.RUNTIME_SUBSYSTEM, JPA, resources.constants().monitor(), Names.JPA)
                 .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, subdeployment, resourceName), Names.JPA,
                         persistenceUnit);
     }

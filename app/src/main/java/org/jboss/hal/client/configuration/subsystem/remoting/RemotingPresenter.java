@@ -144,7 +144,7 @@ public class RemotingPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(REMOTING);
+        return finderPathFactory.configurationSubsystemPath(REMOTING);
     }
 
     @Override

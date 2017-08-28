@@ -134,7 +134,7 @@ public class SecurityDomainPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(SECURITY)
+        return finderPathFactory.configurationSubsystemPath(SECURITY)
                 .append(Ids.SECURITY_DOMAIN, Ids.securityDomain(securityDomain), Names.SECURITY_DOMAIN, securityDomain);
     }
 

@@ -144,7 +144,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(JGROUPS);
+        return finderPathFactory.configurationSubsystemPath(JGROUPS);
     }
 
 

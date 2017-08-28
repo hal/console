@@ -101,7 +101,7 @@ public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView
     @Override
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, Ids.asId(Names.BATCH), resources.constants().monitor(), Names.BATCH)
+                .append(Ids.RUNTIME_SUBSYSTEM, BATCH_JBERET, resources.constants().monitor(), Names.BATCH)
                 .append(Ids.JOB, Ids.job(deployment, subdeployment, job), Names.JOB, job);
     }
 

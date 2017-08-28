@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -31,13 +31,13 @@ import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-public class WebPreview extends PreviewContent<SubsystemMetadata> {
+public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
     private EmptyState noStatistics;
     private HTMLElement descriptionPreview;
@@ -46,7 +46,7 @@ public class WebPreview extends PreviewContent<SubsystemMetadata> {
     private String profile;
 
 
-    public WebPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources) {
+    public UndertowPreview(final Dispatcher dispatcher, final StatementContext statementContext, final Resources resources) {
         super(Names.WEB, Names.UNDERTOW);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;

@@ -114,7 +114,7 @@ public class ConnectionPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(MESSAGING_ACTIVEMQ)
+        return finderPathFactory.configurationSubsystemPath(MESSAGING_ACTIVEMQ)
                 .append(Ids.MESSAGING_CATEGORY, Ids.asId(Names.SERVER),
                         resources.constants().category(), Names.SERVER)
                 .append(Ids.MESSAGING_SERVER_CONFIGURATION, Ids.messagingServer(serverName),

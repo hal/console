@@ -86,7 +86,7 @@ public class ModclusterPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.MODCLUSTER);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.MODCLUSTER);
     }
 
     @Override

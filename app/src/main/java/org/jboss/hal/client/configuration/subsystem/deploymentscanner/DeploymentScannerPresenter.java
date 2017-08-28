@@ -90,7 +90,7 @@ public class DeploymentScannerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
     }
 
     @Override

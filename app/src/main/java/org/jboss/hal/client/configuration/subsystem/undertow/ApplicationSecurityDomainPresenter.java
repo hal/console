@@ -137,7 +137,7 @@ public class ApplicationSecurityDomainPresenter extends
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.APPLICATION_SECURITY_DOMAIN),
                         resources.constants().settings(), Names.APPLICATION_SECURITY_DOMAIN)
                 .append(Ids.UNDERTOW_APP_SECURITY_DOMAIN, Ids.undertowApplicationSecurityDomain(appSecurityDomain),

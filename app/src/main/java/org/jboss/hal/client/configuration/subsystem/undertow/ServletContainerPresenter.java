@@ -117,7 +117,7 @@ public class ServletContainerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.SERVLET_CONTAINER),
                         resources.constants().settings(), Names.SERVLET_CONTAINER)
                 .append(Ids.UNDERTOW_SERVLET_CONTAINER, Ids.undertowServletContainer(servletContainerName),

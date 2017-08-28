@@ -84,7 +84,7 @@ public class EjbPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(ModelDescriptionConstants.EJB3);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.EJB3);
     }
 
     @Override

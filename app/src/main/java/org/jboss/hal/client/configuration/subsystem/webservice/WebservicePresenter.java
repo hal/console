@@ -141,7 +141,7 @@ public class WebservicePresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(WEBSERVICES);
+        return finderPathFactory.configurationSubsystemPath(WEBSERVICES);
     }
 
 

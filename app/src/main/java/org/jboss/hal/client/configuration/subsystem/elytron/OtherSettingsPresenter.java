@@ -131,7 +131,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(Ids.ELYTRON)
+        return finderPathFactory.configurationSubsystemPath(Ids.ELYTRON)
                 .append(Ids.ELYTRON, Ids.asId(Names.OTHER_SETTINGS),
                         resources.constants().settings(), Names.OTHER_SETTINGS);
     }

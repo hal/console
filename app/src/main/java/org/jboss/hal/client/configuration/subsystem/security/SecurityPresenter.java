@@ -86,7 +86,7 @@ public class SecurityPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(SECURITY);
+        return finderPathFactory.configurationSubsystemPath(SECURITY);
     }
 
     @Override

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +57,8 @@ import org.jboss.hal.spi.MessageEvent;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
@@ -131,7 +131,11 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                         callback.onSuccess(deployments);
                     });
                 })
-                .onPreview(item -> new DeploymentPreview(dispatcher, item)));
+                .onPreview(item -> new DeploymentPreview(dispatcher, item))
+                .useFirstActionAsBreadcrumbHandler()
+                .withFilter()
+                .showCount()
+        );
 
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
@@ -150,31 +154,24 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                 return item.getPath();
             }
 
-            //@Override
-            //public String nextColumn() {
-            //    return Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER;
-            //}
-
-
             @Override
             public List<ItemAction<DeploymentResource>> actions() {
                 List<ItemAction<DeploymentResource>> actions = new ArrayList<>();
-                actions.add(new ItemAction.Builder<DeploymentResource>()
-                        .title(resources.constants().invalidateSession())
-                        .constraint(Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, INVALIDATE_SESSION_OPERATION))
-                        .handler(item1 -> invalidateSession(item))
-                        .build());
                 actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
                         .with(DEPLOYMENT, item.getDeployment())
                         .with(SUBDEPLOYMENT, item.getSubdeployment())
                         .build()));
+                actions.add(new ItemAction.Builder<DeploymentResource>()
+                        .title(resources.constants().invalidateSession())
+                        .constraint(Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, INVALIDATE_SESSION_OPERATION))
+                        .handler(itm -> invalidateSession(itm))
+                        .build());
                 return actions;
             }
         });
     }
 
     private void invalidateSession(final DeploymentResource item) {
-
         metadataProcessor.lookup(WEB_DEPLOYMENT_TEMPLATE, progress.get(),
                 new MetadataProcessor.MetadataCallback() {
                     @Override
@@ -190,10 +187,10 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                                 form.asElement(), () -> {
                                     boolean formOk = form.save();
                                     if (formOk) {
-                                        String sessionId = form.<String>getFormItem("session-id").getValue();
+                                        String sessionId = form.<String>getFormItem(SESSION_ID).getValue();
                                         Operation operation = new Operation.Builder(item.getAddress(),
                                                 INVALIDATE_SESSION_OPERATION)
-                                                .param("session-id", sessionId)
+                                                .param(SESSION_ID, sessionId)
                                                 .build();
                                         dispatcher.execute(operation, result -> {
                                             if (result.asBoolean()) {
@@ -220,5 +217,4 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                     }
                 });
     }
-
 }

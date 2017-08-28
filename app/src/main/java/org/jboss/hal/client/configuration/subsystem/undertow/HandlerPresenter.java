@@ -90,7 +90,7 @@ public class HandlerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.asId(Names.HANDLERS),
                         resources.constants().settings(), Names.HANDLERS);
     }

@@ -89,7 +89,7 @@ public class UndertowSubsystemPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(UNDERTOW)
+        return finderPathFactory.configurationSubsystemPath(UNDERTOW)
                 .append(Ids.UNDERTOW_SETTINGS, Ids.UNDERTOW_GLOBAL_SETTINGS,
                         resources.constants().settings(), resources.constants().globalSettings());
     }

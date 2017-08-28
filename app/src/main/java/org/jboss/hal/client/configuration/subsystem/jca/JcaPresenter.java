@@ -124,7 +124,7 @@ public class JcaPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(JCA_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(JCA_TEMPLATE.lastValue());
     }
 
     @Override

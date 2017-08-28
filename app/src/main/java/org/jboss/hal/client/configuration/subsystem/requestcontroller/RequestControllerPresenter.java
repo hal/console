@@ -86,7 +86,7 @@ public class RequestControllerPresenter
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(REQUEST_CONTROLLER);
+        return finderPathFactory.configurationSubsystemPath(REQUEST_CONTROLLER);
     }
 
     @Override

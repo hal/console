@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.web;
+package org.jboss.hal.client.runtime.subsystem.undertow;
 
-import java.util.Iterator;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -32,50 +30,33 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
-import static org.jboss.hal.client.runtime.subsystem.web.AddressTemplates.MODCLUSTER_BALANCER_TEMPLATE;
-import static org.jboss.hal.core.Strings.substringAfterLast;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
-@AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE)
-public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
+@AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER)
+public class ModclusterColumn extends FinderColumn<NamedNode> {
 
     @Inject
-    public ModclusterBalancerNodeColumn(Finder finder,
+    public ModclusterColumn(Finder finder,
             ColumnActionFactory columnActionFactory,
             Dispatcher dispatcher,
             StatementContext statementContext) {
 
-        super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE, Names.NODE)
-                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_BALANCER_NODE_REFRESH))
+        super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER, Names.MODCLUSTER)
+                .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_REFRESH))
                 .itemsProvider((context, callback) -> {
-
-                    String modcluster = "";
-                    String balancer = "";
-                    for (Iterator<FinderSegment> iter = context.getPath().iterator(); iter.hasNext(); ) {
-                        FinderSegment finderSegment = iter.next();
-                        if ("undertow-runtime-modcluster".equals(finderSegment.getColumnId())) {
-                            modcluster = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-");
-                        }
-                        if ("undertow-runtime-modcluster-balancer".equals(finderSegment.getColumnId())) {
-                            balancer = substringAfterLast(finderSegment.getItemId(), "undertow-modcluster-balancer-");
-                        }
-                    }
-                    ;
-                    ResourceAddress address = MODCLUSTER_BALANCER_TEMPLATE.resolve(statementContext, modcluster,
-                            balancer);
+                    ResourceAddress address = WEB_SUBSYSTEM_TEMPLATE.append("/configuration=filter").resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, NODE)
+                            .param(CHILD_TYPE, "mod-cluster")
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
-
-
                 })
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override
                     public String getId() {
-                        return Ids.build(UNDERTOW, MODCLUSTER, BALANCER, NODE, item.getName());
+                        return Ids.build(UNDERTOW, MODCLUSTER, item.getName());
                     }
 
                     @Override
@@ -83,12 +64,14 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
                         return item.getName();
                     }
 
-                    /*@Override
+                    @Override
                     public String nextColumn() {
-                        return Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE_CONTEXT;
-                    }*/
+                        return Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER;
+                    }
                 })
-                .onPreview(ModclusterBalancerNodePreview::new)
+                .onPreview(ModclusterPreview::new)
         );
+
+
     }
 }

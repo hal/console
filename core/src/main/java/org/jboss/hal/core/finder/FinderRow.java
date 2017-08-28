@@ -202,7 +202,7 @@ class FinderRow<T> implements IsElement {
         String[] css = li ? new String[]{clickable} : new String[]{clickable, btn, btnFinder};
         HtmlContentBuilder<HTMLAnchorElement> builder = a().css(css)
                 .data(PREVENT_SET_ITEMS, UIConstants.TRUE);
-        if (action.title.length() > MAX_ACTION_TITLE_LENGTH) {
+        if (!li && action.title.length() > MAX_ACTION_TITLE_LENGTH) {
             builder.textContent(Strings.abbreviateMiddle(action.title, MAX_ACTION_TITLE_LENGTH));
             builder.title(action.title);
         } else {
