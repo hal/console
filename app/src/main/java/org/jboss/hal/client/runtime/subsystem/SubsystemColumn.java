@@ -28,6 +28,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.hal.client.runtime.server.ServerRuntimePreview;
 import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
+import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
@@ -85,6 +86,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 new ServerRuntimePreview(environment, dispatcher, statementContext, resources));
         customPreviews.put(BATCH_JBERET, new BatchPreview(dispatcher, statementContext, resources));
         customPreviews.put(EJB3, new ThreadPoolPreview(dispatcher, statementContext, resources));
+        customPreviews.put(TRANSACTIONS, new TransactionsPreview(dispatcher, statementContext, resources));
         customPreviews.put(UNDERTOW, new UndertowPreview(dispatcher, statementContext, resources));
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {

@@ -94,6 +94,7 @@ public interface NameTokens {
     String SOCKET_BINDING_GROUP = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
+    String TRANSACTIONS_RUNTIME = "transactions-runtime";
     String UNDERTOW = "undertow";
     String UNDERTOW_APPLICATION_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_BUFFER_CACHE = "undertow-buffer-cache";

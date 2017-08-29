@@ -38,6 +38,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
     String abandoned();
+    String aborted();
     String accessType();
     String action();
     String active();
@@ -49,6 +50,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String allMessagesAlways();
     String allMessagesOnce();
     String and();
+    String applicationRollback();
     String archived();
     String assignment();
     String assignmentsOfGroup();
@@ -168,6 +170,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String groups();
 
     String help();
+    String heuristics();
     String hiddenColumns();
     String hideSensitive();
     String hitCount();
@@ -366,6 +369,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String preview();
     String previousPage();
     String processors();
+    String probe();
     String productName();
     String productVersion();
     String providedBy();
@@ -391,6 +395,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String resolve();
     String resolveExpression();
     String resolvedValue();
+    String resourceRollback();
     String restart();
     String restartAllServices();
     String restartJvm();
@@ -404,6 +409,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String role();
     String roles();
     String rollback();
+    String rollbacks();
     String rollbackError();
     String rollbackInProgress();
     String rollbackSuccessful();
@@ -449,6 +455,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String supportsExpressions();
     String suspend();
     String suspended();
+    String systemRollback();
     String switchBehaviour();
     String switchProvider();
     String switchStore();
@@ -462,12 +469,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String testConnection();
     String testConnectionError();
     String testConnectionSuccess();
+    String timedOut();
     String timeout();
     String timeouts();
     String toggleDropdown();
     String toggleNavigation();
     String tools();
     String tracking();
+    String transactions();
     String type();
 
     String undeploy();

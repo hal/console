@@ -91,6 +91,7 @@ public interface ModelDescriptionConstants {
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
     String AVAILABLE_PROCESSORS = "available-processors";
+    String AVERAGE_COMMIT_TIME = "average-commit-time";
     String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
@@ -444,6 +445,16 @@ public interface ModelDescriptionConstants {
     String NON_DURABLE_SUBSCRIPTION_COUNT = "non-durable-subscription-count";
     String NONE = "none";
     String NOT = "not";
+    String NUMBER_OF_ABORTED_TRANSACTIONS = "number-of-aborted-transactions";
+    String NUMBER_OF_APPLICATION_ROLLBACKS = "number-of-application-rollbacks";
+    String NUMBER_OF_COMMITTED_TRANSACTIONS = "number-of-committed-transactions";
+    String NUMBER_OF_HEURISTICS_TRANSACTIONS = "number-of-heuristics";
+    String NUMBER_OF_INFLIGHT_TRANSACTIONS =  "number-of-inflight-transactions";
+    String NUMBER_OF_NESTED_TRANSACTIONS = "number-of-nested-transactions";
+    String NUMBER_OF_RESOURCE_ROLLBACKS = "number-of-resource-rollbacks";
+    String NUMBER_OF_SYSTEM_ROLLBACKS = "number-of-system-rollbacks";
+    String NUMBER_OF_TIMEDOUT_TRANSACTIONS = "number-of-timed-out-transactions";
+    String NUMBER_OF_TRANSACTIONS = "number-of-transactions";
     String OP = "operation";
     String OPERATION = "operation";
     String OPERATION_HEADERS = "operation-headers";

@@ -565,6 +565,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_TransactionView.class,
                 TransactionPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.transaction.TransactionsView.class,
+                org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyProxy.class);
+
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,
                 UnderTheBridgeView.class,

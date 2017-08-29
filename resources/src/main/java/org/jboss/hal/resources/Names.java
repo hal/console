@@ -311,6 +311,7 @@ public interface Names {
     String TOPOLOGY = "Topology";
     String TRANSPORT = "Transport";
     String TRANSACTION = "Transaction";
+    String TRANSACTIONS = "Transactions";
     String TRUST_MODULE = "Trust Module";
 
     String UNKNOWN = "unknown";
