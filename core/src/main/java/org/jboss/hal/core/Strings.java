@@ -17,12 +17,13 @@ package org.jboss.hal.core;
 
 import static java.lang.Math.max;
 
+/** Collection of string helper methods. */
 public final class Strings {
 
+    private static final int INDEX_NOT_FOUND = -1;
     private static final String ELLIPSIS = "...";
     private static final String EMPTY = "";
     private static final String SCHEME_HOST_SEPARATOR = "://";
-    private static final int INDEX_NOT_FOUND = -1;
     private static final String FQ_CLASS_NAME = "\\B\\w+(\\.[a-z])";
 
     public static String abbreviateMiddle(String string, int maxLength) {

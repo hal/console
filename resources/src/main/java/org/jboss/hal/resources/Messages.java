@@ -381,6 +381,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml sharedStoreMaster();
     SafeHtml sharedStoreSlave();
     SafeHtml sharedStoreStrategy();
+    SafeHtml specifyParameters(String link);
     SafeHtml staleStatistics();
 
     SafeHtml startDeliverySuccess(String name);

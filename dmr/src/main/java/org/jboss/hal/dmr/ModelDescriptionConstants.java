@@ -54,6 +54,7 @@ public interface ModelDescriptionConstants {
     String ACTION = "action";
     String ACTIVE = "active";
     String ACTIVE_COUNT = "active-count";
+    String ACTIVE_SESSIONS = "active-sessions";
     String ADD = "add";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
@@ -107,6 +108,8 @@ public interface ModelDescriptionConstants {
     String BOOT_CLASS_PATH = "boot-class-path";
     String BOOT_CLASS_PATH_SUPPORTED = "boot-class-path-supported";
     String BOOT_TIME = "boot-time";
+    String BOUND_ADDRESS = "bound-address";
+    String BOUND_PORT = "bound-port";
     String BRIDGE = "bridge";
     String BROADCAST_GROUP = "broadcast-group";
     String BROWSE_CONTENT = "browse-content";
@@ -246,6 +249,7 @@ public interface ModelDescriptionConstants {
     String EXPIRATION = "expiration";
     String EXPIRE_MESSAGE = "expire-message";
     String EXPIRE_MESSAGES = "expire-messages";
+    String EXPIRED_SESSIONS = "expired-sessions";
     String EXPIRY_ADDRESS = "expiry-address";
     String EXPLODE = "explode";
     String EXPLODED = "exploded";
@@ -399,6 +403,7 @@ public interface ModelDescriptionConstants {
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MAX = "max";
+    String MAX_ACTIVE_SESSIONS = "max-active-sessions";
     String MAX_POOL_SIZE = "max-pool-size";
     String MAX_THREADS = "max-threads";
     String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
@@ -531,6 +536,7 @@ public interface ModelDescriptionConstants {
     String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "regex-validating-principal-transformer";
     String REJECT_DUPLICATES = "reject-duplicates";
     String REJECTED_COUNT = "rejected-count";
+    String REJECTED_SESSIONS = "rejected-sessions";
     String RELATIVE_TO = "relative-to";
     String RELAY = "relay";
     String RELEASE_CODENAME = "release-codename";
@@ -621,8 +627,11 @@ public interface ModelDescriptionConstants {
     String SERVLET = "servlet";
     String SERVLET_CONTAINER = "servlet-container";
     String SETTING = "setting";
+    String SESSION_AVG_ALIVE_TIME = "session-avg-alive-time";
     String SESSION_COOKIE = "session-cookie";
     String SESSION_ID = "session-id";
+    String SESSION_MAX_ALIVE_TIME = "session-max-alive-time";
+    String SESSIONS_CREATED = "sessions-created";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
     String SHARED_STORE_MASTER = "shared-store-master";
     String SHARED_STORE_SLAVE = "shared-store-slave";
@@ -739,6 +748,7 @@ public interface ModelDescriptionConstants {
     String VALUE_TYPE = "value-type";
     String VERBOSE = "verbose";
     String VERSION = "version";
+    String VIRTUAL_HOST = "virtual-host";
     String VM_NAME = "vm-name";
     String VM_VENDOR = "vm-vendor";
     String VM_VERSION = "vm-version";

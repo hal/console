@@ -125,6 +125,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<ServerGroup> serverGroupAttributes;
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
+    private final HTMLElement serverUrl;
 
     TopologyPreview(final SecurityContextRegistry securityContextRegistry,
             final Environment environment,
@@ -211,6 +212,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(SOCKET_BINDING_DEFAULT_INTERFACE);
 
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).asElement();
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER)
                 .append(model -> {
                     String token = lazyToken(NameTokens.RUNTIME, model, m -> !Strings.isNullOrEmpty(m.getHost()),
@@ -234,6 +236,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     .append(Ids.PROFILE, model.get(PROFILE_NAME).asString()));
                     return new PreviewAttribute(Names.PROFILE, model.get(PROFILE_NAME).asString(), token);
                 })
+                .append(model -> new PreviewAttribute(Names.URL, serverUrl))
                 .append(AUTO_START)
                 .append(SOCKET_BINDING_PORT_OFFSET)
                 .append(STATUS)
@@ -777,12 +780,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
         serverAttributes.refresh(server);
         serverAttributes.setVisible(PROFILE, server.isStarted());
+        serverAttributes.setVisible(URL, server.isStarted());
         serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
         serverAttributes.setVisible(SERVER_STATE, server.isStarted());
         serverAttributes.setVisible(SUSPEND_STATE, server.isStarted());
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, true);
+
+        if (server.isStarted()) {
+            serverActions.readUrl(server, serverUrl);
+        }
     }
 
     private boolean isAllowed(Server server) {

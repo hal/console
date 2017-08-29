@@ -26,15 +26,18 @@ import elemental2.dom.HTMLElement;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.DeploymentResource;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -62,12 +65,13 @@ import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.W
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
-public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
+public class DeploymentColumn extends FinderColumn<DeploymentResource> {
 
     /**
-     *  The regular Dialogs in DialogFactory uses button with a simple Callback that closes the dialog, even when
-     *  the form contains errors as "required fields" not set. This custom dialog uses a <code>Dialog.ResultCallback</code>
-     *  that returns a boolean, thus the dialog is closed only if there are no form errors.
+     * The regular Dialogs in DialogFactory uses button with a simple Callback that closes the dialog, even when
+     * the form contains errors as "required fields" not set. This custom dialog uses a
+     * <code>Dialog.ResultCallback</code>
+     * that returns a boolean, thus the dialog is closed only if there are no form errors.
      */
     private static Dialog buildConfirmation(Resources resources, String title, SafeHtml question, HTMLElement element,
             Dialog.ResultCallback confirm) {
@@ -96,16 +100,19 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
     private MetadataProcessor metadataProcessor;
 
     @Inject
-    public DeploymentsColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final Places places,
-            final Resources resources,
-            @Footer final Provider<Progress> progress,
-            final MetadataProcessor metadataProcessor,
-            final StatementContext statementContext) {
+    public DeploymentColumn(Finder finder,
+            FinderPathFactory finderPathFactory,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            Places places,
+            MetadataProcessor metadataProcessor,
+            StatementContext statementContext,
+            Environment environment,
+            ServerActions serverActions,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new Builder<DeploymentResource>(finder, Ids.UNDERTOW_RUNTIME_DEPLOYMENT, Names.DEPLOYMENT)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_RUNTIME_REFRESH))
@@ -131,7 +138,8 @@ public class DeploymentsColumn extends FinderColumn<DeploymentResource> {
                         callback.onSuccess(deployments);
                     });
                 })
-                .onPreview(item -> new DeploymentPreview(dispatcher, item))
+                .onPreview(item -> new DeploymentPreview(item, finderPathFactory, places, environment, dispatcher,
+                        statementContext, serverActions))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()

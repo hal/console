@@ -34,7 +34,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.span;
@@ -53,6 +52,7 @@ class ServerPreview extends RuntimePreview<Server> {
     private final HTMLElement resumeLink;
     private final HTMLElement bootErrorsLink;
     private final HTMLElement[] links;
+    private final HTMLElement serverUrl;
     private final PreviewAttributes<Server> attributes;
 
     ServerPreview(ServerActions serverActions,
@@ -115,8 +115,14 @@ class ServerPreview extends RuntimePreview<Server> {
 
         links = new HTMLElement[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
 
+        serverUrl = span().textContent(Names.NOT_AVAILABLE).asElement();
         if (server.isStandalone()) {
-            this.attributes = new PreviewAttributes<>(server, asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE));
+            this.attributes = new PreviewAttributes<>(server)
+                    .append(model -> new PreviewAttribute(Names.URL, serverUrl))
+                    .append(STATUS)
+                    .append(RUNNING_MODE)
+                    .append(SERVER_STATE)
+                    .append(SUSPEND_STATE);
         } else {
             this.attributes = new PreviewAttributes<>(server)
                     .append(model -> {
@@ -142,6 +148,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         String token = places.historyToken(profilePlaceRequest);
                         return new PreviewAttribute(Names.PROFILE, profile, token);
                     })
+                    .append(model -> new PreviewAttribute(Names.URL, serverUrl))
                     .append(AUTO_START)
                     .append(SOCKET_BINDING_PORT_OFFSET)
                     .append(STATUS)
@@ -241,9 +248,14 @@ class ServerPreview extends RuntimePreview<Server> {
 
         attributes.refresh(server);
         attributes.setVisible(PROFILE, server.isStarted());
+        attributes.setVisible(URL, server.isStarted());
         attributes.setVisible(RUNNING_MODE, server.isStarted());
         attributes.setVisible(SERVER_STATE, server.isStarted());
         attributes.setVisible(SUSPEND_STATE, server.isStarted());
+
+        if (server.isStarted()) {
+            serverActions.readUrl(server, serverUrl);
+        }
     }
 
     private void disableAllLinks() {

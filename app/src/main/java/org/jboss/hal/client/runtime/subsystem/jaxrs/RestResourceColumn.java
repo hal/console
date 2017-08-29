@@ -20,14 +20,16 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Sets;
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -45,9 +47,11 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
     public RestResourceColumn(Finder finder,
             FinderPathFactory finderPathFactory,
             ColumnActionFactory columnActionFactory,
-            ItemActionFactory itemActionFactory,
+            Environment environment,
+            ServerActions serverActions,
             DeploymentResources deploymentResources,
             Places places,
+            StatementContext statementContext,
             Resources resources) {
 
         super(new FinderColumn.Builder<RestResource>(finder, Ids.REST_RESOURCE, Names.REST_RESOURCE)
@@ -93,7 +97,8 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
                     }
                 })
 
-                .onPreview(item -> new RestResourcePreview(item, finderPathFactory, places, resources))
+                .onPreview(item -> new RestResourcePreview(item, environment, finderPathFactory, places, serverActions,
+                        statementContext, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()

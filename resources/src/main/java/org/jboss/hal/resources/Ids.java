@@ -560,6 +560,7 @@ public interface Ids {
     String RESOURCE_ADAPTER_FORM = build(RESOURCE_ADAPTER, FORM_SUFFIX);
     String REST_RESOURCE = "rest-rsc";
     String REST_RESOURCE_REFRESH = build(REST_RESOURCE, REFRESH_SUFFIX);
+    String REST_RESOURCE_PATH_PARAM_FORM = build(REST_RESOURCE, "path-param", FORM_SUFFIX);
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);

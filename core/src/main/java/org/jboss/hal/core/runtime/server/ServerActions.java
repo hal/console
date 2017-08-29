@@ -25,14 +25,20 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.HTMLElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -41,6 +47,8 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
+import org.jboss.hal.core.runtime.server.ServerUrlFunctions.ReadSocketBinding;
+import org.jboss.hal.core.runtime.server.ServerUrlFunctions.ReadSocketBindingGroup;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -68,11 +76,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.setTimeout;
+import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
+import static org.jboss.hal.core.runtime.server.ServerUrlFunctions.URL_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
@@ -169,27 +179,27 @@ public class ServerActions {
     }
 
     private final EventBus eventBus;
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
     private final Resources resources;
     private final Map<String, Server> pendingServers;
     private StatementContext statementContext;
-    private CrudOperations crud;
 
     @Inject
-    public ServerActions(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final MetadataProcessor metadataProcessor,
-            final CrudOperations crud,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+    public ServerActions(EventBus eventBus,
+            Environment environment,
+            Dispatcher dispatcher,
+            StatementContext statementContext,
+            MetadataProcessor metadataProcessor,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
         this.eventBus = eventBus;
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.metadataProcessor = metadataProcessor;
-        this.crud = crud;
         this.progress = progress;
         this.resources = resources;
         this.pendingServers = new HashMap<>();
@@ -203,9 +213,7 @@ public class ServerActions {
         dispatcher.execute(operation, result -> {
 
             List<String> hosts = new ArrayList<>();
-            result.asList().forEach(m -> {
-                hosts.add(m.asString());
-            });
+            result.asList().forEach(m -> hosts.add(m.asString()));
             // get the first host only to retrieve the r-r-d for server-config
             // as /host=*/server-config=*:read-operation-description(name=add) does not work
             AddressTemplate template = AddressTemplate.of("/host=" + hosts.get(0) + "/server-config=*");
@@ -225,8 +233,8 @@ public class ServerActions {
                                     .fromRequestProperties()
                                     .unboundFormItem(nameItem, 0)
                                     .unboundFormItem(hostFormItem, 1, resources.messages().addServerHostHelp())
-                                    .exclude("auto-start", "socket-binding-default-interface",
-                                            "socket-binding-group", "update-auto-start-with-server-status")
+                                    .exclude(AUTO_START, SOCKET_BINDING_DEFAULT_INTERFACE,
+                                            SOCKET_BINDING_GROUP, UPDATE_AUTO_START_WITH_SERVER_STATUS)
                                     .build();
 
                             AddResourceDialog dialog = new AddResourceDialog(resources.messages().copyServerTitle(),
@@ -249,9 +257,10 @@ public class ServerActions {
                                         String newServerName = nameItem.getValue();
                                         // set the chosen group in the model
                                         newServerModel.get(GROUP).set(payload.get(GROUP).asString());
-                                        if (payload.hasDefined(SOCKET_BINDING_PORT_OFFSET))
+                                        if (payload.hasDefined(SOCKET_BINDING_PORT_OFFSET)) {
                                             newServerModel.get(SOCKET_BINDING_PORT_OFFSET)
                                                     .set(payload.get(SOCKET_BINDING_PORT_OFFSET).asLong());
+                                        }
                                         newServerModel.get(NAME).set(newServerName);
 
                                         ModelNode newServerModelAddress = new ModelNode();
@@ -274,7 +283,8 @@ public class ServerActions {
 
                                         dispatcher.execute(comp, (Dispatcher.CompositeCallback) result -> {
                                             MessageEvent.fire(eventBus, Message.success(
-                                                    resources.messages().addResourceSuccess(Names.SERVER, newServerName)));
+                                                    resources.messages()
+                                                            .addResourceSuccess(Names.SERVER, newServerName)));
                                             callback.execute();
                                         }, (operation1, failure) -> {
                                             MessageEvent.fire(eventBus, Message.error(
@@ -287,14 +297,16 @@ public class ServerActions {
                                         });
                                     }
 
-                                    private void createOperation(Composite composite, String resource, ModelNode model, ModelNode baseAddress) {
+                                    private void createOperation(Composite composite, String resource, ModelNode model,
+                                            ModelNode baseAddress) {
                                         if (model.hasDefined(resource)) {
                                             List<Property> props = model.get(resource).asPropertyList();
                                             props.forEach(p -> {
                                                 String propname = p.getName();
                                                 ModelNode _address = baseAddress.clone();
                                                 _address.get(resource).set(propname);
-                                                Operation operation = new Operation.Builder(new ResourceAddress(_address), ADD)
+                                                Operation operation = new Operation.Builder(
+                                                        new ResourceAddress(_address), ADD)
                                                         .payload(p.getValue())
                                                         .build();
                                                 composite.add(operation);
@@ -589,6 +601,49 @@ public class ServerActions {
                                 resources.messages().startServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
+    }
+
+    public void readUrl(Server server, HTMLElement element) {
+        readUrl(server, new AsyncCallback<ServerUrl>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Elements.removeChildrenFrom(element);
+                element.textContent = Names.NOT_AVAILABLE;
+            }
+
+            @Override
+            public void onSuccess(ServerUrl url) {
+                Elements.removeChildrenFrom(element);
+                element.appendChild(a(url.getUrl())
+                        .apply(a -> a.target = server.getId())
+                        .textContent(url.getUrl())
+                        .asElement());
+            }
+        });
+    }
+
+    public void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
+        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
+    }
+
+    public void readUrl(boolean standalone, String host, String serverGroup, String server,
+            AsyncCallback<ServerUrl> callback) {
+        // TODO check local storage
+        new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(),
+                new Outcome<FunctionContext>() {
+                    @Override
+                    public void onFailure(FunctionContext context) {
+                        logger.error(context.getError());
+                        callback.onFailure(context.getException());
+                    }
+
+                    @Override
+                    public void onSuccess(FunctionContext context) {
+                        callback.onSuccess(context.get(URL_KEY));
+                    }
+                },
+                new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
+                new ReadSocketBinding(standalone, host, server, dispatcher));
     }
 
     private void prepare(Server server, Action action) {
