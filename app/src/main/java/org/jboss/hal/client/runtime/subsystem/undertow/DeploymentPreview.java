@@ -82,7 +82,16 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .append(EXPIRED_SESSIONS)
                 .append(MAX_ACTIVE_SESSIONS)
                 .append(REJECTED_SESSIONS)
-                .append(SERVER)
+                .append(model -> {
+                    String server = model.get(SERVER).asString();
+                    FinderPath path = finderPathFactory.runtimeServerPath()
+                            .append(Ids.RUNTIME_SUBSYSTEM, UNDERTOW)
+                            .append(Ids.UNDERTOW_RUNTIME, Ids.asId(Names.SERVER))
+                            .append(Ids.UNDERTOW_RUNTIME_SERVER, Ids.webServer(server));
+                    PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path).build();
+                    return new PreviewAttributes.PreviewAttribute(Names.SERVER, server,
+                            places.historyToken(placeRequest));
+                })
                 .append(SESSION_AVG_ALIVE_TIME)
                 .append(SESSION_MAX_ALIVE_TIME)
                 .append(SESSIONS_CREATED)
