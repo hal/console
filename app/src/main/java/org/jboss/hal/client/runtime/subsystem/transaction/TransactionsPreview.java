@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.subsystem.transaction;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -54,8 +53,6 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         COMMITTED, ABORTED, HEURISTICS, TIMEDOUT_ROLLBACK, SYSTEM_ROLLBACK, RESOURCE_ROLLBACK, APPLICATION_ROLLBACK
     }
 
-
-    static Logger _log = Logger.getLogger("org.jboss");
     private Donut transactions;
     private EmptyState noStatistics;
     private Dispatcher dispatcher;
@@ -89,8 +86,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
             // to prevent flickering we initially hide everything
             Elements.setVisible(noStatistics.asElement(), false);
 
-            previewBuilder()
-                    .add(noStatistics);
+            previewBuilder().add(noStatistics);
         });
 
         attributes = new PreviewAttributes<>(new ModelNode(), cons.attributes())
@@ -132,7 +128,6 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .add(transactions);
 
         Elements.setVisible(transactions.asElement(), false);
-
     }
 
     @Override
@@ -183,8 +178,6 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 .param(NAME, STATISTICS_ENABLED)
                 .param(VALUE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            update(null);
-        });
+        dispatcher.execute(operation, result -> update(null));
     }
 }
