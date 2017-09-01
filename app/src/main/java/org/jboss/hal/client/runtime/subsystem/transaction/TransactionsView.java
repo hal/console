@@ -19,6 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -27,7 +28,6 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -37,47 +37,91 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
+import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PARTICIPANTS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
+import static org.jboss.hal.resources.Ids.PAGE_SUFFIX;
 import static org.jboss.hal.resources.Ids.TABLE_SUFFIX;
 
 public class TransactionsView extends HalViewImpl implements TransactionsPresenter.MyView {
 
     private final Table<NamedNode> transactionsTable;
     private final Form<NamedNode> transactionsForm;
+    private final Table<NamedNode> participantsTable;
+    private final Form<NamedNode> participantsForm;
+    private final Pages pages;
     private TransactionsPresenter presenter;
+    private String selectedTx;
 
     @Inject
     @SuppressWarnings({"ConstantConditions", "HardCodedStringLiteral"})
     public TransactionsView(final MetadataRegistry metadataRegistry, final Resources resources) {
 
-        Metadata metadata = metadataRegistry.lookup(TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE);
 
-        transactionsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRANSACTIONS, TABLE_SUFFIX), metadata)
-                .button(resources.constants().probe(), table -> presenter.reload(),
-                        Constraint.executable(TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE, READ_RESOURCE_OPERATION))
+        // ==================================== transactions
+
+        Metadata metadataTx = metadataRegistry.lookup(TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE);
+
+        transactionsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(TRANSACTIONS, TABLE_SUFFIX), metadataTx)
+                .button(resources.constants().probe(), table -> presenter.probe())
+                .button(resources.constants().reload(), table -> presenter.reload())
                 .column(Names.TRANSACTION, (cell, type, row, meta) -> row.getName())
+                .column(Names.PARTICIPANTS, this::showParticipants, "20em") //NON-NLS
                 .build();
 
-        transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.build(TRANSACTIONS, FORM_SUFFIX)), metadata)
+        transactionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(TRANSACTIONS, FORM_SUFFIX), metadataTx)
                 .includeRuntime()
                 .readOnly()
                 .build();
 
         HTMLElement section = section()
                 .add(h(1).textContent(Names.TRANSACTIONS))
-                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(p().textContent(metadataTx.getDescription().getDescription()))
                 .add(transactionsTable)
                 .add(transactionsForm)
                 .asElement();
 
-        registerAttachable(transactionsTable, transactionsForm);
+        // ==================================== participants
+
+        Metadata metadataPart = metadataRegistry.lookup(PARTICIPANTS_LOGSTORE_RUNTIME_TEMPLATE);
+
+        participantsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(PARTICIPANTS, TABLE_SUFFIX), metadataPart)
+                .column(Names.PARTICIPANT, (cell, type, row, meta) -> row.getName())
+                .build();
+
+        participantsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(PARTICIPANTS, FORM_SUFFIX), metadataPart)
+                .includeRuntime()
+                .readOnly()
+                .build();
+
+        HTMLElement sectionParticipants = section()
+                .add(h(1).textContent(Names.PARTICIPANT))
+                .add(p().textContent(metadataPart.getDescription().getDescription()))
+                .add(participantsTable)
+                .add(participantsForm)
+                .asElement();
+
+        String txPageId = Ids.build(TRANSACTIONS, PAGE_SUFFIX);
+        pages = new Pages(txPageId, section);
+        pages.addPage(txPageId, Ids.TRANSACTION_PARTICIPANTS_PAGE,
+                () -> Names.TRANSACTION + ": " + selectedTx, () -> Names.PARTICIPANTS, sectionParticipants);
+
+        registerAttachable(transactionsTable, transactionsForm, participantsTable, participantsForm);
 
         initElement(row()
                 .add(column()
-                        .addAll(section)));
+                        .addAll(section, sectionParticipants)));
+    }
+
+    private void showParticipants(final NamedNode transactionNode) {
+        selectedTx = transactionNode.getName();
+        List<NamedNode> participants = asNamedNodes(transactionNode.asPropertyList());
+        participantsForm.clear();
+        participantsTable.update(participants);
+        pages.showPage(Ids.TRANSACTION_PARTICIPANTS_PAGE);
     }
 
     @Override
@@ -85,6 +129,7 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
     public void attach() {
         super.attach();
         transactionsTable.bindForm(transactionsForm);
+        participantsTable.bindForm(participantsForm);
     }
 
     @Override
