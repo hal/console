@@ -466,6 +466,7 @@ public interface ModelDescriptionConstants {
     String OVERRIDE = "override";
     String OVERRIDE_ALL = "override-all";
     String OVERRIDE_MODULE = "override-modules";
+    String PARTICIPANTS = "partitcipants";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
     String PASSWORD = "password";
@@ -501,6 +502,7 @@ public interface ModelDescriptionConstants {
     String PRINCIPALS = "principals";
     String PRINCIPAL_QUERY = "principal-query";
     String PRIORITY = "priority";
+    String PROBE_OPERATION = "probe";
     String PROCESS_STATE = "process-state";
     String PRODUCES = "produces";
     String PRODUCT_NAME = "product-name";

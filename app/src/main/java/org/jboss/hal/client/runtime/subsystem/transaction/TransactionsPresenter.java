@@ -40,9 +40,11 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROBE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
@@ -111,6 +113,15 @@ public class TransactionsPresenter
                 .build();
         dispatcher.execute(operation, result -> {
             getView().update(asNamedNodes(result.asPropertyList()));
+        });
+    }
+
+    void probe() {
+        ResourceAddress address = LOGSTORE_RUNTIME_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, PROBE_OPERATION)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reload();
         });
     }
 

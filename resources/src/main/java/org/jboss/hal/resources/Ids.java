@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.hal.resources.Names.PARTICIPANTS;
 
 /**
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
@@ -640,6 +641,7 @@ public interface Ids {
     String TOOLBAR_FILTER = build(TOOLBAR, "filter");
     String TOOLBAR_ACTION_DROPDOWN = build(TOOLBAR, "action-dropdown");
     String TRANSACTION = "transaction";
+    String TRANSACTION_PARTICIPANTS_PAGE = build(TRANSACTION, PARTICIPANTS, PAGE_SUFFIX);
     String UNDERTOW_APP_SECURITY_DOMAIN = "undertow-application-security-domain";
     String UNDERTOW_APP_SECURITY_DOMAIN_ADD = build(UNDERTOW_APP_SECURITY_DOMAIN, ADD_SUFFIX);
     String UNDERTOW_APP_SECURITY_DOMAIN_FORM = build(UNDERTOW_APP_SECURITY_DOMAIN, FORM_SUFFIX);
