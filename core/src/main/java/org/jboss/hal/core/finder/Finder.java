@@ -64,29 +64,26 @@ import static org.jboss.hal.resources.Ids.FINDER;
  */
 public class Finder implements IsElement, Attachable {
 
-    /**
-     * Function used in {@link #select(String, FinderPath, Runnable)} to select one segment in a finder path.
-     */
     private class SelectFunction implements Function<FunctionContext> {
 
         private final FinderSegment segment;
 
-        private SelectFunction(final FinderSegment segment) {
+        private SelectFunction(FinderSegment segment) {
             this.segment = segment;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
                 @Override
-                public void onFailure(final Throwable throwable) {
+                public void onFailure(Throwable throwable) {
                     logger.error("Error in Finder.SelectFunction: Unable to append column '{}'",
                             segment.getColumnId());
                     control.abort();
                 }
 
                 @Override
-                public void onSuccess(final FinderColumn finderColumn) {
+                public void onSuccess(FinderColumn finderColumn) {
                     selectItem(finderColumn, control);
                 }
             });
@@ -112,10 +109,12 @@ public class Finder implements IsElement, Attachable {
 
         private final FinderSegment segment;
 
-        private RefreshFunction(final FinderSegment segment) {this.segment = segment;}
+        private RefreshFunction(FinderSegment segment) {
+            this.segment = segment;
+        }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
                 // refresh the existing column
@@ -124,12 +123,12 @@ public class Finder implements IsElement, Attachable {
                 // append the column
                 appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
                     @Override
-                    public void onFailure(final Throwable throwable) {
+                    public void onFailure(Throwable throwable) {
                         control.abort();
                     }
 
                     @Override
-                    public void onSuccess(final FinderColumn finderColumn) {
+                    public void onSuccess(FinderColumn finderColumn) {
                         selectItem(finderColumn, control);
                     }
                 });
@@ -489,7 +488,8 @@ public class Finder implements IsElement, Attachable {
             int index = 0;
             Function[] functions = new Function[path.size()];
             for (FinderSegment segment : path) {
-                functions[index] = new RefreshFunction(segment);
+                // work with a copy of segment!
+                functions[index] = new RefreshFunction(new FinderSegment(segment.getColumnId(), segment.getItemId()));
                 index++;
             }
             new Async<FunctionContext>(progress.get())
@@ -501,6 +501,7 @@ public class Finder implements IsElement, Attachable {
                         public void onSuccess(final FunctionContext context) {
                             if (!context.emptyStack()) {
                                 FinderColumn column = context.pop();
+                                column.asElement().focus();
                                 if (column.selectedRow() != null) {
                                     column.selectedRow().click();
                                 }

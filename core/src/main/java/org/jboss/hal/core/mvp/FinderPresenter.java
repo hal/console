@@ -76,12 +76,8 @@ public abstract class FinderPresenter<V extends FinderView, Proxy_ extends Proxy
         if (Strings.isNullOrEmpty(path)) {
             finder.reset(token, initialColumn(), initialPreview(), callback);
         } else {
-            if (token.equals(finder.getContext().getToken())) {
-                finder.refresh(FinderPath.from(path));
-            } else {
-                finder.select(token, FinderPath.from(path),
-                        () -> finder.reset(token, initialColumn(), initialPreview(), callback));
-            }
+            finder.select(token, FinderPath.from(path),
+                    () -> finder.reset(token, initialColumn(), initialPreview(), callback));
         }
     }
 
