@@ -93,6 +93,7 @@ public interface Names {
     String EE = "EE";
     String EJB3 = "EJB";
     String ELYTRON = "Elytron";
+    String ENDPOINT = "Endpoint";
     String ENDPOINT_CONFIGURATION = "Endpoint Configuration";
     String ENTITY = "Entity";
     String ENTITY_CACHE = "Entity Cache";
@@ -325,6 +326,7 @@ public interface Names {
     String VALUE = "Value";
 
     String WEB = "Web";
+    String WEBSERVICES = "Webservices";
     String WEBSERVICES_CONFIGURATION = "Webservices Configuration";
     String WEBSOCKET = "Web Socket";
     String WEBSOCKETS = "Web Sockets";

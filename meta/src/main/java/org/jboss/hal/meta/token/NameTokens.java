@@ -104,6 +104,7 @@ public interface NameTokens {
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
+    String WEBSERVICES_RUNTIME = "webservices-runtime";
 
     Set<String> getTokens();
 }

@@ -233,6 +233,9 @@ public class Subsystems {
                 .subtitle(Names.UNDERTOW)
                 .nextColumn(Ids.UNDERTOW_RUNTIME)
                 .build());
+        addRuntime(new SubsystemMetadata.Builder(WEBSERVICES, Names.WEBSERVICES)
+                .token(NameTokens.WEBSERVICES_RUNTIME)
+                .build());
     }
 
     private void addConfiguration(SubsystemMetadata subsystem) {

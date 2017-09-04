@@ -237,6 +237,7 @@ public interface ModelDescriptionConstants {
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
     String END_TIME = "end-time";
+    String ENDPOINT = "endpoint";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENTRIES = "entries";
     String EVICTION = "eviction";
@@ -284,6 +285,8 @@ public interface ModelDescriptionConstants {
     String HA_POLICY = "ha-policy";
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
+    String HAL_ADDRESS = "hal-address";
+    String HAL_DEPLOYMENT = "hal-deployment";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
@@ -578,6 +581,7 @@ public interface ModelDescriptionConstants {
     String RESET_CONFIGURATION = "reset-configuration";
     String RESET_STATISTICS_OPERATION = "reset-statistics";
     String RESOLVE_EXPRESSION = "resolve-expression";
+    String RESOLVE_EXPRESSIONS = "resolve-expressions";
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
@@ -778,6 +782,7 @@ public interface ModelDescriptionConstants {
     String WORKMANAGER = "workmanager";
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
+    String WSDL_URL = "wsdl-url";
     String X500_ATTRIBUTE_PRINCIPAL_DECODER = "x500-attribute-principal-decoder";
     String XA_DATA_SOURCE = "xa-data-source";
     String X509_CREDENTIAL_MAPPER = "x509-credential-mapper";

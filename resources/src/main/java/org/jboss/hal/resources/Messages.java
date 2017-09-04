@@ -391,6 +391,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerSuccess(String name);
 
+    SafeHtml statisticsDisabled(String subsystem, String profile);
     SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
@@ -422,12 +423,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml testConnectionSuccess(String datasource);
     SafeHtml topologyError();
     SafeHtml transactionSetUuidOrSocket();
-    SafeHtml transactionsStatisticsDisabled(String profile);
     SafeHtml transactionUnableSetProcessId();
 
     SafeHtml unauthorized();
     SafeHtml undeployedContent(String name);
-    SafeHtml undertowStatisticsDisabled(String profile);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);
     SafeHtml uploadError(String name);

@@ -77,7 +77,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
 
             String profile = result.get(PROFILE_NAME).asString();
             noStatistics = new EmptyState.Builder(cons.statisticsDisabledHeader())
-                    .description(resources.messages().transactionsStatisticsDisabled(profile))
+                    .description(resources.messages().statisticsDisabled(Names.TRANSACTIONS, profile))
                     .icon(fontAwesome("line-chart"))
                     .primaryAction(cons.enableStatistics(), () -> enableStatistics(profile),
                             Constraint.writable(TRANSACTION_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))

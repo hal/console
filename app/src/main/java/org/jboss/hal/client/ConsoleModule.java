@@ -584,5 +584,10 @@ public class ConsoleModule extends AbstractPresenterModule {
                 WebservicePresenter.MyView.class,
                 WebserviceView.class,
                 WebservicePresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.webservice.WebservicesView.class,
+                org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPresenter.MyProxy.class);
     }
 }

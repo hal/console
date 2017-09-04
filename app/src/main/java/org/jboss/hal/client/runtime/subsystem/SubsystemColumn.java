@@ -30,6 +30,7 @@ import org.jboss.hal.client.runtime.subsystem.batch.BatchPreview;
 import org.jboss.hal.client.runtime.subsystem.ejb.ThreadPoolPreview;
 import org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPreview;
 import org.jboss.hal.client.runtime.subsystem.undertow.UndertowPreview;
+import org.jboss.hal.client.runtime.subsystem.webservice.WebservicesPreview;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
@@ -88,6 +89,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         customPreviews.put(EJB3, new ThreadPoolPreview(dispatcher, statementContext, resources));
         customPreviews.put(TRANSACTIONS, new TransactionsPreview(dispatcher, statementContext, resources));
         customPreviews.put(UNDERTOW, new UndertowPreview(dispatcher, statementContext, resources));
+        customPreviews.put(WEBSERVICES, new WebservicesPreview(dispatcher, statementContext, resources));
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
