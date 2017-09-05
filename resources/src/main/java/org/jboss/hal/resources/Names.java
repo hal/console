@@ -255,6 +255,7 @@ public interface Names {
     String REPLICATION_COLOCATED = "Replication Colocated";
     String REPLICATION_MASTER = "Replication Master";
     String REPLICATION_SLAVE = "Replication Slave";
+    String REQUESTS = "Requests";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
     String RESOURCE_PATHS = "Resource Paths";

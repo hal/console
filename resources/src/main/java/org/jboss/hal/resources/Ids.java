@@ -283,6 +283,7 @@ public interface Ids {
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
+    String ENDPOINT_REFRESH = build(ENDPOINT, REFRESH_SUFFIX);
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
     String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
     String EXTENSION = "extension";

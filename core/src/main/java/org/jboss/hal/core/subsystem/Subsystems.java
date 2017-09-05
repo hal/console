@@ -234,7 +234,7 @@ public class Subsystems {
                 .nextColumn(Ids.UNDERTOW_RUNTIME)
                 .build());
         addRuntime(new SubsystemMetadata.Builder(WEBSERVICES, Names.WEBSERVICES)
-                .token(NameTokens.WEBSERVICES_RUNTIME)
+                .nextColumn(Ids.ENDPOINT)
                 .build());
     }
 

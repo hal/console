@@ -17,18 +17,10 @@ package org.jboss.hal.client.runtime.subsystem.webservice;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-import static org.jboss.hal.core.deployment.DeploymentResources.DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.core.deployment.DeploymentResources.SUBDEPLOYMENT_ADDRESS;
-
 public interface AddressTemplates {
 
     String WEBSERVICES_ADDRESS = "/subsystem=webservices";
-    String WEBSERVICES_DEPLOYMENT_ADDRESS = DEPLOYMENT_ADDRESS + WEBSERVICES_ADDRESS;
-    String WEBSERVICES_SUBDEPLOYMENT_ADDRESS = SUBDEPLOYMENT_ADDRESS + WEBSERVICES_ADDRESS;
 
     AddressTemplate WEBSERVICES_RUNTIME_TEMPLATE = AddressTemplate.of("/{selected.host}/{selected.server}" + WEBSERVICES_ADDRESS);
-    AddressTemplate WEBSERVICES_DEPLOYMENT_TEMPLATE = AddressTemplate.of(WEBSERVICES_DEPLOYMENT_ADDRESS);
-    AddressTemplate WEBSERVICES_DEPLOYMENT_ENDPOINT_TEMPLATE = AddressTemplate.of(WEBSERVICES_DEPLOYMENT_ADDRESS + "/endpoint=*");
-    AddressTemplate WEBSERVICES_SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(WEBSERVICES_SUBDEPLOYMENT_ADDRESS);
     AddressTemplate WEBSERVICES_CONFIGURATION_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=webservices");
 }
