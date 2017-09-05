@@ -37,6 +37,7 @@ import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
 import static org.jboss.gwt.elemento.core.Elements.htmlElements;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
+import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * Java wrapper for <a href="https://github.com/Pixabay/JavaScript-autoComplete">javascript-auto-complete</a>
@@ -69,7 +70,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
     @Override
     public void attach() {
         if (api == null) {
-            options.selector = formItemSelector();
+            options.selector = formItem().asElement(EDITING).getElementsByClassName(formControl).getAt(0);
             options.onSelect = (event, item, renderedItem) -> {
                 if (formItem() instanceof AbstractFormItem) {
                     ((AbstractFormItem) formItem()).onSuggest(item);
