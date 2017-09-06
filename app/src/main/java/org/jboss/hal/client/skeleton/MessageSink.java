@@ -55,12 +55,12 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
                         .add(div().css(panel, panelDefault)
                                 .add(panelHeader = div().css(panelHeading).asElement())
                                 .add(div().css(panelCollapse, collapse, in)
-                                        .add(panelBody = div().css(CSS.panelBody)
-                                                .add(div().css(drawerPfAction)
-                                                        .add(clear = button(resources.constants().clearMessages())
-                                                                .css(btn, btnLink, btnBlock, clickable)
-                                                                .asElement()))
-                                                .asElement()))))
+                                        .add(panelBody = div().css(CSS.panelBody).asElement())
+                                        .add(div().css(drawerPfAction)
+                                                .add(clear = button(resources.constants().clearMessages())
+                                                            .css(btn, btnLink, btnBlock, clickable)
+                                                            .asElement()))
+                                                .asElement())))
                 .asElement();
 
         bind(clear, click, event -> presenter.clearMessages());
