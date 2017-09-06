@@ -279,8 +279,7 @@ public class ServerPresenter
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.FILTER), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.FILTER), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + "=" + name)
                             .resolve(statementContext);
@@ -337,8 +336,7 @@ public class ServerPresenter
         form.getFormItem(HANDLER)
                 .registerSuggestHandler(
                         new ReadChildrenAutoComplete(dispatcher, statementContext, HANDLER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.LOCATION), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.LOCATION), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE
                             .append(LOCATION + "=" + encodeValue(name))

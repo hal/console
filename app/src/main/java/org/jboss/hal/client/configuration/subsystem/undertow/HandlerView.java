@@ -91,6 +91,7 @@ public abstract class HandlerView extends MbuiViewImpl<HandlerPresenter>
                                         ResourceAddress server = host.getParent();
                                         return server.lastValue() + "/" + host.lastValue();
                                     })
+                                    .distinct()
                                     .sorted()
                                     .collect(Collectors.joining(", "));
                             formItem.setValue(hosts);

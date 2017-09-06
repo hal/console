@@ -23,10 +23,13 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class AddResourceDialog {
 
@@ -47,7 +50,7 @@ public class AddResourceDialog {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private NameItem nameItem;
+    private FormItem<String> nameItem;
     private Form<ModelNode> form;
     private Dialog dialog;
 
@@ -81,6 +84,7 @@ public class AddResourceDialog {
      * Callback#onAdd(String, ModelNode)}.
      */
     public AddResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
+        nameItem = form.getFormItem(NAME);
         form.setSaveCallback((f, changedValues) -> saveForm(callback, form.getModel()));
         init(title, form);
     }
