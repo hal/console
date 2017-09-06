@@ -27,7 +27,9 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContext;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -43,7 +45,7 @@ import static org.jboss.hal.resources.CSS.breakTooltip;
 public class EndpointColumn extends FinderColumn<DeploymentResource> {
 
     @Inject
-    public EndpointColumn(final Finder finder,
+    public EndpointColumn(final FinderPathFactory finderPathFactory, final Places places, final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final Dispatcher dispatcher,
             final DeploymentResources deploymentResources, final Resources resources) {
@@ -55,8 +57,8 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                 .itemsProvider((FinderContext context, AsyncCallback<List<DeploymentResource>> callback) -> {
                     deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
                             (address, modelNode) -> {
-                                DeploymentResource deploymentResource = new DeploymentResource(address, modelNode);
-                                deploymentResource.setName(deploymentResource.getName().replaceAll("%3A", ":"));
+                                String name = address.lastValue().replaceAll("%3A", ":");
+                                DeploymentResource deploymentResource = new DeploymentResource(name, address, modelNode);
                                 return deploymentResource;
 
                             }, endpoints -> {
@@ -96,7 +98,7 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                     }
                 })
 
-                .onPreview(item -> new EndpointPreview(item, dispatcher, resources))
+                .onPreview(item -> new EndpointPreview(finderPathFactory, places, item, dispatcher, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount()

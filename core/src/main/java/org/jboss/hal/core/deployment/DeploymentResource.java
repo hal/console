@@ -34,7 +34,11 @@ public class DeploymentResource extends NamedNode {
     private String subdeployment;
 
     public DeploymentResource(ResourceAddress address, ModelNode modelNode) {
-        super(address.lastValue(), modelNode);
+        this(address.lastValue(), address, modelNode);
+    }
+
+    public DeploymentResource(String name, ResourceAddress address, ModelNode modelNode) {
+        super(name, modelNode);
         this.address = address;
 
         address.asList().forEach(segment -> {
