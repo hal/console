@@ -43,7 +43,7 @@ public class PreviewContent<T> implements HasElements, Attachable {
 
     /** Common building block for a refresh link */
     protected static HTMLElement refreshLink(Callback callback) {
-        return a().css(clickable, pullRight, smallLink).on(click, event -> callback.execute())
+        return a().css(clickable, pullRight, smallLink, marginTop5).on(click, event -> callback.execute())
                 .add(span().css(fontAwesome("refresh"), marginRight5))
                 .add(span().textContent(CONSTANTS.refresh()))
                 .asElement();

@@ -52,7 +52,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             StatementContext statementContext) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_RUNTIME, Names.SERVER)
-                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_REFRESH))
+                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_RUNTIME_REFRESH))
                 .itemsProvider((context, callback) -> {
                     ResourceAddress address = MESSAGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)

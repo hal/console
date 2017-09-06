@@ -61,7 +61,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                             //noinspection Convert2MethodRef
                             return Ids.messagingServer(name);
                         }))
-                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_REFRESH))
+                .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_CONFIGURATION_REFRESH))
 
                 .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
                         children -> callback.onSuccess(asNamedNodes(children))))

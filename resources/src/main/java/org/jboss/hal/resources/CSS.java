@@ -228,6 +228,7 @@ public interface CSS {
     String marginRight5 = "margin-right-5";
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
+    String marginTop5 = "margin-top-5";
     String marginTopLarge = "margin-top-large";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
