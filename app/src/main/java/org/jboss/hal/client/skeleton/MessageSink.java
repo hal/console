@@ -63,7 +63,7 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
                                                 .asElement())))
                 .asElement();
 
-        bind(clear, click, event -> presenter.clearMessages());
+        bind(clear, click, event -> this.clear());
         Elements.setVisible(panelHeader, false); // not used
     }
 
@@ -77,10 +77,14 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
         return root;
     }
 
+    int getMessageCount() {
+        return (int) panelBody.childElementCount;
+    }
+
     void add(Message message) {
         MessageSinkElement element = new MessageSinkElement(this, message, resources);
         panelBody.insertBefore(element.asElement(), panelBody.firstElementChild);
-        int messageCount = (int) panelBody.childElementCount;
+        int messageCount = getMessageCount();
         if (messageCount > SIZE) {
             panelBody.removeChild(panelBody.lastElementChild);
         }
@@ -91,14 +95,16 @@ class MessageSink implements IsElement, HasPresenter<HeaderPresenter> {
         Element element = document.getElementById(id);
         Elements.failSafeRemove(panelBody, element);
         updateHeader();
+        presenter.onClearMessage();
     }
 
     void clear() {
         Elements.removeChildrenFrom(panelBody);
         updateHeader();
+        presenter.onClearAllMessages();
     }
 
     private void updateHeader() {
-        messagesHeader.textContent = resources.messages().messages((int) panelBody.childElementCount);
+        messagesHeader.textContent = resources.messages().messages(getMessageCount());
     }
 }

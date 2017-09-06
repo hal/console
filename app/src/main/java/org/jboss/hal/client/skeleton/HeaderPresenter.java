@@ -124,6 +124,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void clearMessages();
         void hideReconnect();
 
+        default void onClearMessage() {};
+        default void onClearAllMessages() {};
+
         void selectTopLevelCategory(String nameToken);
         void updateLinks(FinderContext finderContext);
 
@@ -286,6 +289,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     void clearMessages() {
         getView().clearMessages();
+    }
+
+    void onClearAllMessages() {
+        getView().onClearAllMessages();
+    }
+
+    void onClearMessage() {
+        getView().onClearMessage();
     }
 
     void reconnect() {

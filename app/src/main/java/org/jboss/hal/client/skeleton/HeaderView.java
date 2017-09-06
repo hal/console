@@ -337,6 +337,18 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @Override
     public void clearMessages() {
         messageSink.clear();
+    }
+
+    @Override
+    public void onClearMessage() {
+        if (messageSink.getMessageCount() == 0) {
+            messagesIcon.classList.remove("fa-bell"); //NON-NLS
+            messagesIcon.classList.add("fa-bell-o"); //NON-NLS
+        }
+    }
+
+    @Override
+    public void onClearAllMessages() {
         messagesIcon.classList.remove("fa-bell"); //NON-NLS
         messagesIcon.classList.add("fa-bell-o"); //NON-NLS
     }
