@@ -40,6 +40,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 
 public class DataSourcePresenter
@@ -48,8 +49,8 @@ public class DataSourcePresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, DATA_SOURCE_POOL_ADDRESS, DATA_SOURCE_JDBC_ADDRESS,
-            XA_DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_POOL_ADDRESS, XA_DATA_SOURCE_JDBC_ADDRESS})
+    @Requires({DATA_SOURCE_ADDRESS, OPTIONAL + DATA_SOURCE_POOL_ADDRESS, OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
+            XA_DATA_SOURCE_ADDRESS, OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS, OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {

@@ -341,49 +341,37 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
 
     // ------------------------------------------------------ form contract
 
-    /**
-     * Returns {@link Form#isUndefined()} on the currently active form.
-     */
+    /** Returns {@link Form#isUndefined()} on the currently active form. */
     @Override
     public boolean isUndefined() {
         return currentForm.isUndefined();
     }
 
-    /**
-     * Returns {@link Form#isTransient()} on the currently active form.
-     */
+    /** Returns {@link Form#isTransient()} on the currently active form. */
     @Override
     public boolean isTransient() {
         return currentForm.isTransient();
     }
 
-    /**
-     * Calls {@link Form#view(Object)} on all forms.
-     */
+    /** Calls {@link Form#view(Object)} on all forms. */
     @Override
     public void view(final T model) {
         forms.forEach(form -> form.view(model));
     }
 
-    /**
-     * Calls {@link Form#clear()} on all forms.
-     */
+    /** Calls {@link Form#clear()} on all forms. */
     @Override
     public void clear() {
         forms.forEach(Form::clear);
     }
 
-    /**
-     * Calls {@link Form#edit(Object)} on the currently active form.
-     */
+    /** Calls {@link Form#edit(Object)} on the currently active form. */
     @Override
     public void edit(final T model) {
         currentForm.edit(model);
     }
 
-    /**
-     * Calls {@link Form#save()} on the currently active form.
-     */
+    /** Calls {@link Form#save()} on the currently active form. */
     @Override
     public boolean save() {
         return currentForm.save();
@@ -394,9 +382,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setSaveCallback(saveCallback));
     }
 
-    /**
-     * Calls {@link Form#cancel()} on the currently active form.
-     */
+    /** Calls {@link Form#cancel()} on the currently active form. */
     @Override
     public void cancel() {
         currentForm.cancel();
@@ -412,9 +398,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setPrepareReset(prepareReset));
     }
 
-    /**
-     * Calls {@link Form#reset()} on the currently active form.
-     */
+    /** Calls {@link Form#reset()} on the currently active form. */
     @Override
     public void reset() {
         currentForm.reset();
@@ -425,9 +409,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         forms.forEach(form -> form.setPrepareRemove(prepareRemove));
     }
 
-    /**
-     * Calll {@link Form#remove()} on the currently active form.
-     */
+    /** Calls {@link Form#remove()} on the currently active form. */
     @Override
     public void remove() {
         currentForm.remove();
@@ -475,8 +457,11 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         return formItems;
     }
 
+    /** Calls {@link Form#addFormValidation(FormValidation)} on all forms. */
     @Override
     public void addFormValidation(final FormValidation<T> formValidation) {
-        forms.get(0).addFormValidation(formValidation);
+        for (Form<T> form : forms) {
+            form.addFormValidation(formValidation);
+        }
     }
 }

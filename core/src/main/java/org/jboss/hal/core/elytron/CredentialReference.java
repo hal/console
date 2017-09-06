@@ -73,7 +73,8 @@ public class CredentialReference {
         @Override
         public ValidationResult validate(Form<T> form) {
             FormItem<String> formItem = form.getFormItem(alternativeName);
-            if (!Strings.isNullOrEmpty(formItem.getValue()) && credentialReferenceValue.get().isDefined()) {
+            if (formItem != null && !Strings.isNullOrEmpty(formItem.getValue()) && credentialReferenceValue.get()
+                    .isDefined()) {
                 formItem.showError(resources.messages()
                         .credentialReferenceValidationError(new LabelBuilder().label(alternativeName)));
                 return ValidationResult.invalid(resources.messages().credentialReferenceConflict());
@@ -147,7 +148,7 @@ public class CredentialReference {
      * @param baseId           base ID used for the generated form and add resource dialog
      * @param metadata         the metadata of the resource which contains the {@code credential-reference}
      *                         attribute
-     * @param crName           the name of the credential-reference complex attribute, defaults to "credential-reference"
+     * @param crName           the name of the credential-reference complex attribute
      * @param alternativeName  the name of the alternative attribute
      * @param alternativeValue the value of the alternative attribute
      * @param address          the fully qualified address of the resource used for the CRUD actions
@@ -176,11 +177,13 @@ public class CredentialReference {
                                         resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                                         resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
                                         () -> setTimeout(
-                                                o -> addCredentialReference(baseId, crMetadata, credentialReferenceName, alternativeName,
+                                                o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
+                                                        alternativeName,
                                                         address, callback),
                                                 SHORT_TIMEOUT));
                             } else {
-                                addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address, callback);
+                                addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
+                                        callback);
                             }
                         })
                 .onSave(((f, changedValues) -> {
