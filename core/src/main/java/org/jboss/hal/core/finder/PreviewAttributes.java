@@ -55,40 +55,46 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         final SafeHtml htmlValue;
         final String href;
         final HTMLElement element;
+        final boolean targetBlank;
         final Iterable<HTMLElement> elements;
 
         public PreviewAttribute(final String label, final String value) {
-            this(label, value, null, null, null, null);
+            this(label, value, null, null, false, null, null);
         }
 
         public PreviewAttribute(final String label, final String value, final String href) {
-            this(label, value, null, href, null, null);
+            this(label, value, null, href, false, null, null);
+        }
+
+        public PreviewAttribute(final String label, final String value, final String href, final boolean targetBlank) {
+            this(label, value, null, href, targetBlank, null, null);
         }
 
         public PreviewAttribute(final String label, final SafeHtml value) {
-            this(label, null, value, null, null, null);
+            this(label, null, value, null, false, null, null);
         }
 
-        public PreviewAttribute(final String label, final SafeHtml value, final String href) {
-            this(label, null, value, href, null, null);
+        public PreviewAttribute(final String label, final SafeHtml value, final String href, final boolean targetBlank) {
+            this(label, null, value, href, targetBlank, null, null);
         }
 
         public PreviewAttribute(final String label, final Iterable<HTMLElement> elements) {
-            this(label, null, null, null, null, elements);
+            this(label, null, null, null, false, null, elements);
         }
 
         public PreviewAttribute(final String label, final HTMLElement element) {
-            this(label, null, null, null, element, null);
+            this(label, null, null, null, false, element, null);
         }
 
         private PreviewAttribute(final String label, final String value, final SafeHtml htmlValue, final String href,
-                final HTMLElement element, final Iterable<HTMLElement> elements) {
+                final boolean targetBlank, final HTMLElement element, final Iterable<HTMLElement> elements) {
             this.label = label;
             this.value = value;
             this.htmlValue = htmlValue;
             this.href = href;
             this.element = element;
             this.elements = elements;
+            this.targetBlank = targetBlank;
         }
 
         private boolean isUndefined() {
@@ -191,7 +197,11 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             }
         } else {
             if (previewAttribute.href != null) {
-                valueContainer.appendChild(valueContainer = a(previewAttribute.href).asElement());
+                HTMLAnchorElement anchorElement = a(previewAttribute.href).asElement();
+                if (previewAttribute.targetBlank) {
+                    anchorElement.target = "_blank";
+                }
+                valueContainer.appendChild(valueContainer = anchorElement);
             }
             if (previewAttribute.isUndefined()) {
                 valueContainer.textContent = Names.NOT_AVAILABLE;
