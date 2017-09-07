@@ -76,6 +76,7 @@ public interface UIConstants {
     String READONLY = "readonly";
     String ROLE = "role";
     String SELECTED = "selected";
+    String SEPARATOR = "separator";
     String SHOWN_MODAL = "shown.bs.modal";
     String TAB = "tab";
     String TABINDEX = "tabindex";

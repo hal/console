@@ -18,7 +18,6 @@ package org.jboss.hal.core.finder;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.security.Constraints;
 
@@ -27,7 +26,6 @@ public class ItemAction<T> {
     public static class Builder<T> {
 
         private String title;
-        private HTMLElement element;
         private ItemActionHandler<T> handler;
         private String href;
         private final Map<String, String> attributes;
@@ -36,7 +34,6 @@ public class ItemAction<T> {
 
         public Builder() {
             this.title = null;
-            this.element = null;
             this.handler = null;
             this.href = null;
             this.attributes = new HashMap<>();
@@ -80,6 +77,13 @@ public class ItemAction<T> {
         }
     }
 
+
+    public static final ItemAction SEPARATOR = new ItemAction.Builder().build();
+
+    @SuppressWarnings("unchecked")
+    public static <T> ItemAction<T> separator() {
+        return SEPARATOR;
+    }
 
     final String title;
     final ItemActionHandler<T> handler;

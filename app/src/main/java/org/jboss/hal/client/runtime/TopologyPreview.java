@@ -807,6 +807,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         if (!server.isStarted()) {
             actions.add(actionLink(event -> serverActions.start(server), resources.constants().start()));
         } else {
+            actions.add(actionLink(event -> serverActions.editUrl(server, () -> {
+                if (isVisible()) {
+                    updateServer(server);
+                }
+            }), resources.constants().editURL()));
+            actions.add(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).asElement());
             // Order is: reload, restart, (resume | suspend), stop
             actions.add(actionLink(event -> serverActions.reload(server), resources.constants().reload()));
             actions.add(actionLink(event -> serverActions.restart(server), resources.constants().restart()));

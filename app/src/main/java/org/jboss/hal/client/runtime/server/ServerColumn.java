@@ -348,23 +348,23 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     actions.add(itemActionFactory.placeRequest(Names.BOOT_ERRORS, bootErrorsRequest));
                 }
                 if (!serverActions.isPending(item)) {
-                    if (!item.isStarted()) {
-                        actions.add(new ItemAction.Builder<Server>()
-                                .title(resources.constants().start())
-                                .handler(serverActions::start)
-                                .constraint(Constraint.executable(serverConfigTemplate(item), START))
-                                .build());
-                        AddressTemplate template = AddressTemplate
-                                .of("/host=" + item.getHost() + "/server-config=" + item.getName());
-                        actions.add(itemActionFactory.remove(Names.SERVER, item.getName(),
-                                template, serverConfigTemplate(item), ServerColumn.this));
-                    }
                     actions.add(new ItemAction.Builder<Server>()
                             .title(resources.constants().copy())
                             .handler(itm -> copyServer(itm))
                             .constraint(Constraint.executable(serverConfigTemplate(item), ADD))
                             .build());
+                    if (!item.isStarted()) {
+                        AddressTemplate template = AddressTemplate
+                                .of("/host=" + item.getHost() + "/server-config=" + item.getName());
+                        actions.add(itemActionFactory.remove(Names.SERVER, item.getName(),
+                                template, serverConfigTemplate(item), ServerColumn.this));
+                    }
                     if (item.isStarted()) {
+                        actions.add(new ItemAction.Builder<Server>()
+                                .title(resources.constants().editURL())
+                                .handler(itm -> editURL(itm))
+                                .build());
+                        actions.add(ItemAction.separator());
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction.Builder<Server>()
                                 .title(resources.constants().reload())
@@ -395,6 +395,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .title(resources.constants().stop())
                                 .handler(serverActions::stop)
                                 .constraint(Constraint.executable(serverConfigTemplate(item), STOP))
+                                .build());
+                    } else {
+                        actions.add(ItemAction.separator());
+                        actions.add(new ItemAction.Builder<Server>()
+                                .title(resources.constants().start())
+                                .handler(serverActions::start)
+                                .constraint(Constraint.executable(serverConfigTemplate(item), START))
                                 .build());
                     }
                 }
@@ -492,6 +499,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         });
             });
         }
+    }
+
+    private void editURL(Server server) {
+        serverActions.editUrl(server, () -> refresh(RESTORE_SELECTION));
     }
 
     private void copyServer(Server server) {

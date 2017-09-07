@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,12 +34,13 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.config.Environment;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -64,6 +66,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -77,6 +80,8 @@ import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
@@ -86,6 +91,9 @@ import static org.jboss.hal.core.runtime.server.ServerUrlFunctions.URL_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
@@ -179,31 +187,34 @@ public class ServerActions {
     }
 
     private final EventBus eventBus;
-    private final Environment environment;
     private final Dispatcher dispatcher;
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
     private final Resources resources;
     private final Map<String, Server> pendingServers;
+    private final ServerUrlStorage serverUrlStorage;
     private StatementContext statementContext;
 
     @Inject
     public ServerActions(EventBus eventBus,
-            Environment environment,
             Dispatcher dispatcher,
+            ServerUrlStorage serverUrlStorage,
             StatementContext statementContext,
             MetadataProcessor metadataProcessor,
             @Footer Provider<Progress> progress,
             Resources resources) {
         this.eventBus = eventBus;
-        this.environment = environment;
         this.dispatcher = dispatcher;
+        this.serverUrlStorage = serverUrlStorage;
         this.statementContext = statementContext;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.resources = resources;
         this.pendingServers = new HashMap<>();
     }
+
+
+    // ------------------------------------------------------ server operations
 
     public void copyServer(Server server, Callback callback) {
         Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
@@ -322,6 +333,9 @@ public class ServerActions {
         });
     }
 
+
+    // ------------------------------------------------------ lifecycle operations
+
     public void reload(Server server) {
         reloadRestart(server,
                 new Operation.Builder(server.getServerConfigAddress(), RELOAD).param(BLOCKING, false).build(),
@@ -433,6 +447,7 @@ public class ServerActions {
                                 resources.messages().suspend(server.getName()),
                                 resources.messages().suspendServerQuestion(server.getName()),
                                 form.asElement(),
+                                Dialog.Size.MEDIUM,
                                 () -> {
 
                                     form.save();
@@ -508,6 +523,7 @@ public class ServerActions {
                                 resources.messages().stop(server.getName()),
                                 resources.messages().stopServerQuestion(server.getName()),
                                 form.asElement(),
+                                Dialog.Size.MEDIUM,
                                 () -> {
 
                                     form.save();
@@ -603,6 +619,10 @@ public class ServerActions {
                 new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
     }
 
+
+    // ------------------------------------------------------ server url methods
+
+    /** Reads the URL and updates the specified HTML element */
     public void readUrl(Server server, HTMLElement element) {
         readUrl(server, new AsyncCallback<ServerUrl>() {
             @Override
@@ -618,33 +638,115 @@ public class ServerActions {
                         .apply(a -> a.target = server.getId())
                         .textContent(url.getUrl())
                         .asElement());
+                String icon;
+                String tooltip;
+                if (url.isCustom()) {
+                    icon = fontAwesome("external-link");
+                    tooltip = resources.constants().serverUrlCustom();
+                } else {
+                    icon = pfIcon("server");
+                    tooltip = resources.constants().serverUrlManagementModel();
+                }
+                element.appendChild(
+                        span().css(icon, marginLeft5).style("cursor:help").title(tooltip).asElement()); //NON-NLS
             }
         });
     }
 
+    /** Reads the URL using the information from the specified server instance */
     public void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
         readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
     }
 
+    /** Reads the URL using the provided parameters */
     public void readUrl(boolean standalone, String host, String serverGroup, String server,
             AsyncCallback<ServerUrl> callback) {
-        // TODO check local storage
-        new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(),
-                new Outcome<FunctionContext>() {
-                    @Override
-                    public void onFailure(FunctionContext context) {
-                        logger.error(context.getError());
-                        callback.onFailure(context.getException());
-                    }
+        if (serverUrlStorage.hasUrl(host, server)) {
+            ServerUrl serverUrl = new ServerUrl(serverUrlStorage.load(host, server), true);
+            callback.onSuccess(serverUrl);
 
-                    @Override
-                    public void onSuccess(FunctionContext context) {
-                        callback.onSuccess(context.get(URL_KEY));
-                    }
-                },
-                new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
-                new ReadSocketBinding(standalone, host, server, dispatcher));
+        } else {
+            new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(),
+                    new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(FunctionContext context) {
+                            logger.error(context.getError());
+                            callback.onFailure(context.getException());
+                        }
+
+                        @Override
+                        public void onSuccess(FunctionContext context) {
+                            callback.onSuccess(context.get(URL_KEY));
+                        }
+                    },
+                    new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
+                    new ReadSocketBinding(standalone, host, server, dispatcher));
+        }
     }
+
+    public void editUrl(Server server, Callback callback) {
+        Alert alert = new Alert(Icons.ERROR, resources.messages().serverUrlError());
+        HTMLElement info = p().asElement();
+        TextBoxItem urlItem = new TextBoxItem(URL, Names.URL);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SERVER_URL_FORM, Metadata.empty())
+                .unboundFormItem(urlItem)
+                .addOnly()
+                .onSave((f, changedValues) -> {
+                    String url = urlItem.getValue();
+                    if (Strings.isNullOrEmpty(url)) {
+                        serverUrlStorage.remove(server.getHost(), server.getName());
+                    } else {
+                        serverUrlStorage.save(server.getHost(), server.getName(), url);
+                    }
+                    callback.execute();
+                })
+                .build();
+        Dialog dialog = new Dialog.Builder(resources.constants().editURL())
+                .add(alert.asElement())
+                .add(info)
+                .add(form.asElement())
+                .primary(form::save)
+                .cancel()
+                .closeIcon(true)
+                .closeOnEsc(true)
+                .build();
+        dialog.registerAttachable(form);
+        Elements.setVisible(alert.asElement(), false);
+        Elements.setVisible(info, false);
+
+        readUrl(server, new AsyncCallback<ServerUrl>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Elements.setVisible(alert.asElement(), true);
+                show(null);
+            }
+
+            @Override
+            public void onSuccess(ServerUrl serverUrl) {
+                if (serverUrl.isCustom()) {
+                    info.innerHTML = resources.messages().serverUrlCustom().asString();
+                } else {
+                    info.innerHTML = resources.messages().serverUrlManagementModel().asString();
+                }
+                Elements.setVisible(info, true);
+                show(serverUrl);
+            }
+
+            private void show(ServerUrl serverUrl) {
+                dialog.show();
+                form.edit(new ModelNode());
+                if (serverUrl != null) {
+                    urlItem.setValue(serverUrl.getUrl());
+                }
+            }
+        });
+    }
+
+    private void saveUrl(Server server, String url) {
+    }
+
+
+    // ------------------------------------------------------ helper methods
 
     private void prepare(Server server, Action action) {
         markAsPending(server); // mark as pending *before* firing the event!

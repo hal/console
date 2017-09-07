@@ -376,6 +376,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverSuspended(String name);
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
+    SafeHtml serverUrlCustom();
+    SafeHtml serverUrlError();
+    SafeHtml serverUrlManagementModel();
 
     SafeHtml sharedStoreColocated();
     SafeHtml sharedStoreMaster();

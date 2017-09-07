@@ -127,6 +127,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String duration();
 
     String edit();
+    String editURL();
     String enable();
     String enabled();
     String enableDeployment();
@@ -435,6 +436,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sendToDeadLetter();
     String serverGroupScopedRole();
     String serverName();
+    String serverUrlCustom();
+    String serverUrlManagementModel();
     String sessions();
     String settings();
     String showAll();

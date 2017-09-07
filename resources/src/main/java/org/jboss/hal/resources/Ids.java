@@ -608,6 +608,9 @@ public interface Ids {
     String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_RUNTIME, "bootstrap", ENTRY_SUFFIX);
     String SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY = build(SERVER_RUNTIME, "main-attributes", ENTRY_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_RUNTIME, "system-properties", ENTRY_SUFFIX);
+    String SERVER_URL = "server-url";
+    String SERVER_URL_FORM = build(SERVER_URL, FORM_SUFFIX);
+    String SERVER_URL_STORAGE = build(STORAGE_PREFIX, SERVER_URL);
     String SETTINGS_FORM = "settings-form";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_GROUP_ADD = build(SOCKET_BINDING_GROUP, ADD_SUFFIX);

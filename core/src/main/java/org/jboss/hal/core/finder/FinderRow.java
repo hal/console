@@ -185,10 +185,14 @@ class FinderRow<T> implements IsElement {
                                     .asElement());
                             ulCreated = true;
                         }
-                        ul.appendChild(li()
-                                .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
-                                .add(actionLink(action, true))
-                                .asElement());
+                        if (action == ItemAction.SEPARATOR) {
+                            ul.appendChild(li().css(divider).attr(UIConstants.ROLE, UIConstants.SEPARATOR).asElement());
+                        } else {
+                            ul.appendChild(li()
+                                    .data(PREVENT_SET_ITEMS, UIConstants.TRUE)
+                                    .add(actionLink(action, true))
+                                    .asElement());
+                        }
                     }
                 }
             }
