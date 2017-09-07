@@ -26,11 +26,18 @@ import jsinterop.base.JsPropertyMapOfAny;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsHelper;
+import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.ballroom.chart.Donut.Legend.NONE;
 
+/**
+ * Chart to show the relationship of a set of values to a whole.
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/donut-chart/">http://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
+ */
 public class Donut implements IsElement<HTMLElement>, Attachable {
 
     public enum Legend {
@@ -51,7 +58,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     public static class Builder {
 
         private final String unit;
-        private final Map<String, String> columns;
+        private final Map<String, String> colors;
         private final Map<String, String> names;
         private Legend legend;
         private int width;
@@ -59,7 +66,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
 
         public Builder(String unit) {
             this.unit = unit;
-            this.columns = new HashMap<>();
+            this.colors = new HashMap<>();
             this.names = new HashMap<>();
             this.legend = NONE;
             this.width = -1;
@@ -67,7 +74,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         }
 
         public Builder add(String id, String text, String color) {
-            columns.put(id, color);
+            colors.put(id, color);
             names.put(id, text);
             return this;
         }
@@ -99,13 +106,13 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         root = div().id().asElement();
         options = Charts.get().defaultDonutOptions();
         options.bindto = "#" + root.id;
-        options.donut.title = builder.unit;
-        options.legend.show = builder.legend != NONE;
         options.data = new Options.Data();
-        options.data.colors = JsHelper.asJsMap(builder.columns);
+        options.data.colors = JsHelper.asJsMap(builder.colors);
         options.data.columns = new Array<>();
         options.data.names = JsHelper.asJsMap(builder.names);
         options.data.type = "donut";
+        options.donut.title = builder.unit;
+        options.legend.show = builder.legend != NONE;
         options.size.width = builder.width != -1 ? builder.width : builder.legend.width;
         options.size.height = builder.width != -1 ? (int) (builder.width / builder.legend.ratio) : builder.legend.height;
         options.tooltip.show = true;
@@ -113,6 +120,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void attach() {
         if (api == null) {
             api = C3.generate(options);
@@ -153,6 +161,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         long total = 0;
         JsPropertyMapOfAny dataMap = JsPropertyMap.of();
         Array<Array<Any>> columns = new Array<>();
+
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String key = entry.getKey();
             long value = entry.getValue();
@@ -161,6 +170,7 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
             column.push(Any.of(key), Any.of(value));
             columns.push(column);
         }
+
         Charts.setDonutChartTitle("#" + root.id, String.valueOf(total), builder.unit);
         dataMap.set("columns", columns); //NON-NLS
         api().load(dataMap);
@@ -169,13 +179,13 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
     @SuppressWarnings("HardCodedStringLiteral")
     public void resize(int width) {
         JsPropertyMapOfAny dimension = JsPropertyMap.of();
-        dimension.set("width", Any.of(width));
-        dimension.set("height", Any.of(width / builder.legend.ratio));
+        dimension.set(UIConstants.WIDTH, Any.of(width));
+        dimension.set(UIConstants.HEIGHT, Any.of(width / builder.legend.ratio));
         api().resize(dimension);
     }
 
     private void resizeInParent() {
         HTMLElement parent = (HTMLElement) root.parentNode;
-        resize((int) parent.offsetWidth);
+        resize((int) $(parent).width());
     }
 }

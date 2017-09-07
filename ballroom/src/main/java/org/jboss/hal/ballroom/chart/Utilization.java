@@ -35,6 +35,12 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TOGGLE;
 import static org.jboss.hal.resources.UIConstants.TOOLTIP;
 
+/**
+ * The Utilization chart can be used to show a visual relationship between the total available amount of a resource,
+ * and the percentage of that resource that has been utilized.
+ *
+ * @see <a href="http://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">http://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
+ */
 public class Utilization implements IsElement {
 
     private static final String VALUE_MIN = "valuemin";

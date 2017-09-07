@@ -92,6 +92,7 @@ public interface ModelDescriptionConstants {
     String AUTO_START = "auto-start";
     String AVAILABLE_PROCESSORS = "available-processors";
     String AVERAGE_COMMIT_TIME = "average-commit-time";
+    String AVERAGE_PROCESSING_TIME = "average-processing-time";
     String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
     String BACKUP_FOR = "backup-for";
@@ -128,6 +129,7 @@ public interface ModelDescriptionConstants {
     String CHANNEL = "channel";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
+    String CLASS = "class";
     String CLASS_NAME = "class-name";
     String CLASS_PATH = "class-path";
     String CLEAR_TEXT = "clear-text";
@@ -262,6 +264,7 @@ public interface ModelDescriptionConstants {
     String FAILED_OPERATION = "failed-operation";
     String FAILED_SERVICES = "failed-services";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FAULT_COUNT = "fault-count";
     String FETCH_SIZE = "fetch-size";
     String FILE = "file";
     String FILE_AUDIT_LOG = "file-audit-log";
@@ -408,6 +411,7 @@ public interface ModelDescriptionConstants {
     String MASTER = "master";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
+    String MAX_PROCESSING_TIME = "max-processing-time";
     String MAX_POOL_SIZE = "max-pool-size";
     String MAX_THREADS = "max-threads";
     String MECHANISM_CONFIGURATIONS = "mechanism-configurations";
@@ -422,6 +426,7 @@ public interface ModelDescriptionConstants {
     String MIME_MAPPING = "mime-mapping";
     String MIN = "min";
     String MIN_POOL_SIZE = "min-pool-size";
+    String MIN_PROCESSING_TIME = "min-processing-time";
     String MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS = "missing-transitive-dependency-problems";
     String MIXED_JDBC = "mixed-jdbc";
     String MODCLUSTER = "modcluster";
@@ -575,6 +580,7 @@ public interface ModelDescriptionConstants {
     String REPLICATION_SLAVE = "replication-slave";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
+    String REQUEST_COUNT= "request-count";
     String REQUEST_PROPERTIES = "request-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";
@@ -588,6 +594,7 @@ public interface ModelDescriptionConstants {
     String RESOURCE_METHODS = "resource-methods";
     String RESOURCE_PATH = "resource-path";
     String RESPONSE = "response";
+    String RESPONSE_COUNT = "response-count";
     String RESPONSE_HEADERS = "response-headers";
     String REST_RESOURCE = "rest-resource";
     String REST_RESOURCE_PATHS = "rest-resource-paths";
@@ -734,6 +741,7 @@ public interface ModelDescriptionConstants {
     String TO = "to";
     String TO_PROFILE = "to-profile";
     String TOPIC_ADDRESS = "topic-address";
+    String TOTAL_PROCESSING_TIME = "total-processing-time";
     String TOTAL_SIZE = "total-size";
     String TOKEN_REALM = "token-realm";
     String TRANSACTION = "transaction";

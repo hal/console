@@ -38,4 +38,6 @@ public class JQuery {
     public native void bootstrapSwitch();
 
     public native void selectpicker(SelectBoxBridge.Options options);
+
+    public native float width();
 }

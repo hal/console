@@ -29,44 +29,27 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 class Options {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Size {
+    static class Axis {
 
-        public int width;
-        public int height;
+        public boolean rotated;
+        public X x;
     }
 
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Color {
+
+        public Array<String> pattern;
+    }
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     static class Data {
 
+        JsPropertyMapOfAny colors;
         Array<Array<Any>> columns;
+        Array<Array<String>> groups;
         JsPropertyMapOfAny names;
         @NonNls public String type;
-        JsPropertyMapOfAny colors;
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Legend {
-
-        public boolean show;
-        @NonNls public String position;
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Tooltip {
-
-        public boolean show;
-        public TooltipContentsFn contents;
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class Label {
-
-        public boolean show;
-
     }
 
 
@@ -78,10 +61,51 @@ class Options {
     }
 
 
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Label {
+
+        public boolean show;
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Legend {
+
+        @NonNls public String position;
+        public boolean show;
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Size {
+
+        public int height;
+        public int width;
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Tooltip {
+
+        public TooltipContentsFn contents;
+        public boolean show;
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class X {
+
+        public Array<String> categories;
+        public String type;
+    }
+
+
+    Axis axis;
+    Color color;
     String bindto;
-    Size size;
     Data data;
     Donut donut;
     Legend legend;
+    Size size;
     Tooltip tooltip;
 }

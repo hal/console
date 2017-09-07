@@ -57,6 +57,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String assignmentsOfUser();
     String attribute();
     String attributes();
+    String average();
 
     String back();
     String backToNormalMode();
@@ -294,10 +295,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managementVersion();
     String manyMessages();
     String maxUsed();
+    String maximum();
     String membership();
     String membershipOfRole();
     String message();
     String messages();
+    String milliseconds();
+    String minimum();
     String minute();
     String minutes();
     String missCount();
@@ -368,6 +372,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String preparedStatementCache();
     String preview();
     String previousPage();
+    String processingTime();
     String processors();
     String probe();
     String productName();
@@ -389,6 +394,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String rename();
     String replace();
     String replaceContent();
+    String request();
     String requests();
     String required();
     String requiredField();
@@ -397,6 +403,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String resolveExpression();
     String resolvedValue();
     String resourceRollback();
+    String response();
     String restart();
     String restartAllServices();
     String restartJvm();

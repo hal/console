@@ -57,12 +57,12 @@ public interface UIConstants {
     String FOR = "for";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HEIGHT = "height";
+    String HIDDEN = "hidden";
     String HIDDEN_MODAL = "hidden.bs.modal";
     String HREF = "href";
-    String HIDDEN = "hidden";
     String LABEL = "label";
     String LABELLED_BY = "labelledby";
-    String LISTBOX = "listbox";
     String MENU = "menu";
     String MENUITEM = "menuitem";
     String NAME = "name";
@@ -86,6 +86,7 @@ public interface UIConstants {
     String TOOLTIP = "tooltip";
     String TRUE = "true";
     String VALUE = "value";
+    String WIDTH = "width";
 
 
     static String data(String name) {

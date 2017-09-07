@@ -36,4 +36,7 @@ class Charts {
 
     @JsMethod(name = "getDefaultDonutConfig")
     native Options defaultDonutOptions();
+
+    @JsMethod(name = "getDefaultGroupedBarConfig")
+    native Options defaultGroupedBarOptions();
 }
