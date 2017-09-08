@@ -459,10 +459,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                     .title(host.getName())
                     .asElement());
-            if (host.isDomainController()) {
-                a.appendChild(span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).asElement());
-            }
             a.appendChild(span().textContent(host.getName()).asElement());
+            if (host.isDomainController()) {
+                a.appendChild(span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).asElement());
+            }
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
@@ -471,7 +471,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .asElement());
         } else {
             dropdown.appendChild(span().css(name).title(host.getName())
-                    .textContent(host.getName())
+                    .add(host.getName())
+                    .add(span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER))
                     .asElement());
         }
         return th;
