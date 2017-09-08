@@ -28,7 +28,9 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -46,9 +48,14 @@ import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
 import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -57,32 +64,46 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.host.HostColumn.HOST_CONNECTION_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = {"/host=*", "/core-service=management/host-connection=*"}, recursive = false)
+@Requires(value = {"/host=*", HOST_CONNECTION_ADDRESS}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
+
+    static final String HOST_CONNECTION_ADDRESS = "/core-service=management/host-connection=*";
+    static final AddressTemplate HOST_CONNECTION_TEMPLATE = AddressTemplate.of(HOST_CONNECTION_ADDRESS);
 
     static AddressTemplate hostTemplate(Host host) {
         return AddressTemplate.of("/host=" + host.getAddressName());
     }
 
+    private final Dispatcher dispatcher;
+    private final CrudOperations crud;
+    private final EventBus eventBus;
+    private final StatementContext statementContext;
+    private final Resources resources;
+
     @Inject
-    public HostColumn(final Finder finder,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final HostActions hostActions,
-            final Resources resources) {
+    public HostColumn(Finder finder,
+            Environment environment,
+            Dispatcher dispatcher,
+            CrudOperations crud,
+            EventBus eventBus,
+            StatementContext statementContext,
+            @Footer Provider<Progress> progress,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            HostActions hostActions,
+            Resources resources) {
 
         super(new Builder<Host>(finder, Ids.HOST, Names.HOST)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
@@ -95,19 +116,23 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+        this.dispatcher = dispatcher;
+        this.crud = crud;
+        this.eventBus = eventBus;
+        this.statementContext = statementContext;
+        this.resources = resources;
 
-        AddressTemplate pruneTemplate = AddressTemplate.of("/core-service=management/host-connection=*");
         addColumnAction(columnActionFactory.refresh(Ids.HOST_REFRESH));
         List<ColumnAction<Host>> pruneActions = new ArrayList<>();
         pruneActions.add(new ColumnAction.Builder<Host>(Ids.HOST_PRUNE_EXPIRED)
                 .title(resources.constants().pruneExpired())
                 .handler(column -> pruneExpired())
-                .constraint(Constraint.executable(pruneTemplate, PRUNE_EXPIRED))
+                .constraint(Constraint.executable(HOST_CONNECTION_TEMPLATE, PRUNE_EXPIRED))
                 .build());
         pruneActions.add(new ColumnAction.Builder<Host>(Ids.HOST_PRUNE_DISCONNECTED)
                 .title(resources.constants().pruneDisconnected())
                 .handler(column -> pruneDisconnected())
-                .constraint(Constraint.executable(pruneTemplate, PRUNE_DISCONNECTED))
+                .constraint(Constraint.executable(HOST_CONNECTION_TEMPLATE, PRUNE_DISCONNECTED))
                 .build());
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
@@ -269,10 +294,29 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     private void pruneExpired() {
-
+        DialogFactory.showConfirmation(resources.constants().pruneExpired(), resources.messages().pruneExpiredQuestion(),
+                () -> prune(PRUNE_EXPIRED));
     }
 
     private void pruneDisconnected() {
+        DialogFactory.showConfirmation(resources.constants().pruneDisconnected(), resources.messages().pruneDisconnectedQuestion(),
+                () -> prune(PRUNE_DISCONNECTED));
+    }
 
+    private void prune(String operation) {
+        ResourceAddress address = new ResourceAddress().add(CORE_SERVICE, MANAGEMENT);
+        crud.readChildren(address, HOST_CONNECTION, children -> {
+            List<Operation> operations = children.stream()
+                    .map(property -> {
+                        ResourceAddress hcAddress = HOST_CONNECTION_TEMPLATE.resolve(statementContext,
+                                property.getName());
+                        return new Operation.Builder(hcAddress, operation).build();
+                    })
+                    .collect(toList());
+            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                MessageEvent.fire(eventBus, Message.success(resources.messages().pruneSuccessful()));
+                refresh(RESTORE_SELECTION);
+            });
+        });
     }
 }

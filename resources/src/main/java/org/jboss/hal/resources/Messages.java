@@ -270,6 +270,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml profileNotUsedInServerGroups();
     SafeHtml profileUsedInServerGroups(SafeHtml serverGroupLinks);
     SafeHtml propertiesHint();
+    SafeHtml pruneDisconnectedQuestion();
+    SafeHtml pruneExpiredQuestion();
+    SafeHtml pruneSuccessful();
 
     String recordedOperations(@PluralCount int count);
     SafeHtml recordingStarted();
