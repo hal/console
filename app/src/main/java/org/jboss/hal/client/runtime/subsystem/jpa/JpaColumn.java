@@ -48,8 +48,8 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-@Requires(JPA_DEPLOYMENT_ADDRESS)
 @AsyncColumn(Ids.JPA_RUNTIME)
+@Requires(JPA_DEPLOYMENT_ADDRESS)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
 
     @Inject
@@ -122,6 +122,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
         ItemsProvider<JpaStatistic> itemsProvider = (context, callback) ->
                 deploymentResources.readChildren(JPA, HIBERNATE_PERSISTENCE_UNIT, JpaStatistic::new,
                         callback::onSuccess);
+
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items

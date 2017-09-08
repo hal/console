@@ -38,9 +38,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.HPU_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
 
@@ -122,7 +122,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
         if (subdeployment == null) {
             address = JPA_DEPLOYMENT_TEMPLATE.resolve(statementContext, deployment, resourceName);
         } else {
-            address = JPA_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext, deployment, subdeployment, resourceName);
+            address = HPU_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext, deployment, subdeployment, resourceName);
         }
         return address;
     }
