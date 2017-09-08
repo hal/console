@@ -28,7 +28,11 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** Provides methods to read subsystem resources from (sub)deployments. */
@@ -38,6 +42,7 @@ public class DeploymentResources {
     public static final String SUBDEPLOYMENT_ADDRESS = "{selected.host}/{selected.server}/deployment=*/subdeployment=*";
     private static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
     private static final AddressTemplate SUBDEPLOYMENT_TEMPLATE = AddressTemplate.of(SUBDEPLOYMENT_ADDRESS);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentResources.class);
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -82,6 +87,10 @@ public class DeploymentResources {
                     result.step(0).get(RESULT).asList().forEach(nodeConsumer);
                     result.step(1).get(RESULT).asList().forEach(nodeConsumer);
                     callback.accept(nodes);
+                },
+                (operation, failure) -> {
+                    logger.error("Unable to read {}/{} deployment resources: {}", subsystem, resource, failure);
+                    callback.accept(emptyList());
                 });
     }
 }
