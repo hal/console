@@ -45,6 +45,8 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.FinderPath;
@@ -126,6 +128,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
     private final HTMLElement serverUrl;
+    private final LabelBuilder labelBuilder;
 
     TopologyPreview(final SecurityContextRegistry securityContextRegistry,
             final Environment environment,
@@ -149,6 +152,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         this.serverGroupActions = serverGroupActions;
         this.serverActions = serverActions;
         this.resources = resources;
+        this.labelBuilder = new LabelBuilder();
 
         eventBus.addHandler(HostActionEvent.getType(), this);
         eventBus.addHandler(HostResultEvent.getType(), this);
@@ -180,13 +184,20 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .append(PRODUCT_VERSION)
                 .append(HOST_STATE)
                 .append(RUNNING_MODE)
-                .append(model -> new PreviewAttribute(
-                        "Management Version", //NON-NLS
+                .append(model -> new PreviewAttribute(labelBuilder.label(MANAGEMENT_VERSION),
                         String.join(".",
                                 model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
-                ));
+                ))
+                .append(model -> new PreviewAttribute(labelBuilder.label(LAST_CONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getLastConnected())
+                                : Names.NOT_AVAILABLE))
+                .append(model -> new PreviewAttribute(labelBuilder.label(DISCONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getDisconnected())
+                                : Names.NOT_AVAILABLE));
 
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP)
                 .append(model -> {
@@ -444,25 +455,21 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLTableCellElement th = th()
                 .css(asList(rowHeader, statusCss(host)).toArray(new String[]{}))
                 .on(click, event -> hostDetails(host))
-                .data("host", host.getName())
+                .data("host", host.getName()) //NON-NLS
                 .add(div().css(hostContainer)
                         .add(dropdown = div().css(CSS.dropdown).asElement()))
                 .asElement();
 
-        if (host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
-            HTMLElement a;
+        HTMLElement hostNameElement;
+        if (host.isConnected() && host.hasServers() && !hostActions.isPending(host) && isAllowed(host)) {
             String hostDropDownId = Ids.host(host.getAddressName());
-            dropdown.appendChild(a = a()
+            dropdown.appendChild(hostNameElement = a()
                     .id(hostDropDownId)
                     .css(clickable, dropdownToggle, name)
                     .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                     .aria(UIConstants.HAS_POPUP, UIConstants.TRUE)
                     .title(host.getName())
                     .asElement());
-            a.appendChild(span().textContent(host.getName()).asElement());
-            if (host.isDomainController()) {
-                a.appendChild(span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).asElement());
-            }
             dropdown.appendChild(ul()
                     .css(dropdownMenu)
                     .attr(UIConstants.ROLE, UIConstants.MENU)
@@ -470,11 +477,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     .addAll(hostActions(host))
                     .asElement());
         } else {
-            dropdown.appendChild(span().css(name).title(host.getName())
-                    .add(host.getName())
-                    .add(span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER))
+            dropdown.appendChild(hostNameElement = span().css(name).title(host.getName())
                     .asElement());
         }
+        hostNameElement.appendChild(hostNameElement.ownerDocument.createTextNode(host.getName()));
+        if (!host.isConnected()) {
+            hostNameElement.classList.add(disconnected);
+            hostNameElement.title = hostNameElement.title + " (" + resources.constants().disconnected() + ")";
+        }
+        if (host.isDomainController()) {
+            hostNameElement.appendChild(
+                    span().css(fontAwesome("star"), marginLeft5).title(Names.DOMAIN_CONTROLLER).asElement());
+        }
+
         return th;
     }
 
@@ -482,7 +497,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLElement dropdown;
         HTMLTableCellElement element = th()
                 .on(click, event -> serverGroupDetails(serverGroup))
-                .data("serverGroup", serverGroup.getName())
+                .data("serverGroup", serverGroup.getName()) //NON-NLS
                 .add(div().css(serverGroupContainer)
                         .add(dropdown = div().css(CSS.dropdown).asElement()))
                 .asElement();
@@ -629,8 +644,16 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
 
         hostAttributes.refresh(host);
-        hostAttributes.setVisible(HOST_STATE, hostActions.isPending(host));
-        hostAttributes.setVisible(RUNNING_MODE, hostActions.isPending(host));
+        hostAttributes.setVisible(RELEASE_CODENAME, host.isConnected());
+        hostAttributes.setVisible(RELEASE_VERSION, host.isConnected());
+        hostAttributes.setVisible(PRODUCT_NAME, host.isConnected());
+        hostAttributes.setVisible(PRODUCT_VERSION, host.isConnected());
+        hostAttributes.setVisible(HOST_STATE, host.isConnected() && hostActions.isPending(host));
+        hostAttributes.setVisible(RUNNING_MODE, host.isConnected() && hostActions.isPending(host));
+        hostAttributes.setVisible(labelBuilder.label(MANAGEMENT_VERSION), host.isConnected());
+        hostAttributes.setVisible(labelBuilder.label(LAST_CONNECTED), !host.isConnected());
+        hostAttributes.setVisible(labelBuilder.label(DISCONNECTED), !host.isConnected());
+
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, true);
         Elements.setVisible(serverAttributesSection, false);

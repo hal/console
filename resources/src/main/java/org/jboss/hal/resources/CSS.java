@@ -95,6 +95,7 @@ public interface CSS {
     String deprecated = "deprecated";
     String disabled = "disabled";
     String divider = "divider";
+    String disconnected = "disconnected";
     String dlHorizontal = "dl-horizontal";
     String drawerPf = "drawer-pf";
     String drawerPfAction = "drawer-pf-action";

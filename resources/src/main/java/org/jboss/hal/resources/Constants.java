@@ -119,6 +119,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String directory();
     String disable();
     String disabled();
+    String disconnected();
+    String disconnectedUpper();
     String domainConfigurationChanged();
     String domainConfigurationChangedTooltip();
     String download();
@@ -379,6 +381,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productName();
     String productVersion();
     String providedBy();
+    String prune();
+    String pruneDisconnected();
+    String pruneExpired();
 
     String queue();
 

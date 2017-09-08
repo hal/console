@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.runtime.host;
 
+import java.util.Date;
+
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
@@ -30,6 +32,7 @@ import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
@@ -37,21 +40,43 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 /**
  * For the host we need to distinguish between the address-name (the name which is part of the host address)
  * and the model-node-name (the name which is part of the host model node).
- * When the latter is changed, the former remains unchanged until a host reload was executed.
+ * When the latter is changed, the former remains unchanged until the host reload has been executed.
  */
 public class Host extends HasServersNode {
 
+    public static Host disconnected(String name, Date disconnected, Date lastConnected) {
+        return new Host(name, disconnected, lastConnected);
+    }
+
+    private final boolean connected;
+    private final Date disconnected;
+    private final Date lastConnected;
     private final String addressName;
     private final Version managementVersion;
 
-    public Host(final ModelNode node) {
+    private Host(String name, Date disconnected, Date lastConnected) {
+        super(name, new ModelNode().setEmptyObject());
+        this.connected = false;
+        this.disconnected = disconnected;
+        this.lastConnected = lastConnected;
+        this.addressName = name;
+        this.managementVersion = Version.UNDEFINED;
+    }
+
+    public Host(ModelNode node) {
         super(node.get(NAME).asString(), node);
+        this.connected = true;
+        this.disconnected = null;
+        this.lastConnected = null;
         this.addressName = node.get(NAME).asString();
         this.managementVersion = ManagementModel.parseVersion(node);
     }
 
-    public Host(final Property property) {
+    public Host( Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
+        this.connected = true;
+        this.disconnected = null;
+        this.lastConnected = null;
         this.addressName = property.getName();
         this.managementVersion = ManagementModel.parseVersion(property.getValue());
     }
@@ -64,8 +89,20 @@ public class Host extends HasServersNode {
         return managementVersion;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public Date getDisconnected() {
+        return disconnected;
+    }
+
+    public Date getLastConnected() {
+        return lastConnected;
+    }
+
     public boolean isDomainController() {
-        return hasDefined("master") && get("master").asBoolean(); //NON-NLS
+        return hasDefined(MASTER) && get(MASTER).asBoolean();
     }
 
     public RunningState getHostState() {

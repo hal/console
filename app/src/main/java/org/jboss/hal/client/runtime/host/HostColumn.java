@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
@@ -28,6 +29,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -35,6 +37,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActionEvent;
@@ -56,14 +59,14 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 @Column(Ids.HOST)
-@Requires(value = "/host=*", recursive = false)
+@Requires(value = {"/host=*", "/core-service=management/host-connection=*"}, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static AddressTemplate hostTemplate(Host host) {
@@ -82,33 +85,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             final Resources resources) {
 
         super(new Builder<Host>(finder, Ids.HOST, Names.HOST)
-
-                .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
-
-                .itemsProvider((context, callback) ->
-                        new Async<FunctionContext>(progress.get()).waterfall(
-                                new FunctionContext(),
-                                new Outcome<FunctionContext>() {
-                                    @Override
-                                    public void onFailure(final FunctionContext context) {
-                                        callback.onFailure(context.getException());
-                                    }
-
-                                    @Override
-                                    public void onSuccess(final FunctionContext context) {
-                                        List<Host> hosts = context.get(TopologyFunctions.HOSTS);
-                                        callback.onSuccess(hosts);
-
-                                        // Restore pending visualization
-                                        hosts.stream()
-                                                .filter(hostActions::isPending)
-                                                .forEach(host -> ItemMonitor
-                                                        .startProgress(Ids.host(host.getAddressName())));
-                                    }
-                                },
-                                new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
-                                new TopologyFunctions.HostsStartedServers(environment, dispatcher)))
-
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
                 .onPreview(item -> new HostPreview(hostActions, item, resources))
                 .pinnable()
@@ -119,6 +95,59 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+
+        AddressTemplate pruneTemplate = AddressTemplate.of("/core-service=management/host-connection=*");
+        addColumnAction(columnActionFactory.refresh(Ids.HOST_REFRESH));
+        List<ColumnAction<Host>> pruneActions = new ArrayList<>();
+        pruneActions.add(new ColumnAction.Builder<Host>(Ids.HOST_PRUNE_EXPIRED)
+                .title(resources.constants().pruneExpired())
+                .handler(column -> pruneExpired())
+                .constraint(Constraint.executable(pruneTemplate, PRUNE_EXPIRED))
+                .build());
+        pruneActions.add(new ColumnAction.Builder<Host>(Ids.HOST_PRUNE_DISCONNECTED)
+                .title(resources.constants().pruneDisconnected())
+                .handler(column -> pruneDisconnected())
+                .constraint(Constraint.executable(pruneTemplate, PRUNE_DISCONNECTED))
+                .build());
+        addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
+
+        ItemsProvider<Host> itemsProvider = (context, callback) ->
+                new Async<FunctionContext>(progress.get()).waterfall(
+                        new FunctionContext(),
+                        new Outcome<FunctionContext>() {
+                            @Override
+                            public void onFailure(final FunctionContext context) {
+                                callback.onFailure(context.getException());
+                            }
+
+                            @Override
+                            public void onSuccess(final FunctionContext context) {
+                                List<Host> hosts = context.get(TopologyFunctions.HOSTS);
+                                callback.onSuccess(hosts);
+
+                                // Restore pending visualization
+                                hosts.stream()
+                                        .filter(hostActions::isPending)
+                                        .forEach(host -> ItemMonitor
+                                                .startProgress(Ids.host(host.getAddressName())));
+                            }
+                        },
+                        new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
+                        new TopologyFunctions.HostsStartedServers(environment, dispatcher));
+        setItemsProvider(itemsProvider);
+
+        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Host>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(List<Host> result) {
+                // only connected hosts please!
+                callback.onSuccess(result.stream().filter(Host::isConnected).collect(toList()));
+            }
+        }));
 
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
@@ -141,12 +170,15 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             public String getFilterData() {
                 return String.join(" ", item.getName(),
                         item.isDomainController() ? "dc" : "hc", //NON-NLS
+                        item.isConnected() ? "on" : "off", //NON-NLS
                         ModelNodeHelper.asAttributeValue(item.getHostState()));
             }
 
             @Override
             public String getTooltip() {
-                if (hostActions.isPending(item)) {
+                if (!item.isConnected()) {
+                    return resources.constants().disconnectedUpper();
+                } else if (hostActions.isPending(item)) {
                     return resources.constants().pending();
                 } else if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
@@ -165,7 +197,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public HTMLElement getIcon() {
-                if (hostActions.isPending(item)) {
+                if (!item.isConnected()) {
+                    return Icons.disconnected();
+                } else if (hostActions.isPending(item)) {
                     return Icons.unknown();
                 } else if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
@@ -180,29 +214,33 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public String nextColumn() {
-                return SERVER;
+                return item.isConnected() ? SERVER : null;
             }
 
             @Override
             public List<ItemAction<Host>> actions() {
-                PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
-                        .with(HOST, item.getAddressName()).build();
-                List<ItemAction<Host>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
-                if (!hostActions.isPending(item)) {
-                    actions.add(new ItemAction.Builder<Host>()
-                            .title(resources.constants().reload())
-                            .handler(hostActions::reload)
-                            .constraint(Constraint.executable(hostTemplate(item), RELOAD_SERVERS))
-                            .build());
-                    actions.add(new ItemAction.Builder<Host>()
-                            .title(resources.constants().restart())
-                            .handler(hostActions::restart)
-                            .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
-                            .build());
-                    // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                if (item.isConnected()) {
+                    PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
+                            .with(HOST, item.getAddressName()).build();
+                    List<ItemAction<Host>> actions = new ArrayList<>();
+                    actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
+                    if (!hostActions.isPending(item)) {
+                        actions.add(new ItemAction.Builder<Host>()
+                                .title(resources.constants().reload())
+                                .handler(hostActions::reload)
+                                .constraint(Constraint.executable(hostTemplate(item), RELOAD_SERVERS))
+                                .build());
+                        actions.add(new ItemAction.Builder<Host>()
+                                .title(resources.constants().restart())
+                                .handler(hostActions::restart)
+                                .constraint(Constraint.executable(hostTemplate(item), SHUTDOWN))
+                                .build());
+                        // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                    }
+                    return actions;
+                } else {
+                    return emptyList();
                 }
-                return actions;
             }
         });
 
@@ -220,6 +258,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void onHostResult(final HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
@@ -227,5 +266,13 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
             refresh(RESTORE_SELECTION);
         }
+    }
+
+    private void pruneExpired() {
+
+    }
+
+    private void pruneDisconnected() {
+
     }
 }

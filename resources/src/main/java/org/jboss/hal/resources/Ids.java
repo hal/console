@@ -315,6 +315,9 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = build(HOMEPAGE, "runtime-server-section");
     String HOST = "host";
     String HOST_REFRESH = build(HOST, REFRESH_SUFFIX);
+    String HOST_PRUNE_ACTIONS = build(HOST, "prune-actions");
+    String HOST_PRUNE_EXPIRED = build(HOST, "prune-expired");
+    String HOST_PRUNE_DISCONNECTED = build(HOST, "prune-disconnected");
     String INTERFACE = "interface";
     String INTERFACE_ADD = build(INTERFACE, ADD_SUFFIX);
     String INTERFACE_REFRESH = build(INTERFACE, REFRESH_SUFFIX);
@@ -853,10 +856,6 @@ public interface Ids {
 
     static String serverGroupDeployment(String serverGroup, String name) {
         return build(serverGroup, name);
-    }
-
-    static String serverGroupServer(String serverGroup, String server) {
-        return build(serverGroup, server);
     }
 
     static String undertowApplicationSecurityDomain(String name) {

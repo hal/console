@@ -17,6 +17,8 @@ package org.jboss.hal.client.runtime.host;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
@@ -45,13 +47,14 @@ class HostPreview extends RuntimePreview<Host> {
     private final PreviewAttributes<Host> attributes;
     private final HostActions hostActions;
     private final Resources resources;
+    private final LabelBuilder labelBuilder;
 
-    @SuppressWarnings("HardCodedStringLiteral")
     HostPreview(final HostActions hostActions, final Host host,
             final Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
         this.hostActions = hostActions;
         this.resources = resources;
+        this.labelBuilder = new LabelBuilder();
 
         previewBuilder()
                 .add(alertContainer = div()
@@ -74,11 +77,19 @@ class HostPreview extends RuntimePreview<Host> {
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
                 .append(model -> new PreviewAttribute(
-                        "Management Version",
+                        labelBuilder.label(MANAGEMENT_VERSION),
                         String.join(".", model.get(MANAGEMENT_MAJOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MINOR_VERSION).asString(),
                                 model.get(MANAGEMENT_MICRO_VERSION).asString())
-                ));
+                ))
+                .append(model -> new PreviewAttribute(labelBuilder.label(LAST_CONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getLastConnected())
+                                : Names.NOT_AVAILABLE))
+                .append(model -> new PreviewAttribute(labelBuilder.label(DISCONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getDisconnected())
+                                : Names.NOT_AVAILABLE));
         previewBuilder().addAll(attributes);
 
         update(host);
@@ -86,7 +97,9 @@ class HostPreview extends RuntimePreview<Host> {
 
     @Override
     public void update(final Host host) {
-        if (hostActions.isPending(host)) {
+        if (!host.isConnected()) {
+            disconnected(resources.messages().hostDisconnected(host.getName()));
+        } else if (hostActions.isPending(host)) {
             pending(resources.messages().hostPending(host.getName()));
         } else if (host.isAdminMode()) {
             adminOnly(resources.messages().hostAdminMode(host.getName()));
@@ -107,6 +120,18 @@ class HostPreview extends RuntimePreview<Host> {
         Elements.toggle(reloadLink, hidden, !host.needsReload());
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
-        attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
+        if (host.isStarting()) {
+            attributes.asElements().forEach(element -> Elements.setVisible(element, false));
+        } else {
+            attributes.setVisible(RELEASE_CODENAME, host.isConnected());
+            attributes.setVisible(RELEASE_VERSION, host.isConnected());
+            attributes.setVisible(PRODUCT_NAME, host.isConnected());
+            attributes.setVisible(PRODUCT_VERSION, host.isConnected());
+            attributes.setVisible(HOST_STATE, host.isConnected() && hostActions.isPending(host));
+            attributes.setVisible(RUNNING_MODE, host.isConnected() && hostActions.isPending(host));
+            attributes.setVisible(labelBuilder.label(MANAGEMENT_VERSION), host.isConnected());
+            attributes.setVisible(labelBuilder.label(LAST_CONNECTED), !host.isConnected());
+            attributes.setVisible(labelBuilder.label(DISCONNECTED), !host.isConnected());
+        }
     }
 }

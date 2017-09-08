@@ -303,6 +303,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void onHostResult(final HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();

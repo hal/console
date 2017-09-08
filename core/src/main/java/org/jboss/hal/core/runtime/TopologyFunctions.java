@@ -18,6 +18,7 @@ package org.jboss.hal.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,19 +31,19 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
@@ -50,6 +51,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 /** Set of functions to read runtime data like running server of a specific server group. */
 public class TopologyFunctions {
@@ -67,18 +69,28 @@ public class TopologyFunctions {
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER_CONFIG, "*");
+
     private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER, "*");
+
     private static final Operation HOSTS_OPERATION = new Operation.Builder(ResourceAddress.root(),
-            READ_CHILDREN_RESOURCES_OPERATION
-    )
+            READ_CHILDREN_RESOURCES_OPERATION)
             .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
             .param(INCLUDE_RUNTIME, true)
             .build();
+
+    private static final Operation DISCONNECTED_HOSTS = new Operation.Builder(
+            new ResourceAddress()
+                    .add(CORE_SERVICE, MANAGEMENT)
+                    .add(HOST_CONNECTION, "*"),
+            QUERY)
+            .param(SELECT, new ModelNode().add(EVENTS))
+            .param(WHERE, new ModelNode().set(CONNECTED, false))
+            .build();
+
     private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(ResourceAddress.root(),
-            READ_CHILDREN_RESOURCES_OPERATION
-    )
+            READ_CHILDREN_RESOURCES_OPERATION)
             .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
             .param(INCLUDE_RUNTIME, true)
             .build();
@@ -114,7 +126,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 List<Host> hosts = Collections.emptyList();
                 List<ServerGroup> serverGroups = Collections.emptyList();
@@ -125,23 +137,30 @@ public class TopologyFunctions {
                 control.proceed();
 
             } else {
-                Composite composite = new Composite(HOSTS_OPERATION, SERVER_GROUPS_OPERATION,
+                Composite composite = new Composite(
+                        HOSTS_OPERATION,
+                        DISCONNECTED_HOSTS,
+                        SERVER_GROUPS_OPERATION,
                         serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET).build());
                 dispatcher.executeInFunction(control, composite,
                         (CompositeResult result) -> {
 
-                            List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(
-                                    result.step(0).get(RESULT).asPropertyList());
+                            List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
+                                    .map(Host::new)
+                                    .collect(toList());
+                            List<Host> disconnectedHosts = disconnectedHosts(result.step(1).get(RESULT));
+                            List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(connectedHosts,
+                                    disconnectedHosts);
                             control.getContext().set(HOSTS, hosts);
 
-                            List<ServerGroup> serverGroups = result.step(1).get(RESULT).asPropertyList().stream()
+                            List<ServerGroup> serverGroups = result.step(2).get(RESULT).asPropertyList().stream()
                                     .map(ServerGroup::new)
                                     .sorted(comparing(ServerGroup::getName))
                                     .collect(toList());
                             control.getContext().set(SERVER_GROUPS, serverGroups);
 
-                            Map<String, Server> serverConfigsByName = serverConfigsByName(
-                                    result.step(2).get(RESULT).asList());
+                            Map<String, Server> serverConfigsByName = serverConfigsById(
+                                    result.step(3).get(RESULT).asList());
                             control.getContext().set(SERVERS, Lists.newArrayList(serverConfigsByName.values()));
 
                             addServersToHosts(hosts, serverConfigsByName.values());
@@ -162,13 +181,13 @@ public class TopologyFunctions {
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public TopologyStartedServers(final Environment environment, final Dispatcher dispatcher) {
+        public TopologyStartedServers(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -200,18 +219,22 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                Composite composite = new Composite(HOSTS_OPERATION,
+                Composite composite = new Composite(HOSTS_OPERATION, DISCONNECTED_HOSTS,
                         serverConfigOperation(NAME, GROUP, STATUS).build());
                 dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
 
-                    List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(
-                            result.step(0).get(RESULT).asPropertyList());
+                    List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
+                            .map(Host::new)
+                            .collect(toList());
+                    List<Host> disconnectedHosts = disconnectedHosts(result.step(1).get(RESULT));
+                    List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(connectedHosts,
+                            disconnectedHosts);
 
-                    Map<String, Server> serverConfigsByName = serverConfigsByName(result.step(1).get(RESULT).asList());
+                    Map<String, Server> serverConfigsByName = serverConfigsById(result.step(2).get(RESULT).asList());
                     addServersToHosts(hosts, serverConfigsByName.values());
 
                     control.getContext().set(HOSTS, hosts);
@@ -223,60 +246,27 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the {@code server} resource attributes for started servers across hosts. Expects a list of hosts in the
-     * context as provided by {@link HostsWithServerConfigs}.
+     * Reads the {@code server} resource attributes for started servers across connected hosts. Expects a list of hosts
+     * in the context as provided by {@link HostsWithServerConfigs}.
      */
     public static class HostsStartedServers implements Function<FunctionContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public HostsStartedServers(final Environment environment, final Dispatcher dispatcher) {
+        public HostsStartedServers(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
                 List<Host> hosts = control.getContext().get(HOSTS);
-                if (hosts != null) {
-                    List<Server> servers = hosts.stream()
-                            .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
-                            .collect(toList());
-                    Composite composite = serverRuntimeComposite(servers);
-                    if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByHostAndServerName = servers.stream()
-                                .collect(toMap(server -> Ids.hostServer(server.getHost(), server.getName()),
-                                        identity()));
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-                                ModelNode payload = iterator.next().get(RESULT);
-                                String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
-                                String serverName = payload.get(NAME).asString();
-                                String id = Ids.hostServer(hostName, serverName);
-                                Server server = serverConfigsByHostAndServerName.get(id);
-                                //noinspection Duplicates
-                                if (server != null) {
-                                    server.addServerAttributes(payload);
-                                    if (iterator.hasNext()) {
-                                        List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                                        server.setBootErrors(!bootErrors.isEmpty());
-                                    } else {
-                                        logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                                    }
-                                }
-                            }
-                            control.proceed();
-                        });
-                    } else {
-                        control.proceed();
-                    }
-                } else {
-                    control.proceed();
-                }
+                List<Host> connectedHosts = hosts.stream().filter(Host::isConnected).collect(toList());
+                processRunningServers(connectedHosts, dispatcher, control);
             }
         }
     }
@@ -293,13 +283,13 @@ public class TopologyFunctions {
         private final String hostName;
         private final Dispatcher dispatcher;
 
-        public HostWithServerConfigs(final String hostName, final Dispatcher dispatcher) {
+        public HostWithServerConfigs(String hostName, Dispatcher dispatcher) {
             this.hostName = hostName;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
             Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
@@ -330,12 +320,12 @@ public class TopologyFunctions {
 
         private final Dispatcher dispatcher;
 
-        public HostStartedServers(final Dispatcher dispatcher) {
+        public HostStartedServers(Dispatcher dispatcher) {
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             Host host = control.getContext().get(HOST);
             if (host != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, host.getServers());
@@ -343,6 +333,51 @@ public class TopologyFunctions {
                 control.proceed();
             }
         }
+    }
+
+    private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Host> connected,
+            List<Host> disconnected) {
+        List<Host> hosts = new ArrayList<>();
+        hosts.addAll(connected);
+        hosts.addAll(disconnected);
+        hosts.sort(comparing(Host::getName));
+
+        Host domainController = null;
+        for (Iterator<Host> iterator = hosts.iterator();
+                iterator.hasNext() && domainController == null; ) {
+            Host host = iterator.next();
+            if (host.isDomainController()) {
+                domainController = host;
+                iterator.remove();
+            }
+        }
+        if (domainController != null) {
+            hosts.add(0, domainController);
+        }
+        return hosts;
+    }
+
+    private static List<Host> disconnectedHosts(ModelNode modelNode) {
+        return modelNode.asList().stream()
+                .filter(node -> !node.isFailure())
+                .map(node -> {
+                    String name = new ResourceAddress(node.get(ADDRESS)).lastValue();
+                    long registered = 0;
+                    long unregistered = 0;
+                    for (ModelNode event : failSafeList(node, RESULT + "/" + EVENTS)) {
+                        if (event.hasDefined(TYPE) && event.hasDefined(TIMESTAMP)) {
+                            if (REGISTERED.equals(event.get(TYPE).asString())) {
+                                registered = max(registered, event.get(TIMESTAMP).asLong());
+                            } else if (UNREGISTERED.equals(event.get(TYPE).asString())) {
+                                unregistered = max(unregistered, event.get(TIMESTAMP).asLong());
+                            }
+                        }
+                    }
+                    Date disconnected = unregistered != 0 ? new Date(unregistered) : null;
+                    Date lastConnected = registered != 0 ? new Date(registered) : null;
+                    return Host.disconnected(name, disconnected, lastConnected);
+                })
+                .collect(toList());
     }
 
 
@@ -360,13 +395,13 @@ public class TopologyFunctions {
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public ServerGroupsWithServerConfigs(final Environment environment, final Dispatcher dispatcher) {
+        public ServerGroupsWithServerConfigs(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -379,7 +414,7 @@ public class TopologyFunctions {
                             .sorted(comparing(ServerGroup::getName))
                             .collect(toList());
 
-                    Map<String, Server> serverConfigsByName = serverConfigsByName(result.step(1).get(RESULT).asList());
+                    Map<String, Server> serverConfigsByName = serverConfigsById(result.step(1).get(RESULT).asList());
                     addServersToServerGroups(serverGroups, serverConfigsByName.values());
 
                     control.getContext().set(SERVER_GROUPS, serverGroups);
@@ -399,52 +434,18 @@ public class TopologyFunctions {
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public ServerGroupsStartedServers(final Environment environment, final Dispatcher dispatcher) {
+        public ServerGroupsStartedServers(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
                 List<ServerGroup> serverGroups = control.getContext().get(SERVER_GROUPS);
-                if (serverGroups != null) {
-                    List<Server> servers = serverGroups.stream()
-                            .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
-                            .collect(toList());
-                    Composite composite = serverRuntimeComposite(servers);
-                    if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByServerGroupAndServerName = servers.stream()
-                                .collect(toMap(server -> Ids.serverGroupServer(server.getServerGroup(),
-                                        server.getName()), identity()));
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
-                                ModelNode payload = iterator.next().get(RESULT);
-                                String serverGroupName = payload.get(ModelDescriptionConstants.SERVER_GROUP).asString();
-                                String serverName = payload.get(NAME).asString();
-                                String id = Ids.serverGroupServer(serverGroupName, serverName);
-                                Server server = serverConfigsByServerGroupAndServerName.get(id);
-                                //noinspection Duplicates
-                                if (server != null) {
-                                    server.addServerAttributes(payload);
-                                    if (iterator.hasNext()) {
-                                        List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
-                                        server.setBootErrors(!bootErrors.isEmpty());
-                                    } else {
-                                        logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
-                                    }
-                                }
-                            }
-                            control.proceed();
-                        });
-                    } else {
-                        control.proceed();
-                    }
-                } else {
-                    control.proceed();
-                }
+                processRunningServers(serverGroups, dispatcher, control);
             }
         }
     }
@@ -461,13 +462,13 @@ public class TopologyFunctions {
         private final String serverGroupName;
         private final Dispatcher dispatcher;
 
-        public ServerGroupWithServerConfigs(final String serverGroupName, final Dispatcher dispatcher) {
+        public ServerGroupWithServerConfigs(String serverGroupName, Dispatcher dispatcher) {
             this.serverGroupName = serverGroupName;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
             Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
@@ -504,12 +505,12 @@ public class TopologyFunctions {
 
         private final Dispatcher dispatcher;
 
-        public ServerGroupStartedServers(final Dispatcher dispatcher) {
+        public ServerGroupStartedServers(Dispatcher dispatcher) {
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             ServerGroup serverGroup = control.getContext().get(SERVER_GROUP);
             if (serverGroup != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, serverGroup.getServers());
@@ -534,15 +535,14 @@ public class TopologyFunctions {
         private final Dispatcher dispatcher;
         private final ModelNode query;
 
-        public RunningServersQuery(final Environment environment, final Dispatcher dispatcher,
-                final ModelNode query) {
+        public RunningServersQuery(Environment environment, Dispatcher dispatcher, ModelNode query) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.query = query;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
                 control.getContext().set(RUNNING_SERVERS, servers);
@@ -582,9 +582,6 @@ public class TopologyFunctions {
         }
     }
 
-
-    // ------------------------------------------------------ helper methods
-
     private static Operation.Builder serverConfigOperation(String first, String... rest) {
         ModelNode select = new ModelNode().add(first);
         if (rest != null) {
@@ -596,39 +593,18 @@ public class TopologyFunctions {
                 .param(SELECT, select);
     }
 
-    private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Property> properties) {
-        // first collect all hosts, sort them by name and finally
-        // remove the domain controller to add it as first element
-        List<Host> allHosts = properties.stream()
-                .map(Host::new)
-                .sorted(comparing(Host::getName))
-                .collect(toList());
-        Host domainController = null;
-        List<Host> hosts = new ArrayList<>(allHosts);
-        for (Iterator<Host> iterator = hosts.iterator();
-                iterator.hasNext() && domainController == null; ) {
-            Host host = iterator.next();
-            if (host.isDomainController()) {
-                domainController = host;
-                iterator.remove();
-            }
-        }
-        if (domainController != null) {
-            hosts.add(0, domainController);
-        }
-        return hosts;
-    }
-
-    private static void addServersToHosts(final List<Host> hosts, final Collection<Server> servers) {
+    private static void addServersToHosts(List<Host> hosts, Collection<Server> servers) {
         Map<String, List<Server>> serversByHost = servers.stream()
                 .collect(groupingBy(Server::getHost));
-        hosts.forEach(host -> {
-            List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
-            serversOfHost.forEach(host::addServer);
-        });
+        hosts.stream()
+                .filter(Host::isConnected)
+                .forEach(host -> {
+                    List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
+                    serversOfHost.forEach(host::addServer);
+                });
     }
 
-    private static void addServersToServerGroups(final List<ServerGroup> serverGroups,
+    private static void addServersToServerGroups(List<ServerGroup> serverGroups,
             final Collection<Server> servers) {
         Map<String, List<Server>> serversByServerGroup = servers.stream()
                 .collect(groupingBy(Server::getServerGroup));
@@ -639,7 +615,48 @@ public class TopologyFunctions {
         });
     }
 
-    private static Map<String, Server> serverConfigsByName(List<ModelNode> modelNodes) {
+    private static <T extends HasServersNode> void processRunningServers(List<T> hasServersNode, Dispatcher dispatcher,
+            Control<FunctionContext> control) {
+        if (hasServersNode != null) {
+            List<Server> servers = runningServers(hasServersNode);
+            Composite composite = serverRuntimeComposite(servers);
+            if (!composite.isEmpty()) {
+                Map<String, Server> serverConfigsById = mapServersById(servers);
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                    for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                        ModelNode payload = iterator.next().get(RESULT);
+                        String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
+                        String serverName = payload.get(NAME).asString();
+                        String id = Ids.hostServer(hostName, serverName);
+                        Server server = serverConfigsById.get(id);
+                        //noinspection Duplicates
+                        if (server != null) {
+                            server.addServerAttributes(payload);
+                            if (iterator.hasNext()) {
+                                List<ModelNode> bootErrors = iterator.next().get(RESULT).asList();
+                                server.setBootErrors(!bootErrors.isEmpty());
+                            } else {
+                                logger.error(NO_SERVER_BOOT_ERRORS, server.getName());
+                            }
+                        }
+                    }
+                    control.proceed();
+                });
+            } else {
+                control.proceed();
+            }
+        } else {
+            control.proceed();
+        }
+    }
+
+    private static <T extends HasServersNode> List<Server> runningServers(List<T> hasServersNode) {
+        return hasServersNode.stream()
+                .flatMap(hasServers -> hasServers.getServers().stream().filter(Server::isStarted))
+                .collect(toList());
+    }
+
+    private static Map<String, Server> serverConfigsById(List<ModelNode> modelNodes) {
         return modelNodes.stream()
                 .filter(modelNode -> !modelNode.isFailure())
                 .map(modelNode -> {
@@ -648,6 +665,10 @@ public class TopologyFunctions {
                     return new Server(host, modelNode.get(RESULT));
                 })
                 .collect(toMap(Server::getId, identity()));
+    }
+
+    private static Map<String, Server> mapServersById(List<Server> servers) {
+        return servers.stream().collect(toMap(Server::getId, identity()));
     }
 
     private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,

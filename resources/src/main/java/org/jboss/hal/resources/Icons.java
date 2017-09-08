@@ -27,6 +27,7 @@ public interface Icons {
 
     String CHECK = fontAwesome("check");
     String DISABLED = fontAwesome("ban");
+    String DISCONNECTED = fontAwesome("chain-broken");
     String ERROR = pfIcon(errorCircleO);
     String INFO = pfIcon(info);
     String LOCK = fontAwesome("lock");
@@ -46,6 +47,10 @@ public interface Icons {
 
     static HTMLElement disabled() {
         return span().css(DISABLED).asElement();
+    }
+
+    static HTMLElement disconnected() {
+        return span().css(DISCONNECTED).asElement();
     }
 
     static HTMLElement error() {

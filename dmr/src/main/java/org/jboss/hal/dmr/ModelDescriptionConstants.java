@@ -90,7 +90,6 @@ public interface ModelDescriptionConstants {
     String AUTHENTICATION_CONTEXT = "authentication-context";
     String AUTHOR = "author";
     String AUTO_START = "auto-start";
-    String AVAILABLE_PROCESSORS = "available-processors";
     String AVERAGE_COMMIT_TIME = "average-commit-time";
     String AVERAGE_PROCESSING_TIME = "average-processing-time";
     String BACKGROUND_VALIDATION = "background-validation";
@@ -139,7 +138,6 @@ public interface ModelDescriptionConstants {
     String CLONE = "clone";
     String CLUSTER_CONNECTION = "cluster-connection";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
-    String COMMITTED = "committed";
     String COMPLETED_TASK_COUNT = "completed-task-count";
     String COMPONENT = "component";
     String COMPONENT_CLASS_NAME = "component-class-name";
@@ -149,6 +147,7 @@ public interface ModelDescriptionConstants {
     String CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY = "configurable-http-server-mechanism-factory";
     String CONFIGURABLE_SASL_SERVER_FACTORY = "configurable-sasl-server-factory";
     String CONFIGURATION = "configuration";
+    String CONNECTED = "connected";
     String CONNECTION_COUNT = "connection-count";
     String CONNECTION_LIMIT_HIGH_WATER_MARK = "connection-limit-high-water-mark";
     String CONNECTION_LIMIT_LOW_WATER_MARK = "connection-limit-low-water-mark";
@@ -190,7 +189,6 @@ public interface ModelDescriptionConstants {
     String CUSTOM_REALM_MAPPER = "custom-realm-mapper";
     String CUSTOM_ROLE_DECODER = "custom-role-decoder";
     String CUSTOM_ROLE_MAPPER = "custom-role-mapper";
-    String DAEMON_THREAD_COUNT = "daemon-thread-count";
     String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
@@ -218,6 +216,7 @@ public interface ModelDescriptionConstants {
     String DIRECT_VERIFICATION = "direct-verification";
     String DISABLED = "disabled";
     String DISABLED_TIME = "disabled-time";
+    String DISCONNECTED = "disconnected";
     String DISCOVERY_GROUP = "discovery-group";
     String DIVERT = "divert";
     String DRIVER_CLASS = "driver-class";
@@ -242,6 +241,7 @@ public interface ModelDescriptionConstants {
     String ENDPOINT = "endpoint";
     String ENDPOINT_CONFIG = "endpoint-config";
     String ENTRIES = "entries";
+    String EVENTS = "events";
     String EVICTION = "eviction";
     String EXCEPTION_SORTER_CLASS_NAME = "exception-sorter-class-name";
     String EXCEPTIONS = "exceptions";
@@ -288,16 +288,14 @@ public interface ModelDescriptionConstants {
     String HA_POLICY = "ha-policy";
     String HAL_INDEX = "hal-index";
     String HAL_LABEL = "hal-label";
-    String HAL_ADDRESS = "hal-address";
-    String HAL_DEPLOYMENT = "hal-deployment";
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HEADER_NAME = "header-name";
-    String HEAP_MEMORY_USAGE = "heap-memory-usage";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";
+    String HOST_CONNECTION = "host-connection";
     String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
     String HOSTS = "hosts";
@@ -370,6 +368,7 @@ public interface ModelDescriptionConstants {
     String KEY_STORE_REALM = "key-store-realm";
     String KILL = "kill";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
+    String LAST_CONNECTED = "last-connected";
     String LAST_UPDATED_TIME = "last-updated-time";
     String LAUNCH_TYPE = "launch-type";
     String LDAP_KEY_STORE = "ldap-key-store";
@@ -406,6 +405,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MANAGEMENT_NOTIFICATION_ADDRESS = "management-notification-address";
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
+    String MANAGEMENT_VERSION = "management-version";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
@@ -528,6 +528,8 @@ public interface ModelDescriptionConstants {
     String PROVIDER_MODULE = "provider-module";
     String PROVIDER_SASL_SERVER_FACTORY = "provider-sasl-server-factory";
     String PROXIES = "proxies";
+    String PRUNE_EXPIRED = "prune-expired";
+    String PRUNE_DISCONNECTED = "prune-disconnected";
     String QUERY = "query";
     String QUEUE = "queue";
     String QUEUE_ADDRESS = "queue-address";
@@ -555,6 +557,7 @@ public interface ModelDescriptionConstants {
     String RECURSIVE_DEPTH = "recursive-depth";
     String REGEX_PRINCIPAL_TRANSFORMER = "regex-principal-transformer";
     String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "regex-validating-principal-transformer";
+    String REGISTERED = "registered";
     String REJECT_DUPLICATES = "reject-duplicates";
     String REJECTED_COUNT = "rejected-count";
     String REJECTED_SESSIONS = "rejected-sessions";
@@ -729,7 +732,6 @@ public interface ModelDescriptionConstants {
     String TASK_MAX_THREADS = "task-max-threads";
     String TEMPORARY = "temporary";
     String TEST_CONNECTION_IN_POOL = "test-connection-in-pool";
-    String THREAD_COUNT = "thread-count";
     String THREAD_FACTORY = "thread-factory";
     String THREAD_POOL = "thread-pool";
     String THREAD_POOL_MAX_SIZE = "thread-pool-max-size";
@@ -737,6 +739,7 @@ public interface ModelDescriptionConstants {
     String TIMEOUT = "timeout";
     String TIME_REMAINING = "time-remaining";
     String TIMERS = "timers";
+    String TIMESTAMP = "timestamp";
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TO_PROFILE = "to-profile";
@@ -759,11 +762,11 @@ public interface ModelDescriptionConstants {
     String UNDEPLOY = "undeploy";
     String UNDERTOW = "undertow";
     String UNIT = "unit";
+    String UNREGISTERED = "unregistered";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
     String UPTIME = "uptime";
     String URL = "url";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
-    String USED = "used";
     String USER_NAME = "user-name";
     String USER_PASSWORD_MAPPER = "user-password-mapper";
     String USERS_PROPERTIES = "users-properties";

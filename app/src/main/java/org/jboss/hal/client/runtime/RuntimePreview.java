@@ -87,6 +87,12 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
         alertText.innerHTML = message.asString();
     }
 
+    protected void disconnected(SafeHtml message) {
+        alertContainer.className = alert + " " + alertInfo;
+        alertIcon.className = Icons.DISCONNECTED;
+        alertText.innerHTML = message.asString();
+    }
+
     private void warning() {
         alertContainer.className = alert + " " + alertWarning;
         alertIcon.className = Icons.WARNING;
