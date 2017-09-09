@@ -17,9 +17,9 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -33,14 +33,14 @@ public class RegisterStaticCapabilities implements BootstrapFunction {
     private final Capabilities capabilities;
 
     @Inject
-    public RegisterStaticCapabilities(final Environment environment, final Capabilities capabilities) {
+    public RegisterStaticCapabilities(Environment environment, Capabilities capabilities) {
         this.environment = environment;
         this.capabilities = capabilities;
     }
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
             logStart();
 

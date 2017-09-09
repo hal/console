@@ -51,6 +51,7 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
@@ -146,9 +147,9 @@ public class Dispatcher implements RecordingHandler {
 
     @Inject
     @JsIgnore
-    public Dispatcher(final Environment environment, final Endpoints endpoints, final Settings settings,
-            final EventBus eventBus, final ResponseHeadersProcessors responseHeadersProcessors,
-            final Macros macros, final Resources resources) {
+    public Dispatcher(Environment environment, Endpoints endpoints, Settings settings,
+            EventBus eventBus, ResponseHeadersProcessors responseHeadersProcessors,
+            Macros macros, Resources resources) {
         this.environment = environment;
         this.endpoints = endpoints;
         this.settings = settings;
@@ -177,32 +178,38 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute composite
 
     @JsIgnore
-    public void execute(final Composite composite, final CompositeCallback callback) {
+    public void execute(Composite composite, CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Composite composite, final CompositeCallback callback,
-            final FailedCallback failedCallback) {
+    public void execute(Composite composite, CompositeCallback callback, FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Composite composite, final CompositeCallback callback,
-            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+    public void execute(Composite composite, CompositeCallback callback, FailedCallback failedCallback,
+            ExceptionCallback exceptionCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
-            final CompositeCallback callback) {
+    public <T extends FunctionContext> void executeInFunction(Control<T> control, Composite composite,
+            CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
                 new ExceptionalFunctionCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
-            final CompositeCallback callback, FailedCallback failedCallback) {
+    public <T extends FlowContext> void executeInFlow(org.jboss.hal.flow.Control<T> control, Composite composite,
+            CompositeCallback callback) {
+        dmr(composite, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
+                new ExceptionalFlowCallback<>(control));
+    }
+
+    @JsIgnore
+    public <T extends FunctionContext> void executeInFunction(Control<T> control, Composite composite,
+            CompositeCallback callback, FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFunctionCallback<>(control));
     }
@@ -211,61 +218,71 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute operation
 
     @JsIgnore
-    public void execute(final Operation operation, final OperationCallback callback) {
+    public void execute(Operation operation, OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback) {
+    public void execute(Operation operation, OperationCallback callback, FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+    public void execute(Operation operation, OperationCallback callback, FailedCallback failedCallback,
+            ExceptionCallback exceptionCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
-            final OperationCallback callback) {
+    public void execute(Operation operation, Function<ModelNode, ModelNode> getResult, OperationCallback callback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
-            final OperationCallback callback, final FailedCallback failedCallback) {
+    public void execute(Operation operation, Function<ModelNode, ModelNode> getResult, OperationCallback callback,
+            FailedCallback failedCallback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void execute(final Operation operation, final Function<ModelNode, ModelNode> getResult,
-            final OperationCallback callback, final FailedCallback failedCallback,
-            final ExceptionCallback exceptionCallback) {
+    public void execute(Operation operation, Function<ModelNode, ModelNode> getResult, OperationCallback callback,
+            FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         dmr(operation, getResult, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
-            final OperationCallback callback) {
+    public <T extends FunctionContext> void executeInFunction(Control<T> control, Operation operation,
+            OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, new FailedFunctionCallback<>(control),
                 new ExceptionalFunctionCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
-            final OperationCallback callback, FailedCallback failedCallback) {
+    public <T extends FlowContext> void executeInFlow(org.jboss.hal.flow.Control<T> control, Operation operation,
+            OperationCallback callback) {
+        dmr(operation, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
+                new ExceptionalFlowCallback<>(control));
+    }
+
+    @JsIgnore
+    public <T extends FunctionContext> void executeInFunction(Control<T> control, Operation operation,
+            OperationCallback callback, FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFunctionCallback<>(control));
+    }
+
+    @JsIgnore
+    public <T extends FlowContext> void executeInFlow(org.jboss.hal.flow.Control<T> control, Operation operation,
+            OperationCallback callback, FailedCallback failedCallback) {
+        dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFlowCallback<>(control));
     }
 
 
     // ------------------------------------------------------ dmr
 
-    private <T> void dmr(final Operation operation, final Function<ModelNode, ModelNode> getResult,
-            final SuccessCallback<T> callback, final FailedCallback failedCallback,
-            final ExceptionCallback exceptionCallback) {
+    private <T> void dmr(Operation operation, Function<ModelNode, ModelNode> getResult, SuccessCallback<T> callback,
+            FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
         Operation dmrOperation = runAs(operation);
@@ -294,19 +311,18 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ upload
 
     @JsIgnore
-    public void upload(final File file, final Operation operation, final OperationCallback callback) {
+    public void upload(File file, Operation operation, OperationCallback callback) {
         upload(file, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final File file, final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback) {
+    public void upload(File file, Operation operation, OperationCallback callback, FailedCallback failedCallback) {
         upload(file, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final File file, final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+    public void upload(File file, Operation operation, OperationCallback callback, FailedCallback failedCallback,
+            ExceptionCallback exceptionCallback) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(file, uploadOperation.toBase64String());
         uploadFormData(formData, uploadOperation, callback, failedCallback, exceptionCallback);
@@ -320,19 +336,19 @@ public class Dispatcher implements RecordingHandler {
     }-*/;
 
     @JsIgnore
-    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback) {
+    public void upload(HTMLInputElement fileInput, Operation operation, OperationCallback callback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback) {
+    public void upload(HTMLInputElement fileInput, Operation operation, OperationCallback callback,
+            FailedCallback failedCallback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
 
     @JsIgnore
-    public void upload(final HTMLInputElement fileInput, final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+    public void upload(HTMLInputElement fileInput, Operation operation, OperationCallback callback,
+            FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         Operation uploadOperation = runAs(operation);
         FormData formData = createFormData(fileInput, uploadOperation.toBase64String());
         uploadFormData(formData, uploadOperation, callback, failedCallback, exceptionCallback);
@@ -345,8 +361,8 @@ public class Dispatcher implements RecordingHandler {
         return formData;
     }-*/;
 
-    private void uploadFormData(FormData formData, final Operation operation, final OperationCallback callback,
-            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+    private void uploadFormData(FormData formData, Operation operation, OperationCallback callback,
+            FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(),
                 payload -> payload.get(RESULT), callback, failedCallback, exceptionCallback);
         xhr.send(formData);
@@ -357,7 +373,7 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ download
 
     @JsIgnore
-    public void download(final Operation operation, final SuccessCallback<String> successCallback) {
+    public void download(Operation operation, SuccessCallback<String> successCallback) {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
         XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
@@ -377,7 +393,7 @@ public class Dispatcher implements RecordingHandler {
     }
 
     @JsIgnore
-    public String downloadUrl(final Operation operation) {
+    public String downloadUrl(Operation operation) {
         return operationUrl(operation) + "&useStreamAsResponse"; //NON-NLS
     }
 
@@ -427,17 +443,15 @@ public class Dispatcher implements RecordingHandler {
         }
 
         // TODO operation headers
-
         return builder.toString();
     }
 
 
     // ------------------------------------------------------ xhr
 
-    private <T> XMLHttpRequest newDmrXhr(final String url, final HttpMethod method, final Operation operation,
-            final PayloadProcessor payloadProcessor, final Function<ModelNode, ModelNode> getResult,
-            final SuccessCallback<T> callback, final FailedCallback failedCallback,
-            final ExceptionCallback exceptionCallback) {
+    private <T> XMLHttpRequest newDmrXhr(String url, HttpMethod method, Operation operation,
+            PayloadProcessor payloadProcessor, Function<ModelNode, ModelNode> getResult, SuccessCallback<T> callback,
+            FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         return newXhr(url, method, operation, exceptionCallback, xhr -> {
             int status = (int) xhr.status;
             String responseText = xhr.responseText;
@@ -483,8 +497,8 @@ public class Dispatcher implements RecordingHandler {
         });
     }
 
-    private XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
-            final ExceptionCallback exceptionCallback, final OnLoad onLoad) {
+    private XMLHttpRequest newXhr(String url, HttpMethod method, Operation operation,
+            ExceptionCallback exceptionCallback, OnLoad onLoad) {
         XMLHttpRequest xhr = new XMLHttpRequest();
 
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
@@ -556,7 +570,7 @@ public class Dispatcher implements RecordingHandler {
 
     @Override
     @JsIgnore
-    public void onRecording(final RecordingEvent event) {
+    public void onRecording(RecordingEvent event) {
         if (event.getAction() == Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
             String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;

@@ -38,17 +38,17 @@ package org.jboss.hal.client.bootstrap.functions;
 import java.util.Set;
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -81,7 +81,7 @@ public class ReadAuthentication implements BootstrapFunction {
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         logStart();
 
         ResourceAddress address = AUTHENTICATION_TEMPLATE.resolve(statementContext);
@@ -89,8 +89,7 @@ public class ReadAuthentication implements BootstrapFunction {
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE_DEPTH, 1)
                 .build();
-        dispatcher.executeInFunction(control, operation,
-                result -> {
+        dispatcher.executeInFlow(control, operation, result -> {
                     // provider
                     AccessControlProvider accessControlProvider = asEnumValue(result, PROVIDER,
                             AccessControlProvider::valueOf, SIMPLE);

@@ -17,11 +17,11 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.core.extension.ExtensionRegistry;
 import org.jboss.hal.core.extension.ExtensionStorage;
 import org.jboss.hal.core.extension.InstalledExtension;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 
 public class ReadExtensions implements BootstrapFunction {
 
@@ -29,13 +29,13 @@ public class ReadExtensions implements BootstrapFunction {
     private final ExtensionStorage extensionStorage;
 
     @Inject
-    public ReadExtensions(final ExtensionRegistry extensionRegistry, final ExtensionStorage extensionStorage) {
+    public ReadExtensions(ExtensionRegistry extensionRegistry, ExtensionStorage extensionStorage) {
         this.extensionRegistry = extensionRegistry;
         this.extensionStorage = extensionStorage;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         logStart();
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {

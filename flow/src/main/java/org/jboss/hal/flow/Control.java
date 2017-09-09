@@ -13,27 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.flow;
 
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/** Execution control handle passed into functions */
+public interface Control<C> {
 
-/** Interface for bootstrap functions. */
-public interface BootstrapFunction extends Step<FlowContext> {
+    void proceed();
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
+    void abort();
 
-    @NonNls
-    String name();
-
-    default void logStart() {
-        logger.info("{}: Start", name());
-    }
-
-    default void logDone() {
-        logger.info("{}: Done", name());
-    }
+    C getContext();
 }

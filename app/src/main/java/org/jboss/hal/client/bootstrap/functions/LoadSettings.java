@@ -17,11 +17,11 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 
 import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
 import static org.jboss.hal.config.Settings.Key.LOCALE;
@@ -38,13 +38,13 @@ public class LoadSettings implements BootstrapFunction {
     private final Settings settings;
 
     @Inject
-    public LoadSettings(final Environment environment, final Settings settings) {
+    public LoadSettings(Environment environment, Settings settings) {
         this.environment = environment;
         this.settings = settings;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         logStart();
 
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);

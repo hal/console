@@ -13,27 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.flow;
 
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/** Interface to reflect progress for flow control functions. */
+public interface Progress {
 
-/** Interface for bootstrap functions. */
-public interface BootstrapFunction extends Step<FlowContext> {
+    void reset();
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
-
-    @NonNls
-    String name();
-
-    default void logStart() {
-        logger.info("{}: Start", name());
+    default void reset(int max) {
+        reset(max, null);
     }
 
-    default void logDone() {
-        logger.info("{}: Done", name());
+    void reset(int max, String label);
+
+    default void tick() {
+        tick(null);
     }
+
+    void tick(String label);
+
+    void finish();
+
+    Progress NOOP = new Progress() {
+
+        @Override
+        public void reset() {}
+
+        @Override
+        public void reset(int max, String label) {}
+
+        @Override
+        public void tick(String label) {}
+
+        @Override
+        public void finish() {}
+    };
 }

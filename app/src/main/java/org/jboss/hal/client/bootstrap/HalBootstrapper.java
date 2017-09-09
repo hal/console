@@ -21,14 +21,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
+import elemental2.dom.Event;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.flow.Async;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -36,6 +35,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.SingleSubscriber;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
@@ -69,9 +69,10 @@ public class HalBootstrapper implements Bootstrapper {
     @Override
     public void onBootstrap() {
         // event for users of the JS API
-        elemental2.dom.Event event = new elemental2.dom.Event("halReady"); //NON-NLS
+        Event event = new Event("halReady"); //NON-NLS
         window.dispatchEvent(event);
 
+/*
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
@@ -95,11 +96,38 @@ public class HalBootstrapper implements Bootstrapper {
                 });
             }
         };
+*/
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            new Async<FunctionContext>(Progress.NOOP).waterfall(
-                    new FunctionContext(), outcome, (Function[]) bootstrapFunctions.functions());
+            Async.series(Progress.NOOP, new FlowContext(), bootstrapFunctions.functions())
+                    .subscribe(new SingleSubscriber<FlowContext>() {
+                        @Override
+                        public void onSuccess(FlowContext context) {
+                            LoadingPanel.get().off();
+                            logger.info("Bootstrap finished");
+                            placeManager.revealCurrentPlace();
+
+                            // reset the uncaught exception handler from HalPreBootstrapper
+                            GWT.setUncaughtExceptionHandler(e -> {
+                                String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
+                                logger.error("Uncaught exception: {}", errorMessage);
+                                placeManager.unlock();
+                                MessageEvent.fire(eventBus,
+                                        Message.error(resources.messages().unknownError(), errorMessage));
+                            });
+
+                        }
+
+                        @Override
+                        public void onError(Throwable error) {
+                            LoadingPanel.get().off();
+                            logger.error("Bootstrap error: {}", error.getMessage());
+                            document.body.appendChild(BootstrapFailed.create(error.getMessage(), endpoints).asElement());
+                        }
+                    });
+            // new Async<FunctionContext>(Progress.NOOP).waterfall(
+            //         new FunctionContext(), outcome, (Function[]) bootstrapFunctions.functions());
         });
     }
 }

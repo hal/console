@@ -18,13 +18,13 @@ package org.jboss.hal.client.bootstrap.functions;
 import java.util.List;
 import javax.inject.Inject;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
@@ -38,14 +38,13 @@ public class FindDomainController implements BootstrapFunction {
     private final Environment environment;
 
     @Inject
-    public FindDomainController(final Dispatcher dispatcher,
-            final Environment environment) {
+    public FindDomainController(Dispatcher dispatcher, Environment environment) {
         this.dispatcher = dispatcher;
         this.environment = environment;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         logStart();
         if (environment.isStandalone()) {
             logDone();
