@@ -23,15 +23,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.core.OperationFactory;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 
@@ -39,17 +39,17 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-class HandlerFunctions {
+class HandlerSteps {
 
-    static class SaveAuditLog implements Function<FunctionContext> {
+    static class SaveAuditLog implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
         private final Map<String, Object> changedValues;
         private final Metadata metadata;
 
-        SaveAuditLog(final Dispatcher dispatcher, final StatementContext statementContext,
-                final Map<String, Object> changedValues, final Metadata metadata) {
+        SaveAuditLog(Dispatcher dispatcher, StatementContext statementContext, Map<String, Object> changedValues,
+                Metadata metadata) {
             this.dispatcher = dispatcher;
             this.statementContext = statementContext;
             this.changedValues = changedValues;
@@ -57,38 +57,38 @@ class HandlerFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
                     .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
             if (operation.isEmpty()) {
                 control.proceed();
             } else {
-                dispatcher.executeInFunction(control, operation, (CompositeResult result) -> control.proceed());
+                dispatcher.executeInFlow(control, operation, (CompositeResult result) -> control.proceed());
             }
         }
     }
 
 
-    static class ReadHandlers implements Function<FunctionContext> {
+    static class ReadHandlers implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
 
-        ReadHandlers(final Dispatcher dispatcher, final StatementContext statementContext) {
+        ReadHandlers(Dispatcher dispatcher, StatementContext statementContext) {
             this.dispatcher = dispatcher;
             this.statementContext = statementContext;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION
             )
                     .param(CHILD_TYPE, HANDLER)
                     .build();
             //noinspection Duplicates
-            dispatcher.executeInFunction(control, operation,
+            dispatcher.executeInFlow(control, operation,
                     result -> {
                         control.getContext().push(result.asList().stream()
                                 .map(ModelNode::asString)
@@ -103,21 +103,20 @@ class HandlerFunctions {
     }
 
 
-    static class MergeHandler implements Function<FunctionContext> {
+    static class MergeHandler implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
         private final Set<String> newHandlers;
 
-        MergeHandler(final Dispatcher dispatcher, final StatementContext statementContext,
-                final Set<String> newHandlers) {
+        MergeHandler(Dispatcher dispatcher, StatementContext statementContext, Set<String> newHandlers) {
             this.dispatcher = dispatcher;
             this.statementContext = statementContext;
             this.newHandlers = newHandlers;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Set<String> existingHandlers = control.getContext().pop();
             Set<String> add = Sets.difference(newHandlers, existingHandlers).immutableCopy();
             Set<String> remove = Sets.difference(existingHandlers, newHandlers).immutableCopy();
@@ -137,7 +136,7 @@ class HandlerFunctions {
             if (composite.isEmpty()) {
                 control.proceed();
             } else {
-                dispatcher.executeInFunction(control, new Composite(operations),
+                dispatcher.executeInFlow(control, new Composite(operations),
                         (CompositeResult result) -> control.proceed());
             }
         }

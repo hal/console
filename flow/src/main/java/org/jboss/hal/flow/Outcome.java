@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.flow;
 
-import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Step;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import rx.SingleSubscriber;
 
-/** Interface for bootstrap functions. */
-public interface BootstrapFunction extends Step<FlowContext> {
+public abstract class Outcome<C> extends SingleSubscriber<C> {
 
-    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
-
-    @NonNls
-    String name();
-
-    default void logStart() {
-        logger.info("{}: Start", name());
+    @Override
+    @SuppressWarnings("unchecked")
+    public final void onError(Throwable error) {
+        if (error instanceof FlowException) {
+            onError((C) ((FlowException) error).context, error);
+        } else {
+            onError(null, error);
+        }
     }
 
-    default void logDone() {
-        logger.info("{}: Done", name());
-    }
+    public abstract void onError(C context, Throwable error);
 }

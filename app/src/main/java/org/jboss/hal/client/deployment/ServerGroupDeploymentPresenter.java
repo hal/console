@@ -25,13 +25,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
-import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
+import org.jboss.hal.client.deployment.DeploymentSteps.LoadDeploymentsFromRunningServer;
+import org.jboss.hal.client.deployment.DeploymentSteps.ReadServerGroupDeployments;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
 import org.jboss.hal.core.finder.Finder;
@@ -41,11 +36,14 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
+import org.jboss.hal.core.runtime.TopologySteps.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -60,6 +58,7 @@ import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.flow.Flow.series;
 
 public class ServerGroupDeploymentPresenter extends
         ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
@@ -87,17 +86,17 @@ public class ServerGroupDeploymentPresenter extends
     private String deployment;
 
     @Inject
-    public ServerGroupDeploymentPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy,
-            final Environment environment,
-            final Finder finder,
-            final FinderPathFactory finderPathFactory,
-            final Dispatcher dispatcher,
-            final PlaceManager placeManager,
-            final Places places,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+    public ServerGroupDeploymentPresenter(EventBus eventBus,
+            MyView view,
+            MyProxy proxy,
+            Environment environment,
+            Finder finder,
+            FinderPathFactory finderPathFactory,
+            Dispatcher dispatcher,
+            PlaceManager placeManager,
+            Places places,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
         super(eventBus, view, proxy, finder);
         this.environment = environment;
         this.finderPathFactory = finderPathFactory;
@@ -115,7 +114,7 @@ public class ServerGroupDeploymentPresenter extends
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
+    public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         serverGroup = request.getParameter(SERVER_GROUP, null);
         deployment = request.getParameter(DEPLOYMENT, null);
@@ -128,24 +127,21 @@ public class ServerGroupDeploymentPresenter extends
 
     @Override
     protected void reload() {
-        Function[] functions = new Function[]{
+        series(progress.get(), new FlowContext(),
                 new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
                 new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
-                new LoadDeploymentsFromRunningServer(environment, dispatcher)
-        };
-
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                new Outcome<FunctionContext>() {
+                new LoadDeploymentsFromRunningServer(environment, dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onFailure(final FunctionContext context) {
+                    public void onError(FlowContext context, Throwable error) {
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().deploymentReadError(deployment)));
                     }
 
                     @Override
-                    public void onSuccess(final FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         List<ServerGroupDeployment> serverGroupDeployments = context
-                                .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
+                                .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
                         if (!serverGroupDeployments.isEmpty()) {
                             ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
                             getView().update(serverGroup, serverGroupDeployment);
@@ -154,7 +150,7 @@ public class ServerGroupDeploymentPresenter extends
                                     Message.error(resources.messages().deploymentReadError(deployment)));
                         }
                     }
-                }, functions);
+                });
     }
 
     void goToServerGroup() {
@@ -165,7 +161,7 @@ public class ServerGroupDeploymentPresenter extends
         placeManager.revealPlace(serverGroupPlaceRequest);
     }
 
-    void enable(final String deployment) {
+    void enable(String deployment) {
         ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();

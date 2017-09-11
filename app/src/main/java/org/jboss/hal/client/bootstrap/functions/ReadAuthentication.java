@@ -64,7 +64,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * scoped role scoped to a slave host).
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class ReadAuthentication implements BootstrapFunction {
+public class ReadAuthentication implements BootstrapStep {
 
     private static final AddressTemplate AUTHENTICATION_TEMPLATE = AddressTemplate.of(
             "/core-service=management/access=authorization");

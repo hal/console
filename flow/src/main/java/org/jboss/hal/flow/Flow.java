@@ -24,8 +24,8 @@ import rx.Single;
 
 import static java.util.Arrays.asList;
 
-/** Flow control functions based on RxGWT */
-public class Async {
+/** Flow control based on RxGWT */
+public class Flow {
 
     public static <C> Single<C> single(Progress progress, C context, Step<C> step) {
         return fromControl(context, step)
@@ -65,7 +65,7 @@ public class Async {
     private static <C> Single<C> fromControl(C context, Step<C> producer) {
         return Single.fromEmitter(emitter -> producer.execute(new Control<C>() {
             @Override public void proceed() { emitter.onSuccess(context); }
-            @Override public void abort() { emitter.onError(new Exception("abort")); }
+            @Override public void abort(String error) { emitter.onError(new FlowException(error, context)); }
             @Override public C getContext() { return context; }
         }));
     }

@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.XMLHttpRequest;
+import org.jboss.hal.client.bootstrap.functions.BootstrapStep;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.spi.Callback;
 import org.jetbrains.annotations.NonNls;
@@ -34,7 +35,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  * endpoint. By default this class first tries to connect to the management endpoint the console was loaded from.
  * If no endpoint was found, the selection is triggered by {@link EndpointDialog}.
  * <p>
- * Please note: This class must run <em>before</em> any {@linkplain org.jboss.hal.client.bootstrap.functions.BootstrapFunction
+ * Please note: This class must run <em>before</em> any {@linkplain BootstrapStep
  * bootstrap function}!
  */
 public class EndpointManager {

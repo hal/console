@@ -214,6 +214,13 @@ public class Dispatcher implements RecordingHandler {
                 new ExceptionalFunctionCallback<>(control));
     }
 
+    @JsIgnore
+    public <T extends FlowContext> void executeInFlow(org.jboss.hal.flow.Control<T> control, Composite composite,
+            CompositeCallback callback, FailedCallback failedCallback) {
+        dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
+                new ExceptionalFlowCallback<>(control));
+    }
+
 
     // ------------------------------------------------------ execute operation
 

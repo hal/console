@@ -102,9 +102,8 @@ public abstract class FooterView extends HalViewImpl implements FooterPresenter.
         if (version.greaterThan(environment.getHalVersion())) {
             logger.info("A new HAL version is available. Current version: {}, new version: {}",
                     environment.getHalVersion(), version);
-            String message = resources().messages().updateAvailable(environment.getHalVersion().toString(),
+            updateAvailable.title = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
-            updateAvailable.title = message;
             updateAvailable.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
             updateAvailable.dataset.set(UIConstants.PLACEMENT, UIConstants.TOP);
             updateAvailable.dataset.set(UIConstants.CONTAINER, UIConstants.BODY);

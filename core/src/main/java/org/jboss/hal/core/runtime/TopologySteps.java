@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.host.Host;
@@ -38,6 +35,9 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -53,8 +53,8 @@ import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
-/** Set of functions to read runtime data like running server of a specific server group. */
-public class TopologyFunctions {
+/** Set of steps to read runtime data like running server of a specific server group. */
+public class TopologySteps {
 
     public static final String SERVER_GROUP = "topologyFunctions.serverGroup";
     public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
@@ -64,7 +64,7 @@ public class TopologyFunctions {
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
     private static final String NO_SERVER_BOOT_ERRORS = "No second step containing the boot errors for server {}";
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologyFunctions.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(TopologySteps.class);
 
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
@@ -115,18 +115,18 @@ public class TopologyFunctions {
      * resource attributes attributes.
      * </ul>
      */
-    public static class Topology implements Function<FunctionContext> {
+    public static class Topology implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public Topology(final Environment environment, final Dispatcher dispatcher) {
+        public Topology( Environment environment,  Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 List<Host> hosts = Collections.emptyList();
                 List<ServerGroup> serverGroups = Collections.emptyList();
@@ -142,7 +142,7 @@ public class TopologyFunctions {
                         DISCONNECTED_HOSTS,
                         SERVER_GROUPS_OPERATION,
                         serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET).build());
-                dispatcher.executeInFunction(control, composite,
+                dispatcher.executeInFlow(control, composite,
                         (CompositeResult result) -> {
 
                             List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
@@ -176,7 +176,7 @@ public class TopologyFunctions {
      * Adds the {@code server} resource attributes and the server bootstrap errors for started servers. Expects a list
      * of servers in the context as provided by {@link Topology}.
      */
-    public static class TopologyStartedServers implements Function<FunctionContext> {
+    public static class TopologyStartedServers implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -187,7 +187,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -208,24 +208,24 @@ public class TopologyFunctions {
      * <p>
      * The list of hosts is available in the context under the key {@link #HOSTS}.
      */
-    public static class HostsWithServerConfigs implements Function<FunctionContext> {
+    public static class HostsWithServerConfigs implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public HostsWithServerConfigs(final Environment environment, final Dispatcher dispatcher) {
+        public HostsWithServerConfigs( Environment environment,  Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
                 Composite composite = new Composite(HOSTS_OPERATION, DISCONNECTED_HOSTS,
                         serverConfigOperation(NAME, GROUP, STATUS).build());
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
 
                     List<Host> connectedHosts = result.step(0).get(RESULT).asPropertyList().stream()
                             .map(Host::new)
@@ -249,7 +249,7 @@ public class TopologyFunctions {
      * Reads the {@code server} resource attributes for started servers across connected hosts. Expects a list of hosts
      * in the context as provided by {@link HostsWithServerConfigs}.
      */
-    public static class HostsStartedServers implements Function<FunctionContext> {
+    public static class HostsStartedServers implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -260,7 +260,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -278,7 +278,7 @@ public class TopologyFunctions {
      * <p>
      * The host is available in the context under the key {@link #HOST}.
      */
-    public static class HostWithServerConfigs implements Function<FunctionContext> {
+    public static class HostWithServerConfigs implements Step<FlowContext> {
 
         private final String hostName;
         private final Dispatcher dispatcher;
@@ -289,7 +289,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
             Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
@@ -299,7 +299,7 @@ public class TopologyFunctions {
                     .param(CHILD_TYPE, SERVER_CONFIG)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.executeInFunction(control, new Composite(hostOp, serverConfigsOp), (CompositeResult result) -> {
+            dispatcher.executeInFlow(control, new Composite(hostOp, serverConfigsOp), (CompositeResult result) -> {
                 Host host = new Host(result.step(0).get(RESULT));
                 result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new Server(hostName, property.getValue()))
@@ -316,7 +316,7 @@ public class TopologyFunctions {
      * Reads the {@code server} resource attributes for started servers of a host. Expects the host in the context
      * as provided by {@link HostWithServerConfigs}.
      */
-    public static class HostStartedServers implements Function<FunctionContext> {
+    public static class HostStartedServers implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
 
@@ -325,7 +325,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Host host = control.getContext().get(HOST);
             if (host != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, host.getServers());
@@ -390,7 +390,7 @@ public class TopologyFunctions {
      * <p>
      * The list of server groups is available in the context under the key {@link #SERVER_GROUPS}.
      */
-    public static class ServerGroupsWithServerConfigs implements Function<FunctionContext> {
+    public static class ServerGroupsWithServerConfigs implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -401,13 +401,13 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
                 Composite composite = new Composite(SERVER_GROUPS_OPERATION,
                         serverConfigOperation(NAME, GROUP, STATUS).build());
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
 
                     List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
                             .map(ServerGroup::new)
@@ -429,7 +429,7 @@ public class TopologyFunctions {
      * Reads the {@code server} resource attributes for started servers across server groups. Expects a list of server
      * groups in the context as provided by {@link ServerGroupsWithServerConfigs}.
      */
-    public static class ServerGroupsStartedServers implements Function<FunctionContext> {
+    public static class ServerGroupsStartedServers implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -440,7 +440,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -457,7 +457,7 @@ public class TopologyFunctions {
      * <p>
      * The server group is available in the context under the key {@link #SERVER_GROUP}.
      */
-    public static class ServerGroupWithServerConfigs implements Function<FunctionContext> {
+    public static class ServerGroupWithServerConfigs implements Step<FlowContext> {
 
         private final String serverGroupName;
         private final Dispatcher dispatcher;
@@ -468,7 +468,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
             Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
@@ -478,7 +478,7 @@ public class TopologyFunctions {
             Operation serverConfigsOp = serverConfigOperation(NAME, GROUP, STATUS)
                     .param(WHERE, new ModelNode().set(GROUP, serverGroupName))
                     .build();
-            dispatcher.executeInFunction(control, new Composite(serverGroupOp, serverConfigsOp),
+            dispatcher.executeInFlow(control, new Composite(serverGroupOp, serverConfigsOp),
                     (CompositeResult result) -> {
                         ServerGroup serverGroup = new ServerGroup(serverGroupName, result.step(0).get(RESULT));
                         result.step(1).get(RESULT).asList().stream()
@@ -501,7 +501,7 @@ public class TopologyFunctions {
      * Reads the {@code server} resource attributes for started servers of a server groups. Expects the server group in
      * the context as provided by {@link ServerGroupWithServerConfigs}.
      */
-    public static class ServerGroupStartedServers implements Function<FunctionContext> {
+    public static class ServerGroupStartedServers implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
 
@@ -510,7 +510,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ServerGroup serverGroup = control.getContext().get(SERVER_GROUP);
             if (serverGroup != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, serverGroup.getServers());
@@ -526,10 +526,10 @@ public class TopologyFunctions {
 
     /**
      * Returns a list of running servers which satisfy the specified query. Stores the list in the context under
-     * the key {@link TopologyFunctions#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
+     * the key {@link TopologySteps#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
      * running in standalone mode.
      */
-    public static class RunningServersQuery implements Function<FunctionContext> {
+    public static class RunningServersQuery implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
@@ -542,7 +542,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        public void execute(Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
                 control.getContext().set(RUNNING_SERVERS, servers);
@@ -566,7 +566,7 @@ public class TopologyFunctions {
                         .param(WHERE, query)
                         .build();
 
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     List<Server> servers = result.asList().stream()
                             .filter(modelNode -> !modelNode.isFailure())
                             .map(modelNode -> {
@@ -616,13 +616,13 @@ public class TopologyFunctions {
     }
 
     private static <T extends HasServersNode> void processRunningServers(List<T> hasServersNode, Dispatcher dispatcher,
-            Control<FunctionContext> control) {
+            Control<FlowContext> control) {
         if (hasServersNode != null) {
             List<Server> servers = runningServers(hasServersNode);
             Composite composite = serverRuntimeComposite(servers);
             if (!composite.isEmpty()) {
                 Map<String, Server> serverConfigsById = mapServersById(servers);
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
                     for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
                         ModelNode payload = iterator.next().get(RESULT);
                         String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
@@ -671,12 +671,12 @@ public class TopologyFunctions {
         return servers.stream().collect(toMap(Server::getId, identity()));
     }
 
-    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
+    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FlowContext> control,
             List<Server> servers) {
         if (servers != null) {
             Composite composite = serverRuntimeComposite(servers);
             if (!composite.isEmpty()) {
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                dispatcher.executeInFlow(control, composite, (CompositeResult result) -> {
                     addServerRuntimeAttributes(servers, result);
                     control.proceed();
                 });

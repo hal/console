@@ -22,20 +22,18 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
@@ -44,6 +42,7 @@ import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard.addOperation;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.blankSlatePf;
 import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnLg;
@@ -53,7 +52,6 @@ class TestStep extends WizardStep<Context, State> {
 
     private static final String WIZARD_TITLE = "wizard-title";
     private static final String WIZARD_TEXT = "wizard-text";
-    private static final String WIZARD_ERROR = "wizard-error";
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -96,10 +94,10 @@ class TestStep extends WizardStep<Context, State> {
     private void testConnection() {
         Context context = wizard().getContext();
 
-        List<Function<FunctionContext>> functions = new ArrayList<>();
+        List<Step<FlowContext>> steps = new ArrayList<>();
         if (!context.isCreated()) {
             // add data source
-            functions.add(control -> dispatcher.executeInFunction(control, addOperation(context, statementContext),
+            steps.add(control -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
                     (CompositeResult result) -> {
                         context.setCreated(true);
                         control.proceed();
@@ -107,58 +105,53 @@ class TestStep extends WizardStep<Context, State> {
                     (op, failure) -> {
                         control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
                         control.getContext().set(WIZARD_TEXT, resources.messages().dataSourceAddError());
-                        control.getContext().set(WIZARD_ERROR, failure);
-                        control.abort();
+                        control.abort(failure);
                     }));
         }
 
         // check running server(s)
-        functions.add(new TopologyFunctions.RunningServersQuery(
+        steps.add(new TopologySteps.RunningServersQuery(
                 environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
-        functions.add(control -> {
-            List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+        steps.add(control -> {
+            List<Server> servers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
                         .add(DATA_SOURCE, context.dataSource.getName());
                 Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
-                dispatcher.executeInFunction(control, operation,
+                dispatcher.executeInFlow(control, operation,
                         result -> control.proceed(),
                         (op, failure) -> {
                             control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                            control.getContext()
-                                    .set(WIZARD_TEXT,
-                                            resources.messages().testConnectionError(context.dataSource.getName()));
-                            control.getContext().set(WIZARD_ERROR, failure);
-                            control.abort();
+                            control.getContext().set(WIZARD_TEXT,
+                                    resources.messages().testConnectionError(context.dataSource.getName()));
+                            control.abort(failure);
                         });
 
             } else {
                 control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                control.getContext()
-                        .set(WIZARD_TEXT, SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
-                control.abort();
+                control.getContext().set(WIZARD_TEXT,
+                        SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
+                control.abort("no running servers"); //NON-NLS
             }
         });
 
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                String title = context.get(WIZARD_TITLE);
-                SafeHtml text = context.get(WIZARD_TEXT);
-                String error = context.get(WIZARD_ERROR);
-                wizard().showError(title, text, error, false);
-            }
+        series(progress.get(), new FlowContext(), steps)
+                .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
+                    @Override
+                    public void onError(FlowContext flowContext, Throwable error) {
+                        String title = flowContext.get(WIZARD_TITLE);
+                        SafeHtml text = flowContext.get(WIZARD_TEXT);
+                        wizard().showError(title, text, error.getMessage(), false);
+                    }
 
-            @Override
-            public void onSuccess(final FunctionContext functionContext) {
-                wizard().showSuccess(resources.constants().testConnectionSuccess(),
-                        resources.messages().testConnectionSuccess(context.dataSource.getName()), false);
-            }
-        };
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                functions.toArray(new Function[functions.size()]));
+                    @Override
+                    public void onSuccess(FlowContext flowContext) {
+                        wizard().showSuccess(resources.constants().testConnectionSuccess(),
+                                resources.messages().testConnectionSuccess(context.dataSource.getName()), false);
+                    }
+                });
     }
 }

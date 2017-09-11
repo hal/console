@@ -15,24 +15,24 @@
  */
 package org.jboss.hal.client.tools;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 
-class MacroOperationFunction implements Function<FunctionContext> {
+class MacroOperationStep implements Step<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final Operation operation;
 
-    MacroOperationFunction(final Dispatcher dispatcher, final Operation operation) {
+    MacroOperationStep(Dispatcher dispatcher, Operation operation) {
         this.dispatcher = dispatcher;
         this.operation = operation;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
-        dispatcher.executeInFunction(control, operation, result -> control.proceed());
+    public void execute(Control<FlowContext> control) {
+        dispatcher.executeInFlow(control, operation, result -> control.proceed());
     }
 }

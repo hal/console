@@ -23,7 +23,7 @@ import org.jboss.hal.core.extension.InstalledExtension;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.FlowContext;
 
-public class ReadExtensions implements BootstrapFunction {
+public class ReadExtensions implements BootstrapStep {
 
     private final ExtensionRegistry extensionRegistry;
     private final ExtensionStorage extensionStorage;

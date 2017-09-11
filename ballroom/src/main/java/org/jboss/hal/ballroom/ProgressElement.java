@@ -38,7 +38,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.flow.Progress;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
@@ -78,6 +78,7 @@ public class ProgressElement implements IsElement, Progress {
     private int max;
     private boolean determinate;
 
+    @SuppressWarnings("HardCodedStringLiteral")
     public ProgressElement(Size size, Label label, boolean reverse) {
         this.reverse = reverse;
 

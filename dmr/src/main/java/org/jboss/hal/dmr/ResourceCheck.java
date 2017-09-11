@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.dmr;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -26,20 +26,20 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * Function which checks whether a given resource exists. Pushes {@code 200} onto the context stack if it exists,
  * {@code 404} otherwise.
  */
-public class ResourceCheck implements Function<FunctionContext> {
+public class ResourceCheck implements Step<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final ResourceAddress address;
 
-    public ResourceCheck(final Dispatcher dispatcher, final ResourceAddress address) {
+    public ResourceCheck(Dispatcher dispatcher, ResourceAddress address) {
         this.dispatcher = dispatcher;
         this.address = address;
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
+    public void execute(Control<FlowContext> control) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
-        dispatcher.executeInFunction(control, operation,
+        dispatcher.executeInFlow(control, operation,
                 result -> {
                     control.getContext().push(200);
                     control.proceed();

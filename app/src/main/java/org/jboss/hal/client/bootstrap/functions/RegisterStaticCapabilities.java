@@ -27,7 +27,7 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /** Reads the capabilities from the capability registry. Depends on {@link FindDomainController}. */
-public class RegisterStaticCapabilities implements BootstrapFunction {
+public class RegisterStaticCapabilities implements BootstrapStep {
 
     private final Environment environment;
     private final Capabilities capabilities;

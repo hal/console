@@ -17,15 +17,13 @@ package org.jboss.hal.client.runtime.server;
 
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -40,8 +38,11 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Flow;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -96,7 +97,7 @@ public class ServerPresenter
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final ServerActions serverActions;
-    private final Progress progress;
+    private final Provider<Progress> progress;
     private final Resources resources;
 
     @Inject
@@ -108,7 +109,7 @@ public class ServerPresenter
             StatementContext statementContext,
             Dispatcher dispatcher,
             ServerActions serverActions,
-            @Footer Progress progress,
+            @Footer Provider<Progress> progress,
             Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
@@ -137,7 +138,7 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        Function<FunctionContext> serverConfigFn = control -> {
+        Step<FlowContext> serverConfigFn = control -> {
             ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
             Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -158,7 +159,7 @@ public class ServerPresenter
                     .param(CHILD_TYPE, SYSTEM_PROPERTY)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.executeInFunction(control,
+            dispatcher.executeInFlow(control,
                     new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp),
                     (CompositeResult result) -> {
                         Server server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
@@ -167,14 +168,14 @@ public class ServerPresenter
                         control.proceed();
                     });
         };
-        Function<FunctionContext> serverRuntimeFn = control -> {
+        Step<FlowContext> serverRuntimeFn = control -> {
             Server server = control.getContext().get(SERVER_KEY);
             if (!serverActions.isPending(server) && server.isRunning()) {
                 ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);
                 Operation serverRuntimeOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                dispatcher.executeInFunction(control, serverRuntimeOp, result -> {
+                dispatcher.executeInFlow(control, serverRuntimeOp, result -> {
                     control.getContext().set(SERVER_RUNTIME_KEY, result);
                     control.proceed();
                 });
@@ -183,10 +184,10 @@ public class ServerPresenter
             }
         };
 
-        new Async<FunctionContext>(progress).waterfall(new FunctionContext(),
-                new SuccessfulOutcome(getEventBus(), resources) {
+        Flow.series(progress.get(), new FlowContext(), serverConfigFn, serverRuntimeFn)
+                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
                     @Override
-                    public void onSuccess(FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         Server server = context.get(SERVER_KEY);
                         getView().updateServer(server);
 
@@ -204,7 +205,6 @@ public class ServerPresenter
                             getView().updateRuntime(null);
                         }
                     }
-                },
-                serverConfigFn, serverRuntimeFn);
+                });
     }
 }

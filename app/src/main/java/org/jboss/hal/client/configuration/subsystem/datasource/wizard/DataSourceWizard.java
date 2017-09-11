@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceColumn;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
@@ -91,7 +90,7 @@ public class DataSourceWizard {
             EventBus eventBus,
             StatementContext statementContext,
             Environment environment,
-            Provider<Progress> progress,
+            Provider<org.jboss.hal.flow.Progress> progress,
             Resources resources,
             DataSourceTemplates templates,
             List<DataSource> dataSources,

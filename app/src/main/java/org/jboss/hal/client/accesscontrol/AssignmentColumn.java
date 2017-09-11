@@ -26,15 +26,13 @@ import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
-import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddAssignment;
+import org.jboss.hal.client.accesscontrol.AccessControlSteps.AddRoleMapping;
+import org.jboss.hal.client.accesscontrol.AccessControlSteps.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.UserChangedEvent;
+import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionHandler;
 import org.jboss.hal.core.finder.Finder;
@@ -46,8 +44,8 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -63,6 +61,7 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -73,7 +72,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
-    private final Provider<Progress> progress;
+    private final Provider<org.jboss.hal.flow.Progress> progress;
     private final User currentUser;
     private final AccessControl accessControl;
     private final Resources resources;
@@ -83,7 +82,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             final ItemActionFactory itemActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
+            final @Footer Provider<org.jboss.hal.flow.Progress> progress,
             final User currentUser,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
@@ -235,10 +234,13 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         return column -> {
             Principal principal = findPrincipal(getFinder().getContext().getPath());
             if (principal != null) {
-                new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                        new SuccessfulOutcome(eventBus, resources) {
+                series(progress.get(), new FlowContext(),
+                        new CheckRoleMapping(dispatcher, role),
+                        new AddRoleMapping(dispatcher, role, status -> status == 404),
+                        new AddAssignment(dispatcher, role, principal, include))
+                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                             @Override
-                            public void onSuccess(final FunctionContext context) {
+                            public void onSuccess(FlowContext context) {
                                 String type = resources.constants().role();
                                 SafeHtml message = include
                                         ? resources.messages().assignmentIncludeSuccess(type, role.getName())
@@ -251,10 +253,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                                     }
                                 });
                             }
-                        },
-                        new CheckRoleMapping(dispatcher, role),
-                        new AddRoleMapping(dispatcher, role, status -> status == 404),
-                        new AddAssignment(dispatcher, role, principal, include));
+                        });
             }
         };
     }

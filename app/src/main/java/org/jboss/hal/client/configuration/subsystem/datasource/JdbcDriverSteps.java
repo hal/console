@@ -21,13 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.JdbcDriver;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
@@ -35,13 +32,16 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/** Set of functions to read the installed JDBC drivers. */
-class JdbcDriverFunctions {
+/** Set of steps to read the installed JDBC drivers. */
+class JdbcDriverSteps {
 
     private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
     private static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
@@ -50,18 +50,18 @@ class JdbcDriverFunctions {
 
     /**
      * Reads the JDBC drivers from {@code /{selected.profile}/subsystem=datasource/jdbc-driver=*} and puts the result
-     * as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#CONFIGURATION_DRIVERS} into the context.
+     * as {@code List<JdbcDriver>} under the key {@link JdbcDriverSteps#CONFIGURATION_DRIVERS} into the context.
      */
-    static class ReadConfiguration implements Function<FunctionContext> {
+    static class ReadConfiguration implements Step<FlowContext> {
 
         private final CrudOperations crud;
 
-        ReadConfiguration(final CrudOperations crud) {
+        ReadConfiguration(CrudOperations crud) {
             this.crud = crud;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER, children -> {
                 List<JdbcDriver> drivers = children.stream()
                         .map(JdbcDriver::new)
@@ -75,26 +75,26 @@ class JdbcDriverFunctions {
 
     /**
      * Reads the JDBC drivers from a list of running servers which are expected in the context under the key
-     * {@link TopologyFunctions#RUNNING_SERVERS}. The drivers are read using the {@code :installed-drivers-list}
+     * {@link TopologySteps#RUNNING_SERVERS}. The drivers are read using the {@code :installed-drivers-list}
      * operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
-     * JdbcDriverFunctions#RUNTIME_DRIVERS} into the context.
+     * JdbcDriverSteps#RUNTIME_DRIVERS} into the context.
      */
-    static class ReadRuntime implements Function<FunctionContext> {
+    static class ReadRuntime implements Step<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        ReadRuntime(final Environment environment, final Dispatcher dispatcher) {
+        ReadRuntime(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
                 Operation operation = new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
-                dispatcher.executeInFunction(control, operation, result -> {
+                dispatcher.executeInFlow(control, operation, result -> {
                     List<JdbcDriver> drivers = result.asList().stream()
                             .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
                             .collect(toList());
@@ -103,7 +103,7 @@ class JdbcDriverFunctions {
                 });
 
             } else {
-                List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+                List<Server> servers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
                 if (servers != null && !servers.isEmpty()) {
                     List<Operation> operations = servers.stream()
                             .map(server -> {
@@ -111,7 +111,7 @@ class JdbcDriverFunctions {
                                 return new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
                             })
                             .collect(toList());
-                    dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {
+                    dispatcher.executeInFlow(control, new Composite(operations), (CompositeResult result) -> {
                         List<JdbcDriver> drivers = new ArrayList<>();
                         for (ModelNode step : result) {
                             if (!step.isFailure()) {
@@ -137,16 +137,16 @@ class JdbcDriverFunctions {
      * Combines and sorts the results form {@link ReadConfiguration} and {@link
      * ReadRuntime} with a preference for runtime drivers over configuration drivers.
      * <p>
-     * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#DRIVERS} into the
+     * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverSteps#DRIVERS} into the
      * context.
      */
-    static class CombineDriverResults implements Function<FunctionContext> {
+    static class CombineDriverResults implements Step<FlowContext> {
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Map<String, JdbcDriver> map = new HashMap<>();
-            List<JdbcDriver> configDrivers = control.getContext().get(JdbcDriverFunctions.CONFIGURATION_DRIVERS);
-            List<JdbcDriver> runtimeDrivers = control.getContext().get(JdbcDriverFunctions.RUNTIME_DRIVERS);
+            List<JdbcDriver> configDrivers = control.getContext().get(JdbcDriverSteps.CONFIGURATION_DRIVERS);
+            List<JdbcDriver> runtimeDrivers = control.getContext().get(JdbcDriverSteps.RUNTIME_DRIVERS);
             if (configDrivers != null) {
                 for (JdbcDriver driver : configDrivers) {
                     map.put(driver.getName(), driver);

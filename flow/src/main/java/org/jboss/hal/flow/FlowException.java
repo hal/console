@@ -15,12 +15,12 @@
  */
 package org.jboss.hal.flow;
 
-/** Execution control handle passed into functions */
-public interface Control<C> {
+class FlowException extends RuntimeException {
 
-    void proceed();
+    final Object context;
 
-    void abort(String error);
-
-    C getContext();
+    FlowException(String message, Object context) {
+        super(message);
+        this.context = context;
+    }
 }

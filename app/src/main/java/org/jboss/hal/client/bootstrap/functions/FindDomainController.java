@@ -32,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /** Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}. */
-public class FindDomainController implements BootstrapFunction {
+public class FindDomainController implements BootstrapStep {
 
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -60,8 +60,7 @@ public class FindDomainController implements BootstrapFunction {
                 List<Property> properties = result.asPropertyList();
                 if (properties.isEmpty()) {
                     // TODO Is this possible?
-                    control.getContext().failed("No hosts found!"); //NON-NLS
-                    control.abort();
+                    control.abort("No hosts found!"); //NON-NLS
 
                 } else {
                     for (Property property : properties) {

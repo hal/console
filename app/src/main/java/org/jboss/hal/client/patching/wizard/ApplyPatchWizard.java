@@ -19,12 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Provider;
 
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.server.Server;
@@ -33,6 +27,11 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Messages;
@@ -45,18 +44,19 @@ import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.CONFIGURE;
 import static org.jboss.hal.client.patching.wizard.PatchState.UPLOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.single;
 
 public class ApplyPatchWizard {
 
-    static class UploadPatch implements Function<FunctionContext> {
+    static class UploadPatch implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private StatementContext statementContext;
         private ServerActions serverActions;
         private PatchContext patchContext;
 
-        UploadPatch(final StatementContext statementContext, final Dispatcher dispatcher,
-                final ServerActions serverActions, final PatchContext patchContext) {
+        UploadPatch(StatementContext statementContext, Dispatcher dispatcher,
+                ServerActions serverActions, PatchContext patchContext) {
 
             this.statementContext = statementContext;
             this.dispatcher = dispatcher;
@@ -65,8 +65,7 @@ public class ApplyPatchWizard {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
-
+        public void execute(Control<FlowContext> control) {
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
                     Server server = new Server(statementContext.selectedHost(), serverProp);
@@ -88,19 +87,9 @@ public class ApplyPatchWizard {
             operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
 
             dispatcher.upload(patchContext.file, operation,
-                    result -> {
-                        control.proceed();
-                    },
-
-                    (op, failure) -> {
-                        control.getContext().failed(failure);
-                        control.abort();
-                    },
-
-                    (op, exception) -> {
-                        control.getContext().failed(exception);
-                        control.abort();
-                    });
+                    result -> control.proceed(),
+                    (op, failure) -> control.abort(failure),
+                    (op, exception) -> control.abort(exception.getMessage()));
         }
     }
 
@@ -114,9 +103,9 @@ public class ApplyPatchWizard {
     private ServerActions serverActions;
     private Callback callback;
 
-    public ApplyPatchWizard(final Resources resources, final Environment environment, final Metadata metadata,
-            final StatementContext statementContext, final Dispatcher dispatcher, final Provider<Progress> progress,
-            final ServerActions serverActions, Callback callback) {
+    public ApplyPatchWizard(Resources resources, Environment environment, Metadata metadata,
+            StatementContext statementContext, Dispatcher dispatcher, Provider<Progress> progress,
+            ServerActions serverActions, Callback callback) {
 
         this.resources = resources;
         this.environment = environment;
@@ -139,67 +128,63 @@ public class ApplyPatchWizard {
                         statementContext.selectedHost()));
             }
             wb.addStep(UPLOAD, new UploadPatchStep(resources.constants().uploadPatch(), messages.noSelectedPatch()))
-            .addStep(CONFIGURE, new ConfigurationStep(metadataOp, resources))
+                    .addStep(CONFIGURE, new ConfigurationStep(metadataOp, resources))
 
-            .onBack((context, currentState) -> {
-                PatchState previous = null;
-                switch (currentState) {
-                    case CHECK_SERVERS:
-                        break;
-                    case UPLOAD:
-                        previous = CHECK_SERVERS;
-                        break;
-                    case CONFIGURE:
-                        previous = UPLOAD;
-                        break;
-                }
-                return previous;
-            })
-            .onNext((context, currentState) -> {
-                PatchState next = null;
-                switch (currentState) {
-                    case CHECK_SERVERS:
-                        next = UPLOAD;
-                        break;
-                    case UPLOAD:
-                        next = CONFIGURE;
-                        break;
-                    case CONFIGURE:
-                        break;
-                }
-                return next;
-            })
+                    .onBack((context, currentState) -> {
+                        PatchState previous = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                break;
+                            case UPLOAD:
+                                previous = CHECK_SERVERS;
+                                break;
+                            case CONFIGURE:
+                                previous = UPLOAD;
+                                break;
+                        }
+                        return previous;
+                    })
+                    .onNext((context, currentState) -> {
+                        PatchState next = null;
+                        switch (currentState) {
+                            case CHECK_SERVERS:
+                                next = UPLOAD;
+                                break;
+                            case UPLOAD:
+                                next = CONFIGURE;
+                                break;
+                            case CONFIGURE:
+                                break;
+                        }
+                        return next;
+                    })
 
-            .stayOpenAfterFinish()
-            .onFinish((wzd, context) -> {
-                String name = context.file.name;
-                wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
+                    .stayOpenAfterFinish()
+                    .onFinish((wzd, context) -> {
+                        String name = context.file.name;
+                        wzd.showProgress(resources.constants().patchInProgress(), messages.patchInProgress(name));
 
-                Function[] functions = {
-                        new UploadPatch(statementContext, dispatcher, serverActions,
-                                context)
-                };
-                new Async<FunctionContext>(progress.get()).waterfall(
-                        new FunctionContext(),
-                        new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext functionContext) {
-                                wzd.showError(resources.constants().patchError(),
-                                        messages.patchAddError(name, functionContext.getError()),
-                                        functionContext.getError());
-                            }
+                        single(progress.get(), new FlowContext(),
+                                new UploadPatch(statementContext, dispatcher, serverActions, context))
+                                .subscribe(new Outcome<FlowContext>() {
+                                    @Override
+                                    public void onError(FlowContext flowContext, Throwable error) {
+                                        wzd.showError(resources.constants().patchError(),
+                                                messages.patchAddError(name, error.getMessage()),
+                                                error.getMessage());
+                                    }
 
-                            @Override
-                            public void onSuccess(final FunctionContext functionContext) {
-                                callback.execute();
-                                wzd.showSuccess(
-                                        resources.constants().patchSuccessful(),
-                                        messages.patchSucessfullyApplied(name),
-                                        messages.view(Names.PATCH),
-                                        cxt -> { /* nothing to do, content is already selected */ });
-                            }
-                        }, functions);
-            });
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        callback.execute();
+                                        wzd.showSuccess(
+                                                resources.constants().patchSuccessful(),
+                                                messages.patchSucessfullyApplied(name),
+                                                messages.view(Names.PATCH),
+                                                cxt -> { /* nothing to do, content is already selected */ });
+                                    }
+                                });
+                    });
             Wizard<PatchContext, PatchState> wizard = wb.build();
             wizard.show();
         });

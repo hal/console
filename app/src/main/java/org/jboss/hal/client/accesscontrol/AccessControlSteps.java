@@ -19,27 +19,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Role;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.ResourceCheck;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.Metadata;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-/**
- * Functions related to principals, roles and assignments.
- */
-final class AccessControlFunctions {
+/** Steps related to principals, roles and assignments. */
+final class AccessControlSteps {
 
     /**
      * Checks whether a role mapping for a given role exists and pushes {@code 200} to the context stack if it exists,
@@ -47,7 +45,7 @@ final class AccessControlFunctions {
      */
     static class CheckRoleMapping extends ResourceCheck {
 
-        CheckRoleMapping(final Dispatcher dispatcher, final Role role) {
+        CheckRoleMapping(Dispatcher dispatcher, Role role) {
             super(dispatcher, AddressTemplates.roleMapping(role));
         }
     }
@@ -57,13 +55,13 @@ final class AccessControlFunctions {
      * Adds a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
      * Expects an integer status code at the top of the context stack which is used to call the predicate.
      */
-    static class AddRoleMapping implements Function<FunctionContext> {
+    static class AddRoleMapping implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
         private final Predicate<Integer> predicate;
 
-        AddRoleMapping(final Dispatcher dispatcher, final Role role, final Predicate<Integer> predicate) {
+        AddRoleMapping(Dispatcher dispatcher, Role role, Predicate<Integer> predicate) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.predicate = predicate;
@@ -71,14 +69,14 @@ final class AccessControlFunctions {
 
         @Override
         @SuppressWarnings("Duplicates")
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (control.getContext().emptyStack()) {
                 control.proceed();
             } else {
                 Integer status = control.getContext().pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), ADD).build();
-                    dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
                 } else {
                     control.proceed();
                 }
@@ -91,25 +89,25 @@ final class AccessControlFunctions {
      * Modifies the include-all flag of a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class ModifyIncludeAll implements Function<FunctionContext> {
+    static class ModifyIncludeAll implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
         private final boolean includeAll;
 
-        ModifyIncludeAll(final Dispatcher dispatcher, final Role role, final boolean includeAll) {
+        ModifyIncludeAll(Dispatcher dispatcher, Role role, boolean includeAll) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.includeAll = includeAll;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
                     .build();
-            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+            dispatcher.executeInFlow(control, operation, result -> control.proceed());
         }
     }
 
@@ -118,13 +116,13 @@ final class AccessControlFunctions {
      * Removes a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
      * Expects an integer status code at the top of the context stack which is used to call the predicate.
      */
-    static class RemoveRoleMapping implements Function<FunctionContext> {
+    static class RemoveRoleMapping implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
         private final Predicate<Integer> predicate;
 
-        RemoveRoleMapping(final Dispatcher dispatcher, final Role role, final Predicate<Integer> predicate) {
+        RemoveRoleMapping(Dispatcher dispatcher, Role role, Predicate<Integer> predicate) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.predicate = predicate;
@@ -132,14 +130,14 @@ final class AccessControlFunctions {
 
         @Override
         @SuppressWarnings("Duplicates")
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (control.getContext().emptyStack()) {
                 control.proceed();
             } else {
                 Integer status = control.getContext().pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), REMOVE).build();
-                    dispatcher.executeInFunction(control, operation, result -> control.proceed());
+                    dispatcher.executeInFlow(control, operation, result -> control.proceed());
                 } else {
                     control.proceed();
                 }
@@ -152,14 +150,14 @@ final class AccessControlFunctions {
      * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this function.
      * Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class AddAssignment implements Function<FunctionContext> {
+    static class AddAssignment implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
         private final Principal principal;
         private final boolean include;
 
-        AddAssignment(final Dispatcher dispatcher, final Role role, final Principal principal, final boolean include) {
+        AddAssignment(Dispatcher dispatcher, Role role, Principal principal, boolean include) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.principal = principal;
@@ -167,7 +165,7 @@ final class AccessControlFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
             Operation.Builder builder = new Operation.Builder(address, ADD)
@@ -176,7 +174,7 @@ final class AccessControlFunctions {
             if (principal.getRealm() != null) {
                 builder.param(REALM, principal.getRealm());
             }
-            dispatcher.executeInFunction(control, builder.build(), result -> control.proceed());
+            dispatcher.executeInFlow(control, builder.build(), result -> control.proceed());
         }
     }
 
@@ -185,18 +183,18 @@ final class AccessControlFunctions {
      * Removes assignments from a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class RemoveAssignments implements Function<FunctionContext> {
+    static class RemoveAssignments implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final List<Assignment> assignments;
 
-        RemoveAssignments(final Dispatcher dispatcher, final List<Assignment> assignments) {
+        RemoveAssignments(Dispatcher dispatcher, List<Assignment> assignments) {
             this.dispatcher = dispatcher;
             this.assignments = assignments;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             if (assignments.isEmpty()) {
                 control.proceed();
             } else if (assignments.size() == 1) {
@@ -220,14 +218,14 @@ final class AccessControlFunctions {
     /**
      * Adds a scoped role.
      */
-    static class AddScopedRole implements Function<FunctionContext> {
+    static class AddScopedRole implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role.Type type;
         private final String name;
         private final ModelNode payload;
 
-        AddScopedRole(final Dispatcher dispatcher, final Role.Type type, final String name, final ModelNode payload) {
+        AddScopedRole(Dispatcher dispatcher, Role.Type type, String name, ModelNode payload) {
             this.dispatcher = dispatcher;
             this.type = type;
             this.name = name;
@@ -235,12 +233,12 @@ final class AccessControlFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
             Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
                     .build();
-            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+            dispatcher.executeInFlow(control, operation, result -> control.proceed());
         }
     }
 
@@ -248,15 +246,15 @@ final class AccessControlFunctions {
     /**
      * Modifies a scoped role.
      */
-    static class ModifyScopedRole implements Function<FunctionContext> {
+    static class ModifyScopedRole implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
         private final Map<String, Object> changedValues;
         private final Metadata metadata;
 
-        ModifyScopedRole(final Dispatcher dispatcher, final Role role, final Map<String, Object> changedValues,
-                final Metadata metadata) {
+        ModifyScopedRole(Dispatcher dispatcher, Role role, Map<String, Object> changedValues,
+                Metadata metadata) {
             this.dispatcher = dispatcher;
             this.role = role;
             this.changedValues = changedValues;
@@ -264,10 +262,10 @@ final class AccessControlFunctions {
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
-            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+            dispatcher.executeInFlow(control, operation, result -> control.proceed());
         }
     }
 
@@ -275,38 +273,25 @@ final class AccessControlFunctions {
     /**
      * Removes a scoped role.
      */
-    static class RemoveScopedRole implements Function<FunctionContext> {
+    static class RemoveScopedRole implements Step<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
 
-        RemoveScopedRole(final Dispatcher dispatcher, final Role role) {
+        RemoveScopedRole(Dispatcher dispatcher, Role role) {
             this.dispatcher = dispatcher;
             this.role = role;
         }
 
         @Override
-        public void execute(final Control<FunctionContext> control) {
+        public void execute(Control<FlowContext> control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new Operation.Builder(address, REMOVE).build();
-            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+            dispatcher.executeInFlow(control, operation, result -> control.proceed());
         }
     }
 
 
-    static Operation addAssignmentOperation(final Role role, final Principal principal, boolean include) {
-        ResourceAddress address = AddressTemplates.roleMapping(role)
-                .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
-        Operation.Builder builder = new Operation.Builder(address, ADD)
-                .param(NAME, principal.getName())
-                .param(TYPE, principal.getType().name());
-        if (principal.getRealm() != null) {
-            builder.param(REALM, principal.getRealm());
-        }
-        return builder.build();
-    }
-
-
-    private AccessControlFunctions() {
+    private AccessControlSteps() {
     }
 }

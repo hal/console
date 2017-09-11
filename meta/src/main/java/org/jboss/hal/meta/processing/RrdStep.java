@@ -15,21 +15,21 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Control;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RrdFunction implements Function<FunctionContext> {
+class RrdStep implements Step<FlowContext> {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdStep.class);
 
     private final SecurityContextRegistry securityContextRegistry;
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
@@ -37,7 +37,7 @@ class RrdFunction implements Function<FunctionContext> {
     private final Composite composite;
     private final boolean optional;
 
-    RrdFunction(final SecurityContextRegistry securityContextRegistry,
+    RrdStep(final SecurityContextRegistry securityContextRegistry,
             final ResourceDescriptionRegistry resourceDescriptionRegistry,
             final Dispatcher dispatcher,
             final Composite composite,
@@ -50,8 +50,8 @@ class RrdFunction implements Function<FunctionContext> {
     }
 
     @Override
-    public void execute(final Control<FunctionContext> control) {
-        dispatcher.executeInFunction(control, composite,
+    public void execute(Control<FlowContext> control) {
+        dispatcher.executeInFlow(control, composite,
                 (CompositeResult compositeResult) -> {
                     try {
                         RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
@@ -65,8 +65,7 @@ class RrdFunction implements Function<FunctionContext> {
                         });
                         control.proceed();
                     } catch (ParserException e) {
-                        control.getContext().failed(e);
-                        control.abort();
+                        control.abort(e.getMessage());
                     }
                 },
                 (operation, failure) -> {
@@ -74,8 +73,7 @@ class RrdFunction implements Function<FunctionContext> {
                         logger.debug("Ignore errors on optional resource operation {}", operation.asCli());
                         control.proceed(); // ignore errors on optional resources!
                     } else {
-                        control.getContext().failed(failure);
-                        control.abort();
+                        control.abort(failure);
                     }
                 });
     }

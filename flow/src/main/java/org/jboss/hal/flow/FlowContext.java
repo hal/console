@@ -24,14 +24,10 @@ public class FlowContext {
 
     private final Stack<Object> stack;
     private final Map<String, Object> data;
-    private String error;
-    private Throwable throwable;
 
     public FlowContext() {
         this.stack = new Stack<>();
         this.data = new HashMap<>();
-        this.error = "n/a";
-        this.throwable = new RuntimeException("n/a");
     }
 
     /**
@@ -69,32 +65,6 @@ public class FlowContext {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         return (T) data.get(key);
-    }
-
-    public void failed(final String error) {
-        if (error != null) {
-            this.error = error;
-            this.throwable = new RuntimeException(error);
-        }
-    }
-
-    public void failed(final Throwable throwable) {
-        if (throwable != null) {
-            this.error = throwable.getMessage();
-            this.throwable = throwable;
-        }
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public Throwable getException() {
-        return throwable;
-    }
-
-    public boolean hasError() {
-        return error != null;
     }
 
     @Override

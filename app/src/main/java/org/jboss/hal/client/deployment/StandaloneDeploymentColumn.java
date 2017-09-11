@@ -23,24 +23,20 @@ import javax.inject.Provider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.core.deployment.Deployment;
-import org.jboss.hal.core.deployment.Deployment.Status;
-import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
-import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
-import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
+import org.jboss.hal.client.deployment.DeploymentSteps.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentSteps.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentSteps.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.SuccessfulOutcome;
+import org.jboss.hal.core.deployment.Deployment;
+import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -52,8 +48,9 @@ import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.SuccessfulOutcome;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -76,6 +73,8 @@ import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.single;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -95,15 +94,15 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private final Resources resources;
 
     @Inject
-    public StandaloneDeploymentColumn(final Finder finder,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final EventBus eventBus,
-            final MetadataRegistry metadataRegistry,
-            @Footer final Provider<Progress> progress,
-            final Resources resources) {
+    public StandaloneDeploymentColumn(Finder finder,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            Environment environment,
+            Dispatcher dispatcher,
+            EventBus eventBus,
+            MetadataRegistry metadataRegistry,
+            @Footer Provider<Progress> progress,
+            Resources resources) {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
@@ -224,7 +223,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     public void attach() {
         super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
+            setOnDrop(event -> DeploymentSteps.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources
             ));
         }
@@ -248,28 +247,26 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
-                    Function[] functions = {
+                    series(progress.get(), new FlowContext(),
                             new CheckDeployment(dispatcher, name),
                             new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                    context.enabled)
-                    };
-                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                            new Outcome<FunctionContext>() {
+                                    context.enabled))
+                            .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
                                 @Override
-                                public void onFailure(final FunctionContext functionContext) {
+                                public void onError(FlowContext context, Throwable error) {
                                     wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name), functionContext.getError());
+                                            resources.messages().deploymentError(name), error.getMessage());
                                 }
 
                                 @Override
-                                public void onSuccess(final FunctionContext functionContext) {
+                                public void onSuccess(FlowContext context) {
                                     refresh(Ids.deployment(name));
                                     wzd.showSuccess(resources.constants().uploadSuccessful(),
                                             resources.messages().uploadSuccessful(name),
                                             resources.messages().view(Names.DEPLOYMENT),
                                             cxt -> { /* nothing to do, deployment is already selected */ });
                                 }
-                            }, functions);
+                            });
                 })
                 .build();
         wizard.show();
@@ -278,16 +275,17 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void addUnmanaged() {
         Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
-                (name, model) -> new Async<FunctionContext>(progress.get()).single(new FunctionContext(),
-                        new SuccessfulOutcome(eventBus, resources) {
+                (name, model) -> single(progress.get(), new FlowContext(),
+                        new AddUnmanagedDeployment(dispatcher, name, model))
+                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
                             @Override
-                            public void onSuccess(final FunctionContext context) {
+                            public void onSuccess(FlowContext context) {
                                 refresh(Ids.deployment(name));
                                 MessageEvent.fire(eventBus, Message.success(
                                         resources.messages()
                                                 .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
                             }
-                        }, new AddUnmanagedDeployment(dispatcher, name, model)));
+                        }));
         dialog.show();
     }
 

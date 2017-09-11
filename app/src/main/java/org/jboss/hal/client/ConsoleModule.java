@@ -183,6 +183,7 @@ public class ConsoleModule extends AbstractPresenterModule {
         bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
+        bind(ExceptionHandler.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
         bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 

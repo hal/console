@@ -28,11 +28,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.runtime.BrowseByColumn;
@@ -54,7 +49,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
@@ -69,6 +64,9 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Step;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
@@ -93,6 +91,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.resources.Ids.FORM_SUFFIX;
 
@@ -122,22 +121,22 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     private FinderPath refreshPath;
 
     @Inject
-    public ServerColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final Environment environment,
-            final EventBus eventBus,
-            final @Footer Provider<Progress> progress,
-            final SecurityContextRegistry securityContextRegistry,
-            final StatementContext statementContext,
-            final PlaceManager placeManager,
-            final Places places,
-            final MetadataProcessor metadataProcessor,
-            final FinderPathFactory finderPathFactory,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final ServerActions serverActions,
-            final CrudOperations crud,
-            final Resources resources) {
+    public ServerColumn(Finder finder,
+            Dispatcher dispatcher,
+            Environment environment,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            SecurityContextRegistry securityContextRegistry,
+            StatementContext statementContext,
+            PlaceManager placeManager,
+            Places places,
+            MetadataProcessor metadataProcessor,
+            FinderPathFactory finderPathFactory,
+            ColumnActionFactory columnActionFactory,
+            ItemActionFactory itemActionFactory,
+            ServerActions serverActions,
+            CrudOperations crud,
+            Resources resources) {
 
         super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
@@ -197,7 +196,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         this.resources = resources;
 
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
-            Function<FunctionContext> serverConfigsFn;
+            Step<FlowContext> serverConfigsFn;
             boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
@@ -208,11 +207,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
-                        control.getContext().set(TopologyFunctions.SERVERS, servers);
+                        control.getContext().set(TopologySteps.SERVERS, servers);
                         control.proceed();
                     });
                 };
@@ -224,7 +223,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
                             .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
                             .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
+                    dispatcher.executeInFlow(control, operation, result -> {
                         List<Server> servers = result.asList().stream()
                                 .filter(modelNode -> !modelNode.isFailure())
                                 .map(modelNode -> {
@@ -233,22 +232,23 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     return new Server(host, modelNode.get(RESULT));
                                 })
                                 .collect(toList());
-                        control.getContext().set(TopologyFunctions.SERVERS, servers);
+                        control.getContext().set(TopologySteps.SERVERS, servers);
                         control.proceed();
                     });
                 };
             }
 
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
+            series(progress.get(), new FlowContext(),
+                    serverConfigsFn, new TopologySteps.TopologyStartedServers(environment, dispatcher))
+                    .subscribe(new org.jboss.hal.flow.Outcome<FlowContext>() {
                         @Override
-                        public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getException());
+                        public void onError(FlowContext context, Throwable error) {
+                            callback.onFailure(error);
                         }
 
                         @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.get(TopologyFunctions.SERVERS);
+                        public void onSuccess(FlowContext context) {
+                            List<Server> servers = context.get(TopologySteps.SERVERS);
                             if (servers == null) {
                                 servers = Collections.emptyList();
                             }
@@ -260,8 +260,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     .filter(serverActions::isPending)
                                     .forEach(server -> ItemMonitor.startProgress(server.getId()));
                         }
-                    },
-                    serverConfigsFn, new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+                    });
         };
         setItemsProvider(itemsProvider);
 

@@ -41,10 +41,6 @@ import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
@@ -56,7 +52,7 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologySteps;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
@@ -78,6 +74,9 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.Constraint;
@@ -102,6 +101,7 @@ import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.table;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.*;
 
 class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHandler, HostResultHandler,
@@ -130,17 +130,17 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final HTMLElement serverUrl;
     private final LabelBuilder labelBuilder;
 
-    TopologyPreview(final SecurityContextRegistry securityContextRegistry,
-            final Environment environment,
-            final Dispatcher dispatcher,
-            final Provider<Progress> progress,
-            final EventBus eventBus,
-            final Places places,
-            final FinderPathFactory finderPathFactory,
-            final HostActions hostActions,
-            final ServerGroupActions serverGroupActions,
-            final ServerActions serverActions,
-            final Resources resources) {
+    TopologyPreview(SecurityContextRegistry securityContextRegistry,
+            Environment environment,
+            Dispatcher dispatcher,
+            Provider<Progress> progress,
+            EventBus eventBus,
+            Places places,
+            FinderPathFactory finderPathFactory,
+            HostActions hostActions,
+            ServerGroupActions serverGroupActions,
+            ServerActions serverActions,
+            Resources resources) {
         super(Names.TOPOLOGY, resources.previews().runtimeTopology());
         this.securityContextRegistry = securityContextRegistry;
         this.environment = environment;
@@ -297,26 +297,27 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // show the loading indicator if the dmr operation takes too long
         double timeoutHandle = setTimeout((o) -> Elements.setVisible(loadingSection, true),
                 UIConstants.MEDIUM_TIMEOUT);
-        new Async<FunctionContext>(progress.get()).waterfall(
-                new FunctionContext(),
-                new Outcome<FunctionContext>() {
+        series(progress.get(), new FlowContext(),
+                new TopologySteps.Topology(environment, dispatcher),
+                new TopologySteps.TopologyStartedServers(environment, dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onFailure(final FunctionContext context) {
+                    public void onError(FlowContext context, Throwable error) {
                         clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().topologyError(), context.getError()));
+                                Message.error(resources.messages().topologyError(), error.getMessage()));
                     }
 
                     @Override
-                    public void onSuccess(final FunctionContext context) {
+                    public void onSuccess(FlowContext context) {
                         clearTimeout(timeoutHandle);
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
-                        List<Host> hosts = context.get(TopologyFunctions.HOSTS);
-                        List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
-                        List<Server> servers = context.get(TopologyFunctions.SERVERS);
+                        List<Host> hosts = context.get(TopologySteps.HOSTS);
+                        List<ServerGroup> serverGroups = context.get(TopologySteps.SERVER_GROUPS);
+                        List<Server> servers = context.get(TopologySteps.SERVERS);
 
                         topologySection.appendChild(buildTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
@@ -342,23 +343,28 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     .ifPresent(server -> serverDetails(server));
                         }
                     }
-                },
-                new TopologyFunctions.Topology(environment, dispatcher),
-                new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+                });
     }
 
     private void updateServer(Server server) {
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+        series(progress.get(), new FlowContext(),
+                // TODO Include function to read server boot errors
+                new TopologySteps.HostWithServerConfigs(server.getHost(), dispatcher),
+                new TopologySteps.HostStartedServers(dispatcher),
+                new TopologySteps.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
+                new TopologySteps.ServerGroupStartedServers(dispatcher))
+                .subscribe(new Outcome<FlowContext>() {
                     @Override
-                    public void onFailure(final FunctionContext context) {
+                    public void onError(FlowContext context, Throwable error) {
                         MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().updateServerError(server.getName()), context.getError()));
+                                Message.error(resources.messages().updateServerError(server.getName()),
+                                        error.getMessage()));
                     }
 
                     @Override
-                    public void onSuccess(final FunctionContext context) {
-                        Host host = context.get(TopologyFunctions.HOST);
-                        ServerGroup serverGroup = context.get(TopologyFunctions.SERVER_GROUP);
+                    public void onSuccess(FlowContext context) {
+                        Host host = context.get(TopologySteps.HOST);
+                        ServerGroup serverGroup = context.get(TopologySteps.SERVER_GROUP);
                         if (host != null && serverGroup != null) {
                             // Does not matter where we take the updated server from (must be included in both
                             // host and server group)
@@ -383,13 +389,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     updatedElement -> serverGroupDetails(serverGroup));
                         }
                     }
-                },
-                // TODO Include function to read server boot errors
-                new TopologyFunctions.HostWithServerConfigs(server.getHost(), dispatcher),
-                new TopologyFunctions.HostStartedServers(dispatcher),
-                new TopologyFunctions.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
-                new TopologyFunctions.ServerGroupStartedServers(dispatcher)
-        );
+                });
     }
 
 
