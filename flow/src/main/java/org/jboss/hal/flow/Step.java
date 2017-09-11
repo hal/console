@@ -15,7 +15,12 @@
  */
 package org.jboss.hal.flow;
 
+/** Encapsulates one operation inside a flow */
 public interface Step<C> {
 
+    /**
+     * Execute the step. Please make sure that you <strong>always</strong> call either {@link Control#proceed()} or
+     * {@link Control#abort(String)}.
+     */
     void execute(C context, Control control);
 }

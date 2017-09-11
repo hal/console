@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.flow;
 
-/** Execution control handle passed into functions */
+/** Execution control handle passed into steps */
 public interface Control {
 
     void proceed();

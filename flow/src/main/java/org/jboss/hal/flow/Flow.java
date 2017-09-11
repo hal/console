@@ -25,10 +25,12 @@ import rx.Single;
 import static java.util.Arrays.asList;
 
 /**
- * Methods to execute async operations in order or until a condition is met.
+ * Collection of static methods to execute async operations in order or until a condition is met. Uses RxGWT to
+ * orchestrate the async operations.
  */
 public class Flow {
 
+    /** Executes a single step. Useful if you already have a step implementation which you want to re-use. */
     public static <C> Single<C> single(Progress progress, C context, Step<C> step) {
         return fromControl(context, step)
                 .doOnSubscribe(progress::reset)
@@ -36,11 +38,13 @@ public class Flow {
                 .doOnError(e -> progress.finish());
     }
 
+    /** Executes multiple steps in order. */
     @SafeVarargs
     public static <C> Single<C> series(Progress progress, C context, Step<C>... step) {
         return series(progress, context, asList(step));
     }
 
+    /** Executes multiple steps in order. */
     public static <C> Single<C> series(Progress progress, C context, Collection<? extends Step<C>> steps) {
         assert !steps.isEmpty();
         return Observable.from(steps)
@@ -52,6 +56,7 @@ public class Flow {
                 .last().toSingle();
     }
 
+    /** Executes a steps until a condition is met. */
     public static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until,
             Step<C> step) {
         return Observable.interval(interval, TimeUnit.MILLISECONDS)
