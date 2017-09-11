@@ -35,7 +35,7 @@ public class ReadExtensions implements BootstrapStep {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         logStart();
         // TODO Load server side extensions from /core-service=management/console-extension=*
         for (InstalledExtension extension : extensionStorage.list()) {

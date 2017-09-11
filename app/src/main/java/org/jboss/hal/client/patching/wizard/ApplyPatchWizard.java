@@ -65,7 +65,7 @@ public class ApplyPatchWizard {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
                     Server server = new Server(statementContext.selectedHost(), serverProp);

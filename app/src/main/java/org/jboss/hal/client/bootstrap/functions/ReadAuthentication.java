@@ -81,7 +81,7 @@ public class ReadAuthentication implements BootstrapStep {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         logStart();
 
         ResourceAddress address = AUTHENTICATION_TEMPLATE.resolve(statementContext);

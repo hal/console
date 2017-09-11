@@ -37,11 +37,11 @@ class RrdStep implements Step<FlowContext> {
     private final Composite composite;
     private final boolean optional;
 
-    RrdStep(final SecurityContextRegistry securityContextRegistry,
-            final ResourceDescriptionRegistry resourceDescriptionRegistry,
-            final Dispatcher dispatcher,
-            final Composite composite,
-            final boolean optional) {
+    RrdStep(SecurityContextRegistry securityContextRegistry,
+            ResourceDescriptionRegistry resourceDescriptionRegistry,
+            Dispatcher dispatcher,
+            Composite composite,
+            boolean optional) {
         this.securityContextRegistry = securityContextRegistry;
         this.resourceDescriptionRegistry = resourceDescriptionRegistry;
         this.dispatcher = dispatcher;
@@ -50,7 +50,7 @@ class RrdStep implements Step<FlowContext> {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         dispatcher.executeInFlow(control, composite,
                 (CompositeResult compositeResult) -> {
                     try {

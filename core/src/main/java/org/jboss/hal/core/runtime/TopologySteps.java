@@ -120,20 +120,20 @@ public class TopologySteps {
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public Topology( Environment environment,  Dispatcher dispatcher) {
+        public Topology(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 List<Host> hosts = Collections.emptyList();
                 List<ServerGroup> serverGroups = Collections.emptyList();
                 List<Server> servers = Collections.emptyList();
-                control.getContext().set(HOSTS, hosts);
-                control.getContext().set(SERVER_GROUPS, serverGroups);
-                control.getContext().set(SERVERS, servers);
+                context.set(HOSTS, hosts);
+                context.set(SERVER_GROUPS, serverGroups);
+                context.set(SERVERS, servers);
                 control.proceed();
 
             } else {
@@ -151,17 +151,17 @@ public class TopologySteps {
                             List<Host> disconnectedHosts = disconnectedHosts(result.step(1).get(RESULT));
                             List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(connectedHosts,
                                     disconnectedHosts);
-                            control.getContext().set(HOSTS, hosts);
+                            context.set(HOSTS, hosts);
 
                             List<ServerGroup> serverGroups = result.step(2).get(RESULT).asPropertyList().stream()
                                     .map(ServerGroup::new)
                                     .sorted(comparing(ServerGroup::getName))
                                     .collect(toList());
-                            control.getContext().set(SERVER_GROUPS, serverGroups);
+                            context.set(SERVER_GROUPS, serverGroups);
 
                             Map<String, Server> serverConfigsByName = serverConfigsById(
                                     result.step(3).get(RESULT).asList());
-                            control.getContext().set(SERVERS, Lists.newArrayList(serverConfigsByName.values()));
+                            context.set(SERVERS, Lists.newArrayList(serverConfigsByName.values()));
 
                             addServersToHosts(hosts, serverConfigsByName.values());
                             addServersToServerGroups(serverGroups, serverConfigsByName.values());
@@ -187,11 +187,11 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                List<Server> servers = control.getContext().get(SERVERS);
+                List<Server> servers = context.get(SERVERS);
                 readAndAddServerRuntimeAttributes(dispatcher, control, servers);
             }
         }
@@ -213,13 +213,13 @@ public class TopologySteps {
         private final Environment environment;
         private final Dispatcher dispatcher;
 
-        public HostsWithServerConfigs( Environment environment,  Dispatcher dispatcher) {
+        public HostsWithServerConfigs(Environment environment, Dispatcher dispatcher) {
             this.environment = environment;
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -237,7 +237,7 @@ public class TopologySteps {
                     Map<String, Server> serverConfigsByName = serverConfigsById(result.step(2).get(RESULT).asList());
                     addServersToHosts(hosts, serverConfigsByName.values());
 
-                    control.getContext().set(HOSTS, hosts);
+                    context.set(HOSTS, hosts);
                     control.proceed();
                 });
             }
@@ -260,11 +260,11 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                List<Host> hosts = control.getContext().get(HOSTS);
+                List<Host> hosts = context.get(HOSTS);
                 List<Host> connectedHosts = hosts.stream().filter(Host::isConnected).collect(toList());
                 processRunningServers(connectedHosts, dispatcher, control);
             }
@@ -289,7 +289,7 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
             Operation hostOp = new Operation.Builder(hostAddress, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
@@ -305,7 +305,7 @@ public class TopologySteps {
                         .map(property -> new Server(hostName, property.getValue()))
                         .forEach(host::addServer);
 
-                control.getContext().set(HOST, host);
+                context.set(HOST, host);
                 control.proceed();
             });
         }
@@ -325,8 +325,8 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
-            Host host = control.getContext().get(HOST);
+        public void execute(FlowContext context, Control control) {
+            Host host = context.get(HOST);
             if (host != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, host.getServers());
             } else {
@@ -401,7 +401,7 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
@@ -417,7 +417,7 @@ public class TopologySteps {
                     Map<String, Server> serverConfigsByName = serverConfigsById(result.step(1).get(RESULT).asList());
                     addServersToServerGroups(serverGroups, serverConfigsByName.values());
 
-                    control.getContext().set(SERVER_GROUPS, serverGroups);
+                    context.set(SERVER_GROUPS, serverGroups);
                     control.proceed();
                 });
             }
@@ -440,11 +440,11 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                List<ServerGroup> serverGroups = control.getContext().get(SERVER_GROUPS);
+                List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
                 processRunningServers(serverGroups, dispatcher, control);
             }
         }
@@ -468,7 +468,7 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress serverGroupAddress = new ResourceAddress()
                     .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
             Operation serverGroupOp = new Operation.Builder(serverGroupAddress, READ_RESOURCE_OPERATION)
@@ -490,7 +490,7 @@ public class TopologySteps {
                                 })
                                 .forEach(serverGroup::addServer);
 
-                        control.getContext().set(SERVER_GROUP, serverGroup);
+                        context.set(SERVER_GROUP, serverGroup);
                         control.proceed();
                     });
         }
@@ -510,8 +510,8 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
-            ServerGroup serverGroup = control.getContext().get(SERVER_GROUP);
+        public void execute(FlowContext context, Control control) {
+            ServerGroup serverGroup = context.get(SERVER_GROUP);
             if (serverGroup != null) {
                 readAndAddServerRuntimeAttributes(dispatcher, control, serverGroup.getServers());
             } else {
@@ -542,10 +542,10 @@ public class TopologySteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
-                control.getContext().set(RUNNING_SERVERS, servers);
+                context.set(RUNNING_SERVERS, servers);
                 control.proceed();
 
             } else {
@@ -575,7 +575,7 @@ public class TopologySteps {
                                 return new Server(host, modelNode.get(RESULT));
                             })
                             .collect(toList());
-                    control.getContext().set(RUNNING_SERVERS, servers);
+                    context.set(RUNNING_SERVERS, servers);
                     control.proceed();
                 });
             }
@@ -604,8 +604,7 @@ public class TopologySteps {
                 });
     }
 
-    private static void addServersToServerGroups(List<ServerGroup> serverGroups,
-            final Collection<Server> servers) {
+    private static void addServersToServerGroups(List<ServerGroup> serverGroups, Collection<Server> servers) {
         Map<String, List<Server>> serversByServerGroup = servers.stream()
                 .collect(groupingBy(Server::getServerGroup));
         serverGroups.forEach(serverGroup -> {
@@ -616,7 +615,7 @@ public class TopologySteps {
     }
 
     private static <T extends HasServersNode> void processRunningServers(List<T> hasServersNode, Dispatcher dispatcher,
-            Control<FlowContext> control) {
+            Control control) {
         if (hasServersNode != null) {
             List<Server> servers = runningServers(hasServersNode);
             Composite composite = serverRuntimeComposite(servers);
@@ -671,7 +670,7 @@ public class TopologySteps {
         return servers.stream().collect(toMap(Server::getId, identity()));
     }
 
-    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control<FlowContext> control,
+    private static void readAndAddServerRuntimeAttributes(Dispatcher dispatcher, Control control,
             List<Server> servers) {
         if (servers != null) {
             Composite composite = serverRuntimeComposite(servers);

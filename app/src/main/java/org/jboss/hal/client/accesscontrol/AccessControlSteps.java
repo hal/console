@@ -69,11 +69,11 @@ final class AccessControlSteps {
 
         @Override
         @SuppressWarnings("Duplicates")
-        public void execute(Control<FlowContext> control) {
-            if (control.getContext().emptyStack()) {
+        public void execute(FlowContext context, Control control) {
+            if (context.emptyStack()) {
                 control.proceed();
             } else {
-                Integer status = control.getContext().pop();
+                Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), ADD).build();
                     dispatcher.executeInFlow(control, operation, result -> control.proceed());
@@ -102,7 +102,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
@@ -130,11 +130,11 @@ final class AccessControlSteps {
 
         @Override
         @SuppressWarnings("Duplicates")
-        public void execute(Control<FlowContext> control) {
-            if (control.getContext().emptyStack()) {
+        public void execute(FlowContext context, Control control) {
+            if (context.emptyStack()) {
                 control.proceed();
             } else {
-                Integer status = control.getContext().pop();
+                Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), REMOVE).build();
                     dispatcher.executeInFlow(control, operation, result -> control.proceed());
@@ -165,7 +165,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
             Operation.Builder builder = new Operation.Builder(address, ADD)
@@ -194,7 +194,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (assignments.isEmpty()) {
                 control.proceed();
             } else if (assignments.size() == 1) {
@@ -233,7 +233,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
             Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
@@ -262,7 +262,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
             dispatcher.executeInFlow(control, operation, result -> control.proceed());
@@ -284,7 +284,7 @@ final class AccessControlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new Operation.Builder(address, REMOVE).build();
             dispatcher.executeInFlow(control, operation, result -> control.proceed());

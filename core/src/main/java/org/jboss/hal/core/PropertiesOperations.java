@@ -87,20 +87,20 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
             //noinspection Duplicates
             dispatcher.executeInFlow(control, operation,
                     result -> {
-                        control.getContext().push(result.asList().stream()
+                        context.push(result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(Collectors.toSet()));
                         control.proceed();
                     },
                     (op, failure) -> {
-                        control.getContext().push(Collections.emptySet());
+                        context.push(Collections.emptySet());
                         control.proceed();
                     });
         }
@@ -123,8 +123,8 @@ public class PropertiesOperations {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
-            Set<String> existingProperties = control.getContext().pop();
+        public void execute(FlowContext context, Control control) {
+            Set<String> existingProperties = context.pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
             Set<String> remove = Sets.difference(existingProperties, properties.keySet()).immutableCopy();
@@ -342,7 +342,7 @@ public class PropertiesOperations {
 
         // TODO Check if the steps can be replaced with a composite operation
         series(progress.get(), new FlowContext(),
-                control -> {
+                (context, control) -> {
                     if (operations.isEmpty()) {
                         control.proceed();
                     } else {

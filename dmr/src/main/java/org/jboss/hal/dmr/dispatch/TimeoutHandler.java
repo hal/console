@@ -88,9 +88,9 @@ public class TimeoutHandler {
     public void execute(Operation operation, Predicate<ModelNode> predicate, Callback callback) {
         interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
                 context -> timeout(context) || context.conditionSatisfied,
-                control -> dispatcher.execute(operation,
+                (context, control) -> dispatcher.execute(operation,
                         result -> {
-                            control.getContext().conditionSatisfied = predicate == null || predicate.test(result);
+                            context.conditionSatisfied = predicate == null || predicate.test(result);
                             control.proceed();
                         },
                         (op, failure) -> control.proceed(),
@@ -121,12 +121,12 @@ public class TimeoutHandler {
     public void execute(Composite composite, Predicate<CompositeResult> predicate, Callback callback) {
         interval(Progress.NOOP, new TimeoutContext(), INTERVAL,
                 context -> timeout(context) || context.conditionSatisfied,
-                control -> dispatcher.execute(composite,
+                (context, control) -> dispatcher.execute(composite,
                         (CompositeResult result) -> {
                             if (predicate != null) {
-                                control.getContext().conditionSatisfied = predicate.test(result);
+                                context.conditionSatisfied = predicate.test(result);
                             } else {
-                                control.getContext().conditionSatisfied = result.stream()
+                                context.conditionSatisfied = result.stream()
                                         .map(stepResult -> !stepResult.isFailure())
                                         .allMatch(flag -> true);
                             }

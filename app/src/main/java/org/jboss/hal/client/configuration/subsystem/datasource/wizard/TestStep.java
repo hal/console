@@ -98,14 +98,14 @@ class TestStep extends WizardStep<Context, State> {
         List<Step<FlowContext>> steps = new ArrayList<>();
         if (!context.isCreated()) {
             // add data source
-            steps.add(control -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
+            steps.add((flowContext, control) -> dispatcher.executeInFlow(control, addOperation(context, statementContext),
                     (CompositeResult result) -> {
                         context.setCreated(true);
                         control.proceed();
                     },
                     (op, failure) -> {
-                        control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                        control.getContext().set(WIZARD_TEXT, resources.messages().dataSourceAddError());
+                        flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                        flowContext.set(WIZARD_TEXT, resources.messages().dataSourceAddError());
                         control.abort(failure);
                     }));
         }
@@ -115,8 +115,8 @@ class TestStep extends WizardStep<Context, State> {
                 environment, dispatcher, new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
 
         // test connection
-        steps.add(control -> {
-            List<Server> servers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
+        steps.add((flowContext, control) -> {
+            List<Server> servers = flowContext.get(TopologySteps.RUNNING_SERVERS);
             if (!servers.isEmpty()) {
                 Server server = servers.get(0);
                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
@@ -125,15 +125,15 @@ class TestStep extends WizardStep<Context, State> {
                 dispatcher.executeInFlow(control, operation,
                         result -> control.proceed(),
                         (op, failure) -> {
-                            control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                            control.getContext().set(WIZARD_TEXT,
+                            flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                            flowContext.set(WIZARD_TEXT,
                                     resources.messages().testConnectionError(context.dataSource.getName()));
                             control.abort(failure);
                         });
 
             } else {
-                control.getContext().set(WIZARD_TITLE, resources.constants().testConnectionError());
-                control.getContext().set(WIZARD_TEXT,
+                flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                flowContext.set(WIZARD_TEXT,
                         SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
                 control.abort("no running servers"); //NON-NLS
             }

@@ -24,7 +24,9 @@ import rx.Single;
 
 import static java.util.Arrays.asList;
 
-/** Flow control based on RxGWT */
+/**
+ * Methods to execute async operations in order or until a condition is met.
+ */
 public class Flow {
 
     public static <C> Single<C> single(Progress progress, C context, Step<C> step) {
@@ -53,10 +55,7 @@ public class Flow {
     public static <C> Single<C> interval(Progress progress, C context, int interval, Predicate<C> until,
             Step<C> step) {
         return Observable.interval(interval, TimeUnit.MILLISECONDS)
-                .doOnSubscribe(() -> {
-                    long l1 = System.currentTimeMillis();
-                    progress.reset();
-                })
+                .doOnSubscribe(progress::reset)
                 .flatMapSingle(n -> fromControl(context, step))
                 .doOnNext(n -> progress.tick())
                 .doOnTerminate(progress::finish)
@@ -66,11 +65,10 @@ public class Flow {
     }
 
     private static <C> Single<C> fromControl(C context, Step<C> producer) {
-        return Single.fromEmitter(emitter -> producer.execute(new Control<C>() {
+        return Single.fromEmitter(emitter -> producer.execute(context, new Control() {
             // @formatter:off
             @Override public void proceed() { emitter.onSuccess(context); }
             @Override public void abort(String error) { emitter.onError(new FlowException(error, context)); }
-            @Override public C getContext() { return context; }
             // @formatter:on
         }));
     }

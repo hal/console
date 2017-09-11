@@ -190,14 +190,14 @@ public class Dispatcher implements RecordingHandler {
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control<T> control, Composite composite,
+    public <T extends FlowContext> void executeInFlow(Control control, Composite composite,
             CompositeCallback callback) {
         dmr(composite, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
                 new ExceptionalFlowCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control<T> control, Composite composite,
+    public <T extends FlowContext> void executeInFlow(Control control, Composite composite,
             CompositeCallback callback, FailedCallback failedCallback) {
         dmr(composite, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFlowCallback<>(control));
@@ -240,14 +240,14 @@ public class Dispatcher implements RecordingHandler {
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control<T> control, Operation operation,
+    public <T extends FlowContext> void executeInFlow(Control control, Operation operation,
             OperationCallback callback) {
         dmr(operation, payload -> payload.get(RESULT), callback, new FailedFlowCallback<>(control),
                 new ExceptionalFlowCallback<>(control));
     }
 
     @JsIgnore
-    public <T extends FlowContext> void executeInFlow(Control<T> control, Operation operation,
+    public <T extends FlowContext> void executeInFlow(Control control, Operation operation,
             OperationCallback callback, FailedCallback failedCallback) {
         dmr(operation, payload -> payload.get(RESULT), callback, failedCallback,
                 new ExceptionalFlowCallback<>(control));

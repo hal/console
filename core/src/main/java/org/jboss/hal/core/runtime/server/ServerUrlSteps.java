@@ -56,7 +56,7 @@ class ServerUrlSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (standalone) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
@@ -66,7 +66,7 @@ class ServerUrlSteps {
                         control.abort("ReadSocketBindingGroup: No socket binding groups defined"); //NON-NLS
                     } else {
                         String sbg = result.asList().get(0).asString();
-                        control.getContext().set(SOCKET_BINDING_GROUP_KEY, sbg);
+                        context.set(SOCKET_BINDING_GROUP_KEY, sbg);
                         control.proceed();
                     }
                 });
@@ -77,7 +77,7 @@ class ServerUrlSteps {
                         .param(NAME, SOCKET_BINDING_GROUP)
                         .build();
                 dispatcher.executeInFlow(control, operation, result -> {
-                    control.getContext().set(SOCKET_BINDING_GROUP_KEY, result.asString());
+                    context.set(SOCKET_BINDING_GROUP_KEY, result.asString());
                     control.proceed();
                 });
             }
@@ -105,8 +105,8 @@ class ServerUrlSteps {
 
         @Override
         @SuppressWarnings("HardCodedStringLiteral")
-        public void execute(Control<FlowContext> control) {
-            String sbg = control.getContext().get(SOCKET_BINDING_GROUP_KEY);
+        public void execute(FlowContext context, Control control) {
+            String sbg = context.get(SOCKET_BINDING_GROUP_KEY);
             if (sbg != null) {
                 ResourceAddress address = new ResourceAddress();
                 if (!standalone) {
@@ -132,7 +132,7 @@ class ServerUrlSteps {
                             if (property.getValue().hasDefined(BOUND_PORT)) {
                                 url.append(":").append(property.getValue().get(BOUND_PORT).asInt());
                             }
-                            control.getContext().set(URL_KEY, new ServerUrl(url.toString(), false));
+                            context.set(URL_KEY, new ServerUrl(url.toString(), false));
                             control.proceed();
                         } else {
                             control.abort("ReadSocketBinding: No address defined for " +

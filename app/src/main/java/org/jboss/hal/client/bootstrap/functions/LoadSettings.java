@@ -44,7 +44,7 @@ public class LoadSettings implements BootstrapStep {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         logStart();
 
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);

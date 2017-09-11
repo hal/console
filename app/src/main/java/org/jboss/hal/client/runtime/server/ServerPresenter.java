@@ -39,7 +39,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Step;
@@ -139,7 +138,7 @@ public class ServerPresenter
 
     @Override
     protected void reload() {
-        Step<FlowContext> serverConfigFn = control -> {
+        Step<FlowContext> serverConfigFn = (context, control) -> {
             ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
             Operation serverOp = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
@@ -164,20 +163,20 @@ public class ServerPresenter
                     new Composite(serverOp, interfacesOp, jvmsOp, pathsOp, systemPropertiesOp),
                     (CompositeResult result) -> {
                         Server server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
-                        control.getContext().set(SERVER_KEY, server);
-                        control.getContext().set(SERVER_CONFIG_KEY, result);
+                        context.set(SERVER_KEY, server);
+                        context.set(SERVER_CONFIG_KEY, result);
                         control.proceed();
                     });
         };
-        Step<FlowContext> serverRuntimeFn = control -> {
-            Server server = control.getContext().get(SERVER_KEY);
+        Step<FlowContext> serverRuntimeFn = (context, control) -> {
+            Server server = context.get(SERVER_KEY);
             if (!serverActions.isPending(server) && server.isRunning()) {
                 ResourceAddress address = SERVER_RUNTIME_TEMPLATE.resolve(statementContext);
                 Operation serverRuntimeOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
                 dispatcher.executeInFlow(control, serverRuntimeOp, result -> {
-                    control.getContext().set(SERVER_RUNTIME_KEY, result);
+                    context.set(SERVER_RUNTIME_KEY, result);
                     control.proceed();
                 });
             } else {

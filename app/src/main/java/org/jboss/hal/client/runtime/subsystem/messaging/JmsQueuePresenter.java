@@ -156,22 +156,22 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
         } else {
             ResourceAddress address = queueAddress();
-            Step<FlowContext> count = control -> {
+            Step<FlowContext> count = (context, control) -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
                 dispatcher.executeInFlow(control, operation, result -> {
-                    control.getContext().set(MESSAGES_COUNT, result.asLong());
+                    context.set(MESSAGES_COUNT, result.asLong());
                     control.proceed();
                 });
             };
-            Step<FlowContext> list = control -> {
-                long messages = control.getContext().get(MESSAGES_COUNT);
+            Step<FlowContext> list = (context, control) -> {
+                long messages = context.get(MESSAGES_COUNT);
                 if (messages > MESSAGES_THRESHOLD) {
-                    control.getContext().set(MESSAGES, emptyList());
+                    context.set(MESSAGES, emptyList());
                     control.proceed();
                 } else {
                     Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
                     dispatcher.executeInFlow(control, operation, result -> {
-                        control.getContext().set(MESSAGES,
+                        context.set(MESSAGES,
                                 result.asList().stream().map(JmsMessage::new).collect(toList()));
                         control.proceed();
                     });

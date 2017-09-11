@@ -228,11 +228,11 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private void prepareWizard(final boolean xa) {
         Step<FlowContext> readDataSources =
-                control -> crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE,
+                (context, control) -> crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE,
                         children -> {
                             List<DataSource> dataSources = children.stream()
                                     .map(property -> new DataSource(property, xa)).collect(toList());
-                            control.getContext().set(DATASOURCES, dataSources);
+                            context.set(DATASOURCES, dataSources);
                             control.proceed();
                         });
 

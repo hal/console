@@ -57,7 +57,7 @@ class HandlerSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
                     .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
@@ -81,7 +81,7 @@ class HandlerSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION
             )
@@ -90,13 +90,13 @@ class HandlerSteps {
             //noinspection Duplicates
             dispatcher.executeInFlow(control, operation,
                     result -> {
-                        control.getContext().push(result.asList().stream()
+                        context.push(result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(Collectors.toSet()));
                         control.proceed();
                     },
                     (op, failure) -> {
-                        control.getContext().push(Collections.emptySet());
+                        context.push(Collections.emptySet());
                         control.proceed();
                     });
         }
@@ -116,8 +116,8 @@ class HandlerSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
-            Set<String> existingHandlers = control.getContext().pop();
+        public void execute(FlowContext context, Control control) {
+            Set<String> existingHandlers = context.pop();
             Set<String> add = Sets.difference(newHandlers, existingHandlers).immutableCopy();
             Set<String> remove = Sets.difference(existingHandlers, newHandlers).immutableCopy();
 

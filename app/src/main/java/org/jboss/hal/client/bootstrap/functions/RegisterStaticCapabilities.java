@@ -40,7 +40,7 @@ public class RegisterStaticCapabilities implements BootstrapStep {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
             logStart();
 

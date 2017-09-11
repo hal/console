@@ -202,7 +202,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             if (browseByHosts) {
                 processAddColumnAction(statementContext.selectedHost());
-                serverConfigsFn = control -> {
+                serverConfigsFn = (flowContext, control) -> {
                     ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER_CONFIG)
@@ -212,13 +212,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         List<Server> servers = result.asPropertyList().stream()
                                 .map(property -> new Server(statementContext.selectedHost(), property))
                                 .collect(toList());
-                        control.getContext().set(TopologySteps.SERVERS, servers);
+                        flowContext.set(TopologySteps.SERVERS, servers);
                         control.proceed();
                     });
                 };
 
             } else {
-                serverConfigsFn = control -> {
+                serverConfigsFn = (flowContext, control) -> {
                     ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
                             .resolve(statementContext);
                     Operation operation = new Operation.Builder(serverConfigAddress, QUERY)
@@ -233,7 +233,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                     return new Server(host, modelNode.get(RESULT));
                                 })
                                 .collect(toList());
-                        control.getContext().set(TopologySteps.SERVERS, servers);
+                        flowContext.set(TopologySteps.SERVERS, servers);
                         control.proceed();
                     });
                 };

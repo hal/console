@@ -37,15 +37,15 @@ public class ResourceCheck implements Step<FlowContext> {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         dispatcher.executeInFlow(control, operation,
                 result -> {
-                    control.getContext().push(200);
+                    context.push(200);
                     control.proceed();
                 },
                 (op, failure) -> {
-                    control.getContext().push(404);
+                    context.push(404);
                     control.proceed();
                 });
     }

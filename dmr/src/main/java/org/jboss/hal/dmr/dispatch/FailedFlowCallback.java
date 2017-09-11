@@ -21,12 +21,12 @@ import org.jboss.hal.flow.FlowContext;
 
 public class FailedFlowCallback<C extends FlowContext> implements Dispatcher.FailedCallback {
 
-    private final Control<C> control;
+    private final Control control;
 
-    FailedFlowCallback(final Control<C> control) {this.control = control;}
+    FailedFlowCallback(Control control) {this.control = control;}
 
     @Override
-    public void onFailed(final Operation operation, final String failure) {
+    public void onFailed(Operation operation, String failure) {
         control.abort(failure);
     }
 }

@@ -443,8 +443,8 @@ public class RemotingPresenter
 
         series(progress.get(), new FlowContext(),
                 new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
-                control -> {
-                    int status = control.getContext().pop();
+                (context, control) -> {
+                    int status = context.pop();
                     if (status == 200) {
                         control.proceed();
                     } else {
@@ -453,7 +453,7 @@ public class RemotingPresenter
                         dispatcher.executeInFlow(control, operation, result -> control.proceed());
                     }
                 },
-                control -> {
+                (context, control) -> {
                     Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
                     dispatcher.executeInFlow(control, operation, result -> control.proceed());
                 })

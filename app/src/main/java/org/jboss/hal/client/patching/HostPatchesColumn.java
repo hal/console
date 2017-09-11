@@ -73,12 +73,12 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
 
         private Dispatcher dispatcher;
 
-        AvailableHosts(final Dispatcher dispatcher) {
+        AvailableHosts(Dispatcher dispatcher) {
             this.dispatcher = dispatcher;
         }
 
         @Override
-        public void execute(final Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
 
             ResourceAddress hostAddress = new ResourceAddress()
                     .add(HOST, "*");
@@ -129,7 +129,7 @@ public class HostPatchesColumn extends FinderColumn<NamedNode> implements HostAc
                     hostPatches.add(ac);
                 });
                 List<NamedNode> sortedHosts = orderedHostWithDomainControllerAsFirstElement(hostPatches);
-                control.getContext().set(HOSTS, sortedHosts);
+                context.set(HOSTS, sortedHosts);
                 control.proceed();
             });
         }

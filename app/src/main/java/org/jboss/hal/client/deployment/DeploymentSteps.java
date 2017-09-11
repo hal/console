@@ -91,7 +91,7 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation contentOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
@@ -121,7 +121,7 @@ class DeploymentSteps {
                         content.addDeployment(serverGroupDeployment);
                     }
                 }
-                control.getContext().push(new ArrayList<>(contentByName.values()));
+                context.push(new ArrayList<>(contentByName.values()));
                 control.proceed();
             });
         }
@@ -153,10 +153,10 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
-                control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                 control.proceed();
 
             } else {
@@ -170,7 +170,7 @@ class DeploymentSteps {
                     dispatcher.executeInFlow(control, operation, result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = Lists
                                 .newArrayList(new ServerGroupDeployment(serverGroup, result));
-                        control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                        context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                         control.proceed();
                     });
 
@@ -185,7 +185,7 @@ class DeploymentSteps {
                         List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
                                 .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
                                 .collect(toList());
-                        control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                        context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                         control.proceed();
                     });
                 }
@@ -214,10 +214,10 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
-                control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                 control.proceed();
 
             } else {
@@ -251,14 +251,14 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 control.proceed();
 
             } else {
-                List<ServerGroupDeployment> serverGroupDeployments = control.getContext()
+                List<ServerGroupDeployment> serverGroupDeployments = context
                         .get(DeploymentSteps.SERVER_GROUP_DEPLOYMENTS);
-                List<Server> runningServers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
+                List<Server> runningServers = context.get(TopologySteps.RUNNING_SERVERS);
                 if (serverGroupDeployments != null && runningServers != null &&
                         !serverGroupDeployments.isEmpty() && !runningServers.isEmpty()) {
 
@@ -302,16 +302,16 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFlow(control, operation, result -> {
                 Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
                 if (names.contains(name)) {
-                    control.getContext().push(200);
+                    context.push(200);
                 } else {
-                    control.getContext().push(404);
+                    context.push(404);
                 }
                 control.proceed();
             });
@@ -346,14 +346,14 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             boolean replace;
             Operation.Builder builder;
 
-            if (control.getContext().emptyStack()) {
+            if (context.emptyStack()) {
                 replace = false;
             } else {
-                Integer status = control.getContext().pop();
+                Integer status = context.pop();
                 replace = status == 200;
             }
 
@@ -373,10 +373,10 @@ class DeploymentSteps {
 
             dispatcher.upload(file, operation,
                     result -> {
-                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics == null) {
                             statistics = new UploadStatistics(environment);
-                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                            context.set(UPLOAD_STATISTICS, statistics);
                         }
                         if (ADD.equals(operation.getName())) {
                             statistics.recordAdded(name);
@@ -387,20 +387,20 @@ class DeploymentSteps {
                     },
 
                     (op, failure) -> {
-                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics == null) {
                             statistics = new UploadStatistics(environment);
-                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                            context.set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(name);
                         control.proceed();
                     },
 
                     (op, exception) -> {
-                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics == null) {
                             statistics = new UploadStatistics(environment);
-                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                            context.set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(name);
                         control.proceed();
@@ -425,7 +425,7 @@ class DeploymentSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Operation operation = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
                     .payload(payload)
                     .build();

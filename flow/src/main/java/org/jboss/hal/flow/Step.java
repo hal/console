@@ -17,5 +17,5 @@ package org.jboss.hal.flow;
 
 public interface Step<C> {
 
-    void execute(Control<C> control);
+    void execute(C context, Control control);
 }

@@ -16,11 +16,9 @@
 package org.jboss.hal.flow;
 
 /** Execution control handle passed into functions */
-public interface Control<C> {
+public interface Control {
 
     void proceed();
 
     void abort(String error);
-
-    C getContext();
 }

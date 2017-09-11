@@ -80,7 +80,7 @@ public class ReadEnvironment implements BootstrapStep {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         logStart();
 
         List<Operation> ops = new ArrayList<>();

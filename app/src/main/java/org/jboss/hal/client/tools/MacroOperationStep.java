@@ -32,7 +32,7 @@ class MacroOperationStep implements Step<FlowContext> {
     }
 
     @Override
-    public void execute(Control<FlowContext> control) {
+    public void execute(FlowContext context, Control control) {
         dispatcher.executeInFlow(control, operation, result -> control.proceed());
     }
 }

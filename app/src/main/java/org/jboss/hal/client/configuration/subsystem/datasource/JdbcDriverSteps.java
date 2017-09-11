@@ -61,12 +61,12 @@ class JdbcDriverSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, JDBC_DRIVER, children -> {
                 List<JdbcDriver> drivers = children.stream()
                         .map(JdbcDriver::new)
                         .collect(toList());
-                control.getContext().set(CONFIGURATION_DRIVERS, drivers);
+                context.set(CONFIGURATION_DRIVERS, drivers);
                 control.proceed();
             });
         }
@@ -90,7 +90,7 @@ class JdbcDriverSteps {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (environment.isStandalone()) {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
                 Operation operation = new Operation.Builder(address, "installed-drivers-list").build(); //NON-NLS
@@ -98,12 +98,12 @@ class JdbcDriverSteps {
                     List<JdbcDriver> drivers = result.asList().stream()
                             .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
                             .collect(toList());
-                    control.getContext().set(RUNTIME_DRIVERS, drivers);
+                    context.set(RUNTIME_DRIVERS, drivers);
                     control.proceed();
                 });
 
             } else {
-                List<Server> servers = control.getContext().get(TopologySteps.RUNNING_SERVERS);
+                List<Server> servers = context.get(TopologySteps.RUNNING_SERVERS);
                 if (servers != null && !servers.isEmpty()) {
                     List<Operation> operations = servers.stream()
                             .map(server -> {
@@ -121,7 +121,7 @@ class JdbcDriverSteps {
                                 }
                             }
                         }
-                        control.getContext().set(RUNTIME_DRIVERS, drivers);
+                        context.set(RUNTIME_DRIVERS, drivers);
                         control.proceed();
                     });
 
@@ -143,10 +143,10 @@ class JdbcDriverSteps {
     static class CombineDriverResults implements Step<FlowContext> {
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             Map<String, JdbcDriver> map = new HashMap<>();
-            List<JdbcDriver> configDrivers = control.getContext().get(JdbcDriverSteps.CONFIGURATION_DRIVERS);
-            List<JdbcDriver> runtimeDrivers = control.getContext().get(JdbcDriverSteps.RUNTIME_DRIVERS);
+            List<JdbcDriver> configDrivers = context.get(JdbcDriverSteps.CONFIGURATION_DRIVERS);
+            List<JdbcDriver> runtimeDrivers = context.get(JdbcDriverSteps.RUNTIME_DRIVERS);
             if (configDrivers != null) {
                 for (JdbcDriver driver : configDrivers) {
                     map.put(driver.getName(), driver);
@@ -159,7 +159,7 @@ class JdbcDriverSteps {
             }
             List<JdbcDriver> drivers = new ArrayList<>(map.values());
             drivers.sort(Comparator.comparing(JdbcDriver::getName));
-            control.getContext().set(DRIVERS, drivers);
+            context.set(DRIVERS, drivers);
             control.proceed();
         }
     }

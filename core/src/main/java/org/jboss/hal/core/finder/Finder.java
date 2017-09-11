@@ -74,7 +74,7 @@ public class Finder implements IsElement, Attachable {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
                 @Override
                 public void onFailure(Throwable throwable) {
@@ -85,17 +85,17 @@ public class Finder implements IsElement, Attachable {
 
                 @Override
                 public void onSuccess(FinderColumn finderColumn) {
-                    selectItem(finderColumn, control);
+                    selectItem(finderColumn, context, control);
                 }
             });
         }
 
-        private void selectItem(FinderColumn column, Control<FlowContext> control) {
+        private void selectItem(FinderColumn column, FlowContext context, Control control) {
             if (column.contains(segment.getItemId())) {
                 column.markSelected(segment.getItemId());
                 column.row(segment.getItemId()).asElement().scrollIntoView(false);
                 updateContext();
-                control.getContext().push(column);
+                context.push(column);
                 control.proceed();
             } else {
                 //noinspection HardCodedStringLiteral
@@ -115,11 +115,11 @@ public class Finder implements IsElement, Attachable {
         }
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
                 // refresh the existing column
-                column.refresh(() -> selectItem(column, control));
+                column.refresh(() -> selectItem(column, context, control));
             } else {
                 // append the column
                 appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
@@ -130,16 +130,16 @@ public class Finder implements IsElement, Attachable {
 
                     @Override
                     public void onSuccess(FinderColumn finderColumn) {
-                        selectItem(finderColumn, control);
+                        selectItem(finderColumn, context, control);
                     }
                 });
             }
         }
 
-        private void selectItem(FinderColumn column, Control<FlowContext> control) {
+        private void selectItem(FinderColumn column, FlowContext context, Control control) {
             if (column.contains(segment.getItemId())) {
                 column.markSelected(segment.getItemId());
-                control.getContext().push(column);
+                context.push(column);
                 control.proceed();
             } else {
                 //noinspection HardCodedStringLiteral

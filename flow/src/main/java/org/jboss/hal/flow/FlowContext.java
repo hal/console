@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-/** General purpose context to be used inside a flow. Provides a stack and a map for sharing data between calls. */
+/** General purpose context to be used inside a flow. Provides a stack and a map for sharing data between steps. */
 public class FlowContext {
 
     private final Stack<Object> stack;

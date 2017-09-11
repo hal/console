@@ -119,7 +119,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         private OpenNodeStep(String id) {this.id = id;}
 
         @Override
-        public void execute(Control<FlowContext> control) {
+        public void execute(FlowContext context, Control control) {
             if (tree.api().getNode(id) != null) {
                 tree.api().openNode(id, control::proceed);
             } else {

@@ -21,12 +21,12 @@ import org.jboss.hal.flow.FlowContext;
 
 public class ExceptionalFlowCallback<C extends FlowContext> implements Dispatcher.ExceptionCallback {
 
-    private final Control<C> control;
+    private final Control control;
 
-    ExceptionalFlowCallback(final Control<C> control) {this.control = control;}
+    ExceptionalFlowCallback(Control control) {this.control = control;}
 
     @Override
-    public void onException(final Operation operation, final Throwable exception) {
+    public void onException(Operation operation, Throwable exception) {
         control.abort(exception.getMessage());
     }
 }

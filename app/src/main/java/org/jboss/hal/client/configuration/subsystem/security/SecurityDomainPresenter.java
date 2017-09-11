@@ -185,8 +185,8 @@ public class SecurityDomainPresenter
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
         series(progress.get(), new FlowContext(),
                 new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
-                control -> {
-                    int status = control.getContext().pop();
+                (context, control) -> {
+                    int status = context.pop();
                     if (status == 200) {
                         control.proceed();
                     } else {

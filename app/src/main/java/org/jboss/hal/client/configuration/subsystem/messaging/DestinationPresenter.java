@@ -175,11 +175,11 @@ public class DestinationPresenter
                     .resolve(statementContext);
 
             ResourceCheck check = new ResourceCheck(dispatcher, securitySettingAddress);
-            Step<FlowContext> add = control -> {
+            Step<FlowContext> add = (context, control) -> {
                 Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
                 Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
 
-                int status = control.getContext().pop();
+                int status = context.pop();
                 if (status == 404) {
                     dispatcher.executeInFlow(control, new Composite(addSecuritySetting, addRole),
                             (CompositeResult result) -> control.proceed());
@@ -244,7 +244,7 @@ public class DestinationPresenter
                     resources.messages().removeConfirmationTitle(Names.SECURITY_SETTING),
                     resources.messages().removeConfirmationQuestion(combinedName),
                     () -> {
-                        Step<FlowContext> removeRole = control -> {
+                        Step<FlowContext> removeRole = (context, control) -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .append(ROLE + "=" + roleName)
@@ -253,7 +253,7 @@ public class DestinationPresenter
                             dispatcher.executeInFlow(control, operation, result -> control.proceed());
                         };
 
-                        Step<FlowContext> readRemainingRoles = control -> {
+                        Step<FlowContext> readRemainingRoles = (context, control) -> {
                             ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                     .append(SECURITY_SETTING + "=" + securitySetting)
                                     .resolve(statementContext);
@@ -261,13 +261,13 @@ public class DestinationPresenter
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
                             dispatcher.executeInFlow(control, operation, result -> {
-                                control.getContext().push(result.asList());
+                                context.push(result.asList());
                                 control.proceed();
                             });
                         };
 
-                        Step<FlowContext> removeSecuritySetting = control -> {
-                            List<ModelNode> roles = control.getContext().pop();
+                        Step<FlowContext> removeSecuritySetting = (context, control) -> {
+                            List<ModelNode> roles = context.pop();
                             if (roles.isEmpty()) {
                                 ResourceAddress address = SELECTED_SERVER_TEMPLATE
                                         .append(SECURITY_SETTING + "=" + securitySetting)
